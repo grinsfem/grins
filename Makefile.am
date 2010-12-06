@@ -8,12 +8,12 @@ EXTRA_DIST       = CHANGES
 dist-hook:
 	rm -rf `find $(distdir)/ -name .svn`
 
-if SVN_CHECKOUT
-dist_version: FORCE
-	@SVN_REVISION@ > $(top_srcdir)/dist_version
-
-FORCE:
-endif
+#if SVN_CHECKOUT
+#dist_version: FORCE
+#	@SVN_REVISION@ > $(top_srcdir)/dist_version
+#
+#FORCE:
+#endif
 
 # Files to be deleted by 'make maintainer-clean'
 MAINTAINERCLEANFILES = aclocal.m4                               \
