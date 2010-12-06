@@ -35,8 +35,8 @@ class GRINS_Solver
 {
 
 public:
-  GRINS_Solver::GRINS_Solver();
-  GRINS_Solver::~GRINS_Solver();
+  GRINS_Solver();
+  ~GRINS_Solver();
 
 private:
 };
