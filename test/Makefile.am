@@ -2,7 +2,7 @@ check_PROGRAMS  = # Append below
 check_PROGRAMS += test_grins_solver_init
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include
-#	      \ -I$(top_srcdir)/
+#	      \ -I$(top_srcdir)/src/utilities/<NULL>/include
 
 AM_CPPFLAGS +=  $(QUESO_CPPFLAGS) \
                 $(BOOST_CPPFLAGS) \
@@ -36,12 +36,12 @@ endif
 test_grins_solver_init_SOURCES = test_grins_solver_init.C
 
 #Define tests to actually be run
-TESTS = test_grin_solver_init
+TESTS = test_grins_solver_init
 
 #shellfiles_src = <NULL.sh>
 
 # Want these put with the distro so we can run make check
-#EXTRA_DIST = $(shellfiles_src)
+EXTRA_DIST = $(shellfiles_src)
 
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno

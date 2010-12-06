@@ -19,7 +19,7 @@ utils_dir = $(top_srcdir)/src/utilities
 # List of source files to build dynamic library
 #----------------------------------------------
 # Sources in src/grins
-#grins_SRC = $(grins_srcdir)/GRINSSolver.C
+grins_SRC = $(grins_srcdir)/GRINS_Solver.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -27,7 +27,7 @@ utils_dir = $(top_srcdir)/src/utilities
 #----------------------------------------------
 #INCLUDES we want distributed
 #----------------------------------------------
-#grins_INC = $(grins_incdir)/GRINSSolver.h
+grins_INC = $(grins_incdir)/GRINS_Solver.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 
