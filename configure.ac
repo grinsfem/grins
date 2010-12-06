@@ -5,7 +5,6 @@ AC_PREREQ(2.61)
 AC_INIT(grins, 0.0.0, {pbauman,sahni}@ices.utexas.edu)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([build-aux])
-#OS# cdns
 AC_CANONICAL_TARGET()
 AM_INIT_AUTOMAKE(grins,0.0.0)
 
@@ -60,7 +59,7 @@ AC_CHECK_FILE($LIBMESH_PREFIX/contrib/bin/libmesh-config,
               LIBMESH_CONFIG=$LIBMESH_PREFIX/contrib/bin/libmesh-config,
               AC_MSG_ERROR([Cannot find libmesh-config!]))
 
-AC_ARG_ENABLE([libmesh-flags], 
+AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--enable-libmesh-flags],[enable use of libmesh cxxflags for CXXFLAGS]),
                USE_LIBMESH_CXX_FLAGS=1
                AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled]),[])
@@ -141,7 +140,7 @@ AX_PATH_QUESO
 
 #--------------------------
 # Checks for code coverage
-#-------------------------                                                            
+#--------------------------
 AX_CODE_COVERAGE
 
 
@@ -161,4 +160,3 @@ AX_SUMMARIZE_ENV
 # Final summary
 #------------------------------
 AX_SUMMARIZE_CONFIG
-

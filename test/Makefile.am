@@ -1,5 +1,5 @@
 check_PROGRAMS  = # Append below
-check_PROGRAMS += test_libmesh_init
+check_PROGRAMS += test_grins_solver_init
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include
 #	      \ -I$(top_srcdir)/
@@ -33,10 +33,10 @@ if MASA_ENABLED
 endif
 
 # Sources for these tests
-test_libmesh_init_SOURCES = test_libmesh_init.C
+test_grins_solver_init_SOURCES = test_grins_solver_init.C
 
 #Define tests to actually be run
-TESTS = test_libmesh_init
+TESTS = test_grin_solver_init
 
 #shellfiles_src = <NULL.sh>
 
