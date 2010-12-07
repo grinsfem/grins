@@ -4,23 +4,28 @@ check_PROGRAMS += test_grins_solver_init
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include
 #	      \ -I$(top_srcdir)/src/utilities/<NULL>/include
 
-AM_CPPFLAGS +=  $(QUESO_CPPFLAGS) \
-                $(BOOST_CPPFLAGS) \
-                $(GRVY_CFLAGS) \
-                $(GSL_CFLAGS) \
-                $(GLPK_CFLAGS) \
-                $(LIBMESH_CXXFLAGS) \
-                $(HDF5_CFLAGS)  \
-                $(EPETRA_INCLUDES)
+###AM_CPPFLAGS +=  $(QUESO_CPPFLAGS) \
+###                $(BOOST_CPPFLAGS) \
+###                $(GRVY_CFLAGS) \
+###                $(GSL_CFLAGS) \
+###                $(GLPK_CFLAGS) \
+###                $(LIBMESH_CXXFLAGS) \
+###                $(HDF5_CFLAGS)  \
+###                $(EPETRA_INCLUDES)
 
-AM_LDFLAGS = $(QUESO_LIBS) \
-             $(GSL_LIBS) \
-             $(GLPK_LIBS) \
-             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
-             $(GRVY_LIBS) \
-             $(HDF5_LIBS) \
-             $(EPETRA_LIBS) \
-             $(LIBMESH_LIBS) \
+AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
+
+###AM_LDFLAGS = $(QUESO_LIBS) \
+###             $(GSL_LIBS) \
+###             $(GLPK_LIBS) \
+###             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
+###             $(GRVY_LIBS) \
+###             $(HDF5_LIBS) \
+###             $(EPETRA_LIBS) \
+###             $(LIBMESH_LIBS) \
+###             -L$(top_builddir)/src -lgrins
+
+AM_LDFLAGS = $(LIBMESH_LIBS) \
              -L$(top_builddir)/src -lgrins
 
 #--------------
@@ -48,4 +53,4 @@ if CODE_COVERAGE_ENABLED
 endif
 
 # Required for AX_AM_MACROS
-@INC_AMINCLUDE@
+###@INC_AMINCLUDE@

@@ -83,34 +83,34 @@ dnl QUESO dependencies
 dnl----------------
 dnl Check for GSL
 dnl----------------
-AX_PATH_GSL(1.10,AM_CONDITIONAL([UQBT_GSL], [test 'TRUE']),AC_MSG_ERROR([Could not find required GSL version.]))
+dnl### AX_PATH_GSL(1.10,AM_CONDITIONAL([UQBT_GSL], [test 'TRUE']),AC_MSG_ERROR([Could not find required GSL version.]))
 dnl AC_CACHE_SAVE
 
 dnl----------------
 dnl Check for boost
 dnl----------------
-BOOST_REQUIRE([1.36])
-BOOST_MATH()
-BOOST_PROGRAM_OPTIONS()
+dnl###BOOST_REQUIRE([1.36])
+dnl###BOOST_MATH()
+dnl###BOOST_PROGRAM_OPTIONS()
 dnl AC_CACHE_SAVE
 
 dnl-------------------------------------
 dnl Check for GNU Linear Programming kit
 dnl-------------------------------------
-AX_PATH_GLPK(4.35,,AC_MSG_ERROR([Could not find required GLPK error]))
+dnl###AX_PATH_GLPK(4.35,,AC_MSG_ERROR([Could not find required GLPK error]))
 dnl AC_CACHE_SAVE
 
 dnl---------------
 dnl Check for HPCT
 dnl---------------
-AX_PATH_GRVY
+dnl###AX_PATH_GRVY
 dnl AC_CACHE_SAVE
 
 dnl-------------------
 dnl Check for TRILINOS
 dnl-------------------
-AX_TRILINOS_BASE(8.0.7,,AC_MSG_ERROR([Could not find required Trilinos version.]))
-AX_TRILINOS_EPETRA(AC_DEFINE(HAVE_LIBEPETRA,1,[Define if Epetra is available]),AC_MSG_ERROR([Could not find Epetra.]))
+dnl###AX_TRILINOS_BASE(8.0.7,,AC_MSG_ERROR([Could not find required Trilinos version.]))
+dnl###AX_TRILINOS_EPETRA(AC_DEFINE(HAVE_LIBEPETRA,1,[Define if Epetra is available]),AC_MSG_ERROR([Could not find Epetra.]))
 dnl AC_CACHE_SAVE
 
 
@@ -119,13 +119,13 @@ dnl Checks for libraries
 dnl---------------------------------------------------------------
 
 dnl QUESO REQUIRES HDF5
-AX_PATH_HDF5
+dnl###AX_PATH_HDF5
 
 
 dnl----------------
 dnl Check for QUESO
 dnl----------------
-AX_PATH_QUESO
+dnl###AX_PATH_QUESO
 dnl AC_CACHE_SAVE
 
 dnl---------------------------------------------------------------

@@ -45,26 +45,30 @@ AM_CPPFLAGS = -I$(grins_incdir)
 #-------------------------------------
 # External library include directories
 #-------------------------------------
-AM_CPPFLAGS += $(HDF5_CFLAGS) \
-               $(QUESO_CPPFLAGS) \
-               $(BOOST_CPPFLAGS) \
-               $(GRVY_CFLAGS) \
-               $(GSL_CFLAGS) \
-               $(GLPK_CFLAGS) \
-               $(LIBMESH_CXXFLAGS) \
-               $(EPETRA_INCLUDES)	
+###AM_CPPFLAGS += $(HDF5_CFLAGS) \
+###               $(QUESO_CPPFLAGS) \
+###               $(BOOST_CPPFLAGS) \
+###               $(GRVY_CFLAGS) \
+###               $(GSL_CFLAGS) \
+###               $(GLPK_CFLAGS) \
+###               $(LIBMESH_CXXFLAGS) \
+###               $(EPETRA_INCLUDES)
+
+AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
 
 #------------------------------------
 # Flags we need to pass to the linker
 #------------------------------------
-AM_LDFLAGS = $(QUESO_LIBS) \
-             $(GSL_LIBS) \
-             $(GLPK_LIBS) \
-             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
-             $(GRVY_LIBS) \
-             $(HDF5_LIBS)  \
-             $(EPETRA_LIBS) \
-             $(LIBMESH_LIBS)
+###AM_LDFLAGS = $(QUESO_LIBS) \
+###             $(GSL_LIBS) \
+###             $(GLPK_LIBS) \
+###             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
+###             $(GRVY_LIBS) \
+###             $(HDF5_LIBS)  \
+###             $(EPETRA_LIBS) \
+###             $(LIBMESH_LIBS)
+
+AM_LDFLAGS = $(LIBMESH_LIBS)
 
 #--------------
 # MASA support
@@ -80,4 +84,4 @@ if CODE_COVERAGE_ENABLED
 endif
 
 # Required for AX_AM_MACROS
-@INC_AMINCLUDE@
+###@INC_AMINCLUDE@
