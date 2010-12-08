@@ -2,13 +2,13 @@
 # Programs and libraries we want to build
 #----------------------------------------
 
-#bin_PROGRAMS =  <NULL>
+bin_PROGRAMS =  grins_driver
 
 lib_LTLIBRARIES = libgrins.la
 
-#----------------------------------------------
+#--------------------------------------------------
 # List of directories with source and include files
-#----------------------------------------------
+#--------------------------------------------------
 grins_srcdir = $(top_srcdir)/src/grins_solver/src
 grins_incdir = $(top_srcdir)/src/grins_solver/include
 
@@ -24,9 +24,9 @@ grins_SRC = $(grins_srcdir)/GRINS_Solver.C
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
 
-#----------------------------------------------
+#----------------------------
 #INCLUDES we want distributed
-#----------------------------------------------
+#----------------------------
 grins_INC = $(grins_incdir)/GRINS_Solver.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
@@ -35,6 +35,13 @@ include_HEADERS = $(grins_INC) $(utils_INC)
 
 libgrins_la_SOURCES = $(grins_SRC) \
                       $(utils_SRC)
+
+#------------------------------------
+# Source for stand alone GRINS driver
+#------------------------------------
+grins_driver_SOURCES = $(grins_srcdir)/GRINS_Driver.C
+
+grins_driver_LDADD = libgrins.la
 
 #--------------------------------------
 #Local Directories to include for build
@@ -70,9 +77,9 @@ AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
 
 AM_LDFLAGS = $(LIBMESH_LIBS)
 
-#--------------
+#-------------
 # MASA support
-#--------------
+#-------------
 
 if MASA_ENABLED
   AM_CPPFLAGS           += $(MASA_CXXFLAGS)

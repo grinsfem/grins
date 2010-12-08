@@ -22,25 +22,19 @@
 //
 //--------------------------------------------------------------------------
 //
-// GRINS_Solver.h: Declarations for the GRINS_Solver class.
+// GRINS_Driver.C: Driver code for GRINS (FEM solver).
 //
 // $Id$
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_SOLVER_H
-#define GRINS_SOLVER_H
+#include "GRINS_Solver.h"
 
-#include "libmesh.h"
+#include <iostream>
 
-class GRINS_Solver
-{
+int main(int argc, char* argv[]) {
 
-public:
-  GRINS_Solver();
-  ~GRINS_Solver();
+  LibMeshInit libmesh_init(argc, argv);
 
-private:
-};
-
-#endif
+  return 0;
+}
