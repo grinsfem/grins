@@ -32,9 +32,10 @@
 
 #include <iostream>
 
-GRINS_Solver::GRINS_Solver()
+GRINS_Solver::GRINS_Solver( const std::string application_options )
 {
   std::cout << " GRINS_Solver constructor ..." << std::endl;
+  _application_options = application_options;
   return;
 }
 

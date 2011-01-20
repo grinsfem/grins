@@ -31,16 +31,31 @@
 #ifndef GRINS_EQUATIONSYSTEMS_H
 #define GRINS_EQUATIONSYSTEMS_H
 
-#include "libmesh.h"
+#include <string>
 
-class GRINS_EquationSystems
+#include "libmesh.h"
+#include "fem_system.h"
+
+// FEMSystem, TimeSolver and  NewtonSolver will handle most tasks,
+// but we must specify element residuals
+class GRINS_EquationSystems : public FEMSystem
 {
 
 public:
-  GRINS_EquationSystems();
-  ~GRINS_EquationSystems();
+  // Constructor
+  GRINS_EquationSystems(EquationSystems& es,
+                        const std::string& name,
+                        const unsigned int number)
+  : FEMSystem(es, name, number)
+    {}
+
+  // Destructor
+  ~GRINS_EquationSystems() {}
+
+  void set_application( const std::string application_options );
 
 private:
+  std::string _application_options;
 };
 
 #endif

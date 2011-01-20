@@ -30,16 +30,8 @@
 
 #include "GRINS_EquationSystems.h"
 
-#include <iostream>
-
-GRINS_EquationSystems::GRINS_EquationSystems()
+void GRINS_EquationSystems::set_application( const std::string application_options )
 {
-  std::cout << " GRINS_EquationSystems constructor ..." << std::endl;
-  return;
-}
-
-GRINS_EquationSystems::~GRINS_EquationSystems()
-{
-  std::cout << " GRINS_EquationSystems  destructor ..." << std::endl;
+  _application_options = application_options;
   return;
 }

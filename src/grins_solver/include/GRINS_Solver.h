@@ -33,14 +33,17 @@
 
 #include "libmesh.h"
 
+#include "GRINS_EquationSystems.h"
+
 class GRINS_Solver
 {
 
 public:
-  GRINS_Solver();
+  GRINS_Solver( const std::string application_options );
   ~GRINS_Solver();
 
 private:
+  std::string _application_options;
 };
 
 #endif
