@@ -55,13 +55,13 @@ AM_CPPFLAGS = -I$(grins_incdir)
 ###AM_CPPFLAGS += $(HDF5_CFLAGS) \
 ###               $(QUESO_CPPFLAGS) \
 ###               $(BOOST_CPPFLAGS) \
-###               $(GRVY_CFLAGS) \
 ###               $(GSL_CFLAGS) \
 ###               $(GLPK_CFLAGS) \
 ###               $(LIBMESH_CXXFLAGS) \
 ###               $(EPETRA_INCLUDES)
 
-AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
+AM_CPPFLAGS += $(LIBMESH_CXXFLAGS) \
+               $(GRVY_CFLAGS)
 
 #------------------------------------
 # Flags we need to pass to the linker
@@ -70,12 +70,12 @@ AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
 ###             $(GSL_LIBS) \
 ###             $(GLPK_LIBS) \
 ###             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
-###             $(GRVY_LIBS) \
 ###             $(HDF5_LIBS)  \
 ###             $(EPETRA_LIBS) \
 ###             $(LIBMESH_LIBS)
 
-AM_LDFLAGS = $(LIBMESH_LIBS)
+AM_LDFLAGS = $(LIBMESH_LIBS) \
+             $(GRVY_LIBS)
 
 #-------------
 # MASA support

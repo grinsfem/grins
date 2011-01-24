@@ -68,7 +68,9 @@ AC_ARG_ENABLE([libmesh-flags],
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
    CXXFLAGS=`$LIBMESH_CONFIG --cxxflags`
 else
-   CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
+ dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
+ dnl  CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
+   CXXFLAGS="-O0 -g"
 fi
 
 dnl---------------------------------------------------------
@@ -103,7 +105,7 @@ dnl AC_CACHE_SAVE
 dnl---------------
 dnl Check for HPCT
 dnl---------------
-dnl###AX_PATH_GRVY
+AX_PATH_GRVY
 dnl AC_CACHE_SAVE
 
 dnl-------------------

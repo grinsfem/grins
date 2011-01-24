@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-ACLOCAL_AMFLAGS  = -I m4
+ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test
 EXTRA_DIST       = CHANGES

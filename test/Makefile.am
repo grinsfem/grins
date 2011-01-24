@@ -13,7 +13,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include
 ###                $(HDF5_CFLAGS)  \
 ###                $(EPETRA_INCLUDES)
 
-AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
+AM_CPPFLAGS += $(LIBMESH_CXXFLAGS) \
+                $(GRVY_CFLAGS)
 
 ###AM_LDFLAGS = $(QUESO_LIBS) \
 ###             $(GSL_LIBS) \
@@ -26,6 +27,7 @@ AM_CPPFLAGS += $(LIBMESH_CXXFLAGS)
 ###             -L$(top_builddir)/src -lgrins
 
 AM_LDFLAGS = $(LIBMESH_LIBS) \
+             $(GRVY_LIBS) \
              -L$(top_builddir)/src -lgrins
 
 #--------------

@@ -32,6 +32,8 @@
 
 #include <iostream>
 
+#include "grvy.h"
+
 int main(int argc, char* argv[]) {
 
   LibMeshInit libmesh_init(argc, argv);
