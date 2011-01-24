@@ -5,7 +5,7 @@ int main(int argc, char* argv[])
 
   std::string application_options; // ADD OPTIONS LATER
 
-  GRINSSolver grins_solver(application_options);
+  GRINS::GRINSSolver grins_solver(application_options);
 
   return 0;
 }

@@ -36,26 +36,31 @@
 #include "libmesh.h"
 #include "fem_system.h"
 
-// FEMSystem, TimeSolver and  NewtonSolver will handle most tasks,
-// but we must specify element residuals
-class LowMachNumberNavierStokesSystem : public FEMSystem
+namespace GRINS
 {
 
-public:
-  // Constructor
-  LowMachNumberNavierStokesSystem(EquationSystems& es,
-				  const std::string& name,
-				  const unsigned int number)
-  : FEMSystem(es, name, number)
+  // FEMSystem, TimeSolver and  NewtonSolver will handle most tasks,
+  // but we must specify element residuals
+  class LowMachNumberNavierStokesSystem : public FEMSystem
+  {
+    
+  public:
+    // Constructor
+    LowMachNumberNavierStokesSystem(EquationSystems& es,
+				    const std::string& name,
+				    const unsigned int number)
+      : FEMSystem(es, name, number)
     {}
+    
+    // Destructor
+    ~LowMachNumberNavierStokesSystem() {}
+    
+    void set_application( const std::string application_options );
+    
+  private:
+    std::string _application_options;
+  };
+  
+} //End namespace block
 
-  // Destructor
-  ~LowMachNumberNavierStokesSystem() {}
-
-  void set_application( const std::string application_options );
-
-private:
-  std::string _application_options;
-};
-
-#endif
+#endif // LOW_MACH_NUM_NAVIER_STOKES_SYS_H

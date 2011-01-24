@@ -36,15 +36,20 @@
 //PB: Commented this out because I'm not sure we'll need it here.
 //#include "LowMachNumberNavierStokesSystem.h"
 
-class GRINSSolver
+namespace GRINS
 {
 
-public:
-  GRINSSolver( const std::string application_options );
-  ~GRINSSolver();
+  class GRINSSolver
+  {
+    
+  public:
+    GRINSSolver( const std::string application_options );
+    ~GRINSSolver();
+    
+  private:
+    std::string _application_options;
+  };
+  
+} //End namespace block
 
-private:
-  std::string _application_options;
-};
-
-#endif
+#endif //GRINS_SOLVER_H

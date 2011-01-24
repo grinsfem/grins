@@ -30,7 +30,7 @@
 
 #include "low_mach_num_navier_stokes_sys.h"
 
-void LowMachNumberNavierStokesSystem::set_application( const std::string application_options )
+void GRINS::LowMachNumberNavierStokesSystem::set_application( const std::string application_options )
 {
   _application_options = application_options;
   return;
