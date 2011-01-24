@@ -33,6 +33,7 @@
 #include <iostream>
 
 GRINS::GRINSSolver::GRINSSolver( const std::string application_options )
+  : _output_vis(false)
 {
   std::cout << " GRINS_Solver constructor ..." << std::endl;
   _application_options = application_options;
@@ -42,5 +43,16 @@ GRINS::GRINSSolver::GRINSSolver( const std::string application_options )
 GRINS::GRINSSolver::~GRINSSolver()
 {
   std::cout << " GRINS_Solver  destructor ..." << std::endl;
+  return;
+}
+
+
+void GRINS::GRINSSolver:: read_input_options( const GetPot& input )
+{
+  this->_output_vis = input("vis-options/output_vis", false );
+
+  //TODO: Currently there for quick and stupid test. Delete.
+  std::cout << "_output_vis value = " << _output_vis << std::endl;
+
   return;
 }

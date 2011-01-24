@@ -34,7 +34,27 @@
 
 int main(int argc, char* argv[]) {
 
+  // Check command line count.
+  if( argc != 2 )
+    {
+      std::cout << "Error: Must specify libMesh input file." << std::endl;
+      exit(1);
+    }
+
+  // libMesh input file should be first argument
+  std::string libMesh_input = argv[1];
+
+  // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
+  GetPot libMesh_inputfile( libMesh_input );
+
+  // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
+
+  // Create solver object.
+  std::string dummy = "TODO: Delete me when agreed on constructor arguments.";
+  GRINS::GRINSSolver solver( dummy );
+
+  solver.read_input_options( libMesh_inputfile );
 
   return 0;
 }

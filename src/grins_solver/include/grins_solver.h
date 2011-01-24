@@ -32,6 +32,7 @@
 #define GRINS_SOLVER_H
 
 #include "libmesh.h"
+#include "getpot.h"
 
 //PB: Commented this out because I'm not sure we'll need it here.
 //#include "LowMachNumberNavierStokesSystem.h"
@@ -45,9 +46,13 @@ namespace GRINS
   public:
     GRINSSolver( const std::string application_options );
     ~GRINSSolver();
-    
+
+    void read_input_options( const GetPot& input );
+
   private:
     std::string _application_options;
+    
+    bool _output_vis;
   };
   
 } //End namespace block
