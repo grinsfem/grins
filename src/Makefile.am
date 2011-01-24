@@ -19,7 +19,7 @@ utils_dir = $(top_srcdir)/src/utilities
 # List of source files to build dynamic library
 #----------------------------------------------
 # Sources in src/grins
-grins_SRC = $(grins_srcdir)/GRINS_Solver.C
+grins_SRC = $(grins_srcdir)/grins_solver.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -27,7 +27,7 @@ grins_SRC = $(grins_srcdir)/GRINS_Solver.C
 #----------------------------
 #INCLUDES we want distributed
 #----------------------------
-grins_INC = $(grins_incdir)/GRINS_Solver.h
+grins_INC = $(grins_incdir)/grins_solver.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 
@@ -39,7 +39,7 @@ libgrins_la_SOURCES = $(grins_SRC) \
 #------------------------------------
 # Source for stand alone GRINS driver
 #------------------------------------
-grins_driver_SOURCES = $(grins_srcdir)/GRINS_Driver.C
+grins_driver_SOURCES = $(grins_srcdir)/generic_driver.C
 
 grins_driver_LDADD = libgrins.la
 

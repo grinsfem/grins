@@ -22,28 +22,25 @@
 //
 //--------------------------------------------------------------------------
 //
-// GRINS_Solver.h: Declarations for the GRINS_Solver class.
+// Definitions for the GRINS_Solver class.
 //
 // $Id$
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_SOLVER_H
-#define GRINS_SOLVER_H
+#include "grins_solver.h"
 
-#include "libmesh.h"
+#include <iostream>
 
-#include "GRINS_EquationSystems.h"
-
-class GRINS_Solver
+GRINSSolver::GRINSSolver( const std::string application_options )
 {
+  std::cout << " GRINS_Solver constructor ..." << std::endl;
+  _application_options = application_options;
+  return;
+}
 
-public:
-  GRINS_Solver( const std::string application_options );
-  ~GRINS_Solver();
-
-private:
-  std::string _application_options;
-};
-
-#endif
+GRINSSolver::~GRINSSolver()
+{
+  std::cout << " GRINS_Solver  destructor ..." << std::endl;
+  return;
+}

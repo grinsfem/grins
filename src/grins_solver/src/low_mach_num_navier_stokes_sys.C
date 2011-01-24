@@ -22,15 +22,15 @@
 //
 //--------------------------------------------------------------------------
 //
-// GRINS_EquationSystems.C: Definitions for the GRINS_EquationSystems class.
+// Definitions for the LowMachNumberNavierStokesSystem class.
 //
 // $Id$
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "GRINS_EquationSystems.h"
+#include "low_mach_num_navier_stokes_sys.h"
 
-void GRINS_EquationSystems::set_application( const std::string application_options )
+void LowMachNumberNavierStokesSystem::set_application( const std::string application_options )
 {
   _application_options = application_options;
   return;

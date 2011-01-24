@@ -103,7 +103,7 @@ dnl###AX_PATH_GLPK(4.35,,AC_MSG_ERROR([Could not find required GLPK error]))
 dnl AC_CACHE_SAVE
 
 dnl---------------
-dnl Check for HPCT
+dnl Check for GRVY
 dnl---------------
 AX_PATH_GRVY
 dnl AC_CACHE_SAVE

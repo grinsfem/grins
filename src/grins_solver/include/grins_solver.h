@@ -22,21 +22,29 @@
 //
 //--------------------------------------------------------------------------
 //
-// GRINS_Driver.C: Driver code for GRINS (FEM solver).
+// Declarations for the GRINSSolver class.
 //
 // $Id$
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "GRINS_Solver.h"
+#ifndef GRINS_SOLVER_H
+#define GRINS_SOLVER_H
 
-#include <iostream>
+#include "libmesh.h"
 
-#include "grvy.h"
+//PB: Commented this out because I'm not sure we'll need it here.
+//#include "LowMachNumberNavierStokesSystem.h"
 
-int main(int argc, char* argv[]) {
+class GRINSSolver
+{
 
-  LibMeshInit libmesh_init(argc, argv);
+public:
+  GRINSSolver( const std::string application_options );
+  ~GRINSSolver();
 
-  return 0;
-}
+private:
+  std::string _application_options;
+};
+
+#endif
