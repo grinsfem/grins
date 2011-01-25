@@ -31,6 +31,7 @@
 #include "grins_solver.h"
 
 #include <iostream>
+#include "grvy.h"
 
 int main(int argc, char* argv[]) {
 
@@ -40,7 +41,10 @@ int main(int argc, char* argv[]) {
       std::cout << "Error: Must specify libMesh input file." << std::endl;
       exit(1);
     }
-  
+
+  GRVY::GRVY_Timer_Class grvy_timer;
+  grvy_timer.Init("GRVY Timer in GRINS Driver");
+
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
   
@@ -48,6 +52,7 @@ int main(int argc, char* argv[]) {
   std::string dummy = "TODO: Delete me when agreed on constructor arguments.";
   GRINS::GRINSSolver solver( dummy );
   
+  grvy_timer.BeginTimer("Generic Driver - input reading block timing");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -58,6 +63,11 @@ int main(int argc, char* argv[]) {
     
     solver.read_input_options( libMesh_inputfile );
   } //Should be done reading input, so we kill the GetPot object.
+
+  grvy_timer.EndTimer("Generic Driver - input reading block timing");
+
+  grvy_timer.Finalize();
+  grvy_timer.Summarize();
 
   return 0;
 }
