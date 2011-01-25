@@ -40,21 +40,24 @@ int main(int argc, char* argv[]) {
       std::cout << "Error: Must specify libMesh input file." << std::endl;
       exit(1);
     }
-
-  // libMesh input file should be first argument
-  std::string libMesh_input = argv[1];
-
-  // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
-  GetPot libMesh_inputfile( libMesh_input );
-
+  
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
-
-  // Create solver object.
+  
+   // Create solver object.
   std::string dummy = "TODO: Delete me when agreed on constructor arguments.";
   GRINS::GRINSSolver solver( dummy );
+  
+  { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
-  solver.read_input_options( libMesh_inputfile );
+    // libMesh input file should be first argument
+    std::string libMesh_input = argv[1];
+    
+    // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
+    GetPot libMesh_inputfile( libMesh_input );
+    
+    solver.read_input_options( libMesh_inputfile );
+  } //Should be done reading input, so we kill the GetPot object.
 
   return 0;
 }
