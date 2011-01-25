@@ -2,7 +2,7 @@
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS =  grins_driver
+bin_PROGRAMS =  generic_driver
 
 lib_LTLIBRARIES = libgrins.la
 
@@ -37,11 +37,11 @@ libgrins_la_SOURCES = $(grins_SRC) \
                       $(utils_SRC)
 
 #------------------------------------
-# Source for stand alone GRINS driver
+# Source for stand alone GRINS generic driver
 #------------------------------------
-grins_driver_SOURCES = $(grins_srcdir)/generic_driver.C
+generic_driver_SOURCES = $(grins_srcdir)/generic_driver.C
 
-grins_driver_LDADD = libgrins.la
+generic_driver_LDADD = libgrins.la
 
 #--------------------------------------
 #Local Directories to include for build

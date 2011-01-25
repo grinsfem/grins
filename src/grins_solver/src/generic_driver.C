@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     }
 
   GRVY::GRVY_Timer_Class grvy_timer;
-  grvy_timer.Init("GRVY Timer in GRINS Driver");
+  grvy_timer.Init("GRVY Timer in GRINS - Generic Driver");
 
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);

@@ -1,4 +1,4 @@
 [solver-options]
 
 [vis-options]
-output_vis = true
+output_vis_flag = true

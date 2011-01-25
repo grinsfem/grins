@@ -52,7 +52,7 @@ namespace GRINS
   private:
     std::string _application_options;
     
-    bool _output_vis;
+    bool _output_vis_flag;
   };
   
 } //End namespace block
