@@ -2,16 +2,16 @@ dnl                                               -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(grins, 0.0.0, pbauman@ices.utexas.edu)
+AC_INIT(grins, 0.1.0, pbauman@ices.utexas.edu)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE(grins,0.0.0)
+AM_INIT_AUTOMAKE(grins,0.1.0)
 
 dnl Release versioning
 
 GENERIC_MAJOR_VERSION=0
-GENERIC_MINOR_VERSION=0
+GENERIC_MINOR_VERSION=1
 GENERIC_MICRO_VERSION=0
 GENERIC_LIBRARY_NAME=grins
 
