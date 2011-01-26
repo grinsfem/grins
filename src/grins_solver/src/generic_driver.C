@@ -50,8 +50,7 @@ int main(int argc, char* argv[]) {
   LibMeshInit libmesh_init(argc, argv);
   
   // Create mesh manager object.
-  std::string mesh_mngr_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::MeshManager meshmanager( mesh_mngr_dummy_options );
+  GRINS::MeshManager meshmanager;
   
   // Create solver object.
   std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
@@ -68,8 +67,6 @@ int main(int argc, char* argv[]) {
     
     solver.read_input_options( libMesh_inputfile );
 
-    // TODO: need to check if its fine to use same GetPot object in GRINS mesh manager
-    // TODO: I think thats what Paul and I agreed on (not sure though) - sahni
     meshmanager.read_input_options( libMesh_inputfile );
   } //Should be done reading input, so we kill the GetPot object.
   grvy_timer.EndTimer("Generic Driver - input reading block timing");

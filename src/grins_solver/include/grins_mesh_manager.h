@@ -42,17 +42,18 @@ namespace GRINS
   {
     
   public:
-    MeshManager( const std::string mesh_options );
+    MeshManager();
     ~MeshManager();
 
     void read_input_options( const GetPot& input );
 
-    // get/set libMesh::Mesh
+    // get/set pair for mesh object
     libMesh::Mesh* get_mesh(); 
-    void set_mesh( libMesh::Mesh* mesh ); //TODO: discuss if this is needed
+    void set_mesh( libMesh::Mesh* mesh );
 
   private:
-    std::string _mesh_options;
+    int _mesh_option;
+    bool _print_mesh_info_flag;
 
     libMesh::Mesh* _mesh;
   };

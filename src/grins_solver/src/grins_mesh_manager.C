@@ -32,9 +32,8 @@
 
 #include <iostream>
 
-GRINS::MeshManager::MeshManager( const std::string mesh_options )
+GRINS::MeshManager::MeshManager()
 {
-  _mesh_options = mesh_options;
   return;
 }
 
@@ -45,8 +44,8 @@ GRINS::MeshManager::~MeshManager()
 
 void GRINS::MeshManager::read_input_options( const GetPot& input )
 {
-  //TODO: get options
-  //this->_mesh_input_option = input("mesh-options/mesh_input_option", 1 );
+  this->_mesh_option = input("mesh-options/mesh_option", 1 );
+  this->_print_mesh_info_flag = input("mesh-options/print_mesh_info_flag", false );
 
   return;
 }
@@ -56,7 +55,6 @@ libMesh::Mesh* GRINS::MeshManager::get_mesh()
   return this->_mesh;
 }
 
-//TODO: discuss if this is needed
 void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
 {
   this->_mesh = mesh;

@@ -55,7 +55,7 @@ namespace GRINS
 
     void read_input_options( const GetPot& input );
 
-    // get/set libMesh::Mesh
+    // get/set pair for mesh object
     libMesh::Mesh* get_mesh();
     void set_mesh( libMesh::Mesh* mesh );
 
