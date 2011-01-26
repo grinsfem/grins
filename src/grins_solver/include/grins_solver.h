@@ -54,7 +54,7 @@ namespace GRINS
     
     bool _output_vis_flag;
   };
-  
+
 } //End namespace block
 
 #endif //GRINS_SOLVER_H

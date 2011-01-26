@@ -60,7 +60,7 @@ namespace GRINS
   private:
     std::string _application_options;
   };
-  
+
 } //End namespace block
 
 #endif // LOW_MACH_NUM_NAVIER_STOKES_SYS_H
