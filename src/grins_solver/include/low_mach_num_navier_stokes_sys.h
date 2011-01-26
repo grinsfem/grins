@@ -35,6 +35,12 @@
 
 #include "libmesh.h"
 #include "fem_system.h"
+#include "boundary_info.h"
+#include "fe_base.h"
+#include "fe_interface.h"
+#include "mesh.h"
+#include "quadrature.h"
+#include "parameters.h"
 
 namespace GRINS
 {
