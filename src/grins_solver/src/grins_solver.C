@@ -22,7 +22,7 @@
 //
 //--------------------------------------------------------------------------
 //
-// Definitions for the GRINSSolver class.
+// Definitions for the GRINS::Solver class.
 //
 // $Id$
 //--------------------------------------------------------------------------
@@ -32,21 +32,21 @@
 
 #include <iostream>
 
-GRINS::GRINSSolver::GRINSSolver( const std::string application_options )
+GRINS::Solver::Solver( const std::string application_options )
   : _output_vis_flag(false)
 {
-  std::cout << " GRINSSolver constructor ..." << std::endl;
+  std::cout << " GRINS::Solver constructor ..." << std::endl;
   _application_options = application_options;
   return;
 }
 
-GRINS::GRINSSolver::~GRINSSolver()
+GRINS::Solver::~Solver()
 {
-  std::cout << " GRINSSolver  destructor ..." << std::endl;
+  std::cout << " GRINS::Solver  destructor ..." << std::endl;
   return;
 }
 
-void GRINS::GRINSSolver::read_input_options( const GetPot& input )
+void GRINS::Solver::read_input_options( const GetPot& input )
 {
   this->_output_vis_flag = input("vis-options/output_vis_flag", false );
 
@@ -56,12 +56,12 @@ void GRINS::GRINSSolver::read_input_options( const GetPot& input )
   return;
 }
 
-libMesh::Mesh* GRINS::GRINSSolver::get_mesh()
+libMesh::Mesh* GRINS::Solver::get_mesh()
 {
   return this->_mesh;
 }
 
-void GRINS::GRINSSolver::set_mesh( libMesh::Mesh *mesh )
+void GRINS::Solver::set_mesh( libMesh::Mesh *mesh )
 {
   this->_mesh = mesh;
   return;

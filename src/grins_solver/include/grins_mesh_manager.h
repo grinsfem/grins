@@ -22,7 +22,7 @@
 //
 //--------------------------------------------------------------------------
 //
-// Declarations for the GRINSMeshManager class.
+// Declarations for the GRINS::MeshManager class.
 //
 // $Id$
 //--------------------------------------------------------------------------
@@ -38,12 +38,12 @@
 namespace GRINS
 {
 
-  class GRINSMeshManager
+  class MeshManager
   {
     
   public:
-    GRINSMeshManager( const std::string mesh_options );
-    ~GRINSMeshManager();
+    MeshManager( const std::string mesh_options );
+    ~MeshManager();
 
     void read_input_options( const GetPot& input );
 

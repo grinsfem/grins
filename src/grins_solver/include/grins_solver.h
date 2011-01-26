@@ -22,7 +22,7 @@
 //
 //--------------------------------------------------------------------------
 //
-// Declarations for the GRINSSolver class.
+// Declarations for the GRINS::Solver class.
 //
 // $Id$
 //--------------------------------------------------------------------------
@@ -41,12 +41,12 @@
 namespace GRINS
 {
 
-  class GRINSSolver
+  class Solver
   {
     
   public:
-    GRINSSolver( const std::string application_options );
-    ~GRINSSolver();
+    Solver( const std::string application_options );
+    ~Solver();
 
     void read_input_options( const GetPot& input );
 

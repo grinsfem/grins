@@ -22,7 +22,7 @@
 //
 //--------------------------------------------------------------------------
 //
-// Definitions for the GRINSMeshManager class.
+// Definitions for the GRINS::MeshManager class.
 //
 // $Id$
 //--------------------------------------------------------------------------
@@ -32,18 +32,18 @@
 
 #include <iostream>
 
-GRINS::GRINSMeshManager::GRINSMeshManager( const std::string mesh_options )
+GRINS::MeshManager::MeshManager( const std::string mesh_options )
 {
   _mesh_options = mesh_options;
   return;
 }
 
-GRINS::GRINSMeshManager::~GRINSMeshManager()
+GRINS::MeshManager::~MeshManager()
 {
   return;
 }
 
-void GRINS::GRINSMeshManager::read_input_options( const GetPot& input )
+void GRINS::MeshManager::read_input_options( const GetPot& input )
 {
   //TODO: get options
   //this->_mesh_input_option = input("mesh-options/mesh_input_option", 1 );
@@ -51,13 +51,13 @@ void GRINS::GRINSMeshManager::read_input_options( const GetPot& input )
   return;
 }
 
-libMesh::Mesh* GRINS::GRINSMeshManager::get_mesh()
+libMesh::Mesh* GRINS::MeshManager::get_mesh()
 {
   return this->_mesh;
 }
 
 //TODO: discuss if this is needed
-void GRINS::GRINSMeshManager::set_mesh( libMesh::Mesh* mesh )
+void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
 {
   this->_mesh = mesh;
   return;

@@ -51,11 +51,11 @@ int main(int argc, char* argv[]) {
   
   // Create mesh manager object.
   std::string mesh_mngr_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::GRINSMeshManager meshmanager( mesh_mngr_dummy_options );
+  GRINS::MeshManager meshmanager( mesh_mngr_dummy_options );
   
   // Create solver object.
   std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::GRINSSolver solver( solver_dummy_options );
+  GRINS::Solver solver( solver_dummy_options );
 
   grvy_timer.BeginTimer("Generic Driver - input reading block timing");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
