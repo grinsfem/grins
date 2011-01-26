@@ -22,46 +22,42 @@
 //
 //--------------------------------------------------------------------------
 //
-// Definitions for the GRINSSolver class.
+// Definitions for the GRINSMeshManager class.
 //
 // $Id$
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_solver.h"
+#include "grins_mesh_manager.h"
 
 #include <iostream>
 
-GRINS::GRINSSolver::GRINSSolver( const std::string application_options )
-  : _output_vis_flag(false)
+GRINS::GRINSMeshManager::GRINSMeshManager( const std::string mesh_options )
 {
-  std::cout << " GRINSSolver constructor ..." << std::endl;
-  _application_options = application_options;
+  _mesh_options = mesh_options;
   return;
 }
 
-GRINS::GRINSSolver::~GRINSSolver()
+GRINS::GRINSMeshManager::~GRINSMeshManager()
 {
-  std::cout << " GRINSSolver  destructor ..." << std::endl;
   return;
 }
 
-void GRINS::GRINSSolver::read_input_options( const GetPot& input )
+void GRINS::GRINSMeshManager::read_input_options( const GetPot& input )
 {
-  this->_output_vis_flag = input("vis-options/output_vis_flag", false );
-
-  //TODO: Currently there for quick and stupid test. Delete.
-  std::cout << "_output_vis_flag value = " << _output_vis_flag << std::endl;
+  //TODO: get options
+  //this->_mesh_input_option = input("mesh-options/mesh_input_option", 1 );
 
   return;
 }
 
-libMesh::Mesh* GRINS::GRINSSolver::get_mesh()
+libMesh::Mesh* GRINS::GRINSMeshManager::get_mesh()
 {
   return this->_mesh;
 }
 
-void GRINS::GRINSSolver::set_mesh( libMesh::Mesh *mesh )
+//TODO: discuss if this is needed
+void GRINS::GRINSMeshManager::set_mesh( libMesh::Mesh* mesh )
 {
   this->_mesh = mesh;
   return;

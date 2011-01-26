@@ -28,6 +28,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#include "grins_mesh_manager.h"
 #include "grins_solver.h"
 
 #include <iostream>
@@ -48,10 +49,14 @@ int main(int argc, char* argv[]) {
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
   
-   // Create solver object.
-  std::string dummy = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::GRINSSolver solver( dummy );
+  // Create mesh manager object.
+  std::string mesh_mngr_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
+  GRINS::GRINSMeshManager meshmanager( mesh_mngr_dummy_options );
   
+  // Create solver object.
+  std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
+  GRINS::GRINSSolver solver( solver_dummy_options );
+
   grvy_timer.BeginTimer("Generic Driver - input reading block timing");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
@@ -62,9 +67,17 @@ int main(int argc, char* argv[]) {
     GetPot libMesh_inputfile( libMesh_input );
     
     solver.read_input_options( libMesh_inputfile );
-  } //Should be done reading input, so we kill the GetPot object.
 
+    // TODO: need to check if its fine to use same GetPot object in GRINS mesh manager
+    // TODO: I think thats what Paul and I agreed on (not sure though) - sahni
+    meshmanager.read_input_options( libMesh_inputfile );
+  } //Should be done reading input, so we kill the GetPot object.
   grvy_timer.EndTimer("Generic Driver - input reading block timing");
+
+  // TODO: meshmanager.init, meshmanager.read, etc.
+
+  // pass libMesh::Mesh object from meshmanager to solver
+  solver.set_mesh( meshmanager.get_mesh() );
 
   grvy_timer.Finalize();
   grvy_timer.Summarize();

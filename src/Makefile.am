@@ -20,6 +20,7 @@ utils_dir = $(top_srcdir)/src/utilities
 #----------------------------------------------
 # Sources in src/grins
 grins_SRC = $(grins_srcdir)/grins_solver.C \
+            $(grins_srcdir)/grins_mesh_manager.C \
             $(grins_srcdir)/low_mach_num_navier_stokes_sys.C
 
 #Sources in utilities/src
@@ -29,6 +30,7 @@ grins_SRC = $(grins_srcdir)/grins_solver.C \
 #INCLUDES we want distributed
 #----------------------------
 grins_INC = $(grins_incdir)/grins_solver.h \
+            $(grins_incdir)/grins_mesh_manager.h \
             $(grins_incdir)/low_mach_num_navier_stokes_sys.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>

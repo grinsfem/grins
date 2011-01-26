@@ -32,6 +32,7 @@
 #define GRINS_SOLVER_H
 
 #include "libmesh.h"
+#include "mesh.h"
 #include "getpot.h"
 
 //PB: Commented this out because I'm not sure we'll need it here.
@@ -49,10 +50,16 @@ namespace GRINS
 
     void read_input_options( const GetPot& input );
 
+    // get/set libMesh::Mesh
+    libMesh::Mesh* get_mesh();
+    void set_mesh( libMesh::Mesh* mesh );
+
   private:
     std::string _application_options;
     
     bool _output_vis_flag;
+
+    libMesh::Mesh* _mesh;
   };
 
 } //End namespace block
