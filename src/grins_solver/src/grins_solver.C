@@ -116,7 +116,8 @@ void GRINS::Solver<T>::initialize_system()
   // Declare the system and its variables.
   //TODO: Maybe have this class templated about the
   //TODO: system type to make it easy to use different system types?
-  this->_system = &(this->_equation_systems)->add_system<T> ("LMNNS");
+  EquationSystems *es = this->_equation_systems;
+  this->_system = &es->add_system<T> ("LMNNS");
 
   // Solve this as a time-dependent or steady system
   if (this->_transient)
