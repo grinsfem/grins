@@ -34,6 +34,9 @@
 #include <iostream>
 #include "grvy.h"
 
+// System types that we might want to instantiate
+#include "low_mach_num_navier_stokes_sys.h"
+
 int main(int argc, char* argv[]) {
 
   // Check command line count.
@@ -54,7 +57,7 @@ int main(int argc, char* argv[]) {
   
   // Create solver object.
   std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::Solver solver( solver_dummy_options );
+  GRINS::Solver<LowMachNumberNavierStokesSystem> solver( solver_dummy_options );
 
   grvy_timer.BeginTimer("Generic Driver - input reading block timing");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
