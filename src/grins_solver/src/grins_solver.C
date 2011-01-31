@@ -32,7 +32,8 @@
 
 #include <iostream>
 
-GRINS::Solver::Solver( const std::string application_options )
+template< class T >
+GRINS::Solver<T>::Solver( const std::string application_options )
   : _output_vis_flag(false),
     _system_initialized(false)
 {
@@ -41,7 +42,8 @@ GRINS::Solver::Solver( const std::string application_options )
   return;
 }
 
-GRINS::Solver::~Solver()
+template< class T >
+GRINS::Solver<T>::~Solver()
 {
   std::cout << " GRINS::Solver  destructor ..." << std::endl;
 
@@ -54,7 +56,8 @@ GRINS::Solver::~Solver()
   return;
 }
 
-void GRINS::Solver::read_input_options( const GetPot& input )
+template< class T >
+void GRINS::Solver<T>::read_input_options( const GetPot& input )
 {
   // Linear/Nonlinear solver options
   this->_solver_quiet                = input("linear-nonlinear-solver/solver_quiet", false );
@@ -77,18 +80,21 @@ void GRINS::Solver::read_input_options( const GetPot& input )
   return;
 }
 
-libMesh::Mesh* GRINS::Solver::get_mesh()
+template< class T >
+libMesh::Mesh* GRINS::Solver<T>::get_mesh()
 {
   return this->_mesh;
 }
 
-void GRINS::Solver::set_mesh( libMesh::Mesh *mesh )
+template< class T >
+void GRINS::Solver<T>::set_mesh( libMesh::Mesh *mesh )
 {
   this->_mesh = mesh;
   return;
 }
 
-void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
+template< class T >
+void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 {
   solver.quiet                       = this->_solver_quiet;
   solver.max_nonlinear_iterations    = this->_max_nonlinear_iterations;
@@ -101,7 +107,8 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
-void GRINS::Solver::initialize_system()
+template< class T >
+void GRINS::Solver<T>::initialize_system()
 {
   // Create an equation systems object.
   this->_equation_systems = new libMesh::EquationSystems(*_mesh);
@@ -109,7 +116,7 @@ void GRINS::Solver::initialize_system()
   // Declare the system and its variables.
   //TODO: Maybe have this class templated about the
   //TODO: system type to make it easy to use different system types?
-  this->_system = &(this->_equation_systems)->add_system<LowMachNumberNavierStokesSystem> ("LMNNS");
+  this->_system = &(this->_equation_systems)->add_system<T> ("LMNNS");
 
   // Solve this as a time-dependent or steady system
   if (this->_transient)
@@ -143,7 +150,8 @@ void GRINS::Solver::initialize_system()
   return;
 }
 
-void GRINS::Solver::solve()
+template< class T >
+void GRINS::Solver<T>::solve()
 {
   this->_system->deltat = this->_deltat;
 
