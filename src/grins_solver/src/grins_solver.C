@@ -30,6 +30,9 @@
 
 #include "grins_solver.h"
 
+// For instantiating systems
+#include "low_mach_num_navier_stokes_sys.h"
+
 #include <iostream>
 
 template< class T >
@@ -168,3 +171,6 @@ void GRINS::Solver<T>::solve()
 
   return;
 }
+
+// Instantiate class
+template class GRINS::Solver<GRINS::LowMachNumberNavierStokesSystem>;
