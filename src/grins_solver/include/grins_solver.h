@@ -39,10 +39,13 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 
+//TODO: Maybe have this class templated about the
+//TODO: system type to make it easy to use different system types?
+#include "low_mach_num_navier_stokes_sys.h"
+
 namespace GRINS
 {
 
-  template< class T >
   class Solver
   {
     
@@ -84,7 +87,7 @@ namespace GRINS
     // Mesh/Solver related objects
     libMesh::Mesh* _mesh;
     libMesh::EquationSystems* _equation_systems;
-    T* _system;
+    LowMachNumberNavierStokesSystem* _system;
 
     // Variables to track state of system
     bool _system_initialized;
