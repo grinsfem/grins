@@ -33,6 +33,7 @@
 #include <iostream>
 
 GRINS::MeshManager::MeshManager()
+  : _mesh(NULL)
 {
   return;
 }
@@ -44,7 +45,8 @@ GRINS::MeshManager::~MeshManager()
 
 void GRINS::MeshManager::read_input_options( const GetPot& input )
 {
-  this->_mesh_option = input("mesh-options/mesh_option", 1 );
+  // TODO: should be fine to have (int)READ_MESH_FROM_FILE
+  this->_mesh_option = input("mesh-options/mesh_option", (int)READ_MESH_FROM_FILE );
   this->_print_mesh_info_flag = input("mesh-options/print_mesh_info_flag", false );
 
   return;

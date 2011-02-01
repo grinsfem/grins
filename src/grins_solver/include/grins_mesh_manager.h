@@ -42,6 +42,13 @@ namespace GRINS
   {
     
   public:
+    // enumeration for mesh options
+    enum MESH_OPTION_ENUM { MESH_ALREADY_LOADED = 0,
+                            READ_MESH_FROM_FILE = 1,
+                            CREATE_1D_MESH      = 2,
+                            CREATE_2D_MESH      = 3,
+                            CREATE_3D_MESH      = 4 };
+
     MeshManager();
     ~MeshManager();
 
