@@ -62,3 +62,44 @@ void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
   this->_mesh = mesh;
   return;
 }
+
+void GRINS::MeshManager::build_mesh()
+{
+
+  if( this->_mesh_option==MESH_ALREADY_LOADED )
+    {
+      std::cerr << " GRINS::MeshManager::build_mesh() : mesh already loaded " << std::endl;
+      exit(1); // TODO: something more sophisticated for parallel runs?
+    }
+
+  switch (this->_mesh_option)
+  {
+    case READ_MESH_FROM_FILE:
+      {
+        // TODO: fill
+      }
+      break;
+    case CREATE_1D_MESH:
+      {
+        // TODO: fill
+      }
+      break;
+    case CREATE_2D_MESH:
+      {
+        // TODO: fill
+      }
+      break;
+    case CREATE_3D_MESH:
+      {
+        // TODO: fill
+      }
+      break;
+    default:
+      {
+        // TODO: fill
+      }
+      break;
+  }
+
+  return;
+}

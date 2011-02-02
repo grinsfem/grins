@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
   // Check command line count.
   if( argc != 2 )
     {
-      std::cout << "Error: Must specify libMesh input file." << std::endl;
-      exit(1);
+      std::cerr << "Error: Must specify libMesh input file." << std::endl;
+      exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
   GRVY::GRVY_Timer_Class grvy_timer;

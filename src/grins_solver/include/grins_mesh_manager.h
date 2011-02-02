@@ -58,6 +58,8 @@ namespace GRINS
     libMesh::Mesh* get_mesh(); 
     void set_mesh( libMesh::Mesh* mesh );
 
+    void build_mesh();
+
   private:
     int _mesh_option;
     bool _print_mesh_info_flag;
