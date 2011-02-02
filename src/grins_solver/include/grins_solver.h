@@ -31,9 +31,9 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
+#include "getpot.h"
 #include "libmesh.h"
 #include "mesh.h"
-#include "getpot.h"
 #include "diff_solver.h"
 #include "equation_systems.h"
 #include "euler_solver.h"

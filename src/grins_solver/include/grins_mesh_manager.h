@@ -31,9 +31,10 @@
 #ifndef GRINS_MESH_MANAGER_H
 #define GRINS_MESH_MANAGER_H
 
+#include "getpot.h"
 #include "libmesh.h"
 #include "mesh.h"
-#include "getpot.h"
+#include "mesh_generation.h"
 
 namespace GRINS
 {
@@ -43,6 +44,7 @@ namespace GRINS
     
   public:
     // enumeration for mesh options
+    // TODO: may not need enumeration if _mesh_option is a string?
     enum MESH_OPTION_ENUM { MESH_ALREADY_LOADED = 0,
                             READ_MESH_FROM_FILE = 1,
                             CREATE_1D_MESH      = 2,
@@ -61,10 +63,21 @@ namespace GRINS
     void build_mesh();
 
   private:
-    int _mesh_option;
+    MESH_OPTION_ENUM _mesh_option; // TODO: can be a string
     bool _print_mesh_info_flag;
+    std::string _mesh_filename;
 
     libMesh::Mesh* _mesh;
+
+    // all possible values for _domain_type:
+    //    "line", "rectangle", "cylinder", "box", sphere"
+    std::string _domain_type;
+
+    double _domain_x1_min, _domain_x2_min, _domain_x3_min;
+    double _domain_x1_max, _domain_x2_max, _domain_x3_max;
+
+    int _mesh_nx1, _mesh_nx2, _mesh_nx3;
+    libMeshEnums::ElemType _element_type;
   };
 
 } //End namespace block

@@ -45,9 +45,62 @@ GRINS::MeshManager::~MeshManager()
 
 void GRINS::MeshManager::read_input_options( const GetPot& input )
 {
-  // TODO: should be fine to have (int)READ_MESH_FROM_FILE
-  this->_mesh_option = input("mesh-options/mesh_option", (int)READ_MESH_FROM_FILE );
-  this->_print_mesh_info_flag = input("mesh-options/print_mesh_info_flag", false );
+  this->_mesh_option = (MESH_OPTION_ENUM)input("mesh-options/mesh_option",
+                                               (int)READ_MESH_FROM_FILE);
+  this->_print_mesh_info_flag = input("mesh-options/print_mesh_info_flag",
+                                      false);
+
+  if(this->_mesh_option==READ_MESH_FROM_FILE)
+    {
+      if(input.have_variable("mesh-options/mesh_filename"))
+        {
+          this->_mesh_filename = input("mesh-options/mesh_filename", "NULL");
+        }
+      else
+        {
+          std::cerr << " GRINS::MeshManager::read_input_options :" << 
+                       " mesh-options/mesh_filename NOT specified " <<
+                       std::endl;
+          exit(1); // TODO: something more sophisticated for parallel runs?
+        }
+    }
+  else if(this->_mesh_option!=MESH_ALREADY_LOADED)
+    {
+      std::string domain_type_default_value;
+      switch (this->_mesh_option)
+      {
+        case CREATE_1D_MESH:
+          domain_type_default_value = "line";
+          break;
+        case CREATE_2D_MESH:
+          domain_type_default_value = "rectangle";
+          break;
+        case CREATE_3D_MESH:
+          domain_type_default_value = "box";
+          break;
+      }
+
+      this->_domain_type = input("mesh-options/domain_type",
+                                 domain_type_default_value);
+
+      this->_domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
+      this->_domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
+      this->_domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
+
+      this->_domain_x1_max = input("mesh-options/domain_x1_max", 1.0);
+      this->_domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
+      this->_domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
+
+      this->_mesh_nx1 = input("mesh-options/mesh_nx1", 100);
+      this->_mesh_nx2 = input("mesh-options/mesh_nx2", 100);
+      this->_mesh_nx3 = input("mesh-options/mesh_nx3", 100);
+
+      // set default element type as libMeshEnums::INVALID_ELEM and
+      // switch it to an appropriate one based on domain type
+      this->_element_type =
+             (libMeshEnums::ElemType)input("mesh-options/element_type",
+                                           (int)libMeshEnums::INVALID_ELEM);
+    }
 
   return;
 }
@@ -68,7 +121,8 @@ void GRINS::MeshManager::build_mesh()
 
   if( this->_mesh_option==MESH_ALREADY_LOADED )
     {
-      std::cerr << " GRINS::MeshManager::build_mesh() : mesh already loaded " << std::endl;
+      std::cerr << " GRINS::MeshManager::build_mesh() :" << 
+                   " mesh already loaded " << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
@@ -76,17 +130,42 @@ void GRINS::MeshManager::build_mesh()
   {
     case READ_MESH_FROM_FILE:
       {
-        // TODO: fill
+        (this->_mesh)->read(this->_mesh_filename);
       }
       break;
     case CREATE_1D_MESH:
       {
-        // TODO: fill
+        libMesh::Mesh mesh = *_mesh;
+
+        mesh.set_mesh_dimension(1);
+
+        if(this->_element_type==libMeshEnums::INVALID_ELEM)
+          this->_element_type = libMeshEnums::EDGE2;
+
+        libMesh::MeshTools::Generation::build_line(mesh,
+                                          this->_mesh_nx1,
+                                          this->_domain_x1_min,
+                                          this->_domain_x1_max,
+                                          this->_element_type);
       }
       break;
     case CREATE_2D_MESH:
       {
-        // TODO: fill
+        libMesh::Mesh mesh = *_mesh;
+
+        mesh.set_mesh_dimension(2);
+
+        if(this->_element_type==libMeshEnums::INVALID_ELEM)
+          this->_element_type = libMeshEnums::TRI3;
+
+        libMesh::MeshTools::Generation::build_square(mesh,
+                                          this->_mesh_nx1,
+                                          this->_mesh_nx2,
+                                          this->_domain_x1_min,
+                                          this->_domain_x1_max,
+                                          this->_domain_x2_min,
+                                          this->_domain_x2_max,
+                                          this->_element_type);
       }
       break;
     case CREATE_3D_MESH:
