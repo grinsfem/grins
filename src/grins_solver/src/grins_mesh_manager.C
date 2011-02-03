@@ -104,8 +104,6 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
                                            (int)libMeshEnums::INVALID_ELEM);
     }
 
-  this->_mesh_built = true;
-
   return;
 }
 
@@ -125,6 +123,7 @@ libMesh::Mesh* GRINS::MeshManager::get_mesh()
 void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
 {
   this->_mesh = mesh;
+  this->_mesh_built = true;
   return;
 }
 
@@ -133,6 +132,7 @@ void GRINS::MeshManager::build_mesh()
 
   if( this->_mesh_option==MESH_ALREADY_LOADED )
     {
+      // TODO: Need more consistent error handling.
       std::cerr << " GRINS::MeshManager::build_mesh() :" << 
                    " mesh already loaded " << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
@@ -195,6 +195,8 @@ void GRINS::MeshManager::build_mesh()
       }
       break;
   }
+
+  this->_mesh_built = true;
 
   return;
 }
