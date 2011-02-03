@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
   // Check command line count.
   if( argc != 2 )
     {
+      // TODO: Need more consistent error handling.
       std::cerr << "Error: Must specify libMesh input file." << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }

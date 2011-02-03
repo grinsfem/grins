@@ -33,7 +33,8 @@
 #include <iostream>
 
 GRINS::MeshManager::MeshManager()
-  : _mesh(NULL)
+  : _mesh(NULL),
+    _mesh_built(false)
 {
   return;
 }
@@ -58,6 +59,7 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
         }
       else
         {
+	  // TODO: Need more consistent error handling.
           std::cerr << " GRINS::MeshManager::read_input_options :" << 
                        " mesh-options/mesh_filename NOT specified " <<
                        std::endl;
@@ -102,11 +104,21 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
                                            (int)libMeshEnums::INVALID_ELEM);
     }
 
+  this->_mesh_built = true;
+
   return;
 }
 
 libMesh::Mesh* GRINS::MeshManager::get_mesh()
 {
+  if( !this->_mesh_built )
+    {
+      // TODO: Need more consistent error handling.
+      std::cerr << " GRINS::MeshManager::get_mesh :" 
+		<< " mesh not yet constructed. " 
+		<< std::endl;
+      exit(1); // TODO: something more sophisticated for parallel runs?
+    }
   return this->_mesh;
 }
 
@@ -140,7 +152,9 @@ void GRINS::MeshManager::build_mesh()
         mesh.set_mesh_dimension(1);
 
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
-          this->_element_type = libMeshEnums::EDGE2;
+	  {
+	    this->_element_type = libMeshEnums::EDGE2;
+	  }
 
         libMesh::MeshTools::Generation::build_line(mesh,
                                           this->_mesh_nx1,
@@ -156,7 +170,9 @@ void GRINS::MeshManager::build_mesh()
         mesh.set_mesh_dimension(2);
 
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
-          this->_element_type = libMeshEnums::TRI3;
+	  {
+	    this->_element_type = libMeshEnums::TRI3;
+	  }
 
         libMesh::MeshTools::Generation::build_square(mesh,
                                           this->_mesh_nx1,
