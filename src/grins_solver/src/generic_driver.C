@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
   std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
   GRINS::Solver<GRINS::LowMachNumberNavierStokesSystem> solver( solver_dummy_options );
 
-  grvy_timer.BeginTimer("Generic Driver - input reading block timing");
+  grvy_timer.BeginTimer("Process Input");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -73,9 +73,12 @@ int main(int argc, char* argv[]) {
 
     meshmanager.read_input_options( libMesh_inputfile );
   } //Should be done reading input, so we kill the GetPot object.
-  grvy_timer.EndTimer("Generic Driver - input reading block timing");
+  grvy_timer.EndTimer("Process Input");
 
-  // TODO: meshmanager.init, meshmanager.read, etc.
+  grvy_timer.BeginTimer("Build Mesh");
+  meshmanager.build_mesh();
+  grvy_timer.EndTimer("Build Mesh");
+  
 
   // pass libMesh::Mesh object from meshmanager to solver
   solver.set_mesh( meshmanager.get_mesh() );

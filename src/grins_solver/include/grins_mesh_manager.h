@@ -80,6 +80,7 @@ namespace GRINS
     libMeshEnums::ElemType _element_type;
 
     bool _mesh_built;
+    bool _mesh_created_locally;
   };
 
 } //End namespace block

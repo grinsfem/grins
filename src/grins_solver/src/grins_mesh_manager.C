@@ -34,14 +34,16 @@
 
 GRINS::MeshManager::MeshManager()
   : _mesh(NULL),
-    _mesh_built(false)
+    _mesh_built(false),
+    _mesh_created_locally(false)
 {
   return;
 }
 
 GRINS::MeshManager::~MeshManager()
 {
-  if( this->_mesh_built && this->_mesh )
+  // Only delete the mesh if we actually new'ed it.
+  if( this->_mesh_created_locally )
     {
       delete _mesh;
     }
@@ -127,14 +129,19 @@ libMesh::Mesh* GRINS::MeshManager::get_mesh()
 
 void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
 {
+  // FIXME: There's some potential problems here if we've created
+  // FIXME: a mesh object ourselves and haven't destroyed it. Need
+  // FIXME: to build in that logic here.
   this->_mesh = mesh;
+
+  // We are assuming here that the user already built up
+  // the mesh.
   this->_mesh_built = true;
   return;
 }
 
 void GRINS::MeshManager::build_mesh()
 {
-
   if( this->_mesh_option==MESH_ALREADY_LOADED )
     {
       // TODO: Need more consistent error handling.
@@ -143,49 +150,53 @@ void GRINS::MeshManager::build_mesh()
       exit(1);
     }
 
+  // Create Mesh object with dimension 1. Reset the dimension as needed.
+  // According to Roy Stogner, the only read format that won't properly reset
+  // the dimension is GMesh. 
+  this->_mesh = new libMesh::Mesh(1);
+
   switch (this->_mesh_option)
   {
     case READ_MESH_FROM_FILE:
       {
-        _mesh = new libMesh::Mesh();
+        // FIXME: Make this GMesh safe.
         (this->_mesh)->read(this->_mesh_filename);
       }
       break;
     case CREATE_1D_MESH:
       {
-        _mesh = new libMesh::Mesh(1);
-        libMesh::Mesh mesh = *_mesh;
-
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
 	    this->_element_type = libMeshEnums::EDGE2;
 	  }
-
-        libMesh::MeshTools::Generation::build_line(mesh,
-                                          this->_mesh_nx1,
-                                          this->_domain_x1_min,
-                                          this->_domain_x1_max,
-                                          this->_element_type);
+	
+        libMesh::MeshTools::Generation::build_line(*(this->_mesh),
+						   this->_mesh_nx1,
+						   this->_domain_x1_min,
+						   this->_domain_x1_max,
+						   this->_element_type);
+	_mesh_created_locally = true;
       }
       break;
     case CREATE_2D_MESH:
       {
-        _mesh = new libMesh::Mesh(2);
-        libMesh::Mesh mesh = *_mesh;
-
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
 	    this->_element_type = libMeshEnums::TRI3;
 	  }
 
-        libMesh::MeshTools::Generation::build_square(mesh,
-                                          this->_mesh_nx1,
-                                          this->_mesh_nx2,
-                                          this->_domain_x1_min,
-                                          this->_domain_x1_max,
-                                          this->_domain_x2_min,
-                                          this->_domain_x2_max,
-                                          this->_element_type);
+	// Reset mesh dimension to 2.
+	(this->_mesh)->set_mesh_dimension(2);
+
+        libMesh::MeshTools::Generation::build_square(*(this->_mesh),
+						     this->_mesh_nx1,
+						     this->_mesh_nx2,
+						     this->_domain_x1_min,
+						     this->_domain_x1_max,
+						     this->_domain_x2_min,
+						     this->_domain_x2_max,
+						     this->_element_type);
+	_mesh_created_locally = true;
       }
       break;
     case CREATE_3D_MESH:
