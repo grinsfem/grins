@@ -79,7 +79,6 @@ namespace GRINS
     int _mesh_nx1, _mesh_nx2, _mesh_nx3;
     libMeshEnums::ElemType _element_type;
 
-    bool _mesh_built;
     bool _mesh_created_locally;
   };
 

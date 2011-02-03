@@ -34,7 +34,6 @@
 
 GRINS::MeshManager::MeshManager()
   : _mesh(NULL),
-    _mesh_built(false),
     _mesh_created_locally(false)
 {
   return;
@@ -124,29 +123,30 @@ libMesh::Mesh* GRINS::MeshManager::get_mesh()
 		<< std::endl;
       exit(1);
     }
+
   return this->_mesh;
 }
 
 void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
 {
-  // FIXME: There's some potential problems here if we've created
-  // FIXME: a mesh object ourselves and haven't destroyed it. Need
-  // FIXME: to build in that logic here.
-  this->_mesh = mesh;
+  if( this->_mesh )
+    {
+      // TODO: Need more consistent error handling.
+      std::cerr << " GRINS::MeshManager::set_mesh :" << 
+                   " mesh is already set " << std::endl;
+      exit(1);
+    }
 
-  // We are assuming here that the user already built up
-  // the mesh.
-  this->_mesh_built = true;
   return;
 }
 
 void GRINS::MeshManager::build_mesh()
 {
-  if( this->_mesh_option==MESH_ALREADY_LOADED )
+  if( this->_mesh_option==MESH_ALREADY_LOADED || this->_mesh )
     {
       // TODO: Need more consistent error handling.
       std::cerr << " GRINS::MeshManager::build_mesh :" << 
-                   " mesh already loaded " << std::endl;
+                   " mesh is already loaded or set " << std::endl;
       exit(1);
     }
 
@@ -159,7 +159,7 @@ void GRINS::MeshManager::build_mesh()
   {
     case READ_MESH_FROM_FILE:
       {
-        // FIXME: Make this GMesh safe.
+        // FIXME: Make this gmsh safe ---  GRINS should worry about this
         (this->_mesh)->read(this->_mesh_filename);
       }
       break;
@@ -214,8 +214,6 @@ void GRINS::MeshManager::build_mesh()
       }
       break;
   }
-
-  this->_mesh_built = true;
 
   return;
 }
