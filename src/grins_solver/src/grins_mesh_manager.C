@@ -147,6 +147,7 @@ void GRINS::MeshManager::build_mesh()
   {
     case READ_MESH_FROM_FILE:
       {
+        _mesh = new libMesh::Mesh();
         (this->_mesh)->read(this->_mesh_filename);
       }
       break;
