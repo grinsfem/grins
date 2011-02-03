@@ -41,7 +41,7 @@
 
 namespace GRINS
 {
-
+  // We template around the system type
   template< class T >
   class Solver
   {
@@ -59,6 +59,8 @@ namespace GRINS
     //TODO: Should we have these return error codes?
     void initialize_system();
     void solve( );
+
+    void output_visualization();
 
   private:
     std::string _application_options;
@@ -80,6 +82,8 @@ namespace GRINS
 
     // Visualization options
     bool _output_vis_flag;
+    std::string _vis_output_file_prefix;
+    std::string _output_format;
 
     // Mesh/Solver related objects
     libMesh::Mesh* _mesh;

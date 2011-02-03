@@ -78,7 +78,9 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_deltat      = input("unsteady-solver/deltat", 0.0 ); //TODO: Better default here?
   
   // Visualization options
-  this->_output_vis_flag = input("vis-options/output_vis_flag", false );
+  this->_output_vis_flag        = input("vis-options/output_vis_flag", false );
+  this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
+  this->_output_format          = input("vis-options/output_format", "unknown" );
 
   return;
 }
@@ -169,6 +171,13 @@ void GRINS::Solver<T>::solve()
       this->_system->time_solver->advance_timestep();
     } // End time loop.
 
+  return;
+}
+
+template< class T >
+void GRINS::Solver<T>::output_visualization()
+{
+  
   return;
 }
 
