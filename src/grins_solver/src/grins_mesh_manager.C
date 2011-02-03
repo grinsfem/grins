@@ -41,6 +41,10 @@ GRINS::MeshManager::MeshManager()
 
 GRINS::MeshManager::~MeshManager()
 {
+  if( this->_mesh_built && this->_mesh )
+    {
+      delete _mesh;
+    }
   return;
 }
 
@@ -63,7 +67,7 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
           std::cerr << " GRINS::MeshManager::read_input_options :" << 
                        " mesh-options/mesh_filename NOT specified " <<
                        std::endl;
-          exit(1); // TODO: something more sophisticated for parallel runs?
+          exit(1);
         }
     }
   else if(this->_mesh_option!=MESH_ALREADY_LOADED)
@@ -109,13 +113,14 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
 
 libMesh::Mesh* GRINS::MeshManager::get_mesh()
 {
-  if( !this->_mesh_built )
+  // mesh can be available due to either set_mesh() or build_mesh()
+  if( !this->_mesh )
     {
       // TODO: Need more consistent error handling.
       std::cerr << " GRINS::MeshManager::get_mesh :" 
 		<< " mesh not yet constructed. " 
 		<< std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
+      exit(1);
     }
   return this->_mesh;
 }
@@ -133,9 +138,9 @@ void GRINS::MeshManager::build_mesh()
   if( this->_mesh_option==MESH_ALREADY_LOADED )
     {
       // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::build_mesh() :" << 
+      std::cerr << " GRINS::MeshManager::build_mesh :" << 
                    " mesh already loaded " << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
+      exit(1);
     }
 
   switch (this->_mesh_option)
@@ -147,9 +152,8 @@ void GRINS::MeshManager::build_mesh()
       break;
     case CREATE_1D_MESH:
       {
+        _mesh = new libMesh::Mesh(1);
         libMesh::Mesh mesh = *_mesh;
-
-        mesh.set_mesh_dimension(1);
 
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
@@ -165,9 +169,8 @@ void GRINS::MeshManager::build_mesh()
       break;
     case CREATE_2D_MESH:
       {
+        _mesh = new libMesh::Mesh(1);
         libMesh::Mesh mesh = *_mesh;
-
-        mesh.set_mesh_dimension(2);
 
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
@@ -191,7 +194,11 @@ void GRINS::MeshManager::build_mesh()
       break;
     default:
       {
-        // TODO: fill
+	// TODO: Need more consistent error handling.
+        std::cerr << " GRINS::MeshManager::build_mesh :" << 
+                     " specified mesh-options/mesh_option NOT supported " <<
+                     std::endl;
+        exit(1);
       }
       break;
   }
