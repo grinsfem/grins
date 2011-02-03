@@ -169,7 +169,7 @@ void GRINS::MeshManager::build_mesh()
       break;
     case CREATE_2D_MESH:
       {
-        _mesh = new libMesh::Mesh(1);
+        _mesh = new libMesh::Mesh(2);
         libMesh::Mesh mesh = *_mesh;
 
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
