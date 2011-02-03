@@ -150,9 +150,9 @@ void GRINS::MeshManager::build_mesh()
       exit(1);
     }
 
-  // Create Mesh object (defaults to dimension 1). Reset the dimension as needed.
-  // According to Roy Stogner, the only read format that won't properly reset
-  // the dimension is gmsh. 
+  // Create Mesh object (defaults to dimension 1).
+  // According to Roy Stogner, the only read format
+  // that won't properly reset the dimension is gmsh.
   this->_mesh = new libMesh::Mesh();
 
   switch (this->_mesh_option)
