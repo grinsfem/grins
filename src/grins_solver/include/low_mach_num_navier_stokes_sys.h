@@ -42,6 +42,10 @@
 #include "quadrature.h"
 #include "parameters.h"
 
+// DiffSystem framework files
+#include "fem_system.h"
+#include "fem_context.h"
+
 namespace GRINS
 {
 
@@ -52,7 +56,7 @@ namespace GRINS
     
   public:
     // Constructor
-    LowMachNumberNavierStokesSystem(EquationSystems& es,
+    LowMachNumberNavierStokesSystem(libMesh::EquationSystems& es,
 				    const std::string& name,
 				    const unsigned int number)
       : FEMSystem(es, name, number)
@@ -61,10 +65,32 @@ namespace GRINS
     // Destructor
     ~LowMachNumberNavierStokesSystem() {}
     
-    void set_application( const std::string application_options );
+    // System initialization
+    virtual void init_data ();
+
+    // Context initialization
+    virtual void init_context(libMesh::DiffContext &context);
+
+    // Element residual and jacobian calculations
+    // Time dependent parts
+    virtual bool element_time_derivative (bool request_jacobian,
+					  libMesh::DiffContext& context);
+    
+    virtual bool side_time_derivative( bool request_jacobian,
+				       libMesh::DiffContext& context);
+    
+    // Constraint parts
+    virtual bool side_constraint (bool request_jacobian,
+				  libMesh::DiffContext& context);
+    
+    // Mass matrix part
+    virtual bool mass_residual (bool request_jacobian,
+				libMesh::DiffContext& context);
     
   private:
-    std::string _application_options;
+
+    // Indices for each variable;
+    unsigned int Dummy_var;
   };
 
 } //End namespace block

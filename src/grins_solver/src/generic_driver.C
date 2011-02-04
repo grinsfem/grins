@@ -95,12 +95,12 @@ int main(int argc, char* argv[]) {
   // pass libMesh::Mesh object from meshmanager to solver
   solver.set_mesh( meshmanager.get_mesh() );
 
-  //solver.initialize_system();
+  solver.initialize_system();
 
   // Do solve here
 
   // Do visualization if we want it.
-  //if(output_vis_flag) solver.output_visualization();
+  if(output_vis_flag) solver.output_visualization();
 
   grvy_timer.Finalize();
   grvy_timer.Summarize();
