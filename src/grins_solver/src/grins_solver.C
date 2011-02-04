@@ -85,7 +85,8 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   // Visualization options
   this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
   this->_output_format          = input("vis-options/output_format", "ExodusII" );
-
+  this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
+  
   return;
 }
 
@@ -171,6 +172,12 @@ void GRINS::Solver<T>::solve()
     {
       this->_system->solve();
 
+      // Dump out time series visualization if user wants it.
+      if( this->_output_vis_time_series )
+	{
+	  this->output_visualization( t_step );
+	}
+
       // Advance to the next timestep in a transient problem
       this->_system->time_solver->advance_timestep();
     } // End time loop.
@@ -181,14 +188,34 @@ void GRINS::Solver<T>::solve()
 template< class T >
 void GRINS::Solver<T>::output_visualization()
 {
+  this->dump_visualization( this->_vis_output_file_prefix );
+  return;
+}
+
+template< class T >
+void GRINS::Solver<T>::output_visualization( unsigned int time_step )
+{
+  std::stringstream suffix;
+
+  suffix << time_step;
+
+  std::string filename = this->_vis_output_file_prefix;
+  filename+=suffix.str();
+
+  this->dump_visualization( filename );
+
+  return;
+}
+
+template< class T >
+void GRINS::Solver<T>::dump_visualization( std::string filename )
+{
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
       std::cout << "WARNING: Using 'unknown' as file prefix since it was not set.'"
 		<< std::endl;
     }
-  
-  std::string filename = this->_vis_output_file_prefix;
 
   // The following is a modifed copy from the FIN-S code.
   if (this->_output_format == "tecplot" ||

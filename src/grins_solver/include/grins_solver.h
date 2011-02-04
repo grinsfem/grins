@@ -61,6 +61,7 @@ namespace GRINS
     void solve( );
 
     void output_visualization();
+    void output_visualization( unsigned int time_step );
 
   private:
     std::string _application_options;
@@ -81,6 +82,7 @@ namespace GRINS
     double _deltat;
 
     // Visualization options
+    bool _output_vis_time_series;
     std::string _vis_output_file_prefix;
     std::string _output_format;
 
@@ -92,6 +94,7 @@ namespace GRINS
     // Variables to track state of system
     bool _system_initialized;
 
+    void dump_visualization( std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );
   };
 
