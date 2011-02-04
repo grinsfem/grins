@@ -56,9 +56,9 @@ namespace GRINS
     
   public:
     // Constructor
-    LowMachNumberNavierStokesSystem(libMesh::EquationSystems& es,
-				    const std::string& name,
-				    const unsigned int number)
+    LowMachNumberNavierStokesSystem( libMesh::EquationSystems& es,
+				     const std::string& name,
+				     const unsigned int number )
       : FEMSystem(es, name, number)
     {}
     
@@ -66,26 +66,26 @@ namespace GRINS
     ~LowMachNumberNavierStokesSystem() {}
     
     // System initialization
-    virtual void init_data ();
+    virtual void init_data();
 
     // Context initialization
-    virtual void init_context(libMesh::DiffContext &context);
+    virtual void init_context( libMesh::DiffContext &context );
 
     // Element residual and jacobian calculations
     // Time dependent parts
-    virtual bool element_time_derivative (bool request_jacobian,
-					  libMesh::DiffContext& context);
+    virtual bool element_time_derivative( bool request_jacobian,
+					  libMesh::DiffContext& context );
     
     virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context);
+				       libMesh::DiffContext& context );
     
     // Constraint parts
-    virtual bool side_constraint (bool request_jacobian,
-				  libMesh::DiffContext& context);
+    virtual bool side_constraint( bool request_jacobian,
+				  libMesh::DiffContext& context );
     
     // Mass matrix part
-    virtual bool mass_residual (bool request_jacobian,
-				libMesh::DiffContext& context);
+    virtual bool mass_residual( bool request_jacobian,
+				libMesh::DiffContext& context );
     
   private:
 

@@ -75,18 +75,18 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_absolute_residual_tolerance = input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 );
   this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 50000 );
   this->_initial_linear_tolerance    = input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 );
-  
+
   // Unsteady solver options
   this->_transient   = input("unsteady-solver/transient", false );
   this->_theta       = input("unsteady-solver/theta", 0.5 );
   this->_n_timesteps = input("unsteady-solver/n_timesteps", 1 );
   this->_deltat      = input("unsteady-solver/deltat", 0.0 ); //TODO: Better default here?
-  
+
   // Visualization options
   this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
   this->_output_format          = input("vis-options/output_format", "ExodusII" );
   this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
-  
+
   return;
 }
 
@@ -213,73 +213,80 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
-      std::cout << "WARNING: Using 'unknown' as file prefix since it was not set.'"
-		<< std::endl;
+      std::cout << " WARNING in GRINS::Solver::output_visualization :" <<
+                   " using 'unknown' as file prefix since it was not set " <<
+                   std::endl;
     }
 
   // The following is a modifed copy from the FIN-S code.
   if (this->_output_format == "tecplot" ||
       this->_output_format == "dat")
-    {      
+    {
       filename+=".dat";
-      TecplotIO(*(this->_mesh),false).write_equation_systems (filename,
-							      *(this->_equation_systems));
-      // Left this here as an example from FIN-S if we need to handle boundary meshes separately
-      // in the future.
+      libMesh::TecplotIO(*(this->_mesh),false).write_equation_systems(
+						filename,
+						*(this->_equation_systems) );
+
+      // Left this here as an example from FIN-S if we need to
+      // handle boundary meshes separately in the future.
       /*
       if (have_boundary_data)
 	{
-	  sprintf (filechar, "%s-surf-%05d.dat",
+	  sprintf( filechar, "%s-surf-%05d.dat",
 		   output_name.c_str(),
-		   write_soln_number);
-	  
-	  TecplotIO(*boundary_mesh,false).write_equation_systems (std::string(filechar),
-								  *_boundary_equation_systems);
+		   write_soln_number );
+
+	  libMesh::TecplotIO(*boundary_mesh,false).write_equation_systems(
+						std::string(filechar),
+						*_boundary_equation_systems );
 	}
       */
-    }	
+    }
   else if (this->_output_format == "tecplot_binary" ||
 	   this->_output_format == "plt")
     {
       filename+=".plt";
-      TecplotIO(*(this->_mesh),true).write_equation_systems (filename,
-							     *(this->_equation_systems));	    
-    }	
+      libMesh::TecplotIO(*(this->_mesh),true).write_equation_systems(
+						filename,
+						*(this->_equation_systems) );
+    }
   else if (this->_output_format == "gmv")
     {
       filename+=".gmv";
-      GMVIO(*(this->_mesh)).write_equation_systems (filename,
-						    *(this->_equation_systems));
-      
+      GMVIO(*(this->_mesh)).write_equation_systems(
+						filename,
+						*(this->_equation_systems) );
     }
   else if (this->_output_format == "vtu")
     {
       filename+=".vtu";
-      VTKIO(*(this->_mesh)).write_equation_systems (filename,
-						    *(this->_equation_systems));
-
-    }	  
+      VTKIO(*(this->_mesh)).write_equation_systems(
+						filename,
+						*(this->_equation_systems) );
+    }
   else if (this->_output_format == "ExodusII")
     {
       filename+=".exo";
-      ExodusII_IO(*(this->_mesh)).write_equation_systems (filename,
-							  *(this->_equation_systems));
-    }		  		  	
+      ExodusII_IO(*(this->_mesh)).write_equation_systems(
+						filename,
+						*(this->_equation_systems) );
+    }
   else if (this->_output_format.find("xda") != std::string::npos ||
 	   this->_output_format.find("xdr") != std::string::npos)
     {
       filename+=this->_output_format;
       const bool binary = (this->_output_format.find("xdr") != std::string::npos);
-      
-      (this->_equation_systems)->write(filename,
-				       binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
-				       EquationSystems::WRITE_DATA |
-				       EquationSystems::WRITE_ADDITIONAL_DATA);
+      (this->_equation_systems)->write( filename,
+				        binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
+				        EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
     }
   else
-    // TODO: Do we want to use this to error throughout the code?
-    libmesh_error();
-  
+    {
+      // TODO: Do we want to use this to error throughout the code?
+      // TODO: (at least need to pass/print some message/string) - sahni
+      libmesh_error();
+    }
+
   return;
 }
 

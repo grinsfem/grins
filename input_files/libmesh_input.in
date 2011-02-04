@@ -6,3 +6,4 @@ element_type = 5
 
 [vis-options]
 output_vis_flag = true
+vis_output_file_prefix = test

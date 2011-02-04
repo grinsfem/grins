@@ -30,10 +30,10 @@
 
 #include "low_mach_num_navier_stokes_sys.h"
 
-void GRINS::LowMachNumberNavierStokesSystem::init_data ()
+void GRINS::LowMachNumberNavierStokesSystem::init_data()
 {
   // Setup dummy variable for testing.
-  Dummy_var = this->add_variable( "Dummy", FIRST );
+  Dummy_var = this->add_variable( "Dummy", libMeshEnums::FIRST );
 
   // Do the parent's initialization after variables are defined
   FEMSystem::init_data();
@@ -41,9 +41,10 @@ void GRINS::LowMachNumberNavierStokesSystem::init_data ()
   return;
 }
 
-void GRINS::LowMachNumberNavierStokesSystem::init_context(DiffContext &context)
+void GRINS::LowMachNumberNavierStokesSystem::init_context(
+						libMesh::DiffContext &context )
 {
-  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+  libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
   // We should prerequest all the data
   // we will need to build the linear system
@@ -61,26 +62,30 @@ void GRINS::LowMachNumberNavierStokesSystem::init_context(DiffContext &context)
   return;
 }
 
-bool GRINS::LowMachNumberNavierStokesSystem::element_time_derivative(bool request_jacobian,
-								     DiffContext& context)
+bool GRINS::LowMachNumberNavierStokesSystem::element_time_derivative(
+						bool request_jacobian,
+						libMesh::DiffContext& context )
 {
   return request_jacobian;
 }
 
-bool GRINS::LowMachNumberNavierStokesSystem::side_time_derivative(bool request_jacobian,
-								  DiffContext& context)
+bool GRINS::LowMachNumberNavierStokesSystem::side_time_derivative(
+						bool request_jacobian,
+						libMesh::DiffContext& context )
 {
   return request_jacobian;
 }
 
-bool GRINS::LowMachNumberNavierStokesSystem::side_constraint (bool request_jacobian,
-							      DiffContext& context)
+bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
+						bool request_jacobian,
+						libMesh::DiffContext& context )
 {
   return request_jacobian;
 }
 
-bool GRINS::LowMachNumberNavierStokesSystem::mass_residual (bool request_jacobian,
-							    DiffContext& context)
+bool GRINS::LowMachNumberNavierStokesSystem::mass_residual(
+						bool request_jacobian,
+						libMesh::DiffContext& context )
 {
   return request_jacobian;
 }
