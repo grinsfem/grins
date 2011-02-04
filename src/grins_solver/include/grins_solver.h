@@ -81,7 +81,6 @@ namespace GRINS
     double _deltat;
 
     // Visualization options
-    bool _output_vis_flag;
     std::string _vis_output_file_prefix;
     std::string _output_format;
 

@@ -44,7 +44,8 @@ GRINS::MeshManager::~MeshManager()
   // Only delete the mesh if we actually new'ed it.
   if( this->_mesh_created_locally )
     {
-      delete _mesh;
+      delete this->_mesh;
+      this->_mesh = NULL;
     }
   return;
 }

@@ -60,7 +60,11 @@ int main(int argc, char* argv[]) {
   std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
   GRINS::Solver<GRINS::LowMachNumberNavierStokesSystem> solver( solver_dummy_options );
 
+  // Variables we'll want to read in.
+  bool output_vis_flag;
+
   grvy_timer.BeginTimer("Process Input file");
+
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -69,11 +73,19 @@ int main(int argc, char* argv[]) {
     // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
     GetPot libMesh_inputfile( libMesh_input_filename );
     
+    // Read solver options
     solver.read_input_options( libMesh_inputfile );
 
+    // Read mesh options
     meshmanager.read_input_options( libMesh_inputfile );
+
+    // Read local options
+    output_vis_flag = libMesh_inputfile( "vis-options/output_vis_flag", false );
+
   } //Should be done reading input, so we kill the GetPot object.
+
   grvy_timer.EndTimer("Process Input file");
+
 
   grvy_timer.BeginTimer("Build Mesh");
   meshmanager.build_mesh();
@@ -82,6 +94,13 @@ int main(int argc, char* argv[]) {
 
   // pass libMesh::Mesh object from meshmanager to solver
   solver.set_mesh( meshmanager.get_mesh() );
+
+  //solver.initialize_system();
+
+  // Do solve here
+
+  // Do visualization if we want it.
+  //if(output_vis_flag) solver.output_visualization();
 
   grvy_timer.Finalize();
   grvy_timer.Summarize();

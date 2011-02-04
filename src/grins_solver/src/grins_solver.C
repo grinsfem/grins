@@ -33,12 +33,17 @@
 // For instantiating systems
 #include "low_mach_num_navier_stokes_sys.h"
 
+// libMesh I/O classes
+#include "gmv_io.h"
+#include "tecplot_io.h"
+#include "exodusII_io.h"
+#include "vtk_io.h"
+
 #include <iostream>
 
 template< class T >
 GRINS::Solver<T>::Solver( const std::string application_options )
-  : _output_vis_flag(false),
-    _system_initialized(false)
+  : _system_initialized(false)
 {
   std::cout << " GRINS::Solver constructor ..." << std::endl;
   _application_options = application_options;
@@ -78,9 +83,8 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_deltat      = input("unsteady-solver/deltat", 0.0 ); //TODO: Better default here?
   
   // Visualization options
-  this->_output_vis_flag        = input("vis-options/output_vis_flag", false );
   this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
-  this->_output_format          = input("vis-options/output_format", "unknown" );
+  this->_output_format          = input("vis-options/output_format", "ExodusII" );
 
   return;
 }
@@ -177,6 +181,77 @@ void GRINS::Solver<T>::solve()
 template< class T >
 void GRINS::Solver<T>::output_visualization()
 {
+  if( this->_vis_output_file_prefix == "unknown" )
+    {
+      // TODO: Need consisent way to print warning messages.
+      std::cout << "WARNING: Using 'unknown' as file prefix since it was not set.'"
+		<< std::endl;
+    }
+  
+  std::string filename = this->_vis_output_file_prefix;
+
+  // The following is a modifed copy from the FIN-S code.
+  if (this->_output_format == "tecplot" ||
+      this->_output_format == "dat")
+    {      
+      filename+=".dat";
+      TecplotIO(*(this->_mesh),false).write_equation_systems (filename,
+							      *(this->_equation_systems));
+      // Left this here as an example from FIN-S if we need to handle boundary meshes separately
+      // in the future.
+      /*
+      if (have_boundary_data)
+	{
+	  sprintf (filechar, "%s-surf-%05d.dat",
+		   output_name.c_str(),
+		   write_soln_number);
+	  
+	  TecplotIO(*boundary_mesh,false).write_equation_systems (std::string(filechar),
+								  *_boundary_equation_systems);
+	}
+      */
+    }	
+  else if (this->_output_format == "tecplot_binary" ||
+	   this->_output_format == "plt")
+    {
+      filename+=".plt";
+      TecplotIO(*(this->_mesh),true).write_equation_systems (filename,
+							     *(this->_equation_systems));	    
+    }	
+  else if (this->_output_format == "gmv")
+    {
+      filename+=".gmv";
+      GMVIO(*(this->_mesh)).write_equation_systems (filename,
+						    *(this->_equation_systems));
+      
+    }
+  else if (this->_output_format == "vtu")
+    {
+      filename+=".vtu";
+      VTKIO(*(this->_mesh)).write_equation_systems (filename,
+						    *(this->_equation_systems));
+
+    }	  
+  else if (this->_output_format == "ExodusII")
+    {
+      filename+=".exo";
+      ExodusII_IO(*(this->_mesh)).write_equation_systems (filename,
+							  *(this->_equation_systems));
+    }		  		  	
+  else if (this->_output_format.find("xda") != std::string::npos ||
+	   this->_output_format.find("xdr") != std::string::npos)
+    {
+      filename+=this->_output_format;
+      const bool binary = (this->_output_format.find("xdr") != std::string::npos);
+      
+      (this->_equation_systems)->write(filename,
+				       binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
+				       EquationSystems::WRITE_DATA |
+				       EquationSystems::WRITE_ADDITIONAL_DATA);
+    }
+  else
+    // TODO: Do we want to use this to error throughout the code?
+    libmesh_error();
   
   return;
 }
