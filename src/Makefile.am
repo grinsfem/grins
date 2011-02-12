@@ -1,9 +1,10 @@
+BUILT_SOURCES   = .license.stamp
+
 #----------------------------------------
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS =  generic_driver
-
+bin_PROGRAMS    =  generic_driver
 lib_LTLIBRARIES = libgrins.la
 
 #--------------------------------------------------
@@ -13,15 +14,15 @@ grins_srcdir = $(top_srcdir)/src/grins_solver/src
 grins_incdir = $(top_srcdir)/src/grins_solver/include
 
 # utilities may have more sub-dirs.
-utils_dir = $(top_srcdir)/src/utilities
+utils_dir    = $(top_srcdir)/src/utilities
 
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
 # Sources in src/grins
-grins_SRC = $(grins_srcdir)/grins_solver.C \
-            $(grins_srcdir)/grins_mesh_manager.C \
-            $(grins_srcdir)/low_mach_num_navier_stokes_sys.C
+grins_SRC    = $(grins_srcdir)/grins_solver.C \
+               $(grins_srcdir)/grins_mesh_manager.C \
+               $(grins_srcdir)/low_mach_num_navier_stokes_sys.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -29,9 +30,9 @@ grins_SRC = $(grins_srcdir)/grins_solver.C \
 #----------------------------
 #INCLUDES we want distributed
 #----------------------------
-grins_INC = $(grins_incdir)/grins_solver.h \
-            $(grins_incdir)/grins_mesh_manager.h \
-            $(grins_incdir)/low_mach_num_navier_stokes_sys.h
+grins_INC    = $(grins_incdir)/grins_solver.h \
+               $(grins_incdir)/grins_mesh_manager.h \
+               $(grins_incdir)/low_mach_num_navier_stokes_sys.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 
@@ -93,6 +94,15 @@ endif
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno
 endif
+
+#---------------------------------                                                                                      
+# Embedded license header support                                                                                       
+#---------------------------------                                                                                      
+
+.license.stamp: $(top_srcdir)/LICENSE
+	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(grins_SRC) $(grins_INC) \
+	$(generic_driver_SOURCES)
+	echo 'updated source license headers' >$@
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

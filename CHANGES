@@ -1,20 +1,20 @@
-Version 0.1.0
-* GRINS::Solver now reads from an input file and initializes
-  solver options.
-* Created GRINS::MeshManager class to handle operations on 
-  libMesh::Mesh objects.
-* GRINS::MeshManager reads options from an input file.
-* GRINS::Solver.solve() outline in place.
-* Stubs created in GRINS::LowMachNumberNavierStokesSystem
-  class.
-* GRINS::Solver writes out mesh and system information
-  via libMesh methods. Successfully tested with ExodusII
-  format and ParaView.
+Version 0.1.0 (In Progress)
+
+  * include GPL licensing and auto-update header mechanism
+  * GRINS::Solver now reads from an input file and initializes solver options
+  * Created GRINS::MeshManager class to handle operations on libMesh::Mesh objects
+  * GRINS::MeshManager reads options from an input file
+  * GRINS::Solver.solve() outline in place
+  * Stubs created in GRINS::LowMachNumberNavierStokesSystem class
+  * GRINS::Solver writes out mesh and system information via libMesh methods. Successfully tested with ExodusII
+    format and ParaView
 
 Version 0.0.0
-* Autotools build system put in place.
-* Links with libMesh.
-* Links with GRVY.
-* Local code within GRINS namespace.
-* Using GetPot input parser (from libMesh).
-* Using timers from GRVY library.
+https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.0.0
+
+  * autotools build system put in place
+  * links with libMesh
+  * links with GRVY
+  * local code within GRINS namespace
+  * using GetPot input parser (from libMesh)
+  * using timers from GRVY library

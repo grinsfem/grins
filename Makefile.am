@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test
-EXTRA_DIST       = CHANGES
+EXTRA_DIST       = CHANGES LICENSE COPYING
 
 # Eliminate .svn directories in dist tarball
 dist-hook:

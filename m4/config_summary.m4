@@ -51,14 +51,14 @@ echo Boost......................... : $BOOST_ROOT
 echo
 echo Optional Features:
 if test "$HAVE_MASA" = "0"; then
-  echo Link with MASA................ : no
+  echo '   'Link with MASA................ : no
 else
-  echo Link with MASA................ : $MASA_PREFIX
+  echo '   'Link with MASA................ : $MASA_PREFIX
 fi
 if test "$HAVE_GCOV_TOOLS" = "0"; then
-  echo Enable gcov code coverage..... : no
+  echo '   'Enable gcov code coverage..... : no
 else     
-  echo Enable gcov code coverage..... : yes
+  echo '   'Enable gcov code coverage..... : yes
 fi
 
 
