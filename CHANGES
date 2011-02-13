@@ -1,6 +1,10 @@
-Version 0.1.0 (In Progress)
+Version 0.2.0 (In Progress)
 
   * include GPL licensing and auto-update header mechanism
+
+Version 0.1.0
+https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.1.0
+  
   * GRINS::Solver now reads from an input file and initializes solver options
   * Created GRINS::MeshManager class to handle operations on libMesh::Mesh objects
   * GRINS::MeshManager reads options from an input file
