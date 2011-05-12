@@ -1,8 +1,18 @@
 [mesh-options]
-mesh_option = 3   # 2D Mesh
-element_type = 6  # QUAD8
-mesh_nx1 = 100
-mesh_nx2 = 100
+mesh_option = 3   # (2->1D mesh, 3->2D mesh, 4->3D mesh)
+element_type = 7  # QUAD9
+mesh_nx1 = 10
+mesh_nx2 = 10
+
+[unsteady-solver]
+transient = true
+theta = 0.5
+n_timesteps = 10
+deltat = 0.1
+
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 5
+max_linear_iterations = 250
 
 [vis-options]
 output_vis_flag = true

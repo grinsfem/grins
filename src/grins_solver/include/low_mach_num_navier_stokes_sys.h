@@ -86,8 +86,8 @@ namespace GRINS
 				  libMesh::DiffContext& context );
     
     // Mass matrix part(s)
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context );
+    /* virtual bool mass_residual( bool request_jacobian,
+				libMesh::DiffContext& context ); */
     
   private:
 

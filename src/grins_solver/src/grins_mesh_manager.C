@@ -167,7 +167,7 @@ void GRINS::MeshManager::build_mesh()
       {
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
-	    this->_element_type = libMeshEnums::EDGE2;
+	    this->_element_type = libMeshEnums::EDGE3;
 	  }
 	
         libMesh::MeshTools::Generation::build_line(*(this->_mesh),
@@ -182,7 +182,7 @@ void GRINS::MeshManager::build_mesh()
       {
         if(this->_element_type==libMeshEnums::INVALID_ELEM)
 	  {
-	    this->_element_type = libMeshEnums::TRI3;
+	    this->_element_type = libMeshEnums::TRI6;
 	  }
 
 	// Reset mesh dimension to 2.
@@ -201,7 +201,26 @@ void GRINS::MeshManager::build_mesh()
       break;
     case CREATE_3D_MESH:
       {
-        // TODO: fill
+        if(this->_element_type==libMeshEnums::INVALID_ELEM)
+	  {
+	    this->_element_type = libMeshEnums::TET10;
+	  }
+
+	// Reset mesh dimension to 3.
+	(this->_mesh)->set_mesh_dimension(3);
+
+        libMesh::MeshTools::Generation::build_cube(*(this->_mesh),
+						   this->_mesh_nx1,
+						   this->_mesh_nx2,
+						   this->_mesh_nx3,
+						   this->_domain_x1_min,
+						   this->_domain_x1_max,
+						   this->_domain_x2_min,
+						   this->_domain_x2_max,
+						   this->_domain_x3_min,
+						   this->_domain_x3_max,
+						   this->_element_type);
+	_mesh_created_locally = true;
       }
       break;
     default:

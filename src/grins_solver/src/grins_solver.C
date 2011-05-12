@@ -68,8 +68,10 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
 {
   // Linear/Nonlinear solver options
   this->_solver_quiet                = input("linear-nonlinear-solver/solver_quiet", false );
+  this->_solver_verbose              = input("linear-nonlinear-solver/solver_verbose", false );
   this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 10 );
-  this->_relative_step_tolerance     = input("linear-nonlinear-solver/relative_step_tolerance", 1.e-5 );
+  this->_relative_step_tolerance     = input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 );
+  this->_absolute_step_tolerance     = input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 );
   this->_relative_residual_tolerance = input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-16 );
   this->_absolute_residual_tolerance = input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 );
   this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 500 );
@@ -106,8 +108,10 @@ template< class T >
 void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 {
   solver.quiet                       = this->_solver_quiet;
+  solver.verbose                     = this->_solver_verbose;
   solver.max_nonlinear_iterations    = this->_max_nonlinear_iterations;
   solver.relative_step_tolerance     = this->_relative_step_tolerance;
+  solver.absolute_step_tolerance     = this->_absolute_step_tolerance;
   solver.relative_residual_tolerance = this->_relative_residual_tolerance;
   solver.absolute_residual_tolerance = this->_absolute_residual_tolerance;
   solver.max_linear_iterations       = this->_max_linear_iterations;

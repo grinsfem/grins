@@ -67,8 +67,10 @@ namespace GRINS
     
     // Linear/Nonlinear solver options
     bool _solver_quiet;
+    bool _solver_verbose;
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
+    double _absolute_step_tolerance;
     double _relative_residual_tolerance;
     double _absolute_residual_tolerance;
     unsigned int _max_linear_iterations;

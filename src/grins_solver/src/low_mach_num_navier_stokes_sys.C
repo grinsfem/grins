@@ -433,12 +433,28 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
                       w = c.side_value(w_var, qp);
 
       // TODO: make it more general
-      const short int left_id = (dim==3) ? 5 : 3; // TODO: CHECK THIS!!!
-      const short int right_id = (dim==3) ? 5 : 1; // TODO: CHECK THIS!!!
-      const short int top_id = (dim==3) ? 5 : 2; // TODO: CHECK THIS!!!
-
-      // if (boundary_id == right_id)
-      //  break; // its outflow
+      short int left_id, right_id, top_id, bottom_id, front_id, back_id;
+      if (dim == 1)
+        {
+          left_id  = 0; // x=0
+          right_id = 1; // x=1
+        }
+      if (dim == 2)
+        {
+          left_id   = 3; // x=0
+          right_id  = 1; // x=1
+          bottom_id = 0; // y=0
+          top_id    = 2; // y=1
+        }
+      if (dim == 3)
+        {
+          left_id   = 4; // x=0
+          right_id  = 2; // x=1
+          bottom_id = 1; // y=0
+          top_id    = 3; // y=1
+          back_id   = 0; // z=0
+          front_id  = 5; // z=1
+        }
 
       // Boundary data coming from true solution
       libMesh::Real u_value = 0., v_value = 0., w_value = 0.;
@@ -447,13 +463,19 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
       if ((boundary_id == top_id))
         u_value = 1.;
 
-      /* if (boundary_id == left_id)
+    /*
+      // inflow/outflow
+      if (boundary_id == right_id)
+          break; // its outflow
+
+      if (boundary_id == left_id)
         {
           const libMesh::Real x = u_qpoint[qp](0);
           const libMesh::Real y = u_qpoint[qp](1);
           const libMesh::Real z = u_qpoint[qp](2);
-          u_value = 4.*y*(1.-y);
-        } */
+          u_value = 4.*y*(1.-y); // parabolic profile
+        }
+    */
 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
@@ -524,13 +546,13 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
   return request_jacobian;
 }
 
-bool GRINS::LowMachNumberNavierStokesSystem::mass_residual(
+/*bool GRINS::LowMachNumberNavierStokesSystem::mass_residual(
 						bool request_jacobian,
 						libMesh::DiffContext& context )
 {
   // TODO: account for rho factor in mass matrix
   return request_jacobian;
-}
+}*/
 
 libMesh::Point GRINS::LowMachNumberNavierStokesSystem::forcing(const libMesh::Point &pt_xyz)
 {
