@@ -98,9 +98,9 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
       this->_domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
       this->_domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
 
-      this->_mesh_nx1 = input("mesh-options/mesh_nx1", 100);
-      this->_mesh_nx2 = input("mesh-options/mesh_nx2", 100);
-      this->_mesh_nx3 = input("mesh-options/mesh_nx3", 100);
+      this->_mesh_nx1 = input("mesh-options/mesh_nx1", 10);
+      this->_mesh_nx2 = input("mesh-options/mesh_nx2", 10);
+      this->_mesh_nx3 = input("mesh-options/mesh_nx3", 10);
 
       // set default element type as libMeshEnums::INVALID_ELEM and
       // switch it to an appropriate one based on domain type

@@ -1,8 +1,8 @@
 [mesh-options]
-mesh_option = 3
-element_type = 5
-
-[solver-options]
+mesh_option = 3   # 2D Mesh
+element_type = 6  # QUAD8
+mesh_nx1 = 100
+mesh_nx2 = 100
 
 [vis-options]
 output_vis_flag = true

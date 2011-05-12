@@ -97,9 +97,10 @@ int main(int argc, char* argv[]) {
   solver.initialize_system();
 
   // Do solve here
+  solver.solve();
 
   // Do visualization if we want it.
-  if(output_vis_flag) solver.output_visualization();
+  if(output_vis_flag) solver.output_visualization(); //TODO: move this in GRINS::Solver
 
   grvy_timer.Finalize();
   grvy_timer.Summarize();

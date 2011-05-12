@@ -32,9 +32,11 @@
 void GRINS::LowMachNumberNavierStokesSystem::init_data()
 {
   const unsigned int dim = this->get_mesh().mesh_dimension();
+
+  const libMeshEnums::FEFamily FE_family = libMeshEnums::LAGRANGE;
   const libMeshEnums::Order V_order = libMeshEnums::SECOND;
   const libMeshEnums::Order P_order = static_cast<libMeshEnums::Order>(V_order-1);
-  const libMeshEnums::FEFamily FE_family = libMeshEnums::LAGRANGE;
+
   // Flag for plain/standard incompressible flow
   const bool plain_ic_flag = true;
 
@@ -44,7 +46,7 @@ void GRINS::LowMachNumberNavierStokesSystem::init_data()
     w_var = this->add_variable( "w", V_order, FE_family);
   p_var = this->add_variable( "p", P_order, FE_family);
 
-  libmesh_assert(plain_ic_flag==true);
+  libmesh_assert (plain_ic_flag == true);
 
   // Do the parent's initialization after variables are defined
   FEMSystem::init_data();
@@ -195,7 +197,7 @@ bool GRINS::LowMachNumberNavierStokesSystem::element_time_derivative(
       libMesh::Point force = this->forcing(u_qpoint[qp]);
 
       const libMesh::Number rho = 1.0;           // TODO: set these properly!!!
-      const libMesh::Number mu  = 1.0e-2;        // TODO: set these properly!!!
+      const libMesh::Number mu  = 1.0e-0;        // TODO: set these properly!!!
 
       // First, an i-loop over the velocity degrees of freedom.
       // We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -203,23 +205,23 @@ bool GRINS::LowMachNumberNavierStokesSystem::element_time_derivative(
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
           Fu(i) += JxW[qp] *
-                   (-rho*(Uvec*graduvec)*vel_phi[i][qp]     // convection term
+                   (-rho*vel_phi[i][qp]*(Uvec*graduvec)     // convection term
                     +p*vel_gblgradphivec[i][qp](0)          // pressure term
-                    -mu*(graduvec*vel_gblgradphivec[i][qp]) // diffusion term
-                    +force(0)*vel_phi[i][qp]);              // forcing function
+                    -mu*(vel_gblgradphivec[i][qp]*graduvec) // diffusion term
+                    +vel_phi[i][qp]*force(0));              // forcing function
 
           Fv(i) += JxW[qp] *
-                   (-rho*(Uvec*gradvvec)*vel_phi[i][qp]     // convection term
+                   (-rho*vel_phi[i][qp]*(Uvec*gradvvec)     // convection term
                     +p*vel_gblgradphivec[i][qp](1)          // pressure term
-                    -mu*(gradvvec*vel_gblgradphivec[i][qp]) // diffusion term
-                    +force(1)*vel_phi[i][qp]);              // forcing function
+                    -mu*(vel_gblgradphivec[i][qp]*gradvvec) // diffusion term
+                    +vel_phi[i][qp]*force(1));              // forcing function
           if (dim == 3)
             {
               Fw(i) += JxW[qp] *
-                       (-rho*(Uvec*gradwvec)*vel_phi[i][qp]     // convection term
+                       (-rho*vel_phi[i][qp]*(Uvec*gradwvec)     // convection term
                         +p*vel_gblgradphivec[i][qp](2)          // pressure term
-                        -mu*(gradwvec*vel_gblgradphivec[i][qp]) // diffusion term
-                        +force(2)*vel_phi[i][qp]);              // forcing function
+                        -mu*(vel_gblgradphivec[i][qp]*gradwvec) // diffusion term
+                        +vel_phi[i][qp]*force(2));              // forcing function
             }
 
           if (request_jacobian && c.elem_solution_derivative)
@@ -418,6 +420,10 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
   // The penalty value.  \f$ \frac{1}{\epsilon} \f$
   const libMesh::Real vel_penalty = 1.e10;
 
+  const short int boundary_id =
+    this->get_mesh().boundary_info->boundary_id(c.elem, c.side);
+  libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+
   unsigned int n_sidepoints = c.side_qrule->n_points();
   for (unsigned int qp=0; qp != n_sidepoints; qp++)
     {
@@ -426,23 +432,28 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
                       v = c.side_value(v_var, qp),
                       w = c.side_value(w_var, qp);
 
-      const short int boundary_id =
-        this->get_mesh().boundary_info->boundary_id(c.elem, c.side);
-      libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
-
       // TODO: make it more general
-      const short int left_id = (dim==3) ? 5 : 2; // TODO: CHECK THIS!!!
+      const short int left_id = (dim==3) ? 5 : 3; // TODO: CHECK THIS!!!
+      const short int right_id = (dim==3) ? 5 : 1; // TODO: CHECK THIS!!!
+      const short int top_id = (dim==3) ? 5 : 2; // TODO: CHECK THIS!!!
+
+      // if (boundary_id == right_id)
+      //  break; // its outflow
 
       // Boundary data coming from true solution
       libMesh::Real u_value = 0., v_value = 0., w_value = 0.;
 
-      if (boundary_id == left_id)
+      // For lid-driven cavity, set u=1 on the lid.
+      if ((boundary_id == top_id))
+        u_value = 1.;
+
+      /* if (boundary_id == left_id)
         {
-          const libMesh::Real x=u_qpoint[qp](0);
-          const libMesh::Real y=u_qpoint[qp](1);
-          const libMesh::Real z=u_qpoint[qp](2);
-          u_value=(1.-y*y);
-        }
+          const libMesh::Real x = u_qpoint[qp](0);
+          const libMesh::Real y = u_qpoint[qp](1);
+          const libMesh::Real z = u_qpoint[qp](2);
+          u_value = 4.*y*(1.-y);
+        } */
 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
@@ -474,8 +485,9 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
         } // end of the outer dof (i) loop
     } // end of the quadrature point (qp) loop
 
-  // Pin p = 0 at the origin
-  if (c.elem->contains_point(Point(0.,0.)))
+  // Pin p = p_value at p_point
+  libMesh::Point p_point(0.,0.);
+  if (c.elem->contains_point(p_point))
     {
       // The pressure penalty value.  \f$ \frac{1}{\epsilon} \f$
       const libMesh::Real p_penalty = 1.e9;
@@ -486,8 +498,7 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
       // The number of local degrees of freedom in p variable.
       const unsigned int n_p_dofs = c.dof_indices_var[p_var].size();
 
-      libMesh::Point zero(0.);
-      libMesh::Number p = c.point_value(p_var, zero);
+      libMesh::Number p = c.point_value(p_var, p_point);
       libMesh::Number p_value = 0.;
 
       libMesh::FEType fe_type = c.element_fe_var[p_var]->get_fe_type();
@@ -508,7 +519,7 @@ bool GRINS::LowMachNumberNavierStokesSystem::side_constraint(
                 Kpp(i,j) += p_penalty * point_p_phi[i] * point_p_phi[j];
             } // end - if (request_jacobian && c.elem_solution_derivative)
         } // end of the outer dof (i) loop
-    } // end - if Pin p
+    } // end - if p_point is inside element
 
   return request_jacobian;
 }

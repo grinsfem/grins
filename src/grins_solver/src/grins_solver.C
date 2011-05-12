@@ -68,11 +68,11 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
 {
   // Linear/Nonlinear solver options
   this->_solver_quiet                = input("linear-nonlinear-solver/solver_quiet", false );
-  this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 15 );
+  this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 10 );
   this->_relative_step_tolerance     = input("linear-nonlinear-solver/relative_step_tolerance", 1.e-5 );
   this->_relative_residual_tolerance = input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-16 );
   this->_absolute_residual_tolerance = input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 );
-  this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 50000 );
+  this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 500 );
   this->_initial_linear_tolerance    = input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 );
 
   // Unsteady solver options
@@ -212,7 +212,7 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
-      std::cout << " WARNING in GRINS::Solver::output_visualization :" <<
+      std::cout << " WARNING in GRINS::Solver::dump_visualization :" <<
                    " using 'unknown' as file prefix since it was not set " <<
                    std::endl;
     }
