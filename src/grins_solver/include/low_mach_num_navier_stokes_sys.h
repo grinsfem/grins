@@ -70,26 +70,38 @@ namespace GRINS
     // Context initialization
     virtual void init_context( libMesh::DiffContext &context );
 
-    // Element residual and jacobian calculations
-    // Time dependent parts
+    // residual and jacobian calculations
+    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+
+    // Time dependent part(s)
     virtual bool element_time_derivative( bool request_jacobian,
 					  libMesh::DiffContext& context );
-    
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context );
     
-    // Constraint parts
+    // Constraint part(s)
+    virtual bool element_constraint( bool request_jacobian,
+				     libMesh::DiffContext& context );
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context );
     
-    // Mass matrix part
+    // Mass matrix part(s)
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context );
     
   private:
 
     // Indices for each variable;
-    unsigned int Dummy_var;
+    unsigned int u_var;
+    unsigned int v_var;
+    unsigned int w_var;
+    unsigned int p_var;
+    unsigned int T_var;
+
+    // Returns the value of a forcing function at point pt_xyz.
+    // This value depends on which option is set.
+    // TODO: any other option to return? other than libMesh::Point?
+    libMesh::Point forcing(const libMesh::Point& pt_xyz);
   };
 
 } //End namespace block
