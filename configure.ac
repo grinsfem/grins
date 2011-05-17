@@ -102,10 +102,13 @@ dnl-------------------------------------
 dnl###AX_PATH_GLPK(4.35,,AC_MSG_ERROR([Could not find required GLPK error]))
 dnl AC_CACHE_SAVE
 
-dnl---------------
+dnl-------------------------------
 dnl Check for GRVY
-dnl---------------
-AX_PATH_GRVY
+dnl
+dnl libGRVY Config 
+dnl (min_version,required=yes/no)
+dnl-------------------------------
+AX_PATH_GRVY_NEW([0.30],[yes])
 dnl AC_CACHE_SAVE
 
 dnl-------------------
