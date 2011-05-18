@@ -42,13 +42,6 @@ namespace GRINS
   {
     
   public:
-    // enumeration for mesh options
-    // TODO: may not need enumeration if _mesh_option is a string?
-    enum MESH_OPTION_ENUM { MESH_ALREADY_LOADED = 0,
-                            READ_MESH_FROM_FILE = 1,
-                            CREATE_1D_MESH      = 2,
-                            CREATE_2D_MESH      = 3,
-                            CREATE_3D_MESH      = 4 };
 
     MeshManager();
     ~MeshManager();
@@ -62,7 +55,9 @@ namespace GRINS
     void build_mesh();
 
   private:
-    MESH_OPTION_ENUM _mesh_option; // TODO: can be a string
+    // all possible values for _mesh_option:
+    //    "read_mesh_from_file", "create_1D_mesh", "create_2D_MESH", "create_3D_mesh", "mesh_already_loaded"
+    std::string _mesh_option;
     bool _print_mesh_info_flag;
     std::string _mesh_filename;
 
