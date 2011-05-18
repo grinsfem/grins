@@ -65,7 +65,7 @@ AM_CPPFLAGS = -I$(grins_incdir)
 ###               $(LIBMESH_CXXFLAGS) \
 ###               $(EPETRA_INCLUDES)
 
-AM_CPPFLAGS += $(LIBMESH_CXXFLAGS) \
+AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
 
 #------------------------------------
