@@ -1,6 +1,6 @@
 [mesh-options]
 mesh_option = create_2D_mesh
-element_type = 7 # QUAD9
+element_type = QUAD9
 mesh_nx1 = 10
 mesh_nx2 = 10
 

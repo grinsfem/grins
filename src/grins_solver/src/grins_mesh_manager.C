@@ -115,9 +115,7 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
 
       // set default element type as libMeshEnums::INVALID_ELEM and
       // switch it to an appropriate one based on domain type
-      this->_element_type =
-             (libMeshEnums::ElemType)input("mesh-options/element_type",
-                                           (int)libMeshEnums::INVALID_ELEM);
+      this->_element_type = input("mesh-options/element_type", "NULL");
     }
 
   return;
@@ -173,28 +171,32 @@ void GRINS::MeshManager::build_mesh()
     }
   else if(this->_mesh_option=="create_1D_mesh")
     {
-      if(this->_element_type==libMeshEnums::INVALID_ELEM)
+      if(this->_element_type=="NULL")
 	{
-	  this->_element_type = libMeshEnums::EDGE3;
+	  this->_element_type = "EDGE3";
 	}
-	
+
+      libMeshEnums::ElemType _element_enum_type =
+                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
       libMesh::MeshTools::Generation::build_line(*(this->_mesh),
 						 this->_mesh_nx1,
 						 this->_domain_x1_min,
 						 this->_domain_x1_max,
-						 this->_element_type);
+						 _element_enum_type);
       _mesh_created_locally = true;
     }
   else if(this->_mesh_option=="create_2D_mesh")
     {
-      if(this->_element_type==libMeshEnums::INVALID_ELEM)
+      if(this->_element_type=="NULL")
 	{
-	  this->_element_type = libMeshEnums::TRI6;
+	  this->_element_type = "TRI6";
 	}
 
       // Reset mesh dimension to 2.
       (this->_mesh)->set_mesh_dimension(2);
 
+      libMeshEnums::ElemType _element_enum_type =
+                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
       libMesh::MeshTools::Generation::build_square(*(this->_mesh),
 						   this->_mesh_nx1,
 						   this->_mesh_nx2,
@@ -202,19 +204,21 @@ void GRINS::MeshManager::build_mesh()
 						   this->_domain_x1_max,
 						   this->_domain_x2_min,
 						   this->_domain_x2_max,
-						   this->_element_type);
+						   _element_enum_type);
       _mesh_created_locally = true;
     }
   else if(this->_mesh_option=="create_3D_mesh")
     {
-      if(this->_element_type==libMeshEnums::INVALID_ELEM)
+      if(this->_element_type=="NULL")
 	{
-	  this->_element_type = libMeshEnums::TET10;
+	  this->_element_type = "TET10";
 	}
 
       // Reset mesh dimension to 3.
       (this->_mesh)->set_mesh_dimension(3);
 
+      libMeshEnums::ElemType _element_enum_type =
+                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
       libMesh::MeshTools::Generation::build_cube(*(this->_mesh),
 						 this->_mesh_nx1,
 						 this->_mesh_nx2,
@@ -225,7 +229,7 @@ void GRINS::MeshManager::build_mesh()
 						 this->_domain_x2_max,
 						 this->_domain_x3_min,
 						 this->_domain_x3_max,
-						 this->_element_type);
+						 _element_enum_type);
       _mesh_created_locally = true;
     }
   else

@@ -32,6 +32,7 @@
 
 #include "getpot.h"
 #include "libmesh.h"
+#include "string_to_enum.h"
 #include "mesh.h"
 #include "mesh_generation.h"
 
@@ -71,7 +72,7 @@ namespace GRINS
     double _domain_x1_max, _domain_x2_max, _domain_x3_max;
 
     int _mesh_nx1, _mesh_nx2, _mesh_nx3;
-    libMeshEnums::ElemType _element_type;
+    std::string _element_type; // use libMesh::Utility::string_to_enum<libMeshEnums::ElemType>
 
     bool _mesh_created_locally;
   };
