@@ -31,6 +31,7 @@
 
 // For instantiating systems
 #include "low_mach_num_navier_stokes_sys.h"
+#include "multiphysics_sys.h"
 
 // libMesh I/O classes
 #include "gmv_io.h"
@@ -295,3 +296,4 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
 
 // Instantiate class
 template class GRINS::Solver<GRINS::LowMachNumberNavierStokesSystem>;
+template class GRINS::Solver<GRINS::MultiphysicsSystem>;

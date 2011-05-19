@@ -34,7 +34,7 @@
 void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 {
   // Figure out how many physics we are enabling
-  int num_physics = input.vector_variable_size("enabled_physics");
+  int num_physics = input.vector_variable_size("Physics/enabled_physics");
 
   if( num_physics < 1 )
     {

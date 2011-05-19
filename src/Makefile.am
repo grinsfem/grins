@@ -4,7 +4,7 @@ BUILT_SOURCES   = .license.stamp
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS    =  generic_driver
+bin_PROGRAMS    =  generic_driver grins
 lib_LTLIBRARIES = libgrins.la
 
 #--------------------------------------------------
@@ -59,6 +59,14 @@ libgrins_la_SOURCES = $(grins_SRC) \
 generic_driver_SOURCES = $(grins_srcdir)/generic_driver.C
 
 generic_driver_LDADD = libgrins.la
+
+#------------------------------------
+# Source for stand alone GRINS driver
+#------------------------------------
+
+grins_SOURCES = $(grins_srcdir)/grins.C
+
+grins_LDADD = libgrins.la
 
 #--------------------------------------
 #Local Directories to include for build
