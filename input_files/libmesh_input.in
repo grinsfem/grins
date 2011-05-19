@@ -17,3 +17,16 @@ max_linear_iterations = 250
 [vis-options]
 output_vis_flag = true
 vis_output_file_prefix = test
+
+[Physics]
+
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = 1.0
+mu = 1.0
+
+[]

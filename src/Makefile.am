@@ -13,6 +13,9 @@ lib_LTLIBRARIES = libgrins.la
 grins_srcdir = $(top_srcdir)/src/grins_solver/src
 grins_incdir = $(top_srcdir)/src/grins_solver/include
 
+physics_srcdir = $(top_srcdir)/src/physics/src
+physics_incdir = $(top_srcdir)/src/physics/include
+
 # utilities may have more sub-dirs.
 utils_dir    = $(top_srcdir)/src/utilities
 
@@ -22,7 +25,11 @@ utils_dir    = $(top_srcdir)/src/utilities
 # Sources in src/grins
 grins_SRC    = $(grins_srcdir)/grins_solver.C \
                $(grins_srcdir)/grins_mesh_manager.C \
+               $(grins_srcdir)/multiphysics_sys.C \
                $(grins_srcdir)/low_mach_num_navier_stokes_sys.C
+
+physics_SRC  = $(physics_srcdir)/physics.C \
+               $(physics_srcdir)/inc_navier_stokes.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -32,14 +39,19 @@ grins_SRC    = $(grins_srcdir)/grins_solver.C \
 #----------------------------
 grins_INC    = $(grins_incdir)/grins_solver.h \
                $(grins_incdir)/grins_mesh_manager.h \
+               $(grins_incdir)/multiphysics_sys.h \
                $(grins_incdir)/low_mach_num_navier_stokes_sys.h
+
+physics_INC  = $(physics_incdir)/physics.h \
+               $(physics_incdir)/inc_navier_stokes.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 
-include_HEADERS = $(grins_INC) $(utils_INC)
+include_HEADERS = $(grins_INC) $(utils_INC) $(physics_INC)
 
 libgrins_la_SOURCES = $(grins_SRC) \
-                      $(utils_SRC)
+                      $(utils_SRC) \
+                      $(physics_SRC)
 
 #------------------------------------
 # Source for stand alone GRINS generic driver
@@ -51,7 +63,7 @@ generic_driver_LDADD = libgrins.la
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(grins_incdir)
+AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir)
 #              \ -I$(utils_dir)/<NULL>/inc
 
 #-------------------------------------
@@ -101,7 +113,7 @@ endif
 
 .license.stamp: $(top_srcdir)/LICENSE
 	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(grins_SRC) $(grins_INC) \
-	$(generic_driver_SOURCES)
+	$(generic_driver_SOURCES) $(physics_SRC) $(physics_INC)
 	echo 'updated source license headers' >$@
 
 # Required for AX_AM_MACROS
