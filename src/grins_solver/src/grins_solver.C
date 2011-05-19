@@ -121,16 +121,14 @@ void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 }
 
 template< class T >
-void GRINS::Solver<T>::initialize_system()
+void GRINS::Solver<T>::initialize_system( std::string system_name)
 {
   // Create an equation systems object.
   this->_equation_systems = new libMesh::EquationSystems(*_mesh);
 
   // Declare the system and its variables.
-  //TODO: Maybe have this class templated about the
-  //TODO: system type to make it easy to use different system types?
   libMesh::EquationSystems *es = this->_equation_systems;
-  this->_system = &es->add_system<T> ("LMNNS");
+  this->_system = &es->add_system<T> (system_name);
 
   // Solve this as a time-dependent or steady system
   if (this->_transient)
