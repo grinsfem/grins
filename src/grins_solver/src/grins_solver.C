@@ -121,7 +121,7 @@ void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 }
 
 template< class T >
-void GRINS::Solver<T>::initialize_system( std::string system_name)
+void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input )
 {
   // Create an equation systems object.
   this->_equation_systems = new libMesh::EquationSystems(*_mesh);
@@ -129,6 +129,8 @@ void GRINS::Solver<T>::initialize_system( std::string system_name)
   // Declare the system and its variables.
   libMesh::EquationSystems *es = this->_equation_systems;
   this->_system = &es->add_system<T> (system_name);
+
+  this->_system->read_input_options( input );
 
   // Solve this as a time-dependent or steady system
   if (this->_transient)

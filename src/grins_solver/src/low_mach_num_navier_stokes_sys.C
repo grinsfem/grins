@@ -29,6 +29,11 @@
 
 #include "low_mach_num_navier_stokes_sys.h"
 
+void GRINS::LowMachNumberNavierStokesSystem::read_input_options( GetPot& input )
+{
+  return;
+}
+
 void GRINS::LowMachNumberNavierStokesSystem::init_data()
 {
   const unsigned int dim = this->get_mesh().mesh_dimension();

@@ -56,7 +56,7 @@ namespace GRINS
     void set_mesh( libMesh::Mesh* mesh );
 
     //TODO: Should we have these return error codes?
-    void initialize_system( std::string system_name );
+    void initialize_system( std::string system_name, GetPot& input );
     void solve( );
 
     void output_visualization();

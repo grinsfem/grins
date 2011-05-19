@@ -33,6 +33,7 @@
 #include <string>
 
 #include "libmesh.h"
+#include "getpot.h"
 #include "fem_system.h"
 #include "boundary_info.h"
 #include "fe_base.h"
@@ -64,6 +65,8 @@ namespace GRINS
     // Destructor
     ~LowMachNumberNavierStokesSystem() {}
     
+    virtual void read_input_options( GetPot& input );
+
     // System initialization
     virtual void init_data();
 

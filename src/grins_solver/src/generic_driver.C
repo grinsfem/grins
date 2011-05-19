@@ -62,8 +62,6 @@ int main(int argc, char* argv[]) {
   // Variables we'll want to read in.
   bool output_vis_flag;
 
-  grvy_timer.BeginTimer("Process Input file");
-
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -78,23 +76,15 @@ int main(int argc, char* argv[]) {
     // Read mesh options
     meshmanager.read_input_options( libMesh_inputfile );
 
+    // Setup and initialize system so system can read it's relavent options
+    meshmanager.build_mesh();
+    solver.set_mesh( meshmanager.get_mesh() );
+    solver.initialize_system( "Low Mach Number Navier-Stokes", libMesh_inputfile );
+
     // Read local options
     output_vis_flag = libMesh_inputfile( "vis-options/output_vis_flag", false );
 
   } //Should be done reading input, so we kill the GetPot object.
-
-  grvy_timer.EndTimer("Process Input file");
-
-
-  grvy_timer.BeginTimer("Build Mesh");
-  meshmanager.build_mesh();
-  grvy_timer.EndTimer("Build Mesh");
-  
-
-  // pass libMesh::Mesh object from meshmanager to solver
-  solver.set_mesh( meshmanager.get_mesh() );
-
-  solver.initialize_system();
 
   // Do solve here
   solver.solve();
