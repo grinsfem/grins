@@ -128,7 +128,7 @@ namespace GRINS
       Other physics might need access to this physics variables, so this method returns a copy
       of the map from the std::string name of the variable to the variable index in the system.
     */
-    std::map<std::string,VariableIndex> get_variable_indices();
+    std::map<std::string,VariableIndex> get_variable_indices_map();
 
   protected:
 
