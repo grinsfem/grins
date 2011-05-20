@@ -61,6 +61,14 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
   return;
 }
 
+void GRINS::IncompressibleNavierStokes::register_variable_indices( libMesh::FEMSystem* system )
+{
+
+  //TODO: get _var_map, loop over map and register variables
+
+  return;
+}
+
 void GRINS::IncompressibleNavierStokes::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   const unsigned int dim = system->get_mesh().mesh_dimension();

@@ -79,7 +79,6 @@ namespace GRINS
     double _absolute_residual_tolerance;
     unsigned int _max_linear_iterations;
     double _initial_linear_tolerance;
-    
 
     // Unsteady solver options
     bool _transient;

@@ -35,11 +35,11 @@ GRINS::MultiphysicsSystem::~MultiphysicsSystem()
 {
   // Physics* objects get new'ed in the read_input_options call, so we
   // need to delete them.
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      delete *physics;
+      delete (physics_iter->second);
     }
   
   return;
@@ -67,7 +67,7 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
       //TODO: Do we want to create an enum list instead for all available physics?
       if( physics_to_add == "IncompressibleNavierStokes" )
 	{
-	  this->_physics_list.push_back( new GRINS::IncompressibleNavierStokes );
+	  this->_physics_list.push_back( std::make_pair("IncompressibleNavierStokes", new GRINS::IncompressibleNavierStokes) );
 	}
       else
 	{
@@ -77,11 +77,11 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
     }
   
   // Read the input options for each of the physics
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->read_input_options( input );
+      (physics_iter->second)->read_input_options( input );
     }
 
   return;
@@ -91,22 +91,30 @@ void GRINS::MultiphysicsSystem::init_data()
 {
 
   // First, initalize all the variables. We pass this pointer for the system.
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->init_variables( this );
+      (physics_iter->second)->init_variables( this );
+    }
+
+  // Next, call register_variable_indices in each physics.
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
+    {
+      (physics_iter->second)->register_variable_indices( this );
     }
 
   // Next, call parent init_data function to intialize everything.
   libMesh::FEMSystem::init_data();
 
   // Now set time_evolving variables
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->set_time_evolving_vars( this );
+      (physics_iter->second)->set_time_evolving_vars( this );
     }
 
   return;
@@ -115,11 +123,11 @@ void GRINS::MultiphysicsSystem::init_data()
 void GRINS::MultiphysicsSystem::init_context( libMesh::DiffContext &context )
 {
   //Loop over each physics to initialize relevant variable structures for assembling system
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->init_context( context );
+      (physics_iter->second)->init_context( context );
     }
 
   return;
@@ -131,11 +139,11 @@ bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
   _timer->BeginTimer("MultiphysicsSystem::element_time_derivative");
 
   // Loop over each physics and compute their contributions
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->element_time_derivative( request_jacobian, context, this );
+      (physics_iter->second)->element_time_derivative( request_jacobian, context, this );
     }
 
   _timer->EndTimer("MultiphysicsSystem::element_time_derivative");
@@ -149,11 +157,11 @@ bool GRINS::MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						      libMesh::DiffContext& context )
 {
   // Loop over each physics and compute their contributions
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->side_time_derivative( request_jacobian, context, this );
+      (physics_iter->second)->side_time_derivative( request_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -165,11 +173,11 @@ bool GRINS::MultiphysicsSystem::element_constraint( bool request_jacobian,
 						    libMesh::DiffContext& context )
 {
   // Loop over each physics and compute their contributions
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->element_constraint( request_jacobian, context, this );
+      (physics_iter->second)->element_constraint( request_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -181,11 +189,11 @@ bool GRINS::MultiphysicsSystem::side_constraint( bool request_jacobian,
 						 libMesh::DiffContext& context )
 {
   // Loop over each physics and compute their contributions
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->side_constraint( request_jacobian, context, this );
+      (physics_iter->second)->side_constraint( request_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -197,11 +205,11 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
 					       libMesh::DiffContext& context )
 {
   // Loop over each physics and compute their contributions
-  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
-       physics != _physics_list.end();
-       physics++ )
+  for( GRINS::physics_list_iter_t physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
     {
-      (*physics)->mass_residual( request_jacobian, context, this );
+      (physics_iter->second)->mass_residual( request_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some

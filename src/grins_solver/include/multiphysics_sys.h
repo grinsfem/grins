@@ -51,6 +51,10 @@
 
 namespace GRINS
 {
+  //TODO: add comment
+  typedef std::vector<std::pair<std::string,Physics*> > physics_list_t;
+  //TODO: add comment
+  typedef std::vector<std::pair<std::string,Physics*> >::iterator physics_list_iter_t;
 
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
@@ -127,9 +131,10 @@ namespace GRINS
     
   private:
 
-    //! Container for all physics objects
+    // all possible values for physics:
+    //    ""IncompressibleNavierStokes", "HeatTransfer" ...
     // TODO: use AutoPtr instead?
-    std::vector<Physics*> _physics_list;
+    physics_list_t _physics_list;
 
     GRVY::GRVY_Timer_Class* _timer;
 

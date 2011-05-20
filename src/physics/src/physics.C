@@ -49,7 +49,7 @@ void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
   return;
 }
 
-std::map<std::string,GRINS::VariableIndex> GRINS::Physics::get_variable_indices_map()
+GRINS::var_map_t GRINS::Physics::get_variable_indices_map()
 {
   return _var_map;
 }

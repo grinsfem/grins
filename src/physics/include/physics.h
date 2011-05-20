@@ -39,8 +39,12 @@
 //! GRINS namespace
 namespace GRINS
 {
-  //! More descriptive name of the type used for variable indices
+  //! More descriptive name of the type used for (owned) variable indices
   typedef unsigned int VariableIndex;
+  //! More descriptive name of the type used for (registered) variable indices
+  typedef unsigned int RegtdVariableIndex;
+  //TODO: add comment
+  typedef std::map<std::string,VariableIndex> var_map_t;
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
@@ -52,7 +56,7 @@ namespace GRINS
     MultiphysicsSystem (through FEMSystem) solves the following equation:
 
     \f$M(u)\dot{u} = F(u)\f$
-    
+
     M = mass matrix
     u = solution vector
     F = time derivative
@@ -82,8 +86,14 @@ namespace GRINS
     //! Read options from GetPot input file. By default, nothing is read.
     virtual void read_input_options( GetPot& input );
 
-    //! Initialize variables for this physics
+    //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;
+
+    //! Registers variables for coupled physics.
+    /*!
+      Each physics might need access to other physics variables, so this method registers them in individual physics.
+    */
+    virtual void register_variable_indices( libMesh::FEMSystem* system ) = 0; // TODO: should it be pure virtual?
 
     //! Set which variables are time evolving.
     /*!
@@ -130,12 +140,12 @@ namespace GRINS
       Other physics might need access to this physics variables, so this method returns a copy
       of the map from the std::string name of the variable to the variable index in the system.
     */
-    std::map<std::string,VariableIndex> get_variable_indices_map();
+    var_map_t get_variable_indices_map();
 
   protected:
 
     //! Map from std::string variable name to variable index value
-    std::map<std::string,VariableIndex> _var_map;
+    var_map_t _var_map;
 
   }; // End Physics class declarations
 

@@ -69,6 +69,9 @@ namespace GRINS
      */
     virtual void init_variables( libMesh::FEMSystem* system );
 
+    //! Register variables for coupled physics
+    virtual void register_variable_indices( libMesh::FEMSystem* system );
+
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -106,11 +109,21 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    //! Indices for each variable;
-    VariableIndex _u_var;
-    VariableIndex _v_var;
-    VariableIndex _w_var;
-    VariableIndex _p_var;
+    //! Indices for each (owned) variable;
+    VariableIndex _u_var; /* Velocity_x field */
+    VariableIndex _v_var; /* Velocity_y field */
+    VariableIndex _w_var; /* Velocity_z field */
+    VariableIndex _p_var; /* Pressure field */
+
+    //! Indices for each (registered) variable;
+    /*!
+      This depends on pre-defined set of coupling terms.
+     */
+    RegtdVariableIndex _T_var;  /* Temperature field */
+    RegtdVariableIndex _E_var;  /* Electric field */
+    RegtdVariableIndex _Bx_var; /* Bx field */
+    RegtdVariableIndex _By_var; /* By field */
+    RegtdVariableIndex _Bz_var; /* Bz field */
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
