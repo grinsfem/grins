@@ -110,20 +110,20 @@ namespace GRINS
     unsigned int _dim;
 
     //! Indices for each (owned) variable;
-    VariableIndex _u_var; /* Velocity_x field */
-    VariableIndex _v_var; /* Velocity_y field */
-    VariableIndex _w_var; /* Velocity_z field */
-    VariableIndex _p_var; /* Pressure field */
+    VariableIndex _u_var; /* Index for velocity_x field */
+    VariableIndex _v_var; /* Index for velocity_y field */
+    VariableIndex _w_var; /* Index for velocity_z field */
+    VariableIndex _p_var; /* Index for pressure field */
 
     //! Indices for each (registered) variable;
     /*!
       This depends on pre-defined set of coupling terms.
      */
-    RegtdVariableIndex _T_var;  /* Temperature field */
-    RegtdVariableIndex _E_var;  /* Electric field */
-    RegtdVariableIndex _Bx_var; /* Bx field */
-    RegtdVariableIndex _By_var; /* By field */
-    RegtdVariableIndex _Bz_var; /* Bz field */
+    RegtdVariableIndex _T_var;  /* Index for temperature field */
+    RegtdVariableIndex _E_var;  /* Index for electric field */
+    RegtdVariableIndex _Bx_var; /* Index for Bx field */
+    RegtdVariableIndex _By_var; /* Index for By field */
+    RegtdVariableIndex _Bz_var; /* Index for Bz field */
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
