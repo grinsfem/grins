@@ -29,12 +29,18 @@
 #ifndef PHYSICS_SYS_H
 #define PHYSICS_SYS_H
 
+#include "config.h"
+
 #include <string>
 
 #include "getpot.h"
 #include "libmesh.h"
 #include "fem_system.h"
 #include "fem_context.h"
+
+#ifdef HAVE_GRVY
+#include "grvy.h" // GRVY timers
+#endif
 
 //! GRINS namespace
 namespace GRINS
@@ -44,7 +50,7 @@ namespace GRINS
   //! More descriptive name of the type used for (registered) variable indices
   typedef unsigned int RegtdVariableIndex;
   //TODO: add comment
-  typedef std::map<std::string,VariableIndex> var_map_t;
+  typedef std::map<std::string,VariableIndex> VariableMap;
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
@@ -93,7 +99,7 @@ namespace GRINS
     /*!
       Each physics might need access to other physics variables, so this method registers them in individual physics.
     */
-    virtual void register_variable_indices( libMesh::FEMSystem* system ) = 0; // TODO: should it be pure virtual?
+    virtual void register_variable_indices( libMesh::FEMSystem* system ) = 0;
 
     //! Set which variables are time evolving.
     /*!
@@ -140,12 +146,20 @@ namespace GRINS
       Other physics might need access to this physics variables, so this method returns a copy
       of the map from the std::string name of the variable to the variable index in the system.
     */
-    var_map_t get_variable_indices_map();
+    VariableMap get_variable_indices_map();
+
+#ifdef USE_GRVY_TIMERS
+    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
+#endif
 
   protected:
 
     //! Map from std::string variable name to variable index value
-    var_map_t _var_map;
+    VariableMap _var_map;
+
+#ifdef USE_GRVY_TIMERS
+    GRVY::GRVY_Timer_Class* _timer;
+#endif
 
   }; // End Physics class declarations
 

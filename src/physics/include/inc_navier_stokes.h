@@ -30,6 +30,8 @@
 #ifndef INC_NAVIER_STOKES_H
 #define INC_NAVIER_STOKES_H
 
+#include "config.h"
+
 #include "libmesh.h"
 #include "boundary_info.h"
 #include "fe_base.h"

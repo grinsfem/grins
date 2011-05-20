@@ -111,6 +111,10 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
 								 libMesh::DiffContext& context,
 								 libMesh::FEMSystem* system )
 {
+#ifdef USE_GRVY_TIMERS
+  this->_timer->BeginTimer("IncompressibleNavierStokes::element_time_derivative");
+#endif
+
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
   // The number of local degrees of freedom in each variable.
@@ -299,6 +303,10 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
         } // end of the outer dof (i) loop
     } // end of the quadrature point (qp) loop
 
+#ifdef USE_GRVY_TIMERS
+  this->_timer->EndTimer("IncompressibleNavierStokes::element_time_derivative");
+#endif
+
   return request_jacobian;
 }
 
@@ -306,6 +314,10 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
 							    libMesh::DiffContext& context,
 							    libMesh::FEMSystem* system )
 {
+#ifdef USE_GRVY_TIMERS
+  this->_timer->BeginTimer("IncompressibleNavierStokes::element_constraint");
+#endif
+
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
   // The number of local degrees of freedom in each variable.
@@ -379,6 +391,10 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
         } // end of the outer dof (i) loop
     } // end of the quadrature point (qp) loop
 
+#ifdef USE_GRVY_TIMERS
+  this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
+#endif
+
   return request_jacobian;
 }
 
@@ -394,6 +410,10 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 							 libMesh::DiffContext& context,
 							 libMesh::FEMSystem* system )
 {
+#ifdef USE_GRVY_TIMERS
+  this->_timer->BeginTimer("IncompressibleNavierStokes::side_constraint");
+#endif
+
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
   // The number of local degrees of freedom in u variable.
@@ -555,6 +575,10 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
             } // end - if (request_jacobian && c.elem_solution_derivative)
         } // end of the outer dof (i) loop
     } // end - if p_point is inside element
+
+#ifdef USE_GRVY_TIMERS
+  this->_timer->EndTimer("IncompressibleNavierStokes::side_constraint");
+#endif
 
   return request_jacobian;
 }

@@ -49,7 +49,15 @@ void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
   return;
 }
 
-GRINS::var_map_t GRINS::Physics::get_variable_indices_map()
+GRINS::VariableMap GRINS::Physics::get_variable_indices_map()
 {
   return _var_map;
 }
+
+#ifdef USE_GRVY_TIMERS
+void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+{
+  _timer = grvy_timer;
+  return;
+}
+#endif

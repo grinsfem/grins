@@ -27,14 +27,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#include "config.h"
+
 #include <iostream>
 
 // GRINS stuff
 #include "grins_mesh_manager.h"
 #include "grins_solver.h"
 
+#ifdef HAVE_GRVY
 // GRVY includes
 #include "grvy.h"
+#endif
 
 // System types that we might want to instantiate
 #include "multiphysics_sys.h"
@@ -49,8 +53,10 @@ int main(int argc, char* argv[]) {
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
+#ifdef USE_GRVY_TIMERS
   GRVY::GRVY_Timer_Class grvy_timer;
   grvy_timer.Init("GRINS Timer");
+#endif
 
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
@@ -65,7 +71,10 @@ int main(int argc, char* argv[]) {
   // Variables we'll want to read in.
   bool output_vis_flag;
 
+#ifdef USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
+#endif
+
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -89,10 +98,13 @@ int main(int argc, char* argv[]) {
     output_vis_flag = libMesh_inputfile( "vis-options/output_vis_flag", false );
 
   } //Should be done reading input, so we kill the GetPot object.
+
+#ifdef USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
 
   // Attach GRVY timer to solver
   solver.attach_grvy_timer( &grvy_timer );
+#endif
 
   // Do solve here
   solver.solve();
@@ -100,8 +112,10 @@ int main(int argc, char* argv[]) {
   // Do visualization if we want it.
   if(output_vis_flag) solver.output_visualization(); //TODO: move this in GRINS::Solver
 
+#ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();
   grvy_timer.Summarize();
+#endif
 
   return 0;
 }

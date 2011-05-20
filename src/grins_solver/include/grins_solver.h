@@ -30,6 +30,8 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
+#include "config.h"
+
 #include "getpot.h"
 #include "libmesh.h"
 #include "mesh.h"
@@ -38,7 +40,9 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 
+#ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
+#endif
 
 namespace GRINS
 {
@@ -64,7 +68,9 @@ namespace GRINS
     void output_visualization();
     void output_visualization( unsigned int time_step );
 
+#ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
+#endif
 
   private:
     std::string _application_options;
@@ -102,7 +108,10 @@ namespace GRINS
     void dump_visualization( std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );
 
+#ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
+#endif
+
   };
 
 } //End namespace block

@@ -294,6 +294,7 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
   return;
 }
 
+#ifdef USE_GRVY_TIMERS
 template< class T >
 void GRINS::Solver<T>::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {
@@ -304,6 +305,7 @@ void GRINS::Solver<T>::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 
   return;
 }
+#endif
 
 // Instantiate class
 template class GRINS::Solver<GRINS::MultiphysicsSystem>;

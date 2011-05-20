@@ -30,6 +30,8 @@
 #ifndef MULTIPHYSICS_SYS_H
 #define MULTIPHYSICS_SYS_H
 
+#include "config.h"
+
 #include <string>
 
 #include "libmesh.h"
@@ -44,17 +46,19 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+#ifdef HAVE_GRVY
 // GRVY timers
 #include "grvy.h"
+#endif
 
 #include "physics.h"
 
 namespace GRINS
 {
   //TODO: add comment
-  typedef std::vector<std::pair<std::string,Physics*> > physics_list_t;
+  typedef std::vector<std::pair<std::string,Physics*> > PhysicsList;
   //TODO: add comment
-  typedef std::vector<std::pair<std::string,Physics*> >::iterator physics_list_iter_t;
+  typedef std::vector<std::pair<std::string,Physics*> >::iterator PhysicsListIter;
 
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
@@ -126,17 +130,21 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
+#ifdef USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-    
+#endif    
+
   private:
 
     // all possible values for physics:
     //    ""IncompressibleNavierStokes", "HeatTransfer" ...
     // TODO: use AutoPtr instead?
-    physics_list_t _physics_list;
+    PhysicsList _physics_list;
 
+#ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
+#endif
 
   };
 

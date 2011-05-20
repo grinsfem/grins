@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 30
-mesh_nx2 = 30
+mesh_nx1 = 10
+mesh_nx2 = 10
 
 # Options for tiem solvers
 [unsteady-solver]
