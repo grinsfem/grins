@@ -44,6 +44,9 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+// GRVY timers
+#include "grvy.h"
+
 #include "physics.h"
 
 namespace GRINS
@@ -51,19 +54,36 @@ namespace GRINS
 
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
+    MultiphysicsSystem (through FEMSystem) solves the following equation:
+
+    \f$M(u)\dot{u} = F(u)\f$
     
+    M = mass matrix
+    u = solution vector
+    F = time derivative
+
+    Note that for the nonlinear system that is solved for implicit
+    time stepping is:
+
+    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$ 
+
+    *_time_derivative correspond to calculating terms for \f$F(u)\f$
+    *_mass_residual correspond to calculating terms for \f$M(u)\dot{u}\f$
    */
+  //TODO: is it F(u) or F(u_{\theta})?
   class MultiphysicsSystem : public FEMSystem
   {    
   public:
 
+    //! Constructor. Will be called by libMesh only.
     MultiphysicsSystem( libMesh::EquationSystems& es,
 			const std::string& name,
 			const unsigned int number )
       : FEMSystem(es, name, number)
     {}
 
-    ~MultiphysicsSystem() {}
+    //! Destructor. Clean up all physics allocations.
+    ~MultiphysicsSystem();
     
     //! Reads input options for this class and all physics that are enabled
     /*!
@@ -82,26 +102,36 @@ namespace GRINS
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Time dependent part(s)
+    //! Element interior contributions to \f$F(u)\f$ which have time varying components.
     virtual bool element_time_derivative( bool request_jacobian,
 					  libMesh::DiffContext& context );
 
+    //! Boundary contributions to \f$F(u)\f$ which have time varying components.
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context );
     
-    // Constraint part(s)
+    //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context );
+
+    //! Boundary contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context );
     
-    // Mass matrix part(s)
+    // Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
+
+    //! Add GRVY Timer object to system for timing physics.
+    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
     
   private:
 
+    //! Container for all physics objects
+    // TODO: use AutoPtr instead?
     std::vector<Physics*> _physics_list;
+
+    GRVY::GRVY_Timer_Class* _timer;
 
   };
 

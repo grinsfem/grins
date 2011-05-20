@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
   // Variables we'll want to read in.
   bool output_vis_flag;
 
+  grvy_timer.BeginTimer("Initialize Solver");
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -88,6 +89,10 @@ int main(int argc, char* argv[]) {
     output_vis_flag = libMesh_inputfile( "vis-options/output_vis_flag", false );
 
   } //Should be done reading input, so we kill the GetPot object.
+  grvy_timer.EndTimer("Initialize Solver");
+
+  // Attach GRVY timer to solver
+  solver.attach_grvy_timer( &grvy_timer );
 
   // Do solve here
   solver.solve();

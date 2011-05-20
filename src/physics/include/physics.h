@@ -60,8 +60,10 @@ namespace GRINS
     Note that for the nonlinear system that is solved for implicit
     time stepping is:
 
-    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$ //TODO: is it F(u) or F(u_{\theta})?
+    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$
   */
+
+  //TODO: is it F(u) or F(u_{\theta})?
 
   //  element* routines work on element interiors
   //  side* routines work on element sides

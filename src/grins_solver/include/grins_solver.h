@@ -38,6 +38,8 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 
+#include "grvy.h" // GRVY timers
+
 namespace GRINS
 {
   // We template around the system type
@@ -61,6 +63,8 @@ namespace GRINS
 
     void output_visualization();
     void output_visualization( unsigned int time_step );
+
+    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 
   private:
     std::string _application_options;
@@ -98,6 +102,8 @@ namespace GRINS
 
     void dump_visualization( std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );
+
+    GRVY::GRVY_Timer_Class* _timer;
   };
 
 } //End namespace block

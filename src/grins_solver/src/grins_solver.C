@@ -30,7 +30,6 @@
 #include "grins_solver.h"
 
 // For instantiating systems
-#include "low_mach_num_navier_stokes_sys.h"
 #include "multiphysics_sys.h"
 
 // libMesh I/O classes
@@ -174,6 +173,7 @@ void GRINS::Solver<T>::solve()
   // solution of the equations.
   for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
     {
+      // GRVY timers contained in here (if enabled)
       this->_system->solve();
 
       // Dump out time series visualization if user wants it.
@@ -294,6 +294,16 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
   return;
 }
 
+template< class T >
+void GRINS::Solver<T>::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+{
+  _timer = grvy_timer;
+
+  // Attach timer to system
+  this->_system->attach_grvy_timer( grvy_timer );
+
+  return;
+}
+
 // Instantiate class
-template class GRINS::Solver<GRINS::LowMachNumberNavierStokesSystem>;
 template class GRINS::Solver<GRINS::MultiphysicsSystem>;

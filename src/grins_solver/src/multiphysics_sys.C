@@ -31,6 +31,20 @@
 
 #include "inc_navier_stokes.h"
 
+GRINS::MultiphysicsSystem::~MultiphysicsSystem()
+{
+  // Physics* objects get new'ed in the read_input_options call, so we
+  // need to delete them.
+  for( std::vector<Physics*>::iterator physics = _physics_list.begin();
+       physics != _physics_list.end();
+       physics++ )
+    {
+      delete *physics;
+    }
+  
+  return;
+}
+
 void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 {
   // Read options for MultiphysicsSystem first
@@ -114,6 +128,8 @@ void GRINS::MultiphysicsSystem::init_context( libMesh::DiffContext &context )
 bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 							 libMesh::DiffContext& context )
 {
+  _timer->BeginTimer("MultiphysicsSystem::element_time_derivative");
+
   // Loop over each physics and compute their contributions
   for( std::vector<Physics*>::iterator physics = _physics_list.begin();
        physics != _physics_list.end();
@@ -121,6 +137,8 @@ bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
     {
       (*physics)->element_time_derivative( request_jacobian, context, this );
     }
+
+  _timer->EndTimer("MultiphysicsSystem::element_time_derivative");
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
@@ -191,3 +209,8 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
   return request_jacobian;
 }
 
+void GRINS::MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+{
+  _timer = grvy_timer;
+  return;
+}

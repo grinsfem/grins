@@ -4,7 +4,7 @@ BUILT_SOURCES   = .license.stamp
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS    =  generic_driver grins
+bin_PROGRAMS    = grins
 lib_LTLIBRARIES = libgrins.la
 
 #--------------------------------------------------
@@ -25,8 +25,7 @@ utils_dir    = $(top_srcdir)/src/utilities
 # Sources in src/grins
 grins_SRC    = $(grins_srcdir)/grins_solver.C \
                $(grins_srcdir)/grins_mesh_manager.C \
-               $(grins_srcdir)/multiphysics_sys.C \
-               $(grins_srcdir)/low_mach_num_navier_stokes_sys.C
+               $(grins_srcdir)/multiphysics_sys.C
 
 physics_SRC  = $(physics_srcdir)/physics.C \
                $(physics_srcdir)/inc_navier_stokes.C
@@ -39,8 +38,7 @@ physics_SRC  = $(physics_srcdir)/physics.C \
 #----------------------------
 grins_INC    = $(grins_incdir)/grins_solver.h \
                $(grins_incdir)/grins_mesh_manager.h \
-               $(grins_incdir)/multiphysics_sys.h \
-               $(grins_incdir)/low_mach_num_navier_stokes_sys.h
+               $(grins_incdir)/multiphysics_sys.h
 
 physics_INC  = $(physics_incdir)/physics.h \
                $(physics_incdir)/inc_navier_stokes.h
@@ -52,13 +50,6 @@ include_HEADERS = $(grins_INC) $(utils_INC) $(physics_INC)
 libgrins_la_SOURCES = $(grins_SRC) \
                       $(utils_SRC) \
                       $(physics_SRC)
-
-#------------------------------------
-# Source for stand alone GRINS generic driver
-#------------------------------------
-generic_driver_SOURCES = $(grins_srcdir)/generic_driver.C
-
-generic_driver_LDADD = libgrins.la
 
 #------------------------------------
 # Source for stand alone GRINS driver
