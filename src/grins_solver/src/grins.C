@@ -65,8 +65,7 @@ int main(int argc, char* argv[]) {
   GRINS::MeshManager meshmanager;
   
   // Create solver object.
-  std::string solver_dummy_options = "TODO: Delete me when agreed on constructor arguments.";
-  GRINS::Solver<GRINS::MultiphysicsSystem> solver( solver_dummy_options );
+  GRINS::Solver<GRINS::MultiphysicsSystem> solver;
 
   // Variables we'll want to read in.
   bool output_vis_flag;

@@ -14,7 +14,6 @@ deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-solver_verbose = true
 max_nonlinear_iterations = 10 
 max_linear_iterations = 250
 
@@ -25,6 +24,13 @@ verify_analytic_jacobians = 1.e-6
 output_vis_time_series = true
 output_vis_flag = true
 vis_output_file_prefix = test
+
+# Options for print info to the screen
+[screen-options]
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
 
 # Options related to all Physics
 [Physics]

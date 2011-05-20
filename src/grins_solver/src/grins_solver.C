@@ -41,19 +41,15 @@
 #include <iostream>
 
 template< class T >
-GRINS::Solver<T>::Solver( const std::string application_options )
+GRINS::Solver<T>::Solver( )
   : _system_initialized(false)
 {
-  std::cout << " GRINS::Solver constructor ..." << std::endl;
-  _application_options = application_options;
   return;
 }
 
 template< class T >
 GRINS::Solver<T>::~Solver()
 {
-  std::cout << " GRINS::Solver  destructor ..." << std::endl;
-
   // If we initialized the system, we need to destroy the
   // EquationSystems object.
   if(this->_system_initialized)
@@ -67,8 +63,6 @@ template< class T >
 void GRINS::Solver<T>::read_input_options( const GetPot& input )
 {
   // Linear/Nonlinear solver options
-  this->_solver_quiet                = input("linear-nonlinear-solver/solver_quiet", false );
-  this->_solver_verbose              = input("linear-nonlinear-solver/solver_verbose", false );
   this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 10 );
   this->_relative_step_tolerance     = input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 );
   this->_absolute_step_tolerance     = input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 );
@@ -87,6 +81,12 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
   this->_output_format          = input("vis-options/output_format", "ExodusII" );
   this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
+
+  // Screen display options
+  this->_print_mesh_info = input("screen-options/print_mesh_info", false );
+  this->_print_log_info  = input("screen-options/print_log_info", false );
+  this->_solver_quiet    = input("screen-options/solver_quiet", false );
+  this->_solver_verbose  = input("screen-options/solver_verbose", false );
 
   return;
 }
@@ -123,6 +123,13 @@ void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 template< class T >
 void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input )
 {
+  // Print mesh info if the user wants it
+  if( this->_print_mesh_info ) this->_mesh->print_info();
+
+  // Only print log info if the user requests it
+  libMesh::perflog.disable_logging();
+  if( this->_print_log_info ) libMesh::perflog.enable_logging();
+
   // Create an equation systems object.
   this->_equation_systems = new libMesh::EquationSystems(*_mesh);
 

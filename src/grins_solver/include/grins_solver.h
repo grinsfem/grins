@@ -52,7 +52,7 @@ namespace GRINS
   {
     
   public:
-    Solver( const std::string application_options );
+    Solver();
     ~Solver();
 
     void read_input_options( const GetPot& input );
@@ -73,7 +73,6 @@ namespace GRINS
 #endif
 
   private:
-    std::string _application_options;
     
     // Linear/Nonlinear solver options
     bool _solver_quiet;
@@ -104,6 +103,10 @@ namespace GRINS
 
     // Variables to track state of system
     bool _system_initialized;
+
+    // Screen display options
+    bool _print_mesh_info;
+    bool _print_log_info;
 
     void dump_visualization( std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );

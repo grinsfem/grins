@@ -89,7 +89,6 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 
 void GRINS::MultiphysicsSystem::init_data()
 {
-
   // First, initalize all the variables. We pass this pointer for the system.
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
