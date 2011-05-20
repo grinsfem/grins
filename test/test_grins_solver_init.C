@@ -4,9 +4,7 @@
 int main(int argc, char* argv[])
 {
 
-  std::string application_options; // TODO: ADD OPTIONS LATER
-
-  GRINS::Solver<GRINS::MultiphysicsSystem> grins_solver(application_options);
+  GRINS::Solver<GRINS::MultiphysicsSystem> grins_solver();
 
   return 0;
 }
