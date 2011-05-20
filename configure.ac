@@ -108,8 +108,28 @@ dnl
 dnl libGRVY Config 
 dnl (min_version,required=yes/no)
 dnl-------------------------------
-AX_PATH_GRVY_NEW([0.30],[yes])
-dnl AC_CACHE_SAVE
+AX_PATH_GRVY_NEW([0.30],[no])
+
+dnl Check and see if the user wants to use GRVY timers
+AC_ARG_ENABLE([grvy-timers],
+              [AS_HELP_STRING([--enable-grvy-timers], [use GRVY timers (default is no)])],
+	      [grvy_timers=${enableval}],
+	      [grvy_timers=no])
+
+dnl We'll rely on GRVY to make sure it's built correctly, but want to warn the user if
+dnl they asked for timers, but GRVY wasn't found.
+if test "x${grvy_timers}" = xyes; then
+   if test "x$HAVE_GRVY" = x0; then
+      AC_MSG_WARN([You've asked for GRVY timers, but GRVY install not detected. Disabling timers. ])
+   fi
+
+   if test "x$HAVE_GRVY" = x1; then
+      AC_DEFINE([USE_GRVY_TIMERS], 1, [GRVY timers enabled])
+      USE_GRVY_TIMERS=1
+      AC_SUBST(USE_GRVY_TIMERS)
+   fi
+fi
+
 
 dnl-------------------
 dnl Check for TRILINOS

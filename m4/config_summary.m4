@@ -34,17 +34,26 @@ echo Library Dependencies:
 echo libMesh....................... : $LIBMESH_PREFIX
 echo libMesh CXXFLAGS.............. : $LIBMESH_CXXFLAGS
 echo libMesh INCLUDE............... : $LIBMESH_INCLUDE
-echo QUESO......................... : $QUESO_PREFIX
-echo Trilinos...................... : $TRILINOS_PREFIX
-echo GRVY.......................... : $GRVY_PREFIX
-echo HDF5.......................... : $HDF5_PREFIX
-echo GSL........................... : $GSL_PREFIX
-echo GLPK.......................... : $GLPK_PREFIX
-echo Boost......................... : $BOOST_ROOT
+#echo QUESO......................... : $QUESO_PREFIX
+#echo Trilinos...................... : $TRILINOS_PREFIX
+#echo HDF5.......................... : $HDF5_PREFIX
+#echo GSL........................... : $GSL_PREFIX
+#echo GLPK.......................... : $GLPK_PREFIX
+#echo Boost......................... : $BOOST_ROOT
 
 # masa optional check:
 echo
 echo Optional Features:
+if test "$HAVE_GRVY" = "0"; then
+  echo '   'Link with GRVY................ : no
+else
+  echo '   'Link with GRVY................ :$GRVY_PREFIX
+fi
+if test "x$USE_GRVY_TIMERS" = "x1"; then
+  echo '   'Use GRVY timers............... : yes
+else
+  echo '   'Use GRVY timers............... : no
+fi
 if test "$HAVE_MASA" = "0"; then
   echo '   'Link with MASA................ : no
 else
