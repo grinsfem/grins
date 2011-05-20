@@ -18,6 +18,8 @@ solver_verbose = true
 max_nonlinear_iterations = 10 
 max_linear_iterations = 250
 
+verify_analytic_jacobians = 1.e-6
+
 # Visualization options
 [vis-options]
 output_vis_time_series = true

@@ -33,6 +33,9 @@
 
 void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 {
+  // Read options for MultiphysicsSystem first
+  this->verify_analytic_jacobians  = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
+
   // Figure out how many physics we are enabling
   int num_physics = input.vector_variable_size("Physics/enabled_physics");
 
