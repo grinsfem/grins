@@ -51,15 +51,15 @@ namespace GRINS
     This physics class implements the classical Incompressible Navier-Stokes equations.
    */
   class IncompressibleNavierStokes : public Physics
-  { 
+  {
   public:
 
-    IncompressibleNavierStokes() 
+    IncompressibleNavierStokes()
     {};
-    
+
     ~IncompressibleNavierStokes()
-    {}; 
-    
+    {};
+
     //! Read options from GetPot input file.
     virtual void read_input_options( GetPot& input );
 
@@ -67,10 +67,10 @@ namespace GRINS
     /*!
       Add velocity and pressure variables to system.
      */
-    virtual void init_variables( FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
     virtual void init_context( libMesh::DiffContext &context );
@@ -81,26 +81,26 @@ namespace GRINS
     // Time dependent part(s)
     virtual bool element_time_derivative( bool request_jacobian,
 					  libMesh::DiffContext& context,
-					  FEMSystem* system );
+					  libMesh::FEMSystem* system );
 
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context,
-				       FEMSystem* system );
-    
+				       libMesh::FEMSystem* system );
+
     // Constraint part(s)
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context,
-				     FEMSystem* system );
+				     libMesh::FEMSystem* system );
 
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context,
-				  FEMSystem* system );
-    
+				  libMesh::FEMSystem* system );
+
     // Mass matrix part(s)
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
-				FEMSystem* system );
-    
+				libMesh::FEMSystem* system );
+
   protected:
 
     //! Physical dimension of problem

@@ -42,30 +42,30 @@ namespace GRINS
   //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
 
-  //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. 
+  //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
     This abstract base class defines the API for use within the MultiphysicsSystem. Each physics
     instantiation must initialize its varaibles (and element orders and types), initialize the DiffContext
-    for the added variables, and provide element and boundary routines for assembly 
+    for the added variables, and provide element and boundary routines for assembly
     (to be called by MultiphysicsSystem).
 
     MultiphysicsSystem (through FEMSystem) solves the following equation:
-    
+
     \f$M(u)\dot{u} = F(u)\f$
     
     M = mass matrix
     u = solution vector
     F = time derivative
-    
-    Note that for the nonlinear system that is solved for implicit 
+
+    Note that for the nonlinear system that is solved for implicit
     time stepping is:
 
-    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$
+    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$ //TODO: is it F(u) or F(u_{\theta})?
   */
 
-  //    element* routines work on element interiors
+  //  element* routines work on element interiors
   //  side* routines work on element sides
-    
+
   //  *_time_derivative correspond to calculating terms for F(u)
   //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
 
@@ -81,7 +81,7 @@ namespace GRINS
     virtual void read_input_options( GetPot& input );
 
     //! Initialize variables for this physics
-    virtual void init_variables( FEMSystem* system ) = 0;
+    virtual void init_variables( libMesh::FEMSystem* system ) = 0;
 
     //! Set which variables are time evolving.
     /*!
@@ -90,7 +90,7 @@ namespace GRINS
       its base class before time_evolving variables can be set. Default implementation is no
       time evolving variables.
      */
-    virtual void set_time_evolving_vars( FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Initialize context for added physics variables
     virtual void init_context( libMesh::DiffContext &context ) = 0;
@@ -101,27 +101,27 @@ namespace GRINS
     //! Time dependent part(s) of physics for element interiors
     virtual bool element_time_derivative( bool request_jacobian,
 					  libMesh::DiffContext& context,
-					  FEMSystem* system ) = 0;
+					  libMesh::FEMSystem* system ) = 0;
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context,
-				       FEMSystem* system ) = 0;
-    
+				       libMesh::FEMSystem* system ) = 0;
+
     //! Constraint part(s) of physics for element interiors
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context,
-				     FEMSystem* system ) = 0;
+				     libMesh::FEMSystem* system ) = 0;
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context,
-				  FEMSystem* system ) = 0;
-    
+				  libMesh::FEMSystem* system ) = 0;
+
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
-				FEMSystem* system ) = 0;
+				libMesh::FEMSystem* system ) = 0;
 
     //! Returns indices for physics variables
     /*!
@@ -131,7 +131,7 @@ namespace GRINS
     std::map<std::string,VariableIndex> get_variable_indices();
 
   protected:
-    
+
     //! Map from std::string variable name to variable index value
     std::map<std::string,VariableIndex> _var_map;
 
