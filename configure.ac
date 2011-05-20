@@ -133,20 +133,26 @@ dnl----------------
 dnl###AX_PATH_QUESO
 dnl AC_CACHE_SAVE
 
-dnl---------------------------------------------------------------
-dnl Checks for typedefs, structures, and compiler characteristics.
-dnl---------------------------------------------------------------
-
-
-dnl------------------------------
-dnl Checks for library functions.
-dnl------------------------------
-
 
 dnl--------------------------
 dnl Checks for code coverage
 dnl--------------------------
 AX_CODE_COVERAGE
+
+dnl------------------------------------------
+dnl            Doxygen support
+dnl------------------------------------------
+
+DX_HTML_FEATURE(ON)
+DX_CHM_FEATURE(OFF)
+DX_CHI_FEATURE(OFF)
+DX_MAN_FEATURE(OFF)
+DX_RTF_FEATURE(OFF)
+DX_XML_FEATURE(OFF)
+DX_PDF_FEATURE(ON)
+DX_PS_FEATURE(OFF)
+
+DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen )
 
 
 dnl-------------------
@@ -154,7 +160,8 @@ dnl Generate makefiles
 dnl-------------------
 AC_OUTPUT( Makefile \
            src/Makefile \
-           test/Makefile )
+           test/Makefile \
+           doxygen/Makefile )
 
 dnl--------------------------------
 dnl Query configuration environment

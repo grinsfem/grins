@@ -36,6 +36,7 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+//! GRINS namespace
 namespace GRINS
 {
   //! More descriptive name of the type used for variable indices
@@ -50,23 +51,24 @@ namespace GRINS
 
     MultiphysicsSystem (through FEMSystem) solves the following equation:
     
-    M(u)\dot{u} = F(u)
+    \f$M(u)\dot{u} = F(u)\f$
     
     M = mass matrix
     u = solution vector
     F = time derivative
     
-    element* routines work on element interiors
-    side* routines work on element sides
-    
-    *_time_derivative correspond to calculating terms for F(u)
-    *_mass_residual correspond to calculating terms for M(u)\dot{u}
-    
     Note that for the nonlinear system that is solved for implicit 
     time stepping is:
 
-    M(u_{theata})(u^n - u^{n+1}) + \delta t F(u) = 0
+    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$
   */
+
+  //    element* routines work on element interiors
+  //  side* routines work on element sides
+    
+  //  *_time_derivative correspond to calculating terms for F(u)
+  //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
+
   class Physics
   {
 

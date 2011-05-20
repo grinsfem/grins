@@ -1,7 +1,9 @@
+include $(top_srcdir)/doxygen/aminclude.am
+
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
-SUBDIRS          = src test
+SUBDIRS          = src test doxygen
 EXTRA_DIST       = CHANGES LICENSE COPYING
 
 # Eliminate .svn directories in dist tarball
@@ -42,7 +44,10 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        config.h.in                              \
                        Makefile.in                              \
                        src/Makefile.in                          \
-                       test/Makefile.in
+                       test/Makefile.in                         \
+                       doxygen/Makefile.in                      
+
+MOSTLYCLEANFILES     = $(DX_CLEANFILES)
 
 # -------------------------------------------
 # Optional support for code coverage analysis
