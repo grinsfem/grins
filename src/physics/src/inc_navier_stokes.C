@@ -31,22 +31,22 @@
 
 void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 {
-  this->_FE_family = 
+  this->_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
 
-  this->_V_order = 
+  this->_V_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/V_order", "SECOND") );
 
-  this->_P_order = 
+  this->_P_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/P_order", "FIRST") );
-  
+
   this->_rho = input("Physics/IncompNS/rho", 1.0);
   this->_mu  = input("Physics/IncompNS/mu", 1.0);
 
   return;
 }
 
-void GRINS::IncompressibleNavierStokes::init_variables( FEMSystem* system )
+void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* system )
 {
   this->_dim = system->get_mesh().mesh_dimension();
 
@@ -61,7 +61,7 @@ void GRINS::IncompressibleNavierStokes::init_variables( FEMSystem* system )
   return;
 }
 
-void GRINS::IncompressibleNavierStokes::set_time_evolving_vars( FEMSystem* system )
+void GRINS::IncompressibleNavierStokes::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -101,7 +101,7 @@ void GRINS::IncompressibleNavierStokes::init_context( libMesh::DiffContext &cont
 
 bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_jacobian,
 								 libMesh::DiffContext& context,
-								 FEMSystem* system )
+								 libMesh::FEMSystem* system )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
@@ -215,22 +215,22 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
         {
           Fu(i) += JxW[qp] *
                    (-_rho*vel_phi[i][qp]*(Uvec*graduvec)     // convection term
-                    +p*vel_gblgradphivec[i][qp](0)          // pressure term
+                    +p*vel_gblgradphivec[i][qp](0)           // pressure term
                     -_mu*(vel_gblgradphivec[i][qp]*graduvec) // diffusion term
-                    +vel_phi[i][qp]*force(0));              // forcing function
+                    +vel_phi[i][qp]*force(0));               // forcing function
 
           Fv(i) += JxW[qp] *
                    (-_rho*vel_phi[i][qp]*(Uvec*gradvvec)     // convection term
-                    +p*vel_gblgradphivec[i][qp](1)          // pressure term
+                    +p*vel_gblgradphivec[i][qp](1)           // pressure term
                     -_mu*(vel_gblgradphivec[i][qp]*gradvvec) // diffusion term
-                    +vel_phi[i][qp]*force(1));              // forcing function
+                    +vel_phi[i][qp]*force(1));               // forcing function
           if (_dim == 3)
             {
               Fw(i) += JxW[qp] *
                        (-_rho*vel_phi[i][qp]*(Uvec*gradwvec)     // convection term
-                        +p*vel_gblgradphivec[i][qp](2)          // pressure term
+                        +p*vel_gblgradphivec[i][qp](2)           // pressure term
                         -_mu*(vel_gblgradphivec[i][qp]*gradwvec) // diffusion term
-                        +vel_phi[i][qp]*force(2));              // forcing function
+                        +vel_phi[i][qp]*force(2));               // forcing function
             }
 
           if (request_jacobian && c.elem_solution_derivative)
@@ -296,7 +296,7 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
 
 bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobian,
 							    libMesh::DiffContext& context,
-							    FEMSystem* system )
+							    libMesh::FEMSystem* system )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
@@ -377,14 +377,14 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
 
 bool GRINS::IncompressibleNavierStokes::side_time_derivative( bool request_jacobian,
 							      libMesh::DiffContext& context,
-							      FEMSystem* system )
+							      libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
 bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 							 libMesh::DiffContext& context,
-							 FEMSystem* system )
+							 libMesh::FEMSystem* system )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
@@ -553,7 +553,7 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 
 bool GRINS::IncompressibleNavierStokes::mass_residual( bool request_jacobian,
 						       libMesh::DiffContext& context,
-						       FEMSystem* system )
+						       libMesh::FEMSystem* system )
 {
   // TODO: account for rho factor in mass matrix
   return request_jacobian;

@@ -44,7 +44,7 @@ void GRINS::Physics::read_input_options( GetPot& input )
   return;
 }
 
-void GRINS::Physics::set_time_evolving_vars( FEMSystem* system )
+void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   return;
 }
