@@ -34,6 +34,7 @@
 
 #include "getpot.h"
 #include "libmesh.h"
+#include "libmesh_logging.h"
 #include "mesh.h"
 #include "diff_solver.h"
 #include "equation_systems.h"
@@ -75,8 +76,6 @@ namespace GRINS
   private:
     
     // Linear/Nonlinear solver options
-    bool _solver_quiet;
-    bool _solver_verbose;
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
     double _absolute_step_tolerance;
@@ -107,6 +106,9 @@ namespace GRINS
     // Screen display options
     bool _print_mesh_info;
     bool _print_log_info;
+    bool _solver_quiet;
+    bool _solver_verbose;
+    bool _print_equation_system_info;
 
     void dump_visualization( std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );

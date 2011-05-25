@@ -47,10 +47,15 @@ namespace GRINS
 {
   //! More descriptive name of the type used for (owned) variable indices
   typedef unsigned int VariableIndex;
+
   //! More descriptive name of the type used for (registered) variable indices
   typedef unsigned int RegtdVariableIndex;
-  //TODO: add comment
+
+  //! Map between variable name and system index
   typedef std::map<std::string,VariableIndex> VariableMap;
+  typedef std::map<std::string,VariableIndex>::iterator VariableMapIt;
+  typedef std::map<std::string,VariableIndex>::const_iterator VariableMapConstIt;
+  
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
@@ -97,9 +102,11 @@ namespace GRINS
 
     //! Registers variables for coupled physics.
     /*!
-      Each physics might need access to other physics variables, so this method registers them in individual physics.
+      Each physics might need access to other physics variables, 
+      so this method registers them in individual physics. By default,
+      no variables are registered.
     */
-    virtual void register_variable_indices( libMesh::FEMSystem* system ) = 0;
+    virtual void register_variable_indices( VariableMap& global_map );
 
     //! Set which variables are time evolving.
     /*!
@@ -141,6 +148,14 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
+    //! Variable map for this physics
+    /*
+      Force the derived class to build the local physics variable map.
+      User must also set _local_variable_map_built = true or the getter
+      function will error.
+     */
+    virtual void build_local_variable_map() = 0;
+
     //! Returns indices for physics variables
     /*!
       Other physics might need access to this physics variables, so this method returns a copy
@@ -156,6 +171,9 @@ namespace GRINS
 
     //! Map from std::string variable name to variable index value
     VariableMap _var_map;
+
+    //! Need to a way to double check that the local variable map was built
+    bool _local_variable_map_built;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

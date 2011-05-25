@@ -97,12 +97,25 @@ void GRINS::MultiphysicsSystem::init_data()
       (physics_iter->second)->init_variables( this );
     }
 
-  // Next, call register_variable_indices in each physics.
+  // Next, call register_variable_indices in each physics. We do this
+  // by buidling up a "global" variable map for all the physics, then
+  // pass this to each physics so it can grab the varible it wants.
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->register_variable_indices( this );
+      VariableMap local_map = (physics_iter->second)->get_variable_indices_map();
+
+      _global_map.insert( local_map.begin(), local_map.end() );
+    }
+
+  //this->dump_global_variable_map();
+
+  for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
+    {
+      (physics_iter->second)->register_variable_indices( _global_map );
     }
 
   // Next, call parent init_data function to intialize everything.
@@ -210,6 +223,21 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
   return request_jacobian;
+}
+
+void GRINS::MultiphysicsSystem::dump_global_variable_map( )
+{
+  std::cout << "Dumping Variable map" << std::endl;
+  for( GRINS::VariableMapConstIt it = _global_map.begin();
+       it != _global_map.end();
+       it++ )
+    {
+      std::cout << "Variable: " << it->first
+		<< ", Index: " << it->second << std::endl; 
+    }
+  std::cout << "Done dumping variable map" << std::endl;
+
+  return;
 }
 
 #ifdef USE_GRVY_TIMERS

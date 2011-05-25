@@ -7,9 +7,9 @@ mesh_nx2 = 10
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = true 
 theta = 0.5
-n_timesteps = 1
+n_timesteps = 10
 deltat = 0.1
 
 #Linear and nonlinear solver options
@@ -27,6 +27,7 @@ vis_output_file_prefix = test
 
 # Options for print info to the screen
 [screen-options]
+print_equation_system_info = true
 print_mesh_info = true
 print_log_info = true
 solver_verbose = true

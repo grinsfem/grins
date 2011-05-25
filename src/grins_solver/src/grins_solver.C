@@ -83,10 +83,11 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
 
   // Screen display options
-  this->_print_mesh_info = input("screen-options/print_mesh_info", false );
-  this->_print_log_info  = input("screen-options/print_log_info", false );
-  this->_solver_quiet    = input("screen-options/solver_quiet", false );
-  this->_solver_verbose  = input("screen-options/solver_verbose", false );
+  this->_print_mesh_info            = input("screen-options/print_mesh_info", false );
+  this->_print_log_info             = input("screen-options/print_log_info", false );
+  this->_solver_quiet               = input("screen-options/solver_quiet", false );
+  this->_solver_verbose             = input("screen-options/solver_verbose", false );
+  this->_print_equation_system_info = input("screen-options/print_equation_system_info", false );
 
   return;
 }
@@ -159,6 +160,9 @@ void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input
 
   // Initialize the system
   this->_equation_systems->init();
+
+  // Print info if requested
+  if( this->_print_equation_system_info ) this->_equation_systems->print_info();
 
   // Get diff solver to set options
   libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());

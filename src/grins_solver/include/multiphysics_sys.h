@@ -130,6 +130,8 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
+    void dump_global_variable_map( );
+
 #ifdef USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -141,6 +143,8 @@ namespace GRINS
     //    ""IncompressibleNavierStokes", "HeatTransfer" ...
     // TODO: use AutoPtr instead?
     PhysicsList _physics_list;
+
+    GRINS::VariableMap _global_map;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

@@ -48,6 +48,7 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 
 void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* system )
 {
+  // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
 
   _u_var = system->add_variable( "u", this->_V_order, _FE_family);
@@ -58,13 +59,22 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
 
   _p_var = system->add_variable( "p", this->_P_order, _FE_family);
 
+  // Now build the local map
+  this->build_local_variable_map();
+
   return;
 }
 
-void GRINS::IncompressibleNavierStokes::register_variable_indices( libMesh::FEMSystem* system )
+void GRINS::IncompressibleNavierStokes::build_local_variable_map()
 {
+  _var_map["u"] = _u_var;
+  _var_map["v"] = _v_var;
+  if (_dim == 3)
+    _var_map["w"] = _w_var;
+  
+  _var_map["p"] = _p_var;
 
-  //TODO: get _var_map, loop over map and register variables
+  this->_local_variable_map_built = true;
 
   return;
 }

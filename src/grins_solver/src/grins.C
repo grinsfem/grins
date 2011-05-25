@@ -43,6 +43,8 @@
 // System types that we might want to instantiate
 #include "multiphysics_sys.h"
 
+#include "parallel.h"
+
 int main(int argc, char* argv[]) {
 
   // Check command line count.
@@ -113,7 +115,8 @@ int main(int argc, char* argv[]) {
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();
-  grvy_timer.Summarize();
+ 
+  if( Parallel::Communicator_World.rank() == 0 ) grvy_timer.Summarize();
 #endif
 
   return 0;

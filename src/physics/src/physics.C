@@ -30,6 +30,7 @@
 #include "physics.h"
 
 GRINS::Physics::Physics()
+  : _local_variable_map_built(false)
 {
   return;
 }
@@ -51,7 +52,19 @@ void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
 
 GRINS::VariableMap GRINS::Physics::get_variable_indices_map()
 {
+  if( !_local_variable_map_built )
+    {
+      std::cerr << "Error: Must build local variable map before it can be returned."
+		<< std::endl;
+      libmesh_error(); //TODO: Do we want libmesh_error as our error handler?
+    }
+
   return _var_map;
+}
+
+void GRINS::Physics::register_variable_indices( VariableMap& global_map )
+{
+  return;
 }
 
 #ifdef USE_GRVY_TIMERS

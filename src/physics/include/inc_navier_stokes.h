@@ -57,6 +57,7 @@ namespace GRINS
   public:
 
     IncompressibleNavierStokes()
+      : Physics()
     {};
 
     ~IncompressibleNavierStokes()
@@ -70,9 +71,6 @@ namespace GRINS
       Add velocity and pressure variables to system.
      */
     virtual void init_variables( libMesh::FEMSystem* system );
-
-    //! Register variables for coupled physics
-    virtual void register_variable_indices( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
@@ -105,6 +103,8 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
+
+    virtual void build_local_variable_map();
 
   protected:
 
