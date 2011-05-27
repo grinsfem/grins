@@ -28,7 +28,8 @@ grins_SRC    = $(grins_srcdir)/grins_solver.C \
                $(grins_srcdir)/multiphysics_sys.C
 
 physics_SRC  = $(physics_srcdir)/physics.C \
-               $(physics_srcdir)/inc_navier_stokes.C
+               $(physics_srcdir)/inc_navier_stokes.C \
+               $(physics_srcdir)/heat_transfer.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -41,7 +42,8 @@ grins_INC    = $(grins_incdir)/grins_solver.h \
                $(grins_incdir)/multiphysics_sys.h
 
 physics_INC  = $(physics_incdir)/physics.h \
-               $(physics_incdir)/inc_navier_stokes.h
+               $(physics_incdir)/inc_navier_stokes.h \
+               $(physics_incdir)/heat_transfer.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 

@@ -162,32 +162,32 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
 
   // The subvectors and submatrices we need to fill:
   //
-  // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } )where R is residual)
-  // e.g., for \alpha = v and \beta = u we get: Kvu = Rv,u
+  // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
+  // e.g., for \alpha = v and \beta = u we get: K{vu} = R_{v},{u}
   // Note that Kpu, Kpv, Kpw and Fp comes as constraint.
   //
   if (_dim != 3)
     _w_var = _u_var; // for convenience
 
-  libMesh::DenseSubMatrix<Number> &Kuu = *c.elem_subjacobians[_u_var][_u_var]; // Ru,u
-  libMesh::DenseSubMatrix<Number> &Kuv = *c.elem_subjacobians[_u_var][_v_var]; // Ru,v
-  libMesh::DenseSubMatrix<Number> &Kuw = *c.elem_subjacobians[_u_var][_w_var]; // Ru,w
+  libMesh::DenseSubMatrix<Number> &Kuu = *c.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
+  libMesh::DenseSubMatrix<Number> &Kuv = *c.elem_subjacobians[_u_var][_v_var]; // R_{u},{v}
+  libMesh::DenseSubMatrix<Number> &Kuw = *c.elem_subjacobians[_u_var][_w_var]; // R_{u},{w}
 
-  libMesh::DenseSubMatrix<Number> &Kvu = *c.elem_subjacobians[_v_var][_u_var]; // Rv,u
-  libMesh::DenseSubMatrix<Number> &Kvv = *c.elem_subjacobians[_v_var][_v_var]; // Rv,v
-  libMesh::DenseSubMatrix<Number> &Kvw = *c.elem_subjacobians[_v_var][_w_var]; // Rv,w
+  libMesh::DenseSubMatrix<Number> &Kvu = *c.elem_subjacobians[_v_var][_u_var]; // R_{v},{u}
+  libMesh::DenseSubMatrix<Number> &Kvv = *c.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
+  libMesh::DenseSubMatrix<Number> &Kvw = *c.elem_subjacobians[_v_var][_w_var]; // R_{v},{w}
 
-  libMesh::DenseSubMatrix<Number> &Kwu = *c.elem_subjacobians[_w_var][_u_var]; // Rw,u
-  libMesh::DenseSubMatrix<Number> &Kwv = *c.elem_subjacobians[_w_var][_v_var]; // Rw,v
-  libMesh::DenseSubMatrix<Number> &Kww = *c.elem_subjacobians[_w_var][_w_var]; // Rw,w
+  libMesh::DenseSubMatrix<Number> &Kwu = *c.elem_subjacobians[_w_var][_u_var]; // R_{w},{u}
+  libMesh::DenseSubMatrix<Number> &Kwv = *c.elem_subjacobians[_w_var][_v_var]; // R_{w},{v}
+  libMesh::DenseSubMatrix<Number> &Kww = *c.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
 
-  libMesh::DenseSubMatrix<Number> &Kup = *c.elem_subjacobians[_u_var][_p_var]; // Ru,p
-  libMesh::DenseSubMatrix<Number> &Kvp = *c.elem_subjacobians[_v_var][_p_var]; // Ru,p
-  libMesh::DenseSubMatrix<Number> &Kwp = *c.elem_subjacobians[_w_var][_p_var]; // Rw,p
+  libMesh::DenseSubMatrix<Number> &Kup = *c.elem_subjacobians[_u_var][_p_var]; // R_{u},{p}
+  libMesh::DenseSubMatrix<Number> &Kvp = *c.elem_subjacobians[_v_var][_p_var]; // R_{v},{p}
+  libMesh::DenseSubMatrix<Number> &Kwp = *c.elem_subjacobians[_w_var][_p_var]; // R_{w},{p}
 
-  libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // Ru
-  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // Rv
-  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // Rw
+  libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // R_{u}
+  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // R_{v}
+  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // R_{w}
 
   // Now we will build the element Jacobian and residual.
   // Constructing the residual requires the solution and its
@@ -299,7 +299,7 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
                     }
                 } // end of the inner dof (j) loop
 
-              // Matrix contributions for the up and vp couplings
+              // Matrix contributions for the up, vp and wp couplings
               for (unsigned int j=0; j != n_p_dofs; j++)
                 {
                   Kup(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](0)*p_phi[j][qp];
@@ -357,11 +357,11 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
   if (_dim != 3)
     _w_var = _u_var; // for convenience
 
-  libMesh::DenseSubMatrix<Number> &Kpu = *c.elem_subjacobians[_p_var][_u_var]; // Rp,u
-  libMesh::DenseSubMatrix<Number> &Kpv = *c.elem_subjacobians[_p_var][_v_var]; // Rp,u
-  libMesh::DenseSubMatrix<Number> &Kpw = *c.elem_subjacobians[_p_var][_w_var]; // Rp,u
+  libMesh::DenseSubMatrix<Number> &Kpu = *c.elem_subjacobians[_p_var][_u_var]; // R_{p},{u}
+  libMesh::DenseSubMatrix<Number> &Kpv = *c.elem_subjacobians[_p_var][_v_var]; // R_{p},{v}
+  libMesh::DenseSubMatrix<Number> &Kpw = *c.elem_subjacobians[_p_var][_w_var]; // R_{p},{w}
 
-  libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // Rp
+  libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // R_{p}
 
   // Add the constraint given by the continuity equation.
   unsigned int n_qpoints = c.element_qrule->n_points();
@@ -449,13 +449,13 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
   if (_dim != 3)
     _w_var = _u_var; // for convenience
 
-  libMesh::DenseSubMatrix<Number> &Kuu = *c.elem_subjacobians[_u_var][_u_var]; // Ru,u
-  libMesh::DenseSubMatrix<Number> &Kvv = *c.elem_subjacobians[_v_var][_v_var]; // Rv,v
-  libMesh::DenseSubMatrix<Number> &Kww = *c.elem_subjacobians[_w_var][_w_var]; // Rw,w
+  libMesh::DenseSubMatrix<Number> &Kuu = *c.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
+  libMesh::DenseSubMatrix<Number> &Kvv = *c.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
+  libMesh::DenseSubMatrix<Number> &Kww = *c.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
 
-  libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // Ru
-  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // Rv
-  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // Rw
+  libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // R_{u}
+  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // R_{v}
+  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // R_{w}
 
   // For this example we will use Dirichlet velocity boundary
   // conditions imposed at each timestep via the penalty method.
@@ -557,8 +557,8 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
       // The pressure penalty value.  \f$ \frac{1}{\epsilon} \f$
       const libMesh::Real p_penalty = 1.e9;
 
-      libMesh::DenseSubMatrix<Number> &Kpp = *c.elem_subjacobians[_p_var][_p_var]; // Rp,p
-      libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // Rp
+      libMesh::DenseSubMatrix<Number> &Kpp = *c.elem_subjacobians[_p_var][_p_var]; // R_{p},{p}
+      libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // R_{p}
 
       // The number of local degrees of freedom in p variable.
       const unsigned int n_p_dofs = c.dof_indices_var[_p_var].size();
@@ -597,7 +597,7 @@ bool GRINS::IncompressibleNavierStokes::mass_residual( bool request_jacobian,
 						       libMesh::DiffContext& context,
 						       libMesh::FEMSystem* system )
 {
-  // TODO: account for rho factor in mass matrix
+  // TODO: account for 'rho' factor in mass matrix
   return request_jacobian;
 }
 
