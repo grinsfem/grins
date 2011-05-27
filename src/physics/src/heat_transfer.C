@@ -32,7 +32,7 @@
 void GRINS::HeatTransfer::read_input_options( GetPot& input )
 {
   this->_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTrans/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
 
   this->_T_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
@@ -93,7 +93,8 @@ void GRINS::HeatTransfer::init_context( libMesh::DiffContext &context )
   c.side_fe_var[_T_var]->get_dphi();
   c.side_fe_var[_T_var]->get_xyz();
 
-  //TODO: _u_var is registered so can we assume things available for it in FEMContext?
+  //TODO: _u_var is registered so can we assume things related to _u_var
+  //      are available in FEMContext
 
   return;
 }
@@ -127,7 +128,6 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
   // The velocity shape functions at interior quadrature points.
   const std::vector<std::vector<libMesh::Real> >& vel_phi =
     c.element_fe_var[_u_var]->get_phi();
-
 
   // The temperature shape function gradients (in global coords.)
   // at interior quadrature points.
@@ -185,8 +185,8 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
         {
           FT(i) += JxW[qp] *
                    (-_rho*_Cp*T_phi[i][qp]*(Uvec*gradTvec) // convection term
-                    -_k*(T_gblgradphivec[i][qp]*gradTvec) // diffusion term
-                    +T_phi[i][qp]*heat_source);           // source term
+                    -_k*(T_gblgradphivec[i][qp]*gradTvec)  // diffusion term
+                    +T_phi[i][qp]*heat_source);            // source term
 
           if (request_jacobian && c.elem_solution_derivative)
             {
@@ -195,7 +195,7 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
               for (unsigned int j=0; j != n_T_dofs; j++)
                 {
                   // TODO: precompute some terms like:
-                  // _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp])
+                  //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp])
 
                   KTT(i,j) += JxW[qp] *
                               (-_rho*_Cp*T_phi[i][qp]*(Uvec*T_gblgradphivec[j][qp])  // convection term
