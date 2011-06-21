@@ -6,7 +6,7 @@ AC_INIT(grins, 0.2.0, pbauman@ices.utexas.edu)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE(grins,0.2.0)
+AM_INIT_AUTOMAKE([silent-rules])
 
 dnl Release versioning
 
