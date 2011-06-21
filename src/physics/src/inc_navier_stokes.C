@@ -43,6 +43,11 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
   this->_rho = input("Physics/IncompNS/rho", 1.0);
   this->_mu  = input("Physics/IncompNS/mu", 1.0);
 
+  this->_u_var_name = input("Physics/VariableNames/u_velocity", "u" );
+  this->_v_var_name = input("Physics/VariableNames/v_velocity", "v" );
+  this->_w_var_name = input("Physics/VariableNames/w_velocity", "w" );
+  this->_p_var_name = input("Physics/VariableNames/pressure", "p" );
+
   return;
 }
 
@@ -51,13 +56,13 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
 
-  _u_var = system->add_variable( "u", this->_V_order, _FE_family);
-  _v_var = system->add_variable( "v", this->_V_order, _FE_family);
+  _u_var = system->add_variable( _u_var_name, this->_V_order, _FE_family);
+  _v_var = system->add_variable( _v_var_name, this->_V_order, _FE_family);
 
   if (_dim == 3)
-    _w_var = system->add_variable( "w", this->_V_order, _FE_family);
+    _w_var = system->add_variable( _w_var_name, this->_V_order, _FE_family);
 
-  _p_var = system->add_variable( "p", this->_P_order, _FE_family);
+  _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
 
   // Now build the local map
   this->build_local_variable_map();
@@ -67,12 +72,12 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
 
 void GRINS::IncompressibleNavierStokes::build_local_variable_map()
 {
-  _var_map["u"] = _u_var;
-  _var_map["v"] = _v_var;
+  _var_map[_u_var_name] = _u_var;
+  _var_map[_v_var_name] = _v_var;
   if (_dim == 3)
-    _var_map["w"] = _w_var;
+    _var_map[_w_var_name] = _w_var;
   
-  _var_map["p"] = _p_var;
+  _var_map[_p_var_name] = _p_var;
 
   this->_local_variable_map_built = true;
 

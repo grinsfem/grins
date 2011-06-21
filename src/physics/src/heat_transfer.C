@@ -41,6 +41,12 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   this->_Cp  = input("Physics/HeatTransfer/Cp", 1.0);
   this->_k  = input("Physics/HeatTransfer/k", 1.0);
 
+  this->_T_var_name = input("Physics/VariableNames/Temperature", "T" );
+  this->_u_var_name = input("Physics/VariableNames/u_velocity", "u" );
+  this->_v_var_name = input("Physics/VariableNames/v_velocity", "v" );
+  this->_w_var_name = input("Physics/VariableNames/w_velocity", "w" );
+  this->_p_var_name = input("Physics/VariableNames/pressure", "p" );
+
   return;
 }
 
@@ -49,7 +55,7 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
 
-  _T_var = system->add_variable( "T", this->_T_order, _FE_family);
+  _T_var = system->add_variable( _T_var_name, this->_T_order, _FE_family);
 
   // Now build the local map
   this->build_local_variable_map();
@@ -57,9 +63,19 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
   return;
 }
 
+void GRINS::HeatTransfer::register_variable_indices( VariableMap& global_map )
+{
+  _u_var = global_map[_u_var_name];
+  _v_var = global_map[_v_var_name];
+  _w_var = global_map[_w_var_name];
+  _p_var = global_map[_p_var_name];
+
+  return;
+}
+
 void GRINS::HeatTransfer::build_local_variable_map()
 {
-  _var_map["T"] = _T_var;
+  _var_map[_T_var_name] = _T_var;
 
   this->_local_variable_map_built = true;
 

@@ -48,4 +48,12 @@ P_order = FIRST
 rho = 1.0
 mu = 1.0
 
+[../VariableNames]
+
+Temperature = "T"
+u_velocity = "u"
+v_velocity = "v"
+w_velocity = "w"
+pressure = "p"
+
 []

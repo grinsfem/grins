@@ -126,7 +126,7 @@ namespace GRINS
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context );
     
-    // Contributions to \f$M(u)\dot{u}\f$
+    //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 

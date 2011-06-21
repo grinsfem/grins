@@ -72,6 +72,9 @@ namespace GRINS
      */
     virtual void init_variables( libMesh::FEMSystem* system );
 
+    //! Register external physics variables
+    virtual void register_variable_indices( VariableMap& global_map );
+
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -123,6 +126,10 @@ namespace GRINS
     RegtdVariableIndex _w_var; /* Index for velocity_z field */
     RegtdVariableIndex _p_var; /* Index for pressure field */
     RegtdVariableIndex _E_var;  /* Index for electric field */
+
+    //! Names of each variable in the system
+    std::string _T_var_name, _u_var_name, _v_var_name, _w_var_name,
+      _p_var_name, _E_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;

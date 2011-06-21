@@ -117,15 +117,8 @@ namespace GRINS
     VariableIndex _w_var; /* Index for velocity_z field */
     VariableIndex _p_var; /* Index for pressure field */
 
-    //! Indices for each (registered) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _T_var;  /* Index for temperature field */
-    RegtdVariableIndex _E_var;  /* Index for electric field */
-    RegtdVariableIndex _Bx_var; /* Index for Bx field */
-    RegtdVariableIndex _By_var; /* Index for By field */
-    RegtdVariableIndex _Bz_var; /* Index for Bz field */
+     //! Names of each variable in the system
+    std::string  _u_var_name, _v_var_name, _w_var_name, _p_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
