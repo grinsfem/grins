@@ -21,9 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// Definitions for the IncompressibleNavierStokes class.
-//
 // $Id$
+//
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
@@ -43,10 +42,10 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
   this->_rho = input("Physics/IncompNS/rho", 1.0);
   this->_mu  = input("Physics/IncompNS/mu", 1.0);
 
-  this->_u_var_name = input("Physics/VariableNames/u_velocity", "u" );
-  this->_v_var_name = input("Physics/VariableNames/v_velocity", "v" );
-  this->_w_var_name = input("Physics/VariableNames/w_velocity", "w" );
-  this->_p_var_name = input("Physics/VariableNames/pressure", "p" );
+  this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
+  this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
+  this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
+  this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
 
   return;
 }

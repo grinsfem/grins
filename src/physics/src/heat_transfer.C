@@ -21,9 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// Definitions for the HeatTransfer class.
-//
 // $Id$
+//
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
@@ -41,17 +40,21 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   this->_Cp  = input("Physics/HeatTransfer/Cp", 1.0);
   this->_k  = input("Physics/HeatTransfer/k", 1.0);
 
-  this->_T_var_name = input("Physics/VariableNames/Temperature", "T" );
+  this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
-  // registered/non-owned variable names are assigned as "null" by default
-  this->_u_var_name = input("Physics/VariableNames/u_velocity", "null" );
-  this->_v_var_name = input("Physics/VariableNames/v_velocity", "null" );
-  this->_w_var_name = input("Physics/VariableNames/w_velocity", "null" );
-  this->_p_var_name = input("Physics/VariableNames/pressure", "null" );
-  this->_Ex_var_name = input("Physics/VariableNames/Ex_field", "null" );
-  this->_Ey_var_name = input("Physics/VariableNames/Ey_field", "null" );
-  this->_Ez_var_name = input("Physics/VariableNames/Ez_field", "null" );
-
+  // registered/non-owned variable names
+  this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
+  this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
+  this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
+  
+  //\todo{These are not used in this class. Why are they here???
+  //      We should only be registering variables that are used!}
+  /*
+    this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
+    this->_Ex_var_name = input("Physics/VariableNames/Ex_field", GRINS::Ex_var_name_default );
+    this->_Ey_var_name = input("Physics/VariableNames/Ey_field", GRINS::Ey_var_name_default );
+    this->_Ez_var_name = input("Physics/VariableNames/Ez_field", GRINS::Ez_var_name_defaul );
+  */
   return;
 }
 
@@ -70,21 +73,18 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
 
 void GRINS::HeatTransfer::register_variable_indices( VariableMap& global_map )
 {
-  if(_u_var_name!="null")
     _u_var = global_map[_u_var_name];
-  if(_v_var_name!="null")
     _v_var = global_map[_v_var_name];
-  if(_w_var_name!="null")
     _w_var = global_map[_w_var_name];
-  if(_p_var_name!="null")
-    _p_var = global_map[_p_var_name];
-  if(_Ex_var_name!="null")
-    _Ex_var = global_map[_Ex_var_name];
-  if(_Ey_var_name!="null")
-    _Ey_var = global_map[_Ey_var_name];
-  if(_Ez_var_name!="null")
-    _Ez_var = global_map[_Ez_var_name];
 
+    //\todo{These are not used in this class. Why are they here???
+    //      We should only be registering variables that are used!}
+    /*
+    _p_var = global_map[_p_var_name];
+    _Ex_var = global_map[_Ex_var_name];
+    _Ey_var = global_map[_Ey_var_name];
+    _Ez_var = global_map[_Ez_var_name];
+    */
   return;
 }
 
@@ -174,6 +174,11 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
   // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
   // e.g., for \alpha = T and \beta = v we get: K_{Tu} = R_{T},{u}
   //
+
+  // We do this in the incompressible Navier-Stokes class and need to do it here too
+  // since _w_var won't have been defined in the global map.
+  if (_dim != 3)
+    _w_var = _u_var; // for convenience
 
   libMesh::DenseSubMatrix<Number> &KTT = *c.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
 

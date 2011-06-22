@@ -7,9 +7,9 @@ mesh_nx2 = 10
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = true 
+transient = false 
 theta = 0.5
-n_timesteps = 10
+n_timesteps = 1
 deltat = 0.1
 
 #Linear and nonlinear solver options
@@ -51,8 +51,8 @@ mu = 1.0
 [../VariableNames]
 
 Temperature = "T"
-u_velocity = "u"
-v_velocity = "v"
+u_velocity = "u_var"
+v_velocity = "v_var"
 w_velocity = "w"
 pressure = "p"
 

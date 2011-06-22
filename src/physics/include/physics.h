@@ -38,6 +38,9 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+//Including this here so every physics class automatically gets it.
+#include "variable_name_defaults.h"
+
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif

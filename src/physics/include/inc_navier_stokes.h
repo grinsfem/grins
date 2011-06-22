@@ -21,9 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// Declarations for the IncompressibleNavierStokes class.
-//
 // $Id$
+//
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
@@ -49,7 +48,7 @@ namespace GRINS
 {
 
   //! Physics class for Incompressible Navier-Stokes
-  /*
+  /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
    */
   class IncompressibleNavierStokes : public Physics

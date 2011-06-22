@@ -42,6 +42,7 @@ grins_INC    = $(grins_incdir)/grins_solver.h \
                $(grins_incdir)/multiphysics_sys.h
 
 physics_INC  = $(physics_incdir)/physics.h \
+               $(physics_incdir)/variable_name_defaults.h \
                $(physics_incdir)/inc_navier_stokes.h \
                $(physics_incdir)/heat_transfer.h
 
