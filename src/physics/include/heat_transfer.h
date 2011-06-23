@@ -126,14 +126,9 @@ namespace GRINS
     RegtdVariableIndex _u_var; /* Index for x-velocity field */
     RegtdVariableIndex _v_var; /* Index for y-velocity field */
     RegtdVariableIndex _w_var; /* Index for z-velocity field */
-    RegtdVariableIndex _p_var; /* Index for pressure field */
-    RegtdVariableIndex _Ex_var; /* Index for Ex field */
-    RegtdVariableIndex _Ey_var; /* Index for Ey field */
-    RegtdVariableIndex _Ez_var; /* Index for Ez field */
 
     //! Names of each (non-owned) variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name,
-      _Ex_var_name, _Ey_var_name, _Ez_var_name;
+    std::string _u_var_name, _v_var_name, _w_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;

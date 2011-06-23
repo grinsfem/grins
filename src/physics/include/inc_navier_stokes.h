@@ -119,22 +119,6 @@ namespace GRINS
     //! Names of each (owned) variable in the system
     std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name;
 
-    //! Indices for each (registered/non-owned) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _T_var;  /* Index for temperature field */
-    RegtdVariableIndex _Ex_var; /* Index for Ex field */
-    RegtdVariableIndex _Ey_var; /* Index for Ey field */
-    RegtdVariableIndex _Ez_var; /* Index for Ez field */
-    RegtdVariableIndex _Bx_var; /* Index for Bx field */
-    RegtdVariableIndex _By_var; /* Index for By field */
-    RegtdVariableIndex _Bz_var; /* Index for Bz field */
-
-    //! Names of each (non-owned) variable in the system
-    std::string _T_var_name, _Ex_var_name, _Ey_var_name, _Ez_var_name,
-                 _Bx_var_name, _By_var_name, _Bz_var_name;
-
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
 

@@ -47,14 +47,6 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
   
-  //\todo{These are not used in this class. Why are they here???
-  //      We should only be registering variables that are used!}
-  /*
-    this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
-    this->_Ex_var_name = input("Physics/VariableNames/Ex_field", GRINS::Ex_var_name_default );
-    this->_Ey_var_name = input("Physics/VariableNames/Ey_field", GRINS::Ey_var_name_default );
-    this->_Ez_var_name = input("Physics/VariableNames/Ez_field", GRINS::Ez_var_name_defaul );
-  */
   return;
 }
 
@@ -73,18 +65,10 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
 
 void GRINS::HeatTransfer::register_variable_indices( VariableMap& global_map )
 {
-    _u_var = global_map[_u_var_name];
-    _v_var = global_map[_v_var_name];
-    _w_var = global_map[_w_var_name];
+  _u_var = global_map[_u_var_name];
+  _v_var = global_map[_v_var_name];
+  _w_var = global_map[_w_var_name];
 
-    //\todo{These are not used in this class. Why are they here???
-    //      We should only be registering variables that are used!}
-    /*
-    _p_var = global_map[_p_var_name];
-    _Ex_var = global_map[_Ex_var_name];
-    _Ey_var = global_map[_Ey_var_name];
-    _Ez_var = global_map[_Ez_var_name];
-    */
   return;
 }
 
