@@ -126,10 +126,12 @@ namespace GRINS
     libMeshEnums::Order _V_order, _P_order;
 
     //! Material parameters, read from input
-    // TODO: Is it safe to assume these are constant, or do we want
-    // TODO: to create objects to allow spatial variation?
+    /** \todo Create objects to allow for function specification */
     libMesh::Number _rho, _mu;
 
+    //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
+    std::map< unsigned int, std::vector<double> > _bound_values;
+    
     //! Returns the value of a forcing function at point pt_xyz.
     // This value depends on which option is set.
     // TODO: any other option to return? other than libMesh::Point?

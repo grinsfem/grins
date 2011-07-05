@@ -25,49 +25,20 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-
-#include <string>
-
+#ifndef BC_TYPES_H
+#define BC_TYPES_H
 namespace GRINS
 {
-  //! Default physics variable names
-  /*!
-    These are the default string names for all the available physcis
-    variables. These can be reset by the user, but we provide sane defaults
-    here.
-   */
-  /** \todo Should we put the default physics variable names in a 
-            class instead of just GRINS namespace? */
-  //! x-velocity
-  const std::string u_var_name_default = "u";
-  
-  //! y-velocity
-  const std::string v_var_name_default = "v";
-  
-  //! z-velocity
-  const std::string w_var_name_default = "w";
-
-  //! pressure
-  const std::string p_var_name_default = "p";
-
-  //! temperature
-  const std::string T_var_name_default = "T";
-  
-  //! Ex field
-  const std::string Ex_var_name_default = "Ex";
-  
-  //! Ey field
-  const std::string Ey_var_name_default = "Ey";
-
-  //! Ez field
-  const std::string Ez_var_name_default = "Ez";
-
-  //! Bx field
-  const std::string Bx_var_name_default = "Bx";
-  
-  //! By field
-  const std::string By_var_name_default = "By";
-
-  //! Bz field
-  const std::string Bz_var_name_default = "Bz";
+  enum BC_TYPES{ DO_NOTHING = 0, //Should always be first
+		 NO_SLIP,
+		 NO_FLOW,
+		 PRESCRIBED_VELOCITY,
+		 INFLOW,
+		 OUTFLOW,
+		 ISOTHERMAL_WALL,
+		 ADIABATIC_WALL,
+		 PRESCRIBED_HEAT_FLUX,
+		 INVALID_BC_TYPE //Should always be last
+  };
 }
+#endif //BC_TYPES_H

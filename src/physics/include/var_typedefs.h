@@ -25,49 +25,23 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+#ifndef VAR_TYPEDEFS_H
+#define VAR_TYPEDEFS_H
 
 #include <string>
+#include <map>
 
 namespace GRINS
 {
-  //! Default physics variable names
-  /*!
-    These are the default string names for all the available physcis
-    variables. These can be reset by the user, but we provide sane defaults
-    here.
-   */
-  /** \todo Should we put the default physics variable names in a 
-            class instead of just GRINS namespace? */
-  //! x-velocity
-  const std::string u_var_name_default = "u";
-  
-  //! y-velocity
-  const std::string v_var_name_default = "v";
-  
-  //! z-velocity
-  const std::string w_var_name_default = "w";
+  //! More descriptive name of the type used for (owned) variable indices
+  typedef unsigned int VariableIndex;
 
-  //! pressure
-  const std::string p_var_name_default = "p";
+  //! More descriptive name of the type used for (registered) variable indices
+  typedef unsigned int RegtdVariableIndex;
 
-  //! temperature
-  const std::string T_var_name_default = "T";
-  
-  //! Ex field
-  const std::string Ex_var_name_default = "Ex";
-  
-  //! Ey field
-  const std::string Ey_var_name_default = "Ey";
-
-  //! Ez field
-  const std::string Ez_var_name_default = "Ez";
-
-  //! Bx field
-  const std::string Bx_var_name_default = "Bx";
-  
-  //! By field
-  const std::string By_var_name_default = "By";
-
-  //! Bz field
-  const std::string Bz_var_name_default = "Bz";
+  //! Map between variable name and system index
+  typedef std::map<std::string,VariableIndex> VariableMap;
+  typedef std::map<std::string,VariableIndex>::iterator VariableMapIt;
+  typedef std::map<std::string,VariableIndex>::const_iterator VariableMapConstIt;
 }
+#endif //VAR_TYPEDEFS_H

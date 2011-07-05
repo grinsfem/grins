@@ -37,8 +37,13 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
-//Including this here so every physics class automatically gets it.
+// Including this here so every physics class automatically gets it.
 #include "variable_name_defaults.h"
+#include "var_typedefs.h"
+
+// Boundary conditions
+#include "bc_types.h"
+#include "boundary_conditions.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -47,18 +52,6 @@
 //! GRINS namespace
 namespace GRINS
 {
-  //! More descriptive name of the type used for (owned) variable indices
-  typedef unsigned int VariableIndex;
-
-  //! More descriptive name of the type used for (registered) variable indices
-  typedef unsigned int RegtdVariableIndex;
-
-  //! Map between variable name and system index
-  typedef std::map<std::string,VariableIndex> VariableMap;
-  typedef std::map<std::string,VariableIndex>::iterator VariableMapIt;
-  typedef std::map<std::string,VariableIndex>::const_iterator VariableMapConstIt;
-  
-
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
     This abstract base class defines the API for use within the MultiphysicsSystem. Each physics
@@ -108,7 +101,7 @@ namespace GRINS
       so this method registers them in individual physics. By default,
       no variables are registered.
     */
-    virtual void register_variable_indices( VariableMap& global_map );
+    virtual void register_variable_indices( GRINS::VariableMap& global_map );
 
     //! Set which variables are time evolving.
     /*!
@@ -163,7 +156,7 @@ namespace GRINS
       Other physics might need access to this physics variables, so this method returns a copy
       of the map from the std::string name of the variable to the variable index in the system.
     */
-    VariableMap get_variable_indices_map();
+    GRINS::VariableMap get_variable_indices_map();
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -172,10 +165,18 @@ namespace GRINS
   protected:
 
     //! Map from std::string variable name to variable index value
-    VariableMap _var_map;
+    GRINS::VariableMap _var_map;
 
     //! Need to a way to double check that the local variable map was built
     bool _local_variable_map_built;
+
+    //! Map between boundary id and boundary condition type
+    std::map< unsigned int, GRINS::BC_TYPES> _bc_map;
+
+    //! Object that stashes generic boundary condition types
+    /** \todo Move this so that only one object is needed. 
+	        Perhaps make static? */
+    GRINS::BoundaryConditions _bound_conds;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

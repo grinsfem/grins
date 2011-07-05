@@ -25,49 +25,48 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+#ifndef BOUNDARY_CONDITIONS_H
+#define BOUNDARY_CONDITIONS_H
 
-#include <string>
+#include "bc_types.h"
+#include "var_typedefs.h"
+
+// libMesh stuff
+#include "libmesh.h"
+#include "boundary_info.h"
+#include "fe_base.h"
+#include "fe_interface.h"
+#include "mesh.h"
+#include "quadrature.h"
+#include "parameters.h"
+#include "string_to_enum.h"
+#include "fem_context.h"
 
 namespace GRINS
 {
-  //! Default physics variable names
+  //! Class to hold typical boundary condition methods
   /*!
-    These are the default string names for all the available physcis
-    variables. These can be reset by the user, but we provide sane defaults
-    here.
-   */
-  /** \todo Should we put the default physics variable names in a 
-            class instead of just GRINS namespace? */
-  //! x-velocity
-  const std::string u_var_name_default = "u";
-  
-  //! y-velocity
-  const std::string v_var_name_default = "v";
-  
-  //! z-velocity
-  const std::string w_var_name_default = "w";
+    This class holds functions to apply generic versions of
+    Dirichlet and Neumann boundary conditions.
+  */
+  class BoundaryConditions
+  {
+  public:
 
-  //! pressure
-  const std::string p_var_name_default = "p";
+    BoundaryConditions();
+    ~BoundaryConditions();
+    
+    void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
+			  const GRINS::VariableIndex var, const double value, 
+			  const double penalty = 1.0e10 );
 
-  //! temperature
-  const std::string T_var_name_default = "T";
-  
-  //! Ex field
-  const std::string Ex_var_name_default = "Ex";
-  
-  //! Ey field
-  const std::string Ey_var_name_default = "Ey";
+    void apply_neumann( libMesh::DiffContext &context,
+			GRINS::VariableIndex var1, 
+			GRINS::VariableIndex var2, double value, 
+			double jacobian_value );
 
-  //! Ez field
-  const std::string Ez_var_name_default = "Ez";
+    GRINS::BC_TYPES string_to_enum( const std::string bc_type );
 
-  //! Bx field
-  const std::string Bx_var_name_default = "Bx";
-  
-  //! By field
-  const std::string By_var_name_default = "By";
-
-  //! Bz field
-  const std::string Bz_var_name_default = "Bz";
+  };
 }
+#endif //BOUNDARY_CONDITIONS_H

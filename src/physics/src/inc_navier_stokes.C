@@ -30,6 +30,7 @@
 
 void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 {
+  // Read FE info
   this->_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
 
@@ -39,13 +40,75 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
   this->_P_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/P_order", "FIRST") );
 
+  // Read material parameters
   this->_rho = input("Physics/IncompNS/rho", 1.0);
   this->_mu  = input("Physics/IncompNS/mu", 1.0);
 
+  // Read variable naming info
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
   this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
+
+  // Read boundary condition info
+  /** \todo We ought to be able to put this in the base class somehow so
+            that it doesn't have to be rewritten for every physics class.
+	    Then, the physics only handles the specifics, e.g. reading
+	    in boundary velocities. */
+  int num_ids = input.vector_variable_size("Physics/IncompNS/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/IncompNS/bc_types");
+
+  if( num_ids != num_bcs )
+    {
+      std::cerr << "Error: Must specify equal number of boundary ids and boundary conditions"
+		<< std::endl;
+      libmesh_error();
+    }
+  
+  for( int i = 0; i < num_ids; i++ )
+    {
+      int bc_id = input("Physics/IncompNS/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/IncompNS/bc_types", "NULL", i );
+
+      GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
+
+      _bc_map[bc_id] = bc_type;
+
+      std::stringstream ss;
+      ss << bc_id;
+      std::string bc_id_string = ss.str();
+      
+      // Now read in auxillary boundary condition information
+      switch(bc_type)
+	{
+	case(PRESCRIBED_VELOCITY):
+	  std::vector<double> vel_in(3,0.0);
+
+	  /* Force the user to specify 3 velocity components regardless of dimension.
+	     This should make it easier to keep things correct if we want to have 
+	     2D flow not be in the x-y plane. */
+	  int n_vel_comps = input.vector_variable_size("Physics/IncompNS/bound_vel_"+bc_id_string);
+	  if( n_vel_comps != 3 )
+	    {
+	      std::cerr << "Error: Must specify 3 velocity components when inputting"
+			<< std::endl
+			<< "       prescribed velocities. Found " << n_vel_comps
+			<< "velocity components."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  /** \todo Need to unit test this somehow. */
+	  vel_in[0] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 0 );
+	  vel_in[1] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
+	  vel_in[2] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 2 );
+
+	  _bound_values[bc_id] = vel_in;
+
+	  break;
+	}
+
+    }
 
   return;
 }
@@ -430,48 +493,50 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-  // The number of local degrees of freedom in u variable.
-  const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
-
-  // We get some references to cell-specific data that
-  // will be used to assemble the linear system.
-
-  // Element Jacobian * quadrature weight for side integration.
-  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[_u_var]->get_JxW();
-
-  // The velocity shape functions at side quadrature points.
-  const std::vector<std::vector<libMesh::Real> >& vel_phi_side =
-    c.side_fe_var[_u_var]->get_phi();
-
-  // Physical location of the quadrature points on the side.
-  const std::vector<libMesh::Point>& u_qpoint = c.side_fe_var[_u_var]->get_xyz();
-
-  // The subvectors and submatrices we need to fill:
-  //
-  // Kuu, Kvv, Kww, Fu, Fv, Fw
-  //
+  // for convenience
   if (_dim != 3)
-    _w_var = _u_var; // for convenience
-
-  libMesh::DenseSubMatrix<Number> &Kuu = *c.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
-  libMesh::DenseSubMatrix<Number> &Kvv = *c.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
-  libMesh::DenseSubMatrix<Number> &Kww = *c.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
-
-  libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // R_{u}
-  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // R_{v}
-  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // R_{w}
-
-  // For this example we will use Dirichlet velocity boundary
-  // conditions imposed at each timestep via the penalty method.
-
-  // The penalty value.  \f$ \frac{1}{\epsilon} \f$
-  const libMesh::Real vel_penalty = 1.e10;
+    _w_var = _u_var;
 
   const short int boundary_id =
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
   unsigned int n_sidepoints = c.side_qrule->n_points();
+
+  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator bc_map_it;
+
+  bc_map_it = _bc_map.find( boundary_id );
+  if( bc_map_it != _bc_map.end() )
+    {
+      switch( bc_map_it->second )
+	{
+	  // No slip boundary condition
+	case GRINS::NO_SLIP:
+	  _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+
+	  _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
+
+	  if( _dim == 3 )
+	    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
+	  break;
+
+	  // Prescribed constant velocity
+	case GRINS::PRESCRIBED_VELOCITY:
+	  _bound_conds.apply_dirichlet( context, request_jacobian, 
+					_u_var, _bound_values[boundary_id][0] );
+
+	  _bound_conds.apply_dirichlet( context, request_jacobian, 
+					_v_var, _bound_values[boundary_id][1] );
+
+	  if( _dim == 3 )
+	    _bound_conds.apply_dirichlet( context, request_jacobian, 
+					  _w_var, _bound_values[boundary_id][2] );
+	  break;
+	}
+    }
+
+  
+  /*
   for (unsigned int qp=0; qp != n_sidepoints; qp++)
     {
       // Compute the solution at the old Newton iterate
@@ -479,38 +544,15 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
                       v = c.side_value(_v_var, qp),
                       w = c.side_value(_w_var, qp);
 
-      // TODO: make it more general
-      short int left_id, right_id, top_id, bottom_id, front_id, back_id;
-      if (_dim == 1)
-        {
-          left_id  = 0; // x=0
-          right_id = 1; // x=1
-        }
-      if (_dim == 2)
-        {
-          left_id   = 3; // x=0
-          right_id  = 1; // x=1
-          bottom_id = 0; // y=0
-          top_id    = 2; // y=1
-        }
-      if (_dim == 3)
-        {
-          left_id   = 4; // x=0
-          right_id  = 2; // x=1
-          bottom_id = 1; // y=0
-          top_id    = 3; // y=1
-          back_id   = 0; // z=0
-          front_id  = 5; // z=1
-        }
-
       // Boundary data coming from true solution
       libMesh::Real u_value = 0., v_value = 0., w_value = 0.;
 
       // For lid-driven cavity, set u=1 on the lid.
       if ((boundary_id == top_id))
-        u_value = 1.;
+	u_value = 1.0
+        
 
-    /*
+    
       // inflow/outflow
       if (boundary_id == right_id)
           break; // its outflow
@@ -522,37 +564,10 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
           const libMesh::Real z = u_qpoint[qp](2);
           u_value = 4.*y*(1.-y); // parabolic profile
         }
-    */
 
-      for (unsigned int i=0; i != n_u_dofs; i++)
-        {
-          Fu(i) += JxW_side[qp] * vel_penalty *
-                   (u - u_value) * vel_phi_side[i][qp];
-          Fv(i) += JxW_side[qp] * vel_penalty *
-                   (v - v_value) * vel_phi_side[i][qp];
-          if (_dim == 3)
-            Fw(i) += JxW_side[qp] * vel_penalty *
-                     (w - w_value) * vel_phi_side[i][qp];
-
-          if (request_jacobian && c.elem_solution_derivative)
-            {
-              libmesh_assert (c.elem_solution_derivative == 1.0);
-
-              for (unsigned int j=0; j != n_u_dofs; j++)
-                {
-                  Kuu(i,j) += JxW_side[qp] * vel_penalty *
-                              vel_phi_side[i][qp] * vel_phi_side[j][qp];
-                  Kvv(i,j) += JxW_side[qp] * vel_penalty *
-                              vel_phi_side[i][qp] * vel_phi_side[j][qp];
-                  if (_dim == 3)
-                    Kww(i,j) += JxW_side[qp] * vel_penalty *
-                                vel_phi_side[i][qp] * vel_phi_side[j][qp];
-                } // end of the inner dof (j) loop
-
-            } // end - if (request_jacobian && c.elem_solution_derivative)
-
-        } // end of the outer dof (i) loop
     } // end of the quadrature point (qp) loop
+
+  */
 
   // Pin p = p_value at p_point
   libMesh::Point p_point(0.,0.);
