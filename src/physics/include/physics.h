@@ -44,6 +44,7 @@
 // Boundary conditions
 #include "bc_types.h"
 #include "boundary_conditions.h"
+#include "point_func_base.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -175,8 +176,11 @@ namespace GRINS
 
     //! Object that stashes generic boundary condition types
     /** \todo Move this so that only one object is needed. 
-	        Perhaps make static? */
+	      Perhaps make static? */
     GRINS::BoundaryConditions _bound_conds;
+
+    //! Map between boundary id and boundary functions
+    std::map< unsigned int, GRINS::BasePointFuncObj* > _bound_funcs;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

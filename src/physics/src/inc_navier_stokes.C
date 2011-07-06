@@ -103,7 +103,7 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 	  vel_in[1] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
 	  vel_in[2] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 2 );
 
-	  _bound_values[bc_id] = vel_in;
+	  _vel_boundary_values[bc_id] = vel_in;
 
 	  break;
 	}
@@ -503,37 +503,71 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 
   unsigned int n_sidepoints = c.side_qrule->n_points();
 
-  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator bc_map_it;
+  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
+    bc_map_it = _bc_map.find( boundary_id );
 
-  bc_map_it = _bc_map.find( boundary_id );
+  /* We assume that if you didn't put a boundary id in, then you didn't want to
+     set a boundary condition on that boundary. */
   if( bc_map_it != _bc_map.end() )
     {
       switch( bc_map_it->second )
 	{
 	  // No slip boundary condition
 	case GRINS::NO_SLIP:
-	  _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+	  {
+	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+	    
+	    _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
 
-	  _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
-
-	  if( _dim == 3 )
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
+	    if( _dim == 3 )
+	      _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
+	  }
 	  break;
 
 	  // Prescribed constant velocity
 	case GRINS::PRESCRIBED_VELOCITY:
-	  _bound_conds.apply_dirichlet( context, request_jacobian, 
-					_u_var, _bound_values[boundary_id][0] );
-
-	  _bound_conds.apply_dirichlet( context, request_jacobian, 
-					_v_var, _bound_values[boundary_id][1] );
-
-	  if( _dim == 3 )
+	  {
 	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  _w_var, _bound_values[boundary_id][2] );
+					  _u_var, _vel_boundary_values[boundary_id][0] );
+
+	    _bound_conds.apply_dirichlet( context, request_jacobian, 
+					  _v_var, _vel_boundary_values[boundary_id][1] );
+	    
+	    if( _dim == 3 )
+	      _bound_conds.apply_dirichlet( context, request_jacobian, 
+					    _w_var, _vel_boundary_values[boundary_id][2] );
+	  }
 	  break;
-	}
-    }
+
+	  // Inflow 
+	case GRINS::INFLOW:
+	  {
+	    GRINS::BasePointFuncObj* inflow_func = _bound_funcs[boundary_id];
+	    
+	    if(!inflow_func)
+	      {
+		std::cerr << "Error: function not attached for inflow boundary " 
+			  << boundary_id << std::endl;
+		
+		libmesh_error();
+	      }
+
+	    std::vector<GRINS::VariableIndex> vars(3);
+	    vars[0] = _u_var;
+	    vars[1] = _v_var;
+	    vars[2] = _w_var;
+	    
+	    std::vector<bool> set_vars(3, false);
+	    set_vars[0] = true;
+	    set_vars[1] = true;
+	    if( _dim == 3 ) set_vars[2] = true;
+
+	    // _bound_conds.apply_dirichlet( context, request_jacobian, 
+	    //				  vars, set_vars, inflow_func );
+	  }
+	  break;
+	} // End switch on bc type
+    } // End if statement
 
   
   /*

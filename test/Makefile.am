@@ -3,7 +3,8 @@ check_PROGRAMS += test_grins_solver_init
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include \
               -I$(top_srcdir)/src/physics/include \
-              -I$(top_srcdir)/src/boundary_conditions/include
+              -I$(top_srcdir)/src/boundary_conditions/include \
+              -I$(top_srcdir)/src/funcs/include
 
 #	      \ -I$(top_srcdir)/src/utilities/<NULL>/include
 

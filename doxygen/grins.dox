@@ -570,6 +570,7 @@ WARN_LOGFILE           =
 INPUT                  = src/grins_solver         \
                          src/physics              \
                          src/boundary_conditions  \
+                         src/funcs                \
 		       	 doxygen/grins.page       \
 			 doxygen/txt_common
 

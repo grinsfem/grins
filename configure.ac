@@ -69,8 +69,7 @@ if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
    CXXFLAGS=`$LIBMESH_CONFIG --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
- dnl  CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
-   CXXFLAGS="-O0 -g"
+   CXXFLAGS="-O0 -g -Wall -fno-unsafe-math-optimizations"
 fi
 
 dnl---------------------------------------------------------

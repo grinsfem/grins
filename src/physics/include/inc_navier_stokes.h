@@ -130,8 +130,8 @@ namespace GRINS
     libMesh::Number _rho, _mu;
 
     //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
-    std::map< unsigned int, std::vector<double> > _bound_values;
-    
+    std::map< unsigned int, std::vector<double> > _vel_boundary_values;
+
     //! Returns the value of a forcing function at point pt_xyz.
     // This value depends on which option is set.
     // TODO: any other option to return? other than libMesh::Point?
