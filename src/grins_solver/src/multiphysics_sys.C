@@ -63,10 +63,11 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
     {
       std::string physics_to_add = input("Physics/enabled_physics", "NULL", i );
 
-      //TODO: Do we want to create an enum list instead for all available physics?
+      /** \todo Do we want to create an enum list instead 
+	  for all available physics? */
       if( physics_to_add == "IncompressibleNavierStokes" )
 	{
-	  this->_physics_list.push_back( std::make_pair("IncompressibleNavierStokes", new GRINS::IncompressibleNavierStokes) );
+	  this->_physics_list["IncompressibleNavierStokes"] = new GRINS::IncompressibleNavierStokes;
 	}
       else
 	{
@@ -237,6 +238,11 @@ void GRINS::MultiphysicsSystem::dump_global_variable_map( )
   std::cout << "Done dumping variable map" << std::endl;
 
   return;
+}
+
+GRINS::Physics* GRINS::MultiphysicsSystem::get_physics( const std::string physics_name )
+{
+  return _physics_list[physics_name];
 }
 
 #ifdef USE_GRVY_TIMERS

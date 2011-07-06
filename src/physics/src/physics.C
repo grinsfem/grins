@@ -66,6 +66,14 @@ void GRINS::Physics::register_variable_indices( VariableMap& global_map )
   return;
 }
 
+void GRINS::Physics::attach_bound_func( const unsigned int bc_id, 
+					GRINS::BasePointFuncObj* bound_func )
+{
+  _bound_funcs[bc_id] = bound_func;
+
+  return;
+}
+
 #ifdef USE_GRVY_TIMERS
 void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {

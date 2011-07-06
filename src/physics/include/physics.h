@@ -159,6 +159,9 @@ namespace GRINS
     */
     GRINS::VariableMap get_variable_indices_map();
 
+    void attach_bound_func( const unsigned int bc_id, 
+			    GRINS::BasePointFuncObj* bound_func );
+
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif

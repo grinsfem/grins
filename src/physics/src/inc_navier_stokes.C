@@ -93,7 +93,7 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 	      std::cerr << "Error: Must specify 3 velocity components when inputting"
 			<< std::endl
 			<< "       prescribed velocities. Found " << n_vel_comps
-			<< "velocity components."
+			<< " velocity components."
 			<< std::endl;
 	      libmesh_error();
 	    }

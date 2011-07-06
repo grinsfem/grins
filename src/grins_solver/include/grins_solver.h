@@ -68,6 +68,8 @@ namespace GRINS
     void output_visualization();
     void output_visualization( unsigned int time_step );
 
+    T* get_system();
+    
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif

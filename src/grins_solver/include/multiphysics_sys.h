@@ -55,9 +55,9 @@
 namespace GRINS
 {
   //TODO: add comment
-  typedef std::vector<std::pair<std::string,Physics*> > PhysicsList;
+  typedef std::map<std::string,Physics*> PhysicsList;
   //TODO: add comment
-  typedef std::vector<std::pair<std::string,Physics*> >::iterator PhysicsListIter;
+  typedef std::map<std::string,Physics*>::iterator PhysicsListIter;
 
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
@@ -130,6 +130,8 @@ namespace GRINS
 				libMesh::DiffContext& context ); 
 
     void dump_global_variable_map( );
+
+    GRINS::Physics* get_physics( const std::string physics_name );
 
 #ifdef USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

@@ -304,6 +304,13 @@ void GRINS::Solver<T>::dump_visualization( std::string filename )
   return;
 }
 
+template< class T >
+T* GRINS::Solver<T>::get_system()
+{
+  return this->_system;
+}
+
+
 #ifdef USE_GRVY_TIMERS
 template< class T >
 void GRINS::Solver<T>::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
