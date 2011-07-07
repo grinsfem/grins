@@ -1,5 +1,5 @@
 check_PROGRAMS  = # Append below
-check_PROGRAMS += test_grins_solver_init
+check_PROGRAMS += test_ns_couette_flow
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -44,10 +44,10 @@ if MASA_ENABLED
 endif
 
 # Sources for these tests
-test_grins_solver_init_SOURCES = test_grins_solver_init.C
+test_ns_couette_flow_SOURCES = test_ns_couette_flow.C
 
 #Define tests to actually be run
-TESTS = test_grins_solver_init
+TESTS = test_ns_couette_flow.sh
 
 #shellfiles_src = <NULL.sh>
 
