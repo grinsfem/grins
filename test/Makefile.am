@@ -47,7 +47,9 @@ endif
 test_ns_couette_flow_SOURCES = test_ns_couette_flow.C
 
 #Define tests to actually be run
-TESTS = test_ns_couette_flow.sh
+TESTS = navier_stokes_tests.sh  \
+        test_ns_couette_flow.sh \
+        finalize.sh
 
 #shellfiles_src = <NULL.sh>
 
