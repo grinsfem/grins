@@ -35,7 +35,8 @@ grins_SRC    = $(grins_srcdir)/grins_solver.C \
 
 physics_SRC  = $(physics_srcdir)/physics.C \
                $(physics_srcdir)/inc_navier_stokes.C \
-               $(physics_srcdir)/heat_transfer.C
+               $(physics_srcdir)/heat_transfer.C \
+               $(physics_srcdir)/boussinesq_buoyancy.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C
 
@@ -56,7 +57,8 @@ physics_INC  = $(physics_incdir)/physics.h \
                $(physics_incdir)/variable_name_defaults.h \
                $(physics_incdir)/var_typedefs.h \
                $(physics_incdir)/inc_navier_stokes.h \
-               $(physics_incdir)/heat_transfer.h
+               $(physics_incdir)/heat_transfer.h \
+               $(physics_incdir)/boussinesq_buoyancy.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h

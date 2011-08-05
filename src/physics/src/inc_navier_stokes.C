@@ -106,9 +106,28 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 	  _vel_boundary_values[bc_id] = vel_in;
 
 	  break;
-	}
+	} // End switch(bc_type)
+    } // End loop on bc_id
 
+  // Read pressure pinning information
+  _pin_pressure = input("Physics/IncompNS/pin_pressure", true );
+  _pin_value = input("Physics/IncompNS/pin_value", 0.0 );
+
+  unsigned int pin_loc_dim = input.vector_variable_size("Physics/IncompNS/pin_location");
+
+  // If the user is specifying a pin_location, it had better be at least 2-dimensional
+  if( pin_loc_dim > 0 && pin_loc_dim < 2 )
+    {
+      std::cerr << "Error: pressure pin location must be at least 2 dimensional"
+		<< std::endl;
+      libmesh_error();
     }
+
+  _pin_location(0) = input("Physics/IncompNS/pin_location", 0.0, 0 );
+  _pin_location(1) = input("Physics/IncompNS/pin_location", 0.0, 1 );
+
+  if( pin_loc_dim == 3 ) 
+    _pin_location(2) = input("Physics/IncompNS/pin_location", 0.0, 2 );
 
   return;
 }
@@ -468,6 +487,15 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
         } // end of the outer dof (i) loop
     } // end of the quadrature point (qp) loop
 
+
+  // Pin p = p_value at p_point
+  if( _pin_pressure )
+    {
+      _bound_conds.pin_value( context, request_jacobian, _p_var,
+			      _pin_value, _pin_location );
+    }
+  
+
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
 #endif
@@ -562,82 +590,12 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 	    set_vars[1] = true;
 	    if( _dim == 3 ) set_vars[2] = true;
 
-	    // _bound_conds.apply_dirichlet( context, request_jacobian, 
-	    //				  vars, set_vars, inflow_func );
+	    _bound_conds.apply_dirichlet( context, request_jacobian, 
+					  vars, set_vars, inflow_func );
 	  }
 	  break;
 	} // End switch on bc type
     } // End if statement
-
-  
-  /*
-  for (unsigned int qp=0; qp != n_sidepoints; qp++)
-    {
-      // Compute the solution at the old Newton iterate
-      libMesh::Number u = c.side_value(_u_var, qp),
-                      v = c.side_value(_v_var, qp),
-                      w = c.side_value(_w_var, qp);
-
-      // Boundary data coming from true solution
-      libMesh::Real u_value = 0., v_value = 0., w_value = 0.;
-
-      // For lid-driven cavity, set u=1 on the lid.
-      if ((boundary_id == top_id))
-	u_value = 1.0
-        
-
-    
-      // inflow/outflow
-      if (boundary_id == right_id)
-          break; // its outflow
-
-      if (boundary_id == left_id)
-        {
-          const libMesh::Real x = u_qpoint[qp](0);
-          const libMesh::Real y = u_qpoint[qp](1);
-          const libMesh::Real z = u_qpoint[qp](2);
-          u_value = 4.*y*(1.-y); // parabolic profile
-        }
-
-    } // end of the quadrature point (qp) loop
-
-  */
-
-  // Pin p = p_value at p_point
-  libMesh::Point p_point(0.,0.);
-  if (c.elem->contains_point(p_point))
-    {
-      // The pressure penalty value.  \f$ \frac{1}{\epsilon} \f$
-      const libMesh::Real p_penalty = 1.e9;
-
-      libMesh::DenseSubMatrix<Number> &Kpp = *c.elem_subjacobians[_p_var][_p_var]; // R_{p},{p}
-      libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // R_{p}
-
-      // The number of local degrees of freedom in p variable.
-      const unsigned int n_p_dofs = c.dof_indices_var[_p_var].size();
-
-      libMesh::Number p = c.point_value(_p_var, p_point);
-      libMesh::Number p_value = 0.;
-
-      libMesh::FEType fe_type = c.element_fe_var[_p_var]->get_fe_type();
-      libMesh::Point point_loc_in_masterelem = libMesh::FEInterface::inverse_map(_dim, fe_type, c.elem, zero);
-
-      std::vector<libMesh::Real> point_p_phi(n_p_dofs);
-      for (unsigned int i=0; i != n_p_dofs; i++)
-          point_p_phi[i] = libMesh::FEInterface::shape(_dim, fe_type, c.elem, i, point_loc_in_masterelem);
-
-      for (unsigned int i=0; i != n_p_dofs; i++)
-        {
-          Fp(i) += p_penalty * (p - p_value) * point_p_phi[i];
-          if (request_jacobian && c.elem_solution_derivative)
-            {
-              libmesh_assert (c.elem_solution_derivative == 1.0);
-
-              for (unsigned int j=0; j != n_p_dofs; j++)
-                Kpp(i,j) += p_penalty * point_p_phi[i] * point_p_phi[j];
-            } // end - if (request_jacobian && c.elem_solution_derivative)
-        } // end of the outer dof (i) loop
-    } // end - if p_point is inside element
 
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("IncompressibleNavierStokes::side_constraint");
@@ -650,7 +608,7 @@ bool GRINS::IncompressibleNavierStokes::mass_residual( bool request_jacobian,
 						       libMesh::DiffContext& context,
 						       libMesh::FEMSystem* system )
 {
-  // TODO: account for 'rho' factor in mass matrix
+  /** \todo Need to override base class to account for rho factor. */
   return request_jacobian;
 }
 

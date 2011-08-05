@@ -65,7 +65,7 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( GetPot& input );
 
-    //! Initialization Navier-Stokes variables
+    //! Initialization of Navier-Stokes variables
     /*!
       Add velocity and pressure variables to system.
      */
@@ -131,6 +131,15 @@ namespace GRINS
 
     //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
     std::map< unsigned int, std::vector<double> > _vel_boundary_values;
+
+    //! Enable pressure pinning
+    bool _pin_pressure;
+    
+    //! Value of pressure we wish to pin
+    libMesh::Number _pin_value;
+
+    //! Location we want to pin the pressure
+    libMesh::Point _pin_location;
 
     //! Returns the value of a forcing function at point pt_xyz.
     // This value depends on which option is set.

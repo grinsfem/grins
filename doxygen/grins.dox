@@ -571,6 +571,7 @@ INPUT                  = src/grins_solver         \
                          src/physics              \
                          src/boundary_conditions  \
                          src/funcs                \
+                         test                     \
 		       	 doxygen/grins.page       \
 			 doxygen/txt_common
 

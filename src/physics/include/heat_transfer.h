@@ -111,6 +111,7 @@ namespace GRINS
   protected:
 
     //! Physical dimension of problem
+    /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
     //! Indices for each (owned) variable;
@@ -137,8 +138,8 @@ namespace GRINS
     libMeshEnums::Order _T_order;
 
     //! Material parameters, read from input
-    // TODO: Is it safe to assume these are constant, or do we want
-    // TODO: to create objects to allow spatial variation?
+    /*! \todo Need to generalize material parameters. Right now they
+              are assumed constant */
     libMesh::Number _rho, _Cp, _k; //TODO: same as Incompressible NS
 
     //! Returns the value of a heat source function at point pt_xyz.

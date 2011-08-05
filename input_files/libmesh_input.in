@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 100
-mesh_nx2 = 100
+mesh_nx1 = 10
+mesh_nx2 = 10
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -17,7 +17,7 @@ deltat = 0.1
 max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
-verify_analytic_jacobians = 1.e-6
+verify_analytic_jacobians = 0.0 
 
 # Visualization options
 [vis-options]
@@ -48,17 +48,17 @@ P_order = FIRST
 rho = 1.0
 mu = 1.0
 
-bc_ids = '2 0'
-bc_types = 'prescribed_vel no_slip'
+bc_ids = '2 3 1 0'
+bc_types = 'prescribed_vel no_slip no_slip no_slip'
 
 bound_vel_2 = '10.0 0.0 0.0'
 
 [../VariableNames]
 
-Temperature = "T"
-u_velocity = "u_var"
-v_velocity = "v_var"
-w_velocity = "w"
-pressure = "p"
+Temperature = 'T'
+u_velocity = 'u_var'
+v_velocity = 'v_var'
+w_velocity = 'w'
+pressure = 'p'
 
 []

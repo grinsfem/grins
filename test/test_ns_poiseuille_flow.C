@@ -36,6 +36,7 @@
 
 // System types that we might want to instantiate
 #include "multiphysics_sys.h"
+#include "point_parabolic_profile.h"
 
 #include "exact_solution.h"
 
@@ -90,11 +91,20 @@ int main(int argc, char* argv[])
 
   } //Should be done reading input, so we kill the GetPot object.
 
+  GRINS::MultiphysicsSystem* system = solver.get_system();
+
+  GRINS::Physics* ns_physics = system->get_physics("IncompressibleNavierStokes");
+
+  GRINS::PointParabolicProfile inflow;
+
+  ns_physics->attach_bound_func( 3, &inflow );
+  ns_physics->attach_bound_func( 1, &inflow );
+
   // Do solve here
   solver.solve();
 
   // Get equation systems to create ExactSolution object
-  GRINS::MultiphysicsSystem* system = solver.get_system();
+  
 
   EquationSystems & es = system->get_equation_systems ();
 
@@ -116,33 +126,54 @@ int main(int argc, char* argv[])
     {
       return_flag = 1;
 
-      std::cout << "Tolerance exceeded for Couette flow test." << std::endl
+      std::cout << "Tolerance exceeded for velocity in Poiseuille test." << std::endl
 		<< "l2 error = " << l2error << std::endl
 		<< "h1 error = " << h1error << std::endl;
     }
 
- return return_flag;
+  // Compute error and get it in various norms
+  exact_sol.compute_error("GRINS", "p");
+
+  l2error = exact_sol.l2_error("GRINS", "p");
+  h1error = exact_sol.h1_error("GRINS", "p");
+
+  if( l2error > 1.0e-11 || h1error > 1.0e-11 )
+    {
+      return_flag = 1;
+
+      std::cout << "Tolerance exceeded for pressure in Poiseuille test." << std::endl
+		<< "l2 error = " << l2error << std::endl
+		<< "h1 error = " << h1error << std::endl;
+    }
+
+  return return_flag;
 }
 
 Number exact_solution( const Point& p,
 		       const Parameters& params,   // parameters, not needed
-		       const std::string&,  // sys_name, not needed
-		       const std::string&)  // unk_name, not needed);
+		       const std::string& sys_name,  // sys_name, not needed
+		       const std::string& var )  // unk_name, not needed);
 {
   const double x = p(0);
   const double y = p(1);
   const double z = p(2);
   
+  const double h = 1.0;
+  const double mu = 1.0;
+  const double dpdx = -1.0;
+
+  Number f;
   // Hardcoded to velocity in input file.
-  Number f = 10.0*y;
+  if( var == "u" ) f = 4*y*(1-y);
+  if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
 
   return f;
 }
 
 Gradient exact_derivative( const Point& p,
 			   const Parameters& params,   // parameters, not needed
-			   const std::string&,  // sys_name, not needed
-			   const std::string&)  // unk_name, not needed);
+			   const std::string& sys_name,  // sys_name, not needed
+			   const std::string& var)  // unk_name, not needed);
 {
   const double x = p(0);
   const double y = p(1);
@@ -151,9 +182,18 @@ Gradient exact_derivative( const Point& p,
   Gradient g;
 
   // Hardcoded to velocity in input file.
-  g(0) = 0.0;
-  g(1) = 10.0;
-  g(2) = 0.0;
+  if( var == "u" )
+    {
+      g(0) = 0.0;
+      g(1) = 4*(1-y) - 4*y;
+      g(2) = 0.0;
+    }
 
+  if( var == "p" )
+    {
+      g(0) = (80.0-120.0)/5.0;
+      g(1) = 0.0;
+      g(2) = 0.0;
+    }
   return g;
 }

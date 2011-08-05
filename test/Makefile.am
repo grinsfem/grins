@@ -1,5 +1,7 @@
-check_PROGRAMS  = # Append below
-check_PROGRAMS += test_ns_couette_flow
+BUILT_SOURCES   = .license.stamp
+
+check_PROGRAMS  = test_ns_couette_flow
+check_PROGRAMS += test_ns_poiseuille_flow
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -45,10 +47,16 @@ endif
 
 # Sources for these tests
 test_ns_couette_flow_SOURCES = test_ns_couette_flow.C
+test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
+
+# List of source files for license stamping
+testsrc = $(test_ns_couette_flow_SOURCES)            \
+          $(test_ns_poiseuille_flow_SOURCES)
 
 #Define tests to actually be run
-TESTS = navier_stokes_tests.sh  \
-        test_ns_couette_flow.sh \
+TESTS = navier_stokes_tests.sh             \
+        test_ns_couette_flow.sh            \
+        test_ns_poiseuille_flow.sh \
         finalize.sh
 
 #shellfiles_src = <NULL.sh>
@@ -59,6 +67,11 @@ EXTRA_DIST = $(shellfiles_src)
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno
 endif
+
+.license.stamp: $(top_srcdir)/LICENSE
+	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE \
+	$(testsrc)
+	echo 'updated source license headers' >$@
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

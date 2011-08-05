@@ -30,6 +30,7 @@
 
 #include "bc_types.h"
 #include "var_typedefs.h"
+#include "point_func_base.h"
 
 // libMesh stuff
 #include "libmesh.h"
@@ -41,6 +42,7 @@
 #include "parameters.h"
 #include "string_to_enum.h"
 #include "fem_context.h"
+#include "fem_system.h"
 
 namespace GRINS
 {
@@ -56,14 +58,30 @@ namespace GRINS
     BoundaryConditions();
     ~BoundaryConditions();
     
+    /*! Applies Dirichlet boundary conditions for a single variable using the
+      penalty method. */
     void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
 			  const GRINS::VariableIndex var, const double value, 
-			  const double penalty = 1.0e10 );
+			  const double penalty = 1.0e16 );
+
+    /*! Applies Dirichlet boundary conditions for a vector of variables using the
+      penalty method. */
+    void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
+			  const std::vector<GRINS::VariableIndex>& vars,
+			  const std::vector<bool>& set_vars,
+			  GRINS::BasePointFuncObj* func,
+			  const double penalty = 1.0e16 );
 
     void apply_neumann( libMesh::DiffContext &context,
 			GRINS::VariableIndex var1, 
 			GRINS::VariableIndex var2, double value, 
 			double jacobian_value );
+
+    /*! The idea here is to pin a variable to a particular value if there is
+      a null space - e.g. pressure for IncompressibleNavierStokes. */
+    void pin_value( libMesh::DiffContext &context, const bool request_jacobian,
+		    const GRINS::VariableIndex var, const double value,
+		    const libMesh::Point& pin_location, const double penalty = 1.0 );
 
     GRINS::BC_TYPES string_to_enum( const std::string bc_type );
 
