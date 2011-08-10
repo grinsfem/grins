@@ -246,3 +246,82 @@ void GRINS::BoundaryConditions::pin_value( libMesh::DiffContext &context,
 
   return;
 }
+
+void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
+					       const GRINS::VariableIndex var,  
+					       const Point& value )
+{
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_var_dofs = c.dof_indices_var[var].size();
+
+  // Element Jacobian * quadrature weight for side integration.
+  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[var]->get_JxW();
+
+  // The var shape functions at side quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& var_phi_side =
+    c.side_fe_var[var]->get_phi();
+
+  const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
+
+  libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
+
+  unsigned int n_qpoints = c.side_qrule->n_points();
+  for (unsigned int qp=0; qp != n_qpoints; qp++)
+    {
+      for (unsigned int i=0; i != n_var_dofs; i++)
+	{
+	  F_var(i) += JxW_side[qp]*value*normals[qp]*var_phi_side[i][qp];
+	}
+    }
+
+  return;
+}
+
+void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
+					       const bool request_jacobian,
+					       const GRINS::VariableIndex var1, 
+					       const GRINS::VariableIndex var2, 
+					       const Point& value, 
+					       const Point& jacobian_value )
+{
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_var1_dofs = c.dof_indices_var[var1].size();
+  const unsigned int n_var2_dofs = c.dof_indices_var[var2].size();
+
+  // Element Jacobian * quadrature weight for side integration.
+  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[var1]->get_JxW();
+
+  // The var shape functions at side quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& var_phi_side =
+    c.side_fe_var[var1]->get_phi();
+
+  const std::vector<Point> &normals = c.side_fe_var[var1]->get_normals();
+
+  libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var1]; // residual
+  libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var1][var2]; // jacobian
+
+  unsigned int n_qpoints = c.side_qrule->n_points();
+
+  for (unsigned int qp=0; qp != n_qpoints; qp++)
+    {
+      for (unsigned int i=0; i != n_var1_dofs; i++)
+	{
+	  F_var(i) += JxW_side[qp]*value*normals[qp]*var_phi_side[i][qp];
+
+	  if (request_jacobian)
+	    {
+	      for (unsigned int j=0; j != n_var2_dofs; j++)
+		{
+		  K_var(i,j) += JxW_side[qp]*jacobian_value*normals[qp]*
+		    var_phi_side[i][qp]*var_phi_side[j][qp];
+		}
+	    }
+	}
+    }
+
+  return;
+}

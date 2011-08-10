@@ -72,10 +72,21 @@ namespace GRINS
 			  GRINS::BasePointFuncObj* func,
 			  const double penalty = 1.0e16 );
 
+    /*! Applies Neumann boundary conditions for variable var1. This method is for when
+      the boundary condition is linear and, therefore, has no Jacobian contributions */
     void apply_neumann( libMesh::DiffContext &context,
-			GRINS::VariableIndex var1, 
-			GRINS::VariableIndex var2, double value, 
-			double jacobian_value );
+			const GRINS::VariableIndex var,  
+			const Point& value );
+
+    /*! Applies Neumann boundary conditions for variable var1. Jacobian for nonlinear Neumann condition
+      require var2 since one could be adding the Neumann condition to the residual for var1 and
+      have \f$\frac{\partial g(u_2)}{\partial u_2}\f$ */
+    void apply_neumann( libMesh::DiffContext &context,
+			const bool request_jacobian,
+			const GRINS::VariableIndex var1, 
+			const GRINS::VariableIndex var2, 
+			const Point& value, 
+			const Point& jacobian_value  );
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
