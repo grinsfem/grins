@@ -529,8 +529,6 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  unsigned int n_sidepoints = c.side_qrule->n_points();
-
   std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
     bc_map_it = _bc_map.find( boundary_id );
 
@@ -594,6 +592,14 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 					  vars, set_vars, inflow_func );
 	  }
 	  break;
+
+	default:
+	  {
+	    std::cerr << "Error: Invalid BC type for IncompressibleNavierStokes."
+		      << std::endl;
+	    libmesh_error();
+	  }
+
 	} // End switch on bc type
     } // End if statement
 

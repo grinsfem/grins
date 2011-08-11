@@ -140,11 +140,15 @@ namespace GRINS
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
               are assumed constant */
-    libMesh::Number _rho, _Cp, _k; //TODO: same as Incompressible NS
+    /*! \todo Shouldn't this rho be the same as the one in the flow? Need
+              to figure out how to have those shared */
+    libMesh::Number _rho, _Cp, _k;
 
-    //! Returns the value of a heat source function at point pt_xyz.
-    // This value depends on which option is set.
-    libMesh::Number heat_source(const libMesh::Point& pt_xyz);
+    //! Stash prescribed boundary temperature values
+    std::map< unsigned int, double > _T_boundary_values;
+
+    //! Stash prescribed boundary heat flux values
+    std::map< unsigned int, double > _q_boundary_values;
   };
 
 } //End namespace block

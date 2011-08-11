@@ -47,6 +47,62 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
   
+
+  // Read boundary condition info
+  /** \todo We ought to be able to put this in the base class somehow so
+            that it doesn't have to be rewritten for every physics class.
+	    Then, the physics only handles the specifics, e.g. reading
+	    in boundary velocities. */
+  int num_ids = input.vector_variable_size("Physics/HeatTransfer/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/HeatTransfer/bc_types");
+
+  if( num_ids != num_bcs )
+    {
+      std::cerr << "Error: Must specify equal number of boundary ids and boundary conditions"
+		<< std::endl;
+      libmesh_error();
+    }
+
+  for( int i = 0; i < num_ids; i++ )
+    {
+      int bc_id = input("Physics/HeatTransfer/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/HeatTransfer/bc_types", "NULL", i );
+
+      GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
+
+      _bc_map[bc_id] = bc_type;
+
+      std::stringstream ss;
+      ss << bc_id;
+      std::string bc_id_string = ss.str();
+
+      // Now read in auxillary boundary condition information
+      switch(bc_type)
+	{
+	case GRINS::ISOTHERMAL_WALL:
+	  {
+	    _T_boundary_values[bc_id] = 
+	      input("Physics/HeatTransfer/T_wall_"+bc_id_string, 0.0 );
+	  }
+	  break;
+	  
+	case GRINS::PRESCRIBED_HEAT_FLUX:
+	  {
+	    _q_boundary_values[bc_id] = 
+	      input("Physics/HeatTransfer/q_wall_"+bc_id_string, 0.0 );
+	  }
+	  break;
+
+	default:
+	  {
+	    std::cerr << "Error: Invalid boundary condition type for HeatTransfer."
+		      << std::endl;
+	    libmesh_error();
+	  }
+
+	}// End switch(bc_type)
+    } // End loop on bc_id
+
   return;
 }
 
@@ -197,16 +253,12 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
       if (_dim == 3)
         Uvec(2) = w;
 
-      // Value of the heat source function at this quadrature point.
-      libMesh::Number heat_source = this->heat_source(T_qpoint[qp]);
-
       // First, an i-loop over the  degrees of freedom.
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
           FT(i) += JxW[qp] *
-                   (-_rho*_Cp*T_phi[i][qp]*(Uvec*gradTvec) // convection term
-                    -_k*(T_gblgradphivec[i][qp]*gradTvec)  // diffusion term
-                    +T_phi[i][qp]*heat_source);            // source term
+                   (-_rho*_Cp*T_phi[i][qp]*(Uvec*gradTvec)    // convection term
+                    -_k*(T_gblgradphivec[i][qp]*gradTvec) );  // diffusion term
 
           if (request_jacobian && c.elem_solution_derivative)
             {
@@ -268,103 +320,49 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-  // The number of local degrees of freedom in T variable.
-  const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
-
-  // We get some references to cell-specific data that
-  // will be used to assemble the linear system.
-
-  // Element Jacobian * quadrature weight for side integration.
-  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[_T_var]->get_JxW();
-
-  // The temperature shape functions at side quadrature points.
-  const std::vector<std::vector<libMesh::Real> >& T_phi_side =
-    c.side_fe_var[_T_var]->get_phi();
-
-  // Physical location of the quadrature points on the side.
-  const std::vector<libMesh::Point>& T_qpoint = c.side_fe_var[_T_var]->get_xyz();
-
-  // The subvectors and submatrices we need to fill:
-  //
-  // KTT, FT
-  //
-
-  libMesh::DenseSubMatrix<Number> &KTT = *c.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
-
-  libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[_T_var]; // R_{T}
-
-  // For this example we will use Dirichlet temperature boundary
-  // conditions imposed at each timestep via the penalty method.
-
-  // The penalty value.  \f$ \frac{1}{\epsilon} \f$
-  const libMesh::Real T_penalty = 1.e10;
-
   const short int boundary_id =
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  unsigned int n_sidepoints = c.side_qrule->n_points();
-  for (unsigned int qp=0; qp != n_sidepoints; qp++)
+  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
+    bc_map_it = _bc_map.find( boundary_id );
+
+   /* We assume that if you didn't put a boundary id in, then you didn't want to
+     set a boundary condition on that boundary. */
+  if( bc_map_it != _bc_map.end() )
     {
-      // Compute the solution at the old Newton iterate
-      libMesh::Number T = c.side_value(_T_var, qp);
+      switch( bc_map_it->second )
+	{
+	  // Prescribed constant temperature
+	case GRINS::ISOTHERMAL_WALL:
+	  {
+	    _bound_conds.apply_dirichlet( context, request_jacobian,
+					  _T_var, _T_boundary_values[boundary_id] );
+	    break;
+	  }
 
-      // TODO: make it more general
-      short int left_id, right_id, top_id, bottom_id, front_id, back_id;
-      if (_dim == 1)
-        {
-          left_id  = 0; // x=0
-          right_id = 1; // x=1
-        }
-      if (_dim == 2)
-        {
-          left_id   = 3; // x=0
-          right_id  = 1; // x=1
-          bottom_id = 0; // y=0
-          top_id    = 2; // y=1
-        }
-      if (_dim == 3)
-        {
-          left_id   = 4; // x=0
-          right_id  = 2; // x=1
-          bottom_id = 1; // y=0
-          top_id    = 3; // y=1
-          back_id   = 0; // z=0
-          front_id  = 5; // z=1
-        }
+	  // Zero heat flux
+	case GRINS::ADIABATIC_WALL:
+	  // Don't need to do anything: q = 0 in this case
+	  break;
 
-      if ((boundary_id == bottom_id) || (boundary_id == top_id))
-        break;
+	  // Prescribed constant heat flux
+	case GRINS::PRESCRIBED_HEAT_FLUX:
+	  {
+	    _bound_conds.apply_neumann( context, _T_var, 
+					_q_boundary_values[boundary_id] );
+	  }
+	  break;
 
-      // Boundary data coming from true solution
-      libMesh::Real T_value, T_value_left = 0.0, T_value_right = 1.0;
+	default:
+	  {
+	    std::cerr << "Error: Invalid BC type for ConvectiveHeatTransfer."
+		      << std::endl;
+	    libmesh_error();
+	  }
 
-      // set T=0 on the left.
-      if ((boundary_id == left_id))
-        T_value = T_value_left;
-      // set T=1 on the right.
-      if ((boundary_id == right_id))
-        T_value = T_value_right;
-
-      for (unsigned int i=0; i != n_T_dofs; i++)
-        {
-          FT(i) += JxW_side[qp] * T_penalty *
-                   (T - T_value) * T_phi_side[i][qp];
-
-          if (request_jacobian && c.elem_solution_derivative)
-            {
-              libmesh_assert (c.elem_solution_derivative == 1.0);
-
-              for (unsigned int j=0; j != n_T_dofs; j++)
-                {
-                  KTT(i,j) += JxW_side[qp] * T_penalty *
-                              T_phi_side[i][qp] * T_phi_side[j][qp];
-                } // end of the inner dof (j) loop
-
-            } // end - if (request_jacobian && c.elem_solution_derivative)
-
-        } // end of the outer dof (i) loop
-    } // end of the quadrature point (qp) loop
+	} // End switch
+    } // End if
 
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("HeatTransfer::side_constraint");
@@ -379,10 +377,4 @@ bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
 {
   // TODO: account for 'rho*Cp' factor in mass matrix
   return request_jacobian;
-}
-
-libMesh::Number GRINS::HeatTransfer::heat_source(const libMesh::Point &pt_xyz)
-{
-  // TODO: add heat source options
-  return libMesh::Number(0.);
 }
