@@ -86,6 +86,9 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 	  }
 	  break;
 	  
+	case GRINS::ADIABATIC_WALL:
+	  break;
+
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
 	    _q_boundary_values[bc_id] = 
@@ -182,6 +185,7 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
 
   // The number of local degrees of freedom in each variable.
   const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+  const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
 
   //TODO: check n_T_dofs is same as n_u_dofs, n_v_dofs, n_w_dofs
 
@@ -202,12 +206,8 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
 
   // The temperature shape function gradients (in global coords.)
   // at interior quadrature points.
-  const std::vector<std::vector<libMesh::RealGradient> >& T_gblgradphivec =
+  const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
     c.element_fe_var[_T_var]->get_dphi();
-
-  // Physical location of the quadrature points
-  const std::vector<libMesh::Point>& T_qpoint =
-    c.element_fe_var[_T_var]->get_xyz();
 
   // The subvectors and submatrices we need to fill:
   //
@@ -246,19 +246,19 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
       if (_dim == 3)
         w = c.interior_value(_w_var, qp);
 
-      libMesh::Gradient gradTvec;
-      gradTvec = c.interior_gradient(_T_var, qp);
+      libMesh::Gradient grad_T;
+      grad_T = c.interior_gradient(_T_var, qp);
 
-      libMesh::NumberVectorValue Uvec (u,v);
+      libMesh::NumberVectorValue U (u,v);
       if (_dim == 3)
-        Uvec(2) = w;
+        U(2) = w;
 
       // First, an i-loop over the  degrees of freedom.
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
           FT(i) += JxW[qp] *
-                   (-_rho*_Cp*T_phi[i][qp]*(Uvec*gradTvec)    // convection term
-                    -_k*(T_gblgradphivec[i][qp]*gradTvec) );  // diffusion term
+                   (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
+                    -_k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
           if (request_jacobian && c.elem_solution_derivative)
             {
@@ -267,20 +267,20 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
               for (unsigned int j=0; j != n_T_dofs; j++)
                 {
                   // TODO: precompute some terms like:
-                  //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp])
+                  //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
                   KTT(i,j) += JxW[qp] *
-                              (-_rho*_Cp*T_phi[i][qp]*(Uvec*T_gblgradphivec[j][qp])  // convection term
-                               -_k*(T_gblgradphivec[i][qp]*T_gblgradphivec[j][qp])); // diffusion term
+                              (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
+                               -_k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
                 } // end of the inner dof (j) loop
 
               // Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
-              for (unsigned int j=0; j != n_T_dofs; j++)
+              for (unsigned int j=0; j != n_u_dofs; j++)
                 {
-                  KTu(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp](0)));
-                  KTv(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp](1)));
+                  KTu(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+                  KTv(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
                   if (_dim == 3)
-                     KTw(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_gblgradphivec[j][qp](2)));
+                     KTw(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
                 } // end of the inner dof (j) loop
 
             } // end - if (request_jacobian && c.elem_solution_derivative)
