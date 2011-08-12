@@ -29,6 +29,8 @@
 #include "multiphysics_sys.h"
 
 #include "inc_navier_stokes.h"
+#include "heat_transfer.h"
+#include "boussinesq_buoyancy.h"
 
 GRINS::MultiphysicsSystem::~MultiphysicsSystem()
 {
@@ -68,6 +70,14 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
       if( physics_to_add == "IncompressibleNavierStokes" )
 	{
 	  this->_physics_list["IncompressibleNavierStokes"] = new GRINS::IncompressibleNavierStokes;
+	}
+      else if( physics_to_add == "ConvectiveHeatTransfer" )
+	{
+	  this->_physics_list["ConvectiveHeatTransfer"] = new GRINS::HeatTransfer;
+	}
+      else if( physics_to_add == "BoussinesqBuoyancy" )
+	{
+	  this->_physics_list["BoussinesqBuoyancy"] = new GRINS::BoussinesqBuoyancy;
 	}
       else
 	{

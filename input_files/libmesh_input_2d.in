@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 10
-mesh_nx2 = 10
+mesh_nx1 = 50
+mesh_nx2 = 50
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -17,7 +17,7 @@ deltat = 0.1
 max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
-verify_analytic_jacobians = 0.0 
+verify_analytic_jacobians = 1.0e-6
 
 # Visualization options
 [vis-options]
@@ -36,7 +36,13 @@ solver_quiet = false
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes'
+enabled_physics = 'IncompressibleNavierStokes ConvectiveHeatTransfer BoussinesqBuoyancy'
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompNS]
@@ -49,9 +55,29 @@ rho = 1.0
 mu = 1.0
 
 bc_ids = '2 3 1 0'
-bc_types = 'prescribed_vel no_slip no_slip no_slip'
+bc_types = 'no_slip no_slip no_slip no_slip'
 
-bound_vel_2 = '10.0 0.0 0.0'
+
+[../HeatTransfer]
+
+rho = 1.0
+Cp = 1.0
+k = 1.0
+
+bc_ids = '3 0 2 1'
+
+bc_types = 'isothermal_wall adiabatic_wall adiabatic_wall isothermal_wall'
+
+T_wall_1 = 1
+T_wall_3 = 10
+
+[../BoussinesqBuoyancy]
+
+rho_ref = 1.0
+T_ref = 1.0
+beta_T = 1.0
+
+g = '0 9.8'
 
 [../VariableNames]
 

@@ -40,26 +40,22 @@ void GRINS::BoussinesqBuoyancy::read_input_options( GetPot& input )
   _T_ref = input("Physics/BoussinesqBuoyancy/T_ref", 1.0);;
   _beta_T = input("Physics/BoussinesqBuoyancy/beta_T", 1.0);;
 
-  int n_g_comps = input.vector_variable_size("Physics/BoussinesqBuoyancy/g");
-  if( n_g_comps != 3 )
-    {
-      std::cerr << "Error: Must specify 3 gravity components when inputting"
-		<< std::endl
-		<< "       gravity vector. Found " << n_g_comps
-		<< " gravity components."
-		<< std::endl;
-      libmesh_error();
-    }
+   unsigned int g_dim = input.vector_variable_size("Physics/BoussinesqBuoyancy/g");
 
-  _g(1) = input("Physics/BoussinesqBuoyancy/g", 0.0, 0 );
-  _g(2) = input("Physics/BoussinesqBuoyancy/g", 0.0, 1 );
-  _g(3) = input("Physics/BoussinesqBuoyancy/g", 0.0, 2 );
+  _g(0) = input("Physics/BoussinesqBuoyancy/g", 0.0, 0 );
+  _g(1) = input("Physics/BoussinesqBuoyancy/g", 0.0, 1 );
+  
+  if( g_dim == 3)
+    _g(2) = input("Physics/BoussinesqBuoyancy/g", 0.0, 2 );
 
   return;
 }
 
 void GRINS::BoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
 {
+  // No variables to initialize, but we must still "build" the local map.
+  // In this case, we have no new variables, so the map will be registered as built.
+  this->build_local_variable_map();
   return;
 }
 
@@ -89,6 +85,22 @@ bool GRINS::BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
   if (_dim != 3)
     _w_var = _u_var; // for convenience
 
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
+  const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+
+  // Element Jacobian * quadrature weights for interior integration.
+  const std::vector<libMesh::Real> &JxW =
+    c.element_fe_var[_u_var]->get_JxW();
+
+  // The velocity shape functions at interior quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& vel_phi =
+    c.element_fe_var[_u_var]->get_phi();
+
+  // The temperature shape functions at interior quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& T_phi =
+    c.element_fe_var[_T_var]->get_phi();
+
   // Get residuals
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // R_{u}
   libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // R_{v}
@@ -113,7 +125,33 @@ bool GRINS::BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
       libMesh::Number T;
       T = c.interior_value(_T_var, qp);
 
-    }
+      // First, an i-loop over the velocity degrees of freedom.
+      // We know that n_u_dofs == n_v_dofs so we can compute contributions
+      // for both at the same time.
+      for (unsigned int i=0; i != n_u_dofs; i++)
+        {
+	  Fu(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
+	  Fv(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
+
+	  if (_dim == 3)
+	    Fw(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
+
+	  if (request_jacobian && c.elem_solution_derivative)
+            {
+              libmesh_assert (c.elem_solution_derivative == 1.0);
+              for (unsigned int j=0; j != n_T_dofs; j++)
+		{
+		  KuT(i,j) += _rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+		  KvT(i,j) += _rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+
+		  if (_dim == 3)
+		    KwT(i,j) += _rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+
+		} // End j dof loop
+	    } // End request_jacobian check
+
+	} // End i dof loop
+    } // End quadrature loop
 
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("BoussinesqBuoyancy::element_time_derivative");
@@ -157,6 +195,8 @@ bool GRINS::BoussinesqBuoyancy::mass_residual( bool request_jacobian,
 
 void GRINS::BoussinesqBuoyancy::build_local_variable_map()
 {
+  // We only have registered variables in this class so the map is built.
+  _local_variable_map_built = true;
   return;
 }
 
