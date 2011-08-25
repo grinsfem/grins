@@ -61,6 +61,7 @@ TESTS = navier_stokes_tests.sh             \
         test_ns_poiseuille_flow.sh         \
         thermally_driven_flow_tests.sh     \
         test_thermally_driven_2d_flow.sh   \
+        test_thermally_driven_3d_flow.sh   \
         finalize.sh
 
 #shellfiles_src = <NULL.sh>

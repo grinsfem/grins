@@ -1,0 +1,103 @@
+# Mesh related options
+[mesh-options]
+
+mesh_option = create_3D_mesh
+element_type = HEX27
+mesh_nx1 = 5 
+mesh_nx2 = 5
+mesh_nx3 = 5
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 50 
+max_linear_iterations = 2000
+
+verify_analytic_jacobians = 0.0 
+
+# Visualization options
+[vis-options]
+output_vis_time_series = false 
+output_vis_flag = false
+vis_output_file_prefix = thermally_driven_3d_flow
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = false 
+print_mesh_info = false
+print_log_info = false
+solver_verbose = false
+solver_quiet = true
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompNS]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = 1.0
+mu = 1.0
+
+# Boundary ids:
+# k = bottom -> 0
+# k = top    -> 5
+# j = bottom -> 1
+# j = top    -> 3
+# i = bottom -> 4
+# i = top    -> 2
+
+bc_ids = '0 1 2 3 4 5'
+bc_types = 'no_slip no_slip no_slip no_slip no_slip no_slip'
+
+pin_pressure = false
+
+[../HeatTransfer]
+
+FE_family = LAGRANGE
+T_order = SECOND
+
+rho = 1.0
+Cp = 1.0
+k = 1.0
+
+bc_ids = '4 2 0 5 1 3'
+
+bc_types = 'isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall adiabatic_wall adiabatic_wall'
+
+T_wall_4 = 1
+T_wall_2 = 10
+
+[../BoussinesqBuoyancy]
+
+rho_ref = 1.0
+T_ref = 1.0
+beta_T = 1.0
+
+g = '0 9.8 0'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]
+
+[ExactSolution]
+
+solution_file = 'test_data/thermally_driven_3d.xdr'
