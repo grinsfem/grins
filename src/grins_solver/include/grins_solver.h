@@ -94,7 +94,7 @@ namespace GRINS
     // Visualization options
     bool _output_vis_time_series;
     std::string _vis_output_file_prefix;
-    std::string _output_format;
+    std::vector<std::string> _output_format;
 
     // Mesh/Solver related objects
     libMesh::Mesh* _mesh;

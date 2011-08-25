@@ -78,9 +78,21 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
 
   // Visualization options
   this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
-  this->_output_format          = input("vis-options/output_format", "ExodusII" );
   this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
 
+  unsigned int num_formats = input.vector_variable_size("vis-options/output_format");
+
+  // If no format specified, default to ExodusII only
+  if( num_formats == 0 )
+    {
+      _output_format.push_back("ExodusII");
+    }
+
+  for( unsigned int i = 0; i < num_formats; i++ )
+    {
+      _output_format.push_back( input("vis-options/output_format", "DIE", i ) );
+    }
+  
   // Screen display options
   this->_print_mesh_info            = input("screen-options/print_mesh_info", false );
   this->_print_log_info             = input("screen-options/print_log_info", false );
@@ -222,84 +234,89 @@ void GRINS::Solver<T>::output_visualization( unsigned int time_step )
 }
 
 template< class T >
-void GRINS::Solver<T>::dump_visualization( std::string filename )
+void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix )
 {
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
       std::cout << " WARNING in GRINS::Solver::dump_visualization :" <<
-                   " using 'unknown' as file prefix since it was not set " <<
-                   std::endl;
+	" using 'unknown' as file prefix since it was not set " <<
+	std::endl;
     }
-
-  // The following is a modifed copy from the FIN-S code.
-  if (this->_output_format == "tecplot" ||
-      this->_output_format == "dat")
+  
+  for( std::vector<std::string>::const_iterator format = _output_format.begin();
+       format != _output_format.end();
+       format ++ )
     {
-      filename+=".dat";
-      libMesh::TecplotIO(*(this->_mesh),false).write_equation_systems(
-						filename,
-						*(this->_equation_systems) );
-
-      // Left this here as an example from FIN-S if we need to
-      // handle boundary meshes separately in the future.
-      /*
-      if (have_boundary_data)
+      // The following is a modifed copy from the FIN-S code.
+      if ((*format) == "tecplot" ||
+	  (*format) == "dat")
 	{
-	  sprintf( filechar, "%s-surf-%05d.dat",
-		   output_name.c_str(),
-		   write_soln_number );
-
-	  libMesh::TecplotIO(*boundary_mesh,false).write_equation_systems(
-						std::string(filechar),
-						*_boundary_equation_systems );
+	  std::string filename = filename_prefix+".dat";
+	  libMesh::TecplotIO(*(this->_mesh),false).write_equation_systems(
+									  filename,
+									  *(this->_equation_systems) );
+	  
+	  // Left this here as an example from FIN-S if we need to
+	  // handle boundary meshes separately in the future.
+	  /*
+	    if (have_boundary_data)
+	    {
+	    sprintf( filechar, "%s-surf-%05d.dat",
+	    output_name.c_str(),
+	    write_soln_number );
+	    
+	    libMesh::TecplotIO(*boundary_mesh,false).write_equation_systems(
+	    std::string(filechar),
+	    *_boundary_equation_systems );
+	    }
+	  */
 	}
-      */
-    }
-  else if (this->_output_format == "tecplot_binary" ||
-	   this->_output_format == "plt")
-    {
-      filename+=".plt";
-      libMesh::TecplotIO(*(this->_mesh),true).write_equation_systems(
-						filename,
-						*(this->_equation_systems) );
-    }
-  else if (this->_output_format == "gmv")
-    {
-      filename+=".gmv";
-      GMVIO(*(this->_mesh)).write_equation_systems(
-						filename,
-						*(this->_equation_systems) );
-    }
-  else if (this->_output_format == "vtu")
-    {
-      filename+=".vtu";
-      VTKIO(*(this->_mesh)).write_equation_systems(
-						filename,
-						*(this->_equation_systems) );
-    }
-  else if (this->_output_format == "ExodusII")
-    {
-      filename+=".exo";
-      ExodusII_IO(*(this->_mesh)).write_equation_systems(
-						filename,
-						*(this->_equation_systems) );
-    }
-  else if (this->_output_format.find("xda") != std::string::npos ||
-	   this->_output_format.find("xdr") != std::string::npos)
-    {
-      filename+=this->_output_format;
-      const bool binary = (this->_output_format.find("xdr") != std::string::npos);
-      (this->_equation_systems)->write( filename,
-				        binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
-				        EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
-    }
-  else
-    {
-      // TODO: Do we want to use this to error throughout the code?
-      // TODO: (at least need to pass/print some message/string) - sahni
-      libmesh_error();
-    }
+      else if ((*format) == "tecplot_binary" ||
+	       (*format) == "plt")
+	{
+	  std::string filename = filename_prefix+".plt";
+	  libMesh::TecplotIO(*(this->_mesh),true).write_equation_systems(
+									 filename,
+									 *(this->_equation_systems) );
+	}
+      else if ((*format) == "gmv")
+	{
+	  std::string filename = filename_prefix+".gmv";
+	  GMVIO(*(this->_mesh)).write_equation_systems(
+						       filename,
+						       *(this->_equation_systems) );
+	}
+      else if ((*format) == "vtu")
+	{
+	  std::string filename = filename_prefix+".vtu";
+	  VTKIO(*(this->_mesh)).write_equation_systems(
+						       filename,
+						       *(this->_equation_systems) );
+	}
+      else if ((*format) == "ExodusII")
+	{
+	  std::string filename = filename_prefix+".exo";
+	  ExodusII_IO(*(this->_mesh)).write_equation_systems(
+							     filename,
+							     *(this->_equation_systems) );
+	}
+      else if ((*format).find("xda") != std::string::npos ||
+	       (*format).find("xdr") != std::string::npos)
+	{
+	  std::string filename = filename_prefix+"."+(*format);
+	  const bool binary = ((*format).find("xdr") != std::string::npos);
+	  (this->_equation_systems)->write( filename,
+					    binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
+					    EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
+	}
+      else
+	{
+	  // TODO: Do we want to use this to error throughout the code?
+	  // TODO: (at least need to pass/print some message/string) - sahni
+	  libmesh_error();
+	}
+    } // End loop over formats
 
   return;
 }
