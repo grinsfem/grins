@@ -30,10 +30,10 @@ utils_dir    = $(top_srcdir)/src/utilities
 #----------------------------------------------
 # Sources in src/grins
 grins_SRC    = $(grins_srcdir)/grins_solver.C \
-               $(grins_srcdir)/grins_mesh_manager.C \
-               $(grins_srcdir)/multiphysics_sys.C
+               $(grins_srcdir)/grins_mesh_manager.C
 
-physics_SRC  = $(physics_srcdir)/physics.C \
+physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
+               $(physics_srcdir)/physics.C \
                $(physics_srcdir)/inc_navier_stokes.C \
                $(physics_srcdir)/heat_transfer.C \
                $(physics_srcdir)/boussinesq_buoyancy.C
@@ -50,10 +50,10 @@ funcs_SRC = $(funcs_srcdir)/point_func_base.C \
 #INCLUDES we want distributed
 #----------------------------
 grins_INC    = $(grins_incdir)/grins_solver.h \
-               $(grins_incdir)/grins_mesh_manager.h \
-               $(grins_incdir)/multiphysics_sys.h
+               $(grins_incdir)/grins_mesh_manager.h
 
-physics_INC  = $(physics_incdir)/physics.h \
+physics_INC  = $(physics_incdir)/multiphysics_sys.h \
+               $(physics_incdir)/physics.h \
                $(physics_incdir)/variable_name_defaults.h \
                $(physics_incdir)/var_typedefs.h \
                $(physics_incdir)/inc_navier_stokes.h \
