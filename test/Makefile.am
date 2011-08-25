@@ -2,6 +2,7 @@ BUILT_SOURCES   = .license.stamp
 
 check_PROGRAMS  = test_ns_couette_flow
 check_PROGRAMS += test_ns_poiseuille_flow
+check_PROGRAMS += test_thermally_driven_flow
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -48,6 +49,7 @@ endif
 # Sources for these tests
 test_ns_couette_flow_SOURCES = test_ns_couette_flow.C
 test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
+test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_SOURCES)            \
@@ -56,7 +58,9 @@ testsrc = $(test_ns_couette_flow_SOURCES)            \
 #Define tests to actually be run
 TESTS = navier_stokes_tests.sh             \
         test_ns_couette_flow.sh            \
-        test_ns_poiseuille_flow.sh \
+        test_ns_poiseuille_flow.sh         \
+        thermally_driven_flow_tests.sh     \
+        test_thermally_driven_2d_flow.sh   \
         finalize.sh
 
 #shellfiles_src = <NULL.sh>
