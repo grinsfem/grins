@@ -226,7 +226,7 @@ void GRINS::Solver<T>::output_visualization( unsigned int time_step )
   suffix << time_step;
 
   std::string filename = this->_vis_output_file_prefix;
-  filename+=suffix.str();
+  filename+="."+suffix.str();
 
   this->dump_visualization( filename );
 
