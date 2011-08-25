@@ -111,7 +111,7 @@ namespace GRINS
     bool _solver_verbose;
     bool _print_equation_system_info;
 
-    void dump_visualization( std::string filename_prefix );
+    void dump_visualization( const std::string filename_prefix );
     void set_solver_options( libMesh::DiffSolver& solver );
 
 #ifdef USE_GRVY_TIMERS
