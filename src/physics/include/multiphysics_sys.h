@@ -85,9 +85,7 @@ namespace GRINS
     //! Constructor. Will be called by libMesh only.
     MultiphysicsSystem( libMesh::EquationSystems& es,
 			const std::string& name,
-			const unsigned int number )
-      : FEMSystem(es, name, number)
-    {}
+			const unsigned int number );
 
     //! Destructor. Clean up all physics allocations.
     ~MultiphysicsSystem();
@@ -131,6 +129,9 @@ namespace GRINS
 
     void dump_global_variable_map( );
 
+    //! Check that all the requested physics classes have other physics dependencies satisfied.
+    void check_physics_consistency();
+
     GRINS::Physics* get_physics( const std::string physics_name );
 
 #ifdef USE_GRVY_TIMERS
@@ -145,11 +146,15 @@ namespace GRINS
     // TODO: use AutoPtr instead?
     PhysicsList _physics_list;
 
+    const std::string _incompressible_navier_stokes, _heat_transfer, _boussinesq_buoyancy;
+
     GRINS::VariableMap _global_map;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
+
+    void physics_consistency_error( const std::string physics_checked, const std::string physics_required );
 
   };
 

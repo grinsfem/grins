@@ -3,9 +3,9 @@
 
 mesh_option = create_3D_mesh
 element_type = HEX27
-mesh_nx1 = 20
-mesh_nx2 = 20
-mesh_nx3 = 20
+mesh_nx1 = 15 
+mesh_nx2 = 15
+mesh_nx3 = 15
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -38,7 +38,7 @@ solver_quiet = false
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes ConvectiveHeatTransfer BoussinesqBuoyancy'
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompNS]

@@ -32,6 +32,15 @@
 #include "heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 
+GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
+					       const std::string& name,
+					       const unsigned int number )
+  : FEMSystem(es, name, number),
+    _incompressible_navier_stokes("IncompressibleNavierStokes"),
+    _heat_transfer("HeatTransfer"),
+    _boussinesq_buoyancy("BoussinesqBuoyancy")
+    {}
+
 GRINS::MultiphysicsSystem::~MultiphysicsSystem()
 {
   // Physics* objects get new'ed in the read_input_options call, so we
@@ -67,17 +76,17 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 
       /** \todo Do we want to create an enum list instead 
 	  for all available physics? */
-      if( physics_to_add == "IncompressibleNavierStokes" )
+      if( physics_to_add == _incompressible_navier_stokes )
 	{
-	  this->_physics_list["IncompressibleNavierStokes"] = new GRINS::IncompressibleNavierStokes;
+	  this->_physics_list[_incompressible_navier_stokes] = new GRINS::IncompressibleNavierStokes;
 	}
-      else if( physics_to_add == "ConvectiveHeatTransfer" )
+      else if( physics_to_add == _heat_transfer )
 	{
-	  this->_physics_list["ConvectiveHeatTransfer"] = new GRINS::HeatTransfer;
+	  this->_physics_list[_heat_transfer] = new GRINS::HeatTransfer;
 	}
-      else if( physics_to_add == "BoussinesqBuoyancy" )
+      else if( physics_to_add == _boussinesq_buoyancy )
 	{
-	  this->_physics_list["BoussinesqBuoyancy"] = new GRINS::BoussinesqBuoyancy;
+	  this->_physics_list[_boussinesq_buoyancy] = new GRINS::BoussinesqBuoyancy;
 	}
       else
 	{
@@ -86,6 +95,8 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 	}
     }
   
+  this->check_physics_consistency();
+
   // Read the input options for each of the physics
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
@@ -255,6 +266,40 @@ GRINS::Physics* GRINS::MultiphysicsSystem::get_physics( const std::string physic
   return _physics_list[physics_name];
 }
 
+void GRINS::MultiphysicsSystem::check_physics_consistency()
+{
+
+  for( GRINS::PhysicsListIter physics = _physics_list.begin();
+       physics != _physics_list.end();
+       physics++ )
+    {
+      // For HeatTransfer, we need IncompressibleNavierStokes
+      if( physics->first == _heat_transfer )
+	{
+	  if( _physics_list.find(_incompressible_navier_stokes) == _physics_list.end() )
+	    {
+	      this->physics_consistency_error( _heat_transfer, _incompressible_navier_stokes  );
+	    }
+	}
+
+      // For BoussinesqBuoyancy, we need both HeatTransfer and IncompressibleNavierStokes
+      if( physics->first == _boussinesq_buoyancy )
+	{
+	  if( _physics_list.find(_incompressible_navier_stokes) == _physics_list.end() )
+	    {
+	      this->physics_consistency_error( _boussinesq_buoyancy, _incompressible_navier_stokes  );
+	    }
+
+	  if( _physics_list.find(_heat_transfer) == _physics_list.end() )
+	    {
+	      this->physics_consistency_error( _boussinesq_buoyancy, _heat_transfer  );
+	    }
+	}
+    }
+
+  return;
+}
+
 #ifdef USE_GRVY_TIMERS
 void GRINS::MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {
@@ -271,3 +316,16 @@ void GRINS::MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_
   return;
 }
 #endif
+
+void GRINS::MultiphysicsSystem::physics_consistency_error( const std::string physics_checked, 
+							   const std::string physics_required )
+{
+  std::cerr << "Error: " << physics_checked << " physics class requires using "
+	    << physics_required << " physics." << std::endl
+	    << physics_required << " not found in list of requested physics."
+	    << std::endl;
+
+  libmesh_error();	   
+
+  return;
+}

@@ -36,7 +36,7 @@ solver_quiet = false
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes ConvectiveHeatTransfer BoussinesqBuoyancy'
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 
 # Boundary ids:
 # j = bottom -> 0
