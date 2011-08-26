@@ -214,7 +214,7 @@ void GRINS::Solver<T>::solve()
 template< class T >
 void GRINS::Solver<T>::output_visualization()
 {
-  this->dump_visualization( this->_vis_output_file_prefix );
+  this->dump_visualization( this->_vis_output_file_prefix, 0 );
   return;
 }
 
@@ -228,13 +228,13 @@ void GRINS::Solver<T>::output_visualization( unsigned int time_step )
   std::string filename = this->_vis_output_file_prefix;
   filename+="."+suffix.str();
 
-  this->dump_visualization( filename );
+  this->dump_visualization( filename, time_step );
 
   return;
 }
 
 template< class T >
-void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix )
+void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix, const int time_step )
 {
   if( this->_vis_output_file_prefix == "unknown" )
     {
@@ -297,9 +297,12 @@ void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix )
       else if ((*format) == "ExodusII")
 	{
 	  std::string filename = filename_prefix+".exo";
-	  ExodusII_IO(*(this->_mesh)).write_equation_systems(
-							     filename,
-							     *(this->_equation_systems) );
+	  std::cout << "time_step = " << time_step << ", time = " << this->_system->time << std::endl;
+	  ExodusII_IO(*(this->_mesh)).write_timestep(
+						     filename,
+						     *(this->_equation_systems),
+						     time_step+1, // ExodusII wants 1-based counting
+						     this->_system->time );
 	}
       else if ((*format).find("xda") != std::string::npos ||
 	       (*format).find("xdr") != std::string::npos)

@@ -372,9 +372,57 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
 }
 
 bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
-						       libMesh::DiffContext& context,
-						       libMesh::FEMSystem* system )
+					 libMesh::DiffContext& context,
+					 libMesh::FEMSystem* system )
 {
-  // TODO: account for 'rho*Cp' factor in mass matrix
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // First we get some references to cell-specific data that
+  // will be used to assemble the linear system.
+
+  // Element Jacobian * quadrature weights for interior integration
+  const std::vector<Real> &JxW = 
+    c.element_fe_var[_T_var]->get_JxW();
+
+  // The shape functions at interior quadrature points.
+  const std::vector<std::vector<Real> >& phi = 
+    c.element_fe_var[_T_var]->get_phi();
+
+  // The number of local degrees of freedom in each variable
+  const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+
+  // The subvectors and submatrices we need to fill:
+  DenseSubVector<Real> &F = *c.elem_subresiduals[_T_var];
+
+  DenseSubMatrix<Real> &M = *c.elem_subjacobians[_T_var][_T_var];
+
+  unsigned int n_qpoints = c.element_qrule->n_points();
+
+  for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+    {
+      // For the mass residual, we need to be a little careful.
+      // The time integrator is handling the time-discretization
+      // for us so we need to supply M(u_fixed)*u for the residual.
+      // u_fixed will be given by the fixed_interior_* functions
+      // while u will be given by the interior_* functions.
+      Real T_dot = c.interior_value(_T_var, qp);
+
+      for (unsigned int i = 0; i != n_T_dofs; ++i)
+        {
+          F(i) += JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
+
+          if( request_jacobian )
+              {
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+		    // We're assuming rho, cp are constant w.r.t. T here.
+                    M(i,j) += JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
+                  }
+              }// End of check on Jacobian
+          
+        } // End of element dof loop
+      
+    } // End of the quadrature point loop
+
   return request_jacobian;
 }

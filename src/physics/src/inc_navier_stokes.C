@@ -614,7 +614,80 @@ bool GRINS::IncompressibleNavierStokes::mass_residual( bool request_jacobian,
 						       libMesh::DiffContext& context,
 						       libMesh::FEMSystem* system )
 {
-  /** \todo Need to override base class to account for rho factor. */
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // Element Jacobian * quadrature weights for interior integration
+  // We assume the same for each flow variable
+  const std::vector<Real> &JxW = 
+    c.element_fe_var[_u_var]->get_JxW();
+
+  // The shape functions at interior quadrature points.
+  // We assume the same for each flow variable
+  const std::vector<std::vector<Real> >& u_phi = 
+    c.element_fe_var[_u_var]->get_phi();
+
+  // The number of local degrees of freedom in each variable
+  const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
+
+  // for convenience
+  if (_dim != 3)
+    _w_var = _u_var;
+
+  // The subvectors and submatrices we need to fill:
+  DenseSubVector<Real> &F_u = *c.elem_subresiduals[_u_var];
+  DenseSubVector<Real> &F_v = *c.elem_subresiduals[_v_var];
+  DenseSubVector<Real> &F_w = *c.elem_subresiduals[_w_var];
+
+  DenseSubMatrix<Real> &M_uu = *c.elem_subjacobians[_u_var][_u_var];
+  DenseSubMatrix<Real> &M_vv = *c.elem_subjacobians[_v_var][_v_var];
+  DenseSubMatrix<Real> &M_ww = *c.elem_subjacobians[_w_var][_w_var];
+
+  unsigned int n_qpoints = c.element_qrule->n_points();
+
+  for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+    {
+      // For the mass residual, we need to be a little careful.
+      // The time integrator is handling the time-discretization
+      // for us so we need to supply M(u_fixed)*u for the residual.
+      // u_fixed will be given by the fixed_interior_* functions
+      // while u will be given by the interior_* functions.
+      Real u_dot = c.interior_value(_u_var, qp);
+      Real v_dot = c.interior_value(_v_var, qp);
+
+      Real w_dot = 0.0;
+
+      if( _dim == 3 )
+	Real w_dot = c.interior_value(_w_var, qp);
+      
+      for (unsigned int i = 0; i != n_u_dofs; ++i)
+        {
+	  F_u(i) += JxW[qp]*_rho*u_dot*u_phi[i][qp];
+	  F_v(i) += JxW[qp]*_rho*v_dot*u_phi[i][qp];
+
+	  if( _dim == 3 )
+	    F_w(i) += JxW[qp]*_rho*w_dot*u_phi[i][qp];
+	  
+	  if( request_jacobian )
+              {
+		for (unsigned int j=0; j != n_u_dofs; j++)
+		  {
+		    // Assuming rho is constant w.r.t. u, v, w
+		    // and T (if Boussinesq added).
+		    Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
+
+		    M_uu(i,j) += value;
+		    M_vv(i,j) += value;
+
+		    if( _dim == 3)
+		      {
+			M_ww(i,j) += value;
+		      }
+
+		  } // End dof loop
+	      } // End Jacobian check
+	} // End dof loop
+    } // End quadrature loop
+
   return request_jacobian;
 }
 
