@@ -8,4 +8,4 @@ PETSC_OPTIONS="-pc_type ilu"
 
 #-pc_factor_mat_solver_package mumps"
 
-$PROG $INPUT 
+$PROG $INPUT $PETSC_OPTIONS

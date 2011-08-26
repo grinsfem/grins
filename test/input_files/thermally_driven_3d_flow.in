@@ -19,7 +19,9 @@ deltat = 0.1
 max_nonlinear_iterations = 50 
 max_linear_iterations = 2000
 
-verify_analytic_jacobians = 0.0 
+verify_analytic_jacobians = 1.0e-6 
+
+initial_linear_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]

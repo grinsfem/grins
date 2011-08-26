@@ -19,6 +19,8 @@ max_linear_iterations = 2500
 
 verify_analytic_jacobians = 1.0e-6
 
+initial_linear_tolerance = 1.0e-10
+
 # Visualization options
 [vis-options]
 output_vis_time_series = false 
@@ -28,7 +30,7 @@ output_format = 'ExodusII xdr'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = false 
+print_equation_system_info = false
 print_mesh_info = false
 print_log_info = false
 solver_verbose = false
