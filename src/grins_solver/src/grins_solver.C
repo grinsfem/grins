@@ -297,11 +297,14 @@ void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix, co
       else if ((*format) == "ExodusII")
 	{
 	  std::string filename = filename_prefix+".exo";
-	  std::cout << "time_step = " << time_step << ", time = " << this->_system->time << std::endl;
+	  
+	  // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
+	  // it should be the number of timesteps within the file. Here, we are explicitly only doing 
+	  // one timestep per file.
 	  ExodusII_IO(*(this->_mesh)).write_timestep(
 						     filename,
 						     *(this->_equation_systems),
-						     time_step+1, // ExodusII wants 1-based counting
+						     1,
 						     this->_system->time );
 	}
       else if ((*format).find("xda") != std::string::npos ||
