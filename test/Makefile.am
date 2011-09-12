@@ -1,6 +1,7 @@
 BUILT_SOURCES   = .license.stamp
 
-check_PROGRAMS  = test_ns_couette_flow
+check_PROGRAMS  = test_ns_couette_flow_2d_x
+check_PROGRAMS += test_ns_couette_flow_2d_y
 check_PROGRAMS += test_ns_poiseuille_flow
 check_PROGRAMS += test_thermally_driven_flow
 
@@ -47,7 +48,8 @@ if MASA_ENABLED
 endif
 
 # Sources for these tests
-test_ns_couette_flow_SOURCES = test_ns_couette_flow.C
+test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
+test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
 test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 
@@ -57,7 +59,8 @@ testsrc = $(test_ns_couette_flow_SOURCES)            \
 
 #Define tests to actually be run
 TESTS = navier_stokes_tests.sh             \
-        test_ns_couette_flow.sh            \
+        test_ns_couette_flow_2d_x.sh       \
+        test_ns_couette_flow_2d_y.sh       \
         test_ns_poiseuille_flow.sh         \
         thermally_driven_flow_tests.sh     \
         test_thermally_driven_2d_flow.sh   \
