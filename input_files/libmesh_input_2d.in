@@ -19,6 +19,8 @@ max_linear_iterations = 2500
 
 verify_analytic_jacobians = 1.0e-6
 
+initial_linear_tolerance = 1.0e-10
+
 # Visualization options
 [vis-options]
 output_vis_time_series = true
@@ -57,6 +59,7 @@ mu = 1.0
 bc_ids = '2 3 1 0'
 bc_types = 'no_slip no_slip no_slip no_slip'
 
+pin_pressure = false
 
 [../HeatTransfer]
 

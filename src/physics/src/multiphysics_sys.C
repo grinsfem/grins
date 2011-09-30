@@ -29,6 +29,7 @@
 #include "multiphysics_sys.h"
 
 #include "inc_navier_stokes.h"
+#include "axisym_inc_navier_stokes.h"
 #include "heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 
@@ -37,6 +38,7 @@ GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
 					       const unsigned int number )
   : FEMSystem(es, name, number),
     _incompressible_navier_stokes("IncompressibleNavierStokes"),
+    _axisymmetric_incomp_navier_stokes("AxisymmetricIncompNavierStokes"),
     _heat_transfer("HeatTransfer"),
     _boussinesq_buoyancy("BoussinesqBuoyancy")
     {}
@@ -79,6 +81,11 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
       if( physics_to_add == _incompressible_navier_stokes )
 	{
 	  this->_physics_list[_incompressible_navier_stokes] = new GRINS::IncompressibleNavierStokes;
+	}
+      else if( physics_to_add == _axisymmetric_incomp_navier_stokes )
+	{
+	  this->_physics_list[_axisymmetric_incomp_navier_stokes] = 
+	    new GRINS::AxisymmetricIncompNavierStokes;
 	}
       else if( physics_to_add == _heat_transfer )
 	{
@@ -273,6 +280,20 @@ void GRINS::MultiphysicsSystem::check_physics_consistency()
        physics != _physics_list.end();
        physics++ )
     {
+      // For Axisymmetric Incompressible Navier-Stokes, make sure we
+      // have two-dimensions
+      if( physics->first == _axisymmetric_incomp_navier_stokes )
+	{
+	  if( this->get_mesh().mesh_dimension() != 2 )
+	    {
+	      std::cerr << "Error: Dimension of mesh must be 2 for axisymmetric problems."
+			<< "Dimension = " 
+			<< this->get_mesh().mesh_dimension()
+			<< std::endl;
+	      libmesh_error();
+	    }
+	}
+
       // For HeatTransfer, we need IncompressibleNavierStokes
       if( physics->first == _heat_transfer )
 	{

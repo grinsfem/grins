@@ -25,21 +25,39 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BC_TYPES_H
-#define BC_TYPES_H
-namespace GRINS
+
+#include "point_concentric_cylinder_profile.h"
+
+GRINS::PointConcentricCylinderProfile::PointConcentricCylinderProfile( )
+  : BasePointFuncObj(),
+    _u0(2.0),
+    _r0(1.0),
+    _r1(2.0)
 {
-  enum BC_TYPES{ DO_NOTHING = 0, //Should always be first
-		 NO_SLIP,
-		 NO_FLOW,
-		 PRESCRIBED_VELOCITY,
-		 INFLOW,
-		 OUTFLOW,
-		 AXISYMMETRIC,
-		 ISOTHERMAL_WALL,
-		 ADIABATIC_WALL,
-		 PRESCRIBED_HEAT_FLUX,
-		 INVALID_BC_TYPE //Should always be last
-  };
+  return;
 }
-#endif //BC_TYPES_H
+
+GRINS::PointConcentricCylinderProfile::PointConcentricCylinderProfile( const double u0, 
+								       const double r0, 
+								       const double r1 )
+  : BasePointFuncObj(),
+    _u0(u0),
+    _r0(r0),
+    _r1(r1)
+{
+  return;
+}
+
+GRINS::PointConcentricCylinderProfile::~PointConcentricCylinderProfile()
+{
+  return;
+}
+
+libMesh::Point GRINS::PointConcentricCylinderProfile::operator()( const libMesh::Point& point )
+{
+  const double r = point(0);
+
+  double z_out = this->eval( _u0, _r0, _r1, r );
+  
+  return libMesh::Point( 0.0, z_out );
+}

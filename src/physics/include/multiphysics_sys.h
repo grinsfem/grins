@@ -146,7 +146,9 @@ namespace GRINS
     // TODO: use AutoPtr instead?
     PhysicsList _physics_list;
 
-    const std::string _incompressible_navier_stokes, _heat_transfer, _boussinesq_buoyancy;
+    const std::string _incompressible_navier_stokes, 
+      _axisymmetric_incomp_navier_stokes,
+      _heat_transfer, _boussinesq_buoyancy;
 
     GRINS::VariableMap _global_map;
 

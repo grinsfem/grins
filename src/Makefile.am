@@ -35,13 +35,15 @@ grins_SRC    = $(grins_srcdir)/grins_solver.C \
 physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/physics.C \
                $(physics_srcdir)/inc_navier_stokes.C \
+               $(physics_srcdir)/axisym_inc_navier_stokes.C \
                $(physics_srcdir)/heat_transfer.C \
                $(physics_srcdir)/boussinesq_buoyancy.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C
 
 funcs_SRC = $(funcs_srcdir)/point_func_base.C \
-            $(funcs_srcdir)/point_parabolic_profile.C
+            $(funcs_srcdir)/point_parabolic_profile.C \
+            $(funcs_srcdir)/point_concentric_cylinder_profile.C
 
 #Sources in utilities/src
 #utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
@@ -56,6 +58,7 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/physics.h \
                $(physics_incdir)/variable_name_defaults.h \
                $(physics_incdir)/var_typedefs.h \
+               $(physics_incdir)/axisym_inc_navier_stokes.h \
                $(physics_incdir)/inc_navier_stokes.h \
                $(physics_incdir)/heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h
@@ -64,7 +67,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h
 
 funcs_INC = $(funcs_incdir)/point_func_base.h \
-            $(funcs_incdir)/point_parabolic_profile.h
+            $(funcs_incdir)/point_parabolic_profile.h \
+            $(funcs_incdir)/point_concentric_cylinder_profile.h
 
 #utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
 

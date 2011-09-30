@@ -179,6 +179,9 @@ GRINS::BC_TYPES GRINS::BoundaryConditions::string_to_enum( const std::string bc_
   else if( bc_type == "outflow" )
     bc_type_out = GRINS::OUTFLOW;
 
+  else if( bc_type == "axisymmetric" )
+    bc_type_out = GRINS::AXISYMMETRIC;
+
   else if( bc_type == "isothermal_wall" )
     bc_type_out = GRINS::ISOTHERMAL_WALL;
 
