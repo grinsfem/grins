@@ -37,7 +37,9 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/inc_navier_stokes.C \
                $(physics_srcdir)/axisym_inc_navier_stokes.C \
                $(physics_srcdir)/heat_transfer.C \
-               $(physics_srcdir)/boussinesq_buoyancy.C
+               $(physics_srcdir)/axisym_heat_transfer.C \
+               $(physics_srcdir)/boussinesq_buoyancy.C \
+               $(physics_srcdir)/axisym_boussinesq_buoyancy.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C
 
@@ -61,7 +63,9 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/axisym_inc_navier_stokes.h \
                $(physics_incdir)/inc_navier_stokes.h \
                $(physics_incdir)/heat_transfer.h \
-               $(physics_incdir)/boussinesq_buoyancy.h
+               $(physics_incdir)/axisym_heat_transfer.h \
+               $(physics_incdir)/boussinesq_buoyancy.h \
+               $(physics_incdir)/axisym_boussinesq_buoyancy.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h
@@ -93,32 +97,9 @@ grins_LDADD = libgrins.la
 #Local Directories to include for build
 #--------------------------------------
 AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(funcs_incdir)
-#              \ -I$(utils_dir)/<NULL>/inc
-
-#-------------------------------------
-# External library include directories
-#-------------------------------------
-###AM_CPPFLAGS += $(HDF5_CFLAGS) \
-###               $(QUESO_CPPFLAGS) \
-###               $(BOOST_CPPFLAGS) \
-###               $(GSL_CFLAGS) \
-###               $(GLPK_CFLAGS) \
-###               $(LIBMESH_CXXFLAGS) \
-###               $(EPETRA_INCLUDES)
 
 AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
-
-#------------------------------------
-# Flags we need to pass to the linker
-#------------------------------------
-###AM_LDFLAGS = $(QUESO_LIBS) \
-###             $(GSL_LIBS) \
-###             $(GLPK_LIBS) \
-###             $(BOOST_PROGRAM_OPTIONS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIBS) \
-###             $(HDF5_LIBS)  \
-###             $(EPETRA_LIBS) \
-###             $(LIBMESH_LIBS)
 
 AM_LDFLAGS = $(LIBMESH_LIBS) \
              $(GRVY_LIBS)

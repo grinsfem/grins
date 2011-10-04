@@ -26,9 +26,9 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "heat_transfer.h"
+#include "axisym_heat_transfer.h"
 
-void GRINS::HeatTransfer::read_input_options( GetPot& input )
+void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 {
   this->_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
@@ -36,16 +36,15 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   this->_T_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
 
-  this->_rho = input("Physics/HeatTransfer/rho", 1.0); //TODO: same as Incompressible NS
-  this->_Cp  = input("Physics/HeatTransfer/Cp", 1.0);
-  this->_k  = input("Physics/HeatTransfer/k", 1.0);
+  this->_rho = input("Physics/AxisymmetricHeatTransfer/rho", 1.0); //TODO: same as Incompressible NS
+  this->_Cp  = input("Physics/AxisymmetricHeatTransfer/Cp", 1.0);
+  this->_k  = input("Physics/AxisymmetricHeatTransfer/k", 1.0);
 
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
   // registered/non-owned variable names
-  this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
-  this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
-  this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
+  this->_u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
+  this->_u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::u_z_var_name_default );
   
 
   // Read boundary condition info
@@ -53,8 +52,8 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
             that it doesn't have to be rewritten for every physics class.
 	    Then, the physics only handles the specifics, e.g. reading
 	    in boundary velocities. */
-  int num_ids = input.vector_variable_size("Physics/HeatTransfer/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/HeatTransfer/bc_types");
+  int num_ids = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/bc_types");
 
   if( num_ids != num_bcs )
     {
@@ -65,8 +64,8 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 
   for( int i = 0; i < num_ids; i++ )
     {
-      int bc_id = input("Physics/HeatTransfer/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/HeatTransfer/bc_types", "NULL", i );
+      int bc_id = input("Physics/AxisymmetricHeatTransfer/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/AxisymmetricHeatTransfer/bc_types", "NULL", i );
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
@@ -82,7 +81,7 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 	case GRINS::ISOTHERMAL_WALL:
 	  {
 	    _T_boundary_values[bc_id] = 
-	      input("Physics/HeatTransfer/T_wall_"+bc_id_string, 0.0 );
+	      input("Physics/AxisymmetricHeatTransfer/T_wall_"+bc_id_string, 0.0 );
 	  }
 	  break;
 	  
@@ -92,8 +91,10 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
 	    _q_boundary_values[bc_id] = 
-	      input("Physics/HeatTransfer/q_wall_"+bc_id_string, 0.0 );
+	      input("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string, 0.0 );
 	  }
+	  break;
+	case GRINS::AXISYMMETRIC:
 	  break;
 
 	default:
@@ -109,7 +110,7 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
   return;
 }
 
-void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
+void GRINS::AxisymmetricHeatTransfer::init_variables( libMesh::FEMSystem* system )
 {
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
@@ -122,16 +123,15 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
   return;
 }
 
-void GRINS::HeatTransfer::register_variable_indices( VariableMap& global_map )
+void GRINS::AxisymmetricHeatTransfer::register_variable_indices( VariableMap& global_map )
 {
-  _u_var = global_map[_u_var_name];
-  _v_var = global_map[_v_var_name];
-  _w_var = global_map[_w_var_name];
+  _u_r_var = global_map[_u_r_var_name];
+  _u_z_var = global_map[_u_z_var_name];
 
   return;
 }
 
-void GRINS::HeatTransfer::build_local_variable_map()
+void GRINS::AxisymmetricHeatTransfer::build_local_variable_map()
 {
   _var_map[_T_var_name] = _T_var;
 
@@ -140,17 +140,14 @@ void GRINS::HeatTransfer::build_local_variable_map()
   return;
 }
 
-void GRINS::HeatTransfer::set_time_evolving_vars( libMesh::FEMSystem* system )
+void GRINS::AxisymmetricHeatTransfer::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
-  const unsigned int dim = system->get_mesh().mesh_dimension();
-
   // Tell the system to march temperature forward in time
   system->time_evolving(_T_var);
-
   return;
 }
 
-void GRINS::HeatTransfer::init_context( libMesh::DiffContext &context )
+void GRINS::AxisymmetricHeatTransfer::init_context( libMesh::DiffContext &context )
 {
   libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
@@ -167,25 +164,25 @@ void GRINS::HeatTransfer::init_context( libMesh::DiffContext &context )
   c.side_fe_var[_T_var]->get_dphi();
   c.side_fe_var[_T_var]->get_xyz();
 
-  //TODO: _u_var is registered so can we assume things related to _u_var
-  //      are available in FEMContext
+  // _u_var is registered so can we assume things related to _u_var
+  // are available in FEMContext
 
   return;
 }
 
-bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
-								 libMesh::DiffContext& context,
-								 libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricHeatTransfer::element_time_derivative( bool request_jacobian,
+							       libMesh::DiffContext& context,
+							       libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("HeatTransfer::element_time_derivative");
+  this->_timer->BeginTimer("AxisymmetricHeatTransfer::element_time_derivative");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
   // The number of local degrees of freedom in each variable.
   const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
-  const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
+  const unsigned int n_u_dofs = c.dof_indices_var[_u_r_var].size();
 
   //TODO: check n_T_dofs is same as n_u_dofs, n_v_dofs, n_w_dofs
 
@@ -202,31 +199,25 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
 
   // The velocity shape functions at interior quadrature points.
   const std::vector<std::vector<libMesh::Real> >& vel_phi =
-    c.element_fe_var[_u_var]->get_phi();
+    c.element_fe_var[_u_r_var]->get_phi();
 
   // The temperature shape function gradients (in global coords.)
   // at interior quadrature points.
   const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
     c.element_fe_var[_T_var]->get_dphi();
 
-  // The subvectors and submatrices we need to fill:
-  //
-  // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
-  // e.g., for \alpha = T and \beta = v we get: K_{Tu} = R_{T},{u}
-  //
+  // Physical location of the quadrature points
+  const std::vector<libMesh::Point>& u_qpoint =
+    c.element_fe_var[_u_r_var]->get_xyz();
 
-  // We do this in the incompressible Navier-Stokes class and need to do it here too
-  // since _w_var won't have been defined in the global map.
-  if (_dim != 3)
-    _w_var = _u_var; // for convenience
+  // The subvectors and submatrices we need to fill:
+  libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[_T_var]; // R_{T}
 
   libMesh::DenseSubMatrix<Number> &KTT = *c.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
 
-  libMesh::DenseSubMatrix<Number> &KTu = *c.elem_subjacobians[_T_var][_u_var]; // R_{T},{u}
-  libMesh::DenseSubMatrix<Number> &KTv = *c.elem_subjacobians[_T_var][_v_var]; // R_{T},{v}
-  libMesh::DenseSubMatrix<Number> &KTw = *c.elem_subjacobians[_T_var][_w_var]; // R_{T},{w}
+  libMesh::DenseSubMatrix<Number> &KTr = *c.elem_subjacobians[_T_var][_u_r_var]; // R_{T},{r}
+  libMesh::DenseSubMatrix<Number> &KTz = *c.elem_subjacobians[_T_var][_u_z_var]; // R_{T},{z}
 
-  libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[_T_var]; // R_{T}
 
   // Now we will build the element Jacobian and residual.
   // Constructing the residual requires the solution and its
@@ -238,25 +229,23 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
 
   for (unsigned int qp=0; qp != n_qpoints; qp++)
     {
+      const libMesh::Number r = u_qpoint[qp](0);
+      
       // Compute the solution & its gradient at the old Newton iterate.
-      libMesh::Number T, u, v, w;
+      libMesh::Number T, u_r, u_z;
       T = c.interior_value(_T_var, qp);
-      u = c.interior_value(_u_var, qp);
-      v = c.interior_value(_v_var, qp);
-      if (_dim == 3)
-        w = c.interior_value(_w_var, qp);
+      u_r = c.interior_value(_u_r_var, qp);
+      u_z = c.interior_value(_u_z_var, qp);
 
       libMesh::Gradient grad_T;
       grad_T = c.interior_gradient(_T_var, qp);
 
-      libMesh::NumberVectorValue U (u,v);
-      if (_dim == 3)
-        U(2) = w;
+      libMesh::NumberVectorValue U (u_r,u_z);
 
       // First, an i-loop over the  degrees of freedom.
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
-          FT(i) += JxW[qp] *
+          FT(i) += JxW[qp]*r*
                    (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
                     -_k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
@@ -269,7 +258,7 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
                   // TODO: precompute some terms like:
                   //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-                  KTT(i,j) += JxW[qp] *
+                  KTT(i,j) += JxW[qp]*r*
                               (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
                                -_k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
                 } // end of the inner dof (j) loop
@@ -277,10 +266,8 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
               // Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
               for (unsigned int j=0; j != n_u_dofs; j++)
                 {
-                  KTu(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
-                  KTv(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
-                  if (_dim == 3)
-                     KTw(i,j) += JxW[qp]*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
+                  KTr(i,j) += JxW[qp]*r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+                  KTz(i,j) += JxW[qp]*r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
                 } // end of the inner dof (j) loop
 
             } // end - if (request_jacobian && c.elem_solution_derivative)
@@ -289,13 +276,13 @@ bool GRINS::HeatTransfer::element_time_derivative( bool request_jacobian,
     } // end of the quadrature point (qp) loop
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("HeatTransfer::element_time_derivative");
+  this->_timer->EndTimer("AxisymmetricHeatTransfer::element_time_derivative");
 #endif
 
   return request_jacobian;
 }
 
-bool GRINS::HeatTransfer::element_constraint( bool request_jacobian,
+bool GRINS::AxisymmetricHeatTransfer::element_constraint( bool request_jacobian,
 							    libMesh::DiffContext& context,
 							    libMesh::FEMSystem* system )
 {
@@ -303,19 +290,19 @@ bool GRINS::HeatTransfer::element_constraint( bool request_jacobian,
 }
 
 
-bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
+bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobian,
 							      libMesh::DiffContext& context,
 							      libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
+bool GRINS::AxisymmetricHeatTransfer::side_constraint( bool request_jacobian,
 							 libMesh::DiffContext& context,
 							 libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("HeatTransfer::side_constraint");
+  this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_constraint");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -354,6 +341,10 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
 	  }
 	  break;
 
+	case GRINS::AXISYMMETRIC:
+	  // Don't need to do anything for dT/dr = 0
+	  break;
+
 	default:
 	  {
 	    std::cerr << "Error: Invalid BC type for ConvectiveHeatTransfer."
@@ -365,18 +356,18 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
     } // End if
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("HeatTransfer::side_constraint");
+  this->_timer->EndTimer("AxisymmetricHeatTransfer::side_constraint");
 #endif
 
   return request_jacobian;
 }
 
-bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
-					 libMesh::DiffContext& context,
-					 libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricHeatTransfer::mass_residual( bool request_jacobian,
+						     libMesh::DiffContext& context,
+						     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("HeatTransfer::mass_residual");
+  this->_timer->BeginTimer("AxisymmetricHeatTransfer::mass_residual");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -395,6 +386,10 @@ bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
   // The number of local degrees of freedom in each variable
   const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
 
+  // Physical location of the quadrature points
+  const std::vector<libMesh::Point>& u_qpoint =
+    c.element_fe_var[_u_r_var]->get_xyz();
+
   // The subvectors and submatrices we need to fill:
   DenseSubVector<Real> &F = *c.elem_subresiduals[_T_var];
 
@@ -404,6 +399,8 @@ bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
 
   for (unsigned int qp = 0; qp != n_qpoints; ++qp)
     {
+      const libMesh::Number r = u_qpoint[qp](0);
+
       // For the mass residual, we need to be a little careful.
       // The time integrator is handling the time-discretization
       // for us so we need to supply M(u_fixed)*u for the residual.
@@ -413,14 +410,14 @@ bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
 
       for (unsigned int i = 0; i != n_T_dofs; ++i)
         {
-          F(i) += JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
+          F(i) += JxW[qp]*r*(_rho*_Cp*T_dot*phi[i][qp] );
 
           if( request_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
 		    // We're assuming rho, cp are constant w.r.t. T here.
-                    M(i,j) += JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
+                    M(i,j) += JxW[qp]*r*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
           
@@ -429,7 +426,7 @@ bool GRINS::HeatTransfer::mass_residual( bool request_jacobian,
     } // End of the quadrature point loop
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("HeatTransfer::mass_residual");
+  this->_timer->EndTimer("AxisymmetricHeatTransfer::mass_residual");
 #endif
 
   return request_jacobian;

@@ -115,7 +115,7 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( GetPot& input )
   unsigned int pin_loc_dim = input.vector_variable_size("Physics/AxisymIncompNS/pin_location");
 
   // If the user is specifying a pin_location, it had better be 2-dimensional
-  if( pin_loc_dim != 2 )
+  if( pin_loc_dim > 2 )
     {
       std::cerr << "Error: pressure pin location must be 2 dimensional"
 		<< std::endl;
