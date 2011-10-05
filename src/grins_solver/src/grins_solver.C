@@ -77,8 +77,10 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_deltat      = input("unsteady-solver/deltat", 0.0 ); //TODO: Better default here?
 
   // Visualization options
-  this->_vis_output_file_prefix = input("vis-options/vis_output_file_prefix", "unknown" );
-  this->_output_vis_time_series = input("vis-options/output_vis_time_series", false);
+  this->_vis_output_file_prefix   = input("vis-options/vis_output_file_prefix", "unknown" );
+  this->_output_vis_time_series   = input("vis-options/output_vis_time_series", false);
+  this->_output_residual          = input("vis-options/output_residual", false );
+  this->_output_unsteady_residual = input("vis-options/output_unsteady_residual", false );
 
   unsigned int num_formats = input.vector_variable_size("vis-options/output_format");
 
@@ -204,6 +206,16 @@ void GRINS::Solver<T>::solve()
 	  this->output_visualization( t_step );
 	}
 
+      if( this->_output_residual )
+	{
+	  this->output_residual_vis( t_step );
+	}
+
+      if( this->_output_unsteady_residual )
+	{
+	  this->output_unsteady_residual_vis( t_step );
+	}
+
       // Advance to the next timestep in a transient problem
       this->_system->time_solver->advance_timestep();
     } // End time loop.
@@ -215,6 +227,7 @@ template< class T >
 void GRINS::Solver<T>::output_visualization()
 {
   this->dump_visualization( this->_vis_output_file_prefix, 0 );
+
   return;
 }
 
@@ -229,6 +242,83 @@ void GRINS::Solver<T>::output_visualization( unsigned int time_step )
   filename+="."+suffix.str();
 
   this->dump_visualization( filename, time_step );
+
+  return;
+}
+
+template< class T >
+void GRINS::Solver<T>::output_residual_vis( const unsigned int time_step )
+{
+  std::stringstream suffix;
+  suffix << time_step;
+
+  std::string filename = this->_vis_output_file_prefix+"_residual";
+
+  filename+="."+suffix.str();
+
+  // Idea is that this->rhs stashes the residual. Thus, when we swap
+  // with the solution, we should be dumping the residual. Then, we swap
+  // back once we're done outputting.
+
+  // Swap solution with computed residual
+  this->_system->solution->swap( *(this->_system->rhs) );
+  this->_equation_systems->update();
+  
+  this->dump_visualization( filename, time_step );
+  
+  // Now swap back and reupdate
+  this->_system->solution->swap( *(this->_system->rhs) );
+  this->_equation_systems->update();
+
+  return;
+}
+
+template< class T >
+void GRINS::Solver<T>::output_unsteady_residual_vis( const unsigned int time_step )
+{
+  if( !this->_transient  &&
+      this->_output_unsteady_residual )
+    {
+      std::cerr << "WARNING: Doesn't make sense to output unsteady residual" 
+		<< " for a steady problem. Not producing output."
+		<< std::endl;
+      return;
+    }
+
+  std::stringstream suffix;
+  suffix << time_step;
+
+  std::string filename = this->_vis_output_file_prefix+"_unsteady_residual";
+
+  filename+="."+suffix.str();
+
+  // For the unsteady residual, we just want to evaluate F(u) from
+  // dU/dt = F(u). What we do is swap out the time solver to a
+  // SteadySolver and reassemble the residual. Then, we'll need to swap
+  // the solution and the rhs vector stashed in the system. Once we're done,
+  // we'll reset the time solver pointer back to the original guy.
+  
+  AutoPtr<TimeSolver> prev_time_solver(this->_system->time_solver);
+
+  libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(this->_system) );
+
+  this->_system->time_solver = AutoPtr<TimeSolver>(steady_solver);
+
+  this->_system->assembly( true /*residual*/, false /*jacobian*/ );
+  this->_system->rhs->close();
+
+  // Swap solution with newly computed residual
+  this->_system->solution->swap( *(this->_system->rhs) );
+  // Update equation systems
+  this->_equation_systems->update();
+  
+  this->dump_visualization( filename, time_step );
+  
+  // Now swap back and reupdate
+  this->_system->solution->swap( *(this->_system->rhs) );
+  this->_equation_systems->update();
+
+  this->_system->time_solver = prev_time_solver;
 
   return;
 }

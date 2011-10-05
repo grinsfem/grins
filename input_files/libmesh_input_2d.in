@@ -7,10 +7,10 @@ mesh_nx2 = 50
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = true 
 theta = 0.5
-n_timesteps = 1
-deltat = 0.1
+n_timesteps = 10
+deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -26,6 +26,9 @@ initial_linear_tolerance = 1.0e-10
 output_vis_time_series = true
 output_vis_flag = true
 vis_output_file_prefix = test
+
+output_residual = false
+output_unsteady_residual = true
 
 # Options for print info to the screen
 [screen-options]

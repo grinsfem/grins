@@ -68,6 +68,9 @@ namespace GRINS
     void output_visualization();
     void output_visualization( unsigned int time_step );
 
+    void output_residual_vis( const unsigned int time_step );
+    void output_unsteady_residual_vis( const unsigned int time_step );
+
     T* get_system();
     
 #ifdef USE_GRVY_TIMERS
@@ -95,6 +98,8 @@ namespace GRINS
     bool _output_vis_time_series;
     std::string _vis_output_file_prefix;
     std::vector<std::string> _output_format;
+    bool _output_residual;
+    bool _output_unsteady_residual;
 
     // Mesh/Solver related objects
     libMesh::Mesh* _mesh;
