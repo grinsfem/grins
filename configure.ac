@@ -188,7 +188,8 @@ dnl-------------------
 AC_OUTPUT( Makefile \
            src/Makefile \
            test/Makefile \
-           doxygen/Makefile )
+           doxygen/Makefile \
+           doxygen/txt_common/about.page )
 
 
 
