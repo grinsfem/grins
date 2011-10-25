@@ -9,10 +9,10 @@ AC_CANONICAL_TARGET()
 AM_INIT_AUTOMAKE([silent-rules])
 
 dnl Release versioning
-
-GENERIC_MAJOR_VERSION=0
-GENERIC_MINOR_VERSION=2
-GENERIC_MICRO_VERSION=0
+AX_SPLIT_VERSION
+GENERIC_MAJOR_VERSION=$AX_MAJOR_VERSION
+GENERIC_MINOR_VERSION=$AX_MINOR_VERSION
+GENERIC_MICRO_VERSION=$AX_POINT_VERSION
 GENERIC_LIBRARY_NAME=grins
 
 dnl shared library versioning
@@ -158,6 +158,14 @@ dnl Checks for code coverage
 dnl--------------------------
 AX_CODE_COVERAGE
 
+
+dnl---------------------------------
+dnl Query configuration environment
+dnl Must be done *before* Doxygen to
+dnl get some happy variables defined.
+dnl---------------------------------
+AX_SUMMARIZE_ENV
+
 dnl------------------------------------------
 dnl            Doxygen support
 dnl------------------------------------------
@@ -182,10 +190,7 @@ AC_OUTPUT( Makefile \
            test/Makefile \
            doxygen/Makefile )
 
-dnl--------------------------------
-dnl Query configuration environment
-dnl------------------------------
-AX_SUMMARIZE_ENV
+
 
 dnl------------------------------
 dnl Final summary
