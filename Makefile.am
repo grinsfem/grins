@@ -4,7 +4,11 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen
-EXTRA_DIST       = CHANGES LICENSE COPYING
+DISTDIRS         = examples
+EXTRA_DIST       = CHANGES LICENSE COPYING examples
+
+examplesdir      = $(prefix)/examples
+examples_DATA    = $(top_srcdir)/examples/*
 
 # Eliminate .svn directories in dist tarball
 dist-hook:

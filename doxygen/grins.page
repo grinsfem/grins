@@ -21,17 +21,9 @@ further divided into the following subsections:
 
 <ul>
 <li> \subpage installation
-<li> \subpage inputFile"
+<li> \subpage inputFile
 <!-- <li> <a href="http://buildbot.ices.utexas.edu/docs/buildbot/hpct/build/docs/html/lcov/build/src/index.html">Buildbot Coverage</a> -->
 </ul>
-
-<!-- <li> <a href="lcov/index.html">Code Coverage Analysis</a> -->
-
-<!-- \subpage inputFile  Example Input File -->
-
-
-<!-- \subpage apiF Fortran API -->
-<!-- \subpage examples Examples -->
 
 \section bugs Reporting Bugs
 
@@ -51,7 +43,7 @@ bin/ directory of a local GRINS installation),
 
 \section licence License
 Copyright (C) 2010,2011 The PECOS Development Team
-\copydoc LicenseLGPL
+\copydoc LicenseGPL
 
 \section acknowledgements Acknowledgments
 \copydoc Acknowledgments
@@ -59,14 +51,15 @@ Copyright (C) 2010,2011 The PECOS Development Team
 \section pecos-center More Information About PECOS
 \copydoc About
 
- */
+*/
 
-/*! \page inputFile Example libGRVY Input File
+/*! \page inputFile Example GRINS Input File
 
-This is an example input file for use with the libGRVY parsing mechanism.
-Note that behind the scenes, the library is using
+This is an example input file for use with the generic solver
+included with GRINS.
+Note that GRINS is using 
 the <a href="http://getpot.sourceforge.net/">GetPot</a> parsing tool
-to provide a flexible parsing mechanism for C/C++ and Fortran.  Note
+shipped with <a href="http://libmesh.sourceforge.net">libMesh</a>.  Note
 that the default comment delimiter is defined as the \# sign and
 comments can begin at the beginning of a line or after a variable
 declaration to aid in documenting the input file.  The parsing
@@ -77,134 +70,147 @@ that because the parsing mechanism is keyword driven, the input
 directives can be specified in \e arbitrary order.  There is no
 requirement to maintain a specific variable declaration pattern.
 
-<b>Important Note for Fortran Programmers</b> The input parser can
-handle double precision input using standard C style notation;
-however, it will not support Fortran's "d" delimiter. So, please specify
-double precision values as \e 1.2345e6 as opposed to \e 1.2345d6.
-
 <hr>
 
-\include pecos-input.txt
+\include input_2d.in
 
 */
 
 /*! \page installation Installation/Linkage
 
-libGRVY uses the GNU autotools suite (autoconf, automake, and libtool)
+GRINS uses the GNU autotools suite (autoconf, automake, and libtool)
 for its development build system.  This system is popular among the
 Linux development community and provides a familiar build environment
 for end users.  
 
-To build libGRVY starting from a release distribution, untar the distribution and
+To build GRINS starting from a release distribution, untar the distribution and
 enter the top-level directory.
 
 <div class="fragment"><pre class="fragment">
- > tar xvfz grvy-$(VERSION).tar.gz
- > cd grvy-$(VERSION)/            
+ > tar xvfz grins-$(VERSION).tar.gz
+ > cd grins-$(VERSION)/            
 </pre></div>
 
 <h2>Configuration Requirements</h2>
 
-libGRVY requires that the <a href="http://www.boost.org/">Boost C++
-library</a> be available locally. If Boost is installed and available
-within your default login environment, then libGRVY should automatically configure
-against the available installation.  If, however, your Boost
+GRINS requires that the <a href="http://libmesh.sourceforge.net">libMesh</a>
+be available locally, along with the <a href="http://libmesh.sourceforge.net">libMesh</a>
+dependencies. If <a href="http://libmesh.sourceforge.net">libMesh</a> is installed and available
+within your default login environment, then GRINS should automatically configure
+against the available installation.  If, however, your <a href="http://libmesh.sourceforge.net">libMesh</a>
 installation is in a non-standard location, use
-the <tt>--with-boost</tt> option to specify the location.
+the <tt>--with-libmesh</tt> option to specify the location.
 
-Since libGRVY provides a Fortran interface, a valid Fortran90 compiler is
-also required.  To date, libGRVY has been successfully tested with \e
-gfortran and the Intel \e ifort compilers.  The configuration step
-will look for available compilers in the user environment but as with
-any \e autoconf based configuration, these can be overridden with
-command line arguments (by setting \c CXX, \c FC, and \c F77
-appropriately).
+To date, GRINS has been successfully built and tested with the gcc 4.4, 4.5, and 4.6 compilers
+and the Intel 11.1 compilers.
 
 <b>Installation Directory</b>: Use the <tt>--prefix</tt> option to
-specify your desired top-level installation directory for GRVY.  The
-examples below all configure libGRVY to be installed in the user's ~/bin/grvy
+specify your desired top-level installation directory for GRINS.  The
+examples below all configure GRINS to be installed in the user's ~/bin/grins
 directory.
 
-<em>Configure with Boost from default login environment:</em> <br>
+<em>Configure with libMesh from default login environment:</em> <br>
 
-\code > ./configure --prefix=$HOME/bin/grvy \endcode
+\code > ./configure --prefix=$HOME/bin/grins \endcode
 
-<em>Or, configure with Boost from a specific directory:</em>        <br>
+<em>Or, configure with libMesh from a specific directory:</em>        <br>
 
-\code > ./configure --prefix=$HOME/bin/grvy --with-boost=$MY_BOOST_DIR/boost-1.37.0 \endcode
+\code > ./configure --prefix=$HOME/bin/grins --with-libmesh=$MY_LIBMESH_DIR \endcode
 
 <em>Or, configure with specific compilers:</em>        <br>
 
-\code > ./configure CXX=g++ FC=ifort --prefix=$HOME/bin/grvy \endcode
+\code > ./configure CXX=g++ --prefix=$HOME/bin/grins \endcode
+
+<h2> Other Configuration Options </h2>
+
+GRINS can optionally be built with other libraries as well. In particular, GRINS leverages the 
+<a href="https://red.ices.utexas.edu/projects/software/wiki/GRVY">GRVY</a> library for
+some performance timing capabilities. 
+
+<em>Configure with libGRVY and enable grvy timers :</em> <br>
+
+\code > ./configure --with-grvy=$MY_GRVY_DIR --enable-grvy-timers \endcode
+
+To enable verification using the method of manufactured solutions, GRINS uses
+the <a href="https://red.ices.utexas.edu/projects/software/wiki/MASA">MASA</a> 
+library. Although GRINS can configure and build with 
+<a href="https://red.ices.utexas.edu/projects/software/wiki/MASA">MASA</a>, it is currently not
+using these capabilities. This is planned for the next release.
+
+<em>Configure with MASA:</em> <br>
+
+\code > ./configure --with-masa=$MY_MASA_DIR \endcode
+
+Configure help can also be accessed at the command line:
+
+\code> ./configure --help \endcode
+
+\endcode
 
 <h2> Library Build </h2>
 
 Once configured, issue a <tt>make</tt> to build the software. If successful, this
-will build the libGRVY library (static and dynamic versions) and several
-examples.
+will build GRINS (static and dynamic libraries and executables).
 
 \code > make \endcode
+
+If you have multiple cores at your disposal, a parallel buid can accelerate
+the build time. If there are 4 cores avaiable, then the following will build
+using 4 threads, thereby leveraging 4 processors.
+
+\code > make -j 4\endcode
 
 <b> Verifying the build:</b> To verify that the software is working
 properly, a test option is provided to run a short suite of
 functionality tests against the local build.  To run, issue a <tt>make
-check</tt> to run the tests.  If successfull, output similar to the
+check</tt> to run the tests. Note that these tests may take a few minutes
+depending upon optimization level and architecture.  
+If successfull, output similar to the
 following will be generated.
 
 \code
  > make check
 -------------------------------------------------------
-Initializing GRVY Tests
+ Initializing Incompressible Navier-Stokes tests.
 -------------------------------------------------------
-PASS: init.sh
-PASS: C_input_read_variables
-PASS: C_input_nofile_available
-PASS: C_input_read_missing_variable
-PASS: C_input_register_variables
-PASS: C_input_register_read_missing_variable
-PASS: C_math_isnan
-PASS: C_math_isinf
-PASS: C_check_file_path
-PASS: C_unique_dir
-PASS: C_wrapper_scratch_dir.sh
-PASS: C_input_fdump
-PASS: C_wrapper_log.sh
-PASS: C_wrapper_log_printf.sh
-PASS: F_wrapper_check_file_path.sh
-PASS: F_wrapper_unique_dir.sh
-PASS: F_wrapper_scratch_dir.sh
-PASS: F_wrapper_log.sh
-PASS: F_math
-PASS: F_input_read_variables
-PASS: F_input_nofile_available
-PASS: F_input_read_missing_variable
-PASS: F_input_register_variables
-PASS: F_input_read_bigstring
+PASS: navier_stokes_tests.sh
+PASS: test_ns_couette_flow_2d_x.sh
+PASS: test_ns_couette_flow_2d_y.sh
+PASS: test_ns_poiseuille_flow.sh
+PASS: test_axi_ns_poiseuille_flow.sh
+PASS: test_axi_ns_con_cyl_flow.sh
 -------------------------------------------------------
-Finalizing GRVY Tests, have a snazzy day
+      Initializing Thermally Driven Flow tests.
 -------------------------------------------------------
-
+PASS: thermally_driven_flow_tests.sh
+PASS: test_thermally_driven_2d_flow.sh
+PASS: test_axi_thermally_driven_flow.sh
+PASS: test_thermally_driven_3d_flow.sh
+-------------------------------------------------------
+ Finalizing all regression tests. Don't worry be happy.
+-------------------------------------------------------
 PASS: finalize.sh
 ===================
-All 25 tests passed
+All 11 tests passed
 ===================
 \endcode
 
 <h2> Installation </h2>
 
 After the build is complete, issue a <tt>make install</tt> to install
-the library.  The installation will consist of three top-level
-directories housing the library, include files, and
+GRINS. This will install the header files, libraries, executables.  
+The installation will consist of three top-level
+directories housing the library, include files, executables, and
 example files.  An example of the top-level directories after
 installation is shown below:
 
 \code > make install \endcode
 
-Top-level libGRVY installation directory:
+Top-level GRINS installation directory:
 
 \code
- > ls $HOME/bin/grvy/
- examples/  include/  lib/
+ > ls $HOME/bin/grins/
+ bin  examples  include  lib
 \endcode
 
 <h2>Library Linkage</h2>
@@ -215,8 +221,8 @@ path in order to access the grvy.h header file (or for Fortran, the \c
 lib directory should be added to access the pre-compiled
 grvy F90 module).  The \c lib directory should also be added
 to the linker search path along with a request to link against the
-libGRVY library.  Several example link steps are provided below.  These
-examples assume that the libGRVY library has been successfully built and
+GRINS library.  Several example link steps are provided below.  These
+examples assume that the GRINS library has been successfully built and
 installed previously in the users's ~/bin/grvy directory:
 
 <h3>C/C++ Example</h3>
@@ -227,7 +233,7 @@ installed previously in the users's ~/bin/grvy directory:
 
 \code > $(FC) -I$HOME/bin/grvy/lib app.f90 -L$HOME/bin/grvy/lib -lgrvy \endcode
 
-To embed the dynamic library search path for the libGRVY library
+To embed the dynamic library search path for the GRINS library
 directly into the application executable, use an additional linker
 option as follows:
 
@@ -238,7 +244,7 @@ option as follows:
 
 
 <b>Important Note:</b> F90 module file formats are not consistent
-across multiple compilers. Therefore, a Fortran application and the libGRVY
+across multiple compilers. Therefore, a Fortran application and the GRINS
 F90 interface \em must be built with the same Fortran compiler family to ensure
 compatibility.
 

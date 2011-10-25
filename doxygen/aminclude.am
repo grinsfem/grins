@@ -4,11 +4,10 @@
 #-----------------------------------
 
 PECOS_extra_dependencies = doxygen/grins.page 
-
-#\
-#			   doxygen/txt_common/about.page \
-#			   doxygen/txt_common/gpl.page \
-#			   doxygen/txt_common/acknowledgment.page
+			   doxygen/txt_common/about.page \
+			   doxygen/txt_common/gpl.page \
+                           doxygen/txt_common/lgpl.page \
+			   doxygen/txt_common/acknowledgment.page
 
 ## --------------------------------- ##
 ## Format-independent Doxygen rules. ##
@@ -166,10 +165,7 @@ DX_CLEANFILES = \
     $(DX_CLEAN_XML) \
     $(DX_CLEAN_PS) \
     $(DX_CLEAN_PDF) \
-    @DX_DOCDIR@/@PACKAGE@.tag 
-
-# Additional PECOS dependencies
-
-# doxygen/hpct.page: doxygen-doc
+    @DX_DOCDIR@/@PACKAGE@.tag \
+    doxygen/txt_common/about.page 
 
 endif DX_COND_doc
