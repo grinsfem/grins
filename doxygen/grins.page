@@ -1,40 +1,28 @@
-/*! \mainpage The GRVY Library
+/*! \mainpage GRINS: General Reacting Incompressible Navier-Stokes
 
 <b>Version \version</b>, Build Date: \builddate
-
+<br><br>
 Built by: \builduser on \buildhost
 <hr>
 
 \section overview Overview
 
-The Groovy Toolkit (GRVY) is a library used to house various support
-functions often required for application development of
-high-performance, scientific applications.  The library is written in
-C++, but provides an API for development in C and Fortran.  The
-primary functionality provided by the library is categorized as
-follows:
+The GRINS code has been developed to serve as a test bed for 
+numerical methods, based on finite element methods, for multiphysics problems
+involving various forms of incompressible flow.
+It is written in object-oriented C++ and leverages heavily the 
+C++ finite element library 
+<a href="http://libmesh.sourceforge.net">libMesh</a>. Although the majority of GRINS is
+contained in a library, example applications
+are included as well, including a generic solver.
 
-<ul>
-<li>a flexible method for
-parsing ascii-files input files (with backwards-compatibility support)
-<li>a performance timing mechanism to provide a simple
-summary of individual code section performance along with basic
-statistics
-<li> an HDF5 based historical performance mechanism for logging 
-application performance over time on various compute resources
-<li> a simple priority-based logging mechanism to control application messages
-<li> miscellaneous file handling and math utilities
-</ul>
-
-Thanks for your interest in libGRVY. To aid in usage, this manual is
+Thanks for your interest in GRINS. To aid in usage, this manual is
 further divided into the following subsections:
 
 <ul>
-<!-- <li> \subpage model "Library Overview" -->
 <li> \subpage installation
-<li> \subpage apiC "C/C++ Interface"
-<li> \subpage apiF "Fortran Interface"
-<li> <a href="http://buildbot.ices.utexas.edu/docs/buildbot/hpct/build/docs/html/lcov/build/src/index.html">Buildbot Coverage</a>
+<li> \subpage inputFile"
+<!-- <li> <a href="http://buildbot.ices.utexas.edu/docs/buildbot/hpct/build/docs/html/lcov/build/src/index.html">Buildbot Coverage</a> -->
 </ul>
 
 <!-- <li> <a href="lcov/index.html">Code Coverage Analysis</a> -->
@@ -48,13 +36,13 @@ further divided into the following subsections:
 \section bugs Reporting Bugs
 
 Bugs in the code and errors or omissions in the documentation can be
-reported to karl@ices.utexas.edu.  Requests and contributions are
+reported to pbauman@ices.utexas.edu.  Requests and contributions are
 welcome at the same e-mail address.  All bug reports should include:
 <ul>
 
-<li>the version number of the GRVY library (versioning information can
+<li>the version number of GRINS (versioning information can
 be obtained by running the <B><code>version</code></B> binary located in the
-bin/ directory of a local libGRVY installation),
+bin/ directory of a local GRINS installation),
 <li>the hardware and operating system,
 <li>the local compiler version number,
 <li>a description of the bug behavior, and ideally, 
@@ -62,7 +50,7 @@ bin/ directory of a local libGRVY installation),
 </ul>
 
 \section licence License
-Copyright (C) 2008,2009,2010 The PECOS Development Team
+Copyright (C) 2010,2011 The PECOS Development Team
 \copydoc LicenseLGPL
 
 \section acknowledgements Acknowledgments
