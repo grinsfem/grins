@@ -8,7 +8,7 @@ Built by: \builduser on \buildhost
 \section overview Overview
 
 The GRINS code has been developed to serve as a test bed for 
-numerical methods, based on finite element methods, for multiphysics problems
+numerical methods, based on finite elements, for multiphysics problems
 involving various forms of incompressible flow.
 It is written in object-oriented C++ and leverages heavily the 
 C++ finite element library 
@@ -198,8 +198,9 @@ All 11 tests passed
 <h2> Installation </h2>
 
 After the build is complete, issue a <tt>make install</tt> to install
-GRINS. This will install the header files, libraries, executables.  
-The installation will consist of three top-level
+GRINS. This will install the header files, libraries, executables,
+and examples.  
+The installation will consist of four top-level
 directories housing the library, include files, executables, and
 example files.  An example of the top-level directories after
 installation is shown below:
@@ -215,39 +216,23 @@ Top-level GRINS installation directory:
 
 <h2>Library Linkage</h2>
 
-To link an external C/C++ or Fortran application with the library, the
+Although a generic solver is shipped with the code, you may wish to
+write your own application code. To link an external application with the library, the
 \c include directory must be added to the compilers include search
-path in order to access the grvy.h header file (or for Fortran, the \c
-lib directory should be added to access the pre-compiled
-grvy F90 module).  The \c lib directory should also be added
+path in order to access the necessary header files.  The \c lib directory should also be added
 to the linker search path along with a request to link against the
 GRINS library.  Several example link steps are provided below.  These
 examples assume that the GRINS library has been successfully built and
-installed previously in the users's ~/bin/grvy directory:
+installed previously in the users's ~/bin/grins directory:
 
-<h3>C/C++ Example</h3>
-
-\code > $(CC) -I$HOME/bin/grvy/include app.c -L$HOME/bin/grvy/lib -lgrvy \endcode
-
-<h3>Fortran Example</h3>
-
-\code > $(FC) -I$HOME/bin/grvy/lib app.f90 -L$HOME/bin/grvy/lib -lgrvy \endcode
+\code > $(CXX) -I$HOME/bin/grins/include app.c -L$HOME/bin/grins/lib -lgrins \endcode
 
 To embed the dynamic library search path for the GRINS library
 directly into the application executable, use an additional linker
 option as follows:
 
-<h3>C/C++ Example</h3>
-
-\code > $(CC) -I$HOME/bin/grvy/include app.c -L$HOME/bin/grvy/lib \
-         -Wl,-rpath,$HOME/bin/grvy/lib -lgrvy \endcode
-
-
-<b>Important Note:</b> F90 module file formats are not consistent
-across multiple compilers. Therefore, a Fortran application and the GRINS
-F90 interface \em must be built with the same Fortran compiler family to ensure
-compatibility.
-
+\code > $(CXX) -I$HOME/bin/grins/include app.c -L$HOME/bin/grins/lib \
+         -Wl,-rpath,$HOME/bin/grins/lib -lgrins \endcode
 
 */
 
