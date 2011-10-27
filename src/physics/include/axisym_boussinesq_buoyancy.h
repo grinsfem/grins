@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
 // 
-// GRINS - a low Mach number Navier-Stokes Finite-Element Solver
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2010,2011 The PECOS Development Team
 //
@@ -46,9 +46,9 @@
 
 namespace GRINS
 {  
-  //! Adds Boussinesq bouyancy source term
+  //! Adds Axisymmetric Boussinesq bouyancy source term
   /*!
-    This class implements the Boussinesq approximation for thermal buoyancy.
+    This class implements the Axisymmetric Boussinesq approximation for thermal buoyancy.
     Namely:
     \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
     where
@@ -56,9 +56,9 @@ namespace GRINS
     \f$ T_0 = \f$ reference temperature,
     \f$ \beta_T = \f$ coefficient of thermal expansion, and
     \f$ \mathbf{g} = \f$ the gravitional vector.
-    This source term to the governing flow equations through the
-    element_time_derivative routine. This class requires a flow physics enabled
-    and the ConvectiveHeatTransfer physics class enabled.
+    This source term is added to the governing flow equations through the
+    element_time_derivative routine. This class requires an axisymmetric flow physics enabled
+    and the AxisymmetricHeatTransfer physics class enabled.
    */
   class AxisymmetricBoussinesqBuoyancy : public Physics
   {
@@ -74,7 +74,7 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( GetPot& input );
 
-    //! Initialization of BoussinesqBuoyancy variables
+    //! Initialization of AxisymmetricBoussinesqBuoyancy variables
     /*!
       There are actually no extra variables
      */
@@ -82,40 +82,40 @@ namespace GRINS
       to overload with nothing? */
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    //! Register variables needed by BoussinesqBuoyancy
+    //! Register variables needed by AxisymmetricBoussinesqBuoyancy
     /*! This will register the temperature and velocity variables from
       the IncompressibleNavierStokes and ConvectiveHeatTransfer classes.*/
     virtual void register_variable_indices(GRINS::VariableMap &global_map);
 
     // Context initialization
-    /*! Doesn't do anything for BoussinesqBuoyancy since there
+    /*! Doesn't do anything for AxisymmetricBoussinesqBuoyancy since there
       are no new variables registered */
     virtual void init_context( libMesh::DiffContext &context );
 
-    //! Source term contribution for BoussinesqBuoyancy
+    //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
-        the IncompressibleNavierStokes class.
+        the AxisymmetricIncompNavierStokes class.
      */
     virtual bool element_time_derivative( bool request_jacobian,
 					  libMesh::DiffContext& context,
 					  libMesh::FEMSystem* system );
 
-    //! No boundary terms for BoussinesqBuoyancy.
+    //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context,
 				       libMesh::FEMSystem* system );
 
-    //! No constraint terms for BoussinesqBuoyancy.
+    //! No constraint terms for AxisymmetricBoussinesqBuoyancy.
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context,
 				     libMesh::FEMSystem* system );
 
-    //! No boundary terms for BoussinesqBuoyancy.
+    //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context,
 				  libMesh::FEMSystem* system );
 
-    //! No mass terms for BoussinesqBuoyancy.
+    //! No mass terms for AxisymmetricBoussinesqBuoyancy.
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ); 
@@ -128,16 +128,26 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    //! Indices for each (registered/non-owned) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _u_r_var; /* Index for r-velocity field */
-    RegtdVariableIndex _u_z_var; /* Index for z-velocity field */
-    RegtdVariableIndex _T_var; /* Index for Temperature field */
+    // Indices for each (registered/non-owned) variable;
+    //! Index for registered r-velocity field
+    RegtdVariableIndex _u_r_var;
 
-    //! Names of each (non-owned) variable in the system
-    std::string _u_r_var_name, _u_z_var_name, _T_var_name;
+    //! Index for registered z-velocity field
+    RegtdVariableIndex _u_z_var;
+
+    //! Index for registered temperature field
+    RegtdVariableIndex _T_var;
+
+    // Names of each registered variable in the system
+
+    //! Name of registered r-velocity
+    std::string _u_r_var_name;
+
+    //! Name of registered z-velocity
+    std::string _u_z_var_name;
+
+    //! Name of registered temperature
+    std::string _T_var_name;
 
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _rho_ref;
@@ -149,6 +159,7 @@ namespace GRINS
     libMesh::Number _beta_T;
 
     //! Gravitational vector
+    /* \todo This should be stashed in a singleton class and brought in from there */
     Point _g;
 
   }; // class AxisymmetricBoussinesqBuoyancy

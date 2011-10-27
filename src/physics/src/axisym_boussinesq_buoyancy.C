@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
 // 
-// GRINS - a low Mach number Navier-Stokes Finite-Element Solver
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2010,2011 The PECOS Development Team
 //

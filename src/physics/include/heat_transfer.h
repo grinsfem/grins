@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
 // 
-// GRINS - a low Mach number Navier-Stokes Finite-Element Solver
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2010,2011 The PECOS Development Team
 //
@@ -49,7 +49,7 @@ namespace GRINS
 
   //! Physics class for Heat Transfer
   /*
-    This physics class implements the classical Heat Transfer
+    This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
   class HeatTransfer : public Physics
   {

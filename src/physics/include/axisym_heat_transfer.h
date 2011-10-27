@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
 // 
-// GRINS - a low Mach number Navier-Stokes Finite-Element Solver
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2010,2011 The PECOS Development Team
 //
@@ -47,9 +47,9 @@
 namespace GRINS
 {
 
-  //! Physics class for Heat Transfer
+  //! Physics class for Axisymmetric Heat Transfer
   /*
-    This physics class implements the classical Heat Transfer
+    This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
    */
   class AxisymmetricHeatTransfer : public Physics
   {
@@ -65,7 +65,7 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( GetPot& input );
 
-    //! Initialization Heat Transfer variables
+    //! Initialization  AxisymmetricHeatTransfer variables
     /*!
       Add velocity and pressure variables to system.
      */
@@ -114,26 +114,32 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    //! Indices for each (owned) variable;
-    VariableIndex _T_var;  /* Index for temperature field */
+    // Indices for each (owned) variable;
+    //! Index for temperature field
+    VariableIndex _T_var;
 
-    //! Names of each (owned) variable in the system
+    // Names of each (owned) variable in the system
+    //! Name for temperature variable
     std::string _T_var_name;
 
-    //! Indices for each (registered/non-owned) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _u_r_var; /* Index for r-velocity field */
-    RegtdVariableIndex _u_z_var; /* Index for z-velocity field */
+    // Indices for each (registered/non-owned) variable;
+    //! Index for registered r-velocity field
+    RegtdVariableIndex _u_r_var;
 
-    //! Names of each (non-owned) variable in the system
-    std::string _u_r_var_name, _u_z_var_name;
+    //! Index for registered z-velocity field
+    RegtdVariableIndex _u_z_var; 
+
+    // Names of each (non-owned) variable in the system
+    //! Name of registered r-velocity
+    std::string _u_r_var_name;
+
+    //! Name of registered z-velocity
+    std::string _u_z_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
 
-    //! Element orders, read from input
+    //! Temperature element order, read from input
     libMeshEnums::Order _T_order;
 
     //! Material parameters, read from input

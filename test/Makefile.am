@@ -37,8 +37,12 @@ test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 
 # List of source files for license stamping
-testsrc = $(test_ns_couette_flow_SOURCES)            \
-          $(test_ns_poiseuille_flow_SOURCES)
+testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
+          $(test_ns_couette_flow_2d_y_SOURCES)       \
+          $(test_ns_poiseuille_flow_SOURCES)         \
+          $(test_axi_ns_poiseuille_flow_SOURCES)     \
+          $(test_axi_ns_con_cyl_flow_SOURCES)        \
+          $(test_thermally_driven_flow_SOURCES)
 
 #Define tests to actually be run
 TESTS = navier_stokes_tests.sh             \

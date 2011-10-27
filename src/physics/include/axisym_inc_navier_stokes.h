@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
 // 
-// GRINS - a low Mach number Navier-Stokes Finite-Element Solver
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2010,2011 The PECOS Development Team
 //
@@ -47,9 +47,9 @@
 namespace GRINS
 {
 
-  //! Physics class for Incompressible Navier-Stokes
+  //! Physics class for Axisymmetric Incompressible Navier-Stokes
   /*!
-    This physics class implements the classical Incompressible Navier-Stokes equations.
+    This physics class implements the classical Axisymmetric Incompressible Navier-Stokes equations.
    */
   class AxisymmetricIncompNavierStokes : public Physics
   {
@@ -65,9 +65,10 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( GetPot& input );
 
-    //! Initialization of Navier-Stokes variables
+    //! Initialization of Axisymmetric Navier-Stokes variables
     /*!
       Add velocity and pressure variables to system.
+      Note there are only two components of velocity in this case: r and z
      */
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -110,19 +111,34 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    //! Indices for each (owned) variable;
-    VariableIndex _u_r_var; /* Index for r-velocity field */
-    VariableIndex _u_z_var; /* Index for z-velocity field */
-    VariableIndex _p_var; /* Index for pressure field */
+    // Index for each owned variable in the system
+    //! Index for each r velocity field
+    VariableIndex _u_r_var;
 
-    //! Names of each (owned) variable in the system
-    std::string _u_r_var_name, _u_z_var_name, _p_var_name;
+    //! Index for each z velocity field
+    VariableIndex _u_z_var;
+
+    //! Index for each pressure field
+    VariableIndex _p_var;
+
+    // Names of each (owned) variable in the system
+    //! r velocity name
+    std::string _u_r_var_name;
+    
+    //! z velocity name
+    std::string _u_z_var_name;
+
+    //! pressure name
+    std::string _p_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _FE_family;
 
-    //! Element orders, read from input
-    libMeshEnums::Order _V_order, _P_order;
+    //! Velocity element order, read from input
+    libMeshEnums::Order _V_order;
+
+    //! Pressure element order, read from input
+    libMeshEnums::Order _P_order;
 
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
