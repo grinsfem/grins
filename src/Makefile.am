@@ -128,5 +128,7 @@ endif
 	$(funcs_INC) $(funcs_SRC)
 	echo 'updated source license headers' >$@
 
+EXTRA_DIST = common
+
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

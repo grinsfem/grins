@@ -57,8 +57,20 @@ TESTS = navier_stokes_tests.sh             \
         test_thermally_driven_3d_flow.sh   \
         finalize.sh
 
+shellfiles_src = navier_stokes_tests.sh             \
+                 test_ns_couette_flow_2d_x.sh       \
+                 test_ns_couette_flow_2d_y.sh       \
+                 test_ns_poiseuille_flow.sh         \
+                 test_axi_ns_poiseuille_flow.sh     \
+                 test_axi_ns_con_cyl_flow.sh        \
+                 thermally_driven_flow_tests.sh     \
+                 test_thermally_driven_2d_flow.sh   \
+                 test_axi_thermally_driven_flow.sh  \
+                 test_thermally_driven_3d_flow.sh   \
+                 finalize.sh 
+
 # Want these put with the distro so we can run make check
-EXTRA_DIST = $(shellfiles_src)
+EXTRA_DIST = $(shellfiles_src) input_files test_data
 
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno
