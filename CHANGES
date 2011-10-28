@@ -1,6 +1,20 @@
-Version 0.2.0 (In Progress)
+Version 0.2.0
+https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.2.0
 
-  * include GPL licensing and auto-update header mechanism
+  * Include GPL licensing and auto-update header mechanism
+  * Designed MultiphysicsSystem class to interface with FEMSystem. Each physics
+    is implemented as a subclass of Physics.
+  * Implemented and tested the following physics: incompressible Navier-Stokes,
+    heat transfer (neglecting viscous dissipation), Boussinesq buoyancy, all with
+    their axisymmetric counter parts.
+  * Setup generic BoundaryConditions class for all physics classes to leverage for
+    implementing Dirichlet and Neumann boundary conditions.
+  * Incorporated Doxygen documentation and setup initial pages describing installation
+    and an example input file.
+  * Incorporated GRVY as an optional library to use for performance timing.
+  * Added capability for visualizing element residuals for each physics components,
+    both steady and unsteady.
+  * Code is stated to currently build and run with libMesh r4887.
 
 Version 0.1.0
 https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.1.0
