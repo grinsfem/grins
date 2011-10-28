@@ -95,7 +95,8 @@ enter the top-level directory.
 
 GRINS requires that the <a href="http://libmesh.sourceforge.net">libMesh</a>
 be available locally, along with the <a href="http://libmesh.sourceforge.net">libMesh</a>
-dependencies. If <a href="http://libmesh.sourceforge.net">libMesh</a> is installed and available
+dependencies. Note that GRINS has been developed and tested on revision 4887 of 
+trunk. If <a href="http://libmesh.sourceforge.net">libMesh</a> is installed and available
 within your default login environment, then GRINS should automatically configure
 against the available installation.  If, however, your <a href="http://libmesh.sourceforge.net">libMesh</a>
 installation is in a non-standard location, use
