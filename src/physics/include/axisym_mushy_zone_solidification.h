@@ -153,6 +153,14 @@ namespace GRINS
     std::string _T_var_name;
 
     //! Function to compute liquid fraction \f$ \phi_l \f$
+    /*! Computes the liquid fraction of the material. Generally,
+        this function has the form \f$ \phi_l = f( T, T_{melt}, \Delta T )\f$
+	where \f$ T \f$ is the local temperature, \f$ T_{melt} \f$ is the given
+	melting temperature of the material, and \f$ \Delta T \f$ is the
+	desired "interface" thickness (given). In this implemenation,
+	\f$ \phi_l \f$ is a Hermite cubic spline in the "melt zone". This
+	choice was made to have continuous derivatives.
+     */
     double compute_liquid_phi( const double T );
     
     //! Function to compute \f$ \frac{ d \phi_l}{dT} \f$
@@ -163,6 +171,16 @@ namespace GRINS
 
     //! Function to compute \f$ \frac{dK_{perm}}{dT} \f$
     double dKperm_dT( const double T );
+
+    //! Melting temperature parameter \f$ T_{melt \f$
+    double _T_melt;
+
+    //! "Interface" thickness \f$ \Delta T \f$
+    /*! The liquid fraction takes the form \f$ \phi_l = f( T, T_{melt}, \Delta T )\f$
+        so that \f$ \phi_l = 0, T \le T_{melt} - \Delta T \f$ and 
+	\f$ \phi_l = 1.0, T \ge T_{melt} + \Delta T \f$
+     */
+    double _delta_T;
 
   }; // class AxisymmetricMushyZoneSolidification
 

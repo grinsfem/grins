@@ -26,9 +26,9 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "axisym_boussinesq_buoyancy.h"
+#include "axisym_mushy_zone_solidification.h"
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::read_input_options( GetPot& input )
+void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& input )
 {
   // Read variable naming info
   /* \todo We should move this naming stuff to a singleton class */
@@ -40,7 +40,7 @@ void GRINS::AxisymmetricBoussinesqBuoyancy::read_input_options( GetPot& input )
   return;
 }
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
+void GRINS::AxisymmetricMushyZoneSolidification::init_variables( libMesh::FEMSystem* system )
 {
   // No variables to initialize, but we must still "build" the local map.
   // In this case, we have no new variables, so the map will be registered as built.
@@ -48,7 +48,7 @@ void GRINS::AxisymmetricBoussinesqBuoyancy::init_variables( libMesh::FEMSystem* 
   return;
 }
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::register_variable_indices(GRINS::VariableMap &global_map)
+void GRINS::AxisymmetricMushyZoneSolidification::register_variable_indices(GRINS::VariableMap &global_map)
 {
   _u_r_var = global_map[_u_r_var_name];
   _u_z_var = global_map[_u_z_var_name];
@@ -58,12 +58,12 @@ void GRINS::AxisymmetricBoussinesqBuoyancy::register_variable_indices(GRINS::Var
   return;
 }
 
-bool GRINS::AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
+bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool request_jacobian,
 								     libMesh::DiffContext& context,
 								     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("AxisymmetricBoussinesqBuoyancy::element_time_derivative");
+  this->_timer->BeginTimer("AxisymmetricMushyZoneSolidification::element_time_derivative");
 #endif
   
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -144,46 +144,83 @@ bool GRINS::AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool reques
     } // End quadrature loop
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("AxisymmetricBoussinesqBuoyancy::element_time_derivative");
+  this->_timer->EndTimer("AxisymmetricMushyZoneSolidification::element_time_derivative");
 #endif
 
   return request_jacobian;
 }
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::init_context( libMesh::DiffContext &context )
+double GRINS::AxisymmetricMushyZoneSolidification::compute_liquid_phi( const double T )
+{
+  double phi_l = 0.0;
+
+  if( T >= _T_melt + _delta_T ) return phi_l = 1.0;
+  else if( T <= _T_melt - _delta_T ) return phi_l = 0.0;
+  else
+    {
+      const double t = (T - (_T_melt - _delta_T ))/(2.0*_delta_T);
+      
+      phi_l = t*t*(3.0 - 2.0*t);
+    }
+
+  return phi_l;
+}
+
+double GRINS::AxisymmetricMushyZoneSolidification:: dphi_dT( const double T )
+{
+  double dphi_dT = 0;
+
+  if( T >= _T_melt + _delta_T ) return dphi_dT = 0.0;
+  else if( T <= _T_melt - _delta_T ) return dphi_dT = 0.0;
+  else
+    {
+      // Minor flop optimization
+      const double one_over_two_delta_T = 1.0/(2.0*_delta_T);
+
+      const double t = (T - (_T_melt - _delta_T ))*one_over_two_delta_T;
+
+      const double dt_dT = one_over_two_delta_T;
+      const double dphi_dt = (6.0*t - t*t);
+      dphi_dT = dphi_dt*dt_dT;
+    }
+
+  return dphi_dT;
+}
+
+void GRINS::AxisymmetricMushyZoneSolidification::init_context( libMesh::DiffContext &context )
 {
   return;
 }
 
-bool GRINS::AxisymmetricBoussinesqBuoyancy::side_time_derivative( bool request_jacobian,
+bool GRINS::AxisymmetricMushyZoneSolidification::side_time_derivative( bool request_jacobian,
 						      libMesh::DiffContext& context,
 						      libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricBoussinesqBuoyancy::element_constraint( bool request_jacobian,
+bool GRINS::AxisymmetricMushyZoneSolidification::element_constraint( bool request_jacobian,
 						    libMesh::DiffContext& context,
 						    libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricBoussinesqBuoyancy::side_constraint( bool request_jacobian,
+bool GRINS::AxisymmetricMushyZoneSolidification::side_constraint( bool request_jacobian,
 						 libMesh::DiffContext& context,
 						 libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricBoussinesqBuoyancy::mass_residual( bool request_jacobian,
+bool GRINS::AxisymmetricMushyZoneSolidification::mass_residual( bool request_jacobian,
 					       libMesh::DiffContext& context,
 					       libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::build_local_variable_map()
+void GRINS::AxisymmetricMushyZoneSolidification::build_local_variable_map()
 {
   // We only have registered variables in this class so the map is built.
   _local_variable_map_built = true;
