@@ -36,7 +36,24 @@ void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& inp
   this->_u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::u_z_var_name_default );
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
+  this->_T_melt = input("Physics/AxisymmetricMushyZoneForce/T_melt", 0.0 );
+  this->_delta_T = input("Physics/AxisymmetricMushyZoneForce/delta_T", 0.0 );
+  this->_A_perm = input("Physics/AxisymmetricMushyZoneForce/A_perm", 0.0 );
+  this->_eps = input("Physics/AxisymmetricMushyZoneForce/eps", 0.0 );
  
+  unsigned int u_cast_dim = input.vector_variable_size("Physics/AxisymmetricMushyZoneForce/u_cast");
+
+  // If the user is specifying a pin_location, it had better be 2-dimensional
+  if( u_cast_dim != 2 )
+    {
+      std::cerr << "Error: casting velcoity must be 2 dimensional"
+		<< std::endl;
+      libmesh_error();
+    }
+
+  _u_cast(0) = input("Physics/AxisymmetricMushyZoneForce/u_cast", 0.0, 0 );
+  _u_cast(1) = input("Physics/AxisymmetricMushyZoneForce/u_cast", 0.0, 1 );
+
   return;
 }
 
@@ -111,17 +128,22 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
       const libMesh::Number r = u_qpoint[qp](0);
 
       // Compute the solution & its gradient at the old Newton iterate.
+      const libMesh::Number u_r = c.interior_value(_u_r_var, qp );
+      const libMesh::Number u_z = c.interior_value(_u_z_var, qp );
       const libMesh::Number T = c.interior_value(_T_var, qp);
+      
+      // Properties that depend on T
+      const libMesh::Number K_perm = this->compute_K_perm( T );
+      const libMesh::Number dK_dT = this->dKperm_dT( T );
 
       // First, an i-loop over the velocity degrees of freedom.
       // We know that n_u_r_dofs == n_u_z_dofs so we can compute contributions
       // for both at the same time.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-	  const libMesh::Number K_perm = this->compute_K_perm( T );
-
-	  Fr(i) += _mu*( u_r - u_cast_r )/K_perm*vel_phi[i][qp]*r*JxW[qp];
-	  Fz(i) += _mu*( u_z - u_cast_z )/K_perm*vel_phi[i][qp]*r*JxW[qp];
+	  
+	  Fr(i) += _mu*( u_r - _u_cast(0) )/K_perm*vel_phi[i][qp]*r*JxW[qp];
+	  Fz(i) += _mu*( u_z - _u_cast(1) )/K_perm*vel_phi[i][qp]*r*JxW[qp];
 
 	  if (request_jacobian && c.elem_solution_derivative)
             {
@@ -133,9 +155,9 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
 		  Krr(i,j) += du;
 		  Kzz(i,j) += du;
 
-		  const libMesh::Number dK_dT = this->dKperm_dT( T );
-		  KrT(i,j) += -_mu*( u_r - u_cast_r )/(K_perm*K_perm)*dK_dT*vel_phi[i][qp]*r*JxW[qp];
-		  KzT(i,j) += -_mu*( u_z - u_cast_z )/(K_perm*K_perm)*dK_dT*vel_phi[i][qp]*r*JxW[qp];
+		  
+		  KrT(i,j) += -_mu*( u_r - _u_cast(0) )/(K_perm*K_perm)*dK_dT*T_phi[j][qp]*vel_phi[i][qp]*r*JxW[qp];
+		  KzT(i,j) += -_mu*( u_z - _u_cast(1) )/(K_perm*K_perm)*dK_dT*T_phi[j][qp]*vel_phi[i][qp]*r*JxW[qp];
 
 		} // End j dof loop
 	    } // End request_jacobian check
@@ -166,7 +188,7 @@ double GRINS::AxisymmetricMushyZoneSolidification::compute_liquid_phi( const dou
   return phi_l;
 }
 
-double GRINS::AxisymmetricMushyZoneSolidification:: dphi_dT( const double T )
+double GRINS::AxisymmetricMushyZoneSolidification::dphi_dT( const double T )
 {
   double dphi_dT = 0;
 
@@ -185,6 +207,36 @@ double GRINS::AxisymmetricMushyZoneSolidification:: dphi_dT( const double T )
     }
 
   return dphi_dT;
+}
+
+double GRINS::AxisymmetricMushyZoneSolidification::compute_K_perm( const double T )
+{
+  double K_perm = 0.0;
+
+  const double phi_l = this->compute_liquid_phi( T );
+
+  const double one_minus_phi = (1.0 - phi_l);
+
+  K_perm = one_minus_phi*one_minus_phi*_A_perm/(phi_l*phi_l*phi_l + _eps);
+
+  return K_perm;
+}
+
+double GRINS::AxisymmetricMushyZoneSolidification::dKperm_dT( const double T )
+{
+  double dK_dT = 0.0;
+
+  const double phi_l = this->compute_liquid_phi( T );
+
+  const double one_minus_phi = (1.0 - phi_l);
+  const double phi_cubed = phi_l*phi_l*phi_l;
+
+  dK_dphi = _A_perm*( -2.0*one_minus_phi/(phi_cubed + _eps) + 
+		      one_minus_phi*one_minus_phi*(-3.0)/(phi_cubed*phi_l + _eps) );
+
+  dK_dT = dK_dphi*(this->dphi_dT(T));
+
+  return dK_dT;
 }
 
 void GRINS::AxisymmetricMushyZoneSolidification::init_context( libMesh::DiffContext &context )

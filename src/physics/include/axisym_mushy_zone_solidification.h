@@ -182,6 +182,19 @@ namespace GRINS
      */
     double _delta_T;
 
+    //! Permeability parameter
+    double _A_perm;
+
+    //! Numerical stability parameter for permeability
+    double _eps;
+
+    //! Viscosity
+    /*! \todo Needs to be moved to a central location */
+    double _mu;
+
+    //! Casting velocity
+    libMesh::Point _u_cast;
+
   }; // class AxisymmetricMushyZoneSolidification
 
 } // namespace GRINS
