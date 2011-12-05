@@ -50,7 +50,8 @@ namespace GRINS
   //! Adds axisymmetric mushy zone solidification source term
   /*!
     This class implements the axisymmetric mushy zone solidification to model a phase change
-    from liquid to solid aimed at vacuum arc remelting (VAR) applications. The form is
+    from liquid to solid aimed at vacuum arc remelting (VAR) applications. The source term 
+    for the flow equations has the form
     \f$ \mathbf{F} = -\mu ( \mathbf{u} - \mathbf{u}_{cast} )/K_{perm} \f$
     where
     \f$ \mu = \f$ viscosity,
@@ -63,6 +64,12 @@ namespace GRINS
     The scalar phase function \f$ \phi_l = f(T_{melt}, \Delta T) \f$ where
     \f$ T_{melt} = \f$ the local melting temperature and 
     \f$ \Delta T = \f$ is the interface thickness.
+
+    The source term for the heat transfer equations takes the form
+    \f$ Q = \rho_0 L \mathbf{u} \cdot \nabla \phi_l \f$
+    where
+    \f$ \rho_0 = \f$ reference density,
+    \f$ L = \f$ latent heat of fusion.
    */
   class AxisymmetricMushyZoneSolidification : public Physics
   {
@@ -167,6 +174,9 @@ namespace GRINS
     //! Function to compute \f$ \frac{ d \phi_l}{dT} \f$
     double dphi_dT( const double T );
 
+    //! Function to compute \f$ \frac{ d^2 \phi_l}{dT^2} \f$
+    double dphi2_dT2( const double T );
+
     //! Function to compute permeability \f$ K_{perm} \f$
     double compute_K_perm( const double T );
 
@@ -196,6 +206,12 @@ namespace GRINS
     //! Casting velocity
     libMesh::Point _u_cast;
 
+    //! Reference density
+    double _rho_0;
+
+    //! Latent heat of fusion
+    double _L;
+    
   }; // class AxisymmetricMushyZoneSolidification
 
 } // namespace GRINS

@@ -40,7 +40,8 @@ void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& inp
   this->_delta_T = input("Physics/AxisymmetricMushyZoneForce/delta_T", 0.0 );
   this->_A_perm = input("Physics/AxisymmetricMushyZoneForce/A_perm", 0.0 );
   this->_eps = input("Physics/AxisymmetricMushyZoneForce/eps", 0.0 );
- 
+  this->_mu = input("Physics/AxisymmetricMushyZoneForce/mu", 0.0 );
+
   unsigned int u_cast_dim = input.vector_variable_size("Physics/AxisymmetricMushyZoneForce/u_cast");
 
   // If the user is specifying a pin_location, it had better be 2-dimensional
@@ -54,6 +55,9 @@ void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& inp
   _u_cast(0) = input("Physics/AxisymmetricMushyZoneForce/u_cast", 0.0, 0 );
   _u_cast(1) = input("Physics/AxisymmetricMushyZoneForce/u_cast", 0.0, 1 );
 
+  this->_rho_0 = input("Physics/AxisymmetricMushyZoneForce/rho_0", 0.0 );
+  this->_L = input("Physics/AxisymmetricMushyZoneForce/latent_heat_of_fusion", 0.0 );
+  
   return;
 }
 
@@ -101,6 +105,10 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
   const std::vector<std::vector<libMesh::Real> >& T_phi =
     c.element_fe_var[_T_var]->get_phi();
 
+  // The temperature shape function gradients at interior quadrature points.
+  const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
+    c.element_fe_var[_T_var]->get_dphi();
+
   // Physical location of the quadrature points
   const std::vector<libMesh::Point>& u_qpoint =
     c.element_fe_var[_u_r_var]->get_xyz();
@@ -108,12 +116,14 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
   // Get residuals
   libMesh::DenseSubVector<Number> &Fr = *c.elem_subresiduals[_u_r_var]; // R_{r}
   libMesh::DenseSubVector<Number> &Fz = *c.elem_subresiduals[_u_z_var]; // R_{z}
+  libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[_T_var]; //R_{T}
 
   // Get Jacobians
   libMesh::DenseSubMatrix<Number> &Krr = *c.elem_subjacobians[_u_r_var][_u_r_var]; // R_{r},{r}
   libMesh::DenseSubMatrix<Number> &Kzz = *c.elem_subjacobians[_u_z_var][_u_z_var]; // R_{z},{z}
   libMesh::DenseSubMatrix<Number> &KrT = *c.elem_subjacobians[_u_r_var][_T_var]; // R_{r},{T}
   libMesh::DenseSubMatrix<Number> &KzT = *c.elem_subjacobians[_u_z_var][_T_var]; // R_{z},{T}
+  libMesh::DenseSubMatrix<Number> &KTT = *c.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
 
   // Now we will build the element Jacobian and residual.
   // Constructing the residual requires the solution and its
@@ -130,8 +140,12 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
       // Compute the solution & its gradient at the old Newton iterate.
       const libMesh::Number u_r = c.interior_value(_u_r_var, qp );
       const libMesh::Number u_z = c.interior_value(_u_z_var, qp );
-      const libMesh::Number T = c.interior_value(_T_var, qp);
       
+      libMesh::NumberVectorValue U(u_r, u_z);
+
+      const libMesh::Number T = c.interior_value(_T_var, qp);
+      const libMesh::Gradient gradT = c.interior_gradient( _T_var, qp );
+
       // Properties that depend on T
       const libMesh::Number K_perm = this->compute_K_perm( T );
       const libMesh::Number dK_dT = this->dKperm_dT( T );
@@ -142,8 +156,12 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
 	  
+	  // Mushy zone force
 	  Fr(i) += _mu*( u_r - _u_cast(0) )/K_perm*vel_phi[i][qp]*r*JxW[qp];
 	  Fz(i) += _mu*( u_z - _u_cast(1) )/K_perm*vel_phi[i][qp]*r*JxW[qp];
+
+	  // Latent heat of fusion
+	  FT(i) += _rho_0*_L*(this->dphi_dT(T))*U*gradT*T_phi[i][qp]*r*JxW[qp];
 
 	  if (request_jacobian && c.elem_solution_derivative)
             {
@@ -158,6 +176,9 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
 		  
 		  KrT(i,j) += -_mu*( u_r - _u_cast(0) )/(K_perm*K_perm)*dK_dT*T_phi[j][qp]*vel_phi[i][qp]*r*JxW[qp];
 		  KzT(i,j) += -_mu*( u_z - _u_cast(1) )/(K_perm*K_perm)*dK_dT*T_phi[j][qp]*vel_phi[i][qp]*r*JxW[qp];
+
+		  KTT(i,j) += _rho_0*_L*( this->dphi2_dT2(T)*U*gradT*T_phi[j][qp] + 
+					  this->dphi_dT(T)*U*T_gradphi[j][qp] )*T_phi[i][qp]*r*JxW[qp];
 
 		} // End j dof loop
 	    } // End request_jacobian check
@@ -207,6 +228,28 @@ double GRINS::AxisymmetricMushyZoneSolidification::dphi_dT( const double T )
     }
 
   return dphi_dT;
+}
+
+double GRINS::AxisymmetricMushyZoneSolidification::dphi2_dT2( const double T )
+{
+  double dphi2_dT2 = 0.0;
+
+  if( T >= _T_melt + _delta_T ) return dphi2_dT2 = 0.0;
+  else if( T <= _T_melt - _delta_T ) return dphi2_dT2 = 0.0;
+  else
+    {
+      // Minor flop optimization
+      const double one_over_two_delta_T = 1.0/(2.0*_delta_T);
+
+      const double t = (T - (_T_melt - _delta_T ))*one_over_two_delta_T;
+
+      const double dt_dT = one_over_two_delta_T;
+      const double dphi2_dt2 = (6.0 - 2.0*t);
+
+      dphi2_dT2 = dphi2_dt2*dt_dT*dt_dT;
+    }
+
+  return dphi2_dT2;
 }
 
 double GRINS::AxisymmetricMushyZoneSolidification::compute_K_perm( const double T )
