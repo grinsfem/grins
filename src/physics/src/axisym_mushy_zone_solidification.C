@@ -231,8 +231,8 @@ double GRINS::AxisymmetricMushyZoneSolidification::dKperm_dT( const double T )
   const double one_minus_phi = (1.0 - phi_l);
   const double phi_cubed = phi_l*phi_l*phi_l;
 
-  dK_dphi = _A_perm*( -2.0*one_minus_phi/(phi_cubed + _eps) + 
-		      one_minus_phi*one_minus_phi*(-3.0)/(phi_cubed*phi_l + _eps) );
+  const double dK_dphi = _A_perm*( -2.0*one_minus_phi/(phi_cubed + _eps) + 
+				   one_minus_phi*one_minus_phi*(-3.0)/(phi_cubed*phi_l + _eps) );
 
   dK_dT = dK_dphi*(this->dphi_dT(T));
 

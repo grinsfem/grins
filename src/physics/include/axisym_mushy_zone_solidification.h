@@ -46,11 +46,12 @@
 
 namespace GRINS
 {  
+
   //! Adds axisymmetric mushy zone solidification source term
   /*!
     This class implements the axisymmetric mushy zone solidification to model a phase change
     from liquid to solid aimed at vacuum arc remelting (VAR) applications. The form is
-    \f$ \mathbf{F} = -\mu \left( \mathbf{u} - \mathbf{u}_{cast} \right)/K_{perm} \f$
+    \f$ \mathbf{F} = -\mu ( \mathbf{u} - \mathbf{u}_{cast} )/K_{perm} \f$
     where
     \f$ \mu = \f$ viscosity,
     \f$ \mathbf{u} = \f$ is the velocity
@@ -58,7 +59,7 @@ namespace GRINS
     \f$ K_{perm} = \f$ is the permeability of the medium.
     The permeability is an algebraic function of the liquid fraction, namely
     \f$ K_{perm} = (1-\phi_l)^2 A_{perm}/\phi_l^3 \f$
-    where \f$A_{perm} is a constant dependent on the characteristics of the medium. 
+    where \f$ A_{perm} \f$ is a constant dependent on the characteristics of the medium. 
     The scalar phase function \f$ \phi_l = f(T_{melt}, \Delta T) \f$ where
     \f$ T_{melt} = \f$ the local melting temperature and 
     \f$ \Delta T = \f$ is the interface thickness.
@@ -71,7 +72,7 @@ namespace GRINS
       : Physics()
     {};
 
-    ~AxisymmetricMushyZoneSolidification()
+    virtual ~AxisymmetricMushyZoneSolidification()
     {};
 
     //! Read options from GetPot input file.
@@ -154,7 +155,7 @@ namespace GRINS
 
     //! Function to compute liquid fraction \f$ \phi_l \f$
     /*! Computes the liquid fraction of the material. Generally,
-        this function has the form \f$ \phi_l = f( T, T_{melt}, \Delta T )\f$
+        this function has the form \f$ \phi_l = f( T, T_{melt}, \Delta T ) \f$
 	where \f$ T \f$ is the local temperature, \f$ T_{melt} \f$ is the given
 	melting temperature of the material, and \f$ \Delta T \f$ is the
 	desired "interface" thickness (given). In this implemenation,
@@ -172,11 +173,11 @@ namespace GRINS
     //! Function to compute \f$ \frac{dK_{perm}}{dT} \f$
     double dKperm_dT( const double T );
 
-    //! Melting temperature parameter \f$ T_{melt \f$
+    //! Melting temperature parameter \f$ T_{melt} \f$
     double _T_melt;
 
     //! "Interface" thickness \f$ \Delta T \f$
-    /*! The liquid fraction takes the form \f$ \phi_l = f( T, T_{melt}, \Delta T )\f$
+    /*! The liquid fraction takes the form \f$ \phi_l = f( T, T_{melt}, \Delta T ) \f$
         so that \f$ \phi_l = 0, T \le T_{melt} - \Delta T \f$ and 
 	\f$ \phi_l = 1.0, T \ge T_{melt} + \Delta T \f$
      */

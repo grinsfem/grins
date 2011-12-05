@@ -155,7 +155,7 @@ namespace GRINS
     //! \f$ T_0 = \f$ reference temperature 
     libMesh::Number _T_ref;
 
-    //! \f$ \beta_T = $ coefficient of thermal expansion
+    //! \f$ \beta_T = \f$ coefficient of thermal expansion
     libMesh::Number _beta_T;
 
     //! Gravitational vector

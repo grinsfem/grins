@@ -146,8 +146,6 @@ Configure help can also be accessed at the command line:
 
 \code> ./configure --help \endcode
 
-\endcode
-
 <h2> Library Build </h2>
 
 Once configured, issue a <tt>make</tt> to build the software. If successful, this
