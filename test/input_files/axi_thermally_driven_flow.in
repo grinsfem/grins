@@ -74,7 +74,7 @@ bc_ids = '3 0 2 1'
 
 bc_types = 'axisymmetric isothermal_wall isothermal_wall prescribed_heat_flux'
 
-q_wall_1 = 1.0
+q_wall_1 = '1.0 0.0'
 T_wall_0 = 10
 T_wall_2 = 1
 

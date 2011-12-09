@@ -91,8 +91,15 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
-	    _q_boundary_values[bc_id] = 
-	      input("Physics/HeatTransfer/q_wall_"+bc_id_string, 0.0 );
+	    libMesh::Point q_in;
+	    
+	    int num_q_components = input.vector_variable_size("Physics/HeatTransfer/q_wall_"+bc_id_string);
+
+	    for( int i = 0; i < num_q_components; i++ )
+	      {
+		q_in(i) = input("Physics/HeatTransfer/q_wall_"+bc_id_string, 0.0, i );
+	      }
+	      _q_boundary_values[bc_id] = q_in;
 	  }
 	  break;
 

@@ -84,22 +84,41 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 	      input("Physics/AxisymmetricHeatTransfer/T_wall_"+bc_id_string, 0.0 );
 	  }
 	  break;
-	  
+
 	case GRINS::ADIABATIC_WALL:
 	  break;
 
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
-	    _q_boundary_values[bc_id] = 
-	      input("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string, 0.0 );
+	    libMesh::Point q_in;
+	    
+	    int num_q_components = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string);
+	    
+	    if( num_q_components > 2 )
+	      {
+		std::cerr << "Error: Cannot have more than 2 components of heat flux for the axisymmetric case."
+			  << std::endl
+			  << "       Boundary id " << bc_id << " contains "
+			  << num_q_components << "."
+			  << std::endl;
+		libmesh_error();
+	      }
+
+	    for( int i = 0; i < num_q_components; i++ )
+	      {
+		q_in(i) = input("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string, 0.0, i );
+	      }
+	      _q_boundary_values[bc_id] = q_in;
 	  }
 	  break;
+
+	  // Don't need to do anything since dT/dr = 0
 	case GRINS::AXISYMMETRIC:
 	  break;
 
 	default:
 	  {
-	    std::cerr << "Error: Invalid boundary condition type for HeatTransfer."
+	    std::cerr << "Error: Invalid boundary condition type for AxisymmetricHeatTransfer."
 		      << std::endl;
 	    libmesh_error();
 	  }

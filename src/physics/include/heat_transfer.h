@@ -148,7 +148,7 @@ namespace GRINS
     std::map< unsigned int, double > _T_boundary_values;
 
     //! Stash prescribed boundary heat flux values
-    std::map< unsigned int, double > _q_boundary_values;
+    std::map< unsigned int, libMesh::Point > _q_boundary_values;
   };
 
 } //End namespace block
