@@ -138,21 +138,6 @@ void GRINS::AxisymmetricIncompNavierStokes::init_variables( libMesh::FEMSystem* 
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
 
-  // Now build the local map
-  this->build_local_variable_map();
-
-  return;
-}
-
-void GRINS::AxisymmetricIncompNavierStokes::build_local_variable_map()
-{
-  _var_map[_u_r_var_name] = _u_r_var;
-  _var_map[_u_z_var_name] = _u_z_var;
-  
-  _var_map[_p_var_name] = _p_var;
-
-  this->_local_variable_map_built = true;
-
   return;
 }
 

@@ -104,8 +104,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual void build_local_variable_map();
-
   protected:
 
     //! Physical dimension of problem

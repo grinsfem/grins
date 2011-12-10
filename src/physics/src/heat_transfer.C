@@ -30,7 +30,7 @@
 
 void GRINS::HeatTransfer::read_input_options( GetPot& input )
 {
-  this->_FE_family =
+  this->_T_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
 
   this->_T_order =
@@ -42,7 +42,13 @@ void GRINS::HeatTransfer::read_input_options( GetPot& input )
 
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
-  // registered/non-owned variable names
+  // velocity variables. We assume the same element type and order for all velocities.
+  this->_V_FE_family = 
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
+
+  this->_V_order =
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/V_order", "SECOND") );
+
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
@@ -121,29 +127,14 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
 
-  _T_var = system->add_variable( _T_var_name, this->_T_order, _FE_family);
-
-  // Now build the local map
-  this->build_local_variable_map();
-
-  return;
-}
-
-void GRINS::HeatTransfer::register_variable_indices( VariableMap& global_map )
-{
-  _u_var = global_map[_u_var_name];
-  _v_var = global_map[_v_var_name];
-  _w_var = global_map[_w_var_name];
-
-  return;
-}
-
-void GRINS::HeatTransfer::build_local_variable_map()
-{
-  _var_map[_T_var_name] = _T_var;
-
-  this->_local_variable_map_built = true;
-
+  _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+ 
+  // If these are already added, then we just get the index. 
+  _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
+  _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
+  if (_dim == 3)
+    _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
+ 
   return;
 }
 

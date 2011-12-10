@@ -76,16 +76,9 @@ namespace GRINS
 
     //! Initialization of BoussinesqBuoyancy variables
     /*!
-      There are actually no extra variables
+      There are actually no extra variables, just grabbing what we need.
      */
-    /*! \todo Perhaps put a default method in the base class so we don't have
-      to overload with nothing? */
     virtual void init_variables( libMesh::FEMSystem* system );
-
-    //! Register variables needed by BoussinesqBuoyancy
-    /*! This will register the temperature and velocity variables from
-      the IncompressibleNavierStokes and ConvectiveHeatTransfer classes.*/
-    virtual void register_variable_indices(GRINS::VariableMap &global_map);
 
     // Context initialization
     /*! Doesn't do anything for BoussinesqBuoyancy since there
@@ -118,26 +111,26 @@ namespace GRINS
     //! No mass terms for BoussinesqBuoyancy.
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system ); 
-
-    //! No new variables, so no local map
-    virtual void build_local_variable_map();
+				libMesh::FEMSystem* system );
 
   protected:
 
     //! Physical dimension of problem
     unsigned int _dim;
 
-    //! Indices for each (registered/non-owned) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _u_var; /* Index for x-velocity field */
-    RegtdVariableIndex _v_var; /* Index for y-velocity field */
-    RegtdVariableIndex _w_var; /* Index for z-velocity field */
-    RegtdVariableIndex _T_var; /* Index for Temperature field */
+    //! Element type, read from input
+    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
 
-    //! Names of each (non-owned) variable in the system
+    //! Element orders, read from input
+    libMeshEnums::Order _T_order, _V_order;
+
+    //! Indices for each variable;
+    VariableIndex _u_var; /* Index for x-velocity field */
+    VariableIndex _v_var; /* Index for y-velocity field */
+    VariableIndex _w_var; /* Index for z-velocity field */
+    VariableIndex _T_var; /* Index for Temperature field */
+
+    //! Names of each variable in the system
     std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
 
     //! \f$ \rho_0 = \f$ reference density

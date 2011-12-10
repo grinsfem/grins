@@ -145,23 +145,6 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
 
-  // Now build the local map
-  this->build_local_variable_map();
-
-  return;
-}
-
-void GRINS::IncompressibleNavierStokes::build_local_variable_map()
-{
-  _var_map[_u_var_name] = _u_var;
-  _var_map[_v_var_name] = _v_var;
-  if (_dim == 3)
-    _var_map[_w_var_name] = _w_var;
-  
-  _var_map[_p_var_name] = _p_var;
-
-  this->_local_variable_map_built = true;
-
   return;
 }
 
@@ -313,32 +296,26 @@ bool GRINS::IncompressibleNavierStokes::element_time_derivative( bool request_ja
       const libMesh::Number  gradwvec_y = (_dim == 3)?gradwvec(1):0;
       const libMesh::Number  gradwvec_z = (_dim == 3)?gradwvec(2):0;
 
-      // Value of the forcing function at this quadrature point.
-      libMesh::Point force = this->forcing(u_qpoint[qp]);
-
       // First, an i-loop over the velocity degrees of freedom.
       // We know that n_u_dofs == n_v_dofs so we can compute contributions
       // for both at the same time.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
           Fu(i) += JxW[qp] *
-                   (-_rho*vel_phi[i][qp]*(Uvec*graduvec)     // convection term
-                    +p*vel_gblgradphivec[i][qp](0)           // pressure term
-                    -_mu*(vel_gblgradphivec[i][qp]*graduvec) // diffusion term
-                    +vel_phi[i][qp]*force(0));               // forcing function
+                   (-_rho*vel_phi[i][qp]*(Uvec*graduvec)        // convection term
+                    +p*vel_gblgradphivec[i][qp](0)              // pressure term
+                    -_mu*(vel_gblgradphivec[i][qp]*graduvec) ); // diffusion term
 
           Fv(i) += JxW[qp] *
-                   (-_rho*vel_phi[i][qp]*(Uvec*gradvvec)     // convection term
-                    +p*vel_gblgradphivec[i][qp](1)           // pressure term
-                    -_mu*(vel_gblgradphivec[i][qp]*gradvvec) // diffusion term
-                    +vel_phi[i][qp]*force(1));               // forcing function
+                   (-_rho*vel_phi[i][qp]*(Uvec*gradvvec)        // convection term
+                    +p*vel_gblgradphivec[i][qp](1)              // pressure term
+                    -_mu*(vel_gblgradphivec[i][qp]*gradvvec) ); // diffusion term
           if (_dim == 3)
             {
               Fw(i) += JxW[qp] *
-                       (-_rho*vel_phi[i][qp]*(Uvec*gradwvec)     // convection term
-                        +p*vel_gblgradphivec[i][qp](2)           // pressure term
-                        -_mu*(vel_gblgradphivec[i][qp]*gradwvec) // diffusion term
-                        +vel_phi[i][qp]*force(2));               // forcing function
+                       (-_rho*vel_phi[i][qp]*(Uvec*gradwvec)        // convection term
+                        +p*vel_gblgradphivec[i][qp](2)              // pressure term
+                        -_mu*(vel_gblgradphivec[i][qp]*gradwvec) ); // diffusion term
             }
 
           if (request_jacobian && c.elem_solution_derivative)
@@ -689,10 +666,4 @@ bool GRINS::IncompressibleNavierStokes::mass_residual( bool request_jacobian,
     } // End quadrature loop
 
   return request_jacobian;
-}
-
-libMesh::Point GRINS::IncompressibleNavierStokes::forcing(const libMesh::Point &pt_xyz)
-{
-  // TODO: add forcing options
-  return libMesh::Point(0.,0.,0.);
 }

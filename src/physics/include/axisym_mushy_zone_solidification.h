@@ -93,11 +93,6 @@ namespace GRINS
       to overload with nothing? */
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    //! Register variables needed by AxisymmetricMushyZoneSolidification
-    /*! This will register the temperature and velocity variables from
-      the AxisymmetricIncompNavierStokes and AxisymmetricHeatTransfer classes.*/
-    virtual void register_variable_indices(GRINS::VariableMap &global_map);
-
     // Context initialization
     /*! Doesn't do anything for AxisymmetricMushyZoneSolidification since there
       are no new variables created */
@@ -130,34 +125,30 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ); 
-
-    //! No new variables, so no local map
-    virtual void build_local_variable_map();
-
   protected:
 
     //! Physical dimension of problem
     unsigned int _dim;
 
-    // Indices for each (registered/non-owned) variable;
-    //! Index for registered r-velocity field
-    RegtdVariableIndex _u_r_var;
+    // Indices for each variable;
+    //! Index for r-velocity field
+    VariableIndex _u_r_var;
 
-    //! Index for registered z-velocity field
-    RegtdVariableIndex _u_z_var;
+    //! Index for z-velocity field
+    VariableIndex _u_z_var;
 
-    //! Index for registered temperature field
-    RegtdVariableIndex _T_var;
+    //! Index for temperature field
+    VariableIndex _T_var;
 
-    // Names of each registered variable in the system
+    // Names of each variable in the system
 
-    //! Name of registered r-velocity
+    //! Name of r-velocity
     std::string _u_r_var_name;
 
-    //! Name of registered z-velocity
+    //! Name of z-velocity
     std::string _u_z_var_name;
 
-    //! Name of registered temperature
+    //! Name of temperature
     std::string _T_var_name;
 
     //! Function to compute liquid fraction \f$ \phi_l \f$

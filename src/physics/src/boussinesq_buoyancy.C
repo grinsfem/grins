@@ -30,6 +30,18 @@
 
 void GRINS::BoussinesqBuoyancy::read_input_options( GetPot& input )
 {
+  this->_V_FE_family =
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
+
+  this->_V_order =
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/V_order", "SECOND") ); 
+
+  this->_T_FE_family =
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
+
+  this->_T_order =
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
+
   // Read variable naming info
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
@@ -53,21 +65,14 @@ void GRINS::BoussinesqBuoyancy::read_input_options( GetPot& input )
 
 void GRINS::BoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
 {
-  // No variables to initialize, but we must still "build" the local map.
-  // In this case, we have no new variables, so the map will be registered as built.
-  this->build_local_variable_map();
-  return;
-}
+  this->_dim = system->get_mesh().mesh_dimension();
 
-void GRINS::BoussinesqBuoyancy::register_variable_indices(GRINS::VariableMap &global_map)
-{
-  _u_var = global_map[_u_var_name];
-  _v_var = global_map[_v_var_name];
-
+  // If these are already added, then we just get the index. 
+  _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);                                                                                                                                                                 
+  _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
+  _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
   if (_dim == 3)
-    _w_var = global_map[_w_var_name];
-
-  _T_var = global_map[_T_var_name];
+    _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
 
   return;
 }
@@ -193,10 +198,4 @@ bool GRINS::BoussinesqBuoyancy::mass_residual( bool request_jacobian,
   return request_jacobian;
 }
 
-void GRINS::BoussinesqBuoyancy::build_local_variable_map()
-{
-  // We only have registered variables in this class so the map is built.
-  _local_variable_map_built = true;
-  return;
-}
 

@@ -127,8 +127,6 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
-    void dump_global_variable_map( );
-
     //! Check that all the requested physics classes have other physics dependencies satisfied.
     void check_physics_consistency();
 
@@ -150,8 +148,6 @@ namespace GRINS
       _axisymmetric_incomp_navier_stokes,
       _heat_transfer, _axisymmetric_heat_transfer,
       _boussinesq_buoyancy, _axisymmetric_boussinesq_buoyancy;
-
-    GRINS::VariableMap _global_map;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

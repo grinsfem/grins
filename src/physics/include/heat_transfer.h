@@ -71,9 +71,6 @@ namespace GRINS
      */
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    //! Register external physics variables
-    virtual void register_variable_indices( VariableMap& global_map );
-
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -106,36 +103,27 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual void build_local_variable_map();
-
   protected:
 
     //! Physical dimension of problem
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    //! Indices for each (owned) variable;
-    VariableIndex _T_var;  /* Index for temperature field */
+    //! Indices for each variable;
+    VariableIndex _T_var; /* Index for temperature field */
+    VariableIndex _u_var; /* Index for x-velocity field */
+    VariableIndex _v_var; /* Index for y-velocity field */
+    VariableIndex _w_var; /* Index for z-velocity field */
 
-    //! Names of each (owned) variable in the system
+    //! Names of each variable in the system
     std::string _T_var_name;
-
-    //! Indices for each (registered/non-owned) variable;
-    /*!
-      This depends on pre-defined set of coupling terms.
-     */
-    RegtdVariableIndex _u_var; /* Index for x-velocity field */
-    RegtdVariableIndex _v_var; /* Index for y-velocity field */
-    RegtdVariableIndex _w_var; /* Index for z-velocity field */
-
-    //! Names of each (non-owned) variable in the system
     std::string _u_var_name, _v_var_name, _w_var_name;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _FE_family;
+    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
 
     //! Element orders, read from input
-    libMeshEnums::Order _T_order;
+    libMeshEnums::Order _T_order, _V_order;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

@@ -30,11 +30,17 @@
 
 void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 {
-  this->_FE_family =
+  this->_T_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
 
   this->_T_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
+
+  this->_V_FE_family =
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymIncompNS/FE_family", "LAGRANGE") );
+
+  this->_V_order =
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymIncompNS/V_order", "SECOND") );
 
   this->_rho = input("Physics/AxisymmetricHeatTransfer/rho", 1.0); //TODO: same as Incompressible NS
   this->_Cp  = input("Physics/AxisymmetricHeatTransfer/Cp", 1.0);
@@ -134,27 +140,9 @@ void GRINS::AxisymmetricHeatTransfer::init_variables( libMesh::FEMSystem* system
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
 
-  _T_var = system->add_variable( _T_var_name, this->_T_order, _FE_family);
-
-  // Now build the local map
-  this->build_local_variable_map();
-
-  return;
-}
-
-void GRINS::AxisymmetricHeatTransfer::register_variable_indices( VariableMap& global_map )
-{
-  _u_r_var = global_map[_u_r_var_name];
-  _u_z_var = global_map[_u_z_var_name];
-
-  return;
-}
-
-void GRINS::AxisymmetricHeatTransfer::build_local_variable_map()
-{
-  _var_map[_T_var_name] = _T_var;
-
-  this->_local_variable_map_built = true;
+  _T_var   = system->add_variable( _T_var_name, _T_order, _T_FE_family); 
+  _u_r_var = system->add_variable(_u_r_var_name, _V_order, _V_FE_family);
+  _u_z_var = system->add_variable(_u_z_var_name, _V_order, _V_FE_family);
 
   return;
 }

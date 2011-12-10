@@ -96,14 +96,6 @@ namespace GRINS
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;
 
-    //! Registers variables for coupled physics.
-    /*!
-      Each physics might need access to other physics variables, 
-      so this method registers them in individual physics. By default,
-      no variables are registered.
-    */
-    virtual void register_variable_indices( GRINS::VariableMap& global_map );
-
     //! Set which variables are time evolving.
     /*!
       Set those variables which evolve in time (as opposed to variables that behave like constraints).
@@ -144,21 +136,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
-    //! Variable map for this physics
-    /*
-      Force the derived class to build the local physics variable map.
-      User must also set _local_variable_map_built = true or the getter
-      function will error.
-     */
-    virtual void build_local_variable_map() = 0;
-
-    //! Returns indices for physics variables
-    /*!
-      Other physics might need access to this physics variables, so this method returns a copy
-      of the map from the std::string name of the variable to the variable index in the system.
-    */
-    GRINS::VariableMap get_variable_indices_map();
-
     void attach_bound_func( const unsigned int bc_id, 
 			    GRINS::BasePointFuncObj* bound_func );
 
@@ -167,12 +144,6 @@ namespace GRINS
 #endif
 
   protected:
-
-    //! Map from std::string variable name to variable index value
-    GRINS::VariableMap _var_map;
-
-    //! Need to a way to double check that the local variable map was built
-    bool _local_variable_map_built;
 
     //! Map between boundary id and boundary condition type
     std::map< unsigned int, GRINS::BC_TYPES> _bc_map;

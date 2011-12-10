@@ -63,18 +63,15 @@ void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& inp
 
 void GRINS::AxisymmetricMushyZoneSolidification::init_variables( libMesh::FEMSystem* system )
 {
-  // No variables to initialize, but we must still "build" the local map.
-  // In this case, we have no new variables, so the map will be registered as built.
-  this->build_local_variable_map();
-  return;
-}
+  this->_dim = system->get_mesh().mesh_dimension();
 
-void GRINS::AxisymmetricMushyZoneSolidification::register_variable_indices(GRINS::VariableMap &global_map)
-{
-  _u_r_var = global_map[_u_r_var_name];
-  _u_z_var = global_map[_u_z_var_name];
-
-  _T_var = global_map[_T_var_name];
+  // These variables should already be added.
+  /*! \todo The more flexible thing to do is just use add variable since if the
+    the variable is already there, it just returns the index. Will need to also
+    read in the FE information for the velocity. */
+  _u_r_var = system->variable_number(_u_r_var_name);
+  _u_z_var = system->variable_number(_u_z_var_name);
+  _T_var = system->variable_number(_T_var_name);
 
   return;
 }
@@ -315,10 +312,4 @@ bool GRINS::AxisymmetricMushyZoneSolidification::mass_residual( bool request_jac
   return request_jacobian;
 }
 
-void GRINS::AxisymmetricMushyZoneSolidification::build_local_variable_map()
-{
-  // We only have registered variables in this class so the map is built.
-  _local_variable_map_built = true;
-  return;
-}
 

@@ -103,8 +103,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual void build_local_variable_map();
-
   protected:
 
     //! Physical dimension of problem
@@ -141,10 +139,6 @@ namespace GRINS
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
 
-    //! Returns the value of a forcing function at point pt_xyz.
-    // This value depends on which option is set.
-    // TODO: any other option to return? other than libMesh::Point?
-    libMesh::Point forcing(const libMesh::Point& pt_xyz);
   };
 
 } //End namespace block

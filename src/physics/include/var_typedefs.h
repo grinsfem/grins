@@ -33,15 +33,7 @@
 
 namespace GRINS
 {
-  //! More descriptive name of the type used for (owned) variable indices
+  //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
-
-  //! More descriptive name of the type used for (registered) variable indices
-  typedef unsigned int RegtdVariableIndex;
-
-  //! Map between variable name and system index
-  typedef std::map<std::string,VariableIndex> VariableMap;
-  typedef std::map<std::string,VariableIndex>::iterator VariableMapIt;
-  typedef std::map<std::string,VariableIndex>::const_iterator VariableMapConstIt;
 }
 #endif //VAR_TYPEDEFS_H
