@@ -545,41 +545,40 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 	  // Inflow 
 	case GRINS::INFLOW:
 	  {
-            
             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
 	    
-             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_it = bc_map.find( _u_var );
-             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator v_it = bc_map.find( _v_var );
-	     if( _dim == 3 )
-                 std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator w_it = bc_map.find( _w_var ); 
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_it = bc_map.find( _u_var );
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator v_it = bc_map.find( _v_var );
+	    if( _dim == 3 )
+	      std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator w_it = bc_map.find( _w_var ); 
             
             if( u_it == bc_map.end() )
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
-               }
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+	      }
             else
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
-               }
-             if( v_it == bc_map.end() )
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
-               }
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
+	      }
+	    if( v_it == bc_map.end() )
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
+	      }
             else
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, u_it->second );
-               }
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _v_var, v_it->second );
+	      }
             if( _dim == 3 )
-               {
-               if( u_it == bc_map.end() )
-                 {
-                   _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
-                 }
-               else
-                 {
-                   _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
-                 }
-               }
+	      {
+		if( w_it == bc_map.end() )
+		  {
+		    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
+		  }
+		else
+		  {
+		    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, w_it->second );
+		  }
+	      }
 	  }
 	  break;
 

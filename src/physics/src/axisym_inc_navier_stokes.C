@@ -478,30 +478,30 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 	  // Inflow 
 	case GRINS::INFLOW:
 	  {
-             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
             
-             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_r_it = bc_map.find( _u_r_var );
-             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_z_it = bc_map.find( _u_z_var );
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_r_it = bc_map.find( _u_r_var );
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_z_it = bc_map.find( _u_z_var );
 
-            if( u_r_it == bc_map.end() )                                                                                                                                                                               
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
-               }
+            if( u_r_it == bc_map.end() )
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
+	      }
             else
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, u_r_it->second );
-               }
-             if( u_z_it == bc_map.end() )
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
-               }
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, u_r_it->second );
+	      }
+	    if( u_z_it == bc_map.end() )
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
+	      }
             else
-               {
-                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, u_z_it->second );
-               }
+	      {
+		_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, u_z_it->second );
+	      }
 	  }
 	  break;
-
+	  
 	case GRINS::AXISYMMETRIC:
 	  {
 	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );

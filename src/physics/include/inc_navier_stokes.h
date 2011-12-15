@@ -93,7 +93,9 @@ namespace GRINS
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context,
 				     libMesh::FEMSystem* system );
-
+    //! Handles Dirichlet boundary conditions
+    /*! Note that for any generic function specifications, 
+      any components not specified will be assigned a zero Dirichlet value. */
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context,
 				  libMesh::FEMSystem* system );
