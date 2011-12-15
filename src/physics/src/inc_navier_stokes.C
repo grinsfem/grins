@@ -549,8 +549,9 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 	    
 	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_it = bc_map.find( _u_var );
 	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator v_it = bc_map.find( _v_var );
-	    if( _dim == 3 )
-	      std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator w_it = bc_map.find( _w_var ); 
+	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator w_it;
+
+	    if( _dim == 3 ) w_it = bc_map.find( _w_var ); 
             
             if( u_it == bc_map.end() )
 	      {
