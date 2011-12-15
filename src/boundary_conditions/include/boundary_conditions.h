@@ -30,7 +30,8 @@
 
 #include "bc_types.h"
 #include "var_typedefs.h"
-#include "point_func_base.h"
+#include "dirichlet_func_obj.h"
+#include "neumann_func_obj.h"
 
 // libMesh stuff
 #include "libmesh.h"
@@ -58,35 +59,29 @@ namespace GRINS
     BoundaryConditions();
     ~BoundaryConditions();
     
-    /*! Applies Dirichlet boundary conditions for a single variable using the
-      penalty method. */
+    //! Applies Dirichlet boundary conditions using the penalty method.
     void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
 			  const GRINS::VariableIndex var, const double value, 
 			  const double penalty = 1.0e16 );
 
-    /*! Applies Dirichlet boundary conditions for a vector of variables using the
-      penalty method. */
-    void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
-			  const std::vector<GRINS::VariableIndex>& vars,
-			  const std::vector<bool>& set_vars,
-			  GRINS::BasePointFuncObj* func,
+    //! Applies Dirichlet boundary conditions using a user-supplied function using the penalty method. */
+    void apply_dirichlet( libMesh::DiffContext &context, 
+			  const bool request_jacobian,
+			  const VariableIndex var,
+			  GRINS::DirichletFuncObj* dirichlet_func,
 			  const double penalty = 1.0e16 );
 
-    /*! Applies Neumann boundary conditions for variable var1. This method is for when
-      the boundary condition is linear and, therefore, has no Jacobian contributions */
+    //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann( libMesh::DiffContext &context,
 			const GRINS::VariableIndex var,  
 			const Point& value );
 
-    /*! Applies Neumann boundary conditions for variable var1. Jacobian for nonlinear Neumann condition
-      require var2 since one could be adding the Neumann condition to the residual for var1 and
-      have \f$\frac{\partial g(u_2)}{\partial u_2}\f$ */
+    //! Applies Neumann boundary conditions using a user-supplied function.
+    /*! This function must also be aware of the Jacobian with respect to other variables. */
     void apply_neumann( libMesh::DiffContext &context,
 			const bool request_jacobian,
-			const GRINS::VariableIndex var1, 
-			const GRINS::VariableIndex var2, 
-			const Point& value, 
-			const Point& jacobian_value  );
+			const GRINS::VariableIndex var, 
+			GRINS::NeumannFuncObj* neumann_func  );
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */

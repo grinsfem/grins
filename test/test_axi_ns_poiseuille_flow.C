@@ -36,7 +36,7 @@
 
 // System types that we might want to instantiate
 #include "multiphysics_sys.h"
-#include "point_parabolic_profile.h"
+#include "parabolic_profile.h"
 
 #include "exact_solution.h"
 
@@ -70,6 +70,9 @@ int main(int argc, char* argv[])
   // Create solver object.
   GRINS::Solver<GRINS::MultiphysicsSystem> solver;
 
+  // Cache the u-velocity variable index for later use
+  GRINS::VariableIndex z_var;
+
   { // Artificial block to destroy objects associated with reading the input once we've read it in.
 
     // libMesh input file should be first argument
@@ -89,18 +92,20 @@ int main(int argc, char* argv[])
     solver.set_mesh( meshmanager.get_mesh() );
     solver.initialize_system( "GRINS", libMesh_inputfile );
 
+    std::string z_var_name = libMesh_inputfile("Physics/VariableNames/z_velocity", GRINS::u_z_var_name_default );
+    GRINS::MultiphysicsSystem* system = solver.get_system();
+    z_var = system->variable_number(z_var_name);
+
   } //Should be done reading input, so we kill the GetPot object.
 
   GRINS::MultiphysicsSystem* system = solver.get_system();
 
   GRINS::Physics* ns_physics = system->get_physics("AxisymmetricIncompNavierStokes");
 
-  GRINS::PointParabolicProfile inflow(  0.0,     0.0, 0.0, 0.0, 0.0, 0.0,
-				       -1.0/4.0, 0.0, 0.0, 0.0, 0.0, 1.0/4.0,
-				        0.0,     0.0, 0.0, 0.0, 0.0, 0.0     );
+  GRINS::ParabolicProfile inflow(  z_var, -1.0/4.0, 0.0, 0.0, 0.0, 0.0, 1.0/4.0 );
 
-  ns_physics->attach_bound_func( 0, &inflow );
-  ns_physics->attach_bound_func( 2, &inflow );
+  ns_physics->attach_dirichlet_bound_func( 0, z_var, &inflow );
+  ns_physics->attach_dirichlet_bound_func( 2, z_var, &inflow );
 
   // Do solve here
   solver.solve();

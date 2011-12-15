@@ -25,10 +25,12 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef POINT_PARABOLIC_PROFILE_H
-#define POINT_PARABOLIC_PROFILE_H
+#ifndef PARABOLIC_PROFILE_H
+#define PARABOLIC_PROFILE_H
 
-#include "point_func_base.h"
+#include "fe_base.h"
+#include "dirichlet_func_obj.h"
+#include "var_typedefs.h"
 
 namespace GRINS
 {
@@ -38,44 +40,40 @@ namespace GRINS
       boundary conditions. Parabola takes the form:
   \f$ ax^2 + bxy + cy^2 + dx + ey + f \f$ */
   /** \todo Need to incorporate z-directions */
-  class PointParabolicProfile : public BasePointFuncObj
+  class ParabolicProfile : public DirichletFuncObj
   {
   public:
     
     //! Default constructor
     /*! Default constructor sets parameters for the profile:
-      x_out = \f$ 4y(1-y) \f$
-      y_out = 0
-      z_out = 0 */
-    PointParabolicProfile( );
+      value = \f$ 4y(1-y) \f$ */
+    ParabolicProfile( const GRINS::VariableIndex u_var_in );
 
-    PointParabolicProfile( const double ax, const double bx, const double cx,
-			   const double dx, const double ex, const double fx,
-			   const double ay, const double by, const double cy,
-			   const double dy, const double ey, const double fy,
-			   const double az, const double bz, const double cz,
-			   const double dz, const double ez, const double fz );
+    ParabolicProfile( const GRINS::VariableIndex u_var_in,
+                      const double a, const double b, const double c,
+		      const double d, const double e, const double f );
 
-    virtual ~PointParabolicProfile( );
+    virtual ~ParabolicProfile( );
 
-    virtual libMesh::Point operator()( const libMesh::Point& point );
+    virtual libMesh::Number value( const libMesh::FEMContext& c, const unsigned int qp );
     
   protected:
     
     inline double eval( const double a, const double b, const double c,
 			const double d, const double e, const double f,
-			const double x, const double y, const double z )
+			const double x, const double y )
     {
       return a*x*x + b*x*y + c*y*y + d*x + e*y + f;
     };
 
-    //! Coefficients defining parabola
-    double _ax, _bx, _cx, _dx, _ex, _fx;
-    double _ay, _by, _cy, _dy, _ey, _fy;
-    double _az, _bz, _cz, _dz, _ez, _fz;
+    //! Component of velocity to which this profile is being applied                                                                                                                                                                       
+    GRINS::VariableIndex _u_var;
 
-  }; // class PointParabolicProfile
+    //! Coefficients defining parabola
+    double _a, _b, _c, _d, _e, _f;
+
+  }; // class ParabolicProfile
 
 } // namespace GRINS
 
-#endif // POINT_PARABOLIC_PROFILE_H
+#endif // PARABOLIC_PROFILE_H

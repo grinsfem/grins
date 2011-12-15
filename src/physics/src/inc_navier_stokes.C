@@ -502,11 +502,11 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
   if (_dim != 3)
     _w_var = _u_var;
 
-  const short int boundary_id =
+  const GRINS::BoundaryID boundary_id =
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
+  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
     bc_map_it = _bc_map.find( boundary_id );
 
   /* We assume that if you didn't put a boundary id in, then you didn't want to
@@ -545,28 +545,41 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 	  // Inflow 
 	case GRINS::INFLOW:
 	  {
-	    GRINS::BasePointFuncObj* inflow_func = _bound_funcs[boundary_id];
+            
+            std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
 	    
-	    if(!inflow_func)
-	      {
-		std::cerr << "Error: function not attached for inflow boundary " 
-			  << boundary_id << std::endl;
-		
-		libmesh_error();
-	      }
-
-	    std::vector<GRINS::VariableIndex> vars(3);
-	    vars[0] = _u_var;
-	    vars[1] = _v_var;
-	    vars[2] = _w_var;
-	    
-	    std::vector<bool> set_vars(3, false);
-	    set_vars[0] = true;
-	    set_vars[1] = true;
-	    if( _dim == 3 ) set_vars[2] = true;
-
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  vars, set_vars, inflow_func );
+             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_it = bc_map.find( _u_var );
+             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator v_it = bc_map.find( _v_var );
+	     if( _dim == 3 )
+                 std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator w_it = bc_map.find( _w_var ); 
+            
+            if( u_it == bc_map.end() )
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+               }
+            else
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
+               }
+             if( v_it == bc_map.end() )
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
+               }
+            else
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, u_it->second );
+               }
+            if( _dim == 3 )
+               {
+               if( u_it == bc_map.end() )
+                 {
+                   _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
+                 }
+               else
+                 {
+                   _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
+                 }
+               }
 	  }
 	  break;
 

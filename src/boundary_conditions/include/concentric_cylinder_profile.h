@@ -25,10 +25,12 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef POINT_CONCENTRIC_CYLINDER_PROFILE_H
-#define POINT_CONCENTRIC_CYLINDER_PROFILE_H
+#ifndef CONCENTRIC_CYLINDER_PROFILE_H
+#define CONCENTRIC_CYLINDER_PROFILE_H
 
-#include "point_func_base.h"
+#include "dirichlet_func_obj.h"
+#include "fe_base.h"
+#include "var_typedefs.h"
 
 namespace GRINS
 {
@@ -43,24 +45,22 @@ namespace GRINS
       and \f$ r_1 \f$ is the outer cylinder radius. Note, that this
       assumes axisymmetry.
   */
-  class PointConcentricCylinderProfile : public BasePointFuncObj
+  class ConcentricCylinderProfile : public DirichletFuncObj
   {
   public:
     
     //! Default constructor
     /*! Default constructor sets parameters for the profile:
-      r_vel_out = 0.0
-      z_out = \f$ 2.0 \frac{ \ln( 2.0/r) }{\ln(2.0)} \f$
+      value = \f$ 2.0 \frac{ \ln( 2.0/r) }{\ln(2.0)} \f$
     */
-    PointConcentricCylinderProfile( );
+    ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in );
 
-    PointConcentricCylinderProfile( const double u0, 
-				    const double r0, 
-				    const double r1 );
+    ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in,
+			       const double u0, const double r0, const double r1 );
 
-    virtual ~PointConcentricCylinderProfile( );
+    virtual ~ConcentricCylinderProfile( );
 
-    virtual libMesh::Point operator()( const libMesh::Point& point );
+    virtual libMesh::Number value( const libMesh::FEMContext& c, const unsigned int qp );
     
   protected:
     
@@ -70,11 +70,14 @@ namespace GRINS
       return u0*std::log(r1/r)/std::log(r1/r0);
     };
 
+    //! Component of velocity to which this profile is being applied
+    GRINS::VariableIndex _u_var;
+
     //! Coefficients defining parabola
     double _u0, _r0, _r1;
 
-  }; // class PointConcentricCylinderProfile
+  }; // class ConcentricCylinderProfile
 
 } // namespace GRINS
 
-#endif // POINT_CONCENTRIC_CYLINDER_H
+#endif // CONCENTRIC_CYLINDER_H

@@ -137,7 +137,7 @@ void GRINS::AxisymmetricIncompNavierStokes::init_variables( libMesh::FEMSystem* 
   _u_z_var = system->add_variable( _u_z_var_name, this->_V_order, _FE_family);
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
-
+  
   return;
 }
 
@@ -441,12 +441,12 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-  const short int boundary_id =
+  const GRINS::BoundaryID boundary_id =
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
 
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
+  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
     bc_map_it = _bc_map.find( boundary_id );
 
   /* We assume that if you didn't put a boundary id in, then you didn't want to
@@ -478,26 +478,27 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 	  // Inflow 
 	case GRINS::INFLOW:
 	  {
-	    GRINS::BasePointFuncObj* inflow_func = _bound_funcs[boundary_id];
-	    
-	    if(!inflow_func)
-	      {
-		std::cerr << "Error: function not attached for inflow boundary " 
-			  << boundary_id << std::endl;
-		
-		libmesh_error();
-	      }
+             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
+            
+             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_r_it = bc_map.find( _u_r_var );
+             std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_z_it = bc_map.find( _u_z_var );
 
-	    std::vector<GRINS::VariableIndex> vars(2);
-	    vars[0] = _u_r_var;
-	    vars[1] = _u_z_var;
-	    
-	    std::vector<bool> set_vars(2, false);
-	    set_vars[0] = true;
-	    set_vars[1] = true;
-
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  vars, set_vars, inflow_func );
+            if( u_r_it == bc_map.end() )                                                                                                                                                                               
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
+               }
+            else
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, u_r_it->second );
+               }
+             if( u_z_it == bc_map.end() )
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
+               }
+            else
+               {
+                 _bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, u_z_it->second );
+               }
 	  }
 	  break;
 

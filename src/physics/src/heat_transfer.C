@@ -134,7 +134,7 @@ void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
   _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
   if (_dim == 3)
     _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
- 
+
   return;
 }
 
@@ -318,11 +318,11 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-  const short int boundary_id =
+  const GRINS::BoundaryID boundary_id =
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  std::map< unsigned int, GRINS::BC_TYPES>::const_iterator 
+  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
     bc_map_it = _bc_map.find( boundary_id );
 
    /* We assume that if you didn't put a boundary id in, then you didn't want to

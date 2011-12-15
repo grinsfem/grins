@@ -21,35 +21,19 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id$
+// $Id: dirichlet_func_obj.C -1   include
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef POINT_FUNC_BASE_H
-#define POINT_FUNC_BASE_H
 
-#include "libmesh.h"
-#include "point.h"
+#include "dirichlet_func_obj.h"
 
-namespace GRINS
+GRINS::DirichletFuncObj::DirichletFuncObj( )
 {
+  return;
+}
 
-  //! Abstract base class for functions that return a libMesh::Point
-  /*! Interface for all GRINS functions that return a point in space.
-      Current applications are for Dirichlet boundary condition 
-      applications. */
-  class BasePointFuncObj
-  {
-  public:
-    
-    BasePointFuncObj();
-    
-    virtual ~BasePointFuncObj();
-    
-    virtual libMesh::Point operator()( const libMesh::Point& point ) = 0;
-    
-  }; // class BasePointFuncObj
-  
-} // namespace GRINS
-
-#endif // POINT_FUNC_BASE_H
+GRINS::DirichletFuncObj::~DirichletFuncObj( )
+{
+  return;
+}

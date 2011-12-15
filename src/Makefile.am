@@ -19,12 +19,6 @@ physics_incdir = $(top_srcdir)/src/physics/include
 boundary_conditions_srcdir = $(top_srcdir)/src/boundary_conditions/src
 boundary_conditions_incdir = $(top_srcdir)/src/boundary_conditions/include
 
-funcs_srcdir = $(top_srcdir)/src/funcs/src
-funcs_incdir = $(top_srcdir)/src/funcs/include
-
-# utilities may have more sub-dirs.
-utils_dir    = $(top_srcdir)/src/utilities
-
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -42,14 +36,12 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_boussinesq_buoyancy.C \
                $(physics_srcdir)/axisym_mushy_zone_solidification.C
 
-boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C
+boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
+                          $(boundary_conditions_srcdir)/dirichlet_func_obj.C \
+                          $(boundary_conditions_srcdir)/neumann_func_obj.C \
+                          $(boundary_conditions_srcdir)/parabolic_profile.C \
+                          $(boundary_conditions_srcdir)/concentric_cylinder_profile.C
 
-funcs_SRC = $(funcs_srcdir)/point_func_base.C \
-            $(funcs_srcdir)/point_parabolic_profile.C \
-            $(funcs_srcdir)/point_concentric_cylinder_profile.C
-
-#Sources in utilities/src
-#utils_SRC = $(utils_dir)/<NULL>/src/<NULL.C>
 
 #----------------------------
 #INCLUDES we want distributed
@@ -70,22 +62,18 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/axisym_mushy_zone_solidification.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
-                          $(boundary_conditions_incdir)/boundary_conditions.h
+                          $(boundary_conditions_incdir)/boundary_conditions.h \
+                          $(boundary_conditions_incdir)/dirichlet_func_obj.h \
+                          $(boundary_conditions_incdir)/neumann_func_obj.h \
+                          $(boundary_conditions_incdir)/parabolic_profile.h \
+                          $(boundary_conditions_incdir)/concentric_cylinder_profile.h
 
-funcs_INC = $(funcs_incdir)/point_func_base.h \
-            $(funcs_incdir)/point_parabolic_profile.h \
-            $(funcs_incdir)/point_concentric_cylinder_profile.h
 
-#utils_INC = $(utils_dir)/<NULL>/include/<NULL.h>
-
-include_HEADERS = $(grins_INC) $(utils_INC) $(physics_INC) \
-                  $(boundary_conditions_INC) $(funcs_INC)
+include_HEADERS = $(grins_INC) $(physics_INC) $(boundary_conditions_INC)
 
 libgrins_la_SOURCES = $(grins_SRC) \
-                      $(utils_SRC) \
                       $(physics_SRC) \
-                      $(boundary_conditions_SRC) \
-                      $(funcs_SRC)
+                      $(boundary_conditions_SRC)
 
 #------------------------------------
 # Source for stand alone GRINS driver
@@ -98,7 +86,7 @@ grins_LDADD = libgrins.la
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(funcs_incdir)
+AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir)
 
 AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
@@ -119,15 +107,14 @@ if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno
 endif
 
-#---------------------------------                                                                                      
-# Embedded license header support                                                                                       
-#---------------------------------                                                                                      
+#---------------------------------
+# Embedded license header support
+#---------------------------------
 
 .license.stamp: $(top_srcdir)/LICENSE
 	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(grins_SRC) $(grins_INC) \
 	$(generic_driver_SOURCES) $(physics_SRC) $(physics_INC) \
-	$(boundary_conditions_INC) $(boundary_conditions_SRC) \
-	$(funcs_INC) $(funcs_SRC)
+	$(boundary_conditions_INC) $(boundary_conditions_SRC)
 	echo 'updated source license headers' >$@
 
 EXTRA_DIST = common

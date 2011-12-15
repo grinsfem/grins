@@ -26,14 +26,42 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "point_func_base.h"
+#include "concentric_cylinder_profile.h"
 
-GRINS::BasePointFuncObj::BasePointFuncObj( )
+GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in )
+  : DirichletFuncObj(),
+    _u_var( u_var_in ),
+    _u0(2.0),
+    _r0(1.0),
+    _r1(2.0)
 {
   return;
 }
 
-GRINS::BasePointFuncObj::~BasePointFuncObj( )
+GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in,
+							     const double u0, 
+							     const double r0, 
+							     const double r1 )
+  : DirichletFuncObj(),
+    _u_var( u_var_in ),
+    _u0(u0),
+    _r0(r0),
+    _r1(r1)
 {
   return;
+}
+
+GRINS::ConcentricCylinderProfile::~ConcentricCylinderProfile()
+{
+  return;
+}
+
+libMesh::Number GRINS::ConcentricCylinderProfile::value( const libMesh::FEMContext& c, 
+							 const unsigned int qp )
+{
+  const std::vector<libMesh::Point>& qpoint = c.side_fe_var[_u_var]->get_xyz();
+
+  const double r = qpoint[qp](0);
+  
+  return this->eval( _u0, _r0, _r1, r );
 }

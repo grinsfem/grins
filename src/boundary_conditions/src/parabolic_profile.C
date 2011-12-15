@@ -26,38 +26,37 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "point_concentric_cylinder_profile.h"
+#include "parabolic_profile.h"
 
-GRINS::PointConcentricCylinderProfile::PointConcentricCylinderProfile( )
-  : BasePointFuncObj(),
-    _u0(2.0),
-    _r0(1.0),
-    _r1(2.0)
+GRINS::ParabolicProfile::ParabolicProfile( const GRINS::VariableIndex u_var_in )
+  : DirichletFuncObj(),
+    _u_var( u_var_in ),
+    _a(0.0), _b(0.0), _c(-4.0), _d(0.0), _e(4.0), _f(0.0)
 {
   return;
 }
 
-GRINS::PointConcentricCylinderProfile::PointConcentricCylinderProfile( const double u0, 
-								       const double r0, 
-								       const double r1 )
-  : BasePointFuncObj(),
-    _u0(u0),
-    _r0(r0),
-    _r1(r1)
+GRINS::ParabolicProfile::ParabolicProfile( const GRINS::VariableIndex u_var_in,
+					   const double a, const double b, const double c,
+					   const double d, const double e, const double f )
+  : DirichletFuncObj(),
+    _u_var( u_var_in ),
+    _a(a), _b(b), _c(c), _d(d), _e(e), _f(f)
 {
   return;
 }
 
-GRINS::PointConcentricCylinderProfile::~PointConcentricCylinderProfile()
+GRINS::ParabolicProfile::~ParabolicProfile()
 {
   return;
 }
 
-libMesh::Point GRINS::PointConcentricCylinderProfile::operator()( const libMesh::Point& point )
+libMesh::Number GRINS::ParabolicProfile::value( const libMesh::FEMContext& c, const unsigned int qp )
 {
-  const double r = point(0);
+  const std::vector<libMesh::Point>& qpoint = c.side_fe_var[_u_var]->get_xyz();
 
-  double z_out = this->eval( _u0, _r0, _r1, r );
+  const double x = qpoint[qp](0);
+  const double y = qpoint[qp](1);
   
-  return libMesh::Point( 0.0, z_out );
+  return this->eval( _a, _b, _c, _d, _e, _f, x, y );
 }

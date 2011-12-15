@@ -44,7 +44,6 @@
 // Boundary conditions
 #include "bc_types.h"
 #include "boundary_conditions.h"
-#include "point_func_base.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -136,8 +135,11 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
-    void attach_bound_func( const unsigned int bc_id, 
-			    GRINS::BasePointFuncObj* bound_func );
+    void attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
+				      GRINS::DirichletFuncObj* bound_func );
+
+    void attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
+				    GRINS::NeumannFuncObj* bound_func );
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -146,15 +148,25 @@ namespace GRINS
   protected:
 
     //! Map between boundary id and boundary condition type
-    std::map< unsigned int, GRINS::BC_TYPES> _bc_map;
+    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _bc_map;
 
     //! Object that stashes generic boundary condition types
     /** \todo Move this so that only one object is needed. 
 	      Perhaps make static? */
     GRINS::BoundaryConditions _bound_conds;
 
-    //! Map between boundary id and boundary functions
-    std::map< unsigned int, GRINS::BasePointFuncObj* > _bound_funcs;
+    //! Map between boundary id and general Dirichlet boundary functions
+    /*! The user may wish to set a different function for each variable in the physics class,
+        for example components of velocity for Navier-Stokes.
+        For Dirichlet boundary conditions, the user should never have to set more than 1 function per
+	variable, so we use an std::map */
+    std::map< GRINS::BoundaryID,std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* > > _dirichlet_bound_funcs;
+    
+    //! Map between boundary id and general Neumann boundary functions
+    /*! The user may wish to set a different function for each variable in the physics class.
+        For Neumann boundary conditions, the user may want to set more than 1 function per
+	variable, so we use an std::multimap */
+    std::map< GRINS::BoundaryID,std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* > > _neumann_bound_funcs;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

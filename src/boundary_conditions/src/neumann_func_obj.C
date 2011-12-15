@@ -21,53 +21,32 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id$
+// $Id: dirichlet_func_obj.C -1   include
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "physics.h"
+#include "neumann_func_obj.h"
 
-GRINS::Physics::Physics()
+GRINS::NeumannFuncObj::NeumannFuncObj( )
 {
   return;
 }
 
-GRINS::Physics::~Physics()
+GRINS::NeumannFuncObj::~NeumannFuncObj( )
 {
   return;
 }
 
-void GRINS::Physics::read_input_options( GetPot& input )
+libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext& context, 
+						  const unsigned int qp,
+						  const GRINS::VariableIndex jac_var )
 {
-  return;
+  // By default, does nothing.
+  return libMesh::Point(0.0,0.0,0.0);
 }
 
-void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
+std::vector<GRINS::VariableIndex> GRINS::NeumannFuncObj:: get_other_jac_vars()
 {
-  return;
+  return _jac_vars;
 }
-
-void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						  GRINS::DirichletFuncObj* bound_func )
-{
-  _dirichlet_bound_funcs[bc_id][var] = bound_func;
-
-  return;
-}
-
-void GRINS::Physics::attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						GRINS::NeumannFuncObj* bound_func )
-{
-  _neumann_bound_funcs[bc_id].insert( std::pair<GRINS::VariableIndex,GRINS::NeumannFuncObj*>( var, bound_func ) );
-
-  return;
-}
-
-#ifdef USE_GRVY_TIMERS
-void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-{
-  _timer = grvy_timer;
-  return;
-}
-#endif

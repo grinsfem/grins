@@ -25,49 +25,31 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
+#ifndef DIRICHLET_FUNC_OBJ_H 
+#define DIRICHLET_FUNC_OBJ_H
 
-#include "physics.h"
+#include "libmesh.h"
+#include "fem_context.h"
 
-GRINS::Physics::Physics()
+namespace GRINS
 {
-  return;
-}
 
-GRINS::Physics::~Physics()
-{
-  return;
-}
+  //! Abstract base class for general, non-constant Dirichlet boundary conditions
+  class DirichletFuncObj
+  {
+  public:
+    
+    DirichletFuncObj();
+    
+    virtual ~DirichletFuncObj();
+    
+    //! Returns the value of the implemented Dirichlet boundary condition
+    /*! This will leverage the FEMContext to get variable values and derivatives through the
+      side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
+    virtual libMesh::Number value( const libMesh::FEMContext& context, const unsigned int qp ) = 0;
 
-void GRINS::Physics::read_input_options( GetPot& input )
-{
-  return;
-}
+  }; // class DirichletFuncObj
+  
+} // namespace GRINS
 
-void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
-{
-  return;
-}
-
-void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						  GRINS::DirichletFuncObj* bound_func )
-{
-  _dirichlet_bound_funcs[bc_id][var] = bound_func;
-
-  return;
-}
-
-void GRINS::Physics::attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						GRINS::NeumannFuncObj* bound_func )
-{
-  _neumann_bound_funcs[bc_id].insert( std::pair<GRINS::VariableIndex,GRINS::NeumannFuncObj*>( var, bound_func ) );
-
-  return;
-}
-
-#ifdef USE_GRVY_TIMERS
-void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-{
-  _timer = grvy_timer;
-  return;
-}
-#endif
+#endif // DIRICHLET_FUNC_OBJ_H

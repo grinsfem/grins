@@ -35,5 +35,8 @@ namespace GRINS
 {
   //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
+
+  //! More descriptive name of the type used for boundary ids
+  typedef unsigned int BoundaryID;
 }
 #endif //VAR_TYPEDEFS_H
