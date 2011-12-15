@@ -75,8 +75,6 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
-      _bc_map[bc_id] = bc_type;
-
       std::stringstream ss;
       ss << bc_id;
       std::string bc_id_string = ss.str();
@@ -86,16 +84,23 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 	{
 	case GRINS::ISOTHERMAL_WALL:
 	  {
+	    _dirichlet_bc_map[bc_id] = bc_type;
+
 	    _T_boundary_values[bc_id] = 
 	      input("Physics/AxisymmetricHeatTransfer/T_wall_"+bc_id_string, 0.0 );
 	  }
 	  break;
 
 	case GRINS::ADIABATIC_WALL:
+	  {
+	    _neumann_bc_map[bc_id] = bc_type;
+	  }
 	  break;
 
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
+	    _neumann_bc_map[bc_id] = bc_type;
+
 	    libMesh::Point q_in;
 	    
 	    int num_q_components = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string);
@@ -117,9 +122,15 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 	      _q_boundary_values[bc_id] = q_in;
 	  }
 	  break;
-
-	  // Don't need to do anything since dT/dr = 0
+	case GRINS::GENERAL_HEAT_FLUX:
+	  {
+	    _neumann_bc_map[bc_id] = bc_type;
+	  }
+	  break;
 	case GRINS::AXISYMMETRIC:
+	  {
+	    _neumann_bc_map[bc_id] = bc_type;
+	  }
 	  break;
 
 	default:
@@ -303,6 +314,69 @@ bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobia
 							      libMesh::DiffContext& context,
 							      libMesh::FEMSystem* system )
 {
+#ifdef USE_GRVY_TIMERS
+  this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_time_derivative");
+#endif
+
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  const GRINS::BoundaryID boundary_id =
+    system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
+  libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+
+  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
+    bc_map_it = _neumann_bc_map.find( boundary_id );
+
+   /* We assume that if you didn't put a boundary id in, then you didn't want to
+     set a boundary condition on that boundary. */
+  if( bc_map_it != _neumann_bc_map.end() )
+    {
+      switch( bc_map_it->second )
+	{
+	  // Zero heat flux
+	case GRINS::ADIABATIC_WALL:
+	  // Don't need to do anything: q = 0 in this case
+	  break;
+
+	  // Prescribed constant heat flux
+	case GRINS::PRESCRIBED_HEAT_FLUX:
+	  {
+	    _bound_conds.apply_neumann( context, _T_var, 
+					_q_boundary_values[boundary_id] );
+	  }
+	  break;
+	case GRINS::GENERAL_HEAT_FLUX:
+	  {
+	    std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >& bc_map = _neumann_bound_funcs[boundary_id];
+	    /* Because we work with a multimap for Neumann conditions, we must loop over all the functions
+	       associated with this boundary and this variable */
+	    std::pair< std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator,
+		       std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator > map_it = bc_map.equal_range( _T_var );
+
+	    for( std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator T_it = map_it.first;
+		 T_it != map_it.second;
+		 T_it++ )
+	      {
+		_bound_conds.apply_neumann( context, request_jacobian, _T_var, T_it->second );
+	      } // End loop over all functions
+	  }
+	  break;
+	case GRINS::AXISYMMETRIC:
+	  // Don't need to do anything for dT/dr = 0
+	  break;
+	default:
+	  {
+	    std::cerr << "Error: Invalid Neumann BC type for AxisymmetricHeatTransfer."
+		      << std::endl;
+	    libmesh_error();
+	  }
+	} // End switch
+    } // End if
+
+#ifdef USE_GRVY_TIMERS
+  this->_timer->EndTimer("AxisymmetricHeatTransfer::side_time_derivative");
+#endif
+
   return request_jacobian;
 }
 
@@ -321,11 +395,11 @@ bool GRINS::AxisymmetricHeatTransfer::side_constraint( bool request_jacobian,
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
   std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
-    bc_map_it = _bc_map.find( boundary_id );
+    bc_map_it = _dirichlet_bc_map.find( boundary_id );
 
    /* We assume that if you didn't put a boundary id in, then you didn't want to
      set a boundary condition on that boundary. */
-  if( bc_map_it != _bc_map.end() )
+  if( bc_map_it != _dirichlet_bc_map.end() )
     {
       switch( bc_map_it->second )
 	{
@@ -334,29 +408,11 @@ bool GRINS::AxisymmetricHeatTransfer::side_constraint( bool request_jacobian,
 	  {
 	    _bound_conds.apply_dirichlet( context, request_jacobian,
 					  _T_var, _T_boundary_values[boundary_id] );
-	    break;
-	  }
-
-	  // Zero heat flux
-	case GRINS::ADIABATIC_WALL:
-	  // Don't need to do anything: q = 0 in this case
-	  break;
-
-	  // Prescribed constant heat flux
-	case GRINS::PRESCRIBED_HEAT_FLUX:
-	  {
-	    _bound_conds.apply_neumann( context, _T_var, 
-					_q_boundary_values[boundary_id] );
 	  }
 	  break;
-
-	case GRINS::AXISYMMETRIC:
-	  // Don't need to do anything for dT/dr = 0
-	  break;
-
 	default:
 	  {
-	    std::cerr << "Error: Invalid BC type for ConvectiveHeatTransfer."
+	    std::cerr << "Error: Invalid Dirichlet BC type for AxisymmetricHeatTransfer."
 		      << std::endl;
 	    libmesh_error();
 	  }

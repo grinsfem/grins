@@ -251,17 +251,11 @@ GRINS::BC_TYPES GRINS::BoundaryConditions::string_to_enum( const std::string bc_
   if( bc_type == "no_slip" )
     bc_type_out = GRINS::NO_SLIP;
 
-  else if( bc_type == "no_flow" )
-    bc_type_out = GRINS::NO_FLOW;
-
   else if( bc_type == "prescribed_vel" )
     bc_type_out = GRINS::PRESCRIBED_VELOCITY;
 
   else if( bc_type == "inflow" )
     bc_type_out = GRINS::INFLOW;
-
-  else if( bc_type == "outflow" )
-    bc_type_out = GRINS::OUTFLOW;
 
   else if( bc_type == "axisymmetric" )
     bc_type_out = GRINS::AXISYMMETRIC;
@@ -275,6 +269,9 @@ GRINS::BC_TYPES GRINS::BoundaryConditions::string_to_enum( const std::string bc_
   else if( bc_type == "prescribed_heat_flux" )
     bc_type_out = GRINS::PRESCRIBED_HEAT_FLUX;
   
+  else if( bc_type == "general_heat_flux" )
+    bc_type_out = GRINS::GENERAL_HEAT_FLUX;
+
   else
     {
       std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;

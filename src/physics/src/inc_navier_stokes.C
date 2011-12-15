@@ -72,8 +72,6 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
-      _bc_map[bc_id] = bc_type;
-
       std::stringstream ss;
       ss << bc_id;
       std::string bc_id_string = ss.str();
@@ -81,31 +79,49 @@ void GRINS::IncompressibleNavierStokes::read_input_options( GetPot& input )
       // Now read in auxillary boundary condition information
       switch(bc_type)
 	{
-	case(PRESCRIBED_VELOCITY):
-	  std::vector<double> vel_in(3,0.0);
-
-	  /* Force the user to specify 3 velocity components regardless of dimension.
-	     This should make it easier to keep things correct if we want to have 
-	     2D flow not be in the x-y plane. */
-	  int n_vel_comps = input.vector_variable_size("Physics/IncompNS/bound_vel_"+bc_id_string);
-	  if( n_vel_comps != 3 )
-	    {
-	      std::cerr << "Error: Must specify 3 velocity components when inputting"
-			<< std::endl
-			<< "       prescribed velocities. Found " << n_vel_comps
-			<< " velocity components."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  /** \todo Need to unit test this somehow. */
-	  vel_in[0] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 0 );
-	  vel_in[1] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
-	  vel_in[2] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 2 );
-
-	  _vel_boundary_values[bc_id] = vel_in;
-
+	case(NO_SLIP):
+	  {
+	    _dirichlet_bc_map[bc_id] = bc_type;
+	  }
 	  break;
+	case(PRESCRIBED_VELOCITY):
+	  {
+	    _dirichlet_bc_map[bc_id] = bc_type;
+	    std::vector<double> vel_in(3,0.0);
+	    
+	    /* Force the user to specify 3 velocity components regardless of dimension.
+	       This should make it easier to keep things correct if we want to have 
+	       2D flow not be in the x-y plane. */
+	    int n_vel_comps = input.vector_variable_size("Physics/IncompNS/bound_vel_"+bc_id_string);
+	    if( n_vel_comps != 3 )
+	      {
+		std::cerr << "Error: Must specify 3 velocity components when inputting"
+			  << std::endl
+			  << "       prescribed velocities. Found " << n_vel_comps
+			  << " velocity components."
+			  << std::endl;
+		libmesh_error();
+	      }
+	    
+	    /** \todo Need to unit test this somehow. */
+	    vel_in[0] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 0 );
+	    vel_in[1] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
+	    vel_in[2] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 2 );
+	    
+	    _vel_boundary_values[bc_id] = vel_in;
+	  }
+	  break;
+	case(INFLOW):
+	  {
+	    _dirichlet_bc_map[bc_id] = bc_type;
+	  }
+	  break;
+	default:
+	  {
+	    std::cerr << "Error: Invalid boundary condition type for IncompressibleNavierStokes."
+		      << std::endl;
+	    libmesh_error();
+	  }
 	} // End switch(bc_type)
     } // End loop on bc_id
 
@@ -507,11 +523,11 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
   std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
-    bc_map_it = _bc_map.find( boundary_id );
+    bc_map_it = _dirichlet_bc_map.find( boundary_id );
 
   /* We assume that if you didn't put a boundary id in, then you didn't want to
      set a boundary condition on that boundary. */
-  if( bc_map_it != _bc_map.end() )
+  if( bc_map_it != _dirichlet_bc_map.end() )
     {
       switch( bc_map_it->second )
 	{
@@ -585,7 +601,7 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 
 	default:
 	  {
-	    std::cerr << "Error: Invalid BC type for IncompressibleNavierStokes."
+	    std::cerr << "Error: Invalid Dirichlet BC type for IncompressibleNavierStokes."
 		      << std::endl;
 	    libmesh_error();
 	  }

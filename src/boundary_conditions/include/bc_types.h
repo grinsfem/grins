@@ -29,17 +29,14 @@
 #define BC_TYPES_H
 namespace GRINS
 {
-  enum BC_TYPES{ DO_NOTHING = 0, //Should always be first
-		 NO_SLIP,
-		 NO_FLOW,
+  enum BC_TYPES{ NO_SLIP = 0,
 		 PRESCRIBED_VELOCITY,
 		 INFLOW,
-		 OUTFLOW,
 		 AXISYMMETRIC,
 		 ISOTHERMAL_WALL,
 		 ADIABATIC_WALL,
 		 PRESCRIBED_HEAT_FLUX,
-		 INVALID_BC_TYPE //Should always be last
+		 GENERAL_HEAT_FLUX
   };
 }
 #endif //BC_TYPES_H

@@ -147,8 +147,11 @@ namespace GRINS
 
   protected:
 
-    //! Map between boundary id and boundary condition type
-    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _bc_map;
+    //! Map between boundary id and Dirichlet boundary condition type
+    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _dirichlet_bc_map;
+
+    //! Map between boundary id and Neumann boundary condition type
+    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _neumann_bc_map;
 
     //! Object that stashes generic boundary condition types
     /** \todo Move this so that only one object is needed. 
