@@ -186,7 +186,7 @@ dnl-------------------
 dnl Generate makefiles
 dnl-------------------
 AC_OUTPUT( Makefile \
-           src/Makefile \
+           src/Makefile src/utilities/include/grins_version.h \
            test/Makefile \
            doxygen/Makefile \
            doxygen/txt_common/about.page )

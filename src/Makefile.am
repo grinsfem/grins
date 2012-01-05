@@ -4,7 +4,7 @@ BUILT_SOURCES   = .license.stamp
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS    = grins
+bin_PROGRAMS    = grins grins_version
 lib_LTLIBRARIES = libgrins.la
 
 #--------------------------------------------------
@@ -18,6 +18,9 @@ physics_incdir = $(top_srcdir)/src/physics/include
 
 boundary_conditions_srcdir = $(top_srcdir)/src/boundary_conditions/src
 boundary_conditions_incdir = $(top_srcdir)/src/boundary_conditions/include
+
+utilities_srcdir = $(top_srcdir)/src/utilities/src
+utilities_incdir = $(top_srcdir)/src/utilities/include
 
 #----------------------------------------------
 # List of source files to build dynamic library
@@ -42,6 +45,7 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/parabolic_profile.C \
                           $(boundary_conditions_srcdir)/concentric_cylinder_profile.C
 
+utilities_SRC = $(utilities_srcdir)/grins_version.C
 
 #----------------------------
 #INCLUDES we want distributed
@@ -68,25 +72,30 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/parabolic_profile.h \
                           $(boundary_conditions_incdir)/concentric_cylinder_profile.h
 
+utilities_INC = $(utilities_incdir)/grins_version.h
 
-include_HEADERS = $(grins_INC) $(physics_INC) $(boundary_conditions_INC)
+include_HEADERS = $(grins_INC) $(physics_INC) $(boundary_conditions_INC) \
+                  $(utilities_INC)
 
 libgrins_la_SOURCES = $(grins_SRC) \
                       $(physics_SRC) \
-                      $(boundary_conditions_SRC)
+                      $(boundary_conditions_SRC) \
+                      $(utilities_SRC)
 
 #------------------------------------
 # Source for stand alone GRINS driver
 #------------------------------------
 
 grins_SOURCES = $(grins_srcdir)/grins.C
-
 grins_LDADD = libgrins.la
+
+grins_version_SOURCES = $(utilities_srcdir)/version.C
+grins_version_LDADD = libgrins.la
 
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir)
+AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir)
 
 AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
@@ -114,7 +123,9 @@ endif
 .license.stamp: $(top_srcdir)/LICENSE
 	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(grins_SRC) $(grins_INC) \
 	$(generic_driver_SOURCES) $(physics_SRC) $(physics_INC) \
-	$(boundary_conditions_INC) $(boundary_conditions_SRC)
+	$(boundary_conditions_INC) $(boundary_conditions_SRC) \
+        $(utilities_INC) $(utilities_SRC) \
+        $(grins_SOURCES) $(grins_version_SOURCES)
 	echo 'updated source license headers' >$@
 
 EXTRA_DIST = common
