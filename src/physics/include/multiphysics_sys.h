@@ -147,7 +147,8 @@ namespace GRINS
     const std::string _incompressible_navier_stokes, 
       _axisymmetric_incomp_navier_stokes,
       _heat_transfer, _axisymmetric_heat_transfer,
-      _boussinesq_buoyancy, _axisymmetric_boussinesq_buoyancy;
+      _boussinesq_buoyancy, _axisymmetric_boussinesq_buoyancy,
+      _axisymmetric_mushy_zone_solidification;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

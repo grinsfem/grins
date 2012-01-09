@@ -34,6 +34,7 @@
 #include "axisym_heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
+#include "axisym_mushy_zone_solidification.h"
 
 GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
 					       const std::string& name,
@@ -44,7 +45,8 @@ GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
     _heat_transfer("HeatTransfer"),
     _axisymmetric_heat_transfer("AxisymmetricHeatTransfer"),
     _boussinesq_buoyancy("BoussinesqBuoyancy"),
-    _axisymmetric_boussinesq_buoyancy("AxisymmetricBoussinesqBuoyancy")
+    _axisymmetric_boussinesq_buoyancy("AxisymmetricBoussinesqBuoyancy"),
+    _axisymmetric_mushy_zone_solidification("AxisymmetricMushyZoneSolidification")
     {}
 
 GRINS::MultiphysicsSystem::~MultiphysicsSystem()
@@ -109,6 +111,11 @@ void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
 	{
 	  this->_physics_list[_axisymmetric_boussinesq_buoyancy] = 
 	    new GRINS::AxisymmetricBoussinesqBuoyancy;
+	}
+      else if( physics_to_add == _axisymmetric_mushy_zone_solidification )
+	{
+	  this->_physics_list[_axisymmetric_mushy_zone_solidification] =
+	    new GRINS::AxisymmetricMushyZoneSolidification;
 	}
       else
 	{
@@ -306,8 +313,8 @@ void GRINS::MultiphysicsSystem::check_physics_consistency()
 	    }
 	}
 
-      // For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer 
-      // and AxisymmetricIncompNavierStokes
+      /* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer 
+	 and AxisymmetricIncompNavierStokes */
       if( physics->first == _axisymmetric_boussinesq_buoyancy )
 	{
 	  if( _physics_list.find(_axisymmetric_incomp_navier_stokes) == _physics_list.end() )
@@ -319,6 +326,23 @@ void GRINS::MultiphysicsSystem::check_physics_consistency()
 	  if( _physics_list.find(_axisymmetric_heat_transfer) == _physics_list.end() )
 	    {
 	      this->physics_consistency_error( _axisymmetric_boussinesq_buoyancy, 
+					       _axisymmetric_heat_transfer  );
+	    }
+	}
+
+      /* For AxisymmetricMushyZoneSolidification, we need both AxisymmetricHeatTransfer 
+	 and AxisymmetricIncompNavierStokes */
+      if( physics->first == _axisymmetric_mushy_zone_solidification )
+	{
+	  if( _physics_list.find(_axisymmetric_incomp_navier_stokes) == _physics_list.end() )
+	    {
+	      this->physics_consistency_error( _axisymmetric_mushy_zone_solidification, 
+					       _axisymmetric_incomp_navier_stokes );
+	    }
+
+	  if( _physics_list.find(_axisymmetric_heat_transfer) == _physics_list.end() )
+	    {
+	      this->physics_consistency_error( _axisymmetric_mushy_zone_solidification, 
 					       _axisymmetric_heat_transfer  );
 	    }
 	}
