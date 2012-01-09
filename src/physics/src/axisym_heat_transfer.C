@@ -31,10 +31,10 @@
 void GRINS::AxisymmetricHeatTransfer::read_input_options( GetPot& input )
 {
   this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymmetricHeatTransfer/FE_family", "LAGRANGE") );
 
   this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymmetricHeatTransfer/T_order", "SECOND") );
 
   this->_V_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymIncompNS/FE_family", "LAGRANGE") );
