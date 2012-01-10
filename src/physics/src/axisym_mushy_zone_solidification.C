@@ -120,6 +120,8 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
   libMesh::DenseSubMatrix<Number> &Kzz = *c.elem_subjacobians[_u_z_var][_u_z_var]; // R_{z},{z}
   libMesh::DenseSubMatrix<Number> &KrT = *c.elem_subjacobians[_u_r_var][_T_var]; // R_{r},{T}
   libMesh::DenseSubMatrix<Number> &KzT = *c.elem_subjacobians[_u_z_var][_T_var]; // R_{z},{T}
+  libMesh::DenseSubMatrix<Number> &KTr = *c.elem_subjacobians[_T_var][_u_r_var]; // R_{T},{r}
+  libMesh::DenseSubMatrix<Number> &KTz = *c.elem_subjacobians[_T_var][_u_z_var]; // R_{Tx},{z}
   libMesh::DenseSubMatrix<Number> &KTT = *c.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
 
   // Now we will build the element Jacobian and residual.
@@ -177,6 +179,9 @@ bool GRINS::AxisymmetricMushyZoneSolidification::element_time_derivative( bool r
 		  KTT(i,j) += _rho_0*_L*( this->dphi2_dT2(T)*U*gradT*T_phi[j][qp] + 
 					  this->dphi_dT(T)*U*T_gradphi[j][qp] )*T_phi[i][qp]*r*JxW[qp];
 
+		  KTr(i,j) += _rho_0*_L*(this->dphi_dT(T))*vel_phi[j][qp]*gradT(0)*T_phi[i][qp]*r*JxW[qp];
+		  KTz(i,j) += _rho_0*_L*(this->dphi_dT(T))*vel_phi[j][qp]*gradT(1)*T_phi[i][qp]*r*JxW[qp];
+
 		} // End j dof loop
 	    } // End request_jacobian check
 
@@ -220,7 +225,7 @@ double GRINS::AxisymmetricMushyZoneSolidification::dphi_dT( const double T )
       const double t = (T - (_T_melt - _delta_T ))*one_over_two_delta_T;
 
       const double dt_dT = one_over_two_delta_T;
-      const double dphi_dt = (6.0*t - t*t);
+      const double dphi_dt = 6.0*t*(1.0 - t);
       dphi_dT = dphi_dt*dt_dT;
     }
 
