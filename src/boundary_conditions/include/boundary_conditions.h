@@ -62,14 +62,14 @@ namespace GRINS
     //! Applies Dirichlet boundary conditions using the penalty method.
     void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
 			  const GRINS::VariableIndex var, const double value, 
-			  const double penalty = 1.0e16 );
+			  const double penalty = 1.0e10 );
 
     //! Applies Dirichlet boundary conditions using a user-supplied function using the penalty method. */
     void apply_dirichlet( libMesh::DiffContext &context, 
 			  const bool request_jacobian,
 			  const VariableIndex var,
 			  GRINS::DirichletFuncObj* dirichlet_func,
-			  const double penalty = 1.0e16 );
+			  const double penalty = 1.0e10 );
 
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann( libMesh::DiffContext &context,
