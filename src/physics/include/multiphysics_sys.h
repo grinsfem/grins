@@ -54,11 +54,6 @@
 
 namespace GRINS
 {
-  //TODO: add comment
-  typedef std::map<std::string,Physics*> PhysicsList;
-  //TODO: add comment
-  typedef std::map<std::string,Physics*>::iterator PhysicsListIter;
-
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
     MultiphysicsSystem (through FEMSystem) solves the following equation:
@@ -90,6 +85,13 @@ namespace GRINS
     //! Destructor. Clean up all physics allocations.
     ~MultiphysicsSystem();
     
+    //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
+    /*! Note that the PhysicsList uses libMesh::AutoPtr for pointers
+        to the physics, so ownership should transfer to this class
+	once the physics list is "attached".
+     */
+    void attach_physics_list( PhysicsList physics_list );
+
     //! Reads input options for this class and all physics that are enabled
     /*!
       This function reads the input options for the MultiphysicsSystem class and then
@@ -127,9 +129,6 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
-    //! Check that all the requested physics classes have other physics dependencies satisfied.
-    void check_physics_consistency();
-
     GRINS::Physics* get_physics( const std::string physics_name );
 
 #ifdef USE_GRVY_TIMERS
@@ -139,22 +138,14 @@ namespace GRINS
 
   private:
 
-    // all possible values for physics:
-    //    ""IncompressibleNavierStokes", "HeatTransfer" ...
-    // TODO: use AutoPtr instead?
+    //! Container of pointers to GRINS::Physics classes requested at runtime.
+    /*! Set using the attach_physics_list method as construction is taken care
+        of by GRINS::PhysicsFactory. */
     PhysicsList _physics_list;
-
-    const std::string _incompressible_navier_stokes, 
-      _axisymmetric_incomp_navier_stokes,
-      _heat_transfer, _axisymmetric_heat_transfer,
-      _boussinesq_buoyancy, _axisymmetric_boussinesq_buoyancy,
-      _axisymmetric_mushy_zone_solidification;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
-
-    void physics_consistency_error( const std::string physics_checked, const std::string physics_required );
 
   };
 

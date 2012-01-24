@@ -8,8 +8,9 @@
 
 #include "physics_factory.h"
 
-GRINS::PhysicsFactory::PhysicsFactory()
+GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
 {
+  this->read_input_options(input);
   return;
 }
 
@@ -18,25 +19,35 @@ GRINS::PhysicsFactory::~PhysicsFactory()
   return;
 }
 
-GRINS::PhysicsList GRINS::PhysicsFactory::build( const GetPot& input )
+void GRINS::PhysicsFactory::read_input_options( const GetPot& input )
 {
-  GRINS::PhysicsList physics_list;
-  
   // Figure out how many physics we are enabling
-  int num_physics = input.vector_variable_size("Physics/enabled_physics");
+  _num_physics = input.vector_variable_size("Physics/enabled_physics");
 
-  if( num_physics < 1 )
+  if( _num_physics < 1 )
     {
       std::cerr << "Error: Must enable at least one physics model" << std::endl;
       libmesh_error();
     }
 
   // Go through and create a physics object for each physics we're enabling
-  for( int i = 0; i < num_physics; i++ )
+  for( int i = 0; i < _num_physics; i++ )
     {
-      std::string physics_to_add = input("Physics/enabled_physics", "NULL", i );
+      _requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
+    }
 
-      this->add_physics( physics_to_add );
+  return;
+}
+
+GRINS::PhysicsList GRINS::PhysicsFactory::build()
+{
+  GRINS::PhysicsList physics_list;
+
+  for( std::set<std::string>::const_iterator physics = _requested_physics.begin();
+       physics != _requested_physics.end();
+       physics++ )
+    {
+      this->add_physics( physics, physics_list );
     }
 
   this->check_physics_consistency( physics_list );
@@ -44,7 +55,8 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build( const GetPot& input )
   return physics_list;
 }
 
-void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add )
+void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
+					 GRINS::PhysicsList& physics_list )
 {
   if( physics_to_add == _incompressible_navier_stokes )
     {

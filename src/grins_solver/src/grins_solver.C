@@ -96,11 +96,9 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
     }
   
   // Screen display options
-  this->_print_mesh_info            = input("screen-options/print_mesh_info", false );
-  this->_print_log_info             = input("screen-options/print_log_info", false );
   this->_solver_quiet               = input("screen-options/solver_quiet", false );
   this->_solver_verbose             = input("screen-options/solver_verbose", false );
-  this->_print_equation_system_info = input("screen-options/print_equation_system_info", false );
+  
 
   return;
 }
@@ -137,16 +135,6 @@ void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
 template< class T >
 void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input )
 {
-  // Print mesh info if the user wants it
-  if( this->_print_mesh_info ) this->_mesh->print_info();
-
-  // Only print log info if the user requests it
-  libMesh::perflog.disable_logging();
-  if( this->_print_log_info ) libMesh::perflog.enable_logging();
-
-  // Create an equation systems object.
-  this->_equation_systems = new libMesh::EquationSystems(*_mesh);
-
   // Declare the system and its variables.
   libMesh::EquationSystems *es = this->_equation_systems;
   this->_system = &es->add_system<T> (system_name);
@@ -174,16 +162,11 @@ void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input
   // Initialize the system
   this->_equation_systems->init();
 
-  // Print info if requested
-  if( this->_print_equation_system_info ) this->_equation_systems->print_info();
-
   // Get diff solver to set options
   libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());
 
   // Set linear/nonlinear solver options
   this->set_solver_options( solver );
-
-  this->_system_initialized = true;
 
   return;
 }

@@ -32,20 +32,33 @@ namespace GRINS
     PhysicsFactory();
 
     //! Destructor does not need to delete AutoPtr's.
-    virtual ~PhysicsFactory();
+    virtual ~PhysicsFactory( const GetPot& input );
     
     //! Builds PhysicsList. This is the primary function of this class.
     /*! Note that the GRINS::PhysicsList uses libMesh AutoPtr's.
         These are based on std::auto_ptr which means ownership changes.
 	\todo Look into Boost install of shared_ptr */
-    GRINS::PhysicsList build( const GetPot& input );
+    GRINS::PhysicsList build();
 
   protected:
 
+    virtual void read_input_options( const GetPot& input );
+
     //! Figures out which GRINS::Physics pointer to create
-    virtual void add_physics( const std::string& physics_to_add );
+    /*! This is the primary method to override if the user wants to extend
+        the physics capabilities. The strategy is to conditionally add the
+	physics you want, then call the parent PhysicsFactory::add_physics
+	function.
+     */
+    virtual void add_physics( const std::string& physics_to_add,
+			      GRINS::PhysicsList& physics_list );
 
     //! Make sure the requested GRINS::Physics classes are consistent
+    /*! This is the other method to override (in addition to add_physics)
+        for extending physics capabilities. The strategy is to check on
+	the physics you've added, then call the parent 
+	PhysicsFactory::check_physics_consistency.
+     */
     virtual void check_physics_consistency( const GRINS::PhysicsList& physics_list );
 
     //! Utility function
@@ -59,6 +72,9 @@ namespace GRINS
     static const std::string _boussinesq_buoyancy = "BoussinesqBuoyancy";
     static const std::string _axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
     static const std::string _axisymmetric_mushy_zone_solidification = "AxisymmetricMushyZoneSolidification";
+
+    int _num_physics;
+    std::set<std::string> _requested_physics;
 
   }; // class PhysicsFactory
 

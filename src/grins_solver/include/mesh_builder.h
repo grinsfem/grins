@@ -26,9 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_MESH_MANAGER_H
-#define GRINS_MESH_MANAGER_H
+#ifndef MESH_BUILDER_H
+#define MESH_BUILDER_H
 
+// libMesh
+#include "auto_ptr.h"
 #include "getpot.h"
 #include "libmesh.h"
 #include "string_to_enum.h"
@@ -38,44 +40,39 @@
 namespace GRINS
 {
 
-  class MeshManager
-  {
-    
+  class MeshBuilder
+  {    
   public:
 
-    MeshManager();
-    ~MeshManager();
+    //! This Object handles building a libMesh::Mesh
+    /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
+        mesh is built; or is read from input from a specified file. Note
+	that a libMesh::AutoPtr is returned so ownership is transferred
+	away from this class.
+     */
+    MeshBuilder( const GetPot& input );
+    ~MeshBuilder();
 
     void read_input_options( const GetPot& input );
 
-    // get/set pair for mesh object
-    libMesh::Mesh* get_mesh(); 
-    void set_mesh( libMesh::Mesh* mesh );
-
-    void build_mesh();
+    //! Builds the libMesh::Mesh according to input options.
+    /*! Note that a libMesh::AutoPtr is returned so ownership is transferred
+	away from this class.*/
+    libMesh::AutoPtr<libMesh::Mesh> build();
 
   private:
-    // all possible values for _mesh_option:
-    //    "read_mesh_from_file", "create_1D_mesh", "create_2D_MESH", "create_3D_mesh", "mesh_already_loaded"
+    
     std::string _mesh_option;
-    bool _print_mesh_info_flag;
     std::string _mesh_filename;
-
-    libMesh::Mesh* _mesh;
-
-    // all possible values for _domain_type:
-    //    "line", "rectangle", "cylinder", "box", sphere"
-    std::string _domain_type;
 
     double _domain_x1_min, _domain_x2_min, _domain_x3_min;
     double _domain_x1_max, _domain_x2_max, _domain_x3_max;
 
     int _mesh_nx1, _mesh_nx2, _mesh_nx3;
-    std::string _element_type; // use libMesh::Utility::string_to_enum<libMeshEnums::ElemType>
 
-    bool _mesh_created_locally;
+    std::string _element_type;
   };
 
 } //End namespace block
 
-#endif //GRINS_MESH_MANAGER_H
+#endif //MESH_BUILDER_H

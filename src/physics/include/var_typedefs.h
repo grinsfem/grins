@@ -31,6 +31,9 @@
 #include <string>
 #include <map>
 
+// libMesh
+#include "auto_ptr.h"
+
 namespace GRINS
 {
   //! More descriptive name of the type used for variable indices
@@ -38,5 +41,12 @@ namespace GRINS
 
   //! More descriptive name of the type used for boundary ids
   typedef unsigned int BoundaryID;
+
+  //! Container for GRINS::Physics object pointers
+  typedef std::map<std::string,libMesh::AutoPtr<Physics> > PhysicsList;
+
+  //! Iterator for PhysicsList
+  typedef std::map<std::string,libMesh::AutoPtr<Physics> >::iterator PhysicsListIter;
+
 }
 #endif //VAR_TYPEDEFS_H

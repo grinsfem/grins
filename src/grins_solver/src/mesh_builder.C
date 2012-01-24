@@ -26,46 +26,37 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_mesh_manager.h"
+#include "mesh_builder.h"
 
 #include <iostream>
 
-GRINS::MeshManager::MeshManager()
-  : _mesh(NULL),
-    _mesh_created_locally(false)
+GRINS::MeshBuilder::MeshBuilder( const GetPot& input )
+{
+  this->read_input_options( input );
+  return;
+}
+
+GRINS::MeshBuilder::~MeshBuilder()
 {
   return;
 }
 
-GRINS::MeshManager::~MeshManager()
+void GRINS::MeshBuilder::read_input_options( const GetPot& input )
 {
-  // Only delete the mesh if we actually new'ed it.
-  if( this->_mesh_created_locally )
-    {
-      delete this->_mesh;
-      this->_mesh = NULL;
-    }
-  return;
-}
-
-void GRINS::MeshManager::read_input_options( const GetPot& input )
-{
+  // First check the user told us what to do to generate a mesh
   if(input.have_variable("mesh-options/mesh_option"))
     {
       this->_mesh_option = input("mesh-options/mesh_option", "NULL");
     }
   else
     {
-      // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::read_input_options :"
+      std::cerr << " GRINS::MeshBuilder::read_input_options :"
                 << " mesh-options/mesh_option NOT specified "
                 << std::endl;
-      exit(1);
+      libmesh_error();
     }
 
-  this->_print_mesh_info_flag = input("mesh-options/print_mesh_info_flag",
-                                      false);
-
+  // If they want it read from a file, stash the filename
   if(this->_mesh_option=="read_mesh_from_file")
     {
       if(input.have_variable("mesh-options/mesh_filename"))
@@ -75,31 +66,15 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
       else
         {
 	  // TODO: Need more consistent error handling.
-          std::cerr << " GRINS::MeshManager::read_input_options :"
+          std::cerr << " GRINS::MeshBuilder::read_input_options :"
                     << " mesh-options/mesh_filename NOT specified "
                     << std::endl;
-          exit(1);
+          libmesh_error();
         }
     }
-  else if(this->_mesh_option!="mesh_already_loaded")
+  // Otherwise, stash the necessary data to create a mesh
+  else
     {
-      std::string domain_type_default_value;
-      if(this->_mesh_option=="create_1D_mesh")
-        {
-          domain_type_default_value = "line";
-        }
-      else if(this->_mesh_option=="create_2D_mesh")
-        {
-          domain_type_default_value = "rectangle";
-        }
-      else if(this->_mesh_option=="create_3D_mesh")
-        {
-          domain_type_default_value = "box";
-        }
-
-      this->_domain_type = input("mesh-options/domain_type",
-                                 domain_type_default_value);
-
       this->_domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
       this->_domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
       this->_domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
@@ -112,61 +87,23 @@ void GRINS::MeshManager::read_input_options( const GetPot& input )
       this->_mesh_nx2 = input("mesh-options/mesh_nx2", 10);
       this->_mesh_nx3 = input("mesh-options/mesh_nx3", 10);
 
-      // set default element type as libMeshEnums::INVALID_ELEM and
-      // switch it to an appropriate one based on domain type
       this->_element_type = input("mesh-options/element_type", "NULL");
     }
 
   return;
 }
 
-libMesh::Mesh* GRINS::MeshManager::get_mesh()
+libMesh::AutoPtr<libMesh::Mesh> GRINS::MeshBuilder::build()
 {
-  // mesh can be available due to either set_mesh() or build_mesh()
-  if( !this->_mesh )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::get_mesh :"
-		<< " mesh NOT yet constructed. "
-		<< std::endl;
-      exit(1);
-    }
-
-  return this->_mesh;
-}
-
-void GRINS::MeshManager::set_mesh( libMesh::Mesh* mesh )
-{
-  if( this->_mesh )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::set_mesh :"
-                << " mesh is already set " << std::endl;
-      exit(1);
-    }
-
-  return;
-}
-
-void GRINS::MeshManager::build_mesh()
-{
-  if( this->_mesh_option=="mesh_already_loaded" || this->_mesh )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::build_mesh :"
-                << " mesh is already loaded or set " << std::endl;
-      exit(1);
-    }
-
   // Create Mesh object (defaults to dimension 1).
-  // According to Roy Stogner, the only read format
-  // that won't properly reset the dimension is gmsh.
-  this->_mesh = new libMesh::Mesh();
+  libMesh::Mesh* mesh = new libMesh::Mesh();
 
   if(this->_mesh_option=="read_mesh_from_file")
     {
-      // FIXME: Make this gmsh safe ---  GRINS should worry about this
-      (this->_mesh)->read(this->_mesh_filename);
+      // According to Roy Stogner, the only read format
+      // that won't properly reset the dimension is gmsh.
+      /*! \todo Need to a check a GMSH meshes */
+      mesh->read(this->_mesh_filename);
     }
   else if(this->_mesh_option=="create_1D_mesh")
     {
@@ -177,12 +114,12 @@ void GRINS::MeshManager::build_mesh()
 
       libMeshEnums::ElemType _element_enum_type =
                       libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
-      libMesh::MeshTools::Generation::build_line(*(this->_mesh),
+
+      libMesh::MeshTools::Generation::build_line(*mesh,
 						 this->_mesh_nx1,
 						 this->_domain_x1_min,
 						 this->_domain_x1_max,
 						 _element_enum_type);
-      _mesh_created_locally = true;
     }
   else if(this->_mesh_option=="create_2D_mesh")
     {
@@ -192,11 +129,12 @@ void GRINS::MeshManager::build_mesh()
 	}
 
       // Reset mesh dimension to 2.
-      (this->_mesh)->set_mesh_dimension(2);
+      mesh->set_mesh_dimension(2);
 
       libMeshEnums::ElemType _element_enum_type =
                       libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
-      libMesh::MeshTools::Generation::build_square(*(this->_mesh),
+
+      libMesh::MeshTools::Generation::build_square(*mesh,
 						   this->_mesh_nx1,
 						   this->_mesh_nx2,
 						   this->_domain_x1_min,
@@ -204,7 +142,6 @@ void GRINS::MeshManager::build_mesh()
 						   this->_domain_x2_min,
 						   this->_domain_x2_max,
 						   _element_enum_type);
-      _mesh_created_locally = true;
     }
   else if(this->_mesh_option=="create_3D_mesh")
     {
@@ -214,11 +151,12 @@ void GRINS::MeshManager::build_mesh()
 	}
 
       // Reset mesh dimension to 3.
-      (this->_mesh)->set_mesh_dimension(3);
+      mesh->set_mesh_dimension(3);
 
       libMeshEnums::ElemType _element_enum_type =
                       libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
-      libMesh::MeshTools::Generation::build_cube(*(this->_mesh),
+
+      libMesh::MeshTools::Generation::build_cube(*mesh,
 						 this->_mesh_nx1,
 						 this->_mesh_nx2,
 						 this->_mesh_nx3,
@@ -229,16 +167,14 @@ void GRINS::MeshManager::build_mesh()
 						 this->_domain_x3_min,
 						 this->_domain_x3_max,
 						 _element_enum_type);
-      _mesh_created_locally = true;
     }
   else
     {
-      // TODO: Need more consistent error handling.
-      std::cerr << " GRINS::MeshManager::build_mesh :"
+      std::cerr << " GRINS::MeshBuilder::build_mesh :"
                 << " mesh-options/mesh_option [" << this->_mesh_option
                 << "] NOT supported " << std::endl;
-      exit(1);
+      libmesh_error();
     }
 
-  return;
+  return AutoPtr(mesh);
 }

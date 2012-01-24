@@ -46,8 +46,6 @@
 
 namespace GRINS
 {
-  // We template around the system type
-  template< class T >
   class Solver
   {
     
@@ -57,21 +55,16 @@ namespace GRINS
 
     void read_input_options( const GetPot& input );
 
-    // get/set pair for mesh object
-    libMesh::Mesh* get_mesh();
-    void set_mesh( libMesh::Mesh* mesh );
-
     //TODO: Should we have these return error codes?
     void initialize_system( std::string system_name, GetPot& input );
-    void solve( );
+    
+    virtual void solve()=0;
 
     void output_visualization();
     void output_visualization( unsigned int time_step );
 
     void output_residual_vis( const unsigned int time_step );
     void output_unsteady_residual_vis( const unsigned int time_step );
-
-    T* get_system();
     
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -101,21 +94,12 @@ namespace GRINS
     bool _output_residual;
     bool _output_unsteady_residual;
 
-    // Mesh/Solver related objects
-    libMesh::Mesh* _mesh;
-    libMesh::EquationSystems* _equation_systems;
-    T* _system;
-
-    // Variables to track state of system
-    bool _system_initialized;
+    GRINS::MultiphysicsSystem* _system;
 
     // Screen display options
-    bool _print_mesh_info;
-    bool _print_log_info;
     bool _solver_quiet;
     bool _solver_verbose;
-    bool _print_equation_system_info;
-
+    
     void dump_visualization( const std::string filename_prefix, const int time_step );
     void set_solver_options( libMesh::DiffSolver& solver );
 
