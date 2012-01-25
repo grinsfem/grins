@@ -18,11 +18,10 @@ namespace GRINS
   {
   public:
 
-    UnsteadySolver();
+    UnsteadySolver( const GetPot& input );
     virtual ~UnsteadySolver();
 
-    virtual void read_input_options();
-    virtual void solve();
+    virtual void solve( GRINS::Visualization* vis );
     virtual void init_time_solver();
 
   protected:

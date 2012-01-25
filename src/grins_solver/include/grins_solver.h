@@ -51,9 +51,8 @@ namespace GRINS
 {
   class Solver
   {
-    
   public:
-    Solver();
+    Solver( const GetPot& input );
     ~Solver();
 
     virtual void read_input_options( const GetPot& input );
@@ -62,14 +61,8 @@ namespace GRINS
 		     libMesh::EquationSystems equation_system,
 		     GRINS::PhysicsList& physics_list );
     
-    virtual void solve()=0;
+    virtual void solve( GRINS::Visualization* vis )=0;
     virtual void init_time_solver()=0;
-
-    void output_visualization();
-    void output_visualization( unsigned int time_step );
-
-    void output_residual_vis( const unsigned int time_step );
-    void output_unsteady_residual_vis( const unsigned int time_step );
     
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -77,6 +70,8 @@ namespace GRINS
 
   protected:
     
+    GRINS::MultiphysicsSystem* _system;
+
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
@@ -86,20 +81,10 @@ namespace GRINS
     unsigned int _max_linear_iterations;
     double _initial_linear_tolerance;
 
-    // Visualization options
-    bool _output_vis_time_series;
-    std::string _vis_output_file_prefix;
-    std::vector<std::string> _output_format;
-    bool _output_residual;
-    bool _output_unsteady_residual;
-
-    GRINS::MultiphysicsSystem* _system;
-
     // Screen display options
     bool _solver_quiet;
     bool _solver_verbose;
     
-    void dump_visualization( const std::string filename_prefix, const int time_step );
     void set_solver_options( libMesh::DiffSolver& solver );
 
 #ifdef USE_GRVY_TIMERS

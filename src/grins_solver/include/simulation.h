@@ -15,6 +15,7 @@
 
 // GRINS
 #include "physics_factory.h"
+#include "mesh_builder.h"
 #include "solver_factory.h"
 #include "grins_solver.h"
 #include "visualization_factory.h"
@@ -35,10 +36,6 @@ namespace GRINS
     ~Simulation();
 	
     void run();
-
-    void output_vis();
-
-    void read_input_options( const GetPot& input );
 
     void print_sim_info();
 

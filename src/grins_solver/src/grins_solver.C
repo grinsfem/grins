@@ -26,21 +26,22 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_solver.h"
-
-// For instantiating systems
-
-
-// libMesh I/O classes
-#include "gmv_io.h"
-#include "tecplot_io.h"
-#include "exodusII_io.h"
-#include "vtk_io.h"
-
 #include <iostream>
 
+#include "grins_solver.h"
 
-GRINS::Solver::Solver( )
+GRINS::Solver::Solver( const GetPot& input )
+  : _system(NULL),
+    _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
+    _relative_step_tolerance( input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 ) ),
+    _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
+    _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-16 ) ),
+    _absolute_residual_tolerance( input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 ) ),
+    _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
+    _initial_linear_tolerance( input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 ) ),
+    _solver_quiet( input("screen-options/solver_quiet", false ) ),
+    _solver_verbose( input("screen-options/solver_verbose", false ) ),
+    _system_name( input("screen-options/system_name", "GRINS" ) )
 {
   return;
 }
@@ -50,62 +51,6 @@ GRINS::Solver::~Solver()
 {
   return;
 }
-
-
-void GRINS::Solver::read_input_options( const GetPot& input )
-{
-  // Linear/Nonlinear solver options
-  this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 10 );
-  this->_relative_step_tolerance     = input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 );
-  this->_absolute_step_tolerance     = input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 );
-  this->_relative_residual_tolerance = input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-16 );
-  this->_absolute_residual_tolerance = input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 );
-  this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 500 );
-  this->_initial_linear_tolerance    = input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 );
-
-  // Visualization options
-  this->_vis_output_file_prefix   = input("vis-options/vis_output_file_prefix", "unknown" );
-  this->_output_vis_time_series   = input("vis-options/output_vis_time_series", false);
-  this->_output_residual          = input("vis-options/output_residual", false );
-  this->_output_unsteady_residual = input("vis-options/output_unsteady_residual", false );
-
-  unsigned int num_formats = input.vector_variable_size("vis-options/output_format");
-
-  // If no format specified, default to ExodusII only
-  if( num_formats == 0 )
-    {
-      _output_format.push_back("ExodusII");
-    }
-
-  for( unsigned int i = 0; i < num_formats; i++ )
-    {
-      _output_format.push_back( input("vis-options/output_format", "DIE", i ) );
-    }
-  
-  // Screen display options
-  this->_solver_quiet   = input("screen-options/solver_quiet", false );
-  this->_solver_verbose = input("screen-options/solver_verbose", false );
-  this->_system_name    = input("screen-options/system_name", "GRINS" );
-
-  return;
-}
-
-
-void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
-{
-  solver.quiet                       = this->_solver_quiet;
-  solver.verbose                     = this->_solver_verbose;
-  solver.max_nonlinear_iterations    = this->_max_nonlinear_iterations;
-  solver.relative_step_tolerance     = this->_relative_step_tolerance;
-  solver.absolute_step_tolerance     = this->_absolute_step_tolerance;
-  solver.relative_residual_tolerance = this->_relative_residual_tolerance;
-  solver.absolute_residual_tolerance = this->_absolute_residual_tolerance;
-  solver.max_linear_iterations       = this->_max_linear_iterations;
-  solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
-
-  return;
-}
-
 
 void GRINS::Solver::initialize( GetPot& input, 
 				libMesh::EquationSystems equation_system,
@@ -132,29 +77,6 @@ void GRINS::Solver::initialize( GetPot& input,
 
   return;
 }
-
-void GRINS::Solver::output_visualization()
-{
-  this->dump_visualization( this->_vis_output_file_prefix, 0 );
-
-  return;
-}
-
-
-void GRINS::Solver::output_visualization( unsigned int time_step )
-{
-  std::stringstream suffix;
-
-  suffix << time_step;
-
-  std::string filename = this->_vis_output_file_prefix;
-  filename+="."+suffix.str();
-
-  this->dump_visualization( filename, time_step );
-
-  return;
-}
-
 
 void GRINS::Solver::output_residual_vis( const unsigned int time_step )
 {
@@ -232,100 +154,20 @@ void GRINS::Solver::output_unsteady_residual_vis( const unsigned int time_step )
   return;
 }
 
-
-void GRINS::Solver::dump_visualization( const std::string filename_prefix, const int time_step )
+void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
 {
-  if( this->_vis_output_file_prefix == "unknown" )
-    {
-      // TODO: Need consisent way to print warning messages.
-      std::cout << " WARNING in GRINS::Solver::dump_visualization :" <<
-	" using 'unknown' as file prefix since it was not set " <<
-	std::endl;
-    }
-  
-  for( std::vector<std::string>::const_iterator format = _output_format.begin();
-       format != _output_format.end();
-       format ++ )
-    {
-      // The following is a modifed copy from the FIN-S code.
-      if ((*format) == "tecplot" ||
-	  (*format) == "dat")
-	{
-	  std::string filename = filename_prefix+".dat";
-	  libMesh::TecplotIO(*(this->_mesh),false).write_equation_systems(
-									  filename,
-									  *(this->_equation_systems) );
-	  
-	  // Left this here as an example from FIN-S if we need to
-	  // handle boundary meshes separately in the future.
-	  /*
-	    if (have_boundary_data)
-	    {
-	    sprintf( filechar, "%s-surf-%05d.dat",
-	    output_name.c_str(),
-	    write_soln_number );
-	    
-	    libMesh::TecplotIO(*boundary_mesh,false).write_equation_systems(
-	    std::string(filechar),
-	    *_boundary_equation_systems );
-	    }
-	  */
-	}
-      else if ((*format) == "tecplot_binary" ||
-	       (*format) == "plt")
-	{
-	  std::string filename = filename_prefix+".plt";
-	  libMesh::TecplotIO(*(this->_mesh),true).write_equation_systems(
-									 filename,
-									 *(this->_equation_systems) );
-	}
-      else if ((*format) == "gmv")
-	{
-	  std::string filename = filename_prefix+".gmv";
-	  GMVIO(*(this->_mesh)).write_equation_systems(
-						       filename,
-						       *(this->_equation_systems) );
-	}
-      else if ((*format) == "vtu")
-	{
-	  std::string filename = filename_prefix+".vtu";
-	  VTKIO(*(this->_mesh)).write_equation_systems(
-						       filename,
-						       *(this->_equation_systems) );
-	}
-      else if ((*format) == "ExodusII")
-	{
-	  std::string filename = filename_prefix+".exo";
-	  
-	  // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
-	  // it should be the number of timesteps within the file. Here, we are explicitly only doing 
-	  // one timestep per file.
-	  ExodusII_IO(*(this->_mesh)).write_timestep(
-						     filename,
-						     *(this->_equation_systems),
-						     1,
-						     this->_system->time );
-	}
-      else if ((*format).find("xda") != std::string::npos ||
-	       (*format).find("xdr") != std::string::npos)
-	{
-	  std::string filename = filename_prefix+"."+(*format);
-	  const bool binary = ((*format).find("xdr") != std::string::npos);
-	  (this->_equation_systems)->write( filename,
-					    binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
-					    EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
-	}
-      else
-	{
-	  // TODO: Do we want to use this to error throughout the code?
-	  // TODO: (at least need to pass/print some message/string) - sahni
-	  libmesh_error();
-	}
-    } // End loop over formats
+  solver.quiet                       = this->_solver_quiet;
+  solver.verbose                     = this->_solver_verbose;
+  solver.max_nonlinear_iterations    = this->_max_nonlinear_iterations;
+  solver.relative_step_tolerance     = this->_relative_step_tolerance;
+  solver.absolute_step_tolerance     = this->_absolute_step_tolerance;
+  solver.relative_residual_tolerance = this->_relative_residual_tolerance;
+  solver.absolute_residual_tolerance = this->_absolute_residual_tolerance;
+  solver.max_linear_iterations       = this->_max_linear_iterations;
+  solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
 
   return;
 }
-
 
 #ifdef USE_GRVY_TIMERS
 void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )

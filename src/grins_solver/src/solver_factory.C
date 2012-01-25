@@ -9,20 +9,13 @@
 #include "solver_factory.h"
 
 GRINS::SolverFactory::SolverFactory(const GetPot& input)
-  :_transient(false)
+  :_transient( input("unsteady-solver/transient", false ) )
 {
-  this->read_input_options(input);
   return;
 }
 
 GRINS::SolverFactory::~SolverFactory()
 {
-  return;
-}
-
-void GRINS::SolverFactory::read_input_options( const GetPot& input )
-{
-  _transient = input("unsteady-solver/transient", false );
   return;
 }
 

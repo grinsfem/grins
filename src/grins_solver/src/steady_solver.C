@@ -8,7 +8,8 @@
 
 #include "steady_solver.h"
 
-GRINS::SteadySolver::SteadySolver()
+GRINS::SteadySolver::SteadySolver( const GetPot& input )
+  : Solver( input )
 {
   return;
 }
@@ -26,9 +27,14 @@ void GRINS::SteadySolver::init_time_solver()
   return;
 }
 
-void GRINS::SteadySolver::solve()
+void GRINS::SteadySolver::solve( GRINS::Visualization* vis )
 {
   // GRVY timers contained in here (if enabled)
   _system->solve();
+
+  // Output solution and residual, if requested at runtime.
+  vis->output();
+  vis->output_residual();
+
   return;
 }

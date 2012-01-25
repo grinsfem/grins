@@ -32,8 +32,6 @@ namespace GRINS
     SolverFactory(const GetPot& input);
     virtual ~SolverFactory();
 
-    virtual void read_input_options( const GetPot& input );
-
     //! Builds GRINS::Solver object.
     /*! Users should override this method to construct 
         their own solvers. Note that a libMesh::AutoPtr is 
