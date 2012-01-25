@@ -507,7 +507,7 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 
             if( u_r_it == bc_map.end() )
 	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
+		//_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
 	      }
             else
 	      {
@@ -515,7 +515,7 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 	      }
 	    if( u_z_it == bc_map.end() )
 	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
+		//_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
 	      }
             else
 	      {

@@ -29,8 +29,11 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
+// GRINS
 #include "config.h"
+#include "multiphysics_sys.h"
 
+// libMesh
 #include "getpot.h"
 #include "libmesh.h"
 #include "libmesh_logging.h"
@@ -53,12 +56,12 @@ namespace GRINS
     Solver();
     ~Solver();
 
-    void read_input_options( const GetPot& input );
+    virtual void read_input_options( const GetPot& input );
 
-    //TODO: Should we have these return error codes?
     void initialize_system( std::string system_name, GetPot& input );
     
     virtual void solve()=0;
+    virtual void init_time_solver()=0;
 
     void output_visualization();
     void output_visualization( unsigned int time_step );
@@ -70,7 +73,7 @@ namespace GRINS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 
-  private:
+  protected:
     
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
@@ -80,12 +83,6 @@ namespace GRINS
     double _absolute_residual_tolerance;
     unsigned int _max_linear_iterations;
     double _initial_linear_tolerance;
-
-    // Unsteady solver options
-    bool _transient;
-    double _theta;
-    unsigned int _n_timesteps;
-    double _deltat;
 
     // Visualization options
     bool _output_vis_time_series;

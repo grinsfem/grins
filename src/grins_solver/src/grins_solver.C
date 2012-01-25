@@ -29,7 +29,7 @@
 #include "grins_solver.h"
 
 // For instantiating systems
-#include "multiphysics_sys.h"
+
 
 // libMesh I/O classes
 #include "gmv_io.h"
@@ -39,27 +39,20 @@
 
 #include <iostream>
 
-template< class T >
-GRINS::Solver<T>::Solver( )
-  : _system_initialized(false)
+
+GRINS::Solver::Solver( )
 {
   return;
 }
 
-template< class T >
-GRINS::Solver<T>::~Solver()
+
+GRINS::Solver::~Solver()
 {
-  // If we initialized the system, we need to destroy the
-  // EquationSystems object.
-  if(this->_system_initialized)
-    {
-      delete this->_equation_systems;
-    }
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::read_input_options( const GetPot& input )
+
+void GRINS::Solver::read_input_options( const GetPot& input )
 {
   // Linear/Nonlinear solver options
   this->_max_nonlinear_iterations    = input("linear-nonlinear-solver/max_nonlinear_iterations", 10 );
@@ -69,12 +62,6 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   this->_absolute_residual_tolerance = input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 );
   this->_max_linear_iterations       = input("linear-nonlinear-solver/max_linear_iterations", 500 );
   this->_initial_linear_tolerance    = input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 );
-
-  // Unsteady solver options
-  this->_transient   = input("unsteady-solver/transient", false );
-  this->_theta       = input("unsteady-solver/theta", 0.5 );
-  this->_n_timesteps = input("unsteady-solver/n_timesteps", 1 );
-  this->_deltat      = input("unsteady-solver/deltat", 0.0 ); //TODO: Better default here?
 
   // Visualization options
   this->_vis_output_file_prefix   = input("vis-options/vis_output_file_prefix", "unknown" );
@@ -103,21 +90,8 @@ void GRINS::Solver<T>::read_input_options( const GetPot& input )
   return;
 }
 
-template< class T >
-libMesh::Mesh* GRINS::Solver<T>::get_mesh()
-{
-  return this->_mesh;
-}
 
-template< class T >
-void GRINS::Solver<T>::set_mesh( libMesh::Mesh *mesh )
-{
-  this->_mesh = mesh;
-  return;
-}
-
-template< class T >
-void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
+void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
 {
   solver.quiet                       = this->_solver_quiet;
   solver.verbose                     = this->_solver_verbose;
@@ -132,8 +106,8 @@ void GRINS::Solver<T>::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input )
+
+void GRINS::Solver::initialize_system( std::string system_name, GetPot& input )
 {
   // Declare the system and its variables.
   libMesh::EquationSystems *es = this->_equation_systems;
@@ -141,22 +115,14 @@ void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input
 
   this->_system->read_input_options( input );
 
+  // Defined in subclasses depending on the solver used.
+  this->init_time_solver();
+
   // Solve this as a time-dependent or steady system
   if (this->_transient)
     {
       // Setup time solver
-      libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(this->_system) );
-
-      this->_system->time_solver = AutoPtr<TimeSolver>(time_solver);
-
-      // Set theta parameter for time-stepping scheme
-      time_solver->theta = this->_theta;
-    }
-  else
-    {
-      libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(this->_system) );
-      this->_system->time_solver = AutoPtr<TimeSolver>(time_solver);
-      libmesh_assert( this->_n_timesteps == 1 );
+      
     }
 
   // Initialize the system
@@ -171,51 +137,15 @@ void GRINS::Solver<T>::initialize_system( std::string system_name, GetPot& input
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::solve()
-{
-  this->_system->deltat = this->_deltat;
-
-  // Now we begin the timestep loop to compute the time-accurate
-  // solution of the equations.
-  for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
-    {
-      // GRVY timers contained in here (if enabled)
-      this->_system->solve();
-
-      // Dump out time series visualization if user wants it.
-      if( this->_output_vis_time_series )
-	{
-	  this->output_visualization( t_step );
-	}
-
-      if( this->_output_residual )
-	{
-	  this->output_residual_vis( t_step );
-	}
-
-      if( this->_output_unsteady_residual )
-	{
-	  this->output_unsteady_residual_vis( t_step );
-	}
-
-      // Advance to the next timestep in a transient problem
-      this->_system->time_solver->advance_timestep();
-    } // End time loop.
-
-  return;
-}
-
-template< class T >
-void GRINS::Solver<T>::output_visualization()
+void GRINS::Solver::output_visualization()
 {
   this->dump_visualization( this->_vis_output_file_prefix, 0 );
 
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::output_visualization( unsigned int time_step )
+
+void GRINS::Solver::output_visualization( unsigned int time_step )
 {
   std::stringstream suffix;
 
@@ -229,8 +159,8 @@ void GRINS::Solver<T>::output_visualization( unsigned int time_step )
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::output_residual_vis( const unsigned int time_step )
+
+void GRINS::Solver::output_residual_vis( const unsigned int time_step )
 {
   std::stringstream suffix;
   suffix << time_step;
@@ -256,8 +186,8 @@ void GRINS::Solver<T>::output_residual_vis( const unsigned int time_step )
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::output_unsteady_residual_vis( const unsigned int time_step )
+
+void GRINS::Solver::output_unsteady_residual_vis( const unsigned int time_step )
 {
   if( !this->_transient  &&
       this->_output_unsteady_residual )
@@ -306,8 +236,8 @@ void GRINS::Solver<T>::output_unsteady_residual_vis( const unsigned int time_ste
   return;
 }
 
-template< class T >
-void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix, const int time_step )
+
+void GRINS::Solver::dump_visualization( const std::string filename_prefix, const int time_step )
 {
   if( this->_vis_output_file_prefix == "unknown" )
     {
@@ -400,16 +330,15 @@ void GRINS::Solver<T>::dump_visualization( const std::string filename_prefix, co
   return;
 }
 
-template< class T >
-T* GRINS::Solver<T>::get_system()
+
+T* GRINS::Solver::get_system()
 {
   return this->_system;
 }
 
 
 #ifdef USE_GRVY_TIMERS
-template< class T >
-void GRINS::Solver<T>::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {
   _timer = grvy_timer;
 
