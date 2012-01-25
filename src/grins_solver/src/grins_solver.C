@@ -83,9 +83,9 @@ void GRINS::Solver::read_input_options( const GetPot& input )
     }
   
   // Screen display options
-  this->_solver_quiet               = input("screen-options/solver_quiet", false );
-  this->_solver_verbose             = input("screen-options/solver_verbose", false );
-  
+  this->_solver_quiet   = input("screen-options/solver_quiet", false );
+  this->_solver_verbose = input("screen-options/solver_verbose", false );
+  this->_system_name    = input("screen-options/system_name", "GRINS" );
 
   return;
 }
@@ -107,23 +107,19 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
 }
 
 
-void GRINS::Solver::initialize_system( std::string system_name, GetPot& input )
+void GRINS::Solver::initialize( GetPot& input, 
+				libMesh::EquationSystems equation_system,
+				GRINS::PhysicsList& physics_list )
 {
   // Declare the system and its variables.
-  libMesh::EquationSystems *es = this->_equation_systems;
-  this->_system = &es->add_system<T> (system_name);
+  _system = equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name );
 
-  this->_system->read_input_options( input );
+  _system->attach_physics_list( physics_list );
+
+  _system->read_input_options( input );
 
   // Defined in subclasses depending on the solver used.
   this->init_time_solver();
-
-  // Solve this as a time-dependent or steady system
-  if (this->_transient)
-    {
-      // Setup time solver
-      
-    }
 
   // Initialize the system
   this->_equation_systems->init();
@@ -328,12 +324,6 @@ void GRINS::Solver::dump_visualization( const std::string filename_prefix, const
     } // End loop over formats
 
   return;
-}
-
-
-T* GRINS::Solver::get_system()
-{
-  return this->_system;
 }
 
 

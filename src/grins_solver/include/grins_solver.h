@@ -58,7 +58,9 @@ namespace GRINS
 
     virtual void read_input_options( const GetPot& input );
 
-    void initialize_system( std::string system_name, GetPot& input );
+    void initialize( GetPot& input, 
+		     libMesh::EquationSystems equation_system,
+		     GRINS::PhysicsList& physics_list );
     
     virtual void solve()=0;
     virtual void init_time_solver()=0;
