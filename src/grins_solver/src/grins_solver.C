@@ -53,11 +53,11 @@ GRINS::Solver::~Solver()
 }
 
 void GRINS::Solver::initialize( GetPot& input, 
-				libMesh::EquationSystems equation_system,
+				libMesh::EquationSystems* equation_system,
 				GRINS::PhysicsList& physics_list )
 {
   // Declare the system and its variables.
-  _system = equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name );
+  _system = &(equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name ));
 
   _system->attach_physics_list( physics_list );
 
@@ -67,7 +67,7 @@ void GRINS::Solver::initialize( GetPot& input,
   this->init_time_solver();
 
   // Initialize the system
-  equation_systems->init();
+  equation_system->init();
 
   // Get diff solver to set options
   libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());
@@ -105,5 +105,3 @@ void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 }
 #endif
 
-// Instantiate class
-template class GRINS::Solver<GRINS::MultiphysicsSystem>;

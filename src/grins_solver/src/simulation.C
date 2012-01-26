@@ -1,4 +1,24 @@
 //-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010,2011 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
 //-----------------------------------------------------------------------el-
 //
 // $Id$
@@ -19,7 +39,9 @@ GRINS::Simulation::Simulation( const GetPot& input,
      _vis( vis_factory->build() ),
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
-     _print_equation_system_info( input("screen-options/print_equation_system_info", false ) )
+     _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+     _output_vis( input("", false ) ),
+     _output_residual( input( "", false ) )
 {
   // Only print libMesh logging info if the user requests it
   libMesh::perflog.disable_logging();
@@ -39,7 +61,7 @@ void GRINS::Simulation::run()
 {
   this->print_sim_info();
   
-  _solver->solve( _vis );
+  _solver->solve( _vis, _output_vis, _output_residual );
 
   return;
 }

@@ -32,6 +32,7 @@
 // GRINS
 #include "config.h"
 #include "multiphysics_sys.h"
+#include "visualization.h"
 
 // libMesh
 #include "getpot.h"
@@ -58,10 +59,13 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     void initialize( GetPot& input, 
-		     libMesh::EquationSystems equation_system,
+		     libMesh::EquationSystems* equation_system,
 		     GRINS::PhysicsList& physics_list );
     
-    virtual void solve( GRINS::Visualization* vis )=0;
+    virtual void solve( GRINS::Visualization* vis = NULL,
+			bool output_vis = false,
+			bool output_residual = false )=0;
+
     virtual void init_time_solver()=0;
     
 #ifdef USE_GRVY_TIMERS
@@ -84,6 +88,7 @@ namespace GRINS
     // Screen display options
     bool _solver_quiet;
     bool _solver_verbose;
+    std::string _system_name;
     
     void set_solver_options( libMesh::DiffSolver& solver );
 

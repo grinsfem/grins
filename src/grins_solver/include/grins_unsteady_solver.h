@@ -26,58 +26,33 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#ifndef GRINS_UNSTEADY_SOLVER_H
+#define GRINS_UNSTEADY_SOLVER_H
 
-// libMesh
-#include "getpot.h"
-#include "auto_ptr.h"
-
-// GRINS
-#include "physics_factory.h"
-#include "mesh_builder.h"
-#include "solver_factory.h"
+//GRINS
 #include "grins_solver.h"
-#include "visualization_factory.h"
-#include "visualization.h"
 
 namespace GRINS
 {
-  class Simulation
+  class UnsteadySolver : public GRINS::Solver
   {
   public:
-    
-    Simulation( const GetPot& input,
-		GRINS::PhysicsFactory* physics_factory,
-		GRINS::MeshBuilder* mesh_builder,
-		GRINS::SolverFactory* solver_factory,
-		GRINS::VisualizationFactory* vis_factory );
 
-    ~Simulation();
-	
-    void run();
+    UnsteadySolver( const GetPot& input );
+    virtual ~UnsteadySolver();
 
-    void print_sim_info();
+    virtual void solve( GRINS::Visualization* vis = NULL,
+			bool output_vis = false,
+			bool output_residual = false );
 
-  private:
+    virtual void init_time_solver();
 
-    libMesh::AutoPtr<libMesh::Mesh> _mesh;
+  protected:
 
-    libMesh::AutoPtr<libMesh::EquationSystems> _equation_system;
-
-    libMesh::AutoPtr<GRINS::Solver> _solver;
-
-    libMesh::AutoPtr<GRINS::Visualization> _vis;
-
-    // Screen display options
-    bool _print_mesh_info;
-    bool _print_log_info;
-    bool _print_equation_system_info;
-
-    // Visualization options
-    bool _output_vis;
-    bool _output_residual;
+    double _theta;
+    unsigned int _n_timesteps;
+    double _deltat;
 
   };
-}
-#endif // SIMULATION_H
+} // namespace GRINS
+#endif // GRINS_UNSTEADY_SOLVER_H

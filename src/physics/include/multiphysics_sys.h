@@ -90,7 +90,7 @@ namespace GRINS
         to the physics, so ownership should transfer to this class
 	once the physics list is "attached".
      */
-    void attach_physics_list( PhysicsList physics_list );
+    void attach_physics_list( PhysicsList& physics_list );
 
     //! Reads input options for this class and all physics that are enabled
     /*!

@@ -22,12 +22,19 @@ boundary_conditions_incdir = $(top_srcdir)/src/boundary_conditions/include
 utilities_srcdir = $(top_srcdir)/src/utilities/src
 utilities_incdir = $(top_srcdir)/src/utilities/include
 
+visualization_srcdir = $(top_srcdir)/src/visualization/src
+visualization_incdir = $(top_srcdir)/src/visualization/include
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
 # Sources in src/grins
 grins_SRC    = $(grins_srcdir)/grins_solver.C \
-               $(grins_srcdir)/grins_mesh_manager.C
+               $(grins_srcdir)/mesh_builder.C \
+               $(grins_srcdir)/simulation.C \
+               $(grins_srcdir)/solver_factory.C \
+               $(grins_srcdir)/grins_steady_solver.C \
+               $(grins_srcdir)/grins_unsteady_solver.C
 
 physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/physics.C \
@@ -37,7 +44,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_heat_transfer.C \
                $(physics_srcdir)/boussinesq_buoyancy.C \
                $(physics_srcdir)/axisym_boussinesq_buoyancy.C \
-               $(physics_srcdir)/axisym_mushy_zone_solidification.C
+               $(physics_srcdir)/axisym_mushy_zone_solidification.C \
+               $(physics_srcdir)/physics_factory.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/dirichlet_func_obj.C \
@@ -47,11 +55,20 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C
 
+visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
+                    $(visualization_srcdir)/unsteady_visualization.C \
+                    $(visualization_srcdir)/visualization.C \
+                    $(visualization_srcdir)/visualization_factory.C
+
 #----------------------------
 #INCLUDES we want distributed
 #----------------------------
 grins_INC    = $(grins_incdir)/grins_solver.h \
-               $(grins_incdir)/grins_mesh_manager.h
+               $(grins_incdir)/mesh_builder.h \
+               $(grins_incdir)/simulation.h \
+               $(grins_incdir)/solver_factory.h \
+               $(grins_incdir)/grins_steady_solver.h \
+               $(grins_incdir)/grins_unsteady_solver.h
 
 physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/physics.h \
@@ -63,7 +80,8 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/axisym_heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h \
                $(physics_incdir)/axisym_boussinesq_buoyancy.h \
-               $(physics_incdir)/axisym_mushy_zone_solidification.h
+               $(physics_incdir)/axisym_mushy_zone_solidification.h \
+               $(physics_incdir)/physics_factory.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h \
@@ -74,13 +92,19 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
 
 utilities_INC = $(utilities_incdir)/grins_version.h
 
+visualization_INC = $(visualization_incdir)/steady_visualization.h \
+                    $(visualization_incdir)/unsteady_visualization.h \
+                    $(visualization_incdir)/visualization.h \
+                    $(visualization_incdir)/visualization_factory.h
+
 include_HEADERS = $(grins_INC) $(physics_INC) $(boundary_conditions_INC) \
-                  $(utilities_INC)
+                  $(utilities_INC) $(visualization_INC)
 
 libgrins_la_SOURCES = $(grins_SRC) \
                       $(physics_SRC) \
                       $(boundary_conditions_SRC) \
-                      $(utilities_SRC)
+                      $(utilities_SRC) \
+                      $(visualization_SRC)
 
 #------------------------------------
 # Source for stand alone GRINS driver
@@ -95,7 +119,7 @@ grins_version_LDADD = libgrins.la
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir)
+AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir)
 
 AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
@@ -125,6 +149,7 @@ endif
 	$(generic_driver_SOURCES) $(physics_SRC) $(physics_INC) \
 	$(boundary_conditions_INC) $(boundary_conditions_SRC) \
         $(utilities_INC) $(utilities_SRC) \
+	$(visualization_INC) $(visualization_SRC) \
         $(grins_SOURCES) $(grins_version_SOURCES)
 	echo 'updated source license headers' >$@
 

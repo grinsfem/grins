@@ -26,58 +26,37 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#include "steady_solver.h"
 
-// libMesh
-#include "getpot.h"
-#include "auto_ptr.h"
-
-// GRINS
-#include "physics_factory.h"
-#include "mesh_builder.h"
-#include "solver_factory.h"
-#include "grins_solver.h"
-#include "visualization_factory.h"
-#include "visualization.h"
-
-namespace GRINS
+GRINS::SteadySolver::SteadySolver( const GetPot& input )
+  : Solver( input )
 {
-  class Simulation
-  {
-  public:
-    
-    Simulation( const GetPot& input,
-		GRINS::PhysicsFactory* physics_factory,
-		GRINS::MeshBuilder* mesh_builder,
-		GRINS::SolverFactory* solver_factory,
-		GRINS::VisualizationFactory* vis_factory );
-
-    ~Simulation();
-	
-    void run();
-
-    void print_sim_info();
-
-  private:
-
-    libMesh::AutoPtr<libMesh::Mesh> _mesh;
-
-    libMesh::AutoPtr<libMesh::EquationSystems> _equation_system;
-
-    libMesh::AutoPtr<GRINS::Solver> _solver;
-
-    libMesh::AutoPtr<GRINS::Visualization> _vis;
-
-    // Screen display options
-    bool _print_mesh_info;
-    bool _print_log_info;
-    bool _print_equation_system_info;
-
-    // Visualization options
-    bool _output_vis;
-    bool _output_residual;
-
-  };
+  return;
 }
-#endif // SIMULATION_H
+
+GRINS::SteadySolver::~SteadySolver()
+{
+  return;
+}
+
+void GRINS::SteadySolver::init_time_solver()
+{
+  libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(_system) );
+
+  _system->time_solver = AutoPtr<TimeSolver>(time_solver);
+  return;
+}
+
+void GRINS::SteadySolver::solve( GRINS::Visualization* vis,
+				 bool output_vis, 
+				 bool output_residual )
+{
+  // GRVY timers contained in here (if enabled)
+  _system->solve();
+
+  if( output_vis ) vis->output();
+
+  if( output_residual ) vis->output_residual();
+
+  return;
+}

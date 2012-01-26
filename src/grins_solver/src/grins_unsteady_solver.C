@@ -1,4 +1,24 @@
 //-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010,2011 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
 //-----------------------------------------------------------------------el-
 //
 // $Id$
@@ -35,7 +55,9 @@ void GRINS::UnsteadySolver::init_time_solver()
   return;
 }
 
-void GRINS::UnsteadySolver::solve( GRINS::Visualization* vis )
+void GRINS::UnsteadySolver::solve( GRINS::Visualization* vis = NULL,
+				   bool output_vis = false,
+				   bool output_residual = false )
 {
   this->_system->deltat = this->_deltat;
 
@@ -46,11 +68,11 @@ void GRINS::UnsteadySolver::solve( GRINS::Visualization* vis )
       // GRVY timers contained in here (if enabled)
       this->_system->solve();
 
-      // Output solution and residual, if requested at runtime.
-      vis->output( t_step );
-      vis->output_residual( t_step );
+      if( output_vis ) vis->output();
 
-      // Advance to the next timestep in a transient problem
+      if( output_residual ) vis->output_residual();
+
+      // Advance to the next timestep
       this->_system->time_solver->advance_timestep();
     }
 

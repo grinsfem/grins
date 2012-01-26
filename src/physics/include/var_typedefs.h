@@ -36,6 +36,9 @@
 
 namespace GRINS
 {
+  //! Forward declare Physics class since Physics uses some of these typedefs
+  class Physics;
+
   //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
 
@@ -43,10 +46,10 @@ namespace GRINS
   typedef unsigned int BoundaryID;
 
   //! Container for GRINS::Physics object pointers
-  typedef std::map<std::string,libMesh::AutoPtr<Physics> > PhysicsList;
+  typedef std::map< std::string,libMesh::AutoPtr<GRINS::Physics> > PhysicsList;
 
   //! Iterator for PhysicsList
-  typedef std::map<std::string,libMesh::AutoPtr<Physics> >::iterator PhysicsListIter;
+  typedef std::map< std::string,libMesh::AutoPtr<GRINS::Physics> >::iterator PhysicsListIter;
 
 }
 #endif //VAR_TYPEDEFS_H
