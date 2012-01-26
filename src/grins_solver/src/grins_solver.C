@@ -67,89 +67,13 @@ void GRINS::Solver::initialize( GetPot& input,
   this->init_time_solver();
 
   // Initialize the system
-  this->_equation_systems->init();
+  equation_systems->init();
 
   // Get diff solver to set options
   libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());
 
   // Set linear/nonlinear solver options
   this->set_solver_options( solver );
-
-  return;
-}
-
-void GRINS::Solver::output_residual_vis( const unsigned int time_step )
-{
-  std::stringstream suffix;
-  suffix << time_step;
-
-  std::string filename = this->_vis_output_file_prefix+"_residual";
-
-  filename+="."+suffix.str();
-
-  // Idea is that this->rhs stashes the residual. Thus, when we swap
-  // with the solution, we should be dumping the residual. Then, we swap
-  // back once we're done outputting.
-
-  // Swap solution with computed residual
-  this->_system->solution->swap( *(this->_system->rhs) );
-  this->_equation_systems->update();
-  
-  this->dump_visualization( filename, time_step );
-  
-  // Now swap back and reupdate
-  this->_system->solution->swap( *(this->_system->rhs) );
-  this->_equation_systems->update();
-
-  return;
-}
-
-
-void GRINS::Solver::output_unsteady_residual_vis( const unsigned int time_step )
-{
-  if( !this->_transient  &&
-      this->_output_unsteady_residual )
-    {
-      std::cerr << "WARNING: Doesn't make sense to output unsteady residual" 
-		<< " for a steady problem. Not producing output."
-		<< std::endl;
-      return;
-    }
-
-  std::stringstream suffix;
-  suffix << time_step;
-
-  std::string filename = this->_vis_output_file_prefix+"_unsteady_residual";
-
-  filename+="."+suffix.str();
-
-  // For the unsteady residual, we just want to evaluate F(u) from
-  // dU/dt = F(u). What we do is swap out the time solver to a
-  // SteadySolver and reassemble the residual. Then, we'll need to swap
-  // the solution and the rhs vector stashed in the system. Once we're done,
-  // we'll reset the time solver pointer back to the original guy.
-  
-  AutoPtr<TimeSolver> prev_time_solver(this->_system->time_solver);
-
-  libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(this->_system) );
-
-  this->_system->time_solver = AutoPtr<TimeSolver>(steady_solver);
-
-  this->_system->assembly( true /*residual*/, false /*jacobian*/ );
-  this->_system->rhs->close();
-
-  // Swap solution with newly computed residual
-  this->_system->solution->swap( *(this->_system->rhs) );
-  // Update equation systems
-  this->_equation_systems->update();
-  
-  this->dump_visualization( filename, time_step );
-  
-  // Now swap back and reupdate
-  this->_system->solution->swap( *(this->_system->rhs) );
-  this->_equation_systems->update();
-
-  this->_system->time_solver = prev_time_solver;
 
   return;
 }

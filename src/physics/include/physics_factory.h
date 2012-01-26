@@ -29,10 +29,10 @@ namespace GRINS
   {
   public:
     
-    PhysicsFactory();
+    PhysicsFactory( const GetPot& input );
 
     //! Destructor does not need to delete AutoPtr's.
-    virtual ~PhysicsFactory( const GetPot& input );
+    virtual ~PhysicsFactory();
     
     //! Builds PhysicsList. This is the primary function of this class.
     /*! Note that the GRINS::PhysicsList uses libMesh AutoPtr's.
@@ -41,8 +41,6 @@ namespace GRINS
     GRINS::PhysicsList build();
 
   protected:
-
-    virtual void read_input_options( const GetPot& input );
 
     //! Figures out which GRINS::Physics pointer to create
     /*! This is the primary method to override if the user wants to extend

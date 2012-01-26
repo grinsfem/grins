@@ -33,14 +33,14 @@ GRINS::Visualization::~Visualization()
   return;
 }
 
-void GRINS::Solver::output()
+void GRINS::Visualization::output()
 {
   this->dump_visualization( this->_vis_output_file_prefix, 0 );
 
   return;
 }
 
-void GRINS::Solver::output( unsigned int time_step )
+void GRINS::Visualization::output( unsigned int time_step )
 {
   std::stringstream suffix;
 
@@ -54,12 +54,20 @@ void GRINS::Solver::output( unsigned int time_step )
   return;
 }
 
-void GRINS::Solver::dump_visualization( const std::string filename_prefix, const int time_step )
+void GRINS::Visualization::output_residual( libMesh::EquationSystems* equation_system,
+					    GRINS::MultiphysicsSystem* system )
+{
+  this->output_residual( equation_system, system, 0);
+  return;
+}
+
+void GRINS::Visualization::dump_visualization( const std::string filename_prefix, 
+					       const int time_step )
 {
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
-      std::cout << " WARNING in GRINS::Solver::dump_visualization :" 
+      std::cout << " WARNING in GRINS::Visualization::dump_visualization :" 
 		<< " using 'unknown' as file prefix since it was not set " 
 		<< std::endl;
     }

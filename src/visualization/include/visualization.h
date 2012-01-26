@@ -31,7 +31,12 @@ namespace GRINS
     void output();
     void output( unsigned int time_step );
 
-    virtual void output_residual( const unsigned int time_step ) =0;
+    void output_residual( libMesh::EquationSystems* equation_system,
+			  GRINS::MultiphysicsSystem* system );
+
+    virtual void output_residual( libMesh::EquationSystems* equation_system,
+				  GRINS::MultiphysicsSystem* system,
+				  const unsigned int time_step ) =0;
 
   protected:
 

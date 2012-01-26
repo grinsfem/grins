@@ -9,21 +9,8 @@
 #include "physics_factory.h"
 
 GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
+  : _num_physics( input.vector_variable_size("Physics/enabled_physics") )
 {
-  this->read_input_options(input);
-  return;
-}
-
-GRINS::PhysicsFactory::~PhysicsFactory()
-{
-  return;
-}
-
-void GRINS::PhysicsFactory::read_input_options( const GetPot& input )
-{
-  // Figure out how many physics we are enabling
-  _num_physics = input.vector_variable_size("Physics/enabled_physics");
-
   if( _num_physics < 1 )
     {
       std::cerr << "Error: Must enable at least one physics model" << std::endl;
@@ -36,6 +23,11 @@ void GRINS::PhysicsFactory::read_input_options( const GetPot& input )
       _requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
     }
 
+  return;
+}
+
+GRINS::PhysicsFactory::~PhysicsFactory()
+{
   return;
 }
 

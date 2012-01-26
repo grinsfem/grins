@@ -42,6 +42,9 @@ namespace GRINS
 
     //! All we need to distinguish between steady and unsteady solver.
     bool _transient;
+
+    const GetPot& _input;
+
   };
 }
 #endif //SOLVER_FACTORY_H
