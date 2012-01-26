@@ -28,7 +28,7 @@
 
 #include "axisym_mushy_zone_solidification.h"
 
-void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( GetPot& input )
+void GRINS::AxisymmetricMushyZoneSolidification::read_input_options( const GetPot& input )
 {
   // Read variable naming info
   /* \todo We should move this naming stuff to a singleton class */

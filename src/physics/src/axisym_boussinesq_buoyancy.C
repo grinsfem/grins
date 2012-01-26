@@ -28,7 +28,7 @@
 
 #include "axisym_boussinesq_buoyancy.h"
 
-void GRINS::AxisymmetricBoussinesqBuoyancy::read_input_options( GetPot& input )
+void GRINS::AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
 {
   this->_T_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymmetricHeatTransfer/FE_family", "LAGRANGE") );

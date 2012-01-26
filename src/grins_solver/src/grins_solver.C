@@ -52,8 +52,8 @@ GRINS::Solver::~Solver()
   return;
 }
 
-void GRINS::Solver::initialize( GetPot& input, 
-				libMesh::EquationSystems* equation_system,
+void GRINS::Solver::initialize( const GetPot& input, 
+				std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 				GRINS::PhysicsList& physics_list )
 {
   // Declare the system and its variables.

@@ -29,9 +29,10 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <memory>
+
 // libMesh
 #include "getpot.h"
-#include "auto_ptr.h"
 
 // GRINS
 #include "physics_factory.h"
@@ -61,13 +62,13 @@ namespace GRINS
 
   private:
 
-    libMesh::AutoPtr<libMesh::Mesh> _mesh;
+    std::tr1::shared_ptr<libMesh::Mesh> _mesh;
 
-    libMesh::AutoPtr<libMesh::EquationSystems> _equation_system;
+    std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
 
-    libMesh::AutoPtr<GRINS::Solver> _solver;
+    std::tr1::shared_ptr<GRINS::Solver> _solver;
 
-    libMesh::AutoPtr<GRINS::Visualization> _vis;
+    std::tr1::shared_ptr<GRINS::Visualization> _vis;
 
     // Screen display options
     bool _print_mesh_info;

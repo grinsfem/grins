@@ -28,14 +28,6 @@
 
 #include "multiphysics_sys.h"
 
-#include "inc_navier_stokes.h"
-#include "axisym_inc_navier_stokes.h"
-#include "heat_transfer.h"
-#include "axisym_heat_transfer.h"
-#include "boussinesq_buoyancy.h"
-#include "axisym_boussinesq_buoyancy.h"
-#include "axisym_mushy_zone_solidification.h"
-
 GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
 					       const std::string& name,
 					       const unsigned int number )
@@ -53,7 +45,7 @@ void GRINS::MultiphysicsSystem::attach_physics_list( PhysicsList physics_list )
   return;
 }
 
-void GRINS::MultiphysicsSystem::read_input_options( GetPot& input )
+void GRINS::MultiphysicsSystem::read_input_options( const GetPot& input )
 {
   // Read options for MultiphysicsSystem first
   this->verify_analytic_jacobians  = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
@@ -186,7 +178,7 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
   return request_jacobian;
 }
 
-GRINS::Physics* GRINS::MultiphysicsSystem::get_physics( const std::string physics_name )
+std::tr1::shared_ptr<GRINS::Physics> GRINS::MultiphysicsSystem::get_physics( const std::string physics_name )
 {
   return _physics_list[physics_name];
 }
@@ -208,16 +200,3 @@ void GRINS::MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_
   return;
 }
 #endif
-
-void GRINS::MultiphysicsSystem::physics_consistency_error( const std::string physics_checked, 
-							   const std::string physics_required )
-{
-  std::cerr << "Error: " << physics_checked << " physics class requires using "
-	    << physics_required << " physics." << std::endl
-	    << physics_required << " not found in list of requested physics."
-	    << std::endl;
-
-  libmesh_error();	   
-
-  return;
-}

@@ -30,9 +30,7 @@
 
 #include <string>
 #include <map>
-
-// libMesh
-#include "auto_ptr.h"
+#include "boost/tr1/memory.hpp"
 
 namespace GRINS
 {
@@ -46,10 +44,10 @@ namespace GRINS
   typedef unsigned int BoundaryID;
 
   //! Container for GRINS::Physics object pointers
-  typedef std::map< std::string,libMesh::AutoPtr<GRINS::Physics> > PhysicsList;
+  typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> > PhysicsList;
 
   //! Iterator for PhysicsList
-  typedef std::map< std::string,libMesh::AutoPtr<GRINS::Physics> >::iterator PhysicsListIter;
+  typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> >::const_iterator PhysicsListIter;
 
 }
 #endif //VAR_TYPEDEFS_H

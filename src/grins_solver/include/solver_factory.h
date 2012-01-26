@@ -35,16 +35,14 @@
 
 //GRINS
 #include "grins_solver.h"
-#include "steady_solver.h"
-#include "unsteady_solver.h"
+#include "grins_steady_solver.h"
+#include "grins_unsteady_solver.h"
 
 namespace GRINS
 {
   //! This object handles constructing the solver to be used.
   /*! To allow the user to easily extend the (limited) available solvers,
-      the solver construction is handled in this object. Note that a
-      libMesh::AutoPtr is returned to transfer ownership away from this class.
-  */
+      the solver construction is handled in this object. */
   class SolverFactory
   {
   public:
@@ -54,9 +52,8 @@ namespace GRINS
 
     //! Builds GRINS::Solver object.
     /*! Users should override this method to construct 
-        their own solvers. Note that a libMesh::AutoPtr is 
-	returned to transfer ownership away from this class. */
-    virtual libMesh::AutoPtr<GRINS::Solver> build();
+        their own solvers. */
+    virtual std::tr1::shared_ptr<GRINS::Solver> build();
 
   protected:
 

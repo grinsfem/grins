@@ -29,8 +29,7 @@
 #include "visualization.h"
 
 GRINS::Visualization::Visualization( const GetPot& input )
-  : _vis_output_file_prefix( input("vis-options/vis_output_file_prefix", "unknown" ) ),
-    _output_residual( input("vis-options/output_residual", false ) )
+  : _vis_output_file_prefix( input("vis-options/vis_output_file_prefix", "unknown" ) )
 {
   unsigned int num_formats = input.vector_variable_size("vis-options/output_format");
 
@@ -53,14 +52,15 @@ GRINS::Visualization::~Visualization()
   return;
 }
 
-void GRINS::Visualization::output()
+void GRINS::Visualization::output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system )
 {
-  this->dump_visualization( this->_vis_output_file_prefix, 0 );
+  this->dump_visualization( equation_system, _vis_output_file_prefix, 0.0 );
 
   return;
 }
 
-void GRINS::Visualization::output( unsigned int time_step )
+void GRINS::Visualization::output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+				   const unsigned int time_step, const Real time )
 {
   std::stringstream suffix;
 
@@ -69,21 +69,24 @@ void GRINS::Visualization::output( unsigned int time_step )
   std::string filename = this->_vis_output_file_prefix;
   filename+="."+suffix.str();
 
-  this->dump_visualization( filename, time_step );
+  this->dump_visualization( equation_system, filename, time );
 
   return;
 }
 
-void GRINS::Visualization::output_residual( libMesh::EquationSystems* equation_system,
+void GRINS::Visualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 					    GRINS::MultiphysicsSystem* system )
 {
-  this->output_residual( equation_system, system, 0);
+  this->output_residual( equation_system, system, 0, 0.0 );
   return;
 }
 
-void GRINS::Visualization::dump_visualization( const std::string filename_prefix, 
-					       const int time_step )
+void GRINS::Visualization::dump_visualization( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+					       const std::string& filename_prefix, 
+					       const Real time )
 {
+  libMesh::MeshBase& mesh = equation_system->get_mesh();
+
   if( this->_vis_output_file_prefix == "unknown" )
     {
       // TODO: Need consisent way to print warning messages.
@@ -101,27 +104,27 @@ void GRINS::Visualization::dump_visualization( const std::string filename_prefix
 	  (*format) == "dat")
 	{
 	  std::string filename = filename_prefix+".dat";
-	  libMesh::TecplotIO(*(this->_mesh),false).write_equation_systems( filename,
-									   *(this->_equation_systems) );
+	  libMesh::TecplotIO(mesh,false).write_equation_systems( filename,
+								 *equation_system );
 	}
       else if ((*format) == "tecplot_binary" ||
 	       (*format) == "plt")
 	{
 	  std::string filename = filename_prefix+".plt";
-	  libMesh::TecplotIO(*(this->_mesh),true).write_equation_systems( filename,
-									  *(this->_equation_systems) );
+	  libMesh::TecplotIO(mesh,true).write_equation_systems( filename,
+								*equation_system );
 	}
       else if ((*format) == "gmv")
 	{
 	  std::string filename = filename_prefix+".gmv";
-	  GMVIO(*(this->_mesh)).write_equation_systems( filename,
-						        *(this->_equation_systems) );
+	  GMVIO(mesh).write_equation_systems( filename,
+					      *equation_system );
 	}
       else if ((*format) == "vtu")
 	{
 	  std::string filename = filename_prefix+".vtu";
-	  VTKIO(*(this->_mesh)).write_equation_systems( filename,
-						        *(this->_equation_systems) );
+	  VTKIO(mesh).write_equation_systems( filename,
+					      *equation_system );
 	}
       else if ((*format) == "ExodusII")
 	{
@@ -130,19 +133,19 @@ void GRINS::Visualization::dump_visualization( const std::string filename_prefix
 	  // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
 	  // it should be the number of timesteps within the file. Here, we are explicitly only doing 
 	  // one timestep per file.
-	  ExodusII_IO(*(this->_mesh)).write_timestep( filename,
-						      *(this->_equation_systems),
-						      1,
-						      this->_system->time );
+	  ExodusII_IO(mesh).write_timestep( filename,
+					    *equation_system,
+					    1,
+					    time );
 	}
       else if ((*format).find("xda") != std::string::npos ||
 	       (*format).find("xdr") != std::string::npos)
 	{
 	  std::string filename = filename_prefix+"."+(*format);
 	  const bool binary = ((*format).find("xdr") != std::string::npos);
-	  (this->_equation_systems)->write( filename,
-					    binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
-					    EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
+	  equation_system->write( filename,
+				  binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
+				  EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
 	}
       else
 	{

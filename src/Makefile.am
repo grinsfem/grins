@@ -121,7 +121,8 @@ grins_version_LDADD = libgrins.la
 #--------------------------------------
 AM_CPPFLAGS = -I$(grins_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir)
 
-AM_CPPFLAGS += $(LIBMESH_INCLUDE) \
+AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
+               $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
 
 AM_LDFLAGS = $(LIBMESH_LIBS) \

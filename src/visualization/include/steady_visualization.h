@@ -40,9 +40,10 @@ namespace GRINS
     SteadyVisualization(const GetPot& input);
     ~SteadyVisualization();
 
-    virtual void output_residual( libMesh::EquationSystems* equation_system,
+    virtual void output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 				  GRINS::MultiphysicsSystem* system,
-				  const unsigned int time_step );
+				  const unsigned int time_step,
+				  const Real time );
 
   protected:
 

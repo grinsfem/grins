@@ -39,16 +39,12 @@ GRINS::SteadyVisualization::~SteadyVisualization()
   return;
 }
 
-void GRINS::SteadyVisualization::output_residual( libMesh::EquationSystems* equation_system,
+void GRINS::SteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 						  GRINS::MultiphysicsSystem* system,
-						  const unsigned int time_step )
+						  const unsigned int,
+						  const Real )
 {
-  std::stringstream suffix;
-  suffix << time_step;
-
   std::string filename = this->_vis_output_file_prefix+"_residual";
-
-  filename+="."+suffix.str();
 
   // Idea is that this->rhs stashes the residual. Thus, when we swap
   // with the solution, we should be dumping the residual. Then, we swap
@@ -58,7 +54,7 @@ void GRINS::SteadyVisualization::output_residual( libMesh::EquationSystems* equa
   system->solution->swap( *(system->rhs) );
   equation_system->update();
   
-  this->dump_visualization( filename, time_step );
+  this->dump_visualization( equation_system, filename, 0.0 );
   
   // Now swap back and reupdate
   system->solution->swap( *(system->rhs) );

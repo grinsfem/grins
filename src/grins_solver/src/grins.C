@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
   GRINS::SolverFactory solver_factory( libMesh_inputfile );
 
   // VisualizationFactory handles the type of visualization for the simulation
-  GRINS::VisualizationFactory vis_factory( );
+  GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
@@ -88,8 +88,6 @@ int main(int argc, char* argv[])
 			   &vis_factory );
 
   grins.run();
-
-  grins.output_vis();
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");

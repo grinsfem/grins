@@ -29,8 +29,9 @@
 #ifndef MESH_BUILDER_H
 #define MESH_BUILDER_H
 
+#include "boost/tr1/memory.hpp"
+
 // libMesh
-#include "auto_ptr.h"
 #include "getpot.h"
 #include "libmesh.h"
 #include "string_to_enum.h"
@@ -46,19 +47,14 @@ namespace GRINS
 
     //! This Object handles building a libMesh::Mesh
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
-        mesh is built; or is read from input from a specified file. Note
-	that a libMesh::AutoPtr is returned so ownership is transferred
-	away from this class.
-     */
+        mesh is built; or is read from input from a specified file. */
     MeshBuilder( const GetPot& input );
     ~MeshBuilder();
 
     void read_input_options( const GetPot& input );
 
     //! Builds the libMesh::Mesh according to input options.
-    /*! Note that a libMesh::AutoPtr is returned so ownership is transferred
-	away from this class.*/
-    libMesh::AutoPtr<libMesh::Mesh> build();
+    std::tr1::shared_ptr<libMesh::Mesh> build();
 
   private:
     

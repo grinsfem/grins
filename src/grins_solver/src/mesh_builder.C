@@ -93,7 +93,7 @@ void GRINS::MeshBuilder::read_input_options( const GetPot& input )
   return;
 }
 
-libMesh::AutoPtr<libMesh::Mesh> GRINS::MeshBuilder::build()
+std::tr1::shared_ptr<libMesh::Mesh> GRINS::MeshBuilder::build()
 {
   // Create Mesh object (defaults to dimension 1).
   libMesh::Mesh* mesh = new libMesh::Mesh();
@@ -176,5 +176,5 @@ libMesh::AutoPtr<libMesh::Mesh> GRINS::MeshBuilder::build()
       libmesh_error();
     }
 
-  return AutoPtr(mesh);
+  return std::tr1::shared_ptr<libMesh::Mesh>(mesh);
 }

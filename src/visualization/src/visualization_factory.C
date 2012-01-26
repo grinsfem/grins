@@ -40,8 +40,7 @@ GRINS::VisualizationFactory::~VisualizationFactory()
   return;
 }
 
-libmesh::AutoPtr<GRINS::Visualization> 
-GRINS::VisualizationFactory::build()
+std::tr1::shared_ptr<GRINS::Visualization> GRINS::VisualizationFactory::build()
 {
   GRINS::Visualization* vis;
 
@@ -50,5 +49,5 @@ GRINS::VisualizationFactory::build()
   else
     vis = new SteadyVisualization( _input );
 
-  return libMesh::AutoPtr<GRINS::Visualization>( vis );
+  return std::tr1::shared_ptr<GRINS::Visualization>( vis );
 }

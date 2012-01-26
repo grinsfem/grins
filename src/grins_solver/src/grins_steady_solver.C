@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "steady_solver.h"
+#include "grins_steady_solver.h"
 
 GRINS::SteadySolver::SteadySolver( const GetPot& input )
   : Solver( input )
@@ -47,16 +47,17 @@ void GRINS::SteadySolver::init_time_solver()
   return;
 }
 
-void GRINS::SteadySolver::solve( GRINS::Visualization* vis,
+void GRINS::SteadySolver::solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+				 std::tr1::shared_ptr<GRINS::Visualization> vis,
 				 bool output_vis, 
 				 bool output_residual )
 {
   // GRVY timers contained in here (if enabled)
   _system->solve();
 
-  if( output_vis ) vis->output();
+  if( output_vis ) vis->output( equation_system );
 
-  if( output_residual ) vis->output_residual();
+  if( output_residual ) vis->output_residual( equation_system, _system );
 
   return;
 }

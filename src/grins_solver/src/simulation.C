@@ -47,7 +47,9 @@ GRINS::Simulation::Simulation( const GetPot& input,
   libMesh::perflog.disable_logging();
   if( this->_print_log_info ) libMesh::perflog.enable_logging();
 
-  _solver->initialize( input, _equation_system, physics_factory->build() );
+  GRINS::PhysicsList physics_list = physics_factory->build();
+
+  _solver->initialize( input, _equation_system, physics_list );
 
   return;
 }
@@ -61,7 +63,7 @@ void GRINS::Simulation::run()
 {
   this->print_sim_info();
   
-  _solver->solve( _vis, _output_vis, _output_residual );
+  _solver->solve( _equation_system, _vis, _output_vis, _output_residual );
 
   return;
 }
@@ -72,7 +74,7 @@ void GRINS::Simulation::print_sim_info()
   if( this->_print_mesh_info ) this->_mesh->print_info();
 
    // Print info if requested
-  if( this->_print_equation_system_info ) this->_equation_systems->print_info();
+  if( this->_print_equation_system_info ) this->_equation_system->print_info();
 
   return;
 }

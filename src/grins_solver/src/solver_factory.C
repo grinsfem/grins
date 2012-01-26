@@ -40,7 +40,7 @@ GRINS::SolverFactory::~SolverFactory()
   return;
 }
 
-libMesh::AutoPtr<GRINS::Solver> build()
+std::tr1::shared_ptr<GRINS::Solver> GRINS::SolverFactory::build()
 {
   GRINS::Solver* solver;
 
@@ -53,5 +53,5 @@ libMesh::AutoPtr<GRINS::Solver> build()
       solver = new GRINS::SteadySolver( _input );
     }
 
-  return libMesh::AutoPtr<GRINS::Solver>(solver);
+  return std::tr1::shared_ptr<GRINS::Solver>(solver);
 }

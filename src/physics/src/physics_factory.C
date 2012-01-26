@@ -28,6 +28,14 @@
 
 #include "physics_factory.h"
 
+const std::string GRINS::PhysicsFactory::_incompressible_navier_stokes = "IncompressibleNavierStokes";
+const std::string GRINS::PhysicsFactory::_axisymmetric_incomp_navier_stokes = "AxisymmetricIncompNavierStokes";
+const std::string GRINS::PhysicsFactory::_heat_transfer = "HeatTransfer";
+const std::string GRINS::PhysicsFactory::_axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
+const std::string GRINS::PhysicsFactory::_boussinesq_buoyancy = "BoussinesqBuoyancy";
+const std::string GRINS::PhysicsFactory::_axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
+const std::string GRINS::PhysicsFactory::_axisymmetric_mushy_zone_solidification = "AxisymmetricMushyZoneSolidification";
+
 GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
   : _num_physics( input.vector_variable_size("Physics/enabled_physics") )
 {
@@ -59,7 +67,7 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build()
        physics != _requested_physics.end();
        physics++ )
     {
-      this->add_physics( physics, physics_list );
+      this->add_physics( *physics, physics_list );
     }
 
   this->check_physics_consistency( physics_list );
@@ -70,38 +78,43 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build()
 void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
 					 GRINS::PhysicsList& physics_list )
 {
+  typedef std::tr1::shared_ptr<GRINS::Physics> PhysicsPtr;
+  typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
+
   if( physics_to_add == _incompressible_navier_stokes )
     {
-      this->physics_list[_incompressible_navier_stokes] = 
-	new GRINS::IncompressibleNavierStokes;
+      physics_list[_incompressible_navier_stokes] = 
+	PhysicsPtr(new GRINS::IncompressibleNavierStokes);
     }
   else if( physics_to_add == _axisymmetric_incomp_navier_stokes )
     {
-      this->physics_list[_axisymmetric_incomp_navier_stokes] = 
-	new GRINS::AxisymmetricIncompNavierStokes;
+      physics_list[_axisymmetric_incomp_navier_stokes] = 
+	PhysicsPtr(new GRINS::AxisymmetricIncompNavierStokes);
     }
   else if( physics_to_add == _heat_transfer )
     {
-      this->physics_list[_heat_transfer] = new GRINS::HeatTransfer;
+      physics_list[_heat_transfer] = 
+	PhysicsPtr(new GRINS::HeatTransfer);
     }
   else if( physics_to_add == _axisymmetric_heat_transfer )
     {
-      this->physics_list[_axisymmetric_heat_transfer] = 
-	new GRINS::AxisymmetricHeatTransfer;
+      physics_list[_axisymmetric_heat_transfer] = 
+	PhysicsPtr(new GRINS::AxisymmetricHeatTransfer);
     }
   else if( physics_to_add == _boussinesq_buoyancy )
     {
-      this->physics_list[_boussinesq_buoyancy] = new GRINS::BoussinesqBuoyancy;
+      physics_list[_boussinesq_buoyancy] = 
+	PhysicsPtr(new GRINS::BoussinesqBuoyancy);
     }
   else if( physics_to_add == _axisymmetric_boussinesq_buoyancy)
     {
-      this->physics_list[_axisymmetric_boussinesq_buoyancy] = 
-	new GRINS::AxisymmetricBoussinesqBuoyancy;
+      physics_list[_axisymmetric_boussinesq_buoyancy] = 
+	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy);
     }
   else if( physics_to_add == _axisymmetric_mushy_zone_solidification )
     {
-      this->physics_list[_axisymmetric_mushy_zone_solidification] =
-	new GRINS::AxisymmetricMushyZoneSolidification;
+      physics_list[_axisymmetric_mushy_zone_solidification] =
+	PhysicsPtr(new GRINS::AxisymmetricMushyZoneSolidification);
     }
   else
     {
@@ -118,20 +131,6 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
        physics != physics_list.end();
        physics++ )
     {
-      // For Axisymmetric Incompressible Navier-Stokes, make sure we
-      // have two-dimensions
-      if( physics->first == _axisymmetric_incomp_navier_stokes )
-	{
-	  if( this->get_mesh().mesh_dimension() != 2 )
-	    {
-	      std::cerr << "Error: Dimension of mesh must be 2 for axisymmetric problems."
-			<< "Dimension = " 
-			<< this->get_mesh().mesh_dimension()
-			<< std::endl;
-	      libmesh_error();
-	    }
-	}
-
       // For HeatTransfer, we need IncompressibleNavierStokes
       if( physics->first == _heat_transfer )
 	{

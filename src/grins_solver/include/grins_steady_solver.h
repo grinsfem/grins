@@ -33,6 +33,10 @@
 #include "grins_solver.h"
 #include "visualization.h"
 
+//libMesh
+#include "auto_ptr.h"
+#include "equation_systems.h"
+
 namespace GRINS
 {
   class SteadySolver : public Solver
@@ -42,7 +46,10 @@ namespace GRINS
     SteadySolver( const GetPot& input );
     virtual ~SteadySolver();
 
-    virtual void solve( GRINS::Visualization* vis = NULL,
+    virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
+			std::tr1::shared_ptr<libMesh::EquationSystems>(),
+			std::tr1::shared_ptr<GRINS::Visualization> vis = 
+			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
 			bool output_residual = false );
 

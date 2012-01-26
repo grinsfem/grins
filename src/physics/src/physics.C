@@ -38,7 +38,7 @@ GRINS::Physics::~Physics()
   return;
 }
 
-void GRINS::Physics::read_input_options( GetPot& input )
+void GRINS::Physics::read_input_options( const GetPot& input )
 {
   return;
 }

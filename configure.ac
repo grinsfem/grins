@@ -90,10 +90,8 @@ dnl AC_CACHE_SAVE
 dnl----------------
 dnl Check for boost
 dnl----------------
-dnl###BOOST_REQUIRE([1.36])
-dnl###BOOST_MATH()
-dnl###BOOST_PROGRAM_OPTIONS()
-dnl AC_CACHE_SAVE
+BOOST_REQUIRE([1.39.0])
+
 
 dnl-------------------------------------
 dnl Check for GNU Linear Programming kit

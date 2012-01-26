@@ -34,14 +34,17 @@
 
 namespace GRINS
 {
-  class UnsteadySolver : public GRINS::Solver
+  class UnsteadySolver : public Solver
   {
   public:
 
     UnsteadySolver( const GetPot& input );
     virtual ~UnsteadySolver();
 
-    virtual void solve( GRINS::Visualization* vis = NULL,
+    virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
+			std::tr1::shared_ptr<libMesh::EquationSystems>(),
+			std::tr1::shared_ptr<GRINS::Visualization> vis = 
+			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
 			bool output_residual = false );
 

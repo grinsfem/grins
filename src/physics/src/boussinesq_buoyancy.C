@@ -28,7 +28,7 @@
 
 #include "boussinesq_buoyancy.h"
 
-void GRINS::BoussinesqBuoyancy::read_input_options( GetPot& input )
+void GRINS::BoussinesqBuoyancy::read_input_options( const GetPot& input )
 {
   this->_V_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );

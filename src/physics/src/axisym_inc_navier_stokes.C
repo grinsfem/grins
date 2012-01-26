@@ -28,7 +28,7 @@
 
 #include "axisym_inc_navier_stokes.h"
 
-void GRINS::AxisymmetricIncompNavierStokes::read_input_options( GetPot& input )
+void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& input )
 {
   // Read FE info
   this->_FE_family =

@@ -37,6 +37,13 @@
 // GRINS stuff
 #include "var_typedefs.h"
 #include "physics.h"
+#include "inc_navier_stokes.h"
+#include "axisym_inc_navier_stokes.h"
+#include "heat_transfer.h"
+#include "axisym_heat_transfer.h"
+#include "boussinesq_buoyancy.h"
+#include "axisym_boussinesq_buoyancy.h"
+#include "axisym_mushy_zone_solidification.h"
 
 namespace GRINS
 {
@@ -51,13 +58,10 @@ namespace GRINS
     
     PhysicsFactory( const GetPot& input );
 
-    //! Destructor does not need to delete AutoPtr's.
+    //! Destructor does not need to delete std::tr1::shared_ptr's.
     virtual ~PhysicsFactory();
     
     //! Builds PhysicsList. This is the primary function of this class.
-    /*! Note that the GRINS::PhysicsList uses libMesh AutoPtr's.
-        These are based on std::auto_ptr which means ownership changes.
-	\todo Look into Boost install of shared_ptr */
     GRINS::PhysicsList build();
 
   protected:
@@ -81,15 +85,15 @@ namespace GRINS
 
     //! Utility function
     void physics_consistency_error( const std::string physics_checked,
-				    const std::string physics_required )
+				    const std::string physics_required );
     
-    static const std::string _incompressible_navier_stokes = "IncompressibleNavierStokes";
-    static const std::string _axisymmetric_incomp_navier_stokes = "AxisymmetricIncompNavierStokes";
-    static const std::string _heat_transfer = "HeatTransfer";
-    static const std::string _axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
-    static const std::string _boussinesq_buoyancy = "BoussinesqBuoyancy";
-    static const std::string _axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
-    static const std::string _axisymmetric_mushy_zone_solidification = "AxisymmetricMushyZoneSolidification";
+    static const std::string _incompressible_navier_stokes;
+    static const std::string _axisymmetric_incomp_navier_stokes;
+    static const std::string _heat_transfer;
+    static const std::string _axisymmetric_heat_transfer;
+    static const std::string _boussinesq_buoyancy;
+    static const std::string _axisymmetric_boussinesq_buoyancy;
+    static const std::string _axisymmetric_mushy_zone_solidification;
 
     int _num_physics;
     std::set<std::string> _requested_physics;

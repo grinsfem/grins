@@ -90,7 +90,7 @@ namespace GRINS
     virtual ~Physics();
 
     //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( GetPot& input );
+    virtual void read_input_options( const GetPot& input );
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;

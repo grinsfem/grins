@@ -86,11 +86,7 @@ namespace GRINS
     ~MultiphysicsSystem();
     
     //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
-    /*! Note that the PhysicsList uses libMesh::AutoPtr for pointers
-        to the physics, so ownership should transfer to this class
-	once the physics list is "attached".
-     */
-    void attach_physics_list( PhysicsList& physics_list );
+    void attach_physics_list( PhysicsList physics_list );
 
     //! Reads input options for this class and all physics that are enabled
     /*!
@@ -98,7 +94,7 @@ namespace GRINS
       enables each of the requested physics in the system. Finally, the input options
       for each of the physics will be read.
      */
-    virtual void read_input_options( GetPot& input );
+    virtual void read_input_options( const GetPot& input );
 
     //! System initialization. Calls each physics implementation of init_variables()
     virtual void init_data();
@@ -129,7 +125,7 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
-    GRINS::Physics* get_physics( const std::string physics_name );
+    std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
 #ifdef USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

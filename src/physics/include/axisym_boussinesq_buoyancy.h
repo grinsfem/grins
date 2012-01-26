@@ -72,7 +72,7 @@ namespace GRINS
     {};
 
     //! Read options from GetPot input file.
-    virtual void read_input_options( GetPot& input );
+    virtual void read_input_options( const GetPot& input );
 
     //! Initialization of AxisymmetricBoussinesqBuoyancy variables
     virtual void init_variables( libMesh::FEMSystem* system );

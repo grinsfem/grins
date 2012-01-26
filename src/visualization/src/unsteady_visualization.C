@@ -18,9 +18,10 @@ GRINS::UnsteadyVisualization::~UnsteadyVisualization()
   return;
 }
 
-void GRINS::UnsteadyVisualization::output_residual( libMesh::EquationSystems* equation_system,
+void GRINS::UnsteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 						    GRINS::MultiphysicsSystem* system,
-						    const unsigned int time_step )
+						    const unsigned int time_step,
+						    const Real time )
 {
   std::stringstream suffix;
   suffix << time_step;
@@ -35,27 +36,27 @@ void GRINS::UnsteadyVisualization::output_residual( libMesh::EquationSystems* eq
   // the solution and the rhs vector stashed in the system. Once we're done,
   // we'll reset the time solver pointer back to the original guy.
   
-  AutoPtr<TimeSolver> prev_time_solver(this->_system->time_solver);
+  libMesh::AutoPtr<TimeSolver> prev_time_solver(system->time_solver);
 
-  libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(this->_system) );
+  libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
 
-  this->_system->time_solver = AutoPtr<TimeSolver>(steady_solver);
+  system->time_solver = AutoPtr<TimeSolver>(steady_solver);
 
-  this->_system->assembly( true /*residual*/, false /*jacobian*/ );
-  this->_system->rhs->close();
+  system->assembly( true /*residual*/, false /*jacobian*/ );
+  system->rhs->close();
 
   // Swap solution with newly computed residual
-  this->_system->solution->swap( *(this->_system->rhs) );
+  system->solution->swap( *(system->rhs) );
   // Update equation systems
-  this->_equation_systems->update();
+  equation_system->update();
   
-  this->dump_visualization( filename, time_step );
+  this->dump_visualization( equation_system, filename, time );
   
   // Now swap back and reupdate
-  this->_system->solution->swap( *(this->_system->rhs) );
-  this->_equation_systems->update();
+  system->solution->swap( *(system->rhs) );
+  equation_system->update();
 
-  this->_system->time_solver = prev_time_solver;
+  system->time_solver = prev_time_solver;
 
   return;
 }

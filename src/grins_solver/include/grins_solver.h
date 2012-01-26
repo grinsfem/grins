@@ -29,6 +29,8 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
+#include "boost/tr1/memory.hpp"
+
 // GRINS
 #include "config.h"
 #include "multiphysics_sys.h"
@@ -54,15 +56,16 @@ namespace GRINS
   {
   public:
     Solver( const GetPot& input );
-    ~Solver();
+    virtual ~Solver();
 
-    virtual void read_input_options( const GetPot& input );
-
-    void initialize( GetPot& input, 
-		     libMesh::EquationSystems* equation_system,
+    void initialize( const GetPot& input, 
+		     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 		     GRINS::PhysicsList& physics_list );
     
-    virtual void solve( GRINS::Visualization* vis = NULL,
+    virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
+			std::tr1::shared_ptr<libMesh::EquationSystems>(),
+			std::tr1::shared_ptr<GRINS::Visualization> vis = 
+			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
 			bool output_residual = false )=0;
 
@@ -73,7 +76,7 @@ namespace GRINS
 #endif
 
   protected:
-    
+
     GRINS::MultiphysicsSystem* _system;
 
     // Linear/Nonlinear solver options

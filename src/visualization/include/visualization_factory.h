@@ -8,9 +8,10 @@
 #ifndef GRINS_VISUALIZATION_FACTORY_H
 #define GRINS_VISUALIZATION_FACTORY_H
 
+#include <memory>
+
 // libMesh
 #include "getpot.h"
-#include "auto_ptr.h"
 
 // GRINS
 #include "visualization.h"
@@ -26,7 +27,7 @@ namespace GRINS
     VisualizationFactory( const GetPot& input );
     ~VisualizationFactory();
 
-    virtual libmesh::AutoPtr<GRINS::Visualization> build();
+    virtual std::tr1::shared_ptr<GRINS::Visualization> build();
 
   protected:
 
