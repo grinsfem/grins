@@ -45,6 +45,7 @@
 #include "equation_systems.h"
 #include "euler_solver.h"
 #include "steady_solver.h"
+#include "boundary_conditions.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -71,6 +72,16 @@ namespace GRINS
 
     virtual void init_time_solver()=0;
     
+    void attach_dirichlet_bound_func( const std::string& physics_name, 
+				      const GRINS::BoundaryID bc_id, 
+				      const GRINS::VariableIndex var,
+				      GRINS::DirichletFuncObj* bound_func );
+
+    void attach_neumann_bound_func( const std::string& physics_name, 
+				    const GRINS::BoundaryID bc_id, 
+				    const GRINS::VariableIndex var,
+				    GRINS::NeumannFuncObj* bound_func );
+
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif

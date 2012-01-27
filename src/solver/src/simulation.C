@@ -78,3 +78,34 @@ void GRINS::Simulation::print_sim_info()
 
   return;
 }
+
+std::tr1::shared_ptr<libMesh::EquationSystems> GRINS::Simulation::get_equation_system()
+{
+  return _equation_system;
+}
+
+void GRINS::Simulation::attach_dirichlet_bound_func( const std::string& physics_name, 
+						     const GRINS::BoundaryID bc_id, 
+						     const GRINS::VariableIndex var,
+						     GRINS::DirichletFuncObj* bound_func )
+{
+  _solver->attach_dirichlet_bound_func( physics_name, bc_id, var, bound_func );
+  return;
+}
+
+void GRINS::Simulation::attach_neumann_bound_func( const std::string& physics_name, 
+						   const GRINS::BoundaryID bc_id, 
+						   const GRINS::VariableIndex var,
+						   GRINS::NeumannFuncObj* bound_func )
+{
+  _solver->attach_dirichlet_bound_func( physics_name, bc_id, var, bound_func );
+  return;
+}
+
+#ifdef USE_GRVY_TIMERS
+void GRINS::Simulation::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+{
+  _solver->attach_grvy_timer( grvy_timer );
+  return;
+}
+#endif

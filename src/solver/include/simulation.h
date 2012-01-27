@@ -29,7 +29,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include <memory>
+#include "boost/tr1/memory.hpp"
 
 // libMesh
 #include "getpot.h"
@@ -41,6 +41,12 @@
 #include "grins_solver.h"
 #include "visualization_factory.h"
 #include "visualization.h"
+#include "boundary_conditions.h"
+
+// GRVY
+#ifdef HAVE_GRVY
+#include "grvy.h"
+#endif
 
 namespace GRINS
 {
@@ -59,6 +65,23 @@ namespace GRINS
     void run();
 
     void print_sim_info();
+
+    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();
+
+    void attach_dirichlet_bound_func( const std::string& physics_name, 
+				      const GRINS::BoundaryID bc_id, 
+				      const GRINS::VariableIndex var,
+				      GRINS::DirichletFuncObj* bound_func );
+
+    void attach_neumann_bound_func( const std::string& physics_name, 
+				    const GRINS::BoundaryID bc_id, 
+				    const GRINS::VariableIndex var,
+				    GRINS::NeumannFuncObj* bound_func );
+				      
+
+#ifdef USE_GRVY_TIMERS
+    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
+#endif
 
   private:
 

@@ -93,6 +93,26 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
+void GRINS::Solver::attach_dirichlet_bound_func( const std::string& physics_name, 
+						 const GRINS::BoundaryID bc_id, 
+						 const GRINS::VariableIndex var,
+						 GRINS::DirichletFuncObj* bound_func )
+{
+  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( physics_name );
+  physics->attach_dirichlet_bound_func( bc_id, var, bound_func );
+  return;
+}
+
+void GRINS::Solver::attach_neumann_bound_func( const std::string& physics_name, 
+					       const GRINS::BoundaryID bc_id, 
+					       const GRINS::VariableIndex var,
+					       GRINS::NeumannFuncObj* bound_func )
+{
+  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( physics_name );
+  physics->attach_neumann_bound_func( bc_id, var, bound_func );
+  return;
+}
+
 #ifdef USE_GRVY_TIMERS
 void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {

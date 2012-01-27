@@ -7,13 +7,15 @@ check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/grins_solver/include \
+AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
               -I$(top_srcdir)/src/boundary_conditions/include \
-              -I$(top_srcdir)/src/funcs/include
+              -I$(top_srcdir)/src/utilities/include \
+              -I$(top_srcdir)/src/visualization/include
 
-AM_CPPFLAGS += $(LIBMESH_CXXFLAGS) \
-                $(GRVY_CFLAGS)
+AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
+               $(LIBMESH_CXXFLAGS) \
+               $(GRVY_CFLAGS)
 
 AM_LDFLAGS = $(LIBMESH_LIBS) \
              $(GRVY_LIBS) \

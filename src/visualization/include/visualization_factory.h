@@ -8,7 +8,7 @@
 #ifndef GRINS_VISUALIZATION_FACTORY_H
 #define GRINS_VISUALIZATION_FACTORY_H
 
-#include <memory>
+#include "boost/tr1/memory.hpp"
 
 // libMesh
 #include "getpot.h"

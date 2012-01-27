@@ -30,14 +30,18 @@
 
 #include <iostream>
 
-// GRINS stuff
-#include "grins_mesh_manager.h"
-#include "grins_solver.h"
-
-// System types that we might want to instantiate
+// GRINS
+#include "mesh_builder.h"
+#include "simulation.h"
 #include "multiphysics_sys.h"
 
+//libMesh
 #include "exact_solution.h"
+
+// GRVY
+#ifdef HAVE_GRVY
+#include "grvy.h"
+#endif
 
 Number exact_solution( const Point& p,
 		       const Parameters& params,   // parameters, not needed
@@ -52,6 +56,11 @@ Gradient exact_derivative( const Point& p,
 int main(int argc, char* argv[]) 
 {
 
+#ifdef USE_GRVY_TIMERS
+  GRVY::GRVY_Timer_Class grvy_timer;
+  grvy_timer.Init("GRINS Timer");
+#endif
+
   // Check command line count.
   if( argc < 2 )
     {
@@ -60,46 +69,54 @@ int main(int argc, char* argv[])
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
+  // libMesh input file should be first argument
+  std::string libMesh_input_filename = argv[1];
+  
+  // Create our GetPot object.
+  GetPot libMesh_inputfile( libMesh_input_filename );
+
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.BeginTimer("Initialize Solver");
+#endif
+
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
+ 
+  // MeshBuilder for handling mesh construction
+  GRINS::MeshBuilder mesh_builder( libMesh_inputfile );
+
+  // PhysicsFactory handles which GRINS::Physics objects to create
+  GRINS::PhysicsFactory physics_factory( libMesh_inputfile );
+
+  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
+  GRINS::SolverFactory solver_factory( libMesh_inputfile );
+
+  // VisualizationFactory handles the type of visualization for the simulation
+  GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
+
+  GRINS::Simulation grins( libMesh_inputfile,
+			   &physics_factory,
+			   &mesh_builder,
+			   &solver_factory,
+			   &vis_factory );
+
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.EndTimer("Initialize Solver");
+
+  // Attach GRVY timer to solver
+  grins.attach_grvy_timer( &grvy_timer );
+#endif
+
+  grins.run();
   
-  // Create mesh manager object.
-  GRINS::MeshManager meshmanager;
-  
-  // Create solver object.
-  GRINS::Solver<GRINS::MultiphysicsSystem> solver;
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.Finalize();
+#endif
 
-  { // Artificial block to destroy objects associated with reading the input once we've read it in.
-
-    // libMesh input file should be first argument
-    std::string libMesh_input_filename = argv[1];
-    
-    // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
-    GetPot libMesh_inputfile( libMesh_input_filename );
-    
-    // Read solver options
-    solver.read_input_options( libMesh_inputfile );
-
-    // Read mesh options
-    meshmanager.read_input_options( libMesh_inputfile );
-
-    // Setup and initialize system so system can read it's relavent options
-    meshmanager.build_mesh();
-    solver.set_mesh( meshmanager.get_mesh() );
-    solver.initialize_system( "GRINS", libMesh_inputfile );
-
-  } //Should be done reading input, so we kill the GetPot object.
-
-  // Do solve here
-  solver.solve();
-
-  // Get equation systems to create ExactSolution object
-  GRINS::MultiphysicsSystem* system = solver.get_system();
-
-  EquationSystems & es = system->get_equation_systems ();
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(es);
+  ExactSolution exact_sol(*es);
 
   exact_sol.attach_exact_value(&exact_solution);
   exact_sol.attach_exact_deriv(&exact_derivative);

@@ -30,15 +30,16 @@
 
 #include <iostream>
 
-// GRINS stuff
+// GRINS
 #include "mesh_builder.h"
 #include "simulation.h"
 
+// GRVY
 #ifdef HAVE_GRVY
-// GRVY includes
 #include "grvy.h"
 #endif
 
+// libMesh
 #include "parallel.h"
 
 int main(int argc, char* argv[])
@@ -87,14 +88,14 @@ int main(int argc, char* argv[])
 			   &solver_factory,
 			   &vis_factory );
 
-  grins.run();
-
 #ifdef USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
 
   // Attach GRVY timer to solver
-  solver.attach_grvy_timer( &grvy_timer );
+  grins.attach_grvy_timer( &grvy_timer );
 #endif
+
+grins.run();
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();
