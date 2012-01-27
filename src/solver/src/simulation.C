@@ -98,7 +98,7 @@ void GRINS::Simulation::attach_neumann_bound_func( const std::string& physics_na
 						   const GRINS::VariableIndex var,
 						   GRINS::NeumannFuncObj* bound_func )
 {
-  _solver->attach_dirichlet_bound_func( physics_name, bc_id, var, bound_func );
+  _solver->attach_neumann_bound_func( physics_name, bc_id, var, bound_func );
   return;
 }
 
