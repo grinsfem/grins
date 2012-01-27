@@ -39,7 +39,7 @@ echo libMesh INCLUDE............... : $LIBMESH_INCLUDE
 #echo HDF5.......................... : $HDF5_PREFIX
 #echo GSL........................... : $GSL_PREFIX
 #echo GLPK.......................... : $GLPK_PREFIX
-#echo Boost......................... : $BOOST_ROOT
+echo Boost......................... : $BOOST_ROOT
 
 # masa optional check:
 echo
