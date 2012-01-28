@@ -30,15 +30,19 @@
 
 #include <iostream>
 
-// GRINS stuff
-#include "grins_mesh_manager.h"
-#include "grins_solver.h"
-
-// System types that we might want to instantiate
+// GRINS
+#include "mesh_builder.h"
+#include "simulation.h"
 #include "multiphysics_sys.h"
 #include "concentric_cylinder_profile.h"
 
+//libMesh
 #include "exact_solution.h"
+
+// GRVY
+#ifdef HAVE_GRVY
+#include "grvy.h"
+#endif
 
 Number exact_solution( const Point& p,
 		       const Parameters&,   // parameters, not needed
@@ -52,6 +56,10 @@ Gradient exact_derivative( const Point& p,
 
 int main(int argc, char* argv[]) 
 {
+#ifdef USE_GRVY_TIMERS
+  GRVY::GRVY_Timer_Class grvy_timer;
+  grvy_timer.Init("GRINS Timer");
+#endif
 
   // Check command line count.
   if( argc < 2 )
@@ -61,60 +69,59 @@ int main(int argc, char* argv[])
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
+  // libMesh input file should be first argument
+  std::string libMesh_input_filename = argv[1];
+  
+  // Create our GetPot object.
+  GetPot libMesh_inputfile( libMesh_input_filename );
+
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.BeginTimer("Initialize Solver");
+#endif
+
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
-  
-  // Create mesh manager object.
-  GRINS::MeshManager meshmanager;
-  
-  // Create solver object.
-  GRINS::Solver<GRINS::MultiphysicsSystem> solver;
+ 
+  // MeshBuilder for handling mesh construction
+  GRINS::MeshBuilder mesh_builder( libMesh_inputfile );
 
-  // Cache the u-velocity variable index for later use
-  GRINS::VariableIndex z_var;
+  // PhysicsFactory handles which GRINS::Physics objects to create
+  GRINS::PhysicsFactory physics_factory( libMesh_inputfile );
 
-  { // Artificial block to destroy objects associated with reading the input once we've read it in.
+  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
+  GRINS::SolverFactory solver_factory( libMesh_inputfile );
 
-    // libMesh input file should be first argument
-    std::string libMesh_input_filename = argv[1];
-    
-    // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
-    GetPot libMesh_inputfile( libMesh_input_filename );
-    
-    // Read solver options
-    solver.read_input_options( libMesh_inputfile );
+  // VisualizationFactory handles the type of visualization for the simulation
+  GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-    // Read mesh options
-    meshmanager.read_input_options( libMesh_inputfile );
+  GRINS::Simulation grins( libMesh_inputfile,
+			   &physics_factory,
+			   &mesh_builder,
+			   &solver_factory,
+			   &vis_factory );
 
-    // Setup and initialize system so system can read it's relavent options
-    meshmanager.build_mesh();
-    solver.set_mesh( meshmanager.get_mesh() );
-    solver.initialize_system( "GRINS", libMesh_inputfile );
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.EndTimer("Initialize Solver");
 
-    std::string z_var_name = libMesh_inputfile("Physics/VariableNames/z_velocity", GRINS::u_z_var_name_default );
-    GRINS::MultiphysicsSystem* system = solver.get_system();
-    z_var = system->variable_number(z_var_name);
+  // Attach GRVY timer to solver
+  grins.attach_grvy_timer( &grvy_timer );
+#endif
 
-  } //Should be done reading input, so we kill the GetPot object.
+  // Do solve here
+  grins.run();
 
-  GRINS::MultiphysicsSystem* system = solver.get_system();
-
-  GRINS::Physics* ns_physics = system->get_physics("AxisymmetricIncompNavierStokes");
+  // Get equation systems to create ExactSolution object
+  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
+  const libMesh::System& system = es->get_system("GRINS");
+  GRINS::VariableIndex z_var = system.variable_number("z_vel");
 
   GRINS::ConcentricCylinderProfile inflow(z_var);
 
-  ns_physics->attach_dirichlet_bound_func( 0, z_var, &inflow );
-  ns_physics->attach_dirichlet_bound_func( 2, z_var, &inflow );
-
-  // Do solve here
-  solver.solve();
-
-  // Get equation systems to create ExactSolution object
-  EquationSystems & es = system->get_equation_systems ();
+  grins.attach_dirichlet_bound_func( "AxisymmetricIncompNavierStokes", 0, z_var, &inflow );
+  grins.attach_dirichlet_bound_func( "AxisymmetricIncompNavierStokes", 2, z_var, &inflow );
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(es);
+  ExactSolution exact_sol(*es);
 
   exact_sol.attach_exact_value(&exact_solution);
   exact_sol.attach_exact_deriv(&exact_derivative);

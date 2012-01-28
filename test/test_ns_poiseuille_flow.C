@@ -108,9 +108,6 @@ int main(int argc, char* argv[])
   grins.attach_grvy_timer( &grvy_timer );
 #endif
 
-  // Do solve here
-  grins.run();
-
   // Get equation systems to create ExactSolution object
   std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
   const libMesh::System& system = es->get_system("GRINS");
@@ -120,6 +117,10 @@ int main(int argc, char* argv[])
 
   grins.attach_dirichlet_bound_func( "IncompressibleNavierStokes", 3, u_var, &inflow );
   grins.attach_dirichlet_bound_func( "IncompressibleNavierStokes", 1, u_var, &inflow );
+
+  // Solve
+  grins.run();
+
 
   // Create Exact solution object and attach exact solution quantities
   ExactSolution exact_sol(*es);

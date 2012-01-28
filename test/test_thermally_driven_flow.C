@@ -30,17 +30,25 @@
 
 #include <iostream>
 
-// GRINS stuff
-#include "grins_mesh_manager.h"
-#include "grins_solver.h"
-
-// System types that we might want to instantiate
+// GRINS
+#include "mesh_builder.h"
+#include "simulation.h"
 #include "multiphysics_sys.h"
 
+//libMesh
 #include "exact_solution.h"
+
+// GRVY
+#ifdef HAVE_GRVY
+#include "grvy.h"
+#endif
 
 int main(int argc, char* argv[]) 
 {
+#ifdef USE_GRVY_TIMERS
+  GRVY::GRVY_Timer_Class grvy_timer;
+  grvy_timer.Init("GRINS Timer");
+#endif
 
   // Check command line count.
   if( argc < 2 )
@@ -50,54 +58,57 @@ int main(int argc, char* argv[])
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
+  // libMesh input file should be first argument
+  std::string libMesh_input_filename = argv[1];
+  
+  // Create our GetPot object.
+  GetPot libMesh_inputfile( libMesh_input_filename );
+
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.BeginTimer("Initialize Solver");
+#endif
+
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
-  
-  // Create mesh manager object.
-  GRINS::MeshManager meshmanager;
-  
-  // Create solver object.
-  GRINS::Solver<GRINS::MultiphysicsSystem> solver;
+ 
+  // MeshBuilder for handling mesh construction
+  GRINS::MeshBuilder mesh_builder( libMesh_inputfile );
 
-  // Filename of file where comparison solution is stashed
-  std::string solution_file;
+  // PhysicsFactory handles which GRINS::Physics objects to create
+  GRINS::PhysicsFactory physics_factory( libMesh_inputfile );
 
-  { // Artificial block to destroy objects associated with reading the input once we've read it in.
+  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
+  GRINS::SolverFactory solver_factory( libMesh_inputfile );
 
-    // libMesh input file should be first argument
-    std::string libMesh_input_filename = argv[1];
-    
-    // Create our GetPot object. TODO: Finalize decision of GRVY vs. GetPot input.
-    GetPot libMesh_inputfile( libMesh_input_filename );
-    
-    // Read solver options
-    solver.read_input_options( libMesh_inputfile );
+  // VisualizationFactory handles the type of visualization for the simulation
+  GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-    // Read mesh options
-    meshmanager.read_input_options( libMesh_inputfile );
+  GRINS::Simulation grins( libMesh_inputfile,
+			   &physics_factory,
+			   &mesh_builder,
+			   &solver_factory,
+			   &vis_factory );
 
-    // Setup and initialize system so system can read it's relavent options
-    meshmanager.build_mesh();
-    solver.set_mesh( meshmanager.get_mesh() );
-    solver.initialize_system( "GRINS", libMesh_inputfile );
+#ifdef USE_GRVY_TIMERS
+  grvy_timer.EndTimer("Initialize Solver");
 
-    solution_file = libMesh_inputfile( "ExactSolution/solution_file", "DIE!" );
-
-  } //Should be done reading input, so we kill the GetPot object.
+  // Attach GRVY timer to solver
+  grins.attach_grvy_timer( &grvy_timer );
+#endif
 
   // Do solve here
-  solver.solve();
+  grins.run();
 
   // Get equation systems to create ExactSolution object
-  GRINS::MultiphysicsSystem* system = solver.get_system();
-
-  EquationSystems & es = system->get_equation_systems ();
+  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(es);
+  ExactSolution exact_sol(*es);
   
-  EquationSystems es_ref( *meshmanager.get_mesh() );
+  EquationSystems es_ref( es->get_mesh() );
 
+  // Filename of file where comparison solution is stashed
+  std::string solution_file = libMesh_inputfile( "ExactSolution/solution_file", "DIE!" );
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );
@@ -106,7 +117,7 @@ int main(int argc, char* argv[])
   exact_sol.compute_error("GRINS", "u");
   exact_sol.compute_error("GRINS", "v");
 
-  if( (meshmanager.get_mesh())->mesh_dimension() == 3 )
+  if( (es->get_mesh()).mesh_dimension() == 3 )
     exact_sol.compute_error("GRINS", "w");
 
   exact_sol.compute_error("GRINS", "p");
@@ -127,7 +138,7 @@ int main(int argc, char* argv[])
   double w_l2error = 0.0, 
          w_h1error = 0.0;
 
-  if( (meshmanager.get_mesh())->mesh_dimension() == 3 )
+  if( (es->get_mesh()).mesh_dimension() == 3 )
     {
       w_l2error = exact_sol.l2_error("GRINS", "w");
       w_h1error = exact_sol.h1_error("GRINS", "w");
