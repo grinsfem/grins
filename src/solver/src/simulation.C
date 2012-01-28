@@ -40,8 +40,8 @@ GRINS::Simulation::Simulation( const GetPot& input,
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
      _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
-     _output_vis( input("", false ) ),
-     _output_residual( input( "", false ) )
+     _output_vis( input("vis-options/output_vis", false ) ),
+     _output_residual( input( "vis-options/output_residual", false ) )
 {
   // Only print libMesh logging info if the user requests it
   libMesh::perflog.disable_logging();
