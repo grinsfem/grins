@@ -43,7 +43,6 @@
 #include "axisym_heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
-#include "axisym_mushy_zone_solidification.h"
 
 namespace GRINS
 {
@@ -93,7 +92,6 @@ namespace GRINS
     static const std::string _axisymmetric_heat_transfer;
     static const std::string _boussinesq_buoyancy;
     static const std::string _axisymmetric_boussinesq_buoyancy;
-    static const std::string _axisymmetric_mushy_zone_solidification;
 
     int _num_physics;
     std::set<std::string> _requested_physics;

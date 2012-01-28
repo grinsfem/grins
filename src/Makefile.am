@@ -44,7 +44,6 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_heat_transfer.C \
                $(physics_srcdir)/boussinesq_buoyancy.C \
                $(physics_srcdir)/axisym_boussinesq_buoyancy.C \
-               $(physics_srcdir)/axisym_mushy_zone_solidification.C \
                $(physics_srcdir)/physics_factory.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
@@ -80,7 +79,6 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/axisym_heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h \
                $(physics_incdir)/axisym_boussinesq_buoyancy.h \
-               $(physics_incdir)/axisym_mushy_zone_solidification.h \
                $(physics_incdir)/physics_factory.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \

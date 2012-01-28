@@ -34,7 +34,6 @@ const std::string GRINS::PhysicsFactory::_heat_transfer = "HeatTransfer";
 const std::string GRINS::PhysicsFactory::_axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
 const std::string GRINS::PhysicsFactory::_boussinesq_buoyancy = "BoussinesqBuoyancy";
 const std::string GRINS::PhysicsFactory::_axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
-const std::string GRINS::PhysicsFactory::_axisymmetric_mushy_zone_solidification = "AxisymmetricMushyZoneSolidification";
 
 GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
   : _num_physics( input.vector_variable_size("Physics/enabled_physics") )
@@ -111,11 +110,6 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
       physics_list[_axisymmetric_boussinesq_buoyancy] = 
 	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy);
     }
-  else if( physics_to_add == _axisymmetric_mushy_zone_solidification )
-    {
-      physics_list[_axisymmetric_mushy_zone_solidification] =
-	PhysicsPtr(new GRINS::AxisymmetricMushyZoneSolidification);
-    }
   else
     {
       std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
@@ -127,6 +121,8 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
 
 void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList& physics_list )
 {
+  /*! \todo Need to move the internals of the loop to a separate function that we'll make virtual
+            and make this function non-virtual */
   for( GRINS::PhysicsListIter physics = physics_list.begin();
        physics != physics_list.end();
        physics++ )
@@ -177,23 +173,6 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 	  if( physics_list.find(_axisymmetric_heat_transfer) == physics_list.end() )
 	    {
 	      this->physics_consistency_error( _axisymmetric_boussinesq_buoyancy, 
-					       _axisymmetric_heat_transfer  );
-	    }
-	}
-
-      /* For AxisymmetricMushyZoneSolidification, we need both AxisymmetricHeatTransfer 
-	 and AxisymmetricIncompNavierStokes */
-      if( physics->first == _axisymmetric_mushy_zone_solidification )
-	{
-	  if( physics_list.find(_axisymmetric_incomp_navier_stokes) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( _axisymmetric_mushy_zone_solidification, 
-					       _axisymmetric_incomp_navier_stokes );
-	    }
-
-	  if( physics_list.find(_axisymmetric_heat_transfer) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( _axisymmetric_mushy_zone_solidification, 
 					       _axisymmetric_heat_transfer  );
 	    }
 	}
