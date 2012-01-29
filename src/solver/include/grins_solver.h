@@ -59,9 +59,9 @@ namespace GRINS
     Solver( const GetPot& input );
     virtual ~Solver();
 
-    void initialize( const GetPot& input, 
-		     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-		     GRINS::PhysicsList& physics_list );
+    virtual void initialize( const GetPot& input, 
+			     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+			     GRINS::PhysicsList& physics_list );
     
     virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
