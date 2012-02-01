@@ -63,7 +63,12 @@ void GRINS::MultiphysicsSystem::read_input_options( const GetPot& input )
 
 void GRINS::MultiphysicsSystem::init_data()
 {
-  // First, initalize all the variables. We pass this pointer for the system.
+  // Need this to be true because of our overloading of the
+  // mass_residual function.
+  // This is data in FEMSystem. MUST be set before FEMSystem::init_data.
+  use_fixed_solution = true;
+
+  // Initalize all the variables. We pass this pointer for the system.
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
