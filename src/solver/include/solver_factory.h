@@ -30,7 +30,6 @@
 #define SOLVER_FACTORY_H
 
 //libMesh
-#include "auto_ptr.h"
 #include "getpot.h"
 
 //GRINS

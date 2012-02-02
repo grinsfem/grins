@@ -169,7 +169,7 @@ namespace GRINS
     /*! The user may wish to set a different function for each variable in the physics class.
         For Neumann boundary conditions, the user may want to set more than 1 function per
 	variable, so we use an std::multimap */
-    std::map< GRINS::BoundaryID,std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* > > _neumann_bound_funcs;
+    std::map< GRINS::BoundaryID,std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* > > _neumann_bound_funcs;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

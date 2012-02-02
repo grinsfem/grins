@@ -59,7 +59,7 @@ void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id,
 void GRINS::Physics::attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
 						GRINS::NeumannFuncObj* bound_func )
 {
-  _neumann_bound_funcs[bc_id].insert( std::pair<GRINS::VariableIndex,GRINS::NeumannFuncObj*>( var, bound_func ) );
+  _neumann_bound_funcs[bc_id][var] = bound_func;
 
   return;
 }

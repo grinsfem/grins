@@ -348,18 +348,11 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
 	  // General heat flux from user specified function
 	case GRINS::GENERAL_HEAT_FLUX:
 	  {
-	    std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >& bc_map = _neumann_bound_funcs[boundary_id];
-	    /* Because we work with a multimap for Neumann conditions, we must loop over all the functions
-	       associated with this boundary and this variable */
-	    std::pair< std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator,
-		       std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator > map_it = bc_map.equal_range( _T_var );
-
-	    for( std::multimap< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator T_it = map_it.first;
-		 T_it != map_it.second;
-		 T_it++ )
-	      {
-		_bound_conds.apply_neumann( context, request_jacobian, _T_var, T_it->second );
-	      } // End loop over all functions
+	    std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* >& bc_map = _neumann_bound_funcs[boundary_id];
+	    
+	    std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator T_it = bc_map.find( _T_var );
+	    
+	    _bound_conds.apply_neumann( context, request_jacobian, _T_var, T_it->second );
 	  }
 	  break;
 	default:
@@ -379,8 +372,8 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
 }
 
 bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
-							 libMesh::DiffContext& context,
-							 libMesh::FEMSystem* system )
+					   libMesh::DiffContext& context,
+					   libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
   this->_timer->BeginTimer("HeatTransfer::side_constraint");
