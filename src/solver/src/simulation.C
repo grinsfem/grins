@@ -32,7 +32,8 @@ GRINS::Simulation::Simulation( const GetPot& input,
 			       GRINS::PhysicsFactory* physics_factory,
 			       GRINS::MeshBuilder* mesh_builder,
 			       GRINS::SolverFactory* solver_factory,
-			       GRINS::VisualizationFactory* vis_factory )
+			       GRINS::VisualizationFactory* vis_factory,
+			       GRINS::BoundaryConditionsFactory* bc_factory )
   :  _mesh( mesh_builder->build() ),
      _equation_system( new libMesh::EquationSystems( *_mesh ) ),
      _solver( solver_factory->build() ),
@@ -50,6 +51,10 @@ GRINS::Simulation::Simulation( const GetPot& input,
   GRINS::PhysicsList physics_list = physics_factory->build();
 
   _solver->initialize( input, _equation_system, physics_list );
+
+  if( bc_factory )
+    _solver->attach_bc_func_objs( bc_factory->build_dirichlet( *_equation_system ),
+				  bc_factory->build_neumann( *_equation_system ) );
 
   return;
 }
@@ -82,24 +87,6 @@ void GRINS::Simulation::print_sim_info()
 std::tr1::shared_ptr<libMesh::EquationSystems> GRINS::Simulation::get_equation_system()
 {
   return _equation_system;
-}
-
-void GRINS::Simulation::attach_dirichlet_bound_func( const std::string& physics_name, 
-						     const GRINS::BoundaryID bc_id, 
-						     const GRINS::VariableIndex var,
-						     GRINS::DirichletFuncObj* bound_func )
-{
-  _solver->attach_dirichlet_bound_func( physics_name, bc_id, var, bound_func );
-  return;
-}
-
-void GRINS::Simulation::attach_neumann_bound_func( const std::string& physics_name, 
-						   const GRINS::BoundaryID bc_id, 
-						   const GRINS::VariableIndex var,
-						   GRINS::NeumannFuncObj* bound_func )
-{
-  _solver->attach_neumann_bound_func( physics_name, bc_id, var, bound_func );
-  return;
 }
 
 #ifdef USE_GRVY_TIMERS

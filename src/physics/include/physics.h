@@ -134,11 +134,9 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
-    void attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-				      GRINS::DirichletFuncObj* bound_func );
+    void attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs );
 
-    void attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-				    GRINS::NeumannFuncObj* bound_func );
+    void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -159,16 +157,14 @@ namespace GRINS
 
     //! Map between boundary id and general Dirichlet boundary functions
     /*! The user may wish to set a different function for each variable in the physics class,
-        for example components of velocity for Navier-Stokes.
-        For Dirichlet boundary conditions, the user should never have to set more than 1 function per
-	variable, so we use an std::map */
-    std::map< GRINS::BoundaryID, GRINS::DirichletBCsMap > _dirichlet_bound_funcs;
+        for example components of velocity for Navier-Stokes. By design, the user cannot set
+	more than 1 function per variable. */
+    GRINS::DBCContainer _dirichlet_bound_funcs;
     
     //! Map between boundary id and general Neumann boundary functions
-    /*! The user may wish to set a different function for each variable in the physics class.
-        For Neumann boundary conditions, the user may want to set more than 1 function per
-	variable, so we use an std::multimap */
-    std::map< GRINS::BoundaryID, GRINS::NeumannBCsMap > _neumann_bound_funcs;
+    /*! The user may wish to set a different function for each variable in the physics class. 
+        By design, the user cannot set more than 1 function per variable.*/
+    GRINS::NBCContainer _neumann_bound_funcs;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

@@ -54,6 +54,20 @@ Gradient exact_derivative( const Point& p,
 			   const std::string&,  // sys_name, not needed
 			   const std::string&); // unk_name, not needed);
 
+class MyBCFactory : public GRINS::BoundaryConditionsFactory
+{
+public:
+
+  MyBCFactory( const GetPot& input )
+    : GRINS::BoundaryConditionsFactory(input)
+  { return; };
+
+  ~MyBCFactory(){return;};
+
+  std::map< std::string, GRINS::DBCContainer >
+  build_dirichlet( libMesh::EquationSystems& equation_system );
+};
+
 int main(int argc, char* argv[]) 
 {
 
@@ -95,11 +109,14 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
+  MyBCFactory bc_factory( libMesh_inputfile );
+
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
 			   &mesh_builder,
 			   &solver_factory,
-			   &vis_factory );
+			   &vis_factory,
+			   &bc_factory );
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
@@ -108,19 +125,11 @@ int main(int argc, char* argv[])
   grins.attach_grvy_timer( &grvy_timer );
 #endif
 
-  // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
-  const libMesh::System& system = es->get_system("GRINS");
-  GRINS::VariableIndex u_var = system.variable_number("u");
-
-  GRINS::ParabolicProfile inflow(u_var);
-
-  grins.attach_dirichlet_bound_func( "IncompressibleNavierStokes", 3, u_var, &inflow );
-  grins.attach_dirichlet_bound_func( "IncompressibleNavierStokes", 1, u_var, &inflow );
-
   // Solve
   grins.run();
 
+  // Get equation systems to create ExactSolution object
+  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   ExactSolution exact_sol(*es);
@@ -161,6 +170,27 @@ int main(int argc, char* argv[])
     }
 
   return return_flag;
+}
+
+std::map< std::string, GRINS::DBCContainer > MyBCFactory::build_dirichlet( libMesh::EquationSystems& es )
+{
+  const libMesh::System& system = es.get_system("GRINS");
+  GRINS::VariableIndex u_var = system.variable_number("u");
+
+  std::tr1::shared_ptr<GRINS::DirichletFuncObj> inflow( new GRINS::ParabolicProfile(u_var) );
+
+  GRINS::DirichletBCsMap dbc_map;
+  dbc_map.insert( GRINS::DBCMapPair( u_var,inflow ) );
+
+  GRINS::DBCContainer dbc_container;
+  dbc_container.insert( GRINS::DBCContainerPair( 3, dbc_map ) );
+  dbc_container.insert( GRINS::DBCContainerPair( 1, dbc_map ) );
+
+  std::map< std::string, GRINS::DBCContainer > dbcs;
+
+  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "IncompressibleNavierStokes", dbc_container ) );
+
+  return dbcs;
 }
 
 Number exact_solution( const Point& p,

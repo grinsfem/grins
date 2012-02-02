@@ -93,23 +93,35 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
-void GRINS::Solver::attach_dirichlet_bound_func( const std::string& physics_name, 
-						 const GRINS::BoundaryID bc_id, 
-						 const GRINS::VariableIndex var,
-						 GRINS::DirichletFuncObj* bound_func )
+void GRINS::Solver::attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
+					 std::map< std::string, GRINS::NBCContainer > neumann_bcs )
 {
-  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( physics_name );
-  physics->attach_dirichlet_bound_func( bc_id, var, bound_func );
-  return;
-}
+  _dirichlet_bc_funcs = dirichlet_bcs;
+  _neumann_bc_funcs = neumann_bcs;
 
-void GRINS::Solver::attach_neumann_bound_func( const std::string& physics_name, 
-					       const GRINS::BoundaryID bc_id, 
-					       const GRINS::VariableIndex var,
-					       GRINS::NeumannFuncObj* bound_func )
-{
-  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( physics_name );
-  physics->attach_neumann_bound_func( bc_id, var, bound_func );
+  // Loop through each physics that has some functions to attach and then attach them.
+  if( _dirichlet_bc_funcs.size() > 0 )
+    {
+      for( std::map< std::string, GRINS::DBCContainer >::iterator bc = _dirichlet_bc_funcs.begin();
+	   bc != _dirichlet_bc_funcs.end();
+	   bc++ )
+	{
+	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
+	  physics->attach_dirichlet_bound_func( bc->second );
+	}
+    }
+
+  if( _neumann_bc_funcs.size() > 0 )
+    {
+      for( std::map< std::string, GRINS::NBCContainer >::iterator bc = _neumann_bc_funcs.begin();
+	   bc != _neumann_bc_funcs.end();
+	   bc++ )
+	{
+	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
+	  physics->attach_neumann_bound_func( bc->second );
+	}
+    }
+
   return;
 }
 

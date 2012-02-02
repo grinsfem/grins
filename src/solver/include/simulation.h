@@ -42,6 +42,7 @@
 #include "visualization_factory.h"
 #include "visualization.h"
 #include "boundary_conditions.h"
+#include "bc_factory.h"
 
 // GRVY
 #ifdef HAVE_GRVY
@@ -58,7 +59,8 @@ namespace GRINS
 		GRINS::PhysicsFactory* physics_factory,
 		GRINS::MeshBuilder* mesh_builder,
 		GRINS::SolverFactory* solver_factory,
-		GRINS::VisualizationFactory* vis_factory );
+		GRINS::VisualizationFactory* vis_factory,
+		GRINS::BoundaryConditionsFactory* bc_factory = NULL );
 
     ~Simulation();
 	
@@ -66,18 +68,7 @@ namespace GRINS
 
     void print_sim_info();
 
-    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();
-
-    void attach_dirichlet_bound_func( const std::string& physics_name, 
-				      const GRINS::BoundaryID bc_id, 
-				      const GRINS::VariableIndex var,
-				      GRINS::DirichletFuncObj* bound_func );
-
-    void attach_neumann_bound_func( const std::string& physics_name, 
-				    const GRINS::BoundaryID bc_id, 
-				    const GRINS::VariableIndex var,
-				    GRINS::NeumannFuncObj* bound_func );
-				      
+    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );

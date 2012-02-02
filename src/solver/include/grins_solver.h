@@ -46,6 +46,7 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 #include "boundary_conditions.h"
+#include "bc_types.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -71,16 +72,9 @@ namespace GRINS
 			bool output_residual = false )=0;
 
     virtual void init_time_solver()=0;
-    
-    void attach_dirichlet_bound_func( const std::string& physics_name, 
-				      const GRINS::BoundaryID bc_id, 
-				      const GRINS::VariableIndex var,
-				      GRINS::DirichletFuncObj* bound_func );
 
-    void attach_neumann_bound_func( const std::string& physics_name, 
-				    const GRINS::BoundaryID bc_id, 
-				    const GRINS::VariableIndex var,
-				    GRINS::NeumannFuncObj* bound_func );
+    void attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
+			      std::map< std::string, GRINS::NBCContainer > neumann_bcs );
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -104,6 +98,12 @@ namespace GRINS
     bool _solver_verbose;
     std::string _system_name;
     
+    /* Keep copies of the boundary conditions around
+       in case they need to be updated during a solve;
+       for example parameter continuation. */
+    std::map< std::string, GRINS::DBCContainer > _dirichlet_bc_funcs;
+    std::map< std::string, GRINS::NBCContainer > _neumann_bc_funcs;
+
     void set_solver_options( libMesh::DiffSolver& solver );
 
 #ifdef USE_GRVY_TIMERS

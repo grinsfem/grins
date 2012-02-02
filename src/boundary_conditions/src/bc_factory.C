@@ -25,38 +25,25 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BC_TYPES_H
-#define BC_TYPES_H
 
-#include "dirichlet_func_obj.h"
-#include "neumann_func_obj.h"
+#include "bc_factory.h"
 
-// Forward declare BC function objects.
-//class GRINS::DirichletFuncObj;
-//class GRINS::NeumannFuncObj;
-
-namespace GRINS
+GRINS::BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
 {
-  enum BC_TYPES{ NO_SLIP = 0,
-		 PRESCRIBED_VELOCITY,
-		 INFLOW,
-		 AXISYMMETRIC,
-		 ISOTHERMAL_WALL,
-		 ADIABATIC_WALL,
-		 PRESCRIBED_HEAT_FLUX,
-		 GENERAL_HEAT_FLUX
-  };
-
-  typedef std::pair< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::DirichletFuncObj> > DBCMapPair;
-  typedef std::map< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::DirichletFuncObj> > DirichletBCsMap;
-
-  typedef std::pair< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::NeumannFuncObj> > NBCMapPair;
-  typedef std::map< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::NeumannFuncObj> > NeumannBCsMap;
-
-  typedef std::pair< GRINS::BoundaryID, GRINS::DirichletBCsMap > DBCContainerPair;
-  typedef std::map< GRINS::BoundaryID, GRINS::DirichletBCsMap > DBCContainer;
-
-  typedef std::pair< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainerPair;
-  typedef std::map< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainer;
+  return;
 }
-#endif //BC_TYPES_H
+
+GRINS::BoundaryConditionsFactory::~BoundaryConditionsFactory( )
+{
+  return;
+}
+
+std::map< std::string, GRINS::DBCContainer > GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::EquationSystems& equation_system )
+{
+  return std::map< std::string, GRINS::DBCContainer >();
+}
+
+std::map< std::string, GRINS::NBCContainer > GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
+{
+  return std::map< std::string, GRINS::NBCContainer >();
+}

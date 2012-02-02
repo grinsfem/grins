@@ -68,7 +68,7 @@ namespace GRINS
     void apply_dirichlet( libMesh::DiffContext &context, 
 			  const bool request_jacobian,
 			  const VariableIndex var,
-			  GRINS::DirichletFuncObj* dirichlet_func,
+			  std::tr1::shared_ptr<GRINS::DirichletFuncObj> dirichlet_func,
 			  const double penalty = 1.0e16 );
 
     //! Applies Neumann boundary conditions for the constant case.
@@ -81,7 +81,7 @@ namespace GRINS
     void apply_neumann( libMesh::DiffContext &context,
 			const bool request_jacobian,
 			const GRINS::VariableIndex var, 
-			GRINS::NeumannFuncObj* neumann_func  );
+			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */

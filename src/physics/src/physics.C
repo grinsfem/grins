@@ -48,18 +48,16 @@ void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
   return;
 }
 
-void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						  GRINS::DirichletFuncObj* bound_func )
+void GRINS::Physics::attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs )
 {
-  _dirichlet_bound_funcs[bc_id][var] = bound_func;
+  _dirichlet_bound_funcs = dirichlet_bcs;
 
   return;
 }
 
-void GRINS::Physics::attach_neumann_bound_func( const GRINS::BoundaryID bc_id, const GRINS::VariableIndex var,
-						GRINS::NeumannFuncObj* bound_func )
+void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
 {
-  _neumann_bound_funcs[bc_id][var] = bound_func;
+  _neumann_bound_funcs = neumann_bcs;
 
   return;
 }

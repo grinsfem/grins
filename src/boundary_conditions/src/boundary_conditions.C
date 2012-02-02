@@ -87,7 +87,7 @@ void GRINS::BoundaryConditions::apply_dirichlet( libMesh::DiffContext &context,
 void GRINS::BoundaryConditions::apply_dirichlet(libMesh::DiffContext &context, 
 						const bool request_jacobian,
 						const VariableIndex var,
-						GRINS::DirichletFuncObj* dirichlet_func,
+						std::tr1::shared_ptr<GRINS::DirichletFuncObj> dirichlet_func,
 						const double penalty )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -170,7 +170,7 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					       const bool request_jacobian,
 					       const GRINS::VariableIndex var, 
-					       GRINS::NeumannFuncObj* neumann_func )
+					       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
