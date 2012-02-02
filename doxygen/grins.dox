@@ -567,10 +567,11 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = src/grins_solver         \
+INPUT                  = src/solver         \
                          src/physics              \
                          src/boundary_conditions  \
                          src/funcs                \
+                         src/visualization        \
                          test                     \
 		       	 doxygen/grins.page       \
 			 doxygen/txt_common
