@@ -348,9 +348,9 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
 	  // General heat flux from user specified function
 	case GRINS::GENERAL_HEAT_FLUX:
 	  {
-	    std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* >& bc_map = _neumann_bound_funcs[boundary_id];
+	    GRINS::NeumannBCsMap& bc_map = _neumann_bound_funcs[boundary_id];
 	    
-	    std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* >::iterator T_it = bc_map.find( _T_var );
+	    GRINS::NeumannBCsMap::iterator T_it = bc_map.find( _T_var );
 	    
 	    _bound_conds.apply_neumann( context, request_jacobian, _T_var, T_it->second );
 	  }

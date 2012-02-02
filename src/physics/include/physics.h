@@ -32,16 +32,15 @@
 
 #include <string>
 
+//libMesh
 #include "getpot.h"
 #include "libmesh.h"
 #include "fem_system.h"
 #include "fem_context.h"
 
-// Including this here so every physics class automatically gets it.
+//GRINS
 #include "variable_name_defaults.h"
 #include "var_typedefs.h"
-
-// Boundary conditions
 #include "bc_types.h"
 #include "boundary_conditions.h"
 
@@ -163,13 +162,13 @@ namespace GRINS
         for example components of velocity for Navier-Stokes.
         For Dirichlet boundary conditions, the user should never have to set more than 1 function per
 	variable, so we use an std::map */
-    std::map< GRINS::BoundaryID,std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* > > _dirichlet_bound_funcs;
+    std::map< GRINS::BoundaryID, GRINS::DirichletBCsMap > _dirichlet_bound_funcs;
     
     //! Map between boundary id and general Neumann boundary functions
     /*! The user may wish to set a different function for each variable in the physics class.
         For Neumann boundary conditions, the user may want to set more than 1 function per
 	variable, so we use an std::multimap */
-    std::map< GRINS::BoundaryID,std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* > > _neumann_bound_funcs;
+    std::map< GRINS::BoundaryID, GRINS::NeumannBCsMap > _neumann_bound_funcs;
 
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

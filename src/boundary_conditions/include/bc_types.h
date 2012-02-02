@@ -27,6 +27,14 @@
 //--------------------------------------------------------------------------
 #ifndef BC_TYPES_H
 #define BC_TYPES_H
+
+#include "dirichlet_func_obj.h"
+#include "neumann_func_obj.h"
+
+// Forward declare BC function objects.
+//class GRINS::DirichletFuncObj;
+//class GRINS::NeumannFuncObj;
+
 namespace GRINS
 {
   enum BC_TYPES{ NO_SLIP = 0,
@@ -38,5 +46,9 @@ namespace GRINS
 		 PRESCRIBED_HEAT_FLUX,
 		 GENERAL_HEAT_FLUX
   };
+
+  typedef std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* > DirichletBCsMap;
+
+  typedef std::map< GRINS::VariableIndex,GRINS::NeumannFuncObj* > NeumannBCsMap;
 }
 #endif //BC_TYPES_H

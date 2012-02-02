@@ -500,10 +500,10 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 	  // Inflow 
 	case GRINS::INFLOW:
 	  {
-	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >& bc_map = _dirichlet_bound_funcs[boundary_id];
+	    DirichletBCsMap& bc_map = _dirichlet_bound_funcs[boundary_id];
             
-	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_r_it = bc_map.find( _u_r_var );
-	    std::map< GRINS::VariableIndex,GRINS::DirichletFuncObj* >::iterator u_z_it = bc_map.find( _u_z_var );
+	    DirichletBCsMap::iterator u_r_it = bc_map.find( _u_r_var );
+	    DirichletBCsMap::iterator u_z_it = bc_map.find( _u_z_var );
 
             if( u_r_it == bc_map.end() )
 	      {
