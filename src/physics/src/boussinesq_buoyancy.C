@@ -135,22 +135,22 @@ bool GRINS::BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
       // for both at the same time.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-	  Fu(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
-	  Fv(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
+	  Fu(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
+	  Fv(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
 
 	  if (_dim == 3)
-	    Fw(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
+	    Fw(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
 	  if (request_jacobian && c.elem_solution_derivative)
             {
               libmesh_assert (c.elem_solution_derivative == 1.0);
               for (unsigned int j=0; j != n_T_dofs; j++)
 		{
-		  KuT(i,j) += _rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
-		  KvT(i,j) += _rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+		  KuT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+		  KvT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
 		  if (_dim == 3)
-		    KwT(i,j) += _rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+		    KwT(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
 		} // End j dof loop
 	    } // End request_jacobian check
@@ -165,35 +165,35 @@ bool GRINS::BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
   return request_jacobian;
 }
 
-void GRINS::BoussinesqBuoyancy::init_context( libMesh::DiffContext &context )
+void GRINS::BoussinesqBuoyancy::init_context( libMesh::DiffContext& )
 {
   return;
 }
 
 bool GRINS::BoussinesqBuoyancy::side_time_derivative( bool request_jacobian,
-						      libMesh::DiffContext& context,
-						      libMesh::FEMSystem* system )
+						      libMesh::DiffContext&,
+						      libMesh::FEMSystem* )
 {
   return request_jacobian;
 }
 
 bool GRINS::BoussinesqBuoyancy::element_constraint( bool request_jacobian,
-						    libMesh::DiffContext& context,
-						    libMesh::FEMSystem* system )
+						    libMesh::DiffContext&,
+						    libMesh::FEMSystem* )
 {
   return request_jacobian;
 }
 
 bool GRINS::BoussinesqBuoyancy::side_constraint( bool request_jacobian,
-						 libMesh::DiffContext& context,
-						 libMesh::FEMSystem* system )
+						 libMesh::DiffContext&,
+						 libMesh::FEMSystem* )
 {
   return request_jacobian;
 }
 
 bool GRINS::BoussinesqBuoyancy::mass_residual( bool request_jacobian,
-					       libMesh::DiffContext& context,
-					       libMesh::FEMSystem* system )
+					       libMesh::DiffContext&,
+					       libMesh::FEMSystem* )
 {
   return request_jacobian;
 }

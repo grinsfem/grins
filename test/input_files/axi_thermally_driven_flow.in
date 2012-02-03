@@ -84,7 +84,7 @@ rho_ref = 1.0
 T_ref = 1.0
 beta_T = 1.0
 
-g = '0 9.8'
+g = '0 -9.8'
 
 [../VariableNames]
 

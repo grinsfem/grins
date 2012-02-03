@@ -128,16 +128,16 @@ bool GRINS::AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool reques
       // for both at the same time.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-	  Fr(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
-	  Fz(i) += _rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
+	  Fr(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
+	  Fz(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
 
 	  if (request_jacobian && c.elem_solution_derivative)
             {
               libmesh_assert (c.elem_solution_derivative == 1.0);
               for (unsigned int j=0; j != n_T_dofs; j++)
 		{
-		  KrT(i,j) += _rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
-		  KzT(i,j) += _rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
+		  KrT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
+		  KzT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
 		} // End j dof loop
 	    } // End request_jacobian check
 
