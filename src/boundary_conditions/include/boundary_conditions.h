@@ -73,14 +73,16 @@ namespace GRINS
 
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann( libMesh::DiffContext &context,
-			const GRINS::VariableIndex var,  
+			const GRINS::VariableIndex var,
+			const Real sign,
 			const Point& value );
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
     void apply_neumann( libMesh::DiffContext &context,
 			const bool request_jacobian,
-			const GRINS::VariableIndex var, 
+			const GRINS::VariableIndex var,
+			const Real sign,
 			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
 
     /*! The idea here is to pin a variable to a particular value if there is

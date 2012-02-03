@@ -341,7 +341,7 @@ bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobia
 	  // Prescribed constant heat flux
 	case GRINS::PRESCRIBED_HEAT_FLUX:
 	  {
-	    _bound_conds.apply_neumann( context, _T_var, 
+	    _bound_conds.apply_neumann( context, _T_var, -1.0,
 					_q_boundary_values[boundary_id] );
 	  }
 	  break;
@@ -351,7 +351,7 @@ bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobia
 	    
 	    GRINS::NeumannBCsMap::iterator T_it = bc_map.find( _T_var );
 	    
-	    _bound_conds.apply_neumann( context, request_jacobian, _T_var, T_it->second );
+	    _bound_conds.apply_neumann( context, request_jacobian, _T_var, -1.0, T_it->second );
 	  }
 	  break;
 	case GRINS::AXISYMMETRIC:

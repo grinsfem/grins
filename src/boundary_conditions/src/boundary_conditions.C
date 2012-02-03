@@ -136,7 +136,8 @@ void GRINS::BoundaryConditions::apply_dirichlet(libMesh::DiffContext &context,
 }
 
 void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
-					       const GRINS::VariableIndex var,  
+					       const GRINS::VariableIndex var,
+					       const Real sign,
 					       const Point& value )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -160,7 +161,7 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
     {
       for (unsigned int i=0; i != n_var_dofs; i++)
 	{
-	  F_var(i) += JxW_side[qp]*value*normals[qp]*var_phi_side[i][qp];
+	  F_var(i) += sign*JxW_side[qp]*value*normals[qp]*var_phi_side[i][qp];
 	}
     }
 
@@ -169,7 +170,8 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 
 void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					       const bool request_jacobian,
-					       const GRINS::VariableIndex var, 
+					       const GRINS::VariableIndex var,
+					       const Real sign,
 					       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -198,13 +200,13 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 
       for (unsigned int i=0; i != n_var_dofs; i++)
 	{
-	  F_var(i) += JxW_side[qp]*bc_value*normals[qp]*var_phi_side[i][qp];
+	  F_var(i) += sign*JxW_side[qp]*bc_value*normals[qp]*var_phi_side[i][qp];
 
 	  if (request_jacobian)
 	    {
 	      for (unsigned int j=0; j != n_var_dofs; j++)
 		{
-		  K_var(i,j) += JxW_side[qp]*jac_value*normals[qp]*
+		  K_var(i,j) += sign*JxW_side[qp]*jac_value*normals[qp]*
 		    var_phi_side[i][qp]*var_phi_side[j][qp];
 		}
 	    }
