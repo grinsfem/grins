@@ -102,6 +102,8 @@ int main(int argc, char* argv[])
   // Get equation systems to create ExactSolution object
   std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
 
+  //es->write("foobar.xdr");
+
   // Create Exact solution object and attach exact solution quantities
   ExactSolution exact_sol(*es);
   
