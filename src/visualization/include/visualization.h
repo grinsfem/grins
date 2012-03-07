@@ -66,10 +66,10 @@ namespace GRINS
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step, const Real time ) =0;
 
-  protected:
-
     void dump_visualization( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			     const std::string& filename_prefix, const Real time );
+    
+  protected:
 
     // Visualization options
     std::string _vis_output_file_prefix;
