@@ -106,6 +106,8 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(utilities_SRC) \
                       $(visualization_SRC)
 
+libgrins_la_LIBADD = $(GRVY_PREFIX)/lib/libgrvy.la
+
 #------------------------------------
 # Source for stand alone GRINS driver
 #------------------------------------
@@ -125,8 +127,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
 
-AM_LDFLAGS = $(LIBMESH_LIBS) \
-             $(GRVY_LIBS)
+AM_LDFLAGS = $(LIBMESH_LIBS)
 
 #-------------
 # MASA support
