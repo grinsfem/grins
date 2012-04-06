@@ -7,6 +7,7 @@ AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
 AM_INIT_AUTOMAKE([silent-rules])
+LT_INIT
 
 dnl Release versioning
 AX_SPLIT_VERSION
@@ -34,7 +35,7 @@ AC_DEFINE_UNQUOTED([MAJOR_VERSION],$GENERIC_MAJOR_VERSION,[Major version])
 AC_DEFINE_UNQUOTED([MINOR_VERSION],$GENERIC_MINOR_VERSION,[Minor version])
 AC_DEFINE_UNQUOTED([MICRO_VERSION],$GENERIC_MICRO_VERSION,[Micro version])
 
-AC_PROG_LIBTOOL
+
 
 dnl------------------------------
 dnl Checks for compilers and MPI
