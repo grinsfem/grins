@@ -54,10 +54,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH
-AC_CHECK_FILE($LIBMESH_PREFIX/contrib/bin/libmesh-config,
-              LIBMESH_CONFIG=$LIBMESH_PREFIX/contrib/bin/libmesh-config,
-              AC_MSG_ERROR([Cannot find libmesh-config!]))
+AX_PATH_LIBMESH_NEW(0.8.0,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--enable-libmesh-flags],[enable use of libmesh cxxflags for CXXFLAGS]),

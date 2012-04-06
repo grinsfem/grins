@@ -14,12 +14,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/visualization/include
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
-               $(LIBMESH_CXXFLAGS) \
+               $(LIBMESH_CPPFLAGS) \
                $(GRVY_CFLAGS)
 
-AM_LDFLAGS = $(LIBMESH_LIBS) \
-             $(GRVY_LIBS) \
-             -L$(top_builddir)/src -lgrins
+AM_LDFLAGS = $(top_builddir)/src/libgrins.la
 
 #--------------
 # MASA support
