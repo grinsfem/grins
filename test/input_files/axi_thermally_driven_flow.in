@@ -39,7 +39,7 @@ solver_quiet = true
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'AxisymmetricIncompNavierStokes AxisymmetricHeatTransfer AxisymmetricBoussinesqBuoyancy'
+enabled_physics = 'AxisymmetricIncompressibleNavierStokes AxisymmetricHeatTransfer AxisymmetricBoussinesqBuoyancy'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -48,7 +48,7 @@ enabled_physics = 'AxisymmetricIncompNavierStokes AxisymmetricHeatTransfer Axisy
 # i = top    -> 1
 
 # Options for Incompressible Navier-Stokes physics
-[./AxisymIncompNS]
+[./AxisymmetricIncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND

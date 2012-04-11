@@ -55,12 +55,9 @@ namespace GRINS
   {
   public:
 
-    AxisymmetricHeatTransfer()
-      : Physics()
-    {};
+    AxisymmetricHeatTransfer( const std::string& physics_name );
 
-    ~AxisymmetricHeatTransfer()
-    {};
+    ~AxisymmetricHeatTransfer();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -146,6 +143,10 @@ namespace GRINS
 
     //! Stash prescribed boundary heat flux values
     std::map< unsigned int, libMesh::Point > _q_boundary_values;
+
+  private:
+    AxisymmetricHeatTransfer();
+
   };
 
 } //End namespace block

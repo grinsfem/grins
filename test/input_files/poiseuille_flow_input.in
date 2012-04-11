@@ -43,7 +43,7 @@ solver_quiet = true
 enabled_physics = 'IncompressibleNavierStokes'
 
 # Options for Incompressible Navier-Stokes physics
-[./IncompNS]
+[./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND

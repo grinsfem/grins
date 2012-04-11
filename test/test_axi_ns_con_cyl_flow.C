@@ -189,7 +189,7 @@ std::map< std::string, GRINS::DBCContainer > MyBCFactory::build_dirichlet( libMe
 
   std::map< std::string, GRINS::DBCContainer > dbcs;
 
-  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "AxisymmetricIncompNavierStokes", dbc_container ) );
+  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "AxisymmetricIncompressibleNavierStokes", dbc_container ) );
 
   return dbcs;
 }

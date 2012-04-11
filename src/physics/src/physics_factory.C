@@ -28,12 +28,6 @@
 
 #include "physics_factory.h"
 
-const std::string GRINS::PhysicsFactory::_incompressible_navier_stokes = "IncompressibleNavierStokes";
-const std::string GRINS::PhysicsFactory::_axisymmetric_incomp_navier_stokes = "AxisymmetricIncompNavierStokes";
-const std::string GRINS::PhysicsFactory::_heat_transfer = "HeatTransfer";
-const std::string GRINS::PhysicsFactory::_axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
-const std::string GRINS::PhysicsFactory::_boussinesq_buoyancy = "BoussinesqBuoyancy";
-const std::string GRINS::PhysicsFactory::_axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
 
 GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
   : _num_physics( input.vector_variable_size("Physics/enabled_physics") )
@@ -80,35 +74,35 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
   typedef std::tr1::shared_ptr<GRINS::Physics> PhysicsPtr;
   typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
 
-  if( physics_to_add == _incompressible_navier_stokes )
+  if( physics_to_add == incompressible_navier_stokes )
     {
-      physics_list[_incompressible_navier_stokes] = 
-	PhysicsPtr(new GRINS::IncompressibleNavierStokes);
+      physics_list[incompressible_navier_stokes] = 
+	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes));
     }
-  else if( physics_to_add == _axisymmetric_incomp_navier_stokes )
+  else if( physics_to_add == axisymmetric_incomp_navier_stokes )
     {
-      physics_list[_axisymmetric_incomp_navier_stokes] = 
-	PhysicsPtr(new GRINS::AxisymmetricIncompNavierStokes);
+      physics_list[axisymmetric_incomp_navier_stokes] = 
+	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes));
     }
-  else if( physics_to_add == _heat_transfer )
+  else if( physics_to_add == heat_transfer )
     {
-      physics_list[_heat_transfer] = 
-	PhysicsPtr(new GRINS::HeatTransfer);
+      physics_list[heat_transfer] = 
+	PhysicsPtr(new GRINS::HeatTransfer(heat_transfer));
     }
-  else if( physics_to_add == _axisymmetric_heat_transfer )
+  else if( physics_to_add == axisymmetric_heat_transfer )
     {
-      physics_list[_axisymmetric_heat_transfer] = 
-	PhysicsPtr(new GRINS::AxisymmetricHeatTransfer);
+      physics_list[axisymmetric_heat_transfer] = 
+	PhysicsPtr(new GRINS::AxisymmetricHeatTransfer(axisymmetric_heat_transfer));
     }
-  else if( physics_to_add == _boussinesq_buoyancy )
+  else if( physics_to_add == boussinesq_buoyancy )
     {
-      physics_list[_boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::BoussinesqBuoyancy);
+      physics_list[boussinesq_buoyancy] = 
+	PhysicsPtr(new GRINS::BoussinesqBuoyancy(boussinesq_buoyancy));
     }
-  else if( physics_to_add == _axisymmetric_boussinesq_buoyancy)
+  else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
     {
-      physics_list[_axisymmetric_boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy);
+      physics_list[axisymmetric_boussinesq_buoyancy] = 
+	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy(axisymmetric_boussinesq_buoyancy));
     }
   else
     {
@@ -128,52 +122,52 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
        physics++ )
     {
       // For HeatTransfer, we need IncompressibleNavierStokes
-      if( physics->first == _heat_transfer )
+      if( physics->first == heat_transfer )
 	{
-	  if( physics_list.find(_incompressible_navier_stokes) == physics_list.end() )
+	  if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( _heat_transfer, _incompressible_navier_stokes  );
+	      this->physics_consistency_error( heat_transfer, incompressible_navier_stokes  );
 	    }
 	}
 
       // For AxisymmetricHeatTransfer, we need AxisymmetricIncompNavierStokes
-      if( physics->first == _axisymmetric_heat_transfer )
+      if( physics->first == axisymmetric_heat_transfer )
 	{
-	  if( physics_list.find(_axisymmetric_incomp_navier_stokes) == 
+	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == 
 	      physics_list.end() )
 	    {
-	      this->physics_consistency_error( _axisymmetric_heat_transfer, 
-					       _axisymmetric_incomp_navier_stokes  );
+	      this->physics_consistency_error( axisymmetric_heat_transfer, 
+					       axisymmetric_incomp_navier_stokes  );
 	    }
 	}
       // For BoussinesqBuoyancy, we need both HeatTransfer and IncompressibleNavierStokes
-      if( physics->first == _boussinesq_buoyancy )
+      if( physics->first == boussinesq_buoyancy )
 	{
-	  if( physics_list.find(_incompressible_navier_stokes) == physics_list.end() )
+	  if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( _boussinesq_buoyancy, _incompressible_navier_stokes  );
+	      this->physics_consistency_error( boussinesq_buoyancy, incompressible_navier_stokes  );
 	    }
 
-	  if( physics_list.find(_heat_transfer) == physics_list.end() )
+	  if( physics_list.find(heat_transfer) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( _boussinesq_buoyancy, _heat_transfer  );
+	      this->physics_consistency_error( boussinesq_buoyancy, heat_transfer  );
 	    }
 	}
 
       /* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer 
 	 and AxisymmetricIncompNavierStokes */
-      if( physics->first == _axisymmetric_boussinesq_buoyancy )
+      if( physics->first == axisymmetric_boussinesq_buoyancy )
 	{
-	  if( physics_list.find(_axisymmetric_incomp_navier_stokes) == physics_list.end() )
+	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( _axisymmetric_boussinesq_buoyancy, 
-					       _axisymmetric_incomp_navier_stokes );
+	      this->physics_consistency_error( axisymmetric_boussinesq_buoyancy, 
+					       axisymmetric_incomp_navier_stokes );
 	    }
 
-	  if( physics_list.find(_axisymmetric_heat_transfer) == physics_list.end() )
+	  if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( _axisymmetric_boussinesq_buoyancy, 
-					       _axisymmetric_heat_transfer  );
+	      this->physics_consistency_error( axisymmetric_boussinesq_buoyancy, 
+					       axisymmetric_heat_transfer  );
 	    }
 	}
     }

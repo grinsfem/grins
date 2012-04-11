@@ -26,47 +26,19 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "physics.h"
+#ifndef GRINS_PHYSICS_NAMES_H
+#define GRINS_PHYSICS_NAMES_H
 
-GRINS::Physics::Physics( const std::string& physics_name )
-  : _physics_name( physics_name )
+#include <string>
+
+namespace GRINS
 {
-  return;
+  const std::string incompressible_navier_stokes = "IncompressibleNavierStokes";
+  const std::string axisymmetric_incomp_navier_stokes = "AxisymmetricIncompressibleNavierStokes";
+  const std::string heat_transfer = "HeatTransfer";
+  const std::string axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
+  const std::string boussinesq_buoyancy = "BoussinesqBuoyancy";
+  const std::string axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
 }
 
-GRINS::Physics::~Physics()
-{
-  return;
-}
-
-void GRINS::Physics::read_input_options( const GetPot& input )
-{
-  return;
-}
-
-void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
-{
-  return;
-}
-
-void GRINS::Physics::attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs )
-{
-  _dirichlet_bound_funcs = dirichlet_bcs;
-
-  return;
-}
-
-void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
-{
-  _neumann_bound_funcs = neumann_bcs;
-
-  return;
-}
-
-#ifdef USE_GRVY_TIMERS
-void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-{
-  _timer = grvy_timer;
-  return;
-}
-#endif
+#endif //GRINS_PHYSICS_NAMES_H

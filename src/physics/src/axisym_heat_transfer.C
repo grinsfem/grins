@@ -28,23 +28,34 @@
 
 #include "axisym_heat_transfer.h"
 
+GRINS::AxisymmetricHeatTransfer::AxisymmetricHeatTransfer( const std::string& physics_name )
+      : Physics(physics_name)
+{
+  return;
+}
+
+GRINS::AxisymmetricHeatTransfer::~AxisymmetricHeatTransfer( )
+{
+  return;
+}
+
 void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 {
   this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymmetricHeatTransfer/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
 
   this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymmetricHeatTransfer/T_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
 
   this->_V_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymIncompNS/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/FE_family", "LAGRANGE") );
 
   this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymIncompNS/V_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/V_order", "SECOND") );
 
-  this->_rho = input("Physics/AxisymmetricHeatTransfer/rho", 1.0); //TODO: same as Incompressible NS
-  this->_Cp  = input("Physics/AxisymmetricHeatTransfer/Cp", 1.0);
-  this->_k  = input("Physics/AxisymmetricHeatTransfer/k", 1.0);
+  this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
+  this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
+  this->_k  = input("Physics/"+axisymmetric_heat_transfer+"/k", 1.0);
 
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
@@ -58,8 +69,8 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
             that it doesn't have to be rewritten for every physics class.
 	    Then, the physics only handles the specifics, e.g. reading
 	    in boundary velocities. */
-  int num_ids = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/bc_types");
+  int num_ids = input.vector_variable_size("Physics/"+axisymmetric_heat_transfer+"/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/"+axisymmetric_heat_transfer+"/bc_types");
 
   if( num_ids != num_bcs )
     {
@@ -70,8 +81,8 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 
   for( int i = 0; i < num_ids; i++ )
     {
-      int bc_id = input("Physics/AxisymmetricHeatTransfer/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/AxisymmetricHeatTransfer/bc_types", "NULL", i );
+      int bc_id = input("Physics/"+axisymmetric_heat_transfer+"/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/"+axisymmetric_heat_transfer+"/bc_types", "NULL", i );
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
@@ -87,7 +98,7 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 	    _dirichlet_bc_map[bc_id] = bc_type;
 
 	    _T_boundary_values[bc_id] = 
-	      input("Physics/AxisymmetricHeatTransfer/T_wall_"+bc_id_string, 0.0 );
+	      input("Physics/"+axisymmetric_heat_transfer+"/T_wall_"+bc_id_string, 0.0 );
 	  }
 	  break;
 
@@ -103,7 +114,7 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 
 	    libMesh::Point q_in;
 	    
-	    int num_q_components = input.vector_variable_size("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string);
+	    int num_q_components = input.vector_variable_size("Physics/"+axisymmetric_heat_transfer+"/q_wall_"+bc_id_string);
 	    
 	    if( num_q_components > 2 )
 	      {
@@ -117,7 +128,7 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 
 	    for( int i = 0; i < num_q_components; i++ )
 	      {
-		q_in(i) = input("Physics/AxisymmetricHeatTransfer/q_wall_"+bc_id_string, 0.0, i );
+		q_in(i) = input("Physics/"+axisymmetric_heat_transfer+"/q_wall_"+bc_id_string, 0.0, i );
 	      }
 	      _q_boundary_values[bc_id] = q_in;
 	  }

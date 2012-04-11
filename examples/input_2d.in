@@ -50,7 +50,7 @@ enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 # i = top    -> 1
 
 # Options for Incompressible Navier-Stokes physics
-[./IncompNS]
+[./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND

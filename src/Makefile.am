@@ -80,7 +80,8 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/axisym_heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h \
                $(physics_incdir)/axisym_boussinesq_buoyancy.h \
-               $(physics_incdir)/physics_factory.h
+               $(physics_incdir)/physics_factory.h \
+               $(physics_incdir)/grins_physics_names.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h \

@@ -55,12 +55,9 @@ namespace GRINS
   {
   public:
 
-    IncompressibleNavierStokes()
-      : Physics()
-    {};
+    IncompressibleNavierStokes(const std::string& physics_name);
 
-    ~IncompressibleNavierStokes()
-    {};
+    ~IncompressibleNavierStokes();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -140,6 +137,9 @@ namespace GRINS
 
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
+
+  private:
+    IncompressibleNavierStokes();
 
   };
 

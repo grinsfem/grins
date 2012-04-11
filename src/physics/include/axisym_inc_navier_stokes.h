@@ -51,16 +51,13 @@ namespace GRINS
   /*!
     This physics class implements the classical Axisymmetric Incompressible Navier-Stokes equations.
    */
-  class AxisymmetricIncompNavierStokes : public Physics
+  class AxisymmetricIncompressibleNavierStokes : public Physics
   {
   public:
 
-    AxisymmetricIncompNavierStokes()
-      : Physics()
-    {};
+    AxisymmetricIncompressibleNavierStokes( const std::string& physics_name );
 
-    ~AxisymmetricIncompNavierStokes()
-    {};
+    ~AxisymmetricIncompressibleNavierStokes();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -156,6 +153,10 @@ namespace GRINS
 
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
+
+  private:
+    AxisymmetricIncompressibleNavierStokes();
+
   };
 
 } //End namespace block

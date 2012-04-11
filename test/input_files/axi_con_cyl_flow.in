@@ -41,10 +41,10 @@ solver_quiet = true
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'AxisymmetricIncompNavierStokes'
+enabled_physics = 'AxisymmetricIncompressibleNavierStokes'
 
 # Options for Incompressible Navier-Stokes physics
-[./AxisymIncompNS]
+[./AxisymmetricIncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND

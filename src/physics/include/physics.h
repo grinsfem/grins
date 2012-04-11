@@ -43,6 +43,7 @@
 #include "var_typedefs.h"
 #include "bc_types.h"
 #include "boundary_conditions.h"
+#include "grins_physics_names.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -85,7 +86,7 @@ namespace GRINS
 
   public:
 
-    Physics();
+    Physics( const std::string& physics_name );
     virtual ~Physics();
 
     //! Read options from GetPot input file. By default, nothing is read.
@@ -143,6 +144,11 @@ namespace GRINS
 #endif
 
   protected:
+    
+    //! Name of the physics object. Used for reading physics specific inputs.
+    /*! We use a reference because the physics names are const global objects
+      in GRINS namespace */
+    const std::string& _physics_name;
 
     //! Map between boundary id and Dirichlet boundary condition type
     std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _dirichlet_bc_map;
@@ -169,6 +175,9 @@ namespace GRINS
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
+
+  private:
+    Physics();
 
   }; // End Physics class declarations
 

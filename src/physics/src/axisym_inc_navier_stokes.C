@@ -28,21 +28,32 @@
 
 #include "axisym_inc_navier_stokes.h"
 
-void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& input )
+GRINS::AxisymmetricIncompressibleNavierStokes::AxisymmetricIncompressibleNavierStokes( const std::string& physics_name )
+  : Physics(physics_name)
+{
+  return;
+}
+
+GRINS::AxisymmetricIncompressibleNavierStokes::~AxisymmetricIncompressibleNavierStokes()
+{
+  return;
+}
+
+void GRINS::AxisymmetricIncompressibleNavierStokes::read_input_options( const GetPot& input )
 {
   // Read FE info
   this->_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymIncompNS/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/FE_family", "LAGRANGE") );
 
   this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymIncompNS/V_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/V_order", "SECOND") );
 
   this->_P_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymIncompNS/P_order", "FIRST") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/P_order", "FIRST") );
 
   // Read material parameters
-  this->_rho = input("Physics/AxisymIncompNS/rho", 1.0);
-  this->_mu  = input("Physics/AxisymIncompNS/mu", 1.0);
+  this->_rho = input("Physics/"+axisymmetric_incomp_navier_stokes+"/rho", 1.0);
+  this->_mu  = input("Physics/"+axisymmetric_incomp_navier_stokes+"/mu", 1.0);
 
   // Read variable naming info
   this->_u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
@@ -55,8 +66,8 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
             that it doesn't have to be rewritten for every physics class.
 	    Then, the physics only handles the specifics, e.g. reading
 	    in boundary velocities. */
-  int num_ids = input.vector_variable_size("Physics/AxisymIncompNS/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/AxisymIncompNS/bc_types");
+  int num_ids = input.vector_variable_size("Physics/"+axisymmetric_incomp_navier_stokes+"/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/"+axisymmetric_incomp_navier_stokes+"/bc_types");
 
   if( num_ids != num_bcs )
     {
@@ -67,8 +78,8 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
   
   for( int i = 0; i < num_ids; i++ )
     {
-      int bc_id = input("Physics/AxisymIncompNS/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/AxisymIncompNS/bc_types", "NULL", i );
+      int bc_id = input("Physics/"+axisymmetric_incomp_navier_stokes+"/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/"+axisymmetric_incomp_navier_stokes+"/bc_types", "NULL", i );
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
@@ -93,7 +104,7 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
 	    /* Force the user to specify 3 velocity components regardless of dimension.
 	       This should make it easier to keep things correct if we want to have 
 	       2D flow not be in the x-y plane. */
-	    int n_vel_comps = input.vector_variable_size("Physics/AxisymIncompNS/bound_vel_"+bc_id_string);
+	    int n_vel_comps = input.vector_variable_size("Physics/"+axisymmetric_incomp_navier_stokes+"/bound_vel_"+bc_id_string);
 	    if( n_vel_comps != 2 )
 	      {
 		std::cerr << "Error: Must specify 2 velocity components when inputting"
@@ -105,8 +116,8 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
 	      }
 	    
 	    /** \todo Need to unit test this somehow. */
-	    vel_in[0] = input("Physics/AxisymIncompNS/bound_vel_"+bc_id_string, 0.0, 0 );
-	    vel_in[1] = input("Physics/AxisymIncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
+	    vel_in[0] = input("Physics/"+axisymmetric_incomp_navier_stokes+"/bound_vel_"+bc_id_string, 0.0, 0 );
+	    vel_in[1] = input("Physics/"+axisymmetric_incomp_navier_stokes+"/bound_vel_"+bc_id_string, 0.0, 1 );
 	    
 	    _vel_boundary_values[bc_id] = vel_in;
 	  }
@@ -131,10 +142,10 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
     } // End loop on bc_id
 
   // Read pressure pinning information
-  _pin_pressure = input("Physics/AxisymIncompNS/pin_pressure", true );
-  _pin_value = input("Physics/AxisymIncompNS/pin_value", 0.0 );
+  _pin_pressure = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_pressure", true );
+  _pin_value = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_value", 0.0 );
 
-  unsigned int pin_loc_dim = input.vector_variable_size("Physics/AxisymIncompNS/pin_location");
+  unsigned int pin_loc_dim = input.vector_variable_size("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location");
 
   // If the user is specifying a pin_location, it had better be 2-dimensional
   if( pin_loc_dim > 2 )
@@ -144,13 +155,13 @@ void GRINS::AxisymmetricIncompNavierStokes::read_input_options( const GetPot& in
       libmesh_error();
     }
 
-  _pin_location(0) = input("Physics/AxisymIncompNS/pin_location", 0.0, 0 );
-  _pin_location(1) = input("Physics/AxisymIncompNS/pin_location", 0.0, 1 );
+  _pin_location(0) = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location", 0.0, 0 );
+  _pin_location(1) = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location", 0.0, 1 );
 
   return;
 }
 
-void GRINS::AxisymmetricIncompNavierStokes::init_variables( libMesh::FEMSystem* system )
+void GRINS::AxisymmetricIncompressibleNavierStokes::init_variables( libMesh::FEMSystem* system )
 {
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
@@ -163,7 +174,7 @@ void GRINS::AxisymmetricIncompNavierStokes::init_variables( libMesh::FEMSystem* 
   return;
 }
 
-void GRINS::AxisymmetricIncompNavierStokes::set_time_evolving_vars( libMesh::FEMSystem* system )
+void GRINS::AxisymmetricIncompressibleNavierStokes::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   // Tell the system to march velocity forward in time, but
   // leave p as a constraint only
@@ -173,7 +184,7 @@ void GRINS::AxisymmetricIncompNavierStokes::set_time_evolving_vars( libMesh::FEM
   return;
 }
 
-void GRINS::AxisymmetricIncompNavierStokes::init_context( libMesh::DiffContext &context )
+void GRINS::AxisymmetricIncompressibleNavierStokes::init_context( libMesh::DiffContext &context )
 {
   libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
@@ -196,12 +207,12 @@ void GRINS::AxisymmetricIncompNavierStokes::init_context( libMesh::DiffContext &
   return;
 }
 
-bool GRINS::AxisymmetricIncompNavierStokes::element_time_derivative( bool request_jacobian,
-								 libMesh::DiffContext& context,
-								 libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricIncompressibleNavierStokes::element_time_derivative( bool request_jacobian,
+									     libMesh::DiffContext& context,
+									     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("AxisymmetricIncompNavierStokes::element_time_derivative");
+  this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -341,18 +352,18 @@ bool GRINS::AxisymmetricIncompNavierStokes::element_time_derivative( bool reques
     } // end of the quadrature point (qp) loop
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("AxisymmetricIncompNavierStokes::element_time_derivative");
+  this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricIncompNavierStokes::element_constraint( bool request_jacobian,
-								libMesh::DiffContext& context,
-								libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricIncompressibleNavierStokes::element_constraint( bool request_jacobian,
+									libMesh::DiffContext& context,
+									libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("AxisymmetricIncompNavierStokes::element_constraint");
+  this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -439,26 +450,26 @@ bool GRINS::AxisymmetricIncompNavierStokes::element_constraint( bool request_jac
   
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("AxisymmetricIncompNavierStokes::element_constraint");
+  this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
   return request_jacobian;
 }
 
 
-bool GRINS::AxisymmetricIncompNavierStokes::side_time_derivative( bool request_jacobian,
-							      libMesh::DiffContext& context,
-							      libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricIncompressibleNavierStokes::side_time_derivative( bool request_jacobian,
+									  libMesh::DiffContext& context,
+									  libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobian,
-							 libMesh::DiffContext& context,
-							 libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricIncompressibleNavierStokes::side_constraint( bool request_jacobian,
+								     libMesh::DiffContext& context,
+								     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("AxisymmetricIncompNavierStokes::side_constraint");
+  this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -531,7 +542,7 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
 	  break;
 	default:
 	  {
-	    std::cerr << "Error: Invalid BC type for AxisymmetricIncompNavierStokes."
+	    std::cerr << "Error: Invalid BC type for AxisymmetricIncompressibleNavierStokes."
 		      << std::endl;
 	    libmesh_error();
 	  }
@@ -540,15 +551,15 @@ bool GRINS::AxisymmetricIncompNavierStokes::side_constraint( bool request_jacobi
     } // End if statement
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("AxisymmetricIncompNavierStokes::side_constraint");
+  this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricIncompNavierStokes::mass_residual( bool request_jacobian,
-						       libMesh::DiffContext& context,
-						       libMesh::FEMSystem* system )
+bool GRINS::AxisymmetricIncompressibleNavierStokes::mass_residual( bool request_jacobian,
+								   libMesh::DiffContext& context,
+								   libMesh::FEMSystem* system )
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 

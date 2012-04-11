@@ -28,33 +28,44 @@
 
 #include "axisym_boussinesq_buoyancy.h"
 
+GRINS::AxisymmetricBoussinesqBuoyancy::AxisymmetricBoussinesqBuoyancy( const std::string& physics_name )
+  : Physics(physics_name)
+{
+  return;
+}
+
+GRINS::AxisymmetricBoussinesqBuoyancy::~AxisymmetricBoussinesqBuoyancy()
+{
+  return;
+}
+
 void GRINS::AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
 {
   this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymmetricHeatTransfer/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
 
   this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymmetricHeatTransfer/T_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
 
   this->_V_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/AxisymIncompNS/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/FE_family", "LAGRANGE") );
 
   this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/AxisymIncompNS/V_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/V_order", "SECOND") );
 
   // Read variable naming info
   this->_u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
   this->_u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::u_z_var_name_default );
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
-  _rho_ref = input("Physics/AxisymmetricBoussinesqBuoyancy/rho_ref", 1.0);
-  _T_ref = input("Physics/AxisymmetricBoussinesqBuoyancy/T_ref", 1.0);;
-  _beta_T = input("Physics/AxisymmetricBoussinesqBuoyancy/beta_T", 1.0);;
+  _rho_ref = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/rho_ref", 1.0);
+  _T_ref = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/T_ref", 1.0);;
+  _beta_T = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/beta_T", 1.0);;
 
-   unsigned int g_dim = input.vector_variable_size("Physics/AxisymmetricBoussinesqBuoyancy/g");
+   unsigned int g_dim = input.vector_variable_size("Physics/"+axisymmetric_boussinesq_buoyancy+"/g");
 
-  _g(0) = input("Physics/AxisymmetricBoussinesqBuoyancy/g", 0.0, 0 );
-  _g(1) = input("Physics/AxisymmetricBoussinesqBuoyancy/g", 0.0, 1 );
+  _g(0) = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/g", 0.0, 0 );
+  _g(1) = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/g", 0.0, 1 );
 
   return;
 }

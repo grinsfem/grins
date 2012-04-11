@@ -43,6 +43,7 @@
 #include "axisym_heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
+#include "grins_physics_names.h"
 
 namespace GRINS
 {
@@ -85,13 +86,6 @@ namespace GRINS
     //! Utility function
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required );
-    
-    static const std::string _incompressible_navier_stokes;
-    static const std::string _axisymmetric_incomp_navier_stokes;
-    static const std::string _heat_transfer;
-    static const std::string _axisymmetric_heat_transfer;
-    static const std::string _boussinesq_buoyancy;
-    static const std::string _axisymmetric_boussinesq_buoyancy;
 
     int _num_physics;
     std::set<std::string> _requested_physics;

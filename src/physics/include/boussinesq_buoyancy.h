@@ -64,12 +64,9 @@ namespace GRINS
   {
   public:
     
-    BoussinesqBuoyancy()
-      : Physics()
-    {};
+    BoussinesqBuoyancy( const std::string& physics_name );
 
-    ~BoussinesqBuoyancy()
-    {};
+    ~BoussinesqBuoyancy();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -144,6 +141,9 @@ namespace GRINS
 
     //! Gravitational vector
     Point _g;
+
+  private:
+    BoussinesqBuoyancy();
 
   }; // class BoussinesqBuoyancy
 

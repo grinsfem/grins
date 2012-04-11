@@ -28,21 +28,32 @@
 
 #include "inc_navier_stokes.h"
 
+GRINS::IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name)
+  : Physics(physics_name)
+{
+  return;
+}
+
+GRINS::IncompressibleNavierStokes::~IncompressibleNavierStokes()
+{
+  return;
+}
+
 void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input )
 {
   // Read FE info
   this->_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
 
   this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/V_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
   this->_P_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/P_order", "FIRST") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/P_order", "FIRST") );
 
   // Read material parameters
-  this->_rho = input("Physics/IncompNS/rho", 1.0);
-  this->_mu  = input("Physics/IncompNS/mu", 1.0);
+  this->_rho = input("Physics/"+incompressible_navier_stokes+"/rho", 1.0);
+  this->_mu  = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
 
   // Read variable naming info
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
@@ -55,8 +66,8 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
             that it doesn't have to be rewritten for every physics class.
 	    Then, the physics only handles the specifics, e.g. reading
 	    in boundary velocities. */
-  int num_ids = input.vector_variable_size("Physics/IncompNS/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/IncompNS/bc_types");
+  int num_ids = input.vector_variable_size("Physics/"+incompressible_navier_stokes+"/bc_ids");
+  int num_bcs = input.vector_variable_size("Physics/"+incompressible_navier_stokes+"/bc_types");
 
   if( num_ids != num_bcs )
     {
@@ -67,8 +78,8 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
   
   for( int i = 0; i < num_ids; i++ )
     {
-      int bc_id = input("Physics/IncompNS/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/IncompNS/bc_types", "NULL", i );
+      int bc_id = input("Physics/"+incompressible_navier_stokes+"/bc_ids", -1, i );
+      std::string bc_type_in = input("Physics/"+incompressible_navier_stokes+"/bc_types", "NULL", i );
 
       GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
 
@@ -92,7 +103,7 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
 	    /* Force the user to specify 3 velocity components regardless of dimension.
 	       This should make it easier to keep things correct if we want to have 
 	       2D flow not be in the x-y plane. */
-	    int n_vel_comps = input.vector_variable_size("Physics/IncompNS/bound_vel_"+bc_id_string);
+	    int n_vel_comps = input.vector_variable_size("Physics/"+incompressible_navier_stokes+"/bound_vel_"+bc_id_string);
 	    if( n_vel_comps != 3 )
 	      {
 		std::cerr << "Error: Must specify 3 velocity components when inputting"
@@ -104,9 +115,9 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
 	      }
 	    
 	    /** \todo Need to unit test this somehow. */
-	    vel_in[0] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 0 );
-	    vel_in[1] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 1 );
-	    vel_in[2] = input("Physics/IncompNS/bound_vel_"+bc_id_string, 0.0, 2 );
+	    vel_in[0] = input("Physics/"+incompressible_navier_stokes+"/bound_vel_"+bc_id_string, 0.0, 0 );
+	    vel_in[1] = input("Physics/"+incompressible_navier_stokes+"/bound_vel_"+bc_id_string, 0.0, 1 );
+	    vel_in[2] = input("Physics/"+incompressible_navier_stokes+"/bound_vel_"+bc_id_string, 0.0, 2 );
 	    
 	    _vel_boundary_values[bc_id] = vel_in;
 	  }
@@ -126,10 +137,10 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
     } // End loop on bc_id
 
   // Read pressure pinning information
-  _pin_pressure = input("Physics/IncompNS/pin_pressure", true );
-  _pin_value = input("Physics/IncompNS/pin_value", 0.0 );
+  _pin_pressure = input("Physics/"+incompressible_navier_stokes+"/pin_pressure", true );
+  _pin_value = input("Physics/"+incompressible_navier_stokes+"/pin_value", 0.0 );
 
-  unsigned int pin_loc_dim = input.vector_variable_size("Physics/IncompNS/pin_location");
+  unsigned int pin_loc_dim = input.vector_variable_size("Physics/"+incompressible_navier_stokes+"/pin_location");
 
   // If the user is specifying a pin_location, it had better be at least 2-dimensional
   if( pin_loc_dim > 0 && pin_loc_dim < 2 )
@@ -139,11 +150,11 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
       libmesh_error();
     }
 
-  _pin_location(0) = input("Physics/IncompNS/pin_location", 0.0, 0 );
-  _pin_location(1) = input("Physics/IncompNS/pin_location", 0.0, 1 );
+  _pin_location(0) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 0 );
+  _pin_location(1) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 1 );
 
   if( pin_loc_dim == 3 ) 
-    _pin_location(2) = input("Physics/IncompNS/pin_location", 0.0, 2 );
+    _pin_location(2) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 2 );
 
   return;
 }

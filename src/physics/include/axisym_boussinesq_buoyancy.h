@@ -64,12 +64,9 @@ namespace GRINS
   {
   public:
     
-    AxisymmetricBoussinesqBuoyancy()
-      : Physics()
-    {};
+    AxisymmetricBoussinesqBuoyancy( const std::string& physics_name );
 
-    ~AxisymmetricBoussinesqBuoyancy()
-    {};
+    ~AxisymmetricBoussinesqBuoyancy();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -154,6 +151,9 @@ namespace GRINS
     //! Gravitational vector
     /* \todo This should be stashed in a singleton class and brought in from there */
     Point _g;
+
+  private:
+    AxisymmetricBoussinesqBuoyancy();
 
   }; // class AxisymmetricBoussinesqBuoyancy
 

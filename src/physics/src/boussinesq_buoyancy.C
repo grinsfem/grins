@@ -28,19 +28,30 @@
 
 #include "boussinesq_buoyancy.h"
 
+GRINS::BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name )
+  : Physics(physics_name)
+{
+  return;
+}
+
+GRINS::BoussinesqBuoyancy::~BoussinesqBuoyancy()
+{
+  return;
+}
+
 void GRINS::BoussinesqBuoyancy::read_input_options( const GetPot& input )
 {
   this->_V_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/IncompNS/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
 
   this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/IncompNS/V_order", "SECOND") ); 
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") ); 
 
   this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/HeatTransfer/FE_family", "LAGRANGE") );
+    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") );
 
   this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/HeatTransfer/T_order", "SECOND") );
+    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") );
 
   // Read variable naming info
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
@@ -48,17 +59,17 @@ void GRINS::BoussinesqBuoyancy::read_input_options( const GetPot& input )
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
-  _rho_ref = input("Physics/BoussinesqBuoyancy/rho_ref", 1.0);
-  _T_ref = input("Physics/BoussinesqBuoyancy/T_ref", 1.0);;
-  _beta_T = input("Physics/BoussinesqBuoyancy/beta_T", 1.0);;
+  _rho_ref = input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0);
+  _T_ref = input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0);;
+  _beta_T = input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0);;
 
-   unsigned int g_dim = input.vector_variable_size("Physics/BoussinesqBuoyancy/g");
+   unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
 
-  _g(0) = input("Physics/BoussinesqBuoyancy/g", 0.0, 0 );
-  _g(1) = input("Physics/BoussinesqBuoyancy/g", 0.0, 1 );
+  _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
+  _g(1) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 1 );
   
   if( g_dim == 3)
-    _g(2) = input("Physics/BoussinesqBuoyancy/g", 0.0, 2 );
+    _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
 
   return;
 }
