@@ -35,6 +35,7 @@
 #include "config.h"
 #include "multiphysics_sys.h"
 #include "visualization.h"
+#include "bc_factory.h"
 
 // libMesh
 #include "getpot.h"
@@ -72,6 +73,10 @@ namespace GRINS
 			bool output_residual = false )=0;
 
     virtual void init_time_solver()=0;
+
+    void attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCContainer > neumann_bcs );
+    
+    void init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory );
 
     void attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
 			      std::map< std::string, GRINS::NBCContainer > neumann_bcs );

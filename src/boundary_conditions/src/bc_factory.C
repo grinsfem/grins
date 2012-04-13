@@ -47,3 +47,8 @@ std::map< std::string, GRINS::NBCContainer > GRINS::BoundaryConditionsFactory::b
 {
   return std::map< std::string, GRINS::NBCContainer >();
 }
+
+void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::DofMap& dof_map )
+{
+  return;
+}

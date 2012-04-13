@@ -93,11 +93,39 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
+
+void GRINS::Solver::attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCContainer > neumann_bcs )
+{
+  _neumann_bc_funcs = neumann_bcs;
+
+  if( _neumann_bc_funcs.size() > 0 )
+    {
+      for( std::map< std::string, GRINS::NBCContainer >::iterator bc = _neumann_bc_funcs.begin();
+	   bc != _neumann_bc_funcs.end();
+	   bc++ )
+	{
+	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
+	  physics->attach_neumann_bound_func( bc->second );
+	}
+    }
+
+  return;
+}
+
+void GRINS::Solver::init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory )
+{
+  libMesh::DofMap& dof_map = _system->get_dof_map();
+
+  bc_factory->build_dirichlet( dof_map );
+
+  return;
+}
+
+
 void GRINS::Solver::attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
 					 std::map< std::string, GRINS::NBCContainer > neumann_bcs )
 {
   _dirichlet_bc_funcs = dirichlet_bcs;
-  _neumann_bc_funcs = neumann_bcs;
 
   // Loop through each physics that has some functions to attach and then attach them.
   if( _dirichlet_bc_funcs.size() > 0 )
@@ -111,16 +139,7 @@ void GRINS::Solver::attach_bc_func_objs( std::map< std::string, GRINS::DBCContai
 	}
     }
 
-  if( _neumann_bc_funcs.size() > 0 )
-    {
-      for( std::map< std::string, GRINS::NBCContainer >::iterator bc = _neumann_bc_funcs.begin();
-	   bc != _neumann_bc_funcs.end();
-	   bc++ )
-	{
-	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
-	  physics->attach_neumann_bound_func( bc->second );
-	}
-    }
+  this->attach_neumann_bc_funcs( neumann_bcs );
 
   return;
 }

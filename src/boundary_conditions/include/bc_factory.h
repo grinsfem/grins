@@ -56,6 +56,12 @@ namespace GRINS
     /*! This is done for each physics. Thus, the container returned maps between each physics 
       and set of Dirichlet boundary conditions for that physics. */
     virtual std::map< std::string, GRINS::DBCContainer > build_dirichlet( libMesh::EquationSystems& equation_system );
+
+    //! Builds all required libMesh::DirichletBoundary objects and adds them to DofMap
+    /*! This needs to be done for all the physics in the simulation, for all
+      "special" dirichlet boundary conditions. */ 
+    virtual void build_dirichlet( libMesh::DofMap& dof_map );
+
     //! Builds all Neumann boundary condition function objects needed
     /*! This is done for each physics. Thus, the container returned maps between each physics 
       and set of Neumann boundary conditions for that physics. */
