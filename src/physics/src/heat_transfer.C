@@ -146,6 +146,41 @@ void GRINS::HeatTransfer::init_bc_data( const GRINS::BoundaryID bc_id,
   return;
 }
 
+void GRINS::HeatTransfer::init_dirichlet_bcs( libMesh::DofMap& dof_map )
+{
+  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
+       it != _dirichlet_bc_map.end();
+       it++ )
+    {
+      switch( it->second )
+	{
+	case(ISOTHERMAL_WALL):
+	  {
+	    std::set<GRINS::BoundaryID> dbc_ids;
+	    dbc_ids.insert(it->first);
+
+	    std::vector<GRINS::VariableIndex> dbc_vars;
+	    dbc_vars.push_back(_T_var);
+
+	    ConstFunction<Number> t_func( _T_boundary_values[it->first] );
+
+	    libMesh::DirichletBoundary( dbc_ids, dbc_vars, &t_func );
+
+	    //dof_map.add_dirichlet_boundary( t_dbc );
+	  }
+	  break;
+	default:
+	  {
+	    std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
+		      << std::endl;
+	    libmesh_error();
+	  }
+  	}// end switch
+    } //end for
+
+  return;
+}
+
 void GRINS::HeatTransfer::init_variables( libMesh::FEMSystem* system )
 {
   // Get libMesh to assign an index for each variable
