@@ -83,9 +83,6 @@ void GRINS::MultiphysicsSystem::init_data()
       (physics_iter->second)->init_variables( this );
     }
 
-  // Next, call parent init_data function to intialize everything.
-  libMesh::FEMSystem::init_data();
-
   // Now set time_evolving variables
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
@@ -101,6 +98,9 @@ void GRINS::MultiphysicsSystem::init_data()
     {
       (physics_iter->second)->init_dirichlet_bcs( this->get_dof_map() );
     }
+
+  // Next, call parent init_data function to intialize everything.
+  libMesh::FEMSystem::init_data();
 
   return;
 }

@@ -72,6 +72,8 @@ void GRINS::Physics::read_bc_data( const GetPot& input )
       ss << bc_id;
       std::string bc_id_string = ss.str();
 
+      std::cout << "bc_id = " << bc_id << ", bc_type = " << bc_type_in << std::endl;
+
       this->init_bc_data( bc_id, bc_id_string, bc_type, input );
     }
 
@@ -97,13 +99,6 @@ void GRINS::Physics::init_bc_data( const GRINS::BoundaryID bc_id,
 void GRINS::Physics::init_dirichlet_bcs( libMesh::DofMap& dof_map )
 {
   // Not all Physics need this so we have a do nothing default.
-  return;
-}
-
-void GRINS::Physics::attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs )
-{
-  _dirichlet_bound_funcs = dirichlet_bcs;
-
   return;
 }
 

@@ -53,8 +53,11 @@ GRINS::Simulation::Simulation( const GetPot& input,
   _solver->initialize( input, _equation_system, physics_list );
 
   if( bc_factory )
-    _solver->attach_bc_func_objs( bc_factory->build_dirichlet( *_equation_system ),
-				  bc_factory->build_neumann( *_equation_system ) );
+    {
+      _solver->attach_neumann_bc_funcs(bc_factory->build_neumann( *_equation_system ));
+      _solver->init_dirichlet_bc_funcs( bc_factory );
+      _equation_system->reinit();
+    }
 
   return;
 }

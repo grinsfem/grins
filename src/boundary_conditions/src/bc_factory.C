@@ -38,17 +38,12 @@ GRINS::BoundaryConditionsFactory::~BoundaryConditionsFactory( )
   return;
 }
 
-std::map< std::string, GRINS::DBCContainer > GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::EquationSystems& equation_system )
-{
-  return std::map< std::string, GRINS::DBCContainer >();
-}
-
 std::map< std::string, GRINS::NBCContainer > GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
 {
   return std::map< std::string, GRINS::NBCContainer >();
 }
 
-void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::DofMap& dof_map )
+void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::System& system )
 {
   return;
 }

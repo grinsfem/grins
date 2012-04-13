@@ -28,9 +28,12 @@
 #ifndef CONCENTRIC_CYLINDER_PROFILE_H
 #define CONCENTRIC_CYLINDER_PROFILE_H
 
-#include "dirichlet_func_obj.h"
-#include "fe_base.h"
+// GRINS
 #include "var_typedefs.h"
+
+// libMesh
+#include "fe_base.h"
+#include "function_base.h"
 
 namespace GRINS
 {
@@ -45,7 +48,7 @@ namespace GRINS
       and \f$ r_1 \f$ is the outer cylinder radius. Note, that this
       assumes axisymmetry.
   */
-  class ConcentricCylinderProfile : public DirichletFuncObj
+  class ConcentricCylinderProfile : public libMesh::FunctionBase<libMesh::Number>
   {
   public:
     
@@ -53,14 +56,19 @@ namespace GRINS
     /*! Default constructor sets parameters for the profile:
       value = \f$ 2.0 \frac{ \ln( 2.0/r) }{\ln(2.0)} \f$
     */
-    ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in );
+    ConcentricCylinderProfile( );
 
-    ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in,
-			       const double u0, const double r0, const double r1 );
+    ConcentricCylinderProfile( const double u0, const double r0, const double r1 );
 
     virtual ~ConcentricCylinderProfile( );
 
-    virtual libMesh::Number value( const libMesh::FEMContext& c, const unsigned int qp );
+    virtual libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > clone() const;
+
+    virtual libMesh::Number operator()( const Point &p, const Real time );
+
+    virtual void operator()( const Point &p, 
+			     const Real time, 
+			     libMesh::DenseVector<Number> &output );
     
   protected:
     
@@ -69,9 +77,6 @@ namespace GRINS
     {
       return u0*std::log(r1/r)/std::log(r1/r0);
     };
-
-    //! Component of velocity to which this profile is being applied
-    GRINS::VariableIndex _u_var;
 
     //! Coefficients defining parabola
     double _u0, _r0, _r1;

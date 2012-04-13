@@ -171,6 +171,8 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
        it != _dirichlet_bc_map.end();
        it++ )
     {
+      std::cout << "bc_id = " << it->first << ", BCType = " << it->second << std::endl;
+      
       switch( it->second )
 	{
 	case(NO_SLIP):
@@ -188,7 +190,7 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
 						   dbc_vars, 
 						   &zero );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	    dof_map.add_dirichlet_boundary( no_slip_dbc );
 	  }
 	  break;
 	case(PRESCRIBED_VELOCITY):
@@ -210,7 +212,7 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
 						 dbc_vars, 
 						 &vel_func );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dof_map.add_dirichlet_boundary( vel_dbc );
 	      dbc_vars.clear();
 	    }
 
@@ -222,7 +224,7 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
 						 dbc_vars, 
 						 &vel_func );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dof_map.add_dirichlet_boundary( vel_dbc );
 	      dbc_vars.clear();
 	    }
 	  }
@@ -241,7 +243,7 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
 						   dbc_vars, 
 						   &zero );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	    dof_map.add_dirichlet_boundary( no_slip_dbc );
 	  }
 	  break;
 	case(INFLOW):
@@ -567,89 +569,13 @@ bool GRINS::AxisymmetricIncompressibleNavierStokes::side_constraint( bool reques
 								     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
+  //this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 
-  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-  const GRINS::BoundaryID boundary_id =
-    system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
-
-  libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
-
-  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
-    bc_map_it = _dirichlet_bc_map.find( boundary_id );
-
-  /* We assume that if you didn't put a boundary id in, then you didn't want to
-     set a boundary condition on that boundary. */
-  if( bc_map_it != _dirichlet_bc_map.end() )
-    {
-      switch( bc_map_it->second )
-	{
-	  // No slip boundary condition
-	case(NO_SLIP):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
-	    
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
-	  }
-	  break;
-
-	  // Prescribed constant velocity
-	case(PRESCRIBED_VELOCITY):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  _u_r_var, _vel_boundary_values[boundary_id][0] );
-
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  _u_z_var, _vel_boundary_values[boundary_id][1] );
-	  }
-	  break;
-
-	  // Inflow 
-	case(INFLOW):
-	  {
-	    DirichletBCsMap& bc_map = _dirichlet_bound_funcs[boundary_id];
-            
-	    DirichletBCsMap::iterator u_r_it = bc_map.find( _u_r_var );
-	    DirichletBCsMap::iterator u_z_it = bc_map.find( _u_z_var );
-
-            if( u_r_it == bc_map.end() )
-	      {
-		//_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
-	      }
-            else
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, u_r_it->second );
-	      }
-	    if( u_z_it == bc_map.end() )
-	      {
-		//_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, 0.0 );
-	      }
-            else
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_z_var, u_z_it->second );
-	      }
-	  }
-	  break;
-	  
-	case(AXISYMMETRIC):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_r_var, 0.0 );
-	  }
-	  break;
-	default:
-	  {
-	    std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
-	    libmesh_error();
-	  }
-
-	} // End switch on bc type
-    } // End if statement
+  //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
+  //this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 
   return request_jacobian;

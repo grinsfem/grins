@@ -203,7 +203,7 @@ void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof
 						   dbc_vars, 
 						   &zero );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	    dof_map.add_dirichlet_boundary( no_slip_dbc );
 	  }
 	  break;
 	case(PRESCRIBED_VELOCITY):
@@ -225,7 +225,7 @@ void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof
 						 dbc_vars, 
 						 &vel_func );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dof_map.add_dirichlet_boundary( vel_dbc );
 	      dbc_vars.clear();
 	    }
 
@@ -237,7 +237,7 @@ void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof
 						 dbc_vars, 
 						 &vel_func );
 
-	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dof_map.add_dirichlet_boundary( vel_dbc );
 	      dbc_vars.clear();
 	    }
 	    if( _dim == 3 )
@@ -249,7 +249,7 @@ void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof
 						   dbc_vars, 
 						   &vel_func );
 
-		//dof_map.add_dirichlet_boundary( no_slip_dbc );
+		dof_map.add_dirichlet_boundary( vel_dbc );
 	      }  
 	  }
 	  break;
@@ -613,108 +613,13 @@ bool GRINS::IncompressibleNavierStokes::side_constraint( bool request_jacobian,
 							 libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("IncompressibleNavierStokes::side_constraint");
+  //this->_timer->BeginTimer("IncompressibleNavierStokes::side_constraint");
 #endif
 
-  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-  // for convenience
-  if (_dim != 3)
-    _w_var = _u_var;
-
-  const GRINS::BoundaryID boundary_id =
-    system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
-  libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
-
-  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
-    bc_map_it = _dirichlet_bc_map.find( boundary_id );
-
-  /* We assume that if you didn't put a boundary id in, then you didn't want to
-     set a boundary condition on that boundary. */
-  if( bc_map_it != _dirichlet_bc_map.end() )
-    {
-      switch( bc_map_it->second )
-	{
-	  // No slip boundary condition
-	case(NO_SLIP):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
-	    
-	    _bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
-
-	    if( _dim == 3 )
-	      _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
-	  }
-	  break;
-
-	  // Prescribed constant velocity
-	case(PRESCRIBED_VELOCITY):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  _u_var, _vel_boundary_values[boundary_id][0] );
-
-	    _bound_conds.apply_dirichlet( context, request_jacobian, 
-					  _v_var, _vel_boundary_values[boundary_id][1] );
-	    
-	    if( _dim == 3 )
-	      _bound_conds.apply_dirichlet( context, request_jacobian, 
-					    _w_var, _vel_boundary_values[boundary_id][2] );
-	  }
-	  break;
-
-	  // Inflow 
-	case(INFLOW):
-	  {
-            DirichletBCsMap& bc_map = _dirichlet_bound_funcs[boundary_id];
-	    
-	    DirichletBCsMap::iterator u_it = bc_map.find( _u_var );
-	    DirichletBCsMap::iterator v_it = bc_map.find( _v_var );
-	    DirichletBCsMap::iterator w_it;
-
-	    if( _dim == 3 ) w_it = bc_map.find( _w_var ); 
-            
-            if( u_it == bc_map.end() )
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_var, 0.0 );
-	      }
-            else
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _u_var, u_it->second );
-	      }
-	    if( v_it == bc_map.end() )
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _v_var, 0.0 );
-	      }
-            else
-	      {
-		_bound_conds.apply_dirichlet( context, request_jacobian, _v_var, v_it->second );
-	      }
-            if( _dim == 3 )
-	      {
-		if( w_it == bc_map.end() )
-		  {
-		    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, 0.0 );
-		  }
-		else
-		  {
-		    _bound_conds.apply_dirichlet( context, request_jacobian, _w_var, w_it->second );
-		  }
-	      }
-	  }
-	  break;
-
-	default:
-	  {
-	    std::cerr << "Error: Invalid Dirichlet BC type for IncompressibleNavierStokes."
-		      << std::endl;
-	    libmesh_error();
-	  }
-
-	} // End switch on bc type
-    } // End if statement
+  //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("IncompressibleNavierStokes::side_constraint");
+  //this->_timer->EndTimer("IncompressibleNavierStokes::side_constraint");
 #endif
 
   return request_jacobian;

@@ -35,7 +35,7 @@ GRINS::Solver::Solver( const GetPot& input )
     _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
     _relative_step_tolerance( input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 ) ),
     _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
-    _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-16 ) ),
+    _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-15 ) ),
     _absolute_residual_tolerance( input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 ) ),
     _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
     _initial_linear_tolerance( input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 ) ),
@@ -114,35 +114,11 @@ void GRINS::Solver::attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCCo
 
 void GRINS::Solver::init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory )
 {
-  libMesh::DofMap& dof_map = _system->get_dof_map();
-
-  bc_factory->build_dirichlet( dof_map );
+  bc_factory->build_dirichlet( *_system );
 
   return;
 }
 
-
-void GRINS::Solver::attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
-					 std::map< std::string, GRINS::NBCContainer > neumann_bcs )
-{
-  _dirichlet_bc_funcs = dirichlet_bcs;
-
-  // Loop through each physics that has some functions to attach and then attach them.
-  if( _dirichlet_bc_funcs.size() > 0 )
-    {
-      for( std::map< std::string, GRINS::DBCContainer >::iterator bc = _dirichlet_bc_funcs.begin();
-	   bc != _dirichlet_bc_funcs.end();
-	   bc++ )
-	{
-	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
-	  physics->attach_dirichlet_bound_func( bc->second );
-	}
-    }
-
-  this->attach_neumann_bc_funcs( neumann_bcs );
-
-  return;
-}
 
 #ifdef USE_GRVY_TIMERS
 void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )

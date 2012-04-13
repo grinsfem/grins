@@ -54,18 +54,17 @@ Gradient exact_derivative( const Point& p,
 			   const std::string&,  // sys_name, not needed
 			   const std::string&); // unk_name, not needed);
 
-class MyBCFactory : public GRINS::BoundaryConditionsFactory
+class AxiParabolicBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  MyBCFactory( const GetPot& input )
+  AxiParabolicBCFactory( const GetPot& input )
     : GRINS::BoundaryConditionsFactory(input)
   { return; };
 
-  ~MyBCFactory(){return;};
+  ~AxiParabolicBCFactory(){return;};
 
-  std::map< std::string, GRINS::DBCContainer >
-  build_dirichlet( libMesh::EquationSystems& equation_system );
+  void build_dirichlet( libMesh::System& system );
 };
 
 int main(int argc, char* argv[]) 
@@ -108,7 +107,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  MyBCFactory bc_factory( libMesh_inputfile );
+  AxiParabolicBCFactory bc_factory( libMesh_inputfile );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
@@ -174,25 +173,49 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-std::map< std::string, GRINS::DBCContainer > MyBCFactory::build_dirichlet( libMesh::EquationSystems& es )
+void AxiParabolicBCFactory::build_dirichlet( libMesh::System& system )
 {
-  const libMesh::System& system = es.get_system("GRINS");
   GRINS::VariableIndex z_var = system.variable_number("z_vel");
+  GRINS::VariableIndex u_var = system.variable_number("r_vel");
 
-  std::tr1::shared_ptr<GRINS::DirichletFuncObj> inflow( new GRINS::ParabolicProfile (  z_var, -1.0/4.0, 0.0, 0.0, 0.0, 0.0, 1.0/4.0 ) );
+  std::cout << "u_var = " << u_var << ", z_var = " << z_var << std::endl;
 
-  GRINS::DirichletBCsMap dbc_map;
-  dbc_map.insert( GRINS::DBCMapPair( z_var,inflow ) );
+  libMesh::DofMap& dof_map = system.get_dof_map();
 
-  GRINS::DBCContainer dbc_container;
-  dbc_container.insert( GRINS::DBCContainerPair( 0, dbc_map ) );
-  dbc_container.insert( GRINS::DBCContainerPair( 2, dbc_map ) );
+  std::vector<GRINS::VariableIndex> dbc_vars;
+  dbc_vars.push_back( z_var );
 
-  std::map< std::string, GRINS::DBCContainer > dbcs;
+  std::set<GRINS::BoundaryID> dbc_ids;
+  dbc_ids.insert(0);
+  dbc_ids.insert(2);
 
-  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "AxisymmetricIncompressibleNavierStokes", dbc_container ) );
+  {
+    GRINS::ParabolicProfile vel_func( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ); 
+    
+    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &vel_func );
+    
+    std::cout << (*vel_dbc.f)( libMesh::Point(0.0,0.0), 0.0 ) << std::endl;
+    std::cout << (*vel_dbc.f)( libMesh::Point(0.5,0.0), 0.0 ) << std::endl;
+    std::cout << (*vel_dbc.f)( libMesh::Point(1.0,0.0), 0.0 ) << std::endl;
+    
+    dof_map.add_dirichlet_boundary( vel_dbc );
+  }
 
-  return dbcs;
+  dbc_vars[0] = u_var;
+  
+  {
+    ZeroFunction<Number> zero;
+
+    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &zero );
+    
+    std::cout << (*vel_dbc.f)( libMesh::Point(0.0,0.0), 0.0 ) << std::endl;
+    std::cout << (*vel_dbc.f)( libMesh::Point(0.5,0.0), 0.0 ) << std::endl;
+    std::cout << (*vel_dbc.f)( libMesh::Point(1.0,0.0), 0.0 ) << std::endl;
+    
+    dof_map.add_dirichlet_boundary( vel_dbc );
+  }
+
+  return;
 }
 
 Number exact_solution( const Point& p,
@@ -208,7 +231,7 @@ Number exact_solution( const Point& p,
 
   Number f;
   // Hardcoded to velocity in input file.
-  if( var == "z_vel" ) f = -dpdx/(4.0*mu)*(r0*r0 - r*r);
+  if( var == "z_vel" ) f = -dpdx*100.0/(4.0*mu)*(r0*r0 - r*r);
 
   return f;
 }
@@ -225,7 +248,7 @@ Gradient exact_derivative( const Point& p,
   // Hardcoded to velocity in input file.
   if( var == "z_vel" )
     {
-      g(0) = -1.0/2.0*r;
+      g(0) = -100.0/2.0*r;
       g(1) = 0.0;
     }
 

@@ -38,6 +38,7 @@
 
 //libMesh
 #include "exact_solution.h"
+#include "zero_function.h"
 
 // GRVY
 #ifdef HAVE_GRVY
@@ -54,18 +55,17 @@ Gradient exact_derivative( const Point& p,
 			   const std::string&,  // sys_name, not needed
 			   const std::string&); // unk_name, not needed);
 
-class MyBCFactory : public GRINS::BoundaryConditionsFactory
+class AxiConCylBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  MyBCFactory( const GetPot& input )
+  AxiConCylBCFactory( const GetPot& input )
     : GRINS::BoundaryConditionsFactory(input)
   { return; };
 
-  ~MyBCFactory(){return;};
+  ~AxiConCylBCFactory(){return;};
 
-  std::map< std::string, GRINS::DBCContainer >
-  build_dirichlet( libMesh::EquationSystems& equation_system );
+  void build_dirichlet( libMesh::System& system );
 };
 
 int main(int argc, char* argv[]) 
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  MyBCFactory bc_factory( libMesh_inputfile );
+  AxiConCylBCFactory bc_factory( libMesh_inputfile );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
@@ -173,25 +173,38 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-std::map< std::string, GRINS::DBCContainer > MyBCFactory::build_dirichlet( libMesh::EquationSystems& es )
+void AxiConCylBCFactory::build_dirichlet( libMesh::System& system )
 {
-  const libMesh::System& system = es.get_system("GRINS");
   GRINS::VariableIndex z_var = system.variable_number("z_vel");
+  GRINS::VariableIndex u_var = system.variable_number("r_vel");
+  libMesh::DofMap& dof_map = system.get_dof_map();
 
-  std::tr1::shared_ptr<GRINS::DirichletFuncObj> inflow( new GRINS::ConcentricCylinderProfile(z_var) );
+  std::vector<GRINS::VariableIndex> dbc_vars;
+  dbc_vars.push_back( z_var );
 
-  GRINS::DirichletBCsMap dbc_map;
-  dbc_map.insert( GRINS::DBCMapPair( z_var,inflow ) );
+  std::set<GRINS::BoundaryID> dbc_ids;
+  dbc_ids.insert(0);
+  dbc_ids.insert(2);
+  
+  {
+    GRINS::ConcentricCylinderProfile vel_func;
+    
+    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &vel_func );
 
-  GRINS::DBCContainer dbc_container;
-  dbc_container.insert( GRINS::DBCContainerPair( 0, dbc_map ) );
-  dbc_container.insert( GRINS::DBCContainerPair( 2, dbc_map ) );
+    dof_map.add_dirichlet_boundary( vel_dbc );
+  }
 
-  std::map< std::string, GRINS::DBCContainer > dbcs;
+  dbc_vars[0] = u_var;
 
-  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "AxisymmetricIncompressibleNavierStokes", dbc_container ) );
+  {
+    ZeroFunction<Number> zero;
+    
+    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &zero );
+    
+    dof_map.add_dirichlet_boundary( vel_dbc );
+  }
 
-  return dbcs;
+  return;
 }
 
 Number exact_solution( const Point& p,

@@ -28,9 +28,12 @@
 #ifndef PARABOLIC_PROFILE_H
 #define PARABOLIC_PROFILE_H
 
-#include "fe_base.h"
-#include "dirichlet_func_obj.h"
+// GRINS
 #include "var_typedefs.h"
+
+// libMesh
+#include "fe_base.h"
+#include "function_base.h"
 
 namespace GRINS
 {
@@ -40,22 +43,27 @@ namespace GRINS
       boundary conditions. Parabola takes the form:
   \f$ ax^2 + bxy + cy^2 + dx + ey + f \f$ */
   /** \todo Need to incorporate z-directions */
-  class ParabolicProfile : public DirichletFuncObj
+  class ParabolicProfile : public libMesh::FunctionBase<libMesh::Number>
   {
   public:
     
     //! Default constructor
     /*! Default constructor sets parameters for the profile:
       value = \f$ 4y(1-y) \f$ */
-    ParabolicProfile( const GRINS::VariableIndex u_var_in );
+    ParabolicProfile( );
 
-    ParabolicProfile( const GRINS::VariableIndex u_var_in,
-                      const double a, const double b, const double c,
+    ParabolicProfile( const double a, const double b, const double c,
 		      const double d, const double e, const double f );
 
     virtual ~ParabolicProfile( );
 
-    virtual libMesh::Number value( const libMesh::FEMContext& c, const unsigned int qp );
+    virtual libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > clone() const;
+
+    virtual libMesh::Number operator()( const Point &p, const Real time );
+
+    virtual void operator()( const Point &p, 
+			     const Real time, 
+			     libMesh::DenseVector<Number> &output );
     
   protected:
     
@@ -65,9 +73,6 @@ namespace GRINS
     {
       return a*x*x + b*x*y + c*y*y + d*x + e*y + f;
     };
-
-    //! Component of velocity to which this profile is being applied                                                                                                                                                                       
-    GRINS::VariableIndex _u_var;
 
     //! Coefficients defining parabola
     double _a, _b, _c, _d, _e, _f;

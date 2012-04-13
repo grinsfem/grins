@@ -24,19 +24,21 @@ initial_linear_tolerance = 1.0e-12
 
 verify_analytic_jacobians = 1.e-6
 
+relative_residual_tolerance = 1.0e-10
+
 # Visualization options
 [vis-options]
 output_vis_time_series = false 
-output_vis_flag = false 
+output_vis = true 
 vis_output_file_prefix = axi_con_cyl 
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = false 
-print_mesh_info = false
-print_log_info = false
-solver_verbose = false
-solver_quiet = true
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
 
 # Options related to all Physics
 [Physics]
@@ -65,8 +67,8 @@ bc_types = 'no_slip prescribed_vel inflow inflow'
 bound_vel_3 = '0.0 2.0'
 
 pin_pressure = true 
-pin_value = 0.0
-pin_location = '0.5 0.5'
+pin_value = 100.0
+pin_location = '1.5 0.5'
 
 [../VariableNames]
 

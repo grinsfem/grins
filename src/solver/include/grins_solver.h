@@ -78,8 +78,6 @@ namespace GRINS
     
     void init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory );
 
-    void attach_bc_func_objs( std::map< std::string, GRINS::DBCContainer > dirichlet_bcs,
-			      std::map< std::string, GRINS::NBCContainer > neumann_bcs );
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -106,7 +104,6 @@ namespace GRINS
     /* Keep copies of the boundary conditions around
        in case they need to be updated during a solve;
        for example parameter continuation. */
-    std::map< std::string, GRINS::DBCContainer > _dirichlet_bc_funcs;
     std::map< std::string, GRINS::NBCContainer > _neumann_bc_funcs;
 
     void set_solver_options( libMesh::DiffSolver& solver );

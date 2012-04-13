@@ -39,6 +39,7 @@
 #include "fem_context.h"
 #include "dirichlet_boundaries.h"
 #include "zero_function.h"
+#include "dof_map.h"
 
 //GRINS
 #include "variable_name_defaults.h"
@@ -148,8 +149,6 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
 
-    void attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs );
-
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 
 #ifdef USE_GRVY_TIMERS
@@ -164,6 +163,8 @@ namespace GRINS
     const std::string& _physics_name;
 
     //! Map between boundary id and Dirichlet boundary condition type
+    /*! We need to keep this around because the libMesh::DirichletBoundary
+      objects can't be created until we init the variables */
     std::map< GRINS::BoundaryID, GRINS::BCType> _dirichlet_bc_map;
 
     //! Map between boundary id and Neumann boundary condition type
@@ -173,12 +174,6 @@ namespace GRINS
     /** \todo Move this so that only one object is needed. 
 	      Perhaps make static? */
     GRINS::BoundaryConditions _bound_conds;
-
-    //! Map between boundary id and general Dirichlet boundary functions
-    /*! The user may wish to set a different function for each variable in the physics class,
-        for example components of velocity for Navier-Stokes. By design, the user cannot set
-	more than 1 function per variable. */
-    GRINS::DBCContainer _dirichlet_bound_funcs;
     
     //! Map between boundary id and general Neumann boundary functions
     /*! The user may wish to set a different function for each variable in the physics class. 

@@ -30,7 +30,6 @@
 
 #include "bc_types.h"
 #include "var_typedefs.h"
-#include "dirichlet_func_obj.h"
 #include "neumann_func_obj.h"
 
 // libMesh stuff
@@ -58,18 +57,6 @@ namespace GRINS
 
     BoundaryConditions();
     ~BoundaryConditions();
-    
-    //! Applies Dirichlet boundary conditions using the penalty method.
-    void apply_dirichlet( libMesh::DiffContext &context, const bool request_jacobian,
-			  const GRINS::VariableIndex var, const double value, 
-			  const double penalty = 1.0e16 );
-
-    //! Applies Dirichlet boundary conditions using a user-supplied function using the penalty method. */
-    void apply_dirichlet( libMesh::DiffContext &context, 
-			  const bool request_jacobian,
-			  const VariableIndex var,
-			  std::tr1::shared_ptr<GRINS::DirichletFuncObj> dirichlet_func,
-			  const double penalty = 1.0e16 );
 
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann( libMesh::DiffContext &context,

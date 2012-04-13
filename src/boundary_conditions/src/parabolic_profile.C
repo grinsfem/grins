@@ -28,21 +28,20 @@
 
 #include "parabolic_profile.h"
 
-GRINS::ParabolicProfile::ParabolicProfile( const GRINS::VariableIndex u_var_in )
-  : DirichletFuncObj(),
-    _u_var( u_var_in ),
+GRINS::ParabolicProfile::ParabolicProfile( )
+  : FunctionBase<Number>(),
     _a(0.0), _b(0.0), _c(-4.0), _d(0.0), _e(4.0), _f(0.0)
 {
+  _initialized=true;
   return;
 }
 
-GRINS::ParabolicProfile::ParabolicProfile( const GRINS::VariableIndex u_var_in,
-					   const double a, const double b, const double c,
+GRINS::ParabolicProfile::ParabolicProfile( const double a, const double b, const double c,
 					   const double d, const double e, const double f )
-  : DirichletFuncObj(),
-    _u_var( u_var_in ),
+  : FunctionBase<Number>(),
     _a(a), _b(b), _c(c), _d(d), _e(e), _f(f)
 {
+  _initialized=true;
   return;
 }
 
@@ -51,12 +50,25 @@ GRINS::ParabolicProfile::~ParabolicProfile()
   return;
 }
 
-libMesh::Number GRINS::ParabolicProfile::value( const libMesh::FEMContext& c, const unsigned int qp )
+libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::ParabolicProfile::clone() const
 {
-  const std::vector<libMesh::Point>& qpoint = c.side_fe_var[_u_var]->get_xyz();
+  return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ParabolicProfile( _a, _b, _c, _d, _e, _f ) );
+}
 
-  const double x = qpoint[qp](0);
-  const double y = qpoint[qp](1);
+libMesh::Number GRINS::ParabolicProfile::operator()( const Point &p, 
+						     const Real )
+{
+  const double x = p(0);
+  const double y = p(1);
   
   return this->eval( _a, _b, _c, _d, _e, _f, x, y );
+}
+
+void GRINS::ParabolicProfile::operator()( const Point &p, 
+					  const Real time, 
+					  libMesh::DenseVector<libMesh::Number> &output )
+{
+  output(0) = (*this)(p, time);
+
+  return;
 }

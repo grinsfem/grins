@@ -21,12 +21,12 @@ max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
 
-verify_analytic_jacobians = 1.e-5
+verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
 output_vis_time_series = false 
-output_vis_flag = false 
+output_vis = false 
 vis_output_file_prefix = couette_poiseuille 
 
 # Options for print info to the screen

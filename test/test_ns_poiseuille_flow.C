@@ -54,18 +54,17 @@ Gradient exact_derivative( const Point& p,
 			   const std::string&,  // sys_name, not needed
 			   const std::string&); // unk_name, not needed);
 
-class MyBCFactory : public GRINS::BoundaryConditionsFactory
+class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  MyBCFactory( const GetPot& input )
+  ParabolicBCFactory( const GetPot& input )
     : GRINS::BoundaryConditionsFactory(input)
   { return; };
 
-  ~MyBCFactory(){return;};
+  ~ParabolicBCFactory(){return;};
 
-  std::map< std::string, GRINS::DBCContainer >
-  build_dirichlet( libMesh::EquationSystems& equation_system );
+  void build_dirichlet( libMesh::System& system );
 };
 
 int main(int argc, char* argv[]) 
@@ -109,7 +108,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  MyBCFactory bc_factory( libMesh_inputfile );
+  ParabolicBCFactory bc_factory( libMesh_inputfile );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
@@ -172,25 +171,25 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-std::map< std::string, GRINS::DBCContainer > MyBCFactory::build_dirichlet( libMesh::EquationSystems& es )
+void ParabolicBCFactory::build_dirichlet( libMesh::System& system )
 {
-  const libMesh::System& system = es.get_system("GRINS");
   GRINS::VariableIndex u_var = system.variable_number("u");
+  libMesh::DofMap& dof_map = system.get_dof_map();
 
-  std::tr1::shared_ptr<GRINS::DirichletFuncObj> inflow( new GRINS::ParabolicProfile(u_var) );
+  std::vector<GRINS::VariableIndex> dbc_vars;
+  dbc_vars.push_back( u_var );
 
-  GRINS::DirichletBCsMap dbc_map;
-  dbc_map.insert( GRINS::DBCMapPair( u_var,inflow ) );
+  GRINS::ParabolicProfile u_func;
 
-  GRINS::DBCContainer dbc_container;
-  dbc_container.insert( GRINS::DBCContainerPair( 3, dbc_map ) );
-  dbc_container.insert( GRINS::DBCContainerPair( 1, dbc_map ) );
+  std::set<GRINS::BoundaryID> dbc_ids;
+  dbc_ids.insert(3);
+  dbc_ids.insert(1);
 
-  std::map< std::string, GRINS::DBCContainer > dbcs;
+  libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &u_func );
 
-  dbcs.insert( std::pair< std::string, GRINS::DBCContainer >( "IncompressibleNavierStokes", dbc_container ) );
+  dof_map.add_dirichlet_boundary( vel_dbc );
 
-  return dbcs;
+  return;
 }
 
 Number exact_solution( const Point& p,

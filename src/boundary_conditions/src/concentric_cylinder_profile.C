@@ -28,9 +28,8 @@
 
 #include "concentric_cylinder_profile.h"
 
-GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in )
-  : DirichletFuncObj(),
-    _u_var( u_var_in ),
+GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( )
+  : FunctionBase<Number>(),
     _u0(2.0),
     _r0(1.0),
     _r1(2.0)
@@ -38,12 +37,10 @@ GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const GRINS::Variab
   return;
 }
 
-GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const GRINS::VariableIndex u_var_in,
-							     const double u0, 
+GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const double u0, 
 							     const double r0, 
 							     const double r1 )
-  : DirichletFuncObj(),
-    _u_var( u_var_in ),
+  : FunctionBase<Number>(),
     _u0(u0),
     _r0(r0),
     _r1(r1)
@@ -56,12 +53,24 @@ GRINS::ConcentricCylinderProfile::~ConcentricCylinderProfile()
   return;
 }
 
-libMesh::Number GRINS::ConcentricCylinderProfile::value( const libMesh::FEMContext& c, 
-							 const unsigned int qp )
+libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::ConcentricCylinderProfile::clone() const
 {
-  const std::vector<libMesh::Point>& qpoint = c.side_fe_var[_u_var]->get_xyz();
+  return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
+}
 
-  const double r = qpoint[qp](0);
+libMesh::Number GRINS::ConcentricCylinderProfile::operator()( const Point &p, 
+							      const Real )
+{
+  const double r = p(0);
   
   return this->eval( _u0, _r0, _r1, r );
+}
+
+void GRINS::ConcentricCylinderProfile::operator()( const Point &p, 
+						   const Real time, 
+						   libMesh::DenseVector<libMesh::Number> &output )
+{
+  output(0) = (*this)(p, time);
+
+  return;
 }

@@ -164,9 +164,9 @@ void GRINS::HeatTransfer::init_dirichlet_bcs( libMesh::DofMap& dof_map )
 
 	    ConstFunction<Number> t_func( _T_boundary_values[it->first] );
 
-	    libMesh::DirichletBoundary( dbc_ids, dbc_vars, &t_func );
+	    libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );
 
-	    //dof_map.add_dirichlet_boundary( t_dbc );
+	    dof_map.add_dirichlet_boundary( t_dbc );
 	  }
 	  break;
 	default:
@@ -426,43 +426,13 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
 					   libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("HeatTransfer::side_constraint");
+  //this->_timer->BeginTimer("HeatTransfer::side_constraint");
 #endif
 
-  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-  const GRINS::BoundaryID boundary_id =
-    system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
-  libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
-
-  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
-    bc_map_it = _dirichlet_bc_map.find( boundary_id );
-
-   /* We assume that if you didn't put a boundary id in, then you didn't want to
-     set a boundary condition on that boundary. */
-  if( bc_map_it != _dirichlet_bc_map.end() )
-    {
-      switch( bc_map_it->second )
-	{
-	  // Prescribed constant temperature
-	case(ISOTHERMAL_WALL):
-	  {
-	    _bound_conds.apply_dirichlet( context, request_jacobian,
-					  _T_var, _T_boundary_values[boundary_id] );
-	    break;
-	  }
-	default:
-	  {
-	    std::cerr << "Error: Invalid Dirhclet BC type for ConvectiveHeatTransfer."
-		      << std::endl;
-	    libmesh_error();
-	  }
-
-	} // End switch
-    } // End if
+  //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("HeatTransfer::side_constraint");
+  //this->_timer->EndTimer("HeatTransfer::side_constraint");
 #endif
 
   return request_jacobian;
