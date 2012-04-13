@@ -41,7 +41,8 @@ namespace GRINS
   typedef unsigned int VariableIndex;
 
   //! More descriptive name of the type used for boundary ids
-  typedef unsigned int BoundaryID;
+  /*! We make it a short int to be compatible with libMesh */
+  typedef short int BoundaryID;
 
   //! Container for GRINS::Physics object pointers
   typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> > PhysicsList;

@@ -109,6 +109,8 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
+    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
+
   protected:
 
     //! Physical dimension of problem

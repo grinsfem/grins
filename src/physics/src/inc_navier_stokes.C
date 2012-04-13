@@ -178,6 +178,96 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
   return;
 }
 
+void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof_map )
+{
+  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
+       it != _dirichlet_bc_map.end();
+       it++ )
+    {
+      switch( it->second )
+	{
+	case(NO_SLIP):
+	  {
+	    std::set<GRINS::BoundaryID> dbc_ids;
+	    dbc_ids.insert(it->first);
+
+	    std::vector<GRINS::VariableIndex> dbc_vars;
+	    dbc_vars.push_back(_u_var);
+	    dbc_vars.push_back(_v_var);
+	    if(_dim == 3)
+	      dbc_vars.push_back(_w_var);
+
+	    ZeroFunction<Number> zero;
+
+	    libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						   dbc_vars, 
+						   &zero );
+
+	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	  }
+	  break;
+	case(PRESCRIBED_VELOCITY):
+	  {
+	    std::set<GRINS::BoundaryID> dbc_ids;
+	    dbc_ids.insert(it->first);
+
+	    std::vector<GRINS::VariableIndex> dbc_vars;
+	    std::vector<Number> vel_values = _vel_boundary_values[it->first];
+
+	    // This is inefficient, but it shouldn't matter because
+	    // everything gets cached on the libMesh side so it should
+	    // only affect performance at startup.
+	    {
+	      dbc_vars.push_back(_u_var);
+	      ConstFunction<Number> vel_func( vel_values[0] );
+
+	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &vel_func );
+
+	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dbc_vars.clear();
+	    }
+
+	    {
+	      dbc_vars.push_back(_v_var);
+	      ConstFunction<Number> vel_func( vel_values[1] );
+
+	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &vel_func );
+
+	    //dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      dbc_vars.clear();
+	    }
+	    if( _dim == 3 )
+	      {
+		dbc_vars.push_back(_w_var);
+		ConstFunction<Number> vel_func( vel_values[2] );
+
+		libMesh::DirichletBoundary vel_dbc(dbc_ids, 
+						   dbc_vars, 
+						   &vel_func );
+
+		//dof_map.add_dirichlet_boundary( no_slip_dbc );
+	      }  
+	  }
+	  break;
+	case(INFLOW):
+	  // This case is handled in the BoundaryConditionFactory classes.
+	  break;
+	default:
+	  {
+	    std::cerr << "Invalid GRINS::BCType " << it->second << std::endl;
+	    libmesh_error();
+	  }
+
+	}// end switch
+    } //end for
+
+  return;
+}
+
 void GRINS::IncompressibleNavierStokes::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   const unsigned int dim = system->get_mesh().mesh_dimension();

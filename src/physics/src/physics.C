@@ -94,6 +94,12 @@ void GRINS::Physics::init_bc_data( const GRINS::BoundaryID bc_id,
   return;
 }
 
+void GRINS::Physics::init_dirichlet_bcs( libMesh::DofMap& dof_map )
+{
+  // Not all Physics need this so we have a do nothing default.
+  return;
+}
+
 void GRINS::Physics::attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs )
 {
   _dirichlet_bound_funcs = dirichlet_bcs;

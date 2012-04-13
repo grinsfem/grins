@@ -37,6 +37,8 @@
 #include "libmesh.h"
 #include "fem_system.h"
 #include "fem_context.h"
+#include "dirichlet_boundaries.h"
+#include "zero_function.h"
 
 //GRINS
 #include "variable_name_defaults.h"
@@ -143,6 +145,8 @@ namespace GRINS
 			       const std::string& bc_id_string, 
 			       const int bc_type, 
 			       const GetPot& input );
+
+    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
 
     void attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs );
 
