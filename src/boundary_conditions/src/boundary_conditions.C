@@ -369,44 +369,6 @@ void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext
   return;
 }
 
-
-GRINS::BC_TYPES GRINS::BoundaryConditions::string_to_enum( const std::string bc_type )
-{
-  GRINS::BC_TYPES bc_type_out;
-
-  if( bc_type == "no_slip" )
-    bc_type_out = GRINS::NO_SLIP;
-
-  else if( bc_type == "prescribed_vel" )
-    bc_type_out = GRINS::PRESCRIBED_VELOCITY;
-
-  else if( bc_type == "inflow" )
-    bc_type_out = GRINS::INFLOW;
-
-  else if( bc_type == "axisymmetric" )
-    bc_type_out = GRINS::AXISYMMETRIC;
-
-  else if( bc_type == "isothermal_wall" )
-    bc_type_out = GRINS::ISOTHERMAL_WALL;
-
-  else if( bc_type == "adiabatic_wall" )
-    bc_type_out = GRINS::ADIABATIC_WALL;
-
-  else if( bc_type == "prescribed_heat_flux" )
-    bc_type_out = GRINS::PRESCRIBED_HEAT_FLUX;
-  
-  else if( bc_type == "general_heat_flux" )
-    bc_type_out = GRINS::GENERAL_HEAT_FLUX;
-
-  else
-    {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
-      libmesh_error();
-    }
-
-  return bc_type_out;
-}
-
 void GRINS::BoundaryConditions::pin_value( libMesh::DiffContext &context, 
 					   const bool request_jacobian,
 					   const GRINS::VariableIndex var, 

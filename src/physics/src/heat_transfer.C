@@ -63,81 +63,85 @@ void GRINS::HeatTransfer::read_input_options( const GetPot& input )
   this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
   this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
+
+  return;
+}
+
+int GRINS::HeatTransfer::string_to_int( const std::string& bc_type )
+{
+  HT_BC_TYPES bc_type_out;
+
+  if( bc_type == "isothermal_wall" )
+    bc_type_out = ISOTHERMAL_WALL;
   
+  else if( bc_type == "adiabatic_wall" )
+    bc_type_out = ADIABATIC_WALL;
+  
+  else if( bc_type == "prescribed_heat_flux" )
+    bc_type_out = PRESCRIBED_HEAT_FLUX;
+  
+  else if( bc_type == "general_heat_flux" )
+    bc_type_out = GENERAL_HEAT_FLUX;
 
-  // Read boundary condition info
-  /** \todo We ought to be able to put this in the base class somehow so
-            that it doesn't have to be rewritten for every physics class.
-	    Then, the physics only handles the specifics, e.g. reading
-	    in boundary velocities. */
-  int num_ids = input.vector_variable_size("Physics/"+heat_transfer+"/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/"+heat_transfer+"/bc_types");
-
-  if( num_ids != num_bcs )
+  else
     {
-      std::cerr << "Error: Must specify equal number of boundary ids and boundary conditions"
-		<< std::endl;
+      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
       libmesh_error();
     }
 
-  for( int i = 0; i < num_ids; i++ )
+  return bc_type_out;
+}
+
+void GRINS::HeatTransfer::init_bc_data( const GRINS::BoundaryID bc_id, 
+					const std::string& bc_id_string, 
+					const int bc_type, 
+					const GetPot& input )
+{
+  switch(bc_type)
     {
-      int bc_id = input("Physics/"+heat_transfer+"/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/"+heat_transfer+"/bc_types", "NULL", i );
-
-      GRINS::BC_TYPES bc_type = _bound_conds.string_to_enum( bc_type_in );
-
-      std::stringstream ss;
-      ss << bc_id;
-      std::string bc_id_string = ss.str();
-
-      // Now read in auxillary boundary condition information
-      switch(bc_type)
-	{
-	case GRINS::ISOTHERMAL_WALL:
+    case(ISOTHERMAL_WALL):
+      {
+	_dirichlet_bc_map[bc_id] = bc_type;
+	
+	_T_boundary_values[bc_id] = 
+	  input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 );
+      }
+      break;
+      
+    case(ADIABATIC_WALL):
+      {
+	_neumann_bc_map[bc_id] = bc_type;
+      }
+      break;
+      
+    case(PRESCRIBED_HEAT_FLUX):
+      {
+	_neumann_bc_map[bc_id] = bc_type;
+	
+	libMesh::Point q_in;
+	
+	int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_string);
+	
+	for( int i = 0; i < num_q_components; i++ )
 	  {
-	    _dirichlet_bc_map[bc_id] = bc_type;
-
-	    _T_boundary_values[bc_id] = 
-	      input("Physics/"+heat_transfer+"/T_wall_"+bc_id_string, 0.0 );
+	    q_in(i) = input("Physics/"+_physics_name+"/q_wall_"+bc_id_string, 0.0, i );
 	  }
-	  break;
-	  
-	case GRINS::ADIABATIC_WALL:
-	  {
-	    _neumann_bc_map[bc_id] = bc_type;
-	  }
-	  break;
-
-	case GRINS::PRESCRIBED_HEAT_FLUX:
-	  {
-	    _neumann_bc_map[bc_id] = bc_type;
-
-	    libMesh::Point q_in;
-	    
-	    int num_q_components = input.vector_variable_size("Physics/"+heat_transfer+"/q_wall_"+bc_id_string);
-
-	    for( int i = 0; i < num_q_components; i++ )
-	      {
-		q_in(i) = input("Physics/"+heat_transfer+"/q_wall_"+bc_id_string, 0.0, i );
-	      }
-	      _q_boundary_values[bc_id] = q_in;
-	  }
-	  break;
-	case GRINS::GENERAL_HEAT_FLUX:
-	  {
-	    _neumann_bc_map[bc_id] = bc_type;
-	  }
-	  break;
-	default:
-	  {
-	    std::cerr << "Error: Invalid boundary condition type for HeatTransfer."
-		      << std::endl;
-	    libmesh_error();
-	  }
-
-	}// End switch(bc_type)
-    } // End loop on bc_id
+	_q_boundary_values[bc_id] = q_in;
+      }
+      break;
+    case(GENERAL_HEAT_FLUX):
+      {
+	_neumann_bc_map[bc_id] = bc_type;
+      }
+      break;
+    default:
+      {
+	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
+		  << std::endl;
+	libmesh_error();
+      }
+      
+    }// End switch(bc_type)
 
   return;
 }
@@ -335,7 +339,7 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
+  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
     bc_map_it = _neumann_bc_map.find( boundary_id );
 
    /* We assume that if you didn't put a boundary id in, then you didn't want to
@@ -345,19 +349,19 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
       switch( bc_map_it->second )
 	{
 	  // Zero heat flux
-	case GRINS::ADIABATIC_WALL:
+	case(ADIABATIC_WALL):
 	  // Don't need to do anything: q = 0 in this case
 	  break;
 
 	  // Prescribed constant heat flux
-	case GRINS::PRESCRIBED_HEAT_FLUX:
+	case(PRESCRIBED_HEAT_FLUX):
 	  {
 	    _bound_conds.apply_neumann( context, _T_var, -1.0,
 					_q_boundary_values[boundary_id] );
 	  }
 	  break;
 	  // General heat flux from user specified function
-	case GRINS::GENERAL_HEAT_FLUX:
+	case(GENERAL_HEAT_FLUX):
 	  {
 	    GRINS::NeumannBCsMap& bc_map = _neumann_bound_funcs[boundary_id];
 	    
@@ -368,8 +372,8 @@ bool GRINS::HeatTransfer::side_time_derivative( bool request_jacobian,
 	  break;
 	default:
 	  {
-	    std::cerr << "Error: Invalid Neumann BC type for ConvectiveHeatTransfer."
-		      << std::endl;
+	    std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
+		  << std::endl;
 	    libmesh_error();
 	  }
 	} // End switch
@@ -396,7 +400,7 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
     system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
   libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-  std::map< GRINS::BoundaryID, GRINS::BC_TYPES>::const_iterator 
+  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
     bc_map_it = _dirichlet_bc_map.find( boundary_id );
 
    /* We assume that if you didn't put a boundary id in, then you didn't want to
@@ -406,7 +410,7 @@ bool GRINS::HeatTransfer::side_constraint( bool request_jacobian,
       switch( bc_map_it->second )
 	{
 	  // Prescribed constant temperature
-	case GRINS::ISOTHERMAL_WALL:
+	case(ISOTHERMAL_WALL):
 	  {
 	    _bound_conds.apply_dirichlet( context, request_jacobian,
 					  _T_var, _T_boundary_values[boundary_id] );

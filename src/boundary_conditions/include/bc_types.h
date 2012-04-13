@@ -37,15 +37,7 @@
 
 namespace GRINS
 {
-  enum BC_TYPES{ NO_SLIP = 0,
-		 PRESCRIBED_VELOCITY,
-		 INFLOW,
-		 AXISYMMETRIC,
-		 ISOTHERMAL_WALL,
-		 ADIABATIC_WALL,
-		 PRESCRIBED_HEAT_FLUX,
-		 GENERAL_HEAT_FLUX
-  };
+  typedef int BCType;
 
   typedef std::pair< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::DirichletFuncObj> > DBCMapPair;
   typedef std::map< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::DirichletFuncObj> > DirichletBCsMap;

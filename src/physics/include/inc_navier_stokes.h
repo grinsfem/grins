@@ -102,6 +102,13 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
+    virtual int string_to_int( const std::string& bc_type_in );
+
+    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
+			       const std::string& bc_id_string, 
+			       const int bc_type, 
+			       const GetPot& input );
+
   protected:
 
     //! Physical dimension of problem
@@ -137,6 +144,8 @@ namespace GRINS
 
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
+
+    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW};
 
   private:
     IncompressibleNavierStokes();

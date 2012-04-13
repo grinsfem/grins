@@ -58,6 +58,13 @@ void GRINS::MultiphysicsSystem::read_input_options( const GetPot& input )
       (physics_iter->second)->read_input_options( input );
     }
 
+  // Read boundary condition data
+  for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
+    {
+      (physics_iter->second)->read_bc_data( input );
+    }
   return;
 }
 

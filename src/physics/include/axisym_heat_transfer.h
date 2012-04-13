@@ -99,6 +99,14 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
+
+    virtual int string_to_int( const std::string& bc_type_in );
+
+    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
+			       const std::string& bc_id_string, 
+			       const int bc_type, 
+			       const GetPot& input );
+
   protected:
 
     //! Physical dimension of problem
@@ -143,6 +151,12 @@ namespace GRINS
 
     //! Stash prescribed boundary heat flux values
     std::map< unsigned int, libMesh::Point > _q_boundary_values;
+
+    enum AHT_BC_TYPES{ISOTHERMAL_WALL=0,
+		      ADIABATIC_WALL,
+		      PRESCRIBED_HEAT_FLUX,
+		      GENERAL_HEAT_FLUX,
+		      AXISYMMETRIC};
 
   private:
     AxisymmetricHeatTransfer();

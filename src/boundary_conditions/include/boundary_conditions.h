@@ -105,8 +105,6 @@ namespace GRINS
 		    const GRINS::VariableIndex var, const double value,
 		    const libMesh::Point& pin_location, const double penalty = 1.0 );
 
-    GRINS::BC_TYPES string_to_enum( const std::string bc_type );
-
   };
 }
 #endif //BOUNDARY_CONDITIONS_H

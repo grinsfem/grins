@@ -135,6 +135,15 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
+    virtual void read_bc_data( const GetPot& input );
+
+    virtual int string_to_int( const std::string& bc_type_in );
+
+    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
+			       const std::string& bc_id_string, 
+			       const int bc_type, 
+			       const GetPot& input );
+
     void attach_dirichlet_bound_func( GRINS::DBCContainer& dirichlet_bcs );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
@@ -151,10 +160,10 @@ namespace GRINS
     const std::string& _physics_name;
 
     //! Map between boundary id and Dirichlet boundary condition type
-    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _dirichlet_bc_map;
+    std::map< GRINS::BoundaryID, GRINS::BCType> _dirichlet_bc_map;
 
     //! Map between boundary id and Neumann boundary condition type
-    std::map< GRINS::BoundaryID, GRINS::BC_TYPES> _neumann_bc_map;
+    std::map< GRINS::BoundaryID, GRINS::BCType> _neumann_bc_map;
 
     //! Object that stashes generic boundary condition types
     /** \todo Move this so that only one object is needed. 
