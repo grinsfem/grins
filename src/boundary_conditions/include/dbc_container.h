@@ -42,6 +42,12 @@
 
 namespace GRINS
 {
+  //! Simple helper class to setup general Dirichlet boundary conditions
+  /*! This class is to temporarily stash data necessary for setting
+      up libMesh::DirichletBoundary objects. Actually instantiation
+      of libMesh::DirichletBoundary object is handled internally by
+      GRINS::Physics::init_user_dirichlet_bcs. For each Dirichlet bc
+      function, there is a unique DBCContainer object. */
   class DBCContainer
   {
   public:
@@ -49,9 +55,14 @@ namespace GRINS
     DBCContainer();
     ~DBCContainer();
 
+    //! Add variables that are constrained by the Dirichlet bc
     void add_var_name( const GRINS::VariableName& var );
+
+    //! Add boundary id's for which this Dirichlet bc is to be applied
     void add_bc_id( const GRINS::BoundaryID bc_id );
 
+    //! Add the Dirichlet bc functor
+    /*! There is only one Dirichlet bc functor for each container object */
     void set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func );
 
     std::vector<GRINS::VariableName> get_var_names() const;

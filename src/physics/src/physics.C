@@ -109,6 +109,7 @@ void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
        it != _dirichlet_bound_funcs.end();
        it++ )
     {
+      // First, get variable names and convert to variable id's
       std::vector<GRINS::VariableName> var_names = (*it).get_var_names();
       
       std::vector<GRINS::VariableIndex> dbc_vars;
@@ -120,10 +121,13 @@ void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
 	  dbc_vars.push_back( system->variable_number( *name ) );
 	}
       
+      // Get bc_id's
       std::set<GRINS::BoundaryID> bc_ids = (*it).get_bc_ids();
       
+      // Get Dirichlet bc functor
       std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
 
+      // Now create DirichletBoundary object and give it to libMesh
       libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
       
       dof_map.add_dirichlet_boundary( dbc );
