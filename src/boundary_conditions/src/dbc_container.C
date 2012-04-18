@@ -41,15 +41,15 @@ GRINS::DBCContainer::~DBCContainer()
   return;
 }
 
-void GRINS::DBCContainer::set_var_names( const std::vector<GRINS::VariableName>& var_names )
+void GRINS::DBCContainer::add_var_name( const GRINS::VariableName& var )
 {
-  _var_names = var_names;
+  _var_names.push_back( var );
   return;
 }
 
-void GRINS::DBCContainer::set_bc_ids( const std::set<GRINS::BoundaryID>& bc_ids )
+void GRINS::DBCContainer::add_bc_id( const GRINS::BoundaryID bc_id )
 {
-  _bc_ids = bc_ids;
+  _bc_ids.insert( bc_id );
   return;
 }
 

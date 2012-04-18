@@ -175,19 +175,13 @@ int main(int argc, char* argv[])
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiParabolicBCFactory::build_dirichlet( )
 {
-  std::vector<GRINS::VariableName> dbc_vars;
-  dbc_vars.push_back( "z_vel" );
-
-  std::set<GRINS::BoundaryID> dbc_ids;
-  dbc_ids.insert(0);
-  dbc_ids.insert(2);
-
+  GRINS::DBCContainer cont;
+  cont.add_var_name( "z_vel" );
+  cont.add_bc_id( 0 );
+  cont.add_bc_id( 2 );
   
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ) ); 
     
-  GRINS::DBCContainer cont;
-  cont.set_var_names( dbc_vars );
-  cont.set_bc_ids( dbc_ids );
   cont.set_func( vel_func );
     
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;

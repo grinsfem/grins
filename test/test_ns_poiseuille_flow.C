@@ -173,18 +173,13 @@ int main(int argc, char* argv[])
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
 {
-  std::vector<GRINS::VariableName> dbc_vars;
-  dbc_vars.push_back( "u" );
-
+  GRINS::DBCContainer cont;
+  cont.add_var_name( "u" );
+  cont.add_bc_id( 1 );
+  cont.add_bc_id( 3 );
+  
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > u_func( new GRINS::ParabolicProfile );
 
-  std::set<GRINS::BoundaryID> dbc_ids;
-  dbc_ids.insert(3);
-  dbc_ids.insert(1);
-
-  GRINS::DBCContainer cont;
-  cont.set_var_names( dbc_vars );
-  cont.set_bc_ids( dbc_ids );
   cont.set_func( u_func );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;

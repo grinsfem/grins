@@ -175,31 +175,25 @@ int main(int argc, char* argv[])
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::build_dirichlet( )
 {
-  std::vector<GRINS::VariableName> dbc_vars;
-  dbc_vars.push_back( "z_vel" );
-
-  std::set<GRINS::BoundaryID> dbc_ids;
-  dbc_ids.insert(0);
-  dbc_ids.insert(2);
+  GRINS::DBCContainer cont;
+  cont.add_var_name( "z_vel" );
+  cont.add_bc_id( 0 );
+  cont.add_bc_id( 2 );
   
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConcentricCylinderProfile );
     
-  dbc_ids.insert(3);
-  GRINS::DBCContainer cont;
-  cont.set_var_names( dbc_vars );
-  cont.set_bc_ids( dbc_ids );
   cont.set_func( vel_func );
 
-  dbc_vars[0] = "r_vel";
+
+  GRINS::DBCContainer cont2;
+  cont2.add_var_name( "z_vel" );
+  cont2.add_bc_id( 0 );
+  cont2.add_bc_id( 2 );
 
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
 
-  GRINS::DBCContainer cont2;
-  cont2.set_var_names( dbc_vars );
-  cont2.set_bc_ids( dbc_ids );
   cont2.set_func( vel_func2 );
 
-    
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
   
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::axisymmetric_incomp_navier_stokes,  cont) );

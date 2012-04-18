@@ -29,7 +29,7 @@ relative_residual_tolerance = 1.0e-10
 # Visualization options
 [vis-options]
 output_vis_time_series = false 
-output_vis = true 
+output_vis = false 
 vis_output_file_prefix = axi_con_cyl 
 
 # Options for print info to the screen

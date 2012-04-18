@@ -49,9 +49,10 @@ namespace GRINS
     DBCContainer();
     ~DBCContainer();
 
-    void set_var_names( const std::vector<GRINS::VariableName>& var_names );
-    void set_bc_ids( const std::set<GRINS::BoundaryID>& bc_ids );
-    void set_func(std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func );
+    void add_var_name( const GRINS::VariableName& var );
+    void add_bc_id( const GRINS::BoundaryID bc_id );
+
+    void set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func );
 
     std::vector<GRINS::VariableName> get_var_names() const;
     std::set<GRINS::BoundaryID> get_bc_ids() const;
