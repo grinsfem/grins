@@ -44,11 +44,6 @@ GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equat
   return std::map< GRINS::PhysicsName, GRINS::NBCContainer >();
 }
 
-void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::System& system )
-{
-  return;
-}
-
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > 
 GRINS::BoundaryConditionsFactory::build_dirichlet()
 {

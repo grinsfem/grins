@@ -43,7 +43,7 @@ namespace GRINS
       In this case, we assume the outer cylinder is stationary,
       and the inner cylinder is moving at speed u0. The profile
       is given by:
-      \f$ u_0 \frac{ \ln( r_1/r) }{\ln( r_1/r_0} \f$
+      \f$ u_0 \frac{ \log( r_1/r) }{\log( r_1/r_0)} \f$
       where: \f$ r_0 \f$ is the inner cylinder radius
       and \f$ r_1 \f$ is the outer cylinder radius. Note, that this
       assumes axisymmetry.
@@ -54,7 +54,7 @@ namespace GRINS
     
     //! Default constructor
     /*! Default constructor sets parameters for the profile:
-      value = \f$ 2.0 \frac{ \ln( 2.0/r) }{\ln(2.0)} \f$
+      value = \f$ 2.0 \frac{ \log( 2.0/r) }{\log(2.0)} \f$
     */
     ConcentricCylinderProfile( );
 

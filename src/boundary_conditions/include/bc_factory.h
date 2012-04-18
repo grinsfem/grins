@@ -58,10 +58,7 @@ namespace GRINS
 
     //! Builds all required libMesh::DirichletBoundary objects and adds them to DofMap
     /*! This needs to be done for all the physics in the simulation, for all
-      "special" dirichlet boundary conditions. */ 
-    virtual void build_dirichlet( libMesh::System& system );
-
-    
+      "special" dirichlet boundary conditions. */     
     virtual std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet();
 
 
