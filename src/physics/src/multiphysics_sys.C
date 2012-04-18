@@ -91,12 +91,20 @@ void GRINS::MultiphysicsSystem::init_data()
       (physics_iter->second)->set_time_evolving_vars( this );
     }
 
-  // Finally, initialized builtin Dirichlet BC's for each physics
+  // Initialize builtin Dirichlet BC's for each physics
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
       (physics_iter->second)->init_dirichlet_bcs( this->get_dof_map() );
+    }
+
+  // Initialize any user-specified (non-internal) Dirichlet BC's for each physics
+  for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
+       physics_iter != _physics_list.end();
+       physics_iter++ )
+    {
+      (physics_iter->second)->init_user_dirichlet_bcs( this );
     }
 
   // Next, call parent init_data function to intialize everything.
@@ -200,6 +208,12 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
 
 std::tr1::shared_ptr<GRINS::Physics> GRINS::MultiphysicsSystem::get_physics( const std::string physics_name )
 {
+  if( _physics_list.find( physics_name ) == _physics_list.end() )
+    {
+      std::cerr << "Error: Could not find physics " << physics_name << std::endl;
+      libmesh_error();
+    }
+
   return _physics_list[physics_name];
 }
 

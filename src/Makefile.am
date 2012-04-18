@@ -50,7 +50,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
                           $(boundary_conditions_srcdir)/neumann_func_obj.C \
                           $(boundary_conditions_srcdir)/parabolic_profile.C \
-                          $(boundary_conditions_srcdir)/concentric_cylinder_profile.C
+                          $(boundary_conditions_srcdir)/concentric_cylinder_profile.C \
+                          $(boundary_conditions_srcdir)/dbc_container.C
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C
 
@@ -87,7 +88,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/bc_factory.h \
                           $(boundary_conditions_incdir)/neumann_func_obj.h \
                           $(boundary_conditions_incdir)/parabolic_profile.h \
-                          $(boundary_conditions_incdir)/concentric_cylinder_profile.h
+                          $(boundary_conditions_incdir)/concentric_cylinder_profile.h \
+                          $(boundary_conditions_incdir)/dbc_container.h
 
 utilities_INC = $(utilities_incdir)/grins_version.h
 

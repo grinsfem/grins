@@ -65,7 +65,7 @@ public:
 
   ~AxiConCylBCFactory(){return;};
 
-  void build_dirichlet( libMesh::System& system );
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
 };
 
 int main(int argc, char* argv[]) 
@@ -173,38 +173,40 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-void AxiConCylBCFactory::build_dirichlet( libMesh::System& system )
+std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::build_dirichlet( )
 {
-  GRINS::VariableIndex z_var = system.variable_number("z_vel");
-  GRINS::VariableIndex u_var = system.variable_number("r_vel");
-  libMesh::DofMap& dof_map = system.get_dof_map();
-
-  std::vector<GRINS::VariableIndex> dbc_vars;
-  dbc_vars.push_back( z_var );
+  std::vector<GRINS::VariableName> dbc_vars;
+  dbc_vars.push_back( "z_vel" );
 
   std::set<GRINS::BoundaryID> dbc_ids;
   dbc_ids.insert(0);
   dbc_ids.insert(2);
   
-  {
-    GRINS::ConcentricCylinderProfile vel_func;
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConcentricCylinderProfile );
     
-    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &vel_func );
+  dbc_ids.insert(3);
+  GRINS::DBCContainer cont;
+  cont.set_var_names( dbc_vars );
+  cont.set_bc_ids( dbc_ids );
+  cont.set_func( vel_func );
 
-    dof_map.add_dirichlet_boundary( vel_dbc );
-  }
+  dbc_vars[0] = "r_vel";
 
-  dbc_vars[0] = u_var;
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
 
-  {
-    ZeroFunction<Number> zero;
+  GRINS::DBCContainer cont2;
+  cont2.set_var_names( dbc_vars );
+  cont2.set_bc_ids( dbc_ids );
+  cont2.set_func( vel_func2 );
+
     
-    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &zero );
-    
-    dof_map.add_dirichlet_boundary( vel_dbc );
-  }
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
+  
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::axisymmetric_incomp_navier_stokes,  cont) );
 
-  return;
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::axisymmetric_incomp_navier_stokes,  cont2) );
+
+  return mymap;
 }
 
 Number exact_solution( const Point& p,

@@ -64,7 +64,7 @@ public:
 
   ~AxiParabolicBCFactory(){return;};
 
-  void build_dirichlet( libMesh::System& system );
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
 };
 
 int main(int argc, char* argv[]) 
@@ -173,49 +173,28 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-void AxiParabolicBCFactory::build_dirichlet( libMesh::System& system )
+std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiParabolicBCFactory::build_dirichlet( )
 {
-  GRINS::VariableIndex z_var = system.variable_number("z_vel");
-  GRINS::VariableIndex u_var = system.variable_number("r_vel");
-
-  std::cout << "u_var = " << u_var << ", z_var = " << z_var << std::endl;
-
-  libMesh::DofMap& dof_map = system.get_dof_map();
-
-  std::vector<GRINS::VariableIndex> dbc_vars;
-  dbc_vars.push_back( z_var );
+  std::vector<GRINS::VariableName> dbc_vars;
+  dbc_vars.push_back( "z_vel" );
 
   std::set<GRINS::BoundaryID> dbc_ids;
   dbc_ids.insert(0);
   dbc_ids.insert(2);
 
-  {
-    GRINS::ParabolicProfile vel_func( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ); 
-    
-    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &vel_func );
-    
-    std::cout << (*vel_dbc.f)( libMesh::Point(0.0,0.0), 0.0 ) << std::endl;
-    std::cout << (*vel_dbc.f)( libMesh::Point(0.5,0.0), 0.0 ) << std::endl;
-    std::cout << (*vel_dbc.f)( libMesh::Point(1.0,0.0), 0.0 ) << std::endl;
-    
-    dof_map.add_dirichlet_boundary( vel_dbc );
-  }
-
-  dbc_vars[0] = u_var;
   
-  {
-    ZeroFunction<Number> zero;
-
-    libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &zero );
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ) ); 
     
-    std::cout << (*vel_dbc.f)( libMesh::Point(0.0,0.0), 0.0 ) << std::endl;
-    std::cout << (*vel_dbc.f)( libMesh::Point(0.5,0.0), 0.0 ) << std::endl;
-    std::cout << (*vel_dbc.f)( libMesh::Point(1.0,0.0), 0.0 ) << std::endl;
+  GRINS::DBCContainer cont;
+  cont.set_var_names( dbc_vars );
+  cont.set_bc_ids( dbc_ids );
+  cont.set_func( vel_func );
     
-    dof_map.add_dirichlet_boundary( vel_dbc );
-  }
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
+  
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::axisymmetric_incomp_navier_stokes,  cont) );
 
-  return;
+  return mymap;
 }
 
 Number exact_solution( const Point& p,

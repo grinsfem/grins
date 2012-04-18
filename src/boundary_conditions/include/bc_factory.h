@@ -30,6 +30,7 @@
 #define BC_FACTORY_H
 
 #include <string>
+#include <map>
 
 // libMesh stuff
 #include "getpot.h"
@@ -37,6 +38,9 @@
 
 // GRINS stuff
 #include "bc_types.h"
+#include "var_typedefs.h"
+#include "grins_physics_names.h"
+#include "dbc_container.h"
 
 namespace GRINS
 {
@@ -57,10 +61,14 @@ namespace GRINS
       "special" dirichlet boundary conditions. */ 
     virtual void build_dirichlet( libMesh::System& system );
 
+    
+    virtual std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet();
+
+
     //! Builds all Neumann boundary condition function objects needed
     /*! This is done for each physics. Thus, the container returned maps between each physics 
       and set of Neumann boundary conditions for that physics. */
-    virtual std::map< std::string, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
+    virtual std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
  
   }; // class BoundaryConditionsFactory
 

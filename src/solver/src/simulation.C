@@ -50,14 +50,7 @@ GRINS::Simulation::Simulation( const GetPot& input,
 
   GRINS::PhysicsList physics_list = physics_factory->build();
 
-  _solver->initialize( input, _equation_system, physics_list );
-
-  if( bc_factory )
-    {
-      _solver->attach_neumann_bc_funcs(bc_factory->build_neumann( *_equation_system ));
-      _solver->init_dirichlet_bc_funcs( bc_factory );
-      _equation_system->reinit();
-    }
+  _solver->initialize( input, _equation_system, physics_list, bc_factory );
 
   return;
 }

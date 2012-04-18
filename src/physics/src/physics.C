@@ -72,8 +72,6 @@ void GRINS::Physics::read_bc_data( const GetPot& input )
       ss << bc_id;
       std::string bc_id_string = ss.str();
 
-      std::cout << "bc_id = " << bc_id << ", bc_type = " << bc_type_in << std::endl;
-
       this->init_bc_data( bc_id, bc_id_string, bc_type, input );
     }
 
@@ -102,10 +100,48 @@ void GRINS::Physics::init_dirichlet_bcs( libMesh::DofMap& dof_map )
   return;
 }
 
+void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
+{
+  libMesh::DofMap& dof_map = system->get_dof_map();
+
+  for( std::vector< GRINS::DBCContainer >::iterator 
+	 it = _dirichlet_bound_funcs.begin();
+       it != _dirichlet_bound_funcs.end();
+       it++ )
+    {
+      std::vector<GRINS::VariableName> var_names = (*it).get_var_names();
+      
+      std::vector<GRINS::VariableIndex> dbc_vars;
+
+      for( std::vector<GRINS::VariableName>::const_iterator name = var_names.begin();
+	   name != var_names.end();
+	   name++ )
+	{
+	  dbc_vars.push_back( system->variable_number( *name ) );
+	}
+      
+      std::set<GRINS::BoundaryID> bc_ids = (*it).get_bc_ids();
+      
+      std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
+
+      libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
+      
+      dof_map.add_dirichlet_boundary( dbc );
+    }
+
+  return;
+}
+
 void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
 {
   _neumann_bound_funcs = neumann_bcs;
 
+  return;
+}
+
+void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc )
+{
+  _dirichlet_bound_funcs.push_back( dirichlet_bc );
   return;
 }
 

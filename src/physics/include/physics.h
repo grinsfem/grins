@@ -47,6 +47,7 @@
 #include "bc_types.h"
 #include "boundary_conditions.h"
 #include "grins_physics_names.h"
+#include "dbc_container.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -149,7 +150,11 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
 
+    void init_user_dirichlet_bcs( libMesh::FEMSystem* system );
+
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
+
+    void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -160,7 +165,7 @@ namespace GRINS
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects
       in GRINS namespace */
-    const std::string& _physics_name;
+    const PhysicsName& _physics_name;
 
     //! Map between boundary id and Dirichlet boundary condition type
     /*! We need to keep this around because the libMesh::DirichletBoundary
@@ -180,6 +185,8 @@ namespace GRINS
         By design, the user cannot set more than 1 function per variable.*/
     GRINS::NBCContainer _neumann_bound_funcs;
 
+    std::vector< GRINS::DBCContainer > _dirichlet_bound_funcs;
+    
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif

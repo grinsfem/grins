@@ -68,7 +68,16 @@ void GRINS::ParabolicProfile::operator()( const Point &p,
 					  const Real time, 
 					  libMesh::DenseVector<libMesh::Number> &output )
 {
-  output(0) = (*this)(p, time);
-
+  for( unsigned int i = 0; i < output.size(); i++ )
+    {
+      output(i) = (*this)(p, time);
+    }
   return;
+}
+
+libMesh::Number GRINS::ParabolicProfile::operator()( unsigned int i,
+						     const Point &p, 
+						     const Real time )
+{
+  return (*this)(p, time);
 }

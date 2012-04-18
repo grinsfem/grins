@@ -63,7 +63,8 @@ namespace GRINS
 
     virtual void initialize( const GetPot& input, 
 			     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-			     GRINS::PhysicsList& physics_list );
+			     GRINS::PhysicsList& physics_list,
+			     GRINS::BoundaryConditionsFactory* bc_factory = NULL );
     
     virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
@@ -74,9 +75,9 @@ namespace GRINS
 
     virtual void init_time_solver()=0;
 
-    void attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCContainer > neumann_bcs );
+    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs );
     
-    void init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory );
+    void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map );
 
 
 #ifdef USE_GRVY_TIMERS

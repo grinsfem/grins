@@ -39,5 +39,6 @@ namespace GRINS
 
   typedef std::pair< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainerPair;
   typedef std::map< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainer;
+
 }
 #endif //BC_TYPES_H

@@ -34,11 +34,11 @@ vis_output_file_prefix = axi_con_cyl
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = true
-print_mesh_info = true
-print_log_info = true
-solver_verbose = true
-solver_quiet = false
+print_equation_system_info = false 
+print_mesh_info = false
+print_log_info = false
+solver_verbose = false
+solver_quiet = true
 
 # Options related to all Physics
 [Physics]

@@ -54,7 +54,8 @@ GRINS::Solver::~Solver()
 
 void GRINS::Solver::initialize( const GetPot& input, 
 				std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-				GRINS::PhysicsList& physics_list )
+				GRINS::PhysicsList& physics_list,
+				GRINS::BoundaryConditionsFactory* bc_factory )
 {
   // Declare the system and its variables.
   _system = &(equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name ));
@@ -62,6 +63,13 @@ void GRINS::Solver::initialize( const GetPot& input,
   _system->attach_physics_list( physics_list );
 
   _system->read_input_options( input );
+
+  // This *must* be done before equation_system->init
+  if( bc_factory )
+    {
+      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *equation_system ) );
+      this->attach_dirichlet_bc_funcs( bc_factory->build_dirichlet() );
+    }
 
   // Defined in subclasses depending on the solver used.
   this->init_time_solver();
@@ -112,10 +120,16 @@ void GRINS::Solver::attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCCo
   return;
 }
 
-void GRINS::Solver::init_dirichlet_bc_funcs( GRINS::BoundaryConditionsFactory* bc_factory )
+void GRINS::Solver::attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map )
 {
-  bc_factory->build_dirichlet( *_system );
-
+  for( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >::const_iterator it = dbc_map.begin();
+       it != dbc_map.end();
+       it++ )
+    {
+      std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( it->first );
+      
+      physics->attach_dirichlet_bound_func( it->second );
+    }
   return;
 }
 

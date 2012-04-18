@@ -26,31 +26,43 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "bc_factory.h"
+#ifndef DBC_CONTAINER_H
+#define DBC_CONTAINER_H
 
-GRINS::BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
-{
-  return;
-}
+#include <vector>
+#include <set>
 
-GRINS::BoundaryConditionsFactory::~BoundaryConditionsFactory( )
-{
-  return;
-}
+#include "boost/tr1/memory.hpp"
 
-std::map< GRINS::PhysicsName, GRINS::NBCContainer > 
-GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
-{
-  return std::map< GRINS::PhysicsName, GRINS::NBCContainer >();
-}
+// libMesh
+#include "function_base.h"
 
-void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::System& system )
-{
-  return;
-}
+// GRINS
+#include "var_typedefs.h"
 
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > 
-GRINS::BoundaryConditionsFactory::build_dirichlet()
+namespace GRINS
 {
-  return std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >();
+  class DBCContainer
+  {
+  public:
+    
+    DBCContainer();
+    ~DBCContainer();
+
+    void set_var_names( const std::vector<GRINS::VariableName>& var_names );
+    void set_bc_ids( const std::set<GRINS::BoundaryID>& bc_ids );
+    void set_func(std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func );
+
+    std::vector<GRINS::VariableName> get_var_names() const;
+    std::set<GRINS::BoundaryID> get_bc_ids() const;
+    std::tr1::shared_ptr<libMesh::FunctionBase<Number> > get_func() const;
+
+  private:
+
+    std::vector<GRINS::VariableName> _var_names;
+    std::set<GRINS::BoundaryID> _bc_ids;
+    std::tr1::shared_ptr<libMesh::FunctionBase<Number> > _func;
+    
+  };
 }
+#endif //DBC_CONTAINER_H

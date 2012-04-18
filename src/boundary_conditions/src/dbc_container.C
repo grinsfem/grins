@@ -26,31 +26,50 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "bc_factory.h"
+#include "dbc_container.h"
 
-GRINS::BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
+GRINS::DBCContainer::DBCContainer()
+  : _var_names( std::vector<GRINS::VariableName>() ),
+    _bc_ids( std::set<GRINS::BoundaryID>() ),
+    _func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> >() )
 {
   return;
 }
 
-GRINS::BoundaryConditionsFactory::~BoundaryConditionsFactory( )
+GRINS::DBCContainer::~DBCContainer()
 {
   return;
 }
 
-std::map< GRINS::PhysicsName, GRINS::NBCContainer > 
-GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
+void GRINS::DBCContainer::set_var_names( const std::vector<GRINS::VariableName>& var_names )
 {
-  return std::map< GRINS::PhysicsName, GRINS::NBCContainer >();
-}
-
-void GRINS::BoundaryConditionsFactory::build_dirichlet( libMesh::System& system )
-{
+  _var_names = var_names;
   return;
 }
 
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > 
-GRINS::BoundaryConditionsFactory::build_dirichlet()
+void GRINS::DBCContainer::set_bc_ids( const std::set<GRINS::BoundaryID>& bc_ids )
 {
-  return std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >();
+  _bc_ids = bc_ids;
+  return;
+}
+
+void GRINS::DBCContainer::set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func )
+{
+  _func = func;
+  return;
+}
+
+std::vector<GRINS::VariableName> GRINS::DBCContainer::get_var_names() const
+{
+  return _var_names;
+}
+
+std::set<GRINS::BoundaryID> GRINS::DBCContainer::get_bc_ids() const
+{
+  return _bc_ids;
+}
+
+std::tr1::shared_ptr<libMesh::FunctionBase<Number> > GRINS::DBCContainer::get_func() const
+{
+  return _func;
 }

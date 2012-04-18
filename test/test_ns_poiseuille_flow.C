@@ -64,7 +64,7 @@ public:
 
   ~ParabolicBCFactory(){return;};
 
-  void build_dirichlet( libMesh::System& system );
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
 };
 
 int main(int argc, char* argv[]) 
@@ -171,25 +171,27 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-void ParabolicBCFactory::build_dirichlet( libMesh::System& system )
+std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
 {
-  GRINS::VariableIndex u_var = system.variable_number("u");
-  libMesh::DofMap& dof_map = system.get_dof_map();
+  std::vector<GRINS::VariableName> dbc_vars;
+  dbc_vars.push_back( "u" );
 
-  std::vector<GRINS::VariableIndex> dbc_vars;
-  dbc_vars.push_back( u_var );
-
-  GRINS::ParabolicProfile u_func;
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > u_func( new GRINS::ParabolicProfile );
 
   std::set<GRINS::BoundaryID> dbc_ids;
   dbc_ids.insert(3);
   dbc_ids.insert(1);
 
-  libMesh::DirichletBoundary vel_dbc( dbc_ids, dbc_vars, &u_func );
+  GRINS::DBCContainer cont;
+  cont.set_var_names( dbc_vars );
+  cont.set_bc_ids( dbc_ids );
+  cont.set_func( u_func );
 
-  dof_map.add_dirichlet_boundary( vel_dbc );
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  return;
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+
+  return mymap;
 }
 
 Number exact_solution( const Point& p,

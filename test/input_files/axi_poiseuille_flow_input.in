@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 =10 
-mesh_nx2 =10 
+mesh_nx1 = 2 
+mesh_nx2 = 1 
 
 domain_x1_max = 1.0
 
@@ -31,11 +31,11 @@ vis_output_file_prefix = axi_poiseuille
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = true 
-print_mesh_info = true
-print_log_info = true
-solver_verbose = true
-solver_quiet = false
+print_equation_system_info = false 
+print_mesh_info = false
+print_log_info = false
+solver_verbose = false
+solver_quiet = true
 
 # Options related to all Physics
 [Physics]

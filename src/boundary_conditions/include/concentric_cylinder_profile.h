@@ -69,6 +69,9 @@ namespace GRINS
     virtual void operator()( const Point &p, 
 			     const Real time, 
 			     libMesh::DenseVector<Number> &output );
+
+    virtual libMesh::Number operator()( unsigned int i, const Point &p, 
+					const Real time );
     
   protected:
     

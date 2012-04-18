@@ -33,12 +33,14 @@
 
 namespace GRINS
 {
-  const std::string incompressible_navier_stokes = "IncompressibleNavierStokes";
-  const std::string axisymmetric_incomp_navier_stokes = "AxisymmetricIncompressibleNavierStokes";
-  const std::string heat_transfer = "HeatTransfer";
-  const std::string axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
-  const std::string boussinesq_buoyancy = "BoussinesqBuoyancy";
-  const std::string axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
+  typedef std::string PhysicsName;
+
+  const PhysicsName incompressible_navier_stokes = "IncompressibleNavierStokes";
+  const PhysicsName axisymmetric_incomp_navier_stokes = "AxisymmetricIncompressibleNavierStokes";
+  const PhysicsName heat_transfer = "HeatTransfer";
+  const PhysicsName axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
+  const PhysicsName boussinesq_buoyancy = "BoussinesqBuoyancy";
+  const PhysicsName axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H

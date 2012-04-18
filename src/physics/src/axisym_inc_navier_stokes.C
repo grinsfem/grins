@@ -171,8 +171,6 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh:
        it != _dirichlet_bc_map.end();
        it++ )
     {
-      std::cout << "bc_id = " << it->first << ", BCType = " << it->second << std::endl;
-      
       switch( it->second )
 	{
 	case(NO_SLIP):

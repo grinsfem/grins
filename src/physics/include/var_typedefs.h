@@ -40,6 +40,8 @@ namespace GRINS
   //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
 
+  typedef std::string VariableName;
+
   //! More descriptive name of the type used for boundary ids
   /*! We make it a short int to be compatible with libMesh */
   typedef short int BoundaryID;
