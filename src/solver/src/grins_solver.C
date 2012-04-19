@@ -67,7 +67,6 @@ void GRINS::Solver::initialize( const GetPot& input,
   // This *must* be done before equation_system->init
   if( bc_factory )
     {
-      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *equation_system ) );
       this->attach_dirichlet_bc_funcs( bc_factory->build_dirichlet() );
     }
 
@@ -76,6 +75,12 @@ void GRINS::Solver::initialize( const GetPot& input,
 
   // Initialize the system
   equation_system->init();
+
+  // This *must* be done after equation_system->init
+  if( bc_factory )
+    {
+      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *equation_system ) );
+    }
 
   // Get diff solver to set options
   libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());
