@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
   // This is the tolerance of the iterative linear solver so
   // it's unreasonable to expect anything better than this.
-  double tol = 6.0e-12;
+  double tol = 5.0e-13;
   
   if( u_l2error > tol || u_h1error > tol ||
       v_l2error > tol || v_h1error > tol ||

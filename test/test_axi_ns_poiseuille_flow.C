@@ -143,8 +143,10 @@ int main(int argc, char* argv[])
   double h1error = exact_sol.h1_error("GRINS", "z_vel");
   
   int return_flag = 0;
+ 
+  double tol = 5.0e-13;
 
-  if( l2error > 2.0e-14 || h1error > 7.0e-14 )
+  if( l2error > tol || h1error > tol )
     {
       return_flag = 1;
 
