@@ -52,6 +52,8 @@ GRINS::Simulation::Simulation( const GetPot& input,
 
   _solver->initialize( input, _equation_system, physics_list, bc_factory );
 
+  this->check_for_restart( input );
+
   return;
 }
 
@@ -83,6 +85,46 @@ void GRINS::Simulation::print_sim_info()
 std::tr1::shared_ptr<libMesh::EquationSystems> GRINS::Simulation::get_equation_system()
 {
   return _equation_system;
+}
+
+void GRINS::Simulation::check_for_restart( const GetPot& input )
+{
+  const std::string restart_file = input( "restart-options/restart_file", "none" );
+
+  // Most of this was pulled from FIN-S
+  if (restart_file != "none")
+    {
+      std::cout << " ====== Restarting from " << restart_file << std::endl;      
+
+       // Must have correct file type to restart
+      if (restart_file.rfind(".xdr") < restart_file.size())
+        _equation_system->read(restart_file,libMeshEnums::DECODE,
+			      //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+			      EquationSystems::READ_DATA |
+			      EquationSystems::READ_ADDITIONAL_DATA);
+      
+      else if  (restart_file.rfind(".xda") < restart_file.size())
+        _equation_system->read(restart_file,libMeshEnums::READ,
+			      //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+			      EquationSystems::READ_DATA |
+			      EquationSystems::READ_ADDITIONAL_DATA);
+
+      else
+        {
+          std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
+          libmesh_error();
+        }
+      
+      const std::string system_name = input("screen-options/system_name", "GRINS" );
+
+      GRINS::MultiphysicsSystem& system = 
+        _equation_system->get_system<GRINS::MultiphysicsSystem>(system_name);
+
+      // Update the old data
+      system.update();
+    }
+
+  return;
 }
 
 #ifdef USE_GRVY_TIMERS

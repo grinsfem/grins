@@ -70,6 +70,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
+    void check_for_restart( const GetPot& input );
+
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
