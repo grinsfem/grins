@@ -90,7 +90,7 @@ void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext
 
   // Physical location of the quadrature points
   const std::vector<libMesh::Point>& var_qpoint =
-    c.element_fe_var[var]->get_xyz();
+    c.side_fe_var[var]->get_xyz();
 
   const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
 
@@ -207,7 +207,7 @@ void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext
 
   // Physical location of the quadrature points
   const std::vector<libMesh::Point>& var_qpoint =
-    c.element_fe_var[var]->get_xyz();
+    c.side_fe_var[var]->get_xyz();
 
   const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
 
