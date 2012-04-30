@@ -44,6 +44,7 @@
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
 #include "grins_physics_names.h"
+#include "constant_conductivity.h"
 
 namespace GRINS
 {
@@ -89,6 +90,8 @@ namespace GRINS
 
     int _num_physics;
     std::set<std::string> _requested_physics;
+
+    const GetPot& _input;
 
   }; // class PhysicsFactory
 

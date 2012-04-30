@@ -65,7 +65,6 @@ bc_types = 'no_slip no_slip no_slip no_slip'
 
 rho = 1.0
 Cp = 1.0
-k = 1.0
 
 bc_ids = '3 0 2 1'
 
@@ -91,6 +90,15 @@ w_velocity = 'w'
 pressure = 'p'
 
 []
+
+[Materials]
+
+[./Conductivity]
+
+k = 1.0
+
+[]
+
 
 [ExactSolution]
 

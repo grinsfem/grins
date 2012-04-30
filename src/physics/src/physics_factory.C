@@ -30,7 +30,8 @@
 
 
 GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
-  : _num_physics( input.vector_variable_size("Physics/enabled_physics") )
+  : _num_physics( input.vector_variable_size("Physics/enabled_physics") ),
+    _input(input)
 {
   if( _num_physics < 1 )
     {
@@ -91,8 +92,17 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
     }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
-      physics_list[axisymmetric_heat_transfer] = 
-	PhysicsPtr(new GRINS::AxisymmetricHeatTransfer(axisymmetric_heat_transfer));
+      std::string conductivity = _input( "Physics/AxisymmetricHeatTransfer/conductivity_model", "constant" );
+      if(  conductivity == "constant" )
+	{
+	  physics_list[axisymmetric_heat_transfer] = 
+	    PhysicsPtr(new GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>(axisymmetric_heat_transfer));
+	}
+      else
+	{
+	  std::cerr << "Invalid conductivity model " << conductivity << std::endl;
+	  libmesh_error();
+	}
     }
   else if( physics_to_add == boussinesq_buoyancy )
     {

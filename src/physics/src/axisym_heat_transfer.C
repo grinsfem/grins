@@ -28,18 +28,21 @@
 
 #include "axisym_heat_transfer.h"
 
-GRINS::AxisymmetricHeatTransfer::AxisymmetricHeatTransfer( const std::string& physics_name )
+template< class Conductivity>
+GRINS::AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name )
       : Physics(physics_name)
 {
   return;
 }
 
-GRINS::AxisymmetricHeatTransfer::~AxisymmetricHeatTransfer( )
+template< class Conductivity>
+GRINS::AxisymmetricHeatTransfer<Conductivity>::~AxisymmetricHeatTransfer( )
 {
   return;
 }
 
-void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::read_input_options( const GetPot& input )
 {
   this->_T_FE_family =
     libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
@@ -55,7 +58,8 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
 
   this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
   this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
-  this->_k  = input("Physics/"+axisymmetric_heat_transfer+"/k", 1.0);
+
+  this->_k.read_input_options( input );
 
   this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
@@ -66,7 +70,8 @@ void GRINS::AxisymmetricHeatTransfer::read_input_options( const GetPot& input )
   return;
 }
 
-int GRINS::AxisymmetricHeatTransfer::string_to_int( const std::string& bc_type )
+template< class Conductivity>
+int GRINS::AxisymmetricHeatTransfer<Conductivity>::string_to_int( const std::string& bc_type )
 {
   AHT_BC_TYPES bc_type_out;
 
@@ -94,8 +99,8 @@ int GRINS::AxisymmetricHeatTransfer::string_to_int( const std::string& bc_type )
   return bc_type_out;
 }
 
-
-void GRINS::AxisymmetricHeatTransfer::init_bc_data( const GRINS::BoundaryID bc_id, 
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::init_bc_data( const GRINS::BoundaryID bc_id, 
 						    const std::string& bc_id_string, 
 						    const int bc_type, 
 						    const GetPot& input )
@@ -165,7 +170,8 @@ void GRINS::AxisymmetricHeatTransfer::init_bc_data( const GRINS::BoundaryID bc_i
   return;
 }
 
-void GRINS::AxisymmetricHeatTransfer::init_dirichlet_bcs( libMesh::DofMap& dof_map )
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::init_dirichlet_bcs( libMesh::DofMap& dof_map )
 {
   for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
        it != _dirichlet_bc_map.end();
@@ -200,7 +206,8 @@ void GRINS::AxisymmetricHeatTransfer::init_dirichlet_bcs( libMesh::DofMap& dof_m
   return;
 }
 
-void GRINS::AxisymmetricHeatTransfer::init_variables( libMesh::FEMSystem* system )
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::init_variables( libMesh::FEMSystem* system )
 {
   // Get libMesh to assign an index for each variable
   this->_dim = system->get_mesh().mesh_dimension();
@@ -214,14 +221,16 @@ void GRINS::AxisymmetricHeatTransfer::init_variables( libMesh::FEMSystem* system
   return;
 }
 
-void GRINS::AxisymmetricHeatTransfer::set_time_evolving_vars( libMesh::FEMSystem* system )
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::set_time_evolving_vars( libMesh::FEMSystem* system )
 {
   // Tell the system to march temperature forward in time
   system->time_evolving(_T_var);
   return;
 }
 
-void GRINS::AxisymmetricHeatTransfer::init_context( libMesh::DiffContext &context )
+template< class Conductivity>
+void GRINS::AxisymmetricHeatTransfer<Conductivity>::init_context( libMesh::DiffContext &context )
 {
   libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
@@ -244,9 +253,10 @@ void GRINS::AxisymmetricHeatTransfer::init_context( libMesh::DiffContext &contex
   return;
 }
 
-bool GRINS::AxisymmetricHeatTransfer::element_time_derivative( bool request_jacobian,
-							       libMesh::DiffContext& context,
-							       libMesh::FEMSystem* system )
+template< class Conductivity>
+bool GRINS::AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool request_jacobian,
+									     libMesh::DiffContext& context,
+									     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
   this->_timer->BeginTimer("AxisymmetricHeatTransfer::element_time_derivative");
@@ -316,12 +326,15 @@ bool GRINS::AxisymmetricHeatTransfer::element_time_derivative( bool request_jaco
 
       libMesh::NumberVectorValue U (u_r,u_z);
 
+      libMesh::Number k = this->_k.value( T );
+      libMesh::Number dk_dT = this->_k.deriv( T );
+
       // First, an i-loop over the  degrees of freedom.
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
           FT(i) += JxW[qp]*r*
                    (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
-                    -_k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
+                    -k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
           if (request_jacobian && c.elem_solution_derivative)
             {
@@ -334,8 +347,17 @@ bool GRINS::AxisymmetricHeatTransfer::element_time_derivative( bool request_jaco
 
                   KTT(i,j) += JxW[qp]*r*
                               (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
-                               -_k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
+                               -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
                 } // end of the inner dof (j) loop
+
+	      if( dk_dT != 0.0 )
+		{
+		  for (unsigned int j=0; j != n_T_dofs; j++)
+		    {
+		      // TODO: precompute some terms like:
+		      KTT(i,j) -= JxW[qp]*r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
+		    }
+		}
 
               // Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
               for (unsigned int j=0; j != n_u_dofs; j++)
@@ -356,17 +378,18 @@ bool GRINS::AxisymmetricHeatTransfer::element_time_derivative( bool request_jaco
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricHeatTransfer::element_constraint( bool request_jacobian,
-							    libMesh::DiffContext& context,
-							    libMesh::FEMSystem* system )
+template< class Conductivity>
+bool GRINS::AxisymmetricHeatTransfer<Conductivity>::element_constraint( bool request_jacobian,
+									libMesh::DiffContext& context,
+									libMesh::FEMSystem* system )
 {
   return request_jacobian;
 }
 
-
-bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobian,
-							      libMesh::DiffContext& context,
-							      libMesh::FEMSystem* system )
+template< class Conductivity>
+bool GRINS::AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool request_jacobian,
+									  libMesh::DiffContext& context,
+									  libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
   this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_time_derivative");
@@ -427,9 +450,10 @@ bool GRINS::AxisymmetricHeatTransfer::side_time_derivative( bool request_jacobia
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricHeatTransfer::side_constraint( bool request_jacobian,
-						       libMesh::DiffContext& context,
-						       libMesh::FEMSystem* system )
+template< class Conductivity>
+bool GRINS::AxisymmetricHeatTransfer<Conductivity>::side_constraint( bool request_jacobian,
+								     libMesh::DiffContext& context,
+								     libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
   //this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_constraint");
@@ -444,9 +468,10 @@ bool GRINS::AxisymmetricHeatTransfer::side_constraint( bool request_jacobian,
   return request_jacobian;
 }
 
-bool GRINS::AxisymmetricHeatTransfer::mass_residual( bool request_jacobian,
-						     libMesh::DiffContext& context,
-						     libMesh::FEMSystem* system )
+template< class Conductivity>
+bool GRINS::AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool request_jacobian,
+								   libMesh::DiffContext& context,
+								   libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
   this->_timer->BeginTimer("AxisymmetricHeatTransfer::mass_residual");
@@ -513,3 +538,5 @@ bool GRINS::AxisymmetricHeatTransfer::mass_residual( bool request_jacobian,
 
   return request_jacobian;
 }
+
+template class GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>;

@@ -44,6 +44,9 @@
 
 #include "physics.h"
 
+// Conductivity Models
+#include "constant_conductivity.h"
+
 namespace GRINS
 {
 
@@ -51,6 +54,7 @@ namespace GRINS
   /*
     This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
    */
+  template<class Conductivity>
   class AxisymmetricHeatTransfer : public Physics
   {
   public:
@@ -146,7 +150,9 @@ namespace GRINS
               are assumed constant */
     /*! \todo Shouldn't this rho be the same as the one in the flow? Need
               to figure out how to have those shared */
-    libMesh::Number _rho, _Cp, _k;
+    libMesh::Number _rho, _Cp;
+
+    Conductivity _k;
 
     //! Stash prescribed boundary temperature values
     std::map< unsigned int, double > _T_boundary_values;

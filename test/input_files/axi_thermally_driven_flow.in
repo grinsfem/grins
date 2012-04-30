@@ -68,7 +68,6 @@ pin_value = 0.0
 
 rho = 1.0
 Cp = 1.0
-k = 1.0
 
 bc_ids = '3 0 2 1'
 
@@ -96,6 +95,14 @@ pressure = 'p'
 # Made these u and v as well to reuse test.
 r_velocity = 'u'
 z_velocity = 'v'
+[]
+
+[Materials]
+
+[./Conductivity]
+
+k = 1.0
+
 []
 
 [ExactSolution]
