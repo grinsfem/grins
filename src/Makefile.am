@@ -65,6 +65,9 @@ visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
 
 matprops_SRC = $(matprops_srcdir)/constant_conductivity.C
 
+sfilesdir = $(prefix)/src
+sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
+
 #----------------------------
 #INCLUDES we want distributed
 #----------------------------
