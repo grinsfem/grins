@@ -43,8 +43,11 @@
 #include "axisym_heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
+#include "low_mach_navier_stokes.h"
 #include "grins_physics_names.h"
 #include "constant_conductivity.h"
+#include "constant_specific_heat.h"
+#include "constant_viscosity.h"
 
 namespace GRINS
 {
