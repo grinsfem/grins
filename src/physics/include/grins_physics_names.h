@@ -41,6 +41,7 @@ namespace GRINS
   const PhysicsName axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
   const PhysicsName boussinesq_buoyancy = "BoussinesqBuoyancy";
   const PhysicsName axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
+  const PhysicsName low_mach_navier_stokes = "LowMachNavierStokes";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H
