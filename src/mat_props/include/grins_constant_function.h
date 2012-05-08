@@ -26,23 +26,35 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
+#ifndef GRINS_CONSTANT_FUNCTION_H
+#define GRINS_CONSTANT_FUNCTION_H
 
-// GRINS
-#include "grins_constant_function.h"
+// libMesh
+#include "libmesh.h"
+#include "getpot.h"
 
 namespace GRINS
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
+  class ConstantFunction
   {
   public:
 
-    ConstantConductivity();
-    ~ConstantConductivity();
+    ConstantFunction();
+    ~ConstantFunction();
 
-    void read_input_options( const GetPot& input );
+    virtual void read_input_options( const GetPot& input ) =0;
 
+    inline
+    Real operator()( Real ) const
+    { return _value; }
+
+    inline
+    Real deriv( Real ) const
+    { return 0.0; }
+
+  protected:
+
+    Real _value;
   };
 }
-#endif //CONSTANT_CONDUCTIVITY_H
+#endif //GRINS_CONSTANT_FUNCTION_H

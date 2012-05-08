@@ -63,7 +63,10 @@ visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
                     $(visualization_srcdir)/visualization.C \
                     $(visualization_srcdir)/visualization_factory.C
 
-matprops_SRC = $(matprops_srcdir)/constant_conductivity.C
+matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
+               $(matprops_srcdir)/constant_conductivity.C   \
+               $(matprops_srcdir)/constant_viscosity.C      \
+               $(matprops_srcdir)/constant_specific_heat.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -106,7 +109,11 @@ visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/visualization.h \
                     $(visualization_incdir)/visualization_factory.h
 
-matprops_INC = $(matprops_incdir)/constant_conductivity.h
+matprops_INC = $(matprops_incdir)/grins_constant_function.h \
+               $(matprops_incdir)/constant_conductivity.h   \
+               $(matprops_incdir)/constant_viscosity.h      \
+               $(matprops_incdir)/constant_specific_heat.h
+
 
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC)

@@ -34,12 +34,12 @@
 
 namespace GRINS
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
+  class ConstantSpecificHeat : public GRINS::ConstantFunction
   {
   public:
 
-    ConstantConductivity();
-    ~ConstantConductivity();
+    ConstantSpecificHeat();
+    ~ConstantSpecificHeat();
 
     void read_input_options( const GetPot& input );
 

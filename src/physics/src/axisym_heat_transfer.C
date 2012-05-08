@@ -326,7 +326,7 @@ bool GRINS::AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( boo
 
       libMesh::NumberVectorValue U (u_r,u_z);
 
-      libMesh::Number k = this->_k.value( T );
+      libMesh::Number k = this->_k( T );
       libMesh::Number dk_dT = this->_k.deriv( T );
 
       // First, an i-loop over the  degrees of freedom.
@@ -350,7 +350,7 @@ bool GRINS::AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( boo
                                -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
                 } // end of the inner dof (j) loop
 
-	      if( dk_dT != 0.0 )
+	      //if( dk_dT != 0.0 )
 		{
 		  for (unsigned int j=0; j != n_T_dofs; j++)
 		    {

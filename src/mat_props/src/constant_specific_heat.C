@@ -26,23 +26,22 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
+#include "constant_specific_heat.h"
 
-// GRINS
-#include "grins_constant_function.h"
 
-namespace GRINS
+GRINS::ConstantSpecificHeat::ConstantSpecificHeat()
+  : GRINS::ConstantFunction()
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
-  {
-  public:
-
-    ConstantConductivity();
-    ~ConstantConductivity();
-
-    void read_input_options( const GetPot& input );
-
-  };
+  return;
 }
-#endif //CONSTANT_CONDUCTIVITY_H
+
+GRINS::ConstantSpecificHeat::~ConstantSpecificHeat()
+{
+  return;
+}
+
+void GRINS::ConstantSpecificHeat::read_input_options( const GetPot& input )
+{
+  _value = input( "Materials/SpecificHeat/cp", -1.0 );
+  return;
+}

@@ -30,7 +30,7 @@
 
 
 GRINS::ConstantConductivity::ConstantConductivity()
- : _k( -1.0 )
+  : GRINS::ConstantFunction()
 {
   return;
 }
@@ -42,6 +42,6 @@ GRINS::ConstantConductivity::~ConstantConductivity()
 
 void GRINS::ConstantConductivity::read_input_options( const GetPot& input )
 {
-  _k = input( "Materials/Conductivity/k", -1.0 );
+  _value = input( "Materials/Conductivity/k", -1.0 );
   return;
 }

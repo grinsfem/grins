@@ -26,23 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
-
-// GRINS
 #include "grins_constant_function.h"
 
-namespace GRINS
+GRINS::ConstantFunction::ConstantFunction()
+ : _value( -1.0 )
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
-  {
-  public:
-
-    ConstantConductivity();
-    ~ConstantConductivity();
-
-    void read_input_options( const GetPot& input );
-
-  };
+  return;
 }
-#endif //CONSTANT_CONDUCTIVITY_H
+
+GRINS::ConstantFunction::~ConstantFunction()
+{
+  return;
+}

@@ -26,23 +26,22 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
+#include "constant_viscosity.h"
 
-// GRINS
-#include "grins_constant_function.h"
 
-namespace GRINS
+GRINS::ConstantViscosity::ConstantViscosity()
+  : GRINS::ConstantFunction()
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
-  {
-  public:
-
-    ConstantConductivity();
-    ~ConstantConductivity();
-
-    void read_input_options( const GetPot& input );
-
-  };
+  return;
 }
-#endif //CONSTANT_CONDUCTIVITY_H
+
+GRINS::ConstantViscosity::~ConstantViscosity()
+{
+  return;
+}
+
+void GRINS::ConstantViscosity::read_input_options( const GetPot& input )
+{
+  _value = input( "Materials/Viscosity/mu", -1.0 );
+  return;
+}
