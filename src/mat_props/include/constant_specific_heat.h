@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
+#ifndef CONSTANT_SPECIFIC_HEAT_H
+#define CONSTANT_SPECIFIC_HEAT_H
 
 // GRINS
 #include "grins_constant_function.h"
@@ -45,4 +45,4 @@ namespace GRINS
 
   };
 }
-#endif //CONSTANT_CONDUCTIVITY_H
+#endif //CONSTANT_SPECIFIC_HEAT_H

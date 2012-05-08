@@ -149,6 +149,9 @@ namespace GRINS
     //! Thermal conductivity object
     ThermalConductivity _k;
 
+    //! Gravity vector
+    libMesh::Point _g; 
+
     //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
     std::map< unsigned int, std::vector<double> > _vel_boundary_values;
 
