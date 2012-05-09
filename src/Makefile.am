@@ -76,7 +76,8 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
-                  $(bc_handling_srcdir)/axisym_heat_transfer_bc_handling.C
+                  $(bc_handling_srcdir)/axisym_heat_transfer_bc_handling.C \
+                  $(bc_handling_srcdir)/inc_navier_stokes_bc_handling.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -127,7 +128,8 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h
+                  $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h \
+                  $(bc_handling_incdir)/inc_navier_stokes_bc_handling.h
 
 
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
