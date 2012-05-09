@@ -25,54 +25,36 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
-
-//libMesh
-#include "const_function.h"
+#ifndef AXISYM_HEAT_TRANSFER_BC_HANDLING_H
+#define AXISYM_HEAT_TRANSFER_BC_HANDLING_H
 
 //GRINS
-#include "bc_handling_base.h"
+#include "heat_transfer_bc_handling.h"
 
 namespace GRINS
 {
   //! Base class for reading and handling boundary conditions for physics classes
-  class HeatTransferBCHandling : public BCHandlingBase
+  class AxisymmetricHeatTransferBCHandling : public HeatTransferBCHandling
   {
   public:
     
-    HeatTransferBCHandling( std::string& physics_name, const GetPot& input );
+    AxisymmetricHeatTransferBCHandling( std::string& physics_name, const GetPot& input );
     
-    virtual ~HeatTransferBCHandling();
+    ~AxisymmetricHeatTransferBCHandling();
 
-    virtual int string_to_int( const std::string& bc_type_in ) const;
+    int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
-
+    void init_bc_data( const GRINS::BoundaryID bc_id, 
+		       const std::string& bc_id_string, 
+		       const int bc_type, 
+		       const GetPot& input );
     
-  protected:
-
-    std::string _physics_name;
-
-    std::string _T_var_name;
-
   private:
 
-    HeatTransferBCHandling();
+    AxisymmetricHeatTransferBCHandling();
 
-    
-
-    enum HT_BC_TYPES{ISOTHERMAL_WALL=1,
-		     ADIABATIC_WALL,
-		     PRESCRIBED_HEAT_FLUX,
-		     GENERAL_HEAT_FLUX};
+    enum AHT_BC_TYPES{AXISYMMETRIC=0};
 
   };
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+#endif // AXISYM_HEAT_TRANSFER_BC_HANDLING_H

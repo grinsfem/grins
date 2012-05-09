@@ -25,54 +25,54 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
 
-//libMesh
-#include "const_function.h"
+#include "axisym_heat_transfer_bc_handling.h"
 
-//GRINS
-#include "bc_handling_base.h"
-
-namespace GRINS
+GRINS::AxisymmetricHeatTransferBCHandling::AxisymmetricHeatTransferBCHandling(std::string& physics_name,
+									      const GetPot& input)
+  : HeatTransferBCHandling(physics_name, input)
 {
-  //! Base class for reading and handling boundary conditions for physics classes
-  class HeatTransferBCHandling : public BCHandlingBase
-  {
-  public:
-    
-    HeatTransferBCHandling( std::string& physics_name, const GetPot& input );
-    
-    virtual ~HeatTransferBCHandling();
-
-    virtual int string_to_int( const std::string& bc_type_in ) const;
-
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
-
-    
-  protected:
-
-    std::string _physics_name;
-
-    std::string _T_var_name;
-
-  private:
-
-    HeatTransferBCHandling();
-
-    
-
-    enum HT_BC_TYPES{ISOTHERMAL_WALL=1,
-		     ADIABATIC_WALL,
-		     PRESCRIBED_HEAT_FLUX,
-		     GENERAL_HEAT_FLUX};
-
-  };
+  return;
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+
+GRINS::AxisymmetricHeatTransferBCHandling::~AxisymmetricHeatTransferBCHandling()
+{
+  return;
+}
+
+int GRINS::AxisymmetricHeatTransferBCHandling::string_to_int( const std::string& bc_type ) const
+{
+  int bc_type_out;
+
+  if( bc_type == "axisymmetrc" )
+    bc_type_out = AXISYMMETRIC;
+  
+  else
+    {
+      bc_type_out = GRINS::HeatTransferBCHandling::string_to_int( bc_type );
+    }
+
+  return bc_type_out;
+}
+
+void GRINS::AxisymmetricHeatTransferBCHandling::init_bc_data( const GRINS::BoundaryID bc_id, 
+						  const std::string& bc_id_string, 
+						  const int bc_type, 
+						  const GetPot& input )
+{
+  switch(bc_type)
+    {
+    case(AXISYMMETRIC):
+      {
+	this->set_neumann_bc_type( bc_id, bc_type );
+      }
+      break;
+
+    default:
+      {
+	GRINS::HeatTransferBCHandling::init_bc_data( bc_id, bc_id_string, bc_type, input );
+      }  
+    }// End switch(bc_type)
+
+  return;
+}
