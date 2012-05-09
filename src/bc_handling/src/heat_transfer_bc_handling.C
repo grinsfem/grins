@@ -28,10 +28,18 @@
 
 #include "heat_transfer_bc_handling.h"
 
-GRINS::HeatTransferBCHandling::HeatTransferBCHandling(std::string& physics_name)
+GRINS::HeatTransferBCHandling::HeatTransferBCHandling(std::string& physics_name,
+						      const GetPot& input)
   : BCHandlingBase(),
     _physics_name(physics_name)
 {
+  _T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
+
+  std::string id_str = "Physics/"+_physics_name+"/bc_ids";
+  std::string bc_str = "Physics/"+_physics_name+"/bc_types";
+
+  this->read_bc_data( input, id_str, bc_str );
+
   return;
 }
 
@@ -74,22 +82,21 @@ void GRINS::HeatTransferBCHandling::init_bc_data( const GRINS::BoundaryID bc_id,
     {
     case(ISOTHERMAL_WALL):
       {
-	_dirichlet_bc_map[bc_id] = bc_type;
-	
-	_dirichlet_values[bc_id] = 
-	  input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 );
+	this->set_dirichlet_bc_type( bc_id, bc_type );
+
+	this->set_dirichlet_bc_value( bc_id, input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 ) );
       }
       break;
       
     case(ADIABATIC_WALL):
       {
-	_neumann_bc_map[bc_id] = bc_type;
+	this->set_neumann_bc_type( bc_id, bc_type );
       }
       break;
       
     case(PRESCRIBED_HEAT_FLUX):
       {
-	_neumann_bc_map[bc_id] = bc_type;
+	this->set_neumann_bc_type( bc_id, bc_type );
 	
 	libMesh::Point q_in;
 	
@@ -99,12 +106,13 @@ void GRINS::HeatTransferBCHandling::init_bc_data( const GRINS::BoundaryID bc_id,
 	  {
 	    q_in(i) = input("Physics/"+_physics_name+"/q_wall_"+bc_id_string, 0.0, i );
 	  }
-	_q_values[bc_id] = q_in;
+
+	this->set_neumann_bc_value( bc_id, q_in );
       }
       break;
     case(GENERAL_HEAT_FLUX):
       {
-	_neumann_bc_map[bc_id] = bc_type;
+	this->set_neumann_bc_type( bc_id, bc_type );
       }
       break;
     default:
@@ -119,39 +127,37 @@ void GRINS::HeatTransferBCHandling::init_bc_data( const GRINS::BoundaryID bc_id,
   return;
 }
 
-void GRINS::HeatTransferBCHandling::init_dirichlet_bcs( libMesh::DofMap& dof_map ) const
+void GRINS::HeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+							     libMesh::DofMap& dof_map,
+							     GRINS::BoundaryID bc_id,
+							     GRINS::BCType bc_type ) const
 {
-  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
-       it != _dirichlet_bc_map.end();
-       it++ )
+  GRINS::VariableIndex T_var = system->variable_number( _T_var_name );
+
+  switch( bc_type )
     {
-      switch( it->second )
-	{
-	case(ISOTHERMAL_WALL):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    //	    dbc_vars.push_back(_T_var);
-
-	    //Real value = _dirichlet_values.find(it->first);
-
-	    //ConstFunction<Number> t_func( _dirichlet_values[it->first] );
-
-	    //libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );
-
-	    //dof_map.add_dirichlet_boundary( t_dbc );
-	  }
-	  break;
-	default:
-	  {
-	    std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		      << std::endl;
-	    libmesh_error();
-	  }
-  	}// end switch
-    } //end for
+    case(ISOTHERMAL_WALL):
+      {
+	std::set<GRINS::BoundaryID> dbc_ids;
+	dbc_ids.insert(bc_id);
+	
+	std::vector<GRINS::VariableIndex> dbc_vars;
+	dbc_vars.push_back(T_var);
+	
+	ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
+	
+	libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );
+	
+	dof_map.add_dirichlet_boundary( t_dbc );
+      }
+      break;
+    default:
+      {
+	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
+		  << std::endl;
+	libmesh_error();
+      }
+    }// end switch
 
   return;
 }

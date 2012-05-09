@@ -80,7 +80,7 @@ void GRINS::BCHandlingBase::read_bc_data( const GetPot& input, const std::string
   return;
 }
 
-void GRINS::BCHandlingBase::init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const
+void GRINS::BCHandlingBase::init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const
 {
   libMesh::DofMap& dof_map = system->get_dof_map();
 
@@ -118,6 +118,49 @@ void GRINS::BCHandlingBase::init_user_dirichlet_bcs( libMesh::FEMSystem* system 
   return;
 }
 
+void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) const
+{
+  libMesh::DofMap& dof_map = system->get_dof_map();
+
+  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
+       it != _dirichlet_bc_map.end();
+       it++ )
+    {
+      this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
+    }
+
+  return;
+}
+
+void GRINS::BCHandlingBase::set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type )
+{
+  _dirichlet_bc_map[bc_id] = bc_type;
+  return;
+}
+
+void GRINS::BCHandlingBase::set_neumann_bc_type( GRINS::BoundaryID bc_id, int bc_type )
+{
+  _neumann_bc_map[bc_id] = bc_type;
+  return;
+}
+
+void GRINS::BCHandlingBase::set_dirichlet_bc_value( GRINS::BoundaryID bc_id, Real value,
+						    int component )
+{
+  _dirichlet_values[bc_id](component) = value;
+  return;
+}
+
+Real GRINS::BCHandlingBase::get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component ) const
+{
+  return (_dirichlet_values.find(bc_id)->second)(component);
+}
+
+void GRINS::BCHandlingBase::set_neumann_bc_value( GRINS::BoundaryID bc_id, const libMesh::Point& q_in )
+{
+  _q_values[bc_id] = q_in;
+}
+
 int GRINS::BCHandlingBase::string_to_int( const std::string& bc_type_in ) const
 {
   // Default to negative value to help catch forgetting to overload this when
@@ -134,7 +177,8 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
   return;
 }
 
-void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::DofMap& dof_map ) const
+void GRINS::BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
+						     GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const
 {
   // Not all Physics need this so we have a do nothing default.
   return;

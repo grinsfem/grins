@@ -62,7 +62,28 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
-    void init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const;
+    void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
+
+    void set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type );
+    void set_neumann_bc_type( GRINS::BoundaryID bc_id, int bc_type );
+    void set_dirichlet_bc_value( GRINS::BoundaryID bc_id, Real value, int component = 0 );
+    void set_neumann_bc_value( GRINS::BoundaryID bc_id, const libMesh::Point& q_in );
+    Real get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component = 0 ) const;
+
+    inline
+    libMesh::Point get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
+    {
+      return (_q_values.find(bc_id))->second;
+    }
+
+    inline 
+    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
+									  GRINS::VariableIndex var_id ) const
+    {
+      return (((_neumann_bound_funcs.find(bc_id))->second).find(var_id))->second;
+    }
+
+    virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
     // User will need to implement these functions for BC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
@@ -72,9 +93,10 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map ) const;
-
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
     
+
   protected:
 
     //! Map between boundary id and Dirichlet boundary condition type
@@ -86,7 +108,7 @@ namespace GRINS
     std::map< GRINS::BoundaryID, GRINS::BCType> _neumann_bc_map;
 
     //! Stash prescribed Dirichlet boundary values
-    std::map< GRINS::BoundaryID, double > _dirichlet_values;
+    std::map< GRINS::BoundaryID, libMesh::Point > _dirichlet_values;
 
     //! Stash prescribed boundary fluxes
     std::map< GRINS::BoundaryID, libMesh::Point > _q_values;
