@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   GRINS::MeshBuilder mesh_builder( libMesh_inputfile );
 
   // PhysicsFactory handles which GRINS::Physics objects to create
-  GRINS::PhysicsFactory physics_factory( libMesh_inputfile );
+  GRINS::PhysicsFactory physics_factory;
 
   // PhysicsFactory handles which GRINS::Solver to use to solve the problem
   GRINS::SolverFactory solver_factory( libMesh_inputfile );

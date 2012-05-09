@@ -62,6 +62,9 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
+    void init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const;
+
+    // User will need to implement these functions for BC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
     virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
@@ -71,8 +74,7 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map ) const;
 
-    void init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const;
-
+    
   protected:
 
     //! Map between boundary id and Dirichlet boundary condition type
@@ -82,6 +84,12 @@ namespace GRINS
 
     //! Map between boundary id and Neumann boundary condition type
     std::map< GRINS::BoundaryID, GRINS::BCType> _neumann_bc_map;
+
+    //! Stash prescribed Dirichlet boundary values
+    std::map< GRINS::BoundaryID, double > _dirichlet_values;
+
+    //! Stash prescribed boundary fluxes
+    std::map< GRINS::BoundaryID, libMesh::Point > _q_values;
 
     //! Map between boundary id and general Neumann boundary functions
     /*! The user may wish to set a different function for each variable in the physics class. 

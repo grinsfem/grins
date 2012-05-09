@@ -48,7 +48,7 @@ GRINS::Simulation::Simulation( const GetPot& input,
   libMesh::perflog.disable_logging();
   if( this->_print_log_info ) libMesh::perflog.enable_logging();
 
-  GRINS::PhysicsList physics_list = physics_factory->build();
+  GRINS::PhysicsList physics_list = physics_factory->build(input);
 
   _solver->initialize( input, _equation_system, physics_list, bc_factory );
 

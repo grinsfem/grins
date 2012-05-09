@@ -29,21 +29,9 @@
 #include "physics_factory.h"
 
 
-GRINS::PhysicsFactory::PhysicsFactory( const GetPot& input )
-  : _num_physics( input.vector_variable_size("Physics/enabled_physics") ),
-    _input(input)
+GRINS::PhysicsFactory::PhysicsFactory()
 {
-  if( _num_physics < 1 )
-    {
-      std::cerr << "Error: Must enable at least one physics model" << std::endl;
-      libmesh_error();
-    }
-
-  // Go through and create a physics object for each physics we're enabling
-  for( int i = 0; i < _num_physics; i++ )
-    {
-      _requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
-    }
+  
 
   return;
 }
@@ -53,15 +41,31 @@ GRINS::PhysicsFactory::~PhysicsFactory()
   return;
 }
 
-GRINS::PhysicsList GRINS::PhysicsFactory::build()
+GRINS::PhysicsList GRINS::PhysicsFactory::build( const GetPot& input )
 {
   GRINS::PhysicsList physics_list;
 
-  for( std::set<std::string>::const_iterator physics = _requested_physics.begin();
-       physics != _requested_physics.end();
+  int num_physics =  input.vector_variable_size("Physics/enabled_physics");
+
+  if( num_physics < 1 )
+    {
+      std::cerr << "Error: Must enable at least one physics model" << std::endl;
+      libmesh_error();
+    }
+  
+  std::set<std::string> requested_physics;
+
+  // Go through and create a physics object for each physics we're enabling
+  for( int i = 0; i < num_physics; i++ )
+    {
+      requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
+    }
+
+  for( std::set<std::string>::const_iterator physics = requested_physics.begin();
+       physics != requested_physics.end();
        physics++ )
     {
-      this->add_physics( *physics, physics_list );
+      this->add_physics( input, *physics, physics_list );
     }
 
   this->check_physics_consistency( physics_list );
@@ -69,7 +73,8 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build()
   return physics_list;
 }
 
-void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
+void GRINS::PhysicsFactory::add_physics( const GetPot& input, 
+					 const std::string& physics_to_add,
 					 GRINS::PhysicsList& physics_list )
 {
   typedef std::tr1::shared_ptr<GRINS::Physics> PhysicsPtr;
@@ -78,12 +83,12 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
   if( physics_to_add == incompressible_navier_stokes )
     {
       physics_list[incompressible_navier_stokes] = 
-	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes));
+	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes) );
     }
   else if( physics_to_add == axisymmetric_incomp_navier_stokes )
     {
       physics_list[axisymmetric_incomp_navier_stokes] = 
-	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes));
+	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes) );
     }
   else if( physics_to_add == heat_transfer )
     {
@@ -92,7 +97,7 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
     }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
-      std::string conductivity = _input( "Physics/AxisymmetricHeatTransfer/conductivity_model", "constant" );
+      std::string conductivity = input( "Physics/AxisymmetricHeatTransfer/conductivity_model", "constant" );
       if(  conductivity == "constant" )
 	{
 	  physics_list[axisymmetric_heat_transfer] = 
@@ -116,9 +121,9 @@ void GRINS::PhysicsFactory::add_physics( const std::string& physics_to_add,
     }
   else if(  physics_to_add == low_mach_navier_stokes )
     {
-      std::string conductivity  = _input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-      std::string viscosity     = _input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-      std::string specific_heat = _input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+      std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
+      std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+      std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
 
       if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
 	{

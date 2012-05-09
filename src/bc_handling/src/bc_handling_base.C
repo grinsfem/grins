@@ -80,28 +80,6 @@ void GRINS::BCHandlingBase::read_bc_data( const GetPot& input, const std::string
   return;
 }
 
-int GRINS::BCHandlingBase::string_to_int( const std::string& bc_type_in ) const
-{
-  // Default to negative value to help catch forgetting to overload this when
-  // necessary.
-  return -1;
-}
-
-void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id, 
-					  const std::string& bc_id_string, 
-					  const int bc_type, 
-					  const GetPot& input )
-{
-  // Not all Physics need this so we have a do nothing default.
-  return;
-}
-
-void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::DofMap& dof_map ) const
-{
-  // Not all Physics need this so we have a do nothing default.
-  return;
-}
-
 void GRINS::BCHandlingBase::init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const
 {
   libMesh::DofMap& dof_map = system->get_dof_map();
@@ -137,5 +115,27 @@ void GRINS::BCHandlingBase::init_user_dirichlet_bcs( libMesh::FEMSystem* system 
       dof_map.add_dirichlet_boundary( dbc );
     }
 
+  return;
+}
+
+int GRINS::BCHandlingBase::string_to_int( const std::string& bc_type_in ) const
+{
+  // Default to negative value to help catch forgetting to overload this when
+  // necessary.
+  return -1;
+}
+
+void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id, 
+					  const std::string& bc_id_string, 
+					  const int bc_type, 
+					  const GetPot& input )
+{
+  // Not all Physics need this so we have a do nothing default.
+  return;
+}
+
+void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::DofMap& dof_map ) const
+{
+  // Not all Physics need this so we have a do nothing default.
   return;
 }

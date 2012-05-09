@@ -60,13 +60,13 @@ namespace GRINS
   {
   public:
     
-    PhysicsFactory( const GetPot& input );
+    PhysicsFactory();
 
     //! Destructor does not need to delete std::tr1::shared_ptr's.
     virtual ~PhysicsFactory();
     
     //! Builds PhysicsList. This is the primary function of this class.
-    GRINS::PhysicsList build();
+    GRINS::PhysicsList build(const GetPot& input);
 
   protected:
 
@@ -76,7 +76,8 @@ namespace GRINS
 	physics you want, then call the parent PhysicsFactory::add_physics
 	function.
      */
-    virtual void add_physics( const std::string& physics_to_add,
+    virtual void add_physics( const GetPot& input,
+			      const std::string& physics_to_add,
 			      GRINS::PhysicsList& physics_list );
 
     //! Make sure the requested GRINS::Physics classes are consistent
@@ -90,11 +91,6 @@ namespace GRINS
     //! Utility function
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required );
-
-    int _num_physics;
-    std::set<std::string> _requested_physics;
-
-    const GetPot& _input;
 
   }; // class PhysicsFactory
 
