@@ -28,6 +28,11 @@ visualization_incdir = $(top_srcdir)/src/visualization/include
 matprops_srcdir = $(top_srcdir)/src/mat_props/src
 matprops_incdir = $(top_srcdir)/src/mat_props/include
 
+bc_handling_srcdir = $(top_srcdir)/src/bc_handling/src
+bc_handling_incdir = $(top_srcdir)/src/bc_handling/include
+
+
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -68,6 +73,8 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/constant_conductivity.C   \
                $(matprops_srcdir)/constant_viscosity.C      \
                $(matprops_srcdir)/constant_specific_heat.C
+
+bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -116,16 +123,20 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/constant_viscosity.h      \
                $(matprops_incdir)/constant_specific_heat.h
 
+bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h
+
 
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
-                  $(utilities_INC) $(visualization_INC) $(matprops_INC)
+                  $(utilities_INC) $(visualization_INC) $(matprops_INC) \
+                  $(bc_handling_INC)
 
 libgrins_la_SOURCES = $(solver_SRC) \
                       $(physics_SRC) \
                       $(boundary_conditions_SRC) \
                       $(utilities_SRC) \
                       $(visualization_SRC) \
-                      $(matprops_SRC)
+                      $(matprops_SRC) \
+                      $(bc_handling_SRC)
 
 libgrins_la_LIBADD = $(GRVY_PREFIX)/lib/libgrvy.la $(LIBMESH_LIBDIR)/libmesh.la
 
@@ -142,7 +153,7 @@ grins_version_LDADD = libgrins.la
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir)
+AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \
@@ -172,6 +183,7 @@ endif
         $(utilities_INC) $(utilities_SRC) \
 	$(visualization_INC) $(visualization_SRC) \
         $(matprops_INC) $(matprops_SRC) \
+        $(bc_handling_INC) $(bc_handling_SRC) \
         $(solver_SOURCES) $(grins_version_SOURCES)
 	echo 'updated source license headers' >$@
 

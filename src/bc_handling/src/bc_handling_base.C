@@ -26,33 +26,35 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "physics.h"
+#include "bc_handling_base.h"
 
-GRINS::Physics::Physics( const std::string& physics_name )
-  : _physics_name( physics_name )
+GRINS::BCHandlingBase::BCHandlingBase()
 {
   return;
 }
 
-GRINS::Physics::~Physics()
+GRINS::BCHandlingBase::~BCHandlingBase()
 {
   return;
 }
 
-void GRINS::Physics::read_input_options( const GetPot& input )
+void GRINS::BCHandlingBase::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
 {
+  _neumann_bound_funcs = neumann_bcs;
   return;
 }
 
-void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
+void GRINS::BCHandlingBase::attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc )
 {
+  _dirichlet_bound_funcs.push_back( dirichlet_bc );
   return;
 }
 
-void GRINS::Physics::read_bc_data( const GetPot& input )
+void GRINS::BCHandlingBase::read_bc_data( const GetPot& input, const std::string& id_str,
+					  const std::string& bc_str)
 {
-  int num_ids = input.vector_variable_size("Physics/"+_physics_name+"/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/"+_physics_name+"/bc_types");
+  int num_ids = input.vector_variable_size(id_str);
+  int num_bcs = input.vector_variable_size(bc_str);
 
   if( num_ids != num_bcs )
     {
@@ -63,8 +65,8 @@ void GRINS::Physics::read_bc_data( const GetPot& input )
 
   for( int i = 0; i < num_ids; i++ )
     {
-      int bc_id = input("Physics/"+_physics_name+"/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/"+_physics_name+"/bc_types", "NULL", i );
+      int bc_id = input(id_str, -1, i );
+      std::string bc_type_in = input(bc_str, "NULL", i );
 
       int bc_type = this->string_to_int( bc_type_in );
 
@@ -78,38 +80,38 @@ void GRINS::Physics::read_bc_data( const GetPot& input )
   return;
 }
 
-int GRINS::Physics::string_to_int( const std::string& bc_type_in )
+int GRINS::BCHandlingBase::string_to_int( const std::string& bc_type_in ) const
 {
   // Default to negative value to help catch forgetting to overload this when
   // necessary.
   return -1;
 }
 
-void GRINS::Physics::init_bc_data( const GRINS::BoundaryID bc_id, 
-				   const std::string& bc_id_string, 
-				   const int bc_type, 
-				   const GetPot& input )
+void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id, 
+					  const std::string& bc_id_string, 
+					  const int bc_type, 
+					  const GetPot& input )
 {
   // Not all Physics need this so we have a do nothing default.
   return;
 }
 
-void GRINS::Physics::init_dirichlet_bcs( libMesh::DofMap& dof_map )
+void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::DofMap& dof_map ) const
 {
   // Not all Physics need this so we have a do nothing default.
   return;
 }
 
-void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
+void GRINS::BCHandlingBase::init_user_dirichlet_bcs( libMesh::FEMSystem* system ) const
 {
   libMesh::DofMap& dof_map = system->get_dof_map();
 
-  for( std::vector< GRINS::DBCContainer >::iterator 
+  for( std::vector< GRINS::DBCContainer >::const_iterator 
 	 it = _dirichlet_bound_funcs.begin();
        it != _dirichlet_bound_funcs.end();
        it++ )
     {
-      // First, get variable names and convert to variable id's
+      // First, get variable names and convert them to variable id's
       std::vector<GRINS::VariableName> var_names = (*it).get_var_names();
       
       std::vector<GRINS::VariableIndex> dbc_vars;
@@ -128,6 +130,8 @@ void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
       std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
 
       // Now create DirichletBoundary object and give it to libMesh
+      // libMesh makes it own copy of the DirichletBoundary so we can
+      // let this one die.
       libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
       
       dof_map.add_dirichlet_boundary( dbc );
@@ -135,30 +139,3 @@ void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
 
   return;
 }
-
-void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
-{
-  _neumann_bound_funcs = neumann_bcs;
-
-  return;
-}
-
-void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc )
-{
-  _dirichlet_bound_funcs.push_back( dirichlet_bc );
-  return;
-}
-
-void GRINS::Physics::init_dirichlet_bcs( libMesh::FEMSystem* system )
-{
-  // We call the BCHandler object here.
-  return;
-}
-
-#ifdef USE_GRVY_TIMERS
-void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-{
-  _timer = grvy_timer;
-  return;
-}
-#endif

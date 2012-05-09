@@ -150,6 +150,8 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
 
+    void init_dirichlet_bcs( libMesh::FEMSystem* system );
+
     void init_user_dirichlet_bcs( libMesh::FEMSystem* system );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
