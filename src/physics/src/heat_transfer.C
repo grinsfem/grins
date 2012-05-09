@@ -28,9 +28,10 @@
 
 #include "heat_transfer.h"
 
-GRINS::HeatTransfer::HeatTransfer( const std::string& physics_name )
+GRINS::HeatTransfer::HeatTransfer( const std::string& physics_name, const GetPot& input )
   : Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

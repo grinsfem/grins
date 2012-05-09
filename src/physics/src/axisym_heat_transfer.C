@@ -29,9 +29,11 @@
 #include "axisym_heat_transfer.h"
 
 template< class Conductivity>
-GRINS::AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name )
+GRINS::AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
+									 const GetPot& input)
       : Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

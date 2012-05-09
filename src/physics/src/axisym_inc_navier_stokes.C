@@ -28,9 +28,11 @@
 
 #include "axisym_inc_navier_stokes.h"
 
-GRINS::AxisymmetricIncompressibleNavierStokes::AxisymmetricIncompressibleNavierStokes( const std::string& physics_name )
+GRINS::AxisymmetricIncompressibleNavierStokes::AxisymmetricIncompressibleNavierStokes( const std::string& physics_name,
+										       const GetPot& input)
   : Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

@@ -55,7 +55,7 @@ namespace GRINS
   {
   public:
 
-    AxisymmetricIncompressibleNavierStokes( const std::string& physics_name );
+    AxisymmetricIncompressibleNavierStokes( const std::string& physics_name, const GetPot& input );
 
     ~AxisymmetricIncompressibleNavierStokes();
 

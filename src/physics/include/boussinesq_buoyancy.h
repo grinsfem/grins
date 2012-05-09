@@ -64,7 +64,7 @@ namespace GRINS
   {
   public:
     
-    BoussinesqBuoyancy( const std::string& physics_name );
+    BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
     ~BoussinesqBuoyancy();
 

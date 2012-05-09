@@ -83,17 +83,17 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
   if( physics_to_add == incompressible_navier_stokes )
     {
       physics_list[incompressible_navier_stokes] = 
-	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes) );
+	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes,input) );
     }
   else if( physics_to_add == axisymmetric_incomp_navier_stokes )
     {
       physics_list[axisymmetric_incomp_navier_stokes] = 
-	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes) );
+	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes,input) );
     }
   else if( physics_to_add == heat_transfer )
     {
       physics_list[heat_transfer] = 
-	PhysicsPtr(new GRINS::HeatTransfer(heat_transfer));
+	PhysicsPtr(new GRINS::HeatTransfer(heat_transfer,input));
     }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
@@ -101,7 +101,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       if(  conductivity == "constant" )
 	{
 	  physics_list[axisymmetric_heat_transfer] = 
-	    PhysicsPtr(new GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>(axisymmetric_heat_transfer));
+	    PhysicsPtr(new GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>(axisymmetric_heat_transfer,input));
 	}
       else
 	{
@@ -112,12 +112,12 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
   else if( physics_to_add == boussinesq_buoyancy )
     {
       physics_list[boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::BoussinesqBuoyancy(boussinesq_buoyancy));
+	PhysicsPtr(new GRINS::BoussinesqBuoyancy(boussinesq_buoyancy,input));
     }
   else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
     {
       physics_list[axisymmetric_boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy(axisymmetric_boussinesq_buoyancy));
+	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy(axisymmetric_boussinesq_buoyancy,input));
     }
   else if(  physics_to_add == low_mach_navier_stokes )
     {
@@ -128,7 +128,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
 	{
 	  physics_list[low_mach_navier_stokes] = 
-	    PhysicsPtr(new GRINS::LowMachNavierStokes<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(low_mach_navier_stokes));
+	    PhysicsPtr(new GRINS::LowMachNavierStokes<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(low_mach_navier_stokes,input));
 	}
       else
 	{

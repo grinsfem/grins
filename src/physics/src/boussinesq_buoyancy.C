@@ -28,9 +28,10 @@
 
 #include "boussinesq_buoyancy.h"
 
-GRINS::BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name )
+GRINS::BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input )
   : Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

@@ -59,7 +59,7 @@ namespace GRINS
   {
   public:
 
-    AxisymmetricHeatTransfer( const std::string& physics_name );
+    AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
     ~AxisymmetricHeatTransfer();
 

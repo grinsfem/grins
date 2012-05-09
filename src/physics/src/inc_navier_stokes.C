@@ -28,9 +28,10 @@
 
 #include "inc_navier_stokes.h"
 
-GRINS::IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name)
-  : Physics(physics_name)
+GRINS::IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
+  : GRINS::Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

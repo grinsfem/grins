@@ -29,9 +29,10 @@
 #include "low_mach_navier_stokes.h"
 
 template<class Mu, class SH, class TC>
-GRINS::LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name)
+GRINS::LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
   : Physics(physics_name)
 {
+  this->read_input_options(input);
   return;
 }
 

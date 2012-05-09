@@ -55,7 +55,7 @@ namespace GRINS
   {
   public:
 
-    HeatTransfer( const std::string& physics_name );
+    HeatTransfer( const std::string& physics_name, const GetPot& input );
 
     ~HeatTransfer();
 
