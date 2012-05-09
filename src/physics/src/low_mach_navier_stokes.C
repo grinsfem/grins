@@ -181,7 +181,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::init_bc_data( const GRINS::BoundaryID
 template<class Mu, class SH, class TC>
 int GRINS::LowMachNavierStokes<Mu,SH,TC>::string_to_int( const std::string& bc_type )
 {
-  INS_BC_TYPES bc_type_out;
+  LMNS_BC_TYPES bc_type_out;
 
   if( bc_type == "no_slip" )
     bc_type_out = NO_SLIP;
@@ -191,6 +191,18 @@ int GRINS::LowMachNavierStokes<Mu,SH,TC>::string_to_int( const std::string& bc_t
 
   else if( bc_type == "inflow" )
     bc_type_out = INFLOW;
+
+  else if( bc_type == "isothermal_wall" )
+    bc_type_out = ISOTHERMAL_WALL;
+  
+  else if( bc_type == "adiabatic_wall" )
+    bc_type_out = ADIABATIC_WALL;
+  
+  else if( bc_type == "prescribed_heat_flux" )
+    bc_type_out = PRESCRIBED_HEAT_FLUX;
+  
+  else if( bc_type == "general_heat_flux" )
+    bc_type_out = GENERAL_HEAT_FLUX;
 
   else
     {
@@ -575,14 +587,14 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
 		     + p*u_gradphi[i][qp](0)                           // pressure term
 		     - _mu(T)*(grad_u*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
-		     + _p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
+		     - _p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp]; 
 
           Fv(i) += ( -_p0_over_R*U*grad_v*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](1)                           // pressure term
 		     - _mu(T)*(grad_v*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
-		     + _p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
+		     - _p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp];
           if (_dim == 3)
             {
@@ -590,7 +602,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
 			 + p*u_gradphi[i][qp](2)                           // pressure term
 			 - _mu(T)*(grad_w*u_gradphi[i][qp] 
 				   - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
-			 + _p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
+			 - _p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
 			 )*JxW[qp];
             }
 

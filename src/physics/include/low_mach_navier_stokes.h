@@ -164,7 +164,7 @@ namespace GRINS
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
 
-    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW};
+    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL, ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
 
     //! Helper function
     void assemble_mass_time_deriv( bool request_jacobian, 
