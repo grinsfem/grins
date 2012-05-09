@@ -130,9 +130,10 @@ namespace GRINS
     VariableIndex _w_var; /* Index for z-velocity field */
     VariableIndex _p_var; /* Index for pressure field */
     VariableIndex _T_var; /* Index for pressure field */
+    VariableIndex _p0_var; /* Index for thermodynamic pressure */
 
     //! Names of each (owned) variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name;
+    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name, _p0_var_name;
 
     //! Element type, read from input
     libMeshEnums::FEFamily _V_FE_family, _P_FE_family, _T_FE_family;
@@ -151,6 +152,9 @@ namespace GRINS
 
     //! Gravity vector
     libMesh::Point _g; 
+
+    //! Flag to enable thermodynamic pressure calculation
+    bool _enable_thermo_press_calc;
 
     //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
     std::map< unsigned int, std::vector<double> > _vel_boundary_values;

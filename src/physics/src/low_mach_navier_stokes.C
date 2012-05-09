@@ -60,7 +60,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
   this->_P_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
 
-  this->_P_order =
+  this->_T_order =
     libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
 
   // Read variable naming info
@@ -76,8 +76,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
   this->_k.read_input_options( input );
 
   // Read thermodynamic state info
-  Real p0 = input("Physics/"+low_mach_navier_stokes+"p0", 0.0 ); /* thermodynamic pressure */
-  Real R  = input("Physics/"+low_mach_navier_stokes+"R", 0.0 ); /* gas constant */
+  Real p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+  Real R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
 
   if( R <= 0.0 )
     {
@@ -89,6 +89,13 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
     }
 
   _p0_over_R = p0/R;
+
+  _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
+
+  if( _enable_thermo_press_calc )
+    {
+      _p0_var_name = input("Physics/VariableNames/thermo_presure", "P0" );
+    }
 
   // Read gravity vector
   unsigned int g_dim = input.vector_variable_size("Physics/"+low_mach_navier_stokes+"/g");
@@ -227,6 +234,11 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::init_variables( libMesh::FEMSystem* s
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
   _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+
+  /* If we need to compute the thermodynamic pressure, we force this to be a first
+     order scalar variable. */
+  if( _enable_thermo_press_calc )
+    _p0_var = system->add_variable( _p0_var_name, FIRST, SCALAR);
 
   return;
 }
@@ -398,6 +410,11 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool request
 			      _pin_value, _pin_location );
     }
 
+  /*
+  if( _enable_thermo_press_calc )
+    this->assemble_thermo_press_time_deriv( request_jacobian, c, system );
+  */
+
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("LowMachNavierStokes::element_time_derivative");
 #endif
@@ -465,6 +482,11 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool request_jacobian,
   this->assemble_momentum_mass_residual( request_jacobian, c, system );
 
   this->assemble_energy_mass_residual( request_jacobian, c, system );
+
+  /*
+  if( _enable_thermo_press_calc )
+    this->assemble_thermo_press_mass_residual( request_jacobian, c, system );
+  */
 
   return request_jacobian;
 }
@@ -587,14 +609,14 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
 		     + p*u_gradphi[i][qp](0)                           // pressure term
 		     - _mu(T)*(grad_u*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
-		     - _p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
+		     + _p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp]; 
 
           Fv(i) += ( -_p0_over_R*U*grad_v*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](1)                           // pressure term
 		     - _mu(T)*(grad_v*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
-		     - _p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
+		     + _p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp];
           if (_dim == 3)
             {
@@ -602,7 +624,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
 			 + p*u_gradphi[i][qp](2)                           // pressure term
 			 - _mu(T)*(grad_w*u_gradphi[i][qp] 
 				   - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
-			 - _p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
+			 + _p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
 			 )*JxW[qp];
             }
 
