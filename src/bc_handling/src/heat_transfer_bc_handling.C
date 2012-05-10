@@ -28,7 +28,7 @@
 
 #include "heat_transfer_bc_handling.h"
 
-GRINS::HeatTransferBCHandling::HeatTransferBCHandling(std::string& physics_name,
+GRINS::HeatTransferBCHandling::HeatTransferBCHandling(const std::string& physics_name,
 						      const GetPot& input)
   : BCHandlingBase(),
     _physics_name(physics_name)
@@ -159,5 +159,43 @@ void GRINS::HeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem*
       }
     }// end switch
 
+  return;
+}
+
+void GRINS::HeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+							    GRINS::VariableIndex var,
+							    bool request_jacobian,
+							    GRINS::BoundaryID bc_id,
+							    GRINS::BCType bc_type ) const
+{
+  switch( bc_type )
+    {
+      // Zero heat flux
+    case(ADIABATIC_WALL):
+      // Don't need to do anything: q = 0 in this case
+      break;
+      
+      // Prescribed constant heat flux
+    case(PRESCRIBED_HEAT_FLUX):
+      {
+	_bound_conds.apply_neumann( context, var, -1.0,
+				    this->get_neumann_bc_value(bc_id) );
+      }
+      break;
+      // General heat flux from user specified function
+    case(GENERAL_HEAT_FLUX):
+      {
+	_bound_conds.apply_neumann( context, request_jacobian, var, -1.0, 
+				    this->get_neumann_bound_func( bc_id, var ) );
+      }
+      break;
+    default:
+      {
+	std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
+		  << std::endl;
+	libmesh_error();
+      }
+    } // End switch
+  
   return;
 }

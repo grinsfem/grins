@@ -41,7 +41,7 @@ namespace GRINS
   {
   public:
     
-    LowMachNavierStokesBCHandling( std::string& physics_name, const GetPot& input );
+    LowMachNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
     
     virtual ~LowMachNavierStokesBCHandling();
 

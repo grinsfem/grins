@@ -34,11 +34,11 @@
 namespace GRINS
 {
   //! Base class for reading and handling boundary conditions for physics classes
-  class AxisymmetricHeatTransferBCHandling : public HeatTransferBCHandling
+  class AxisymmetricHeatTransferBCHandling : public BCHandlingBase
   {
   public:
     
-    AxisymmetricHeatTransferBCHandling( std::string& physics_name, const GetPot& input );
+    AxisymmetricHeatTransferBCHandling( const std::string& physics_name, const GetPot& input );
     
     ~AxisymmetricHeatTransferBCHandling();
 
@@ -48,12 +48,31 @@ namespace GRINS
 		       const std::string& bc_id_string, 
 		       const int bc_type, 
 		       const GetPot& input );
+
+    void user_apply_neumann_bcs( libMesh::FEMContext& context,
+				 GRINS::VariableIndex var,
+				 bool request_jacobian,
+				 GRINS::BoundaryID bc_id,
+				 GRINS::BCType bc_type ) const;
     
+    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
+				  libMesh::DofMap& dof_map,
+				  GRINS::BoundaryID bc_id, 
+				  GRINS::BCType bc_type ) const;
+
   private:
 
     AxisymmetricHeatTransferBCHandling();
 
-    enum AHT_BC_TYPES{AXISYMMETRIC=0};
+    std::string _physics_name;
+
+    std::string _T_var_name;
+
+    enum AHT_BC_TYPES{AXISYMMETRIC=0,
+		      ISOTHERMAL_WALL,
+		      ADIABATIC_WALL,
+		      PRESCRIBED_HEAT_FLUX,
+		      GENERAL_HEAT_FLUX};
 
   };
 }

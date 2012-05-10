@@ -26,6 +26,9 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#ifndef VARIABLE_NAME_DEFAULTS_H
+#define VARIABLE_NAME_DEFAULTS_H
+
 #include <string>
 
 namespace GRINS
@@ -77,3 +80,5 @@ namespace GRINS
   //! Bz field
   const std::string Bz_var_name_default = "Bz";
 }
+
+#endif //VARIABLE_NAME_DEFAULTS_H

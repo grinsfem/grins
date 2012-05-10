@@ -41,7 +41,7 @@ namespace GRINS
   {
   public:
     
-    AxisymmetricIncompressibleNavierStokesBCHandling( std::string& physics_name, const GetPot& input );
+    AxisymmetricIncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
     
     virtual ~AxisymmetricIncompressibleNavierStokesBCHandling();
 

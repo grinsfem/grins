@@ -132,6 +132,24 @@ void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) con
   return;
 }
 
+void GRINS::BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
+					       GRINS::VariableIndex var,
+					       bool request_jacobian,
+					       GRINS::BoundaryID bc_id ) const
+{
+  std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator 
+    bc_map_it = _neumann_bc_map.find( bc_id );
+
+   /* We assume that if you didn't put a boundary id in, then you didn't want to
+     set a boundary condition on that boundary. */
+  if( bc_map_it != _neumann_bc_map.end() )
+    {
+      this->user_apply_neumann_bcs( context, var, request_jacobian,
+				    bc_id, bc_map_it->second );
+    }
+  return;
+}
+
 void GRINS::BCHandlingBase::set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type )
 {
   _dirichlet_bc_map[bc_id] = bc_type;
@@ -179,6 +197,16 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 
 void GRINS::BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
 						     GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const
+{
+  // Not all Physics need this so we have a do nothing default.
+  return;
+}
+
+void GRINS::BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& context,
+						    GRINS::VariableIndex var,
+						    bool request_jacobian,
+						    GRINS::BoundaryID bc_id,
+						    GRINS::BCType bc_type ) const
 {
   // Not all Physics need this so we have a do nothing default.
   return;

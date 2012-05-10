@@ -29,8 +29,7 @@
 #ifndef HEAT_TRANSFER_H
 #define HEAT_TRANSFER_H
 
-#include "config.h"
-
+//libMesh
 #include "libmesh.h"
 #include "boundary_info.h"
 #include "fe_base.h"
@@ -42,7 +41,10 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+//GRINS
+#include "config.h"
 #include "physics.h"
+#include "heat_transfer_bc_handling.h"
 
 namespace GRINS
 {
@@ -100,15 +102,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual int string_to_int( const std::string& bc_type_in );
-
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
-
   protected:
 
     //! Physical dimension of problem
@@ -137,17 +130,6 @@ namespace GRINS
     /*! \todo Shouldn't this rho be the same as the one in the flow? Need
               to figure out how to have those shared */
     libMesh::Number _rho, _Cp, _k;
-
-    //! Stash prescribed boundary temperature values
-    std::map< unsigned int, double > _T_boundary_values;
-
-    //! Stash prescribed boundary heat flux values
-    std::map< unsigned int, libMesh::Point > _q_boundary_values;
-
-    enum HT_BC_TYPES{ISOTHERMAL_WALL=0,
-		     ADIABATIC_WALL,
-		     PRESCRIBED_HEAT_FLUX,
-		     GENERAL_HEAT_FLUX};
 
   private:
     HeatTransfer();

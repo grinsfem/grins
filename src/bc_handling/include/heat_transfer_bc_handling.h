@@ -41,7 +41,7 @@ namespace GRINS
   {
   public:
     
-    HeatTransferBCHandling( std::string& physics_name, const GetPot& input );
+    HeatTransferBCHandling( const std::string& physics_name, const GetPot& input );
     
     virtual ~HeatTransferBCHandling();
 
@@ -52,9 +52,16 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
+    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
+				  libMesh::DofMap& dof_map,
+				  GRINS::BoundaryID bc_id, 
+				  GRINS::BCType bc_type ) const;
 
+    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+					 GRINS::VariableIndex var,
+					 bool request_jacobian,
+					 GRINS::BoundaryID bc_id,
+					 GRINS::BCType bc_type ) const;
     
   protected:
 
@@ -68,7 +75,7 @@ namespace GRINS
 
     
 
-    enum HT_BC_TYPES{ISOTHERMAL_WALL=1,
+    enum HT_BC_TYPES{ISOTHERMAL_WALL=0,
 		     ADIABATIC_WALL,
 		     PRESCRIBED_HEAT_FLUX,
 		     GENERAL_HEAT_FLUX};

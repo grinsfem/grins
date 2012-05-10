@@ -28,13 +28,13 @@
 
 #include "axisym_inc_navier_stokes_bc_handling.h"
 
-GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::AxisymmetricIncompressibleNavierStokesBCHandling(std::string& physics_name,
+GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::AxisymmetricIncompressibleNavierStokesBCHandling(const std::string& physics_name,
 													  const GetPot& input)
   : BCHandlingBase(),
     _physics_name(physics_name)
 {
-  _u_r_var_name = input("Physics/VariableNames/Temperature", GRINS::u_r_var_name_default );
-  _u_z_var_name = input("Physics/VariableNames/Temperature", GRINS::v_var_name_default );
+  _u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
+  _u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::v_var_name_default );
 
   std::string id_str = "Physics/"+_physics_name+"/bc_ids";
   std::string bc_str = "Physics/"+_physics_name+"/bc_types";
@@ -112,6 +112,11 @@ void GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( cons
       }
       break;
     case(INFLOW):
+      {
+	this->set_dirichlet_bc_type( bc_id, bc_type );
+      }
+      break;
+    case(AXISYMMETRIC):
       {
 	this->set_dirichlet_bc_type( bc_id, bc_type );
       }

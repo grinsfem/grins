@@ -41,7 +41,7 @@ GRINS::BoundaryConditions::~BoundaryConditions( )
 void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					       const GRINS::VariableIndex var,
 					       const Real sign,
-					       const Point& value )
+					       const Point& value ) const
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
@@ -114,7 +114,7 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					       const bool request_jacobian,
 					       const GRINS::VariableIndex var,
 					       const Real sign,
-					       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func )
+					       const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
 {
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 

@@ -62,6 +62,17 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
+    void apply_neumann_bcs( libMesh::FEMContext& context,
+			    GRINS::VariableIndex var,
+			    bool request_jacobian,
+			    GRINS::BoundaryID bc_id ) const;
+
+    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+					 GRINS::VariableIndex var,
+					 bool request_jacobian,
+					 GRINS::BoundaryID bc_id,
+					 GRINS::BCType bc_type ) const;
+
     void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
 
     void set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type );
@@ -71,7 +82,7 @@ namespace GRINS
     Real get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component = 0 ) const;
 
     inline
-    libMesh::Point get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
+    const libMesh::Point get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
     {
       return (_q_values.find(bc_id))->second;
     }
@@ -79,6 +90,13 @@ namespace GRINS
     inline 
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id ) const
+    {
+      return (((_neumann_bound_funcs.find(bc_id))->second).find(var_id))->second;
+    }
+
+    inline 
+    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
+									  GRINS::VariableIndex var_id )
     {
       return (((_neumann_bound_funcs.find(bc_id))->second).find(var_id))->second;
     }
@@ -119,6 +137,12 @@ namespace GRINS
     GRINS::NBCContainer _neumann_bound_funcs;
 
     std::vector< GRINS::DBCContainer > _dirichlet_bound_funcs;
+
+    //! Object that stashes generic boundary condition types
+    /** \todo Move this so that only one object is needed. 
+	      Perhaps make static? */
+    GRINS::BoundaryConditions _bound_conds;
+
   };
 }
 #endif // BC_HANDLING_BASE

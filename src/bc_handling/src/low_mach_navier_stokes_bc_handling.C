@@ -28,14 +28,14 @@
 
 #include "low_mach_navier_stokes_bc_handling.h"
 
-GRINS::LowMachNavierStokesBCHandling::LowMachNavierStokesBCHandling(std::string& physics_name,
+GRINS::LowMachNavierStokesBCHandling::LowMachNavierStokesBCHandling(const std::string& physics_name,
 								    const GetPot& input)
   : BCHandlingBase(),
     _physics_name(physics_name)
 {
-  _u_var_name = input("Physics/VariableNames/Temperature", GRINS::u_var_name_default );
-  _v_var_name = input("Physics/VariableNames/Temperature", GRINS::v_var_name_default );
-  _w_var_name = input("Physics/VariableNames/Temperature", GRINS::w_var_name_default );
+  _u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
+  _v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
+  _w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
   _T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
   std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";

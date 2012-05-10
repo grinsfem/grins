@@ -62,7 +62,7 @@ namespace GRINS
     void apply_neumann( libMesh::DiffContext &context,
 			const GRINS::VariableIndex var,
 			const Real sign,
-			const Point& value );
+			const Point& value ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
@@ -70,7 +70,7 @@ namespace GRINS
 				     const bool request_jacobian,
 				     const GRINS::VariableIndex var,
 				     const Real sign,
-				     std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
+				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
 
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann_axisymmetric( libMesh::DiffContext &context,
@@ -84,7 +84,7 @@ namespace GRINS
 			const bool request_jacobian,
 			const GRINS::VariableIndex var,
 			const Real sign,
-			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
+			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */

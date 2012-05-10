@@ -50,14 +50,6 @@ void GRINS::MultiphysicsSystem::read_input_options( const GetPot& input )
   // Read options for MultiphysicsSystem first
   this->verify_analytic_jacobians  = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
 
-  // Read boundary condition data
-  for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
-       physics_iter != _physics_list.end();
-       physics_iter++ )
-    {
-      (physics_iter->second)->read_bc_data( input );
-    }
-  return;
 }
 
 void GRINS::MultiphysicsSystem::init_data()
@@ -68,6 +60,10 @@ void GRINS::MultiphysicsSystem::init_data()
   use_fixed_solution = true;
 
   // Initalize all the variables. We pass this pointer for the system.
+  /* NOTE: We CANNOT fuse this loop with the others. This loop
+     MUST complete first. */
+  /*! \todo Figure out how to tell compilers not to fuse this loop when
+    they want to be aggressive. */
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
@@ -88,15 +84,7 @@ void GRINS::MultiphysicsSystem::init_data()
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->init_dirichlet_bcs( this->get_dof_map() );
-    }
-
-  // Initialize any user-specified (non-internal) Dirichlet BC's for each physics
-  for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
-       physics_iter != _physics_list.end();
-       physics_iter++ )
-    {
-      (physics_iter->second)->init_user_dirichlet_bcs( this );
+      (physics_iter->second)->init_dirichlet_bcs( this );
     }
 
   // Next, call parent init_data function to intialize everything.

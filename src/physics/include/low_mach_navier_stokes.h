@@ -44,9 +44,11 @@
 // GRINS
 #include "config.h"
 #include "physics.h"
+#include "pressure_pinning.h"
 #include "constant_viscosity.h"
 #include "constant_specific_heat.h"
 #include "constant_conductivity.h"
+#include "low_mach_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
@@ -107,15 +109,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual int string_to_int( const std::string& bc_type_in );
-
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
-
   protected:
 
     //! Thermodynamic pressure divided by gas constant
@@ -156,19 +149,10 @@ namespace GRINS
     //! Flag to enable thermodynamic pressure calculation
     bool _enable_thermo_press_calc;
 
-    //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
-    std::map< unsigned int, std::vector<double> > _vel_boundary_values;
-
     //! Enable pressure pinning
     bool _pin_pressure;
     
-    //! Value of pressure we wish to pin
-    libMesh::Number _pin_value;
-
-    //! Location we want to pin the pressure
-    libMesh::Point _pin_location;
-
-    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL, ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
+    PressurePinning _p_pinning;
 
     //! Helper function
     void assemble_mass_time_deriv( bool request_jacobian, 

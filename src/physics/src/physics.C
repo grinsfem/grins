@@ -29,13 +29,16 @@
 #include "physics.h"
 
 GRINS::Physics::Physics( const std::string& physics_name )
-  : _physics_name( physics_name )
+  : _physics_name( physics_name ),
+    _bc_handler(NULL)
 {
   return;
 }
 
 GRINS::Physics::~Physics()
 {
+  // If a derived class created a bc_handler object, we kill it here.
+  if( _bc_handler ) delete _bc_handler;
   return;
 }
 
@@ -49,88 +52,13 @@ void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
   return;
 }
 
-void GRINS::Physics::read_bc_data( const GetPot& input )
+void GRINS::Physics::init_dirichlet_bcs( libMesh::FEMSystem* system )
 {
-  int num_ids = input.vector_variable_size("Physics/"+_physics_name+"/bc_ids");
-  int num_bcs = input.vector_variable_size("Physics/"+_physics_name+"/bc_types");
-
-  if( num_ids != num_bcs )
+  // Only need to init BC's if the physics actually created a handler
+  if( _bc_handler )
     {
-      std::cerr << "Error: Must specify equal number of boundary ids and boundary conditions"
-		<< std::endl;
-      libmesh_error();
-    }
-
-  for( int i = 0; i < num_ids; i++ )
-    {
-      int bc_id = input("Physics/"+_physics_name+"/bc_ids", -1, i );
-      std::string bc_type_in = input("Physics/"+_physics_name+"/bc_types", "NULL", i );
-
-      int bc_type = this->string_to_int( bc_type_in );
-
-      std::stringstream ss;
-      ss << bc_id;
-      std::string bc_id_string = ss.str();
-
-      this->init_bc_data( bc_id, bc_id_string, bc_type, input );
-    }
-
-  return;
-}
-
-int GRINS::Physics::string_to_int( const std::string& bc_type_in )
-{
-  // Default to negative value to help catch forgetting to overload this when
-  // necessary.
-  return -1;
-}
-
-void GRINS::Physics::init_bc_data( const GRINS::BoundaryID bc_id, 
-				   const std::string& bc_id_string, 
-				   const int bc_type, 
-				   const GetPot& input )
-{
-  // Not all Physics need this so we have a do nothing default.
-  return;
-}
-
-void GRINS::Physics::init_dirichlet_bcs( libMesh::DofMap& dof_map )
-{
-  // Not all Physics need this so we have a do nothing default.
-  return;
-}
-
-void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
-{
-  libMesh::DofMap& dof_map = system->get_dof_map();
-
-  for( std::vector< GRINS::DBCContainer >::iterator 
-	 it = _dirichlet_bound_funcs.begin();
-       it != _dirichlet_bound_funcs.end();
-       it++ )
-    {
-      // First, get variable names and convert to variable id's
-      std::vector<GRINS::VariableName> var_names = (*it).get_var_names();
-      
-      std::vector<GRINS::VariableIndex> dbc_vars;
-
-      for( std::vector<GRINS::VariableName>::const_iterator name = var_names.begin();
-	   name != var_names.end();
-	   name++ )
-	{
-	  dbc_vars.push_back( system->variable_number( *name ) );
-	}
-      
-      // Get bc_id's
-      std::set<GRINS::BoundaryID> bc_ids = (*it).get_bc_ids();
-      
-      // Get Dirichlet bc functor
-      std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
-
-      // Now create DirichletBoundary object and give it to libMesh
-      libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
-      
-      dof_map.add_dirichlet_boundary( dbc );
+      _bc_handler->init_dirichlet_bcs( system );
+      _bc_handler->init_dirichlet_bc_func_objs( system );
     }
 
   return;
@@ -138,20 +66,13 @@ void GRINS::Physics::init_user_dirichlet_bcs( libMesh::FEMSystem* system )
 
 void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
 {
-  _neumann_bound_funcs = neumann_bcs;
-
+  _bc_handler->attach_neumann_bound_func( neumann_bcs );
   return;
 }
 
 void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc )
 {
-  _dirichlet_bound_funcs.push_back( dirichlet_bc );
-  return;
-}
-
-void GRINS::Physics::init_dirichlet_bcs( libMesh::FEMSystem* system )
-{
-  // We call the BCHandler object here.
+  _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
   return;
 }
 

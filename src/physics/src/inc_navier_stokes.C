@@ -29,9 +29,14 @@
 #include "inc_navier_stokes.h"
 
 GRINS::IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
-  : GRINS::Physics(physics_name)
+  : GRINS::Physics(physics_name),
+    _p_pinning(input,physics_name)
 {
   this->read_input_options(input);
+
+  // This is deleted in the base class
+  _bc_handler = new GRINS::IncompressibleNavierStokesBCHandling( physics_name, input );
+
   return;
 }
 
@@ -65,102 +70,8 @@ void GRINS::IncompressibleNavierStokes::read_input_options( const GetPot& input 
 
   // Read pressure pinning information
   _pin_pressure = input("Physics/"+incompressible_navier_stokes+"/pin_pressure", true );
-  _pin_value = input("Physics/"+incompressible_navier_stokes+"/pin_value", 0.0 );
-
-  unsigned int pin_loc_dim = input.vector_variable_size("Physics/"+incompressible_navier_stokes+"/pin_location");
-
-  // If the user is specifying a pin_location, it had better be at least 2-dimensional
-  if( pin_loc_dim > 0 && pin_loc_dim < 2 )
-    {
-      std::cerr << "Error: pressure pin location must be at least 2 dimensional"
-		<< std::endl;
-      libmesh_error();
-    }
-
-  _pin_location(0) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 0 );
-  _pin_location(1) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 1 );
-
-  if( pin_loc_dim == 3 ) 
-    _pin_location(2) = input("Physics/"+incompressible_navier_stokes+"/pin_location", 0.0, 2 );
 
   return;
-}
-
-void GRINS::IncompressibleNavierStokes::init_bc_data( const GRINS::BoundaryID bc_id, 
-						      const std::string& bc_id_string, 
-						      const int bc_type, 
-						      const GetPot& input )
-{
-  switch(bc_type)
-    {
-    case(NO_SLIP):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-      }
-      break;
-    case(PRESCRIBED_VELOCITY):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-	std::vector<double> vel_in(3,0.0);
-	
-	/* Force the user to specify 3 velocity components regardless of dimension.
-	   This should make it easier to keep things correct if we want to have 
-	   2D flow not be in the x-y plane. */
-	int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
-	if( n_vel_comps != 3 )
-	  {
-	    std::cerr << "Error: Must specify 3 velocity components when inputting"
-		      << std::endl
-		      << "       prescribed velocities. Found " << n_vel_comps
-		      << " velocity components."
-		      << std::endl;
-	    libmesh_error();
-	  }
-	
-	/** \todo Need to unit test this somehow. */
-	vel_in[0] = input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 );
-	vel_in[1] = input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 );
-	vel_in[2] = input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 2 );
-	
-	_vel_boundary_values[bc_id] = vel_in;
-      }
-      break;
-    case(INFLOW):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-      }
-      break;
-    default:
-      {
-	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
-	libmesh_error();
-      }
-    } // End switch(bc_type)
-  
-  return;
-}
-
-int GRINS::IncompressibleNavierStokes::string_to_int( const std::string& bc_type )
-{
-  INS_BC_TYPES bc_type_out;
-
-  if( bc_type == "no_slip" )
-    bc_type_out = NO_SLIP;
-
-  else if( bc_type == "prescribed_vel" )
-    bc_type_out = PRESCRIBED_VELOCITY;
-
-  else if( bc_type == "inflow" )
-    bc_type_out = INFLOW;
-
-  else
-    {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
-      libmesh_error();
-    }
-
-  return bc_type_out;
 }
 
 void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* system )
@@ -175,96 +86,6 @@ void GRINS::IncompressibleNavierStokes::init_variables( libMesh::FEMSystem* syst
     _w_var = system->add_variable( _w_var_name, this->_V_order, _FE_family);
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
-
-  return;
-}
-
-void GRINS::IncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof_map )
-{
-  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
-       it != _dirichlet_bc_map.end();
-       it++ )
-    {
-      switch( it->second )
-	{
-	case(NO_SLIP):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    dbc_vars.push_back(_u_var);
-	    dbc_vars.push_back(_v_var);
-	    if(_dim == 3)
-	      dbc_vars.push_back(_w_var);
-
-	    ZeroFunction<Number> zero;
-
-	    libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
-						   dbc_vars, 
-						   &zero );
-
-	    dof_map.add_dirichlet_boundary( no_slip_dbc );
-	  }
-	  break;
-	case(PRESCRIBED_VELOCITY):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    std::vector<Number> vel_values = _vel_boundary_values[it->first];
-
-	    // This is inefficient, but it shouldn't matter because
-	    // everything gets cached on the libMesh side so it should
-	    // only affect performance at startup.
-	    {
-	      dbc_vars.push_back(_u_var);
-	      ConstFunction<Number> vel_func( vel_values[0] );
-
-	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						 dbc_vars, 
-						 &vel_func );
-
-	      dof_map.add_dirichlet_boundary( vel_dbc );
-	      dbc_vars.clear();
-	    }
-
-	    {
-	      dbc_vars.push_back(_v_var);
-	      ConstFunction<Number> vel_func( vel_values[1] );
-
-	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						 dbc_vars, 
-						 &vel_func );
-
-	      dof_map.add_dirichlet_boundary( vel_dbc );
-	      dbc_vars.clear();
-	    }
-	    if( _dim == 3 )
-	      {
-		dbc_vars.push_back(_w_var);
-		ConstFunction<Number> vel_func( vel_values[2] );
-
-		libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						   dbc_vars, 
-						   &vel_func );
-
-		dof_map.add_dirichlet_boundary( vel_dbc );
-	      }  
-	  }
-	  break;
-	case(INFLOW):
-	  // This case is handled in the BoundaryConditionFactory classes.
-	  break;
-	default:
-	  {
-	    std::cerr << "Invalid GRINS::BCType " << it->second << std::endl;
-	    libmesh_error();
-	  }
-
-	}// end switch
-    } //end for
 
   return;
 }
@@ -589,8 +410,7 @@ bool GRINS::IncompressibleNavierStokes::element_constraint( bool request_jacobia
   // Pin p = p_value at p_point
   if( _pin_pressure )
     {
-      _bound_conds.pin_value( context, request_jacobian, _p_var,
-			      _pin_value, _pin_location );
+      _p_pinning.pin_value( context, request_jacobian, _p_var );
     }
   
 

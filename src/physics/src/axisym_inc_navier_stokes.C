@@ -30,9 +30,14 @@
 
 GRINS::AxisymmetricIncompressibleNavierStokes::AxisymmetricIncompressibleNavierStokes( const std::string& physics_name,
 										       const GetPot& input)
-  : Physics(physics_name)
+  : Physics(physics_name),
+    _p_pinning(input,physics_name)
 {
   this->read_input_options(input);
+
+  // This is deleted in the base class
+  _bc_handler = new GRINS::AxisymmetricIncompressibleNavierStokesBCHandling( physics_name, input );
+
   return;
 }
 
@@ -66,197 +71,6 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::read_input_options( const Ge
 
   // Read pressure pinning information
   _pin_pressure = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_pressure", true );
-  _pin_value = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_value", 0.0 );
-
-  unsigned int pin_loc_dim = input.vector_variable_size("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location");
-
-  // If the user is specifying a pin_location, it had better be 2-dimensional
-  if( pin_loc_dim > 2 )
-    {
-      std::cerr << "Error: pressure pin location must be 2 dimensional"
-		<< std::endl;
-      libmesh_error();
-    }
-
-  _pin_location(0) = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location", 0.0, 0 );
-  _pin_location(1) = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_location", 0.0, 1 );
-
-  return;
-}
-
-int GRINS::AxisymmetricIncompressibleNavierStokes::string_to_int( const std::string& bc_type )
-{
-  AINS_BC_TYPES bc_type_out;
-
-  if( bc_type == "no_slip" )
-    bc_type_out = NO_SLIP;
-
-  else if( bc_type == "prescribed_vel" )
-    bc_type_out = PRESCRIBED_VELOCITY;
-
-  else if( bc_type == "inflow" )
-    bc_type_out = INFLOW;
-
-  else if( bc_type == "axisymmetric" )
-    bc_type_out = AXISYMMETRIC;
-
-  else
-    {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
-      libmesh_error();
-    }
-
-  return bc_type_out;
-}
-
-void GRINS::AxisymmetricIncompressibleNavierStokes::init_bc_data( const GRINS::BoundaryID bc_id, 
-								  const std::string& bc_id_string, 
-								  const int bc_type, 
-								  const GetPot& input )
-{
-  switch(bc_type)
-    {
-    case(NO_SLIP):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-      }
-      break;
-    case(PRESCRIBED_VELOCITY):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-	
-	std::vector<double> vel_in(3,0.0);
-	
-	/* Force the user to specify 2 velocity components regardless of dimension.*/
-	int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
-	if( n_vel_comps != 2 )
-	  {
-	    std::cerr << "Error: Must specify 2 velocity components when inputting"
-		      << std::endl
-		      << "       prescribed velocities. Found " << n_vel_comps
-		      << " velocity components."
-		      << std::endl;
-	    libmesh_error();
-	  }
-	
-	/** \todo Need to unit test this somehow. */
-	vel_in[0] = input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 );
-	vel_in[1] = input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 );
-	
-	_vel_boundary_values[bc_id] = vel_in;
-      }
-      break;
-    case(INFLOW):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-      }
-      break;
-    case(AXISYMMETRIC):
-      {
-	_dirichlet_bc_map[bc_id] = bc_type;
-      }
-      break;
-    default:
-      {
-	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
-	libmesh_error();
-      }
-    } // End switch(bc_type)
-
-  return;
-}
-
-void GRINS::AxisymmetricIncompressibleNavierStokes::init_dirichlet_bcs( libMesh::DofMap& dof_map )
-{
-  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
-       it != _dirichlet_bc_map.end();
-       it++ )
-    {
-      switch( it->second )
-	{
-	case(NO_SLIP):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    dbc_vars.push_back(_u_r_var);
-	    dbc_vars.push_back(_u_z_var);
-
-	    ZeroFunction<Number> zero;
-
-	    libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
-						   dbc_vars, 
-						   &zero );
-
-	    dof_map.add_dirichlet_boundary( no_slip_dbc );
-	  }
-	  break;
-	case(PRESCRIBED_VELOCITY):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    std::vector<Number> vel_values = _vel_boundary_values[it->first];
-
-	    // This is inefficient, but it shouldn't matter because
-	    // everything gets cached on the libMesh side so it should
-	    // only affect performance at startup.
-	    {
-	      dbc_vars.push_back(_u_r_var);
-	      ConstFunction<Number> vel_func( vel_values[0] );
-
-	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						 dbc_vars, 
-						 &vel_func );
-
-	      dof_map.add_dirichlet_boundary( vel_dbc );
-	      dbc_vars.clear();
-	    }
-
-	    {
-	      dbc_vars.push_back(_u_z_var);
-	      ConstFunction<Number> vel_func( vel_values[1] );
-
-	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						 dbc_vars, 
-						 &vel_func );
-
-	      dof_map.add_dirichlet_boundary( vel_dbc );
-	      dbc_vars.clear();
-	    }
-	  }
-	  break;
-	case(AXISYMMETRIC):
-	  {
-	    std::set<GRINS::BoundaryID> dbc_ids;
-	    dbc_ids.insert(it->first);
-
-	    std::vector<GRINS::VariableIndex> dbc_vars;
-	    dbc_vars.push_back(_u_r_var);
-
-	    ZeroFunction<Number> zero;
-
-	    libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
-						   dbc_vars, 
-						   &zero );
-
-	    dof_map.add_dirichlet_boundary( no_slip_dbc );
-	  }
-	  break;
-	case(INFLOW):
-	  // This case is handled in the BoundaryConditionFactory classes.
-	  break;
-	default:
-	  {
-	    std::cerr << "Invalid GRINS::BCType " << it->second << std::endl;
-	    libmesh_error();
-	  }
-
-	}// end switch
-    } //end for
 
   return;
 }
@@ -544,8 +358,7 @@ bool GRINS::AxisymmetricIncompressibleNavierStokes::element_constraint( bool req
   // Pin p = p_value at p_point
   if( _pin_pressure )
     {
-      _bound_conds.pin_value( context, request_jacobian, _p_var,
-			      _pin_value, _pin_location );
+      _p_pinning.pin_value( context, request_jacobian, _p_var );
     }
   
 

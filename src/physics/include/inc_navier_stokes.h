@@ -29,8 +29,7 @@
 #ifndef INC_NAVIER_STOKES_H
 #define INC_NAVIER_STOKES_H
 
-#include "config.h"
-
+//libMesh
 #include "libmesh.h"
 #include "boundary_info.h"
 #include "fe_base.h"
@@ -42,7 +41,11 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
+//GRINS
+#include "config.h"
 #include "physics.h"
+#include "pressure_pinning.h"
+#include "inc_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
@@ -102,15 +105,6 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
-    virtual int string_to_int( const std::string& bc_type_in );
-
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    virtual void init_dirichlet_bcs( libMesh::DofMap& dof_map );
-
   protected:
 
     //! Physical dimension of problem
@@ -135,20 +129,11 @@ namespace GRINS
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho, _mu;
 
-    //! Used for storing values corresponding to GRINS::PRESCRIBED_VELOCITY values
-    std::map< unsigned int, std::vector<double> > _vel_boundary_values;
+    PressurePinning _p_pinning;
 
     //! Enable pressure pinning
     bool _pin_pressure;
     
-    //! Value of pressure we wish to pin
-    libMesh::Number _pin_value;
-
-    //! Location we want to pin the pressure
-    libMesh::Point _pin_location;
-
-    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW};
-
   private:
     IncompressibleNavierStokes();
 

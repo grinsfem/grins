@@ -25,51 +25,53 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_BC_HANDLING_H
-#define INC_NAVIER_STOKES_BC_HANDLING_H
+#ifndef PRESSURE_PINNING_H
+#define PRESSURE_PINNING_H
 
-//libMesh
-#include "zero_function.h"
+// libMesh stuff
+#include "getpot.h"
+#include "libmesh.h"
+#include "boundary_info.h"
+#include "fe_base.h"
+#include "fe_interface.h"
+#include "mesh.h"
+#include "quadrature.h"
+#include "parameters.h"
+#include "string_to_enum.h"
+#include "fem_context.h"
+#include "fem_system.h"
 
 //GRINS
-#include "bc_handling_base.h"
+#include "var_typedefs.h"
 
 namespace GRINS
 {
-  //! Base class for reading and handling boundary conditions for physics classes
-  class IncompressibleNavierStokesBCHandling : public BCHandlingBase
+  //! Class to hold typical boundary condition methods
+  /*!
+    This class holds functions to apply generic versions of
+    Dirichlet and Neumann boundary conditions.
+  */
+  class PressurePinning
   {
   public:
-    
-    IncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
-    
-    virtual ~IncompressibleNavierStokesBCHandling();
 
-    virtual int string_to_int( const std::string& bc_type_in ) const;
+    PressurePinning( const GetPot& input,
+		     const std::string& physics_name );
+    ~PressurePinning();
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
-
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
-
-    
-  protected:
-
-    std::string _physics_name;
-
-    std::string _u_var_name, _v_var_name, _w_var_name;
+    /*! The idea here is to pin a variable to a particular value if there is
+      a null space - e.g. pressure for IncompressibleNavierStokes. */
+    void pin_value( libMesh::DiffContext &context, const bool request_jacobian,
+		    const GRINS::VariableIndex var, const double penalty = 1.0 );
 
   private:
 
-    IncompressibleNavierStokesBCHandling();
+    //! Value of pressure we wish to pin
+    libMesh::Number _pin_value;
 
-    
-
-    enum INS_BC_TYPES{NO_SLIP=1, PRESCRIBED_VELOCITY, INFLOW};
+    //! Location we want to pin the pressure
+    libMesh::Point _pin_location;
 
   };
 }
-#endif // INC_NAVIER_STOKES_BC_HANDLING_H
+#endif //PRESSURE_PINNING_H
