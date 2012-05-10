@@ -185,7 +185,9 @@ AC_OUTPUT( Makefile \
            src/Makefile src/utilities/include/grins_version.h \
            test/Makefile \
            doxygen/Makefile \
-           doxygen/txt_common/about.page )
+           doxygen/txt_common/about.page \
+           examples/Makefile \
+           examples/cavity_benchmark/Makefile )
 
 
 

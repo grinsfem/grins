@@ -3,7 +3,7 @@ include $(top_srcdir)/doxygen/aminclude.am
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
-SUBDIRS          = src test doxygen
+SUBDIRS          = src test doxygen examples
 EXTRA_DIST       = CHANGES LICENSE COPYING examples docs
 
 examplesdir      = $(prefix)/examples
@@ -48,7 +48,8 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \
-                       doxygen/Makefile.in                      
+                       doxygen/Makefile.in                      \
+                       examples/Makefile.in           
 
 MOSTLYCLEANFILES     = $(DX_CLEANFILES)
 

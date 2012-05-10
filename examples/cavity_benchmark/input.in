@@ -1,0 +1,134 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'LowMachNavierStokes'
+
+# Options for Incompressible Navier-Stokes physics
+[./LowMachNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+T_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+T_order = 'SECOND'
+P_order = 'FIRST'
+
+# Thermodynamic pressure
+p0 = '101325' #[Pa]
+
+# Reference temperature
+T0 = '600' #[K]
+
+# Gas constant
+R = '287.0' #[J/kg-K]
+
+# Gravity vector
+g = '0.0 -9.81' #[m/s^2]
+
+# Ratio of wall temp differences
+epsilon = '0.6'
+
+conductivity_model = 'constant'
+viscosity_model = 'constant'
+specific_heat_model = 'constant'
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+vel_bc_ids = '2 3 1 0'
+vel_bc_types = 'no_slip no_slip no_slip no_slip'
+
+temp_bc_ids = '0 2 1 3'
+temp_bc_types = 'adiabatic adiabatic isothermal isothermal'
+
+# Cold wall at x = 1
+T_wall_1 = '240' # '${* ${T0}' ${- 1.0 ${epsilon} } }'
+
+# Hot wall at x = 3
+T_wall_3 = '960' # '${* ${T0}' ${+ 1.0 ${epsilon} } }'
+
+enable_thermo_press_calc = 'true'
+
+pin_pressure = true
+pin_location = '0.0 0.0'
+pin_value = '0.0'
+
+[]
+
+[Materials]
+
+[./Viscosity]
+
+mu = '2.95456e-5' #[kg/m-s]
+
+[../Conductivity]
+
+k = '0.41801' #[W/m-K]
+
+[../SpecificHeat]
+
+cp = '1004.5' #[J/kg-K]
+
+[]
+
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+mesh_nx1 = 1
+mesh_nx2 = 1
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 10
+deltat = 0.01
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 0.0
+
+initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'false'
+
+# Visualization options
+[vis-options]
+output_vis_time_series = true
+output_vis = true
+vis_output_file_prefix = test
+
+output_residual = false
+output_unsteady_residual = true
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'LowMachNavierStokes'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = true
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]

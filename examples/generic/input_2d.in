@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 50
-mesh_nx2 = 50
+mesh_nx1 = 25 
+mesh_nx2 = 25
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -17,9 +17,11 @@ deltat = 0.01
 max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
-verify_analytic_jacobians = 1.0e-6
+verify_analytic_jacobians = 0.0 
 
 initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
