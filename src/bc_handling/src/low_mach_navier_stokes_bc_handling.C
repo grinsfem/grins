@@ -140,9 +140,9 @@ void GRINS::LowMachNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID
       break;
       case(ISOTHERMAL_WALL):
       {
-	this->set_dirichlet_bc_type( bc_id, bc_type );
+	this->set_temp_bc_type( bc_id, bc_type );
 
-	this->set_dirichlet_bc_value( bc_id, input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 ) );
+	this->set_temp_bc_value( bc_id, input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 ) );
       }
       break;
       
@@ -276,7 +276,7 @@ void GRINS::LowMachNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEM
 	std::vector<GRINS::VariableIndex> dbc_vars;
 	dbc_vars.push_back(T_var);
 	
-	ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
+	ConstFunction<Number> t_func(this->get_temp_bc_value(bc_id));
 	
 	libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );
 	
@@ -292,4 +292,20 @@ void GRINS::LowMachNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEM
     }// end switch
 
   return;
+}
+
+void GRINS::LowMachNavierStokesBCHandling::set_temp_bc_type( GRINS::BoundaryID bc_id, int bc_type )
+{
+  _temp_bc_map[bc_id] = bc_type;
+  return;
+}
+
+void GRINS::LowMachNavierStokesBCHandling::set_temp_bc_value( GRINS::BoundaryID bc_id, Real value )
+{
+  _T_values[bc_id] = value;
+  return;
+}
+Real GRINS::LowMachNavierStokesBCHandling::get_temp_bc_value( GRINS::BoundaryID bc_id ) const
+{
+  return _T_values.find(bc_id)->second;
 }
