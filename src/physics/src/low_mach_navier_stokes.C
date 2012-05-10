@@ -82,19 +82,19 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
   this->_k.read_input_options( input );
 
   // Read thermodynamic state info
-  Real p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-  Real R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
+  _p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+  _R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
 
-  if( R <= 0.0 )
+  if( _R <= 0.0 )
     {
       std::cerr << "=========================================" << std::endl
 		<< " Error: Gas constant R must be positive. " << std::endl
-		<< " Detected value R = " << R << std::endl
+		<< " Detected value R = " << _R << std::endl
 		<< "=========================================" << std::endl;
       libmesh_error();
     }
 
-  _p0_over_R = p0/R;
+  _p0_over_R = _p0/_R;
 
   _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
@@ -216,10 +216,8 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool request
       _p_pinning.pin_value( context, request_jacobian, _p_var);
     }
 
-  /*
   if( _enable_thermo_press_calc )
-    this->assemble_thermo_press_time_deriv( request_jacobian, c, system );
-  */
+    this->assemble_thermo_press_elem_time_deriv( request_jacobian, c, system );
 
 #ifdef USE_GRVY_TIMERS
   this->_timer->EndTimer("LowMachNavierStokes::element_time_derivative");
@@ -252,6 +250,19 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool request_ja
 								 libMesh::DiffContext& context,
 								 libMesh::FEMSystem* system )
 {
+  if( _enable_thermo_press_calc )
+    {
+#ifdef USE_GRVY_TIMERS
+      this->_timer->BeginTimer("LowMachNavierStokes::side_time_derivative");
+#endif
+      FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+      this->assemble_thermo_press_side_time_deriv( request_jacobian, c, system );
+
+#ifdef USE_GRVY_TIMERS
+      this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
+#endif
+    }
   return request_jacobian;
 }
 
@@ -289,10 +300,8 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool request_jacobian,
 
   this->assemble_energy_mass_residual( request_jacobian, c, system );
 
-  /*
   if( _enable_thermo_press_calc )
     this->assemble_thermo_press_mass_residual( request_jacobian, c, system );
-  */
 
   return request_jacobian;
 }
@@ -407,30 +416,41 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
       if (_dim == 3)
 	divU += grad_w(2);
 
+      libMesh::Number p0_over_R;
+      if( _enable_thermo_press_calc )
+	{
+	  libMesh::Number p0 = c.fixed_interior_value( _p0_var,qp );
+	  p0_over_R = p0/_R;
+	}
+      else
+	{
+	  p0_over_R = _p0_over_R;
+	}
+
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-          Fu(i) += ( -_p0_over_R*U*grad_u*u_phi[i][qp]                 // convection term
+          Fu(i) += ( -p0_over_R*U*grad_u*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](0)                           // pressure term
 		     - _mu(T)*(grad_u*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
-		     + _p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
+		     + p0_over_R/T*_g(0)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp]; 
 
-          Fv(i) += ( -_p0_over_R*U*grad_v*u_phi[i][qp]                 // convection term
+          Fv(i) += ( -p0_over_R*U*grad_v*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](1)                           // pressure term
 		     - _mu(T)*(grad_v*u_gradphi[i][qp] 
 			       - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
-		     + _p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
+		     + p0_over_R/T*_g(1)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp];
           if (_dim == 3)
             {
-              Fw(i) += ( -_p0_over_R*U*grad_w*u_phi[i][qp]                 // convection term
+              Fw(i) += ( -p0_over_R*U*grad_w*u_phi[i][qp]                 // convection term
 			 + p*u_gradphi[i][qp](2)                           // pressure term
 			 - _mu(T)*(grad_w*u_gradphi[i][qp] 
 				   - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
-			 + _p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
+			 + p0_over_R/T*_g(2)*u_phi[i][qp]                 // hydrostatic term
 			 )*JxW[qp];
             }
 
@@ -541,11 +561,22 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool requ
       libMesh::Number k = this->_k(T);
       libMesh::Number cp = this->_cp(T);
 
+      libMesh::Number p0_over_R;
+      if( _enable_thermo_press_calc )
+	{
+	  libMesh::Number p0 = c.fixed_interior_value( _p0_var,qp );
+	  p0_over_R = p0/_R;
+	}
+      else
+	{
+	  p0_over_R = _p0_over_R;
+	}
+
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
-          FT(i) += ( -_p0_over_R*cp/T*U*grad_T*T_phi[i][qp] // convection term
+          FT(i) += ( -p0_over_R*cp/T*U*grad_T*T_phi[i][qp] // convection term
 		     + k*grad_T*T_gradphi[i][qp]            // diffusion term
 		     )*JxW[qp]; 
 	}
@@ -637,13 +668,24 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool
 
       Real T = c.fixed_interior_value(_T_var, qp);
       
+      libMesh::Number p0_over_R;
+      if( _enable_thermo_press_calc )
+	{
+	  libMesh::Number p0 = c.fixed_interior_value( _p0_var,qp );
+	  p0_over_R = p0/_R;
+	}
+      else
+	{
+	  p0_over_R = _p0_over_R;
+	}
+
       for (unsigned int i = 0; i != n_u_dofs; ++i)
         {
-	  F_u(i) += _p0_over_R/T*u_dot*u_phi[i][qp]*JxW[qp];
-	  F_v(i) += _p0_over_R/T*v_dot*u_phi[i][qp]*JxW[qp];
+	  F_u(i) += p0_over_R/T*u_dot*u_phi[i][qp]*JxW[qp];
+	  F_v(i) += p0_over_R/T*v_dot*u_phi[i][qp]*JxW[qp];
 
 	  if( _dim == 3 )
-	    F_w(i) += _p0_over_R/T*w_dot*u_phi[i][qp]*JxW[qp];
+	    F_w(i) += p0_over_R/T*w_dot*u_phi[i][qp]*JxW[qp];
 	  
 	  /*
 	  if( request_jacobian )
@@ -706,13 +748,153 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool r
 
       Real cp = this->_cp(T);
       
+      libMesh::Number p0_over_R;
+      if( _enable_thermo_press_calc )
+	{
+	  libMesh::Number p0 = c.fixed_interior_value( _p0_var,qp );
+	  p0_over_R = p0/_R;
+	}
+      else
+	{
+	  p0_over_R = _p0_over_R;
+	}
+
       for (unsigned int i = 0; i != n_T_dofs; ++i)
         {
-	  F_T(i) += _p0_over_R/T*cp*T_dot*T_phi[i][qp]*JxW[qp];
+	  F_T(i) += p0_over_R/T*cp*T_dot*T_phi[i][qp]*JxW[qp];
 	} // End DoF loop i
 
     } // End quadrature loop qp
 
+  return;
+}
+
+template<class Mu, class SH, class TC>
+void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv( bool request_jacobian, 
+										  libMesh::FEMContext& c, 
+										  libMesh::FEMSystem* system )
+{
+  // Element Jacobian * quadrature weights for interior integration
+  const std::vector<Real> &JxW = 
+    c.element_fe_var[_T_var]->get_JxW();
+  
+  // The number of local degrees of freedom in each variable
+  const unsigned int n_p0_dofs = c.dof_indices_var[_p0_var].size();
+
+  // The subvectors and submatrices we need to fill:
+  DenseSubVector<Real> &F_p = *c.elem_subresiduals[_p0_var];
+
+  unsigned int n_qpoints = c.element_qrule->n_points();
+
+  for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+    {
+      libMesh::Number T;
+      T = c.interior_value(_T_var, qp);
+
+      libMesh::Gradient grad_u, grad_v, grad_w;
+      grad_u = c.interior_gradient(_u_var, qp);
+      grad_v = c.interior_gradient(_v_var, qp);
+      if (_dim == 3)
+       grad_w = c.interior_gradient(_w_var, qp);
+
+      libMesh::Number divU = grad_u(0) + grad_v(1);
+      if(_dim==3)
+	divU += grad_w(2);
+
+      libMesh::Number cp = _cp(T);
+      libMesh::Number cv = cp + _R;
+      libMesh::Number gamma = cp/cv;
+      libMesh::Number gamma_ratio = gamma/(gamma-1.0);
+
+      libMesh::Number p0 = c.interior_value( _p0_var, qp );
+
+      for (unsigned int i = 0; i != n_p0_dofs; ++i)
+        {
+	  F_p(i) -= p0*gamma_ratio*divU*JxW[qp];
+	} // End DoF loop i
+    }
+
+  return;
+}
+
+template<class Mu, class SH, class TC>
+void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv( bool request_jacobian, 
+										  libMesh::FEMContext& c, 
+										  libMesh::FEMSystem* system )
+{
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_p0_dofs = c.dof_indices_var[_p0_var].size();
+
+  // Element Jacobian * quadrature weight for side integration.
+  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[_T_var]->get_JxW();
+
+  const std::vector<Point> &normals = c.side_fe_var[_T_var]->get_normals();
+
+  libMesh::DenseSubVector<Number> &F_p = *c.elem_subresiduals[_p0_var]; // residual
+
+  unsigned int n_qpoints = c.side_qrule->n_points();
+  for (unsigned int qp=0; qp != n_qpoints; qp++)
+    {
+      libMesh::Number T = c.side_value( _T_var, qp );
+      libMesh::Gradient grad_T = c.side_gradient( _T_var, qp );
+
+      libMesh::Number k = _k(T);
+
+      for (unsigned int i=0; i != n_p0_dofs; i++)
+	{
+	  F_p(i) -= k*grad_T*normals[qp]*JxW_side[qp];
+	}
+    }
+  
+  return;
+}
+
+template<class Mu, class SH, class TC>
+void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( bool request_jacobian, 
+										libMesh::FEMContext& c, 
+										libMesh::FEMSystem* system )
+{
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_p0_dofs = c.dof_indices_var[_p0_var].size();
+  const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+
+  // Element Jacobian * quadrature weights for interior integration
+  const std::vector<Real> &JxW = 
+    c.element_fe_var[_T_var]->get_JxW();
+
+  // The temperature shape functions at interior quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& T_phi =
+    c.element_fe_var[_T_var]->get_phi();
+
+  // The subvectors and submatrices we need to fill:
+  DenseSubVector<Real> &F_p = *c.elem_subresiduals[_p0_var];
+  DenseSubVector<Real> &F_T = *c.elem_subresiduals[_T_var];
+
+  unsigned int n_qpoints = c.element_qrule->n_points();
+
+  for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+    {
+      libMesh::Number T;
+      T = c.fixed_interior_value(_T_var, qp);
+
+      libMesh::Number cp = _cp(T);
+      libMesh::Number cv = cp + _R;
+      libMesh::Number gamma = cp/cv;
+      libMesh::Number one_over_gamma = 1.0/(gamma-1.0);
+
+      libMesh::Number p0_dot = c.interior_value(_p0_var, qp );
+
+      for (unsigned int i=0; i != n_p0_dofs; i++)
+	{
+	  F_p(i) += p0_dot*one_over_gamma*JxW[qp];
+	}
+
+      for (unsigned int i=0; i != n_T_dofs; i++)
+	{
+	  F_T(i) -= p0_dot*one_over_gamma*T_phi[i][qp]*JxW[qp];
+	}
+
+    }
   return;
 }
 

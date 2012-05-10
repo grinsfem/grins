@@ -114,6 +114,8 @@ namespace GRINS
     //! Thermodynamic pressure divided by gas constant
     libMesh::Number _p0_over_R;
 
+    libMesh::Number _p0, _R;
+
     //! Physical dimension of problem
     unsigned int _dim;
 
@@ -183,6 +185,18 @@ namespace GRINS
     void assemble_energy_mass_residual( bool request_jacobian, 
 					libMesh::FEMContext& c, 
 					libMesh::FEMSystem* system );
+
+    void assemble_thermo_press_elem_time_deriv( bool request_jacobian, 
+						libMesh::FEMContext& c, 
+						libMesh::FEMSystem* system );
+
+    void assemble_thermo_press_side_time_deriv( bool request_jacobian, 
+						libMesh::FEMContext& c, 
+						libMesh::FEMSystem* system );
+
+    void assemble_thermo_press_mass_residual( bool request_jacobian, 
+					      libMesh::FEMContext& c, 
+					      libMesh::FEMSystem* system );
 
   private:
     LowMachNavierStokes();
