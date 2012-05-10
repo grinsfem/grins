@@ -59,6 +59,8 @@ namespace GRINS
     void set_temp_bc_value( GRINS::BoundaryID bc_id, Real value );
     Real get_temp_bc_value( GRINS::BoundaryID bc_id ) const;
 
+    virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
+
   protected:
 
     std::string _physics_name;

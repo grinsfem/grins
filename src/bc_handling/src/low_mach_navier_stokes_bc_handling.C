@@ -69,10 +69,10 @@ int GRINS::LowMachNavierStokesBCHandling::string_to_int( const std::string& bc_t
   else if( bc_type == "inflow" )
     bc_type_out = INFLOW;
 
-  else if( bc_type == "isothermal_wall" )
+  else if( bc_type == "isothermal" )
     bc_type_out = ISOTHERMAL_WALL;
   
-  else if( bc_type == "adiabatic_wall" )
+  else if( bc_type == "adiabatic" )
     bc_type_out = ADIABATIC_WALL;
   
   else if( bc_type == "prescribed_heat_flux" )
@@ -308,4 +308,25 @@ void GRINS::LowMachNavierStokesBCHandling::set_temp_bc_value( GRINS::BoundaryID 
 Real GRINS::LowMachNavierStokesBCHandling::get_temp_bc_value( GRINS::BoundaryID bc_id ) const
 {
   return _T_values.find(bc_id)->second;
+}
+
+void GRINS::LowMachNavierStokesBCHandling::init_dirichlet_bcs( libMesh::FEMSystem* system ) const
+{
+  libMesh::DofMap& dof_map = system->get_dof_map();
+
+  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _dirichlet_bc_map.begin();
+       it != _dirichlet_bc_map.end();
+       it++ )
+    {
+      this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
+    }
+
+  for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _temp_bc_map.begin();
+       it != _temp_bc_map.end();
+       it++ )
+    {
+      this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
+    }
+
+  return;
 }

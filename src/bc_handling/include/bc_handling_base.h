@@ -62,7 +62,7 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
-    void apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void apply_neumann_bcs( libMesh::FEMContext& context,
 			    GRINS::VariableIndex var,
 			    bool request_jacobian,
 			    GRINS::BoundaryID bc_id ) const;
@@ -73,7 +73,7 @@ namespace GRINS
 					 GRINS::BoundaryID bc_id,
 					 GRINS::BCType bc_type ) const;
 
-    void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
+    virtual void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
 
     void set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type );
     void set_neumann_bc_type( GRINS::BoundaryID bc_id, int bc_type );
