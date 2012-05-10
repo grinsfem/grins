@@ -100,7 +100,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
 
   if( _enable_thermo_press_calc )
     {
-      _p0_var_name = input("Physics/VariableNames/thermo_presure", "P0" );
+      _p0_var_name = input("Physics/VariableNames/thermo_presure", "p0" );
     }
 
   // Read gravity vector
