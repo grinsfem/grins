@@ -97,7 +97,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
     }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
-      std::string conductivity = input( "Physics/AxisymmetricHeatTransfer/conductivity_model", "constant" );
+      std::string conductivity = input( "Physics/"+axisymmetric_heat_transfer+"/conductivity_model", "constant" );
       if(  conductivity == "constant" )
 	{
 	  physics_list[axisymmetric_heat_transfer] = 
