@@ -31,8 +31,11 @@
 GRINS::MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
 					       const std::string& name,
 					       const unsigned int number )
-  : FEMSystem(es, name, number)
-    {}
+  : FEMSystem(es, name, number),
+    _use_numerical_jacobians_only(false)
+{
+  return;
+}
 
 GRINS::MultiphysicsSystem::~MultiphysicsSystem()
 {
@@ -49,7 +52,8 @@ void GRINS::MultiphysicsSystem::read_input_options( const GetPot& input )
 {
   // Read options for MultiphysicsSystem first
   this->verify_analytic_jacobians  = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
-
+  this->print_element_jacobians = input("screen-options/print_element_jacobians", false );
+  _use_numerical_jacobians_only = input("linear-nonlinear-solver/use_numerical_jacobians_only", false );
 }
 
 void GRINS::MultiphysicsSystem::init_data()
@@ -109,81 +113,96 @@ void GRINS::MultiphysicsSystem::init_context( libMesh::DiffContext &context )
 bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 							 libMesh::DiffContext& context )
 {
+  bool compute_jacobian = true;
+  if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
   // Loop over each physics and compute their contributions
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->element_time_derivative( request_jacobian, context, this );
+      (physics_iter->second)->element_time_derivative( compute_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
-  return request_jacobian;
+  return compute_jacobian;
 }
 
 bool GRINS::MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						      libMesh::DiffContext& context )
 {
+  bool compute_jacobian = true;
+  if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
   // Loop over each physics and compute their contributions
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->side_time_derivative( request_jacobian, context, this );
+      (physics_iter->second)->side_time_derivative( compute_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
-  return request_jacobian;
+  return compute_jacobian;
 }
 
 bool GRINS::MultiphysicsSystem::element_constraint( bool request_jacobian,
 						    libMesh::DiffContext& context )
 {
+  bool compute_jacobian = true;
+  if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
   // Loop over each physics and compute their contributions
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->element_constraint( request_jacobian, context, this );
+      (physics_iter->second)->element_constraint( compute_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
-  return request_jacobian;
+  return compute_jacobian;
 }
 
 bool GRINS::MultiphysicsSystem::side_constraint( bool request_jacobian,
 						 libMesh::DiffContext& context )
 {
+  bool compute_jacobian = true;
+  if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
   // Loop over each physics and compute their contributions
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->side_constraint( request_jacobian, context, this );
+      (physics_iter->second)->side_constraint( compute_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
-  return request_jacobian;
+  return compute_jacobian;
 }
 
 bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
 					       libMesh::DiffContext& context )
 {
+  bool compute_jacobian = true;
+  if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
   // Loop over each physics and compute their contributions
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->mass_residual( request_jacobian, context, this );
+      (physics_iter->second)->mass_residual( compute_jacobian, context, this );
     }
 
   // TODO: Need to think about the implications of this because there might be some
   // TODO: jacobian terms we don't want to compute for efficiency reasons
-  return request_jacobian;
+  return compute_jacobian;
 }
 
 std::tr1::shared_ptr<GRINS::Physics> GRINS::MultiphysicsSystem::get_physics( const std::string physics_name )

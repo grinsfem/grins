@@ -139,6 +139,8 @@ namespace GRINS
         of by GRINS::PhysicsFactory. */
     PhysicsList _physics_list;
 
+    bool _use_numerical_jacobians_only;
+    
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
