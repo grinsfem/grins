@@ -114,7 +114,7 @@ namespace GRINS
     //! Thermodynamic pressure divided by gas constant
     libMesh::Number _p0_over_R;
 
-    libMesh::Number _p0, _R;
+    libMesh::Number _p0, _R, _T0;
 
     //! Physical dimension of problem
     unsigned int _dim;
