@@ -251,7 +251,6 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool request_ja
 								 libMesh::DiffContext& context,
 								 libMesh::FEMSystem* system )
 {
-  /*
   if( _enable_thermo_press_calc )
     {
 #ifdef USE_GRVY_TIMERS
@@ -265,7 +264,7 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool request_ja
       this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
 #endif
     }
-  */
+
   return request_jacobian;
 }
 
@@ -303,10 +302,8 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool request_jacobian,
 
   this->assemble_energy_mass_residual( request_jacobian, c, system );
 
-  /*
   if( _enable_thermo_press_calc )
     this->assemble_thermo_press_mass_residual( request_jacobian, c, system );
-  */
 
   return request_jacobian;
 }
@@ -809,26 +806,27 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv
       libMesh::Number T;
       T = c.interior_value(_T_var, qp);
 
-      //libMesh::Gradient grad_u, grad_v, grad_w;
-      //grad_u = c.interior_gradient(_u_var, qp);
-      //grad_v = c.interior_gradient(_v_var, qp);
-      //if (_dim == 3)
-      // grad_w = c.interior_gradient(_w_var, qp);
+      libMesh::Gradient grad_u, grad_v, grad_w;
+      grad_u = c.interior_gradient(_u_var, qp);
+      grad_v = c.interior_gradient(_v_var, qp);
+      if (_dim == 3)
+       grad_w = c.interior_gradient(_w_var, qp);
 
-      //libMesh::Number divU = grad_u(0) + grad_v(1);
-      //if(_dim==3)
-      //divU += grad_w(2);
+      libMesh::Number divU = grad_u(0) + grad_v(1);
+      if(_dim==3)
+      divU += grad_w(2);
 
-      //libMesh::Number cp = _cp(T);
-      //libMesh::Number cv = cp + _R;
-      //libMesh::Number gamma = cp/cv;
-      //libMesh::Number gamma_ratio = gamma/(gamma-1.0);
+      libMesh::Number cp = _cp(T);
+      libMesh::Number cv = cp + _R;
+      libMesh::Number gamma = cp/cv;
+      libMesh::Number gamma_ratio = gamma/(gamma-1.0);
 
       libMesh::Number p0 = c.interior_value( _p0_var, qp );
 
       for (unsigned int i = 0; i != n_p0_dofs; ++i)
         {
-	  F_p(i) += (p0/T - _p0/_T0)*JxW[qp];
+	  //F_p(i) += (p0/T - _p0/_T0)*JxW[qp];
+	  F_p(i) += -p0*gamma_ratio*divU*JxW[qp];
 	} // End DoF loop i
     }
 
@@ -917,7 +915,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( 
 
       for (unsigned int i=0; i != n_T_dofs; i++)
 	{
-	  F_T(i) -= p0_dot*one_over_gamma*T_phi[i][qp]*JxW[qp];
+	  F_T(i) -= p0_dot*T_phi[i][qp]*JxW[qp];
 	}
 
       for (unsigned int i=0; i != n_p_dofs; i++)

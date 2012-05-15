@@ -51,7 +51,7 @@ GRINS::IncompressibleNavierStokesBCHandling::~IncompressibleNavierStokesBCHandli
 
 int GRINS::IncompressibleNavierStokesBCHandling::string_to_int( const std::string& bc_type ) const
 {
-  INS_BC_TYPES bc_type_out;
+  int bc_type_out;
 
   if( bc_type == "no_slip" )
     bc_type_out = NO_SLIP;
@@ -65,7 +65,7 @@ int GRINS::IncompressibleNavierStokesBCHandling::string_to_int( const std::strin
   else
     {
       // Call base class to detect any physics-common boundary conditions
-      GRINS::BCHandlingBase::string_to_int( bc_type );
+      bc_type_out = GRINS::BCHandlingBase::string_to_int( bc_type );
     }
 
   return bc_type_out;

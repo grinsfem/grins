@@ -49,7 +49,7 @@ GRINS::HeatTransferBCHandling::~HeatTransferBCHandling()
 
 int GRINS::HeatTransferBCHandling::string_to_int( const std::string& bc_type ) const
 {
-  HT_BC_TYPES bc_type_out;
+  int bc_type_out;
 
   if( bc_type == "isothermal_wall" )
     bc_type_out = ISOTHERMAL_WALL;
@@ -66,7 +66,7 @@ int GRINS::HeatTransferBCHandling::string_to_int( const std::string& bc_type ) c
   else
     {
       // Call base class to detect any physics-common boundary conditions
-      GRINS::BCHandlingBase::string_to_int( bc_type );
+      bc_type_out = GRINS::BCHandlingBase::string_to_int( bc_type );
     }
 
   return bc_type_out;

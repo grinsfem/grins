@@ -29,7 +29,9 @@
 #include "bc_handling_base.h"
 
 GRINS::BCHandlingBase::BCHandlingBase(const std::string& physics_name)
-  : _physics_name( physics_name )
+  : _num_periodic_bcs(0),
+    _physics_name( physics_name )
+    
 {
   return;
 }
@@ -135,6 +137,19 @@ void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) con
 
 void GRINS::BCHandlingBase::init_periodic_bcs( libMesh::FEMSystem* system ) const
 {
+  /* Consistency check required to make sure user actually set periodic bc data.
+     This is needed because of the way we parse periodic boundary conditions. */
+  if( _periodic_bcs.size() != _num_periodic_bcs/2 )
+    {
+      std::cerr << "=========================================================="  << std::endl
+		<< "Error: Inconsistency in perioidic boundary conditions."      << std::endl
+		<< "       There were " << _num_periodic_bcs << " deteced but "  << std::endl
+		<< "       only " << _periodic_bcs.size() << " pairs of data "   << std::endl
+		<< "       were set."                                            << std::endl
+		<< "=========================================================="  << std::endl;
+      libmesh_error();
+    }
+
   libMesh::DofMap& dof_map = system->get_dof_map();
 
   for( std::vector< GRINS::PBCContainer >::const_iterator it = _periodic_bcs.begin();
@@ -228,6 +243,7 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	   Thus, if we have a periodic id and we don't see a list of bc ids with the
 	   under the current id, we assume it's the slave id. We'll do consistency 
 	   checks later. */
+	_num_periodic_bcs += 1;
 	int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_wall_"+bc_id_string );
 	if( pbc_size == 0 ) break;
 
@@ -244,6 +260,19 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	int id0 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 0 );
 	int id1 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 1 );
 	
+	std::cout << "id0 = " << id0 << ", id1 = " << id1 << std::endl;
+
+	if( id0 == -1 || id1 == -1 )
+	  {
+	    std::cerr << "==========================================================" 
+		      << "Error: Default bc id detected for periodic bc." << std::endl
+		      << "       Please explicitly set periodic bc ids." << std::endl
+		      << "       Detected ids " << id0 << ", " << id1 << std::endl
+		      << "       for bc id = " << bc_id << std::endl
+		      << "==========================================================" << std::endl;
+	    libmesh_error();
+	  }
+
 	GRINS::PBCContainer pbc;
 	
 	if( id0 == bc_id )
@@ -270,6 +299,14 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	// Now populate offset vector
 	{
 	  int offset_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_offset_"+bc_id_string );
+	  if( offset_size = 0 )
+	    {
+	      // User needs to set the offset vector for the periodic boundary
+	      std::cerr << "==========================================================" 
+			<< "Error: Offset vector not found for bc id " << bc_id << std::endl
+			<< "==========================================================" << std::endl;
+	      libmesh_error();
+	    }
 	  libMesh::RealVectorValue offset_vector;
 	  for( int i = 0; i < offset_size; i++ )
 	    {
