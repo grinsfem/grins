@@ -30,8 +30,7 @@
 
 GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::AxisymmetricIncompressibleNavierStokesBCHandling(const std::string& physics_name,
 													  const GetPot& input)
-  : BCHandlingBase(),
-    _physics_name(physics_name)
+  : BCHandlingBase(physics_name)
 {
   _u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
   _u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::v_var_name_default );
@@ -67,7 +66,10 @@ int GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::string_to_int( cons
 
   else
     {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
+      std::cerr << "=========================================================="  << std::endl
+		<< "Error: Invalid bc_type " << bc_type                          << std::endl
+		<< "       Physics class is " << _physics_name                   << std::endl
+		<< "=========================================================="  << std::endl;
       libmesh_error();
     }
 
@@ -123,8 +125,10 @@ void GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( cons
       break;
     default:
       {
-	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
+	std::cerr << "==========================================================" 
+		  << "Error: Invalid BC type for " << _physics_name << std::endl
+		  << "       Detected BC type was " << bc_type << std::endl
+		  << "==========================================================" << std::endl;
 	libmesh_error();
       }
     } // End switch(bc_type)

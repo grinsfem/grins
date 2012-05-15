@@ -28,7 +28,8 @@
 
 #include "bc_handling_base.h"
 
-GRINS::BCHandlingBase::BCHandlingBase()
+GRINS::BCHandlingBase::BCHandlingBase(const std::string& physics_name)
+  : _physics_name( physics_name )
 {
   return;
 }
@@ -132,6 +133,24 @@ void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) con
   return;
 }
 
+void GRINS::BCHandlingBase::init_periodic_bcs( libMesh::FEMSystem* system ) const
+{
+  libMesh::DofMap& dof_map = system->get_dof_map();
+
+  for( std::vector< GRINS::PBCContainer >::const_iterator it = _periodic_bcs.begin();
+       it != _periodic_bcs.end();
+       it++ )
+    {
+      libMesh::PeriodicBoundary bc( it->get_offset_vector() );
+      bc.myboundary = it->get_master_bcid();
+      bc.pairedboundary = it->get_slave_bcid();
+
+      dof_map.add_periodic_boundary( bc );
+    }
+
+  return;
+}
+
 void GRINS::BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
 					       GRINS::VariableIndex var,
 					       bool request_jacobian,
@@ -181,9 +200,19 @@ void GRINS::BCHandlingBase::set_neumann_bc_value( GRINS::BoundaryID bc_id, const
 
 int GRINS::BCHandlingBase::string_to_int( const std::string& bc_type_in ) const
 {
-  // Default to negative value to help catch forgetting to overload this when
-  // necessary.
-  return -1;
+  int bc_type_out;
+  if( bc_type_in == "periodic" )
+    bc_type_out = PERIODIC;
+
+  else
+    {
+      std::cerr << "=========================================================="  << std::endl
+		<< "Error: Invalid bc_type " << bc_type_in                       << std::endl
+		<< "       Physics class is " << _physics_name                   << std::endl
+		<< "=========================================================="  << std::endl;
+      libmesh_error();
+    }
+  return bc_type_out;
 }
 
 void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id, 
@@ -191,7 +220,80 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 					  const int bc_type, 
 					  const GetPot& input )
 {
-  // Not all Physics need this so we have a do nothing default.
+  switch(bc_type)
+    {
+    case(PERIODIC):
+      {
+	/* We assume the periodic boundary pair will be listed by the master bc id.
+	   Thus, if we have a periodic id and we don't see a list of bc ids with the
+	   under the current id, we assume it's the slave id. We'll do consistency 
+	   checks later. */
+	int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_wall_"+bc_id_string );
+	if( pbc_size == 0 ) break;
+
+	// We'd better have only 2 bc ids if this is the bc list
+	if( pbc_size != 2 )
+	  {
+	    std::cerr << "==========================================================" 
+		      << "Error: Must specify exactly two boundary condition ids " << std::endl
+		      << "       for periodic boundary conditions. Found " << pbc_size << std::endl
+		      << "==========================================================" << std::endl;
+	    libmesh_error();
+	  }
+	
+	int id0 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 0 );
+	int id1 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 1 );
+	
+	GRINS::PBCContainer pbc;
+	
+	if( id0 == bc_id )
+	  {
+	    pbc.set_master_bcid( id0 );
+	    pbc.set_slave_bcid( id1 );
+	  }
+	else if( id1 == bc_id )
+	  {
+	    pbc.set_master_bcid( id1 );
+	    pbc.set_slave_bcid( id0 );
+	  }
+	else
+	  {
+	    // At least one of them had better be the master id
+	    std::cerr << "==========================================================" 
+		      << "Error: At least one of the bcs must be the master id." << std::endl
+		      << "       Detected master id = " << bc_id << std::endl
+		      << "       Found bc ids (" << id0 << "," << id1 << ")." << std::endl
+		      << "==========================================================" << std::endl;
+	    libmesh_error();
+	  }
+
+	// Now populate offset vector
+	{
+	  int offset_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_offset_"+bc_id_string );
+	  libMesh::RealVectorValue offset_vector;
+	  for( int i = 0; i < offset_size; i++ )
+	    {
+	      offset_vector(i) = input("Physics/"+_physics_name+"periodic_offset_"+bc_id_string, 0.0, i );
+	    }
+	  
+	  pbc.set_offset_vector( offset_vector );
+	}
+
+	// Now stash the container object for use later in initialization
+	_periodic_bcs.push_back( pbc );
+
+      }
+      break;
+
+    default:
+      {
+	std::cerr << "==========================================================" 
+		  << "Error: Invalid BC type for " << _physics_name << std::endl
+		  << "       Detected BC type was " << bc_type << std::endl
+		  << "==========================================================" << std::endl;
+	libmesh_error();
+      }
+    }
   return;
 }
 

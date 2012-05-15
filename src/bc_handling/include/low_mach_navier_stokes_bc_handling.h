@@ -63,8 +63,6 @@ namespace GRINS
 
   protected:
 
-    std::string _physics_name;
-
     std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
 
   private:

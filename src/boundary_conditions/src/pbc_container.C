@@ -26,61 +26,50 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "physics.h"
+#include "pbc_container.h"
 
-GRINS::Physics::Physics( const std::string& physics_name )
-  : _physics_name( physics_name ),
-    _bc_handler(NULL)
+GRINS::PBCContainer::PBCContainer()
+  : _master_id( -1 ),
+    _slave_id( -1 ),
+    _offset_vector( 0.0, 0.0, 0.0 )
 {
   return;
 }
 
-GRINS::Physics::~Physics()
-{
-  // If a derived class created a bc_handler object, we kill it here.
-  if( _bc_handler ) delete _bc_handler;
-  return;
-}
-
-void GRINS::Physics::read_input_options( const GetPot& input )
+GRINS::PBCContainer::~PBCContainer()
 {
   return;
 }
 
-void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
+void GRINS::PBCContainer::set_master_bcid( const GRINS::BoundaryID bc_id )
 {
+  _master_id = bc_id;
   return;
 }
 
-void GRINS::Physics::init_bcs( libMesh::FEMSystem* system )
+void GRINS::PBCContainer::set_slave_bcid( const GRINS::BoundaryID bc_id )
 {
-  // Only need to init BC's if the physics actually created a handler
-  if( _bc_handler )
-    {
-      _bc_handler->init_dirichlet_bcs( system );
-      _bc_handler->init_dirichlet_bc_func_objs( system );
-      _bc_handler->init_periodic_bcs( system );
-    }
-
+  _slave_id = bc_id;
   return;
 }
 
-void GRINS::Physics::attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs )
+void GRINS::PBCContainer::set_offset_vector( const libMesh::RealVectorValue& offset_vector )
 {
-  _bc_handler->attach_neumann_bound_func( neumann_bcs );
+  _offset_vector = offset_vector;
   return;
 }
 
-void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc )
+GRINS::BoundaryID GRINS::PBCContainer::get_master_bcid() const
 {
-  _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
-  return;
+  return _master_id;
 }
 
-#ifdef USE_GRVY_TIMERS
-void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
+GRINS::BoundaryID GRINS::PBCContainer::get_slave_bcid() const
 {
-  _timer = grvy_timer;
-  return;
+  return _slave_id;
 }
-#endif
+
+const libMesh::RealVectorValue& GRINS::PBCContainer::get_offset_vector() const
+{
+  return _offset_vector;
+}

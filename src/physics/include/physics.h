@@ -138,7 +138,7 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system ) = 0;
 
-    void init_dirichlet_bcs( libMesh::FEMSystem* system );
+    void init_bcs( libMesh::FEMSystem* system );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 

@@ -30,8 +30,7 @@
 
 GRINS::IncompressibleNavierStokesBCHandling::IncompressibleNavierStokesBCHandling(const std::string& physics_name,
 										  const GetPot& input)
-  : BCHandlingBase(),
-    _physics_name(physics_name)
+  : BCHandlingBase(physics_name)
 {
   _u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   _v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
@@ -65,8 +64,8 @@ int GRINS::IncompressibleNavierStokesBCHandling::string_to_int( const std::strin
 
   else
     {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
-      libmesh_error();
+      // Call base class to detect any physics-common boundary conditions
+      GRINS::BCHandlingBase::string_to_int( bc_type );
     }
 
   return bc_type_out;
@@ -122,9 +121,8 @@ void GRINS::IncompressibleNavierStokesBCHandling::init_bc_data( const GRINS::Bou
       break;
     default:
       {
-	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
-	libmesh_error();
+	// Call base class to detect any physics-common boundary conditions
+	GRINS::BCHandlingBase::init_bc_data( bc_id, bc_id_string, bc_type, input );
       }
     } // End switch(bc_type)
   

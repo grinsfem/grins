@@ -35,6 +35,7 @@
 #include "fem_context.h"
 #include "dirichlet_boundaries.h"
 #include "dof_map.h"
+#include "periodic_boundaries.h"
 
 //GRINS
 #include "variable_name_defaults.h"
@@ -43,6 +44,7 @@
 #include "boundary_conditions.h"
 #include "grins_physics_names.h"
 #include "dbc_container.h"
+#include "pbc_container.h"
 
 namespace GRINS
 {
@@ -51,7 +53,7 @@ namespace GRINS
   {
   public:
     
-    BCHandlingBase();
+    BCHandlingBase(const std::string& physics_name);
     
     virtual ~BCHandlingBase();
 
@@ -74,6 +76,8 @@ namespace GRINS
 					 GRINS::BCType bc_type ) const;
 
     virtual void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
+
+    virtual void init_periodic_bcs( libMesh::FEMSystem* system ) const;
 
     void set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type );
     void set_neumann_bc_type( GRINS::BoundaryID bc_id, int bc_type );
@@ -142,6 +146,15 @@ namespace GRINS
     /** \todo Move this so that only one object is needed. 
 	      Perhaps make static? */
     GRINS::BoundaryConditions _bound_conds;
+
+    std::vector< GRINS::PBCContainer > _periodic_bcs;
+
+    std::string _physics_name;
+
+    enum BC_BASE{ PERIODIC = -1};
+
+  private:
+    BCHandlingBase();
 
   };
 }

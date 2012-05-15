@@ -83,12 +83,12 @@ void GRINS::MultiphysicsSystem::init_data()
       (physics_iter->second)->set_time_evolving_vars( this );
     }
 
-  // Initialize builtin Dirichlet BC's for each physics
+  // Initialize builtin BC's for each physics
   for( GRINS::PhysicsListIter physics_iter = _physics_list.begin();
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->init_dirichlet_bcs( this );
+      (physics_iter->second)->init_bcs( this );
     }
 
   // Next, call parent init_data function to intialize everything.

@@ -29,9 +29,8 @@
 #include "axisym_heat_transfer_bc_handling.h"
 
 GRINS::AxisymmetricHeatTransferBCHandling::AxisymmetricHeatTransferBCHandling( const std::string& physics_name,
-									      const GetPot& input)
-  : BCHandlingBase(),
-    _physics_name(physics_name)
+									       const GetPot& input)
+  : BCHandlingBase(physics_name)
 {
   _T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
@@ -70,7 +69,10 @@ int GRINS::AxisymmetricHeatTransferBCHandling::string_to_int( const std::string&
     }
   else
     {
-      std::cerr << "Error: Invalid bc_type " << bc_type << std::endl;
+      std::cerr << "=========================================================="  << std::endl
+		<< "Error: Invalid bc_type " << bc_type                          << std::endl
+		<< "       Physics class is " << _physics_name                   << std::endl
+		<< "=========================================================="  << std::endl;
       libmesh_error();
     }
 
@@ -126,8 +128,10 @@ void GRINS::AxisymmetricHeatTransferBCHandling::init_bc_data( const GRINS::Bound
       break;
     default:
       {
-	std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
-		  << std::endl;
+	std::cerr << "==========================================================" 
+		  << "Error: Invalid BC type for " << _physics_name << std::endl
+		  << "       Detected BC type was " << bc_type << std::endl
+		  << "==========================================================" << std::endl;
 	libmesh_error();
       }
     }// End switch(bc_type)
