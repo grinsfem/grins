@@ -244,7 +244,7 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	   under the current id, we assume it's the slave id. We'll do consistency 
 	   checks later. */
 	_num_periodic_bcs += 1;
-	int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_wall_"+bc_id_string );
+	int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_wall_"+bc_id_string );
 	if( pbc_size == 0 ) break;
 
 	// We'd better have only 2 bc ids if this is the bc list
@@ -257,10 +257,8 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	    libmesh_error();
 	  }
 	
-	int id0 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 0 );
-	int id1 = input( "Physics/"+_physics_name+"periodic_wall_"+bc_id_string, -1, 1 );
-	
-	std::cout << "id0 = " << id0 << ", id1 = " << id1 << std::endl;
+	int id0 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_string, -1, 0 );
+	int id1 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_string, -1, 1 );
 
 	if( id0 == -1 || id1 == -1 )
 	  {
@@ -298,8 +296,8 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 
 	// Now populate offset vector
 	{
-	  int offset_size = input.vector_variable_size("Physics/"+_physics_name+"periodic_offset_"+bc_id_string );
-	  if( offset_size = 0 )
+	  int offset_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_offset_"+bc_id_string );
+	  if( offset_size == 0 )
 	    {
 	      // User needs to set the offset vector for the periodic boundary
 	      std::cerr << "==========================================================" 
@@ -310,9 +308,9 @@ void GRINS::BCHandlingBase::init_bc_data( const GRINS::BoundaryID bc_id,
 	  libMesh::RealVectorValue offset_vector;
 	  for( int i = 0; i < offset_size; i++ )
 	    {
-	      offset_vector(i) = input("Physics/"+_physics_name+"periodic_offset_"+bc_id_string, 0.0, i );
+	      offset_vector(i) = input("Physics/"+_physics_name+"/periodic_offset_"+bc_id_string, 0.0, i );
 	    }
-	  
+
 	  pbc.set_offset_vector( offset_vector );
 	}
 
