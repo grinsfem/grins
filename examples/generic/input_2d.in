@@ -2,12 +2,12 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 25 
-mesh_nx2 = 25
+mesh_nx1 = 2 
+mesh_nx2 = 1
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = true 
+transient = false 
 theta = 0.5
 n_timesteps = 10
 deltat = 0.01
@@ -39,6 +39,8 @@ print_mesh_info = true
 print_log_info = true
 solver_verbose = true
 solver_quiet = false
+
+print_element_jacobians = true
 
 # Options related to all Physics
 [Physics]

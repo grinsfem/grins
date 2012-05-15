@@ -449,14 +449,14 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
         {
           Fu(i) += ( -rho*U*grad_u*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](0)                           // pressure term
-		     - _mu(T)*(grad_u*u_gradphi[i][qp] + grad_uT*u_gradphi[i][qp]
+		     - _mu(T)*(u_gradphi[i][qp]*grad_u + u_gradphi[i][qp]*grad_uT
 			       - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
 		     + rho*_g(0)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp]; 
 
           Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]                 // convection term
 		     + p*u_gradphi[i][qp](1)                           // pressure term
-		     - _mu(T)*(grad_v*u_gradphi[i][qp] + grad_vT*u_gradphi[i][qp]
+		     - _mu(T)*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
 			       - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
 		     + rho*_g(1)*u_phi[i][qp]                 // hydrostatic term
 		     )*JxW[qp];
@@ -464,7 +464,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
             {
               Fw(i) += ( -rho*U*grad_w*u_phi[i][qp]                 // convection term
 			 + p*u_gradphi[i][qp](2)                           // pressure term
-			 - _mu(T)*(grad_w*u_gradphi[i][qp] + grad_wT*u_gradphi[i][qp]
+			 - _mu(T)*(u_gradphi[i][qp]*grad_w + u_gradphi[i][qp]*grad_wT
 				   - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
 			 + rho*_g(2)*u_phi[i][qp]                 // hydrostatic term
 			 )*JxW[qp];
