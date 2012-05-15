@@ -1,1 +1,4 @@
-SUBDIRS = cavity_benchmark
+SUBDIRS = cavity_benchmark \
+          rayleigh_taylor
+
+MAINTAINERCLEANFILES = Makefile.in

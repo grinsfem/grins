@@ -48,8 +48,7 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \
-                       doxygen/Makefile.in                      \
-                       examples/Makefile.in           
+                       doxygen/Makefile.in
 
 MOSTLYCLEANFILES     = $(DX_CLEANFILES)
 

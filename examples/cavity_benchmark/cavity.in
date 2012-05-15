@@ -28,7 +28,7 @@ R = '287.0' #[J/kg-K]
 g = '0.0 -9.81' #[m/s^2]
 
 # Ratio of wall temp differences
-epsilon = '0.0005'
+epsilon = '0.0001'
 
 conductivity_model = 'constant'
 viscosity_model = 'constant'
@@ -86,15 +86,15 @@ cp = '1004.5' #[J/kg-K]
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 250
-mesh_nx2 = 250
+mesh_nx1 = 200
+mesh_nx2 = 200
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = true 
 theta = 1.0
 n_timesteps = 10
-deltat = 0.025
+deltat = 0.005
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -109,9 +109,9 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = true
 output_vis = true
-vis_output_file_prefix = test
+
+vis_output_file_prefix = 'cavity' 
 
 output_residual = true
 

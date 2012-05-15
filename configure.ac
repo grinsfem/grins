@@ -187,7 +187,8 @@ AC_OUTPUT( Makefile \
            doxygen/Makefile \
            doxygen/txt_common/about.page \
            examples/Makefile \
-           examples/cavity_benchmark/Makefile )
+           examples/cavity_benchmark/Makefile \
+	   examples/rayleigh_taylor/Makefile )
 
 
 
