@@ -548,7 +548,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool
 
       Real T = c.fixed_interior_value(this->_T_var, qp);
       
-      libMesh::Number rho = this->compute_rho(c, qp);
+      libMesh::Number rho = this->compute_rho_transient(c, qp);
       
       for (unsigned int i = 0; i != n_u_dofs; ++i)
         {
@@ -619,7 +619,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool r
 
       Real cp = this->_cp(T);
       
-      libMesh::Number rho = this->compute_rho( c, qp );
+      libMesh::Number rho = this->compute_rho_transient( c, qp );
       
       for (unsigned int i = 0; i != n_T_dofs; ++i)
         {
