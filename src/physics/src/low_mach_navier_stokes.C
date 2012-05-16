@@ -58,6 +58,28 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
   return;
 }
 
+template<class Mu, class SH, class TC>
+void GRINS::LowMachNavierStokes<Mu,SH,TC>::init_context( libMesh::DiffContext &context )
+{
+  // First call base class
+  GRINS::LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);
+
+  libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+
+  // We also need the side shape functions, etc.
+  c.side_fe_var[this->_u_var]->get_JxW();
+  c.side_fe_var[this->_u_var]->get_phi();
+  c.side_fe_var[this->_u_var]->get_dphi();
+  c.side_fe_var[this->_u_var]->get_xyz();
+
+  c.side_fe_var[this->_T_var]->get_JxW();
+  c.side_fe_var[this->_T_var]->get_phi();
+  c.side_fe_var[this->_T_var]->get_dphi();
+  c.side_fe_var[this->_T_var]->get_xyz();
+
+  return;
+}
+
 
 template<class Mu, class SH, class TC>
 bool GRINS::LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool request_jacobian,

@@ -51,8 +51,8 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+    // Context initialization
+    virtual void init_context( libMesh::DiffContext &context );
 
     // Time dependent part(s)
     virtual bool element_time_derivative( bool request_jacobian,

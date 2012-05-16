@@ -176,16 +176,6 @@ void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::init_context( libMesh::DiffContex
   c.element_fe_var[_p_var]->get_phi();
   c.element_fe_var[_p_var]->get_xyz();
 
-  c.side_fe_var[_u_var]->get_JxW();
-  c.side_fe_var[_u_var]->get_phi();
-  c.side_fe_var[_u_var]->get_dphi();
-  c.side_fe_var[_u_var]->get_xyz();
-
-  c.side_fe_var[_T_var]->get_JxW();
-  c.side_fe_var[_T_var]->get_phi();
-  c.side_fe_var[_T_var]->get_dphi();
-  c.side_fe_var[_T_var]->get_xyz();
-
   return;
 }
 
