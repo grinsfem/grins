@@ -86,9 +86,6 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool request
 								    libMesh::DiffContext& context,
 								    libMesh::FEMSystem* system )
 {
-  // Testing phase. We'll rely on numerical Jacobians.
-  request_jacobian = false;
-
 #ifdef USE_GRVY_TIMERS
   this->_timer->BeginTimer("LowMachNavierStokes::element_time_derivative");
 #endif
@@ -179,9 +176,6 @@ bool GRINS::LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool request_jacobian,
 							  libMesh::DiffContext& context,
 							  libMesh::FEMSystem* system )
 {
-  // Testing phase. We'll rely on numerical Jacobians.
-  request_jacobian = false;
-
   FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
   this->assemble_continuity_mass_residual( request_jacobian, c, system );
@@ -317,17 +311,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
       if (this->_dim == 3)
 	divU += grad_w(2);
 
-      libMesh::Number rho;
-      if( this->_enable_thermo_press_calc )
-	{
-	  libMesh::Number p0 = c.interior_value( this->_p0_var,qp );
-	  rho = p0/(this->_R*T);
-	}
-      else
-	{
-	  rho = this->_p0_over_R/T;
-	}
-
+      libMesh::Number rho = this->compute_rho( c, qp );
+      
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_u_dofs; i++)
@@ -462,16 +447,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool requ
       libMesh::Number k = this->_k(T);
       libMesh::Number cp = this->_cp(T);
 
-      libMesh::Number rho;
-      if( this->_enable_thermo_press_calc )
-	{
-	  libMesh::Number p0 = c.interior_value( this->_p0_var,qp );
-	  rho = p0/(this->_R*T);
-	}
-      else
-	{
-	  rho = this->_p0_over_R/T;
-	}
+      libMesh::Number rho = this->compute_rho( c, qp );
+      
 
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
@@ -571,17 +548,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool
 
       Real T = c.fixed_interior_value(this->_T_var, qp);
       
-      libMesh::Number rho;
-      if( this->_enable_thermo_press_calc )
-	{
-	  libMesh::Number p0 = c.fixed_interior_value( this->_p0_var,qp );
-	  rho = p0/(this->_R*T);
-	}
-      else
-	{
-	  rho = this->_p0_over_R/T;
-	}
-
+      libMesh::Number rho = this->compute_rho(c, qp);
+      
       for (unsigned int i = 0; i != n_u_dofs; ++i)
         {
 	  F_u(i) += rho*u_dot*u_phi[i][qp]*JxW[qp];
@@ -651,17 +619,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool r
 
       Real cp = this->_cp(T);
       
-      libMesh::Number rho;
-      if( this->_enable_thermo_press_calc )
-	{
-	  libMesh::Number p0 = c.fixed_interior_value( this->_p0_var,qp );
-	  rho = p0/(this->_R*T);
-	}
-      else
-	{
-	  rho = this->_p0_over_R/T;
-	}
-
+      libMesh::Number rho = this->compute_rho( c, qp );
+      
       for (unsigned int i = 0; i != n_T_dofs; ++i)
         {
 	  F_T(i) += rho*cp*T_dot*T_phi[i][qp]*JxW[qp];

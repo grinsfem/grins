@@ -79,6 +79,26 @@ namespace GRINS
 
   protected:
 
+    inline
+    libMesh::Real compute_rho(libMesh::FEMContext& context,
+			      unsigned int qp )
+    {
+      libMesh::Real T = context.interior_value(this->_T_var, qp);
+
+      libMesh::Real rho;
+      if( this->_enable_thermo_press_calc )
+	{
+	  libMesh::Real p0 = context.interior_value( this->_p0_var,qp );
+	  rho = p0/(this->_R*T);
+	}
+      else
+	{
+	  rho = this->_p0_over_R/T;
+	}
+      
+      return rho;
+    }
+
     //! Thermodynamic pressure divided by gas constant
     libMesh::Number _p0_over_R;
 
