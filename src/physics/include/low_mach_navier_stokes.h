@@ -29,26 +29,8 @@
 #ifndef LOW_MACH_NAVIER_STOKES_H
 #define LOW_MACH_NAVIER_STOKES_H
 
-// libMesh
-#include "libmesh.h"
-#include "boundary_info.h"
-#include "fe_base.h"
-#include "fe_interface.h"
-#include "mesh.h"
-#include "quadrature.h"
-#include "parameters.h"
-#include "string_to_enum.h"
-#include "fem_system.h"
-#include "fem_context.h"
-
 // GRINS
-#include "config.h"
-#include "physics.h"
-#include "pressure_pinning.h"
-#include "constant_viscosity.h"
-#include "constant_specific_heat.h"
-#include "constant_conductivity.h"
-#include "low_mach_navier_stokes_bc_handling.h"
+#include "low_mach_navier_stokes_base.h"
 
 namespace GRINS
 {
@@ -58,7 +40,7 @@ namespace GRINS
     This physics class implements the classical Incompressible Navier-Stokes equations.
    */
   template<class Viscosity, class SpecificHeat, class ThermalConductivity>
-  class LowMachNavierStokes : public Physics
+  class LowMachNavierStokes : public LowMachNavierStokesBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
   public:
 
@@ -68,18 +50,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
-
-    //! Initialization of Navier-Stokes variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    // Context initialization
-    virtual void init_context( libMesh::DiffContext &context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
@@ -110,46 +80,6 @@ namespace GRINS
 				libMesh::FEMSystem* system );
 
   protected:
-
-    //! Thermodynamic pressure divided by gas constant
-    libMesh::Number _p0_over_R;
-
-    libMesh::Number _p0, _R, _T0;
-
-    //! Physical dimension of problem
-    unsigned int _dim;
-
-    //! Indices for each (owned) variable;
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
-    VariableIndex _p_var; /* Index for pressure field */
-    VariableIndex _T_var; /* Index for pressure field */
-    VariableIndex _p0_var; /* Index for thermodynamic pressure */
-
-    //! Names of each (owned) variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name, _p0_var_name;
-
-    //! Element type, read from input
-    libMeshEnums::FEFamily _V_FE_family, _P_FE_family, _T_FE_family;
-
-    //! Element orders, read from input
-    libMeshEnums::Order _V_order, _P_order, _T_order;
-
-    //! Viscosity object
-    Viscosity _mu;
-
-    //! Specific heat object
-    SpecificHeat _cp;
-
-    //! Thermal conductivity object
-    ThermalConductivity _k;
-
-    //! Gravity vector
-    libMesh::Point _g; 
-
-    //! Flag to enable thermodynamic pressure calculation
-    bool _enable_thermo_press_calc;
 
     //! Enable pressure pinning
     bool _pin_pressure;
