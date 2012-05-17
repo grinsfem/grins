@@ -58,15 +58,11 @@ namespace GRINS
     
   protected:
 
-    std::string _physics_name;
-
     std::string _u_r_var_name, _u_z_var_name;
 
   private:
 
     AxisymmetricIncompressibleNavierStokesBCHandling();
-
-    
 
     enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, AXISYMMETRIC};
 

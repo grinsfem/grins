@@ -30,8 +30,7 @@
 
 GRINS::BCHandlingBase::BCHandlingBase(const std::string& physics_name)
   : _num_periodic_bcs(0),
-    _physics_name( physics_name )
-    
+    _physics_name( physics_name )   
 {
   return;
 }
@@ -129,6 +128,7 @@ void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) con
        it != _dirichlet_bc_map.end();
        it++ )
     {
+      std::cout << "bc_id = " << it->first << ", bc_type = " << it->second << std::endl;
       this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
     }
 

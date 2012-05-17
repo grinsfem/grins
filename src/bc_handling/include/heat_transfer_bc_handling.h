@@ -65,15 +65,11 @@ namespace GRINS
     
   protected:
 
-    std::string _physics_name;
-
     std::string _T_var_name;
 
   private:
 
     HeatTransferBCHandling();
-
-    
 
     enum HT_BC_TYPES{ISOTHERMAL_WALL=0,
 		     ADIABATIC_WALL,

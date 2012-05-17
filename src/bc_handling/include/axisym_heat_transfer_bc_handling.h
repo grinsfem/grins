@@ -64,8 +64,6 @@ namespace GRINS
 
     AxisymmetricHeatTransferBCHandling();
 
-    std::string _physics_name;
-
     std::string _T_var_name;
 
     enum AHT_BC_TYPES{AXISYMMETRIC=0,

@@ -30,7 +30,7 @@
 
 GRINS::IncompressibleNavierStokesBCHandling::IncompressibleNavierStokesBCHandling(const std::string& physics_name,
 										  const GetPot& input)
-  : BCHandlingBase(physics_name)
+  : GRINS::BCHandlingBase(physics_name)
 {
   _u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
   _v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
