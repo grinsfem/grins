@@ -311,7 +311,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool re
       if (this->_dim == 3)
 	divU += grad_w(2);
 
-      libMesh::Number rho = this->compute_rho( c, qp );
+      libMesh::Number rho = this->compute_rho( T, this->get_p0_steady(c,qp) );
       
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
@@ -447,8 +447,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool requ
       libMesh::Number k = this->_k(T);
       libMesh::Number cp = this->_cp(T);
 
-      libMesh::Number rho = this->compute_rho( c, qp );
-      
+      libMesh::Number rho = this->compute_rho( T, this->get_p0_steady(c,qp) );
 
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
@@ -548,7 +547,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool
 
       Real T = c.fixed_interior_value(this->_T_var, qp);
       
-      libMesh::Number rho = this->compute_rho_transient(c, qp);
+      libMesh::Number rho = this->compute_rho(T, this->get_p0_transient(c, qp));
       
       for (unsigned int i = 0; i != n_u_dofs; ++i)
         {
@@ -619,7 +618,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool r
 
       Real cp = this->_cp(T);
       
-      libMesh::Number rho = this->compute_rho_transient( c, qp );
+      libMesh::Number rho = this->compute_rho(T, this->get_p0_transient(c, qp));
       
       for (unsigned int i = 0; i != n_T_dofs; ++i)
         {

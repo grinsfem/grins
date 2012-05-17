@@ -80,43 +80,39 @@ namespace GRINS
   protected:
 
     inline
-    libMesh::Real compute_rho( libMesh::FEMContext& context,
-			       unsigned int qp )
+    libMesh::Real compute_rho( libMesh::Real T, libMesh::Real p0 ) const
     {
-      libMesh::Real T = context.interior_value(this->_T_var, qp);
-
-      libMesh::Real rho;
-      if( this->_enable_thermo_press_calc )
-	{
-	  libMesh::Real p0 = context.interior_value( this->_p0_var, qp );
-	  rho = p0/(this->_R*T);
-	}
-      else
-	{
-	  rho = this->_p0_over_R/T;
-	}
-      
-      return rho;
+      return p0/(this->_R*T);
     }
 
-    inline
-    libMesh::Real compute_rho_transient( libMesh::FEMContext& context,
-					 unsigned int qp )
+    inline 
+    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const
     {
-      libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-
-      libMesh::Real rho;
+      libMesh::Real p0;
       if( this->_enable_thermo_press_calc )
 	{
-	  libMesh::Real p0 = context.fixed_interior_value( this->_p0_var,qp );
-	  rho = p0/(this->_R*T);
+	  p0 = c.interior_value( _p0_var, qp );
 	}
       else
 	{
-	  rho = this->_p0_over_R/T;
+	  p0 = _p0;
 	}
-      
-      return rho;
+      return p0;
+    }
+
+    inline 
+    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const
+    {
+      libMesh::Real p0;
+      if( this->_enable_thermo_press_calc )
+	{
+	  p0 = c.fixed_interior_value( _p0_var, qp );
+	}
+      else
+	{
+	  p0 = _p0;
+	}
+      return p0;
     }
 
     //! Thermodynamic pressure divided by gas constant
