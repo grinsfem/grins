@@ -158,15 +158,15 @@ void GRINS::AxisymmetricHeatTransferBCHandling::user_apply_neumann_bcs( libMesh:
       // Prescribed constant heat flux
     case(PRESCRIBED_HEAT_FLUX):
       {
-	_bound_conds.apply_neumann( context, var, -1.0,
-				    this->get_neumann_bc_value(bc_id) );
+	_bound_conds.apply_neumann_axisymmetric( context, var, -1.0,
+						 this->get_neumann_bc_value(bc_id) );
       }
       break;
       // General heat flux from user specified function
     case(GENERAL_HEAT_FLUX):
       {
-	_bound_conds.apply_neumann( context, request_jacobian, var, -1.0, 
-				    this->get_neumann_bound_func( bc_id, var ) );
+	_bound_conds.apply_neumann_axisymmetric( context, request_jacobian, var, -1.0, 
+						 this->get_neumann_bound_func( bc_id, var ) );
       }
       break;
     default:

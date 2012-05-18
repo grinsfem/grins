@@ -70,13 +70,13 @@ namespace GRINS
 				     const bool request_jacobian,
 				     const GRINS::VariableIndex var,
 				     const Real sign,
-				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  );
+				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann_axisymmetric( libMesh::DiffContext &context,
 				     const GRINS::VariableIndex var,
 				     const Real sign,
-				     const Point& value );
+				     const Point& value ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
