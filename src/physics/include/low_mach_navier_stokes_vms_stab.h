@@ -75,7 +75,7 @@ namespace GRINS
 
   protected:
 
-    libMesh::Real _C;
+    libMesh::Real _C, _tau_factor;
 
     void assemble_continuity_time_deriv( bool request_jacobian,
 					 libMesh::FEMContext& context,
@@ -123,7 +123,7 @@ namespace GRINS
     libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
 					  libMesh::RealGradient& g ) const
     {
-      return 1.0/(tau_M*(g*g));
+      return this->_tau_factor/(tau_M*(g*g));
     }
 
     inline
@@ -151,9 +151,10 @@ namespace GRINS
 				      libMesh::Real T,
 				      bool is_steady ) const
     {
-      libMesh::Real k_over_cp = (this->_k(T))/(this->_cp(T));
+      libMesh::Real k = this->_k(T);
+      libMesh::Real cp = this->_cp(T);
 
-      return this->compute_tau( c, qp, k_over_cp*k_over_cp, g, G, rho, U, is_steady );
+      return this->compute_tau( c, qp, k*k, g, G, rho*cp, U, is_steady );
     }
 
     inline
@@ -171,7 +172,7 @@ namespace GRINS
       if(!is_steady)
 	tau += (2.0*rho/c.get_deltat_value())*(2.0*rho/c.get_deltat_value());
 
-      return 1.0/std::sqrt(tau);
+      return this->_tau_factor/std::sqrt(tau);
     }
 
     inline
@@ -179,9 +180,18 @@ namespace GRINS
 				     unsigned int qp ) const
     {
       libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
-      return libMesh::RealGradient( fe->get_dxidx()[qp] + fe->get_detadx()[qp] + fe->get_dzetadx()[qp],
-				    fe->get_dxidy()[qp] + fe->get_detady()[qp] + fe->get_dzetady()[qp],
-				    fe->get_dxidz()[qp] + fe->get_detadz()[qp] + fe->get_dzetadz()[qp] );
+
+      libMesh::RealGradient g( fe->get_dxidx()[qp] + fe->get_detadx()[qp],
+			       fe->get_dxidy()[qp] + fe->get_detady()[qp] );
+
+      if( this->_dim == 3 )
+	{
+	  g(0) += fe->get_dzetadx()[qp];
+	  g(1) += fe->get_dzetady()[qp];
+	  g(2) = fe->get_dxidz()[qp] + fe->get_detadz()[qp] + fe->get_dzetadz()[qp];
+	}
+
+      return g;
     }
     
     inline
@@ -189,27 +199,42 @@ namespace GRINS
 				   unsigned int qp ) const
     {
       libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
+     
       libMesh::Real dxidx = fe->get_dxidx()[qp];
       libMesh::Real dxidy = fe->get_dxidy()[qp];
-      libMesh::Real dxidz = fe->get_dxidz()[qp];
-
+     
       libMesh::Real detadx = fe->get_detadx()[qp];
       libMesh::Real detady = fe->get_detady()[qp];
-      libMesh::Real detadz = fe->get_detadz()[qp];
-
-      libMesh::Real dzetadx = fe->get_dzetadx()[qp];
-      libMesh::Real dzetady = fe->get_dzetady()[qp];
-      libMesh::Real dzetadz = fe->get_dzetadz()[qp];
       
-      return libMesh::RealTensor( dxidx*dxidx + detadx*detadx + dzetadx*dzetadx,
-				  dxidx*dxidy + detadx*detady + dzetadx*dzetady,
-				  dxidx*dxidz + detadx*detadz + dzetadx*dzetadz,
-				  dxidy*dxidx + detady*detadx + dzetady*dzetadx,
-				  dxidy*dxidy + detady*detady + dzetady*dzetady,
-				  dxidy*dxidz + detady*detadz + dzetady*dzetadz,
-				  dxidz*dxidx + detadz*detadx + dzetadz*dzetadx,
-				  dxidz*dxidy + detadz*detady + dzetadz*dzetady,
-				  dxidz*dxidz + detadz*detadz + dzetadz*dzetadz );
+      libMesh::RealTensor G( dxidx*dxidx + detadx*detadx,
+			     dxidx*dxidy + detadx*detady,
+			     0.0,
+			     dxidy*dxidx + detady*detadx,
+			     dxidy*dxidy + detady*detady,
+			     0.0 );
+
+      if( this->_dim == 3 )
+	{
+	   libMesh::Real dxidz = fe->get_dxidz()[qp];
+
+	   libMesh::Real detadz = fe->get_detadz()[qp];
+
+	   libMesh::Real dzetadx = fe->get_dzetadx()[qp];
+	   libMesh::Real dzetady = fe->get_dzetady()[qp];
+	   libMesh::Real dzetadz = fe->get_dzetadz()[qp];
+	   
+	   G(0,0) += dzetadx*dzetadx;
+	   G(0,1) += dzetadx*dzetady;
+	   G(0,2) = dxidx*dxidz + detadx*detadz + dzetadx*dzetadz;
+	   G(1,0) += dzetady*dzetadx;
+	   G(1,1) += dzetady*dzetady;
+	   G(1,2) = dxidy*dxidz + detady*detadz + dzetady*dzetadz;
+	   G(2,0) = dxidz*dxidx + detadz*detadx + dzetadz*dzetadx;
+	   G(2,1) = dxidz*dxidy + detadz*detady + dzetadz*dzetady;
+	   G(2,2) = dxidz*dxidz + detadz*detadz + dzetadz*dzetadz;
+	}
+      
+      return G;
     }
 
     

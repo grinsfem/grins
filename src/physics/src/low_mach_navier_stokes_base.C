@@ -123,6 +123,8 @@ void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::init_variables( libMesh::FEMSyste
 
   if (_dim == 3)
     _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
+  else
+    _w_var = _u_var;
 
   _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
   _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);

@@ -47,8 +47,8 @@ GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::~LowMachNavierStokesVMSSta
 template<class Mu, class SH, class TC>
 void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::read_input_options( const GetPot& input )
 {
-  this->_C = input("Physics/"+this->_physics_name+"/tau_constant", 0.5 );
-
+  this->_C = input("Physics/"+this->_physics_name+"/tau_constant", 1 );
+  this->_tau_factor = input("Physics/"+this->_physics_name+"/tau_factor", 0.5 );
   return;
 }
 
@@ -60,6 +60,9 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::init_context( libMesh
 
   libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
   
+  // We need pressure derivatives
+  c.element_fe_var[this->_p_var]->get_dphi();
+
   // We also need second derivatives, so initialize those.
   c.element_fe_var[this->_u_var]->get_d2phi();
   c.element_fe_var[this->_T_var]->get_d2phi();
@@ -133,7 +136,6 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_t
 
   for (unsigned int qp=0; qp != n_qpoints; qp++)
     {
-
       libMesh::RealGradient g = this->compute_g( c, qp );
       libMesh::RealTensor G = this->compute_G( c, qp );
 
@@ -146,13 +148,17 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_t
 	U(2) = c.interior_value( this->_w_var, qp );
 
       libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, is_steady );
+      libMesh::Real tau_E = this->compute_tau_energy( c, qp, g, G, rho, U, T, is_steady );
+
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
+      libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
 
       // Now a loop over the pressure degrees of freedom.  This
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_p_dofs; i++)
         {
           Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+	  Fp(i) -= tau_E*RE_s*(U*p_dphi[i][qp])/T*JxW[qp];
 	}
 
     }
@@ -184,6 +190,9 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
 // The velocity shape function gradients at interior quadrature points.
   const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
     c.element_fe_var[this->_u_var]->get_dphi();
+
+  const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
+    c.element_fe_var[this->_u_var]->get_d2phi();
 
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{u}
   libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{v}
@@ -220,17 +229,31 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
       libMesh::Real RC_s = this->compute_res_continuity_steady( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
 
+      /*
+      std::cout << "g = " << g << std::endl
+		<< "G = " << G << std::endl;
+      */
+
+      /*
+      std::cout << "tau_M = " << tau_M << ", tau_C = " << tau_C << std::endl
+		<< "RC_s = " << RC_s << std::endl
+		<< "RM_s = " << RM_s << std::endl;
+      */
+      libMesh::Real mu = this->_mu(T);
+
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-	  Fu(i) += ( -tau_C*RC_s*u_gradphi[i][qp](0)
-		     + rho*tau_M*RM_s*grad_u*u_phi[i][qp]
-		     - tau_M*RM_s(0)*rho*U*u_gradphi[i][qp]
-		     + tau_M*RM_s(0)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
+	  Fu(i) += ( tau_C*RC_s*u_gradphi[i][qp](0)
+		     //+ rho*tau_M*RM_s*grad_u*u_phi[i][qp]
+		     + tau_M*RM_s(0)*rho*U*u_gradphi[i][qp] 
+		     + mu*tau_M*RM_s(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)) )*JxW[qp];
+		     //+ tau_M*RM_s(0)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
 
-	  Fv(i) += ( -tau_C*RC_s*u_gradphi[i][qp](1)
-		     + rho*tau_M*RM_s*grad_v*u_phi[i][qp]
-		     - tau_M*RM_s(1)*rho*U*u_gradphi[i][qp]
-		     + tau_M*RM_s(1)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
+	  Fv(i) += ( tau_C*RC_s*u_gradphi[i][qp](1)
+		     //+ rho*tau_M*RM_s*grad_v*u_phi[i][qp]
+		     + tau_M*RM_s(1)*rho*U*u_gradphi[i][qp]
+		     + mu*tau_M*RM_s(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)) )*JxW[qp];
+	  //+ tau_M*RM_s(1)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
 
 	  if( this->_dim == 3 )
 	    {
@@ -264,6 +287,9 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_
   // The temperature shape functions gradients at interior quadrature points.
   const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
     c.element_fe_var[this->_T_var]->get_dphi();
+
+  const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
+    c.element_fe_var[this->_T_var]->get_d2phi();
 
   libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[this->_T_var]; // R_{T}
 
@@ -299,11 +325,16 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_
       libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
 
+      //std::cout << "tau_E = " << tau_E << ", RE_s = " << RE_s << std::endl;
+
+      libMesh::Real k = this->_k(T);
+
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
-          FT(i) += ( rho_cp*tau_M*RM_s*grad_T*T_phi[i][qp] 
-		     + rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]
-		     - rho_cp*tau_E*RE_s*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
+          FT(i) += ( //rho_cp*tau_M*RM_s*grad_T*T_phi[i][qp] 
+		    + rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]
+		    + tau_E*RE_s*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2) ) )*JxW[qp];
+	    //+ rho_cp*tau_E*RE_s*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
 	}
 
     }
@@ -502,9 +533,9 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_mass_
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
           FT(i) += ( -rho_cp*tau_M*RM_t*grad_T*T_phi[i][qp] 
-		     -rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
-		     + rho_cp*tau_E*(RE_s+RE_t)*tau_M*RM_t*T_gradphi[i][qp]
-		     + rho_cp*tau_E*RE_t*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
+		     +rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
+		     - rho_cp*tau_E*(RE_s+RE_t)*tau_M*RM_t*T_gradphi[i][qp]
+		     - rho_cp*tau_E*RE_t*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
 	}
 
     }

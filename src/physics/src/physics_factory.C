@@ -70,6 +70,20 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build( const GetPot& input )
 
   this->check_physics_consistency( physics_list );
 
+  if( input( "screen-options/echo_physics", true ) )
+    {
+      std::cout << "==========================================================" << std::endl
+		<< "List of Enabled Physics:" << std::endl;
+
+      for( GRINS::PhysicsListIter it = physics_list.begin();
+	   it != physics_list.end();
+	   it++ )
+	{
+	  std::cout<< it->first << std::endl;
+	}
+      std::cout <<  "==========================================================" << std::endl;
+    }
+
   return physics_list;
 }
 
@@ -82,26 +96,26 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 
   if( physics_to_add == incompressible_navier_stokes )
     {
-      physics_list[incompressible_navier_stokes] = 
-	PhysicsPtr(new GRINS::IncompressibleNavierStokes(incompressible_navier_stokes,input) );
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::IncompressibleNavierStokes(physics_to_add,input) );
     }
   else if( physics_to_add == axisymmetric_incomp_navier_stokes )
     {
-      physics_list[axisymmetric_incomp_navier_stokes] = 
-	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(axisymmetric_incomp_navier_stokes,input) );
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricIncompressibleNavierStokes(physics_to_add,input) );
     }
   else if( physics_to_add == heat_transfer )
     {
-      physics_list[heat_transfer] = 
-	PhysicsPtr(new GRINS::HeatTransfer(heat_transfer,input));
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::HeatTransfer(physics_to_add,input));
     }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
       std::string conductivity = input( "Physics/"+axisymmetric_heat_transfer+"/conductivity_model", "constant" );
       if(  conductivity == "constant" )
 	{
-	  physics_list[axisymmetric_heat_transfer] = 
-	    PhysicsPtr(new GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>(axisymmetric_heat_transfer,input));
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>(physics_to_add,input));
 	}
       else
 	{
@@ -111,13 +125,13 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
     }
   else if( physics_to_add == boussinesq_buoyancy )
     {
-      physics_list[boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::BoussinesqBuoyancy(boussinesq_buoyancy,input));
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::BoussinesqBuoyancy(physics_to_add,input));
     }
   else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
     {
-      physics_list[axisymmetric_boussinesq_buoyancy] = 
-	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy(axisymmetric_boussinesq_buoyancy,input));
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
     }
   else if(  physics_to_add == low_mach_navier_stokes )
     {
@@ -128,12 +142,34 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
 	{
 	  physics_list[low_mach_navier_stokes] = 
-	    PhysicsPtr(new GRINS::LowMachNavierStokes<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(low_mach_navier_stokes,input));
+	    PhysicsPtr(new GRINS::LowMachNavierStokes<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(physics_to_add,input));
 	}
       else
 	{
 	  std::cerr << "================================================================" << std::endl
 		    << "Invalid combination of models for " << low_mach_navier_stokes << std::endl
+		    << "Conductivity model  = " << conductivity << std::endl
+		    << "Viscosity model     = " << viscosity << std::endl
+		    << "Specific heat model = " << specific_heat << std::endl
+		    << "================================================================" << std::endl;
+	  libmesh_error();
+	}
+    }
+  else if(  physics_to_add == low_mach_navier_stokes_vms_stab )
+    {
+      std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
+      std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+      std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+
+      if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
+	{
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::LowMachNavierStokesVMSStabilization<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(physics_to_add,input));
+	}
+      else
+	{
+	  std::cerr << "================================================================" << std::endl
+		    << "Invalid combination of models for " << low_mach_navier_stokes_vms_stab << std::endl
 		    << "Conductivity model  = " << conductivity << std::endl
 		    << "Viscosity model     = " << viscosity << std::endl
 		    << "Specific heat model = " << specific_heat << std::endl
@@ -211,11 +247,11 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
       /* For LowMachNavierStokes, there should be nothing else loaded. */
       if( physics->first == low_mach_navier_stokes )
 	{
-	  if( physics_list.size() > 1 )
+	  if( physics_list.size() > 2 )
 	    {
 	      std::cerr << "=======================================================" << std::endl
-			<< "Error: For physics " << low_mach_navier_stokes << "no" << std::endl
-			<< "other physics class should be loaded. Detected the" << std::endl
+			<< "Error: For physics " << low_mach_navier_stokes << std::endl
+			<< "only one stabilization physics is allowed. Detected the" << std::endl
 			<< "following:" << std::endl;
 	      for( GRINS::PhysicsListIter iter = physics_list.begin();
 		   iter != physics_list.end();

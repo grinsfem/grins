@@ -42,6 +42,7 @@ namespace GRINS
   const PhysicsName boussinesq_buoyancy = "BoussinesqBuoyancy";
   const PhysicsName axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
   const PhysicsName low_mach_navier_stokes = "LowMachNavierStokes";
+  const PhysicsName low_mach_navier_stokes_vms_stab = "LowMachNavierStokesVMSStabilization";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H
