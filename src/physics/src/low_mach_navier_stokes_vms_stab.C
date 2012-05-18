@@ -224,7 +224,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
       libMesh::RealTensor G = this->compute_G( c, qp );
 
       libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, is_steady );
-      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g );
+      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g, G, U, rho );
 
       libMesh::Real RC_s = this->compute_res_continuity_steady( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
@@ -246,13 +246,17 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
 	  Fu(i) += ( tau_C*RC_s*u_gradphi[i][qp](0)
 		     //+ rho*tau_M*RM_s*grad_u*u_phi[i][qp]
 		     + tau_M*RM_s(0)*rho*U*u_gradphi[i][qp] 
-		     + mu*tau_M*RM_s(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)) )*JxW[qp];
+		     + mu*tau_M*RM_s(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
+					 + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1) - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) 
+					 ) )*JxW[qp];
 		     //+ tau_M*RM_s(0)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
 
 	  Fv(i) += ( tau_C*RC_s*u_gradphi[i][qp](1)
 		     //+ rho*tau_M*RM_s*grad_v*u_phi[i][qp]
 		     + tau_M*RM_s(1)*rho*U*u_gradphi[i][qp]
-		     + mu*tau_M*RM_s(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)) )*JxW[qp];
+		     + mu*tau_M*RM_s(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
+					 + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1) - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) 
+					 ) )*JxW[qp];
 	  //+ tau_M*RM_s(1)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
 
 	  if( this->_dim == 3 )
@@ -441,7 +445,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_mas
       libMesh::RealTensor G = this->compute_G( c, qp );
 
       libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, false );
-      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g );
+      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g, G, U, rho );
 
       libMesh::Real RC_t = this->compute_res_continuity_transient( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );

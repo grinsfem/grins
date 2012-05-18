@@ -121,8 +121,21 @@ namespace GRINS
 
     inline
     libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
-					  libMesh::RealGradient& g ) const
+					  libMesh::RealGradient& g,
+					  libMesh::RealTensor& G,
+					  libMesh::Gradient U,
+					  libMesh::Real rho ) const
     {
+      Real h = 2.0/std::sqrt(G(0,0));
+      /*
+      if( std::abs(U.size()) < 1.0e-10)
+	h = std::sqrt(G.size());
+      else
+	h = std::sqrt( U*U/(U*(G*U) ) );
+      */
+      //std::cout << "h = " << h << std::endl;
+
+      //return this->_tau_factor*rho*rho*U.size()*U.size()/tau_M;
       return this->_tau_factor/(tau_M*(g*g));
     }
 
@@ -137,7 +150,15 @@ namespace GRINS
 					bool is_steady ) const
     {
       libMesh::Real mu = this->_mu(T);
+      Real h = 2.0/std::sqrt(G(0,0));
+      /*
+      if( std::abs(U.size()) < 1.0e-10)
+	h = std::sqrt(G.size());
+      else
+	h = std::sqrt( U*U/(U*(G*U) ) );
+      */
 
+      //return this->_tau_factor*1.0/(this->_C*mu/(h*h) + rho*U.size()/h);
       return this->compute_tau( c, qp, mu*mu, g, G, rho, U, is_steady );
     }
 
@@ -153,7 +174,14 @@ namespace GRINS
     {
       libMesh::Real k = this->_k(T);
       libMesh::Real cp = this->_cp(T);
-
+      Real h = 2.0/std::sqrt(G(0,0));
+      /*
+      if( std::abs(U.size()) < 1.0e-10)
+	h = std::sqrt(G.size());
+      else
+	h = std::sqrt( U*U/(U*(G*U) ) );
+      */
+      //return this->_tau_factor*1.0/(this->_C*k/(h*h) + rho*cp*U.size()/h);
       return this->compute_tau( c, qp, k*k, g, G, rho*cp, U, is_steady );
     }
 

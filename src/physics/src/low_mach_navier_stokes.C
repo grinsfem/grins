@@ -672,7 +672,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv
       for (unsigned int i = 0; i != n_p0_dofs; ++i)
         {
 	  F_p(i) += (p0/T - this->_p0/this->_T0)*JxW[qp];
-	  //F_p(i) += -p0*gamma_ratio*divU*JxW[qp];
+	  //F_p(i) += p0*cp/this->_R*divU*JxW[qp];
 	} // End DoF loop i
     }
 
@@ -698,13 +698,18 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv
   for (unsigned int qp=0; qp != n_qpoints; qp++)
     {
       libMesh::Number T = c.side_value( this->_T_var, qp );
+      libMesh::Gradient U = ( c.side_value( this->_u_var, qp ),
+			      c.side_value( this->_v_var, qp ) );
       libMesh::Gradient grad_T = c.side_gradient( this->_T_var, qp );
 
+      libMesh::Number p0 = c.side_value( this->_p0_var, qp );
+
       libMesh::Number k = this->_k(T);
+      libMesh::Number cp = this->_cp(T);
 
       for (unsigned int i=0; i != n_p0_dofs; i++)
 	{
-	  //F_p(i) += k*grad_T*normals[qp]*JxW_side[qp];
+	  //F_p(i) += (p0*cp/this->_R*U*normals[qp] - k*grad_T*normals[qp])*JxW_side[qp];
 	}
     }
   
@@ -754,12 +759,10 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( 
 
       libMesh::Number p0 = c.fixed_interior_value(this->_p0_var, qp );
 
-      /*
       for (unsigned int i=0; i != n_p0_dofs; i++)
 	{
-	  F_p0(i) += p0_dot*one_over_gamma*JxW[qp];
+	  F_p0(i) += p0_dot*(1.0-cp/this->_R)*JxW[qp];
 	}
-      */
 
       for (unsigned int i=0; i != n_T_dofs; i++)
 	{
