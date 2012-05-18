@@ -2,7 +2,7 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'LowMachNavierStokes'
+enabled_physics = 'LowMachNavierStokes LowMachNavierStokesVMSStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
@@ -11,8 +11,8 @@ V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 T_FE_family = 'LAGRANGE'
 
-V_order = 'SECOND'
-T_order = 'SECOND'
+V_order = 'FIRST'
+T_order = 'FIRST'
 P_order = 'FIRST'
 
 # Thermodynamic pressure
@@ -28,7 +28,7 @@ R = '287.0' #[J/kg-K]
 g = '0.0 -9.81' #[m/s^2]
 
 # Ratio of wall temp differences
-epsilon = '0.0001'
+epsilon = '0.016887'
 
 conductivity_model = 'constant'
 viscosity_model = 'constant'
@@ -55,8 +55,19 @@ T_wall_3 = '${* ${T0} ${+ 1.0 ${epsilon} } }'
 enable_thermo_press_calc = 'true'
 
 pin_pressure = true
-pin_location = '0.0 0.0'
+pin_location = '0.0 0.01'
 pin_value = '0.0'
+
+[../LowMachNavierStokesVMSStabilization]
+
+tau_constant = '1'
+tau_factor = '0.001'
+
+[]
+
+[restart-options]
+
+#restart_file = 'cavity.xdr'
 
 []
 
@@ -76,29 +87,31 @@ cp = '1004.5' #[J/kg-K]
 
 []
 
-[restart-options]
 
-#restart_file = 'test.xdr'
-
-[]
 
 # Mesh related options
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 200
-mesh_nx2 = 200
+
+domain_x1_min = 0.0
+domain_x1_max = 0.35
+domain_x2_min = 0.0
+domain_x2_max = 0.35
+
+mesh_nx1 = 25
+mesh_nx2 = 25
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = true 
+transient = false 
 theta = 1.0
 n_timesteps = 10
-deltat = 0.005
+deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 15 
+max_nonlinear_iterations = 100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -106,6 +119,8 @@ verify_analytic_jacobians = 0.0
 initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
+
+require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]

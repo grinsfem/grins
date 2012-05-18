@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
   grins.attach_grvy_timer( &grvy_timer );
 #endif
 
-grins.run();
+  grins.run();
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();
