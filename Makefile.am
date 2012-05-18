@@ -7,7 +7,8 @@ SUBDIRS          = src test doxygen examples
 EXTRA_DIST       = CHANGES LICENSE COPYING examples docs
 
 examplesdir      = $(prefix)/examples
-examples_DATA    = $(top_srcdir)/examples/*
+#examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
+#                  $(top_srcdir)/examples/rayleigh_taylor
 
 # Eliminate .svn directories in dist tarball
 dist-hook:
