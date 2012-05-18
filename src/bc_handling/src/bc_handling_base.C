@@ -128,7 +128,6 @@ void GRINS::BCHandlingBase::init_dirichlet_bcs( libMesh::FEMSystem* system ) con
        it != _dirichlet_bc_map.end();
        it++ )
     {
-      std::cout << "bc_id = " << it->first << ", bc_type = " << it->second << std::endl;
       this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
     }
 

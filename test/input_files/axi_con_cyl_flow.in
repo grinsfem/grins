@@ -40,6 +40,8 @@ print_log_info = false
 solver_verbose = false
 solver_quiet = true
 
+echo_physics = 'false'
+
 # Options related to all Physics
 [Physics]
 
