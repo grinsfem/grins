@@ -26,10 +26,10 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "low_mach_navier_stokes_vms_stab.h"
+#include "low_mach_navier_stokes_braack_stab.h"
 
 template<class Mu, class SH, class TC>
-GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::LowMachNavierStokesVMSStabilization( const std::string& physics_name, 
+GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::LowMachNavierStokesBraackStabilization( const std::string& physics_name, 
 											   const GetPot& input )
   : GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
 {
@@ -39,24 +39,24 @@ GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::LowMachNavierStokesVMSStab
 }
 
 template<class Mu, class SH, class TC>
-GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::~LowMachNavierStokesVMSStabilization()
+GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::~LowMachNavierStokesBraackStabilization()
 {
   return;
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::read_input_options( const GetPot& input )
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::read_input_options( const GetPot& input )
 {
   return;
 }
 
 template<class Mu, class SH, class TC>
-bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::element_time_derivative( bool request_jacobian,
+bool GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative( bool request_jacobian,
 										    libMesh::DiffContext& context,
 										    libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::element_time_derivative");
+  this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::element_time_derivative");
 #endif
 
   libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -66,18 +66,18 @@ bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::element_time_derivati
   this->assemble_energy_time_deriv( request_jacobian, c, system );
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::element_time_derivative");
+  this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::element_time_derivative");
 #endif
   return request_jacobian;
 }
 
 template<class Mu, class SH, class TC>
-bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::mass_residual( bool request_jacobian,
+bool GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::mass_residual( bool request_jacobian,
 									  libMesh::DiffContext& context,
 									  libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::mass_residual");
+  this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::mass_residual");
 #endif
 
   libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
@@ -87,13 +87,13 @@ bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::mass_residual( bool r
   this->assemble_energy_mass_residual( request_jacobian, c, system );
 
 #ifdef USE_GRVY_TIMERS
-  this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::mass_residual");
+  this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::mass_residual");
 #endif
   return request_jacobian;
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool request_jacobian,
 											   libMesh::FEMContext& c,
 											   libMesh::FEMSystem* system )
 {
@@ -149,7 +149,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_t
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool request_jacobian,
 											 libMesh::FEMContext& c,
 											 libMesh::FEMSystem* system )
 {
@@ -257,7 +257,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool request_jacobian,
 										       libMesh::FEMContext& c,
 										       libMesh::FEMSystem* system )
 {
@@ -333,7 +333,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool request_jacobian,
 											      libMesh::FEMContext& c,
 											      libMesh::FEMSystem* system )
 {
@@ -382,7 +382,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_m
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool request_jacobian,
 											    libMesh::FEMContext& c,
 											    libMesh::FEMSystem* system )
 {
@@ -470,7 +470,7 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_mas
 }
 
 template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool request_jacobian,
+void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool request_jacobian,
 											  libMesh::FEMContext& c,
 											  libMesh::FEMSystem* system )
 {
@@ -540,57 +540,57 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_mass_
 }
 
 template<class Mu, class SH, class TC>
-bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::element_constraint( bool request_jacobian,
+bool GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_constraint( bool request_jacobian,
 									       libMesh::DiffContext& context,
 									       libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  //this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::element_constraint");
+  //this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::element_constraint");
 #endif
 
   //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-  //this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::element_constraint");
+  //this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::element_constraint");
 #endif
 
   return request_jacobian;
 }
 
 template<class Mu, class SH, class TC>
-bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::side_time_derivative( bool request_jacobian,
+bool GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::side_time_derivative( bool request_jacobian,
 										 libMesh::DiffContext& context,
 										 libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-      //this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::side_time_derivative");
+      //this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::side_time_derivative");
 #endif
       //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-      //this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::side_time_derivative");
+      //this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::side_time_derivative");
 #endif
 
   return request_jacobian;
 }
 
 template<class Mu, class SH, class TC>
-bool GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::side_constraint( bool request_jacobian,
+bool GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::side_constraint( bool request_jacobian,
 									    libMesh::DiffContext& context,
 									    libMesh::FEMSystem* system )
 {
 #ifdef USE_GRVY_TIMERS
-  //this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::side_constraint");
+  //this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::side_constraint");
 #endif
 
   //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 #ifdef USE_GRVY_TIMERS
-  //this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::side_constraint");
+  //this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::side_constraint");
 #endif
 
   return request_jacobian;
 }
 
 // Instantiate
-template class GRINS::LowMachNavierStokesVMSStabilization<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>;
+template class GRINS::LowMachNavierStokesBraackStabilization<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>;

@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_VMS_STAB_H
-#define LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#ifndef LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
+#define LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
 
 //libMesh
 #include "time_solver.h"
@@ -39,13 +39,13 @@ namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
   template<class Viscosity, class SpecificHeat, class ThermalConductivity>
-  class LowMachNavierStokesVMSStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
+  class LowMachNavierStokesBraackStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
 
   public:
 
-    LowMachNavierStokesVMSStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesVMSStabilization();
+    LowMachNavierStokesBraackStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~LowMachNavierStokesBraackStabilization();
 
     //! Read options from GetPot input file. By default, nothing is read.
     virtual void read_input_options( const GetPot& input );
@@ -97,9 +97,9 @@ namespace GRINS
 					libMesh::FEMSystem* system );
     
   private:
-    LowMachNavierStokesVMSStabilization();
+    LowMachNavierStokesBraackStabilization();
 
-  }; // End LowMachNavierStokesVMSStabilization class declarations
+  }; // End LowMachNavierStokesBraackStabilization class declarations
 
 } // End namespace GRINS
 
