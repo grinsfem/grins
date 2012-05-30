@@ -759,10 +759,12 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( 
 
       libMesh::Number p0 = c.fixed_interior_value(this->_p0_var, qp );
 
+      /*
       for (unsigned int i=0; i != n_p0_dofs; i++)
 	{
 	  F_p0(i) += p0_dot*(1.0-cp/this->_R)*JxW[qp];
 	}
+      */
 
       for (unsigned int i=0; i != n_T_dofs; i++)
 	{

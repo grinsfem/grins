@@ -44,6 +44,7 @@
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
 #include "low_mach_navier_stokes.h"
+#include "low_mach_navier_stokes_braack_stab.h"
 #include "low_mach_navier_stokes_vms_stab.h"
 #include "grins_physics_names.h"
 #include "constant_conductivity.h"
