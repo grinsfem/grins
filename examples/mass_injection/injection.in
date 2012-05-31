@@ -1,0 +1,141 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'LowMachNavierStokes LowMachNavierStokesBraackStabilization'
+
+# Options for Incompressible Navier-Stokes physics
+[./LowMachNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+T_FE_family = 'LAGRANGE'
+
+V_order = 'FIRST'
+T_order = 'FIRST'
+P_order = 'FIRST'
+
+# Thermodynamic pressure
+p0 = '100000' #[Pa]
+
+# Reference temperature
+T0 = '300' #[K]
+
+# Gas constant
+R = '287.0' #[J/kg-K]
+
+# Gravity vector
+g = '0.0 -9.81' #[m/s^2]
+
+conductivity_model = 'constant'
+viscosity_model = 'constant'
+specific_heat_model = 'constant'
+
+# Boundary ids:
+# injection site = 1
+# all others = 2
+
+vel_bc_ids = '1 2'
+vel_bc_types = 'inflow no_slip'
+
+temp_bc_ids = '1 2'
+temp_bc_types = 'isothermal adiabatic'
+
+# Cold wall at x = 1
+T_wall_1 = '600'
+
+enable_thermo_press_calc = 'true'
+
+pin_pressure = true
+pin_location = '0.0 7.0'
+pin_value = '0.0'
+
+[../LowMachNavierStokesBraackStabilization]
+
+tau_constant = '1'
+tau_factor = '0.1'
+
+[]
+
+[restart-options]
+
+#restart_file = 'cavity.xdr'
+
+[]
+
+[Materials]
+
+[./Viscosity]
+
+mu = '0.005' #[kg/m-s]
+
+[../Conductivity]
+
+k = '7.073943662' #[W/m-K]
+
+[../SpecificHeat]
+
+cp = '1004.5' #[J/kg-K]
+
+[]
+
+
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file'
+mesh_filename = 'injection_grid.exo'
+element_type = QUAD9
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = true 
+theta = 1.0
+n_timesteps = 1
+deltat = 0.12
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  1 
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 0.0
+
+initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = true
+
+vis_output_file_prefix = 'injection' 
+
+output_residual = true
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'LowMachNavierStokes'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]
