@@ -384,7 +384,7 @@ void GRINS::LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuit
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_p_dofs; i++)
         {
-          Fp(i) += (tau_E*RE_t*(U*p_dphi[i][qp])/T*JxW[qp]
+          Fp(i) += (tau_E*RE_t*(U*p_dphi[i][qp])/T
 		    - tau_M*RM_t*p_dphi[i][qp] 
 		    )*JxW[qp];
 	}
