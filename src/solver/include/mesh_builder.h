@@ -37,6 +37,7 @@
 #include "string_to_enum.h"
 #include "mesh.h"
 #include "mesh_generation.h"
+#include "mesh_refinement.h"
 
 namespace GRINS
 {
@@ -66,6 +67,8 @@ namespace GRINS
 
     int _mesh_nx1, _mesh_nx2, _mesh_nx3;
 
+    int _uniformly_refine;
+    
     std::string _element_type;
   };
 

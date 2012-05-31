@@ -43,7 +43,10 @@ GRINS::MeshBuilder::~MeshBuilder()
 
 void GRINS::MeshBuilder::read_input_options( const GetPot& input )
 {
-  // First check the user told us what to do to generate a mesh
+  // Grab common options
+  this->_uniformly_refine = input("mesh-options/uniformly_refine", 0);
+
+  // The user told us what to do to generate a mesh
   if(input.have_variable("mesh-options/mesh_option"))
     {
       this->_mesh_option = input("mesh-options/mesh_option", "NULL");
@@ -174,6 +177,11 @@ std::tr1::shared_ptr<libMesh::Mesh> GRINS::MeshBuilder::build()
                 << " mesh-options/mesh_option [" << this->_mesh_option
                 << "] NOT supported " << std::endl;
       libmesh_error();
+    }
+
+  if( _uniformly_refine > 0 )
+    {
+      libMesh::MeshRefinement(*mesh).uniformly_refine(_uniformly_refine);
     }
 
   return std::tr1::shared_ptr<libMesh::Mesh>(mesh);
