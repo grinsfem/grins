@@ -179,7 +179,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > InjectionBCFactory::bui
 
   GRINS::DBCContainer cont2;
   cont2.add_var_name( "u" );
-  cont2.add_bc_id( 2 );
+  cont2.add_bc_id( 1 );
 
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
 

@@ -25,7 +25,7 @@ T0 = '300' #[K]
 R = '287.0' #[J/kg-K]
 
 # Gravity vector
-g = '0.0 -9.81' #[m/s^2]
+g = '0.0 0.0' #[m/s^2]
 
 conductivity_model = 'constant'
 viscosity_model = 'constant'
@@ -47,13 +47,13 @@ T_wall_1 = '600'
 enable_thermo_press_calc = 'true'
 
 pin_pressure = true
-pin_location = '0.0 7.0'
+pin_location = '0.0 0.0'
 pin_value = '0.0'
 
 [../LowMachNavierStokesBraackStabilization]
 
-tau_constant = '1'
-tau_factor = '0.1'
+tau_constant = '100'
+tau_factor = '0.0001'
 
 []
 
@@ -84,19 +84,22 @@ cp = '1004.5' #[J/kg-K]
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'injection_grid.exo'
+mesh_filename = 'injection_grid.e'
 element_type = QUAD9
+
+uniformly_refine = 0
+
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = true 
 theta = 1.0
-n_timesteps = 1
+n_timesteps = 10
 deltat = 0.12
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  1 
+max_nonlinear_iterations =  10 
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
