@@ -1,4 +1,5 @@
 SUBDIRS = cavity_benchmark \
-          rayleigh_taylor
+          rayleigh_taylor \
+          mass_injection
 
 MAINTAINERCLEANFILES = Makefile.in
