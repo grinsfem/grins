@@ -74,23 +74,23 @@ template<class Mu, class SH, class TC>
 libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( libMesh::FEMContext& c,
 												   unsigned int qp ) const
 {
-  libMesh::Real T = c.interior_value(this->_T_var, qp);
-  libMesh::RealGradient grad_T = c.interior_gradient(this->_T_var, qp);
+  libMesh::Real T = c.fixed_interior_value(this->_T_var, qp);
+  libMesh::RealGradient grad_T = c.fixed_interior_gradient(this->_T_var, qp);
 
-  libMesh::RealGradient U( c.interior_value(this->_u_var, qp),
-			   c.interior_value(this->_v_var, qp) );  
+  libMesh::RealGradient U( c.fixed_interior_value(this->_u_var, qp),
+			   c.fixed_interior_value(this->_v_var, qp) );  
 
   libMesh::RealGradient grad_u, grad_v;
 
-  grad_u = c.interior_gradient(this->_u_var, qp);
-  grad_v = c.interior_gradient(this->_v_var, qp);
+  grad_u = c.fixed_interior_gradient(this->_u_var, qp);
+  grad_v = c.fixed_interior_gradient(this->_v_var, qp);
 
   libMesh::Real divU = grad_u(0) + grad_v(1);
 
   if( this->_dim == 3 )
     {
-      U(2) = c.interior_value(this->_w_var, qp);
-      divU += (c.interior_gradient(this->_w_var, qp))(2);
+      U(2) = c.fixed_interior_value(this->_w_var, qp);
+      divU += (c.fixed_interior_gradient(this->_w_var, qp))(2);
     }
 
   return divU - (U*grad_T)/T;
@@ -120,24 +120,24 @@ template<class Mu, class SH, class TC>
 libMesh::RealGradient GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( libMesh::FEMContext& c,
 													 unsigned int qp ) const
 {
-  libMesh::Real T = c.interior_value(this->_T_var, qp);
+  libMesh::Real T = c.fixed_interior_value(this->_T_var, qp);
 
-  libMesh::Real rho = this->compute_rho(T, this->get_p0_steady(c,qp) );
+  libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(c,qp) );
 
-  libMesh::RealGradient rhoU( rho*c.interior_value(this->_u_var, qp), 
-			      rho*c.interior_value(this->_v_var, qp) );
+  libMesh::RealGradient rhoU( rho*c.fixed_interior_value(this->_u_var, qp), 
+			      rho*c.fixed_interior_value(this->_v_var, qp) );
   if(this->_dim == 3)
-    rhoU(2) = rho*c.interior_value(this->_w_var, qp);
+    rhoU(2) = rho*c.fixed_interior_value(this->_w_var, qp);
 
-  libMesh::RealGradient rhoUdotGradU( rhoU*c.interior_gradient(this->_u_var, qp),
-				      rhoU*c.interior_gradient(this->_v_var, qp) );
+  libMesh::RealGradient rhoUdotGradU( rhoU*c.fixed_interior_gradient(this->_u_var, qp),
+				      rhoU*c.fixed_interior_gradient(this->_v_var, qp) );
   if(this->_dim == 3)
-    rhoUdotGradU(2) = rhoU*c.interior_gradient(this->_w_var, qp);
+    rhoUdotGradU(2) = rhoU*c.fixed_interior_gradient(this->_w_var, qp);
 
-  libMesh::RealGradient grad_p = c.interior_gradient(this->_p_var, qp);
+  libMesh::RealGradient grad_p = c.fixed_interior_gradient(this->_p_var, qp);
 
-  libMesh::RealTensor hess_u = c.interior_hessian(this->_u_var, qp);
-  libMesh::RealTensor hess_v = c.interior_hessian(this->_v_var, qp);
+  libMesh::RealTensor hess_u = c.fixed_interior_hessian(this->_u_var, qp);
+  libMesh::RealTensor hess_v = c.fixed_interior_hessian(this->_v_var, qp);
 
   libMesh::RealGradient divGradU( hess_u(0,0) + hess_u(1,1),
 				  hess_v(0,0) + hess_v(1,1) );
@@ -150,7 +150,7 @@ libMesh::RealGradient GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::com
 
   if(this->_dim == 3)
     {
-      libMesh::RealTensor hess_w = c.interior_hessian(this->_w_var, qp);
+      libMesh::RealTensor hess_w = c.fixed_interior_hessian(this->_w_var, qp);
 
       divGradU(0) += hess_u(2,2);
       divGradU(1) += hess_v(2,2);
@@ -169,10 +169,10 @@ libMesh::RealGradient GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::com
 
   if( this->_mu.deriv(T) != 0.0 )
     {
-      libMesh::Gradient grad_T = c.interior_gradient(this->_T_var, qp);
+      libMesh::Gradient grad_T = c.fixed_interior_gradient(this->_T_var, qp);
 
-      libMesh::Gradient grad_u = c.interior_gradient(this->_u_var, qp);
-      libMesh::Gradient grad_v = c.interior_gradient(this->_v_var, qp);
+      libMesh::Gradient grad_u = c.fixed_interior_gradient(this->_u_var, qp);
+      libMesh::Gradient grad_v = c.fixed_interior_gradient(this->_v_var, qp);
 
       libMesh::Gradient gradTgradu( grad_T*grad_u, grad_T*grad_v );
 
@@ -185,7 +185,7 @@ libMesh::RealGradient GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::com
 
       if(this->_dim == 3)
 	{
-	  libMesh::Gradient grad_w = c.interior_gradient(this->_w_var, qp);
+	  libMesh::Gradient grad_w = c.fixed_interior_gradient(this->_w_var, qp);
 
 	  gradTgradu(2) = grad_T*grad_w;
 
@@ -228,17 +228,17 @@ template<class Mu, class SH, class TC>
 libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( libMesh::FEMContext& c,
 											       unsigned int qp ) const
 {
-  libMesh::Real T = c.interior_value(this->_T_var, qp);
-  libMesh::Gradient grad_T = c.interior_gradient(this->_T_var, qp);
-  libMesh::Tensor hess_T = c.interior_hessian(this->_T_var, qp);
+  libMesh::Real T = c.fixed_interior_value(this->_T_var, qp);
+  libMesh::Gradient grad_T = c.fixed_interior_gradient(this->_T_var, qp);
+  libMesh::Tensor hess_T = c.fixed_interior_hessian(this->_T_var, qp);
 
-  libMesh::Real rho = this->compute_rho(T, this->get_p0_steady(c,qp) );
+  libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(c,qp) );
   libMesh::Real rho_cp = rho*this->_cp(T);
 
-  libMesh::RealGradient rhocpU( rho_cp*c.interior_value(this->_u_var, qp), 
-				rho_cp*c.interior_value(this->_v_var, qp) );
+  libMesh::RealGradient rhocpU( rho_cp*c.fixed_interior_value(this->_u_var, qp), 
+				rho_cp*c.fixed_interior_value(this->_v_var, qp) );
   if(this->_dim == 3)
-    rhocpU(2) = rho_cp*c.interior_value(this->_w_var, qp);
+    rhocpU(2) = rho_cp*c.fixed_interior_value(this->_w_var, qp);
 
   return rhocpU*grad_T - this->_k.deriv(T)*(grad_T*grad_T) - this->_k(T)*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
 }
