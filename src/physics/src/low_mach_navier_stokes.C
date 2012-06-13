@@ -240,7 +240,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool reques
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_p_dofs; i++)
         {
-          Fp(i) += (-U*grad_T/T + divU)*p_phi[i][qp]*JxW[qp];
+          Fp(i) += (-U*grad_T + T*divU)*p_phi[i][qp]*JxW[qp];
 	}
     }
 
@@ -496,7 +496,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_continuity_mass_residual( bo
 
       for (unsigned int i = 0; i != n_p_dofs; ++i)
         {
-	  F_p(i) += T_dot/T*p_phi[i][qp]*JxW[qp];
+	  F_p(i) += T_dot*p_phi[i][qp]*JxW[qp];
 	} // End DoF loop i
 
     } // End quadrature loop qp

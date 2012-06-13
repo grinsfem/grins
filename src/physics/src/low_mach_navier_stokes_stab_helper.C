@@ -25,34 +25,16 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef STAB_HELPER_H
-#define STAB_HELPER_H
 
-// libMesh
-#include "fe_base.h"
-#include "vector_value.h"
-#include "tensor_value.h"
-#include "fem_context.h"
+#include "low_mach_navier_stokes_stab_helper.h"
 
-namespace GRINS
+GRINS::LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper(const GetPot& input)
+  : IncompressibleNavierStokesStabilizationHelper(input)
 {
-  class StabilizationHelper
-  {
-  public:
-    StabilizationHelper();
-    ~StabilizationHelper();
+  return;
+}
 
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient compute_g( libMesh::FEBase* fe,
-				     libMesh::FEMContext& c,
-				     unsigned int qp ) const;
-    
-    /*! \todo Should we inline this? */
-    libMesh::RealTensor compute_G( libMesh::FEBase* fe,
-				   libMesh::FEMContext& c,
-				   unsigned int qp ) const;
-
-  }; // class StabilizationHelper
-
-} // namespace GRINS
-#endif // STAB_HELPER_H
+GRINS::LowMachNavierStokesStabilizationHelper::~LowMachNavierStokesStabilizationHelper()
+{
+  return;
+}

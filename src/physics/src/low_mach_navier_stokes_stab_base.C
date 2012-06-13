@@ -31,7 +31,8 @@
 template<class Mu, class SH, class TC>
 GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::LowMachNavierStokesStabilizationBase( const std::string& physics_name, 
 											   const GetPot& input )
-  : GRINS::LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input)
+  : GRINS::LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
+    _stab_helper( input )
 {
   this->read_input_options(input);
 
@@ -47,8 +48,6 @@ GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::~LowMachNavierStokesStabi
 template<class Mu, class SH, class TC>
 void GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::read_input_options( const GetPot& input )
 {
-  this->_C = input("Physics/"+this->_physics_name+"/tau_constant", 1 );
-  this->_tau_factor = input("Physics/"+this->_physics_name+"/tau_factor", 0.5 );
   return;
 }
 
@@ -93,7 +92,7 @@ libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res
       divU += (c.fixed_interior_gradient(this->_w_var, qp))(2);
     }
 
-  return divU - (U*grad_T)/T;
+  return T*divU - (U*grad_T);
 }
 
 template<class Mu, class SH, class TC>
@@ -103,14 +102,14 @@ libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res
   libMesh::Real T = c.fixed_interior_value(this->_T_var, qp);
   libMesh::Real T_dot = c.interior_value(this->_T_var, qp);
 
-  libMesh::Real RC_t = -T_dot/T;
+  libMesh::Real RC_t = -T_dot;
 
   if( this->_enable_thermo_press_calc )
     {
       libMesh::Real p0 = c.fixed_interior_value(this->_p0_var, qp);
       libMesh::Real p0_dot = c.interior_value(this->_p0_var, qp);
 
-      RC_t += p0_dot/p0;
+      RC_t += T*p0_dot/p0;
     }
 
   return RC_t;

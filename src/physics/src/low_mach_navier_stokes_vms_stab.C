@@ -122,6 +122,11 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_t
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
       libMesh::Real T = c.interior_value( this->_T_var, qp );
+      
+      libMesh::Real mu = this->_mu(T);
+      libMesh::Real k = this->_k(T);
+      libMesh::Real cp = this->_cp(T);
+
       libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( c, qp ) );
 
       libMesh::RealGradient U( c.interior_value( this->_u_var, qp ),
@@ -129,8 +134,8 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_t
       if( this->_dim == 3 )
 	U(2) = c.interior_value( this->_w_var, qp );
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, is_steady );
-      libMesh::Real tau_E = this->compute_tau_energy( c, qp, g, G, rho, U, T, is_steady );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
+      libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, is_steady );
 
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
       libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
@@ -205,14 +210,13 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_tim
 
       libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
+      libMesh::Real mu = this->_mu(T);
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, is_steady );
-      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g, G, U, rho );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
+      libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
       libMesh::Real RC_s = this->compute_res_continuity_steady( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
-
-      libMesh::Real mu = this->_mu(T);
 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
@@ -285,6 +289,10 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_
       libMesh::Real T = c.interior_value( this->_T_var, qp );
       libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( c, qp ) );
 
+      libMesh::Real mu = this->_mu(T);
+      libMesh::Real k = this->_k(T);
+      libMesh::Real cp = this->_cp(T);
+
       libMesh::Number rho_cp = rho*this->_cp(T);
 
       libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
@@ -292,15 +300,11 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_time_
       libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, is_steady );
-      libMesh::Real tau_E = this->compute_tau_energy( c, qp, g, G, rho, U, T, is_steady );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
+      libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, is_steady );
 
       libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
-
-      //std::cout << "tau_E = " << tau_E << ", RE_s = " << RE_s << std::endl;
-
-      libMesh::Real k = this->_k(T);
 
       for (unsigned int i=0; i != n_T_dofs; i++)
         {
@@ -344,12 +348,14 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_continuity_m
       libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
       libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
 
+      libMesh::Real mu = this->_mu(T);
+
       libMesh::RealGradient U( c.fixed_interior_value( this->_u_var, qp ),
 			       c.fixed_interior_value( this->_v_var, qp ) );
       if( this->_dim == 3 )
 	U(2) = c.fixed_interior_value( this->_w_var, qp );
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, false );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, false );
       libMesh::RealGradient RM_t = this->compute_res_momentum_transient( c, qp );
 
       // Now a loop over the pressure degrees of freedom.  This
@@ -398,6 +404,8 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_mas
       libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
       libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
 
+      libMesh::Real mu = this->_mu(T);
+
       libMesh::RealGradient U( c.fixed_interior_value(this->_u_var, qp),
 			       c.fixed_interior_value(this->_v_var, qp) );
 
@@ -416,8 +424,8 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_momentum_mas
       libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, false );
-      libMesh::Real tau_C = this->compute_tau_continuity( tau_M, g, G, U, rho );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, false );
+      libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
       libMesh::Real RC_t = this->compute_res_continuity_transient( c, qp );
       libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
@@ -492,6 +500,10 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_mass_
       libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
       libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
 
+      libMesh::Real mu = this->_mu(T);
+      libMesh::Real k = this->_k(T);
+      libMesh::Real cp = this->_cp(T);
+
       libMesh::Number rho_cp = rho*this->_cp(T);
 
       libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
@@ -499,8 +511,8 @@ void GRINS::LowMachNavierStokesVMSStabilization<Mu,SH,TC>::assemble_energy_mass_
       libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
-      libMesh::Real tau_M = this->compute_tau_momentum( c, qp, g, G, rho, U, T, false );
-      libMesh::Real tau_E = this->compute_tau_energy( c, qp, g, G, rho, U, T, false );
+      libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, false );
+      libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, false );
 
       libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
       libMesh::Real RE_t = this->compute_res_energy_transient( c, qp );

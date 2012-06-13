@@ -30,7 +30,7 @@
 
 //GRINS
 #include "low_mach_navier_stokes_base.h"
-#include "stab_helper.h"
+#include "low_mach_navier_stokes_stab_helper.h"
 
 //! GRINS namespace
 namespace GRINS
@@ -43,6 +43,7 @@ namespace GRINS
   public:
 
     LowMachNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+
     virtual ~LowMachNavierStokesStabilizationBase();
 
     //! Read options from GetPot input file. By default, nothing is read.
@@ -50,65 +51,6 @@ namespace GRINS
 
     //! Initialize context for added physics variables
     virtual void init_context( libMesh::DiffContext &context );
-
-    inline
-    libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
-					  libMesh::RealGradient& g,
-					  libMesh::RealTensor&,
-					  libMesh::Gradient,
-					  libMesh::Real  ) const
-    {
-      return this->_tau_factor/(tau_M*(g*g));
-    }
-
-    inline
-    libMesh::Real compute_tau_momentum( libMesh::FEMContext& c,
-					unsigned int qp,
-					libMesh::RealGradient& g,
-					libMesh::RealTensor& G,
-					libMesh::Real rho,
-					libMesh::Gradient U,
-					libMesh::Real T,
-					bool is_steady ) const
-    {
-      libMesh::Real mu = this->_mu(T);
-
-      return this->compute_tau( c, qp, mu*mu, g, G, rho, U, is_steady );
-    }
-
-    inline
-    libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
-				      unsigned int qp,
-				      libMesh::RealGradient& g,
-				      libMesh::RealTensor& G,
-				      libMesh::Real rho,
-				      libMesh::Gradient U,
-				      libMesh::Real T,
-				      bool is_steady ) const
-    {
-      libMesh::Real k = this->_k(T);
-      libMesh::Real cp = this->_cp(T);
-
-      return this->compute_tau( c, qp, k*k, g, G, rho*cp, U, is_steady );
-    }
-
-    inline
-    libMesh::Real compute_tau( libMesh::FEMContext& c,
-			       unsigned int qp,
-			       libMesh::Real mat_prop_sq,
-			       libMesh::RealGradient& g,
-			       libMesh::RealTensor& G,
-			       libMesh::Real rho,
-			       libMesh::Gradient U,
-			       bool is_steady ) const
-    {
-      libMesh::Real tau = (rho*U)*(G*(rho*U)) + this->_C*mat_prop_sq*G.contract(G);
-
-      if(!is_steady)
-	tau += (2.0*rho/c.get_deltat_value())*(2.0*rho/c.get_deltat_value());
-
-      return this->_tau_factor/std::sqrt(tau);
-    }
 
     libMesh::Real compute_res_continuity_steady( libMesh::FEMContext& context,
 						 unsigned int qp ) const;
@@ -118,24 +60,22 @@ namespace GRINS
     
     libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
 						       unsigned int qp ) const;
-
+    
     libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
 							  unsigned int qp ) const;
-
+    
     libMesh::Real compute_res_energy_steady( libMesh::FEMContext& context,
 					     unsigned int qp ) const;
     
     libMesh::Real compute_res_energy_transient( libMesh::FEMContext& context,
 						unsigned int qp ) const;
 
-
   protected:
 
-    libMesh::Real _C, _tau_factor;
-
-    StabilizationHelper _stab_helper;
+    LowMachNavierStokesStabilizationHelper _stab_helper;
     
   private:
+
     LowMachNavierStokesStabilizationBase();
 
   }; // End LowMachNavierStokesStabilizationBase class declarations

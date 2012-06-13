@@ -148,8 +148,8 @@ void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::set_time_evolving_vars( libMesh::
   if (dim == 3)
     system->time_evolving(_w_var);
 
-  system->time_evolving(_p_var);
   system->time_evolving(_T_var);
+  system->time_evolving(_p_var);
 
   if( _enable_thermo_press_calc )
     system->time_evolving(_p0_var);
