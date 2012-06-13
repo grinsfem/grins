@@ -123,45 +123,41 @@ libMesh::RealGradient GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::com
 
   libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(c,qp) );
 
-  libMesh::RealGradient rhoU( rho*c.fixed_interior_value(this->_u_var, qp), 
-			      rho*c.fixed_interior_value(this->_v_var, qp) );
+  libMesh::RealGradient U( c.fixed_interior_value(this->_u_var, qp), 
+			   c.fixed_interior_value(this->_v_var, qp) );
   if(this->_dim == 3)
-    rhoU(2) = rho*c.fixed_interior_value(this->_w_var, qp);
-
-  libMesh::RealGradient rhoUdotGradU( rhoU*c.fixed_interior_gradient(this->_u_var, qp),
-				      rhoU*c.fixed_interior_gradient(this->_v_var, qp) );
-  if(this->_dim == 3)
-    rhoUdotGradU(2) = rhoU*c.fixed_interior_gradient(this->_w_var, qp);
+    U(2) = c.fixed_interior_value(this->_w_var, qp);
 
   libMesh::RealGradient grad_p = c.fixed_interior_gradient(this->_p_var, qp);
+
+  libMesh::RealGradient grad_u = c.fixed_interior_gradient(this->_u_var, qp);
+  libMesh::RealGradient grad_v = c.fixed_interior_gradient(this->_v_var, qp);
 
   libMesh::RealTensor hess_u = c.fixed_interior_hessian(this->_u_var, qp);
   libMesh::RealTensor hess_v = c.fixed_interior_hessian(this->_v_var, qp);
 
-  libMesh::RealGradient divGradU( hess_u(0,0) + hess_u(1,1),
-				  hess_v(0,0) + hess_v(1,1) );
+  libMesh::RealGradient rhoUdotGradU;
+  libMesh::RealGradient divGradU;
+  libMesh::RealGradient divGradUT;
+  libMesh::RealGradient divdivU;
 
-  libMesh::RealGradient divGradUT( hess_u(0,0) + hess_v(0,1),
-				   hess_u(1,0) + hess_v(1,1) );
-
-  libMesh::RealGradient divdivU( hess_u(0,0) + hess_v(1,0),
-				 hess_u(0,1) + hess_v(1,1) );
-
-  if(this->_dim == 3)
+  if( this->_dim < 3 )
     {
+      rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
+      divGradU  = _stab_helper.div_GradU( hess_u, hess_v );
+      divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v );
+      divdivU   = _stab_helper.div_divU_I( hess_u, hess_v );
+    }
+  else
+    {
+      libMesh::RealGradient grad_w = c.fixed_interior_gradient(this->_w_var, qp);
       libMesh::RealTensor hess_w = c.fixed_interior_hessian(this->_w_var, qp);
+      
+      rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v, grad_w );
 
-      divGradU(0) += hess_u(2,2);
-      divGradU(1) += hess_v(2,2);
-      divGradU(2) = hess_w(0,0) + hess_w(1,1) + hess_w(2,2);
-
-      divGradUT(0) += hess_w(0,2);
-      divGradUT(1) += hess_w(1,2);
-      divGradUT(2) = hess_u(2,0) + hess_v(2,1) + hess_w(2,2);
-
-      divdivU(0) += hess_w(2,0);
-      divdivU(1) += hess_w(2,1);
-      divdivU(2) = hess_u(0,2) + hess_v(1,2) + hess_w(2,2);
+      divGradU  = _stab_helper.div_GradU( hess_u, hess_v, hess_w );
+      divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v, hess_w );
+      divdivU   = _stab_helper.div_divU_I( hess_u, hess_v, hess_w );
     }
 
   libMesh::RealGradient divT = this->_mu(T)*(divGradU + divGradUT - 2.0/3.0*divdivU);

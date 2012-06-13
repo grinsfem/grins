@@ -43,7 +43,7 @@ GRINS::IncompressibleNavierStokesStabilizationHelper::~IncompressibleNavierStoke
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U, 
 										       libMesh::Gradient& grad_u, 
-										       libMesh::Gradient& grad_v )
+										       libMesh::Gradient& grad_v ) const
 {
   return libMesh::RealGradient( U*grad_u, U*grad_v );
 }
@@ -51,13 +51,13 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::Udot
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U, 
 										       libMesh::Gradient& grad_u, 
 										       libMesh::Gradient& grad_v, 
-										       libMesh::Gradient& grad_w )
+										       libMesh::Gradient& grad_w ) const
 {
   return libMesh::RealGradient( U*grad_u, U*grad_v, U*grad_w );
 }
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u, 
-										       libMesh::RealTensor& hess_v )
+										       libMesh::RealTensor& hess_v ) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1),
 				hess_v(0,0) + hess_v(1,1) );
@@ -65,7 +65,7 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u, 
 										       libMesh::RealTensor& hess_v,
-										       libMesh::RealTensor& hess_w )
+										       libMesh::RealTensor& hess_w ) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1) + hess_u(2,2),
 				hess_v(0,0) + hess_v(1,1) + hess_v(2,2),
@@ -73,7 +73,7 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_
 }
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u, 
-											 libMesh::RealTensor& hess_v )
+											 libMesh::RealTensor& hess_v ) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1),
 				hess_u(1,0) + hess_v(1,1) );
@@ -81,7 +81,7 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u, 
 											 libMesh::RealTensor& hess_v,
-											 libMesh::RealTensor& hess_w )
+											 libMesh::RealTensor& hess_w ) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1) + hess_w(0,2),
 				hess_u(1,0) + hess_v(1,1) + hess_w(1,2),
@@ -89,7 +89,7 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_
 }
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u, 
-											libMesh::RealTensor& hess_v )
+											libMesh::RealTensor& hess_v ) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0),
 				hess_u(0,1) + hess_v(1,1) );
@@ -97,7 +97,7 @@ libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_
 
 libMesh::RealGradient GRINS::IncompressibleNavierStokesStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u,
 											libMesh::RealTensor& hess_v,
-											libMesh::RealTensor& hess_w)
+											libMesh::RealTensor& hess_w) const
 {
   return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0) + hess_w(2,0),
 				hess_u(0,1) + hess_v(1,1) + hess_w(2,1),
