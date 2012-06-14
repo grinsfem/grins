@@ -99,6 +99,11 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       physics_list[physics_to_add] = 
 	PhysicsPtr(new GRINS::IncompressibleNavierStokes(physics_to_add,input) );
     }
+  else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::IncompressibleNavierStokesAdjointStabilization(physics_to_add,input) );
+    }
   else if( physics_to_add == axisymmetric_incomp_navier_stokes )
     {
       physics_list[physics_to_add] = 
@@ -217,6 +222,15 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
        physics != physics_list.end();
        physics++ )
     {
+      // For IncompressibleNavierStokes*Stabilization, we'd better have IncompressibleNavierStokes
+      if( physics->first == incompressible_navier_stokes_adjoint_stab )
+	{
+	  if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
+	    }
+	}
+
       // For HeatTransfer, we need IncompressibleNavierStokes
       if( physics->first == heat_transfer )
 	{

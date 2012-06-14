@@ -72,8 +72,11 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::element_time_derivat
   const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
     c.element_fe_var[this->_u_var]->get_dphi();
 
+  const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
+    c.element_fe_var[this->_u_var]->get_d2phi();
+
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
-  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_u_var]; // R_{p}
+  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
   libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
 
   unsigned int n_qpoints = c.element_qrule->n_points();
@@ -107,11 +110,13 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::element_time_derivat
 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-          Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp] +
-		     tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
+          Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
+		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) )
+		     + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
-	  Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] +
-		     tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+	  Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
+		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) )
+		     + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 	}
 
     }
@@ -147,8 +152,11 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::mass_residual( bool 
   const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
     c.element_fe_var[this->_u_var]->get_dphi();
 
+  const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
+    c.element_fe_var[this->_u_var]->get_d2phi();
+
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
-  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_u_var]; // R_{p}
+  libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
   libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
 
   unsigned int n_qpoints = c.element_qrule->n_points();
@@ -179,9 +187,13 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::mass_residual( bool 
 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-          Fu(i) += tau_M*RM_t(0)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
+          Fu(i) += tau_M*RM_t(0)*( this->_rho*U*u_gradphi[i][qp] 
+				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) ) 
+				   )*JxW[qp];
 
-	  Fv(i) += tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
+	  Fv(i) += tau_M*RM_t(1)*( this->_rho*U*u_gradphi[i][qp]
+				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) ) 
+				   )*JxW[qp];
 	}
 
     }

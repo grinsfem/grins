@@ -136,7 +136,7 @@ namespace GRINS
     
     if(!is_steady)
       tau += (2.0*rho/c.get_deltat_value())*(2.0*rho/c.get_deltat_value());
-    
+
     return this->_tau_factor/std::sqrt(tau);
   }
   
