@@ -49,6 +49,7 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/inc_navier_stokes_base.C \
                $(physics_srcdir)/inc_navier_stokes.C \
                $(physics_srcdir)/inc_navier_stokes_stab_base.C \
+               $(physics_srcdir)/inc_navier_stokes_adjoint_stab.C \
                $(physics_srcdir)/axisym_inc_navier_stokes.C \
                $(physics_srcdir)/heat_transfer.C \
                $(physics_srcdir)/axisym_heat_transfer.C \
@@ -113,6 +114,7 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/inc_navier_stokes_base.h \
                $(physics_incdir)/inc_navier_stokes.h \
                $(physics_incdir)/inc_navier_stokes_stab_base.h \
+               $(physics_incdir)/inc_navier_stokes_adjoint_stab.h \
                $(physics_incdir)/heat_transfer.h \
                $(physics_incdir)/axisym_heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h \

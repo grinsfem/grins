@@ -25,50 +25,58 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_STAB_BASE_H
-#define INC_NAVIER_STOKES_STAB_BASE_H
+#ifndef INC_NAVIER_STOKES_BRAACK_STAB_H
+#define INC_NAVIER_STOKES_BRAACK_STAB_H
+
+//libMesh
+#include "time_solver.h"
 
 //GRINS
-#include "inc_navier_stokes_base.h"
-#include "inc_navier_stokes_stab_helper.h"
+#include "inc_navier_stokes_stab_base.h"
 
 //! GRINS namespace
 namespace GRINS
 {
-  class IncompressibleNavierStokesStabilizationBase : public IncompressibleNavierStokesBase
+  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
+  class IncompressibleNavierStokesAdjointStabilization : public IncompressibleNavierStokesStabilizationBase
   {
 
   public:
 
-    IncompressibleNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
-
-    virtual ~IncompressibleNavierStokesStabilizationBase();
+    IncompressibleNavierStokesAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~IncompressibleNavierStokesAdjointStabilization();
 
     //! Read options from GetPot input file. By default, nothing is read.
     virtual void read_input_options( const GetPot& input );
 
-    //! Initialize context for added physics variables
-    virtual void init_context( libMesh::DiffContext &context );
+    virtual bool element_time_derivative( bool request_jacobian,
+					  libMesh::DiffContext& context,
+					  libMesh::FEMSystem* system );
 
-    libMesh::Real compute_res_continuity( libMesh::FEMContext& context,
-					  unsigned int qp ) const;
-    
-    libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
-						       unsigned int qp ) const;
-    
-    libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
-							  unsigned int qp ) const;
+    virtual bool side_time_derivative( bool request_jacobian,
+				       libMesh::DiffContext& context,
+				       libMesh::FEMSystem* system );
+
+    virtual bool element_constraint( bool request_jacobian,
+				     libMesh::DiffContext& context,
+				     libMesh::FEMSystem* system );
+
+    virtual bool side_constraint( bool request_jacobian,
+				  libMesh::DiffContext& context,
+				  libMesh::FEMSystem* system );
+
+    virtual bool mass_residual( bool request_jacobian,
+				libMesh::DiffContext& context,
+				libMesh::FEMSystem* system );
 
   protected:
 
-    IncompressibleNavierStokesStabilizationHelper _stab_helper;
     
   private:
+    IncompressibleNavierStokesAdjointStabilization();
 
-    IncompressibleNavierStokesStabilizationBase();
-
-  }; // End IncompressibleNavierStokesStabilizationBase class declarations
+  }; // End IncompressibleNavierStokesAdjointStabilization class declarations
 
 } // End namespace GRINS
 
-#endif //INC_NAVIER_STOKES_STAB_BASE_H
+#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
