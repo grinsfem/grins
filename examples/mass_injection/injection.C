@@ -172,7 +172,19 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > InjectionBCFactory::bui
   cont.add_var_name( "v" );
   cont.add_bc_id( 1 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -285.3, 0.0, 0.0, 0.0, 0.0, 285.3*0.01 ) );
+  const Real l = 0.2;
+
+  const Real mdot = 1.0;
+  const Real R = 287;
+  const Real T = 600;
+  const Real p0 = 1.0e5;
+  const Real rho = p0/(R*T);
+
+  const Real factor = 6.0*mdot/(l*l)/rho;
+
+  std::cout << "factor = " << factor << std::endl;
+  
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -factor, 0.0, 0.0, 0.0, 0.0, factor*l*l/4.0 ) );
     
   cont.set_func( vel_func );
 
