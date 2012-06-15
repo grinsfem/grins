@@ -59,6 +59,7 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/low_mach_navier_stokes_base.C \
                $(physics_srcdir)/low_mach_navier_stokes.C \
                $(physics_srcdir)/low_mach_navier_stokes_stab_base.C \
+               $(physics_srcdir)/low_mach_navier_stokes_spgsm_stab.C \
                $(physics_srcdir)/low_mach_navier_stokes_vms_stab.C \
                $(physics_srcdir)/low_mach_navier_stokes_braack_stab.C \
                $(physics_srcdir)/stab_helper.C \
@@ -124,6 +125,7 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/low_mach_navier_stokes_base.h \
                $(physics_incdir)/low_mach_navier_stokes.h \
                $(physics_incdir)/low_mach_navier_stokes_stab_base.h \
+               $(physics_incdir)/low_mach_navier_stokes_spgsm_stab.h \
                $(physics_incdir)/low_mach_navier_stokes_vms_stab.h \
                $(physics_incdir)/low_mach_navier_stokes_braack_stab.h \
                $(physics_incdir)/stab_helper.h \

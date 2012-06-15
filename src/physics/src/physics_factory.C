@@ -160,6 +160,22 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	  libmesh_error();
 	}
     }
+  else if(  physics_to_add == low_mach_navier_stokes_spgsm_stab )
+    {
+      std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
+      std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+      std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+
+      if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
+	{
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::LowMachNavierStokesSPGSMStabilization<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>(physics_to_add,input));
+	}
+      else
+	{
+	  this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
+	}
+    }
   else if(  physics_to_add == low_mach_navier_stokes_vms_stab )
     {
       std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
@@ -173,13 +189,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	}
       else
 	{
-	  std::cerr << "================================================================" << std::endl
-		    << "Invalid combination of models for " << low_mach_navier_stokes_vms_stab << std::endl
-		    << "Conductivity model  = " << conductivity << std::endl
-		    << "Viscosity model     = " << viscosity << std::endl
-		    << "Specific heat model = " << specific_heat << std::endl
-		    << "================================================================" << std::endl;
-	  libmesh_error();
+	  this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
 	}
     }
   else if(  physics_to_add == low_mach_navier_stokes_braack_stab )
@@ -195,13 +205,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	}
       else
 	{
-	  std::cerr << "================================================================" << std::endl
-		    << "Invalid combination of models for " << low_mach_navier_stokes_vms_stab << std::endl
-		    << "Conductivity model  = " << conductivity << std::endl
-		    << "Viscosity model     = " << viscosity << std::endl
-		    << "Specific heat model = " << specific_heat << std::endl
-		    << "================================================================" << std::endl;
-	  libmesh_error();
+	  this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
 	}
     }
 
@@ -306,7 +310,7 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 }
 
 void GRINS::PhysicsFactory::physics_consistency_error( const std::string physics_checked,
-						       const std::string physics_required )
+						       const std::string physics_required ) const
 {
   std::cerr << "Error: " << physics_checked << " physics class requires using "
 	    << physics_required << " physics." << std::endl
@@ -316,4 +320,18 @@ void GRINS::PhysicsFactory::physics_consistency_error( const std::string physics
   libmesh_error();	   
 
   return;
+}
+
+void GRINS::PhysicsFactory::visc_cond_specheat_error( const std::string& physics,
+						      const std::string& conductivity,
+						      const std::string& viscosity,
+						      const std::string& specific_heat ) const
+{
+  std::cerr << "================================================================" << std::endl
+	    << "Invalid combination of models for " << physics << std::endl
+	    << "Conductivity model  = " << conductivity << std::endl
+	    << "Viscosity model     = " << viscosity << std::endl
+	    << "Specific heat model = " << specific_heat << std::endl
+	    << "================================================================" << std::endl;
+  libmesh_error();
 }
