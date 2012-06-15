@@ -37,7 +37,7 @@ mu = '1.0'
 [Stabilization]
 
 tau_constant = '1'
-tau_factor = '0.01'
+tau_factor = '1.0'
 
 []
 
@@ -66,7 +66,7 @@ mesh_nx2 = 50
 [unsteady-solver]
 transient = true 
 theta = 1.0
-n_timesteps = 1
+n_timesteps = 10
 deltat = 0.001
 
 #Linear and nonlinear solver options
