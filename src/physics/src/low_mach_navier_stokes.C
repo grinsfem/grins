@@ -240,7 +240,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool reques
       // computes the contributions of the continuity equation.
       for (unsigned int i=0; i != n_p_dofs; i++)
         {
-          Fp(i) += (-U*grad_T + T*divU)*p_phi[i][qp]*JxW[qp];
+          Fp(i) += (-U*grad_T/T + divU)*p_phi[i][qp]*JxW[qp];
 	}
     }
 
@@ -496,7 +496,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_continuity_mass_residual( bo
 
       for (unsigned int i = 0; i != n_p_dofs; ++i)
         {
-	  F_p(i) += T_dot*p_phi[i][qp]*JxW[qp];
+	  F_p(i) += T_dot/T*p_phi[i][qp]*JxW[qp];
 	} // End DoF loop i
 
     } // End quadrature loop qp
@@ -643,7 +643,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv
   const unsigned int n_p0_dofs = c.dof_indices_var[this->_p0_var].size();
 
   // The subvectors and submatrices we need to fill:
-  DenseSubVector<Real> &F_p = *c.elem_subresiduals[this->_p0_var];
+  DenseSubVector<Real> &F_p0 = *c.elem_subresiduals[this->_p0_var];
 
   unsigned int n_qpoints = c.element_qrule->n_points();
 
@@ -671,8 +671,8 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv
 
       for (unsigned int i = 0; i != n_p0_dofs; ++i)
         {
-	  //F_p(i) += (p0/T - this->_p0/this->_T0)*JxW[qp];
-	  F_p(i) -= p0*gamma_ratio*divU*JxW[qp];
+	  F_p0(i) += (p0/T - this->_p0/this->_T0)*JxW[qp];
+	  //F_p0(i) -= p0*gamma_ratio*divU*JxW[qp];
 	} // End DoF loop i
     }
 
@@ -692,7 +692,11 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv
 
   const std::vector<Point> &normals = c.side_fe_var[this->_T_var]->get_normals();
 
-  libMesh::DenseSubVector<Number> &F_p = *c.elem_subresiduals[this->_p0_var]; // residual
+  libMesh::DenseSubVector<Number> &F_p0 = *c.elem_subresiduals[this->_p0_var]; // residual
+
+  // Physical location of the quadrature points
+  const std::vector<libMesh::Point>& qpoint =
+    c.side_fe_var[this->_T_var]->get_xyz();
 
   unsigned int n_qpoints = c.side_qrule->n_points();
   for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -707,9 +711,17 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv
       libMesh::Number k = this->_k(T);
       libMesh::Number cp = this->_cp(T);
 
+      libMesh::Number cv = cp + this->_R;
+      libMesh::Number gamma = cp/cv;
+      libMesh::Number gamma_ratio = gamma/(gamma-1.0);
+
+      //std::cout << "U = " << U << std::endl;
+
+      //std::cout << "x = " << qpoint[qp] << ", grad_T = " << grad_T << std::endl;
+
       for (unsigned int i=0; i != n_p0_dofs; i++)
 	{
-	  F_p(i) += k*grad_T*normals[qp]*JxW_side[qp];
+	  //F_p0(i) += (k*grad_T*normals[qp] - p0*gamma_ratio*U*normals[qp]  )*JxW_side[qp];
 	}
     }
   

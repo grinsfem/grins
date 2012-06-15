@@ -92,7 +92,7 @@ libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res
       divU += (c.fixed_interior_gradient(this->_w_var, qp))(2);
     }
 
-  return T*divU - (U*grad_T);
+  return divU - (U*grad_T)/T;
 }
 
 template<class Mu, class SH, class TC>
@@ -102,14 +102,14 @@ libMesh::Real GRINS::LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res
   libMesh::Real T = c.fixed_interior_value(this->_T_var, qp);
   libMesh::Real T_dot = c.interior_value(this->_T_var, qp);
 
-  libMesh::Real RC_t = -T_dot;
+  libMesh::Real RC_t = -T_dot/T;
 
   if( this->_enable_thermo_press_calc )
     {
       libMesh::Real p0 = c.fixed_interior_value(this->_p0_var, qp);
       libMesh::Real p0_dot = c.interior_value(this->_p0_var, qp);
 
-      RC_t += T*p0_dot/p0;
+      RC_t += p0_dot/p0;
     }
 
   return RC_t;
