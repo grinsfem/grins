@@ -6,6 +6,7 @@ check_PROGRAMS += test_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
+check_PROGRAMS += gaussian_profiles
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -37,6 +38,7 @@ test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
 test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
 test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
+gaussian_profiles_SOURCES = gaussian_profiles.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -44,10 +46,13 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_ns_poiseuille_flow_SOURCES)         \
           $(test_axi_ns_poiseuille_flow_SOURCES)     \
           $(test_axi_ns_con_cyl_flow_SOURCES)        \
-          $(test_thermally_driven_flow_SOURCES)
+          $(test_thermally_driven_flow_SOURCES)      \
+          $(gaussian_profiles_SOURCES)
 
 #Define tests to actually be run
-TESTS = navier_stokes_tests.sh             \
+TESTS = bc_profile_tests.sh                \
+        gaussian_profiles                  \
+        navier_stokes_tests.sh             \
         test_ns_couette_flow_2d_x.sh       \
         test_ns_couette_flow_2d_y.sh       \
         test_ns_poiseuille_flow.sh         \
@@ -59,7 +64,8 @@ TESTS = navier_stokes_tests.sh             \
         test_thermally_driven_3d_flow.sh   \
         finalize.sh
 
-shellfiles_src = navier_stokes_tests.sh             \
+shellfiles_src = bc_profile_tests.sh                \
+                 navier_stokes_tests.sh             \
                  test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
                  test_ns_poiseuille_flow.sh         \
