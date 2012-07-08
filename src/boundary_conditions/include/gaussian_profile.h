@@ -41,7 +41,7 @@ namespace GRINS
   //! Gaussian profile
   /*! Generic Gaussian profile. Mainly used for defining inflow
       boundary conditions. Function takes the form:
-      \f$ f= a \exp \left{ -\frac{(r-\mu)^2}{2*\sigma^2} \right} - b\f$ 
+      \f$ f= a \exp \left\{ -\frac{(r-\mu)^2}{2*\sigma^2} \right\} - b\f$ 
       where \f$ b \f$ is a shift so that \f$ f \f$ is continuous.
       In particular, if \f$ r > b, f = 0 \f$.  \f$ r \f$ is computed
       in the derived classes, depending on the plane the function is defined in.*/

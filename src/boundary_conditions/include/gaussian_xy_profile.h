@@ -35,7 +35,7 @@ namespace GRINS
 {
   
   //! Gaussian profile
-  /*! \f$ r \f$ is computed in the x-y plane: \f$ f = \sqrt{x^2 + y^2} \f$*/
+  /*! \f$ r \f$ is computed in the x-y plane: \f$ r = \sqrt{x^2 + y^2} \f$ */
   class GaussianXYProfile : public GaussianProfile
   {
   public:
