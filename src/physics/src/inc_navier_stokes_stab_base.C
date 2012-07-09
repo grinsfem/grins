@@ -67,9 +67,6 @@ void GRINS::IncompressibleNavierStokesStabilizationBase::init_context( libMesh::
 libMesh::Real GRINS::IncompressibleNavierStokesStabilizationBase::compute_res_continuity( libMesh::FEMContext& c,
 											  unsigned int qp ) const
 {
-  libMesh::RealGradient U( c.fixed_interior_value(this->_u_var, qp),
-			   c.fixed_interior_value(this->_v_var, qp) );  
-
   libMesh::RealGradient grad_u, grad_v;
 
   grad_u = c.fixed_interior_gradient(this->_u_var, qp);
@@ -79,7 +76,6 @@ libMesh::Real GRINS::IncompressibleNavierStokesStabilizationBase::compute_res_co
 
   if( this->_dim == 3 )
     {
-      U(2) = c.fixed_interior_value(this->_w_var, qp);
       divU += (c.fixed_interior_gradient(this->_w_var, qp))(2);
     }
 

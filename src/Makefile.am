@@ -54,6 +54,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/heat_transfer_base.C \
                $(physics_srcdir)/heat_transfer.C \
                $(physics_srcdir)/heat_transfer_source.C \
+               $(physics_srcdir)/heat_transfer_stab_base.C \
+               $(physics_srcdir)/heat_transfer_adjoint_stab.C \
                $(physics_srcdir)/axisym_heat_transfer.C \
                $(physics_srcdir)/boussinesq_buoyancy.C \
                $(physics_srcdir)/axisym_boussinesq_buoyancy.C \
@@ -66,6 +68,7 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/low_mach_navier_stokes_braack_stab.C \
                $(physics_srcdir)/stab_helper.C \
                $(physics_srcdir)/inc_navier_stokes_stab_helper.C \
+               $(physics_srcdir)/heat_transfer_stab_helper.C \
                $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
@@ -124,6 +127,8 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/heat_transfer_base.h \
                $(physics_incdir)/heat_transfer.h \
                $(physics_incdir)/heat_transfer_source.h \
+               $(physics_incdir)/heat_transfer_stab_base.h \
+               $(physics_incdir)/heat_transfer_adjoint_stab.h \
                $(physics_incdir)/axisym_heat_transfer.h \
                $(physics_incdir)/boussinesq_buoyancy.h \
                $(physics_incdir)/axisym_boussinesq_buoyancy.h \
@@ -137,6 +142,7 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/low_mach_navier_stokes_braack_stab.h \
                $(physics_incdir)/stab_helper.h \
                $(physics_incdir)/inc_navier_stokes_stab_helper.h \
+               $(physics_incdir)/heat_transfer_stab_helper.h \
                $(physics_incdir)/low_mach_navier_stokes_stab_helper.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
