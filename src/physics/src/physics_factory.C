@@ -114,6 +114,23 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       physics_list[physics_to_add] = 
 	PhysicsPtr(new GRINS::HeatTransfer(physics_to_add,input));
     }
+  else if( physics_to_add == heat_transfer_source )
+    {
+      std::string source_function = input( "Physics/"+physics_to_add+"/source_function", "constant" );
+      if( source_function == "constant")
+	{
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::HeatTransferSource<ConstantSourceFunction>(physics_to_add,input));
+	}
+      else
+	{
+	  std::cerr << "================================================================" << std::endl
+		    << "Invalid combination of models for " << physics_to_add << std::endl
+		    << "Source function  = " << source_function << std::endl
+		    << "================================================================" << std::endl;
+	  libmesh_error();
+	}
+    }
   else if( physics_to_add == axisymmetric_heat_transfer )
     {
       std::string conductivity = input( "Physics/"+axisymmetric_heat_transfer+"/conductivity_model", "constant" );
@@ -151,13 +168,7 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	}
       else
 	{
-	  std::cerr << "================================================================" << std::endl
-		    << "Invalid combination of models for " << low_mach_navier_stokes << std::endl
-		    << "Conductivity model  = " << conductivity << std::endl
-		    << "Viscosity model     = " << viscosity << std::endl
-		    << "Specific heat model = " << specific_heat << std::endl
-		    << "================================================================" << std::endl;
-	  libmesh_error();
+	  this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
 	}
     }
   else if(  physics_to_add == low_mach_navier_stokes_spgsm_stab )
@@ -302,6 +313,15 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 		}
 	      std::cerr << "=======================================================" << std::endl;
 	      libmesh_error();
+	    }
+	}
+
+      /* For HeatTransferSource, we'd better have HeatTransfer */
+      if( physics->first == heat_transfer_source )
+	{
+	  if( physics_list.find(heat_transfer) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( heat_transfer_source, heat_transfer  );
 	    }
 	}
     }
