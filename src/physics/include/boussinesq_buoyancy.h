@@ -42,7 +42,7 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
-#include "physics.h"
+#include "heat_transfer_base.h"
 
 namespace GRINS
 {  
@@ -60,7 +60,7 @@ namespace GRINS
     element_time_derivative routine. This class requires a flow physics enabled
     and the ConvectiveHeatTransfer physics class enabled.
    */
-  class BoussinesqBuoyancy : public Physics
+  class BoussinesqBuoyancy : public HeatTransferBase
   {
   public:
     
@@ -70,17 +70,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
-
-    //! Initialization of BoussinesqBuoyancy variables
-    /*!
-      There are actually no extra variables, just grabbing what we need.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    // Context initialization
-    /*! Doesn't do anything for BoussinesqBuoyancy since there
-      are no new variables registered */
-    virtual void init_context( libMesh::DiffContext &context );
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
@@ -111,24 +100,6 @@ namespace GRINS
 				libMesh::FEMSystem* system );
 
   protected:
-
-    //! Physical dimension of problem
-    unsigned int _dim;
-
-    //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
-
-    //! Element orders, read from input
-    libMeshEnums::Order _T_order, _V_order;
-
-    //! Indices for each variable;
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
-    VariableIndex _T_var; /* Index for Temperature field */
-
-    //! Names of each variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
 
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _rho_ref;

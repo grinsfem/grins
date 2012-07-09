@@ -29,7 +29,7 @@
 #include "boussinesq_buoyancy.h"
 
 GRINS::BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input )
-  : Physics(physics_name)
+  : HeatTransferBase(physics_name,input)
 {
   this->read_input_options(input);
   return;
@@ -42,24 +42,6 @@ GRINS::BoussinesqBuoyancy::~BoussinesqBuoyancy()
 
 void GRINS::BoussinesqBuoyancy::read_input_options( const GetPot& input )
 {
-  this->_V_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
-
-  this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") ); 
-
-  this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") );
-
-  this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") );
-
-  // Read variable naming info
-  this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
-  this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
-  this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
-  this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
-
   _rho_ref = input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0);
   _T_ref = input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0);;
   _beta_T = input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0);;
@@ -71,20 +53,6 @@ void GRINS::BoussinesqBuoyancy::read_input_options( const GetPot& input )
   
   if( g_dim == 3)
     _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
-
-  return;
-}
-
-void GRINS::BoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
-{
-  this->_dim = system->get_mesh().mesh_dimension();
-
-  // If these are already added, then we just get the index. 
-  _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);                                                                                                                                                                 
-  _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
-  _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
-  if (_dim == 3)
-    _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
 
   return;
 }
@@ -175,11 +143,6 @@ bool GRINS::BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
 #endif
 
   return request_jacobian;
-}
-
-void GRINS::BoussinesqBuoyancy::init_context( libMesh::DiffContext& )
-{
-  return;
 }
 
 bool GRINS::BoussinesqBuoyancy::side_time_derivative( bool request_jacobian,

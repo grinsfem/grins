@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef HEAT_TRANSFER_H
-#define HEAT_TRANSFER_H
+#ifndef HEAT_TRANSFER_BASE_H
+#define HEAT_TRANSFER_BASE_H
 
 //libMesh
 #include "libmesh.h"
@@ -43,7 +43,7 @@
 
 //GRINS
 #include "config.h"
-#include "heat_transfer_base.h"
+#include "physics.h"
 #include "heat_transfer_bc_handling.h"
 
 namespace GRINS
@@ -53,51 +53,63 @@ namespace GRINS
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
-  class HeatTransfer : public HeatTransferBase
+  class HeatTransferBase : public Physics
   {
   public:
 
-    HeatTransfer( const std::string& physics_name, const GetPot& input );
+    HeatTransferBase( const std::string& physics_name, const GetPot& input );
 
-    ~HeatTransfer();
+    ~HeatTransferBase();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
-    
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Time dependent part(s)
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
+    //! Initialization Heat Transfer variables
+    /*!
+      Add velocity and pressure variables to system.
+     */
+    virtual void init_variables( libMesh::FEMSystem* system );
 
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
+    //! Sets velocity variables to be time-evolving
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-    // Constraint part(s)
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
-
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
-
-    // Mass matrix part(s)
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    // Context initialization
+    virtual void init_context( libMesh::DiffContext &context );
 
   protected:
-    
+
+    //! Physical dimension of problem
+    /*! \todo Make this static member of base class? */
+    unsigned int _dim;
+
+    //! Indices for each variable;
+    VariableIndex _T_var; /* Index for temperature field */
+    VariableIndex _u_var; /* Index for x-velocity field */
+    VariableIndex _v_var; /* Index for y-velocity field */
+    VariableIndex _w_var; /* Index for z-velocity field */
+
+    //! Names of each variable in the system
+    std::string _T_var_name;
+    std::string _u_var_name, _v_var_name, _w_var_name;
+
+    //! Element type, read from input
+    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+
+    //! Element orders, read from input
+    libMeshEnums::Order _T_order, _V_order;
+
+    //! Material parameters, read from input
+    /*! \todo Need to generalize material parameters. Right now they
+              are assumed constant */
+    /*! \todo Shouldn't this rho be the same as the one in the flow? Need
+              to figure out how to have those shared */
+    libMesh::Number _rho, _Cp, _k;
 
   private:
-    HeatTransfer();
+    HeatTransferBase();
 
   };
 
 } //End namespace block
 
-#endif // HEAT_TRANSFER_H
+#endif // HEAT_TRANSFER_BASE_H
