@@ -1,5 +1,6 @@
 SUBDIRS = cavity_benchmark \
           rayleigh_taylor \
-          mass_injection
+          mass_injection \
+          vortex
 
 MAINTAINERCLEANFILES = Makefile.in
