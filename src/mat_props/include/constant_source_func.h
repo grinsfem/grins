@@ -44,12 +44,12 @@ namespace GRINS
     ~ConstantSourceFunction();
 
     inline
-    Real operator()( libMesh::Point& ) const
+    Real operator()( const libMesh::Point& ) const
     {
       return _value;
     }
 
-    libMesh::Gradient grad( libMesh::Point& ) const
+    libMesh::Gradient grad( const libMesh::Point& ) const
     {
       return libMesh::Gradient();
     }
