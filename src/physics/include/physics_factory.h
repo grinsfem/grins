@@ -42,6 +42,7 @@
 #include "axisym_inc_navier_stokes.h"
 #include "heat_transfer.h"
 #include "heat_transfer_source.h"
+#include "heat_transfer_adjoint_stab.h"
 #include "axisym_heat_transfer.h"
 #include "boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"

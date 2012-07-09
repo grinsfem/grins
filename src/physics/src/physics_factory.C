@@ -114,6 +114,11 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       physics_list[physics_to_add] = 
 	PhysicsPtr(new GRINS::HeatTransfer(physics_to_add,input));
     }
+  else if( physics_to_add == heat_transfer_adjoint_stab )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::HeatTransferAdjointStabilization(physics_to_add,input));
+    }
   else if( physics_to_add == heat_transfer_source )
     {
       std::string source_function = input( "Physics/"+physics_to_add+"/source_function", "constant" );
@@ -321,7 +326,16 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 	{
 	  if( physics_list.find(heat_transfer) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( heat_transfer_source, heat_transfer  );
+	      this->physics_consistency_error( physics->first, heat_transfer  );
+	    }
+	}
+
+      /* For HeatTransferAdjointStabilization, we'd better have HeatTransfer */
+      if( physics->first == heat_transfer_adjoint_stab )
+	{
+	  if( physics_list.find(heat_transfer) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, heat_transfer  );
 	    }
 	}
     }
