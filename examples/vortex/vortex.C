@@ -170,11 +170,14 @@ Real initial_values( const Point& p, const Parameters &params,
   
   Real theta = 0.0;
       
-  if( p(0) >= 0.0 )
-    theta = std::asin(p(1)/r);
-  else
-    theta = -std::asin(p(1)/r) + pi;
-  
+  if( r > 1.0e-6)
+    {
+      if( p(0) >= 0.0 )
+	theta = std::asin(p(1)/r);
+      else
+	theta = -std::asin(p(1)/r) + pi;
+    }
+
   Real u_theta = params.get<Real>("u_theta");
 
   Real rc = 0.2;
