@@ -248,23 +248,42 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > VortexBCFactory::build_
   cont2.set_func( vel_func2 );
 
 
-  // No-flow at bc-id 3. Just setting w-component to 0.
+  // No-flow at top and bottom. Just setting w-component to 0.
   GRINS::DBCContainer cont3;
   cont3.add_var_name( "w" );
   cont3.add_bc_id( 7 );
+  cont3.add_bc_id( 1 );
   
   // Reuse zero function
   cont3.set_func( vel_func2 );
 
 
+  // No-flow at xmin,xmax face
+  GRINS::DBCContainer cont4;
+  cont4.add_var_name( "u" );
+  cont4.add_bc_id( 6 );
+  cont4.add_bc_id( 4 );
+  // Reuse zero function
+  cont4.set_func( vel_func2 );
+
+  // No-flow at ymin,ymax face
+  GRINS::DBCContainer cont5;
+  cont5.add_var_name( "v" );
+  cont5.add_bc_id( 3 );
+  cont5.add_bc_id( 5 );
+  // Reuse zero function
+  cont5.set_func( vel_func2 );
+
   // Now pack it all up.
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
   
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+  //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
 
   //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont2) );
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont3) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont4) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont5) );
 
   return mymap;
 }

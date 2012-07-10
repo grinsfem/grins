@@ -23,13 +23,13 @@ mu = '1.846e-5'
 # top = 7
 
 bc_ids = '1 2 3 4 5 6 7'
-bc_types = 'inflow no_slip periodic periodic periodic periodic inflow'
+bc_types = 'inflow no_slip inflow inflow inflow inflow inflow'
 
-periodic_wall_3 = '3 5'
-periodic_wall_6 = '4 6'
+#periodic_wall_3 = '3 5'
+#periodic_wall_6 = '4 6'
 
-periodic_offset_3 = '0.0 1.0 0.0'
-periodic_offset_6 = '1.0 0.0 0.0'
+#periodic_offset_3 = '0.0 1.0 0.0'
+#periodic_offset_6 = '1.0 0.0 0.0'
 
 pin_pressure = true
 pin_location = '-0.5 -0.5 0.0'
@@ -46,8 +46,8 @@ T_order = 'SECOND'
 # sides = 3,4,5,6
 # top = 7
 
-bc_ids = '1 2 7'
-bc_types = 'prescribed_heat_flux prescribed_heat_flux adiabatic_wall'
+bc_ids = '1 2 3 4 5 6 7'
+bc_types = 'prescribed_heat_flux prescribed_heat_flux adiabatic_wall adiabatic_wall adiabatic_wall adiabatic_wall adiabatic_wall'
 
 #periodic_wall_3 = '3 5'
 #periodic_wall_6 = '4 6'
