@@ -168,28 +168,54 @@ Real initial_values( const Point& p, const Parameters &params,
 
   Real r = std::sqrt( p(0)*p(0) + p(1)*p(1) );
   
+  Real theta = 0.0;
+      
+  if( p(0) >= 0.0 )
+    theta = std::asin(p(1)/r);
+  else
+    theta = -std::asin(p(1)/r) + pi;
+  
+  Real u_theta = params.get<Real>("u_theta");
+
+  Real rc = 0.2;
+  Real sigma = 0.2/4;
+
+  Real vert_scaling = 0.0;
+  
+  if( p(2) >= 0.1 || p(2) <= 0.9 )
+    vert_scaling = 1.0;
+  
+  if( p(2) < 0.1 )
+    {
+      vert_scaling = 10.0*p(2);
+    }
+
+  if( p(2) > 0.9 )
+    vert_scaling = 10.0*(1.0 - p(2));
+
+  if( unknown_name == "u" )
+    {
+      return -vert_scaling*std::sin(theta)*u_theta*std::exp( -(r-rc)*(r-rc)/(2*sigma*sigma));
+    }
+  else if( unknown_name == "v" )
+    {
+      return  vert_scaling*std::cos(theta)*u_theta*std::exp( -(r-rc)*(r-rc)/(2*sigma*sigma));
+    }
+
   if( r >= 0.025 )
     {
-      Real theta = 0.0;
-      
-      if( p(0) >= 0.0 )
-	theta = std::asin(p(1)/r);
-      else
-	theta = -std::asin(p(1)/r) + pi;
-
-       Real u_theta = params.get<Real>("u_theta");
-
-      if( unknown_name == "u" )
+      if( unknown_name == "w" )
 	{
-	  return -std::sin(theta)*u_theta;
-	}
-      else if( unknown_name == "v" )
-	{
-	  return  std::cos(theta)*u_theta;
+	  return -vert_scaling*0.002506266;
 	}
     }
   else
-    return 0.0;
+    {
+      if( unknown_name == "w" )
+	{
+	  return vert_scaling*1.0;
+	}
+    }
 
   return 0.0;
 }
@@ -206,8 +232,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > VortexBCFactory::build_
   const Real sigma = 0.025/3.0;
   const Real shift = a*std::exp( -(3.0*sigma - mu)*(3.0*sigma - mu)/(2.0*sigma*sigma) );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::GaussianXYProfile( a, mu, sigma, shift ) );
-    
+  //std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::GaussianXYProfile( a, mu, sigma, shift ) );
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new ZeroFunction<Number> );
+
   cont.set_func( vel_func );
 
   // Inflow (u,v-components) at bc-id 1
@@ -235,7 +262,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > VortexBCFactory::build_
   
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont2) );
+  //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont2) );
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont3) );
 

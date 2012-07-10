@@ -98,7 +98,7 @@ tau_factor = '0.5'
 # Initial temperature
 T0 = '300.0' #[K]
 
-u_theta = '0.5' # [m/s]
+u_theta = '2' # [m/s]
 
 []
 
