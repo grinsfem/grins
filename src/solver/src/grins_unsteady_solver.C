@@ -68,6 +68,10 @@ void GRINS::UnsteadySolver::solve( std::tr1::shared_ptr<libMesh::EquationSystems
   // solution of the equations.
   for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
     {
+      std::cout << "==========================================================" << std::endl
+		<< "                 Beginning time step " << t_step  << std::endl
+		<< "==========================================================" << std::endl;
+
       // GRVY timers contained in here (if enabled)
       this->_system->solve();
 
