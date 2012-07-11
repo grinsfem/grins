@@ -77,6 +77,7 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::element_time_derivat
 
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
   libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
+  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
   libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
 
   unsigned int n_qpoints = c.element_qrule->n_points();
@@ -111,12 +112,17 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::element_time_derivat
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
           Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
-		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) )
+		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 		     + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
 	  Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
-		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) )
+		     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 		     + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+
+	  if(this->_dim == 3)
+	    Fw(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
+		       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+		       + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
 	}
 
     }
@@ -157,6 +163,7 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::mass_residual( bool 
 
   libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
   libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
+  libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
   libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
 
   unsigned int n_qpoints = c.element_qrule->n_points();
@@ -188,11 +195,15 @@ bool GRINS::IncompressibleNavierStokesAdjointStabilization::mass_residual( bool 
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
           Fu(i) += tau_M*RM_t(0)*( this->_rho*U*u_gradphi[i][qp] 
-				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) ) 
+				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
 				   )*JxW[qp];
 
 	  Fv(i) += tau_M*RM_t(1)*( this->_rho*U*u_gradphi[i][qp]
-				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) ) 
+				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
+				   )*JxW[qp];
+
+	  Fw(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
+				   + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
 				   )*JxW[qp];
 	}
 
