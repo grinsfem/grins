@@ -82,8 +82,8 @@ value = '-450.0' # [W/m^3]
 
 [Stabilization]
 
-tau_constant = '10'
-tau_factor = '0.5'
+tau_constant = '5'
+tau_factor = '0.1'
 
 []
 
@@ -105,7 +105,7 @@ u_theta = '2' # [m/s]
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'vortex_grid_coarse.e'
+mesh_filename = 'vortex_test_coarse.e'
 
 uniformly_refine =  0 
 
@@ -114,13 +114,15 @@ uniformly_refine =  0
 [unsteady-solver]
 transient = true 
 theta = 1.0
-n_timesteps = 1
-deltat = 0.1
+n_timesteps = 10000
+deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 250
+
+relative_residual_tolerance = 1.0e-13
 
 verify_analytic_jacobians = 0.0
 
