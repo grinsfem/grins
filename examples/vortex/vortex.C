@@ -119,16 +119,30 @@ int main(int argc, char* argv[])
       const libMesh::System& system = es->get_system(system_name);
       
       Parameters &params = es->parameters;
-      Real T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
+      Real T_base = libMesh_inputfile("InitialConditions/T_base", 0.0);
+      Real T_top = libMesh_inputfile("InitialConditions/T_top", 0.0);
 
       Real u_theta = libMesh_inputfile("InitialConditions/u_theta", 0.0);
 
-      Real& dummy_T  = params.set<Real>("T_init");
-      dummy_T = T_init;
+      Real jet_width = libMesh_inputfile("InitialConditions/jet_width", 0.0);
+
+      Real w0 = libMesh_inputfile("InitialConditions/w0", 0.0);
+
+      Real& dummy_Tb  = params.set<Real>("T_base");
+      dummy_Tb = T_base;
+
+      Real& dummy_Tt  = params.set<Real>("T_top");
+      dummy_Tt = T_top;
 
       Real& dummy_u = params.set<Real>("u_theta");
       dummy_u = u_theta;
+
+      Real& dummy_jw = params.set<Real>("jet_width");
+      dummy_jw = jet_width;
       
+      Real& dummy_w0 = params.set<Real>("w0");
+      dummy_w0 = w0;
+
       std::cout << "==========================================================" << std::endl
 		<< " Beginning Solution Projection" << std::endl
 		<< "==========================================================" << std::endl;
@@ -161,21 +175,39 @@ int main(int argc, char* argv[])
 Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
+  Real x = p(0);
+  Real y = p(1);
+  Real z = p(2);
+
+  std::string uvar = "u";
+  std::string wvar = "w";
+
+  /*
+  x = p(2);
+  z = p(0);
+  
+  uvar = "w";
+  wvar = "u";
+  */
+  
+
   if( unknown_name == "T" )
     {
-      return params.get<Real>("T_init");
+      const Real T_base = params.get<Real>("T_base");
+      const Real T_top = params.get<Real>("T_top");
+      return (T_top - T_base)*z + T_base;
     }
 
-  Real r = std::sqrt( p(0)*p(0) + p(1)*p(1) );
+  Real r = std::sqrt( x*x + y*y );
   
   Real theta = 0.0;
       
   if( r > 1.0e-6)
     {
-      if( p(0) >= 0.0 )
-	theta = std::asin(p(1)/r);
+      if( x >= 0.0 )
+	theta = std::asin(y/r);
       else
-	theta = -std::asin(p(1)/r) + pi;
+	theta = -std::asin(y/r) + pi;
     }
 
   Real u_theta = params.get<Real>("u_theta");
@@ -185,18 +217,18 @@ Real initial_values( const Point& p, const Parameters &params,
 
   Real vert_scaling = 0.0;
   
-  if( p(2) >= 0.1 || p(2) <= 0.9 )
+  if( z >= 0.1 || z <= 0.9 )
     vert_scaling = 1.0;
   
-  if( p(2) < 0.1 )
+  if( z < 0.1 )
     {
-      vert_scaling = 10.0*p(2);
+      vert_scaling = 10.0*z;
     }
 
-  if( p(2) > 0.9 )
-    vert_scaling = 10.0*(1.0 - p(2));
+  if( z > 0.9 )
+    vert_scaling = 10.0*(1.0 - z);
 
-  if( unknown_name == "u" )
+  if( unknown_name == uvar )
     {
       return -vert_scaling*std::sin(theta)*u_theta*std::exp( -(r-rc)*(r-rc)/(2*sigma*sigma));
     }
@@ -205,18 +237,23 @@ Real initial_values( const Point& p, const Parameters &params,
       return  vert_scaling*std::cos(theta)*u_theta*std::exp( -(r-rc)*(r-rc)/(2*sigma*sigma));
     }
 
-  if( r >= 0.025 )
+  const Real jet_width = params.get<Real>("jet_width");
+  const Real w0 = params.get<Real>("w0");
+
+  if( std::fabs(x) <= jet_width/2.0 && std::fabs(y) <= jet_width/2.0 )
     {
-      if( unknown_name == "w" )
+      if( unknown_name == wvar )
 	{
-	  return -vert_scaling*0.002506266;
+	  return vert_scaling*w0;
 	}
     }
   else
     {
-      if( unknown_name == "w" )
+      if( unknown_name == wvar )
 	{
-	  return vert_scaling*1.0;
+	  const Real A0 = jet_width*jet_width;
+	  const Real A1 = 1.0-A0;
+	  return -vert_scaling*w0*A0/A1;
 	}
     }
 
@@ -225,57 +262,33 @@ Real initial_values( const Point& p, const Parameters &params,
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > VortexBCFactory::build_dirichlet( )
 {
-  // Inflow (w-component) at bc-id 1
-  GRINS::DBCContainer cont;
-  cont.add_var_name( "w" );
-  cont.add_bc_id( 1 );
-  
-  const Real a = 1.0;
-  const Real mu = 0.0;
-  const Real sigma = 0.025/3.0;
-  const Real shift = a*std::exp( -(3.0*sigma - mu)*(3.0*sigma - mu)/(2.0*sigma*sigma) );
-
-  //std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::GaussianXYProfile( a, mu, sigma, shift ) );
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new ZeroFunction<Number> );
 
-  cont.set_func( vel_func );
-
-  // Inflow (u,v-components) at bc-id 1
-  GRINS::DBCContainer cont2;
-  cont2.add_var_name( "u" );
-  cont2.add_var_name( "v" );
-  cont2.add_bc_id( 1 );
-
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
-
-  cont2.set_func( vel_func2 );
-
-
-  // No-flow at top and bottom. Just setting w-component to 0.
+  // No-flow at top.
   GRINS::DBCContainer cont3;
   cont3.add_var_name( "w" );
-  cont3.add_bc_id( 7 );
-  cont3.add_bc_id( 1 );
+  cont3.add_bc_id( 5 );
+  //cont3.add_bc_id( 0 );
   
   // Reuse zero function
-  cont3.set_func( vel_func2 );
+  cont3.set_func( vel_func );
 
 
   // No-flow at xmin,xmax face
   GRINS::DBCContainer cont4;
   cont4.add_var_name( "u" );
-  cont4.add_bc_id( 6 );
+  cont4.add_bc_id( 2 );
   cont4.add_bc_id( 4 );
   // Reuse zero function
-  cont4.set_func( vel_func2 );
+  cont4.set_func( vel_func );
 
   // No-flow at ymin,ymax face
   GRINS::DBCContainer cont5;
   cont5.add_var_name( "v" );
   cont5.add_bc_id( 3 );
-  cont5.add_bc_id( 5 );
+  cont5.add_bc_id( 1 );
   // Reuse zero function
-  cont5.set_func( vel_func2 );
+  cont5.set_func( vel_func );
 
   // Now pack it all up.
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
