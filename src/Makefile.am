@@ -190,7 +190,11 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(matprops_SRC) \
                       $(bc_handling_SRC)
 
-libgrins_la_LIBADD = $(GRVY_PREFIX)/lib/libgrvy.la $(LIBMESH_LIBDIR)/libmesh.la
+libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
+
+if GRVY_ENABLED
+   libgrins_la_LIBADD += $(GRVY_PREFIX)/lib/libgrvy.la
+endif
 
 #------------------------------------
 # Source for stand alone GRINS driver
