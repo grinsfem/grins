@@ -7,7 +7,7 @@ BUILT_SOURCES   = .license.stamp
 bin_PROGRAMS    = vortex
 
 vortex_SOURCES = vortex.C
-vortex_LDADD = $(top_builddir)/src/libgrins.la
+vortex_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \

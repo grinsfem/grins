@@ -190,7 +190,11 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(matprops_SRC) \
                       $(bc_handling_SRC)
 
-libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
+if LIBMESH_LIBTOOL
+   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
+else
+   libgrins_la_LIBADD = $(LIBMESH_LDFLAGS)
+endif
 
 if GRVY_ENABLED
    libgrins_la_LIBADD += $(GRVY_PREFIX)/lib/libgrvy.la
@@ -202,9 +206,15 @@ endif
 
 grins_SOURCES = $(solver_srcdir)/grins.C
 grins_LDADD = libgrins.la
+if !LIBMESH_LIBTOOL
+grins_LDADD += $(LIBMESH_LDFLAGS)
+endif
 
 grins_version_SOURCES = $(utilities_srcdir)/version.C
 grins_version_LDADD = libgrins.la
+if !LIBMESH_LIBTOOL
+grins_version_LDADD += $(LIBMESH_LDFLAGS)
+endif
 
 #--------------------------------------
 #Local Directories to include for build

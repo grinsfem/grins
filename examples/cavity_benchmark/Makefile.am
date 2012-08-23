@@ -7,7 +7,7 @@ BUILT_SOURCES   = .license.stamp
 bin_PROGRAMS    = cavity
 
 cavity_SOURCES = cavity.C
-cavity_LDADD = $(top_builddir)/src/libgrins.la
+cavity_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \

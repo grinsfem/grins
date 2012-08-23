@@ -7,7 +7,7 @@ BUILT_SOURCES   = .license.stamp
 bin_PROGRAMS    = injection
 
 injection_SOURCES = injection.C
-injection_LDADD = $(top_builddir)/src/libgrins.la
+injection_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \

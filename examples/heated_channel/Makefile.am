@@ -7,7 +7,7 @@ BUILT_SOURCES   = .license.stamp
 bin_PROGRAMS    = channel
 
 channel_SOURCES = channel.C
-channel_LDADD = $(top_builddir)/src/libgrins.la
+channel_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \

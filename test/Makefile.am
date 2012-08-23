@@ -20,7 +20,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_CPPFLAGS) \
                $(GRVY_CFLAGS)
 
-AM_LDFLAGS = $(top_builddir)/src/libgrins.la
+AM_LDFLAGS = $(LIBGRINS_LIBS)
 
 #--------------
 # MASA support

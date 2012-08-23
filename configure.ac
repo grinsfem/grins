@@ -71,6 +71,16 @@ else
 fi
 
 dnl---------------------------------------------------------
+dnl Add libMesh flags manually if it's not a libtool build
+dnl---------------------------------------------------------
+if test "x$LIBMESH_LIBTOOL" == "x1"; then
+  LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la'
+else
+  LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la $(LIBMESH_LDFLAGS)'
+fi
+AC_SUBST(LIBGRINS_LIBS)
+
+dnl---------------------------------------------------------
 dnl Checks for  library prerequisites for other libraries...
 dnl---------------------------------------------------------
 
@@ -115,7 +125,7 @@ dnl We'll rely on GRVY to make sure it's built correctly, but want to warn the u
 dnl they asked for timers, but GRVY wasn't found.
 if test "x${grvy_timers}" = xyes; then
    if test "x$HAVE_GRVY" = x0; then
-      AC_MSG_WARN([You've asked for GRVY timers, but GRVY install not detected. Disabling timers. ])
+      AC_MSG_WARN([You asked for GRVY timers, but GRVY install not detected. Disabling timers. ])
    fi
 
    if test "x$HAVE_GRVY" = x1; then
