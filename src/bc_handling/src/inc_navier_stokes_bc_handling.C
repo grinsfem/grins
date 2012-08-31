@@ -59,6 +59,9 @@ int GRINS::IncompressibleNavierStokesBCHandling::string_to_int( const std::strin
   else if( bc_type == "prescribed_vel" )
     bc_type_out = PRESCRIBED_VELOCITY;
 
+  else if( bc_type == "parabolic_profile" )
+    bc_type_out = PARABOLIC_PROFILE;
+
   else if( bc_type == "inflow" )
     bc_type_out = INFLOW;
 
@@ -112,6 +115,40 @@ void GRINS::IncompressibleNavierStokesBCHandling::init_bc_data( const GRINS::Bou
 	this->set_dirichlet_bc_value( bc_id, 
 				      input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 2 ),
 				      2 );
+      }
+      break;
+    case(PARABOLIC_PROFILE):
+      {
+	this->set_dirichlet_bc_type( bc_id, bc_type );
+	
+	// Make sure all 6 components are there
+	if( input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string) != 6 )
+	  {
+	    std::cerr << "Error: Must specify 6 components when inputting"
+		      << std::endl
+		      << "       coefficients for a parabolic profile. Found " 
+		      << input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_"+bc_id_string)
+		      << " components."
+		      << std::endl;
+	    libmesh_error();
+	  }
+
+	Real a = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 0 );
+	Real b = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 1 );
+	Real c = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 2 );
+	Real d = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 3 );
+	Real e = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 4 );
+	Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
+
+	std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
+	
+	GRINS::DBCContainer cont;
+	cont.add_var_name( var );
+	cont.add_bc_id( bc_id );
+
+	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func( new GRINS::ParabolicProfile(a,b,c,d,e,f) );
+	cont.set_func( func );
+	this->attach_dirichlet_bound_func( cont );
       }
       break;
     case(INFLOW):
@@ -210,8 +247,11 @@ void GRINS::IncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMe
 	  }  
       }
       break;
+    case(PARABOLIC_PROFILE):
+      // This case is handled init_dirichlet_bc_func_objs
+      break;
     case(INFLOW):
-      // This case is handled in the BoundaryConditionFactory classes.
+      // This case is handled in the init_dirichlet_bc_func_objs
       break;
     default:
       {

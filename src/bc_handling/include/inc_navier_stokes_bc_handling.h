@@ -33,6 +33,7 @@
 
 //GRINS
 #include "bc_handling_base.h"
+#include "parabolic_profile.h"
 
 namespace GRINS
 {
@@ -64,7 +65,8 @@ namespace GRINS
 
     IncompressibleNavierStokesBCHandling();
 
-    enum INS_BC_TYPES{NO_SLIP=1, PRESCRIBED_VELOCITY, INFLOW};
+    enum INS_BC_TYPES{NO_SLIP=1, PRESCRIBED_VELOCITY, 
+		      PARABOLIC_PROFILE,INFLOW};
 
   };
 }
