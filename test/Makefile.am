@@ -2,6 +2,7 @@ BUILT_SOURCES   = .license.stamp
 
 check_PROGRAMS  = test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
+check_PROGRAMS += test_stokes_poiseuille_flow
 check_PROGRAMS += test_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
@@ -34,6 +35,7 @@ endif
 # Sources for these tests
 test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
 test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
+test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
 test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
 test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
 test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
@@ -43,6 +45,7 @@ gaussian_profiles_SOURCES = gaussian_profiles.C
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_ns_couette_flow_2d_y_SOURCES)       \
+          $(test_stokes_poiseuille_flow_SOURCES)     \
           $(test_ns_poiseuille_flow_SOURCES)         \
           $(test_axi_ns_poiseuille_flow_SOURCES)     \
           $(test_axi_ns_con_cyl_flow_SOURCES)        \
@@ -55,6 +58,7 @@ TESTS = bc_profile_tests.sh                \
         navier_stokes_tests.sh             \
         test_ns_couette_flow_2d_x.sh       \
         test_ns_couette_flow_2d_y.sh       \
+        test_stokes_poiseuille_flow.sh     \
         test_ns_poiseuille_flow.sh         \
         test_axi_ns_poiseuille_flow.sh     \
         test_axi_ns_con_cyl_flow.sh        \
@@ -68,6 +72,7 @@ shellfiles_src = bc_profile_tests.sh                \
                  navier_stokes_tests.sh             \
                  test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
+                 test_stokes_poiseuille_flow.sh     \
                  test_ns_poiseuille_flow.sh         \
                  test_axi_ns_poiseuille_flow.sh     \
                  test_axi_ns_con_cyl_flow.sh        \

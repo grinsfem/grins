@@ -35,6 +35,7 @@ namespace GRINS
 {
   typedef std::string PhysicsName;
 
+  const PhysicsName stokes = "Stokes";
   const PhysicsName incompressible_navier_stokes = "IncompressibleNavierStokes";
   const PhysicsName incompressible_navier_stokes_adjoint_stab = 
     "IncompressibleNavierStokesAdjointStabilization";

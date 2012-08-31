@@ -46,6 +46,7 @@ solver_SRC   = $(solver_srcdir)/grins_solver.C \
 
 physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/physics.C \
+               $(physics_srcdir)/stokes.C \
                $(physics_srcdir)/inc_navier_stokes_base.C \
                $(physics_srcdir)/inc_navier_stokes.C \
                $(physics_srcdir)/inc_navier_stokes_stab_base.C \
@@ -120,6 +121,7 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/variable_name_defaults.h \
                $(physics_incdir)/var_typedefs.h \
                $(physics_incdir)/axisym_inc_navier_stokes.h \
+               $(physics_incdir)/stokes.h \
                $(physics_incdir)/inc_navier_stokes_base.h \
                $(physics_incdir)/inc_navier_stokes.h \
                $(physics_incdir)/inc_navier_stokes_stab_base.h \

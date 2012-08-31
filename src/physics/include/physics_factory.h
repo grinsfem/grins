@@ -37,6 +37,7 @@
 // GRINS stuff
 #include "var_typedefs.h"
 #include "physics.h"
+#include "stokes.h"
 #include "inc_navier_stokes.h"
 #include "inc_navier_stokes_adjoint_stab.h"
 #include "axisym_inc_navier_stokes.h"

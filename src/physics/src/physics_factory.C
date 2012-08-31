@@ -99,6 +99,11 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
       physics_list[physics_to_add] = 
 	PhysicsPtr(new GRINS::IncompressibleNavierStokes(physics_to_add,input) );
     }
+  else if( physics_to_add == stokes )
+    {
+      physics_list[physics_to_add] =
+  PhysicsPtr(new GRINS::Stokes(physics_to_add,input));
+    }
   else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
     {
       physics_list[physics_to_add] = 
