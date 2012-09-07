@@ -141,10 +141,10 @@ bool GRINS::HeatTransferAdjointStabilization::mass_residual( bool request_jacobi
       libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
       libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
-      libMesh::RealGradient U( c.interior_value( this->_u_var, qp ),
-			       c.interior_value( this->_v_var, qp ) );
+      libMesh::RealGradient U( c.fixed_interior_value( this->_u_var, qp ),
+			       c.fixed_interior_value( this->_v_var, qp ) );
       if( this->_dim == 3 )
-	U(2) = c.interior_value( this->_w_var, qp );
+	U(2) = c.fixed_interior_value( this->_w_var, qp );
       
       libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, G, _rho, _Cp, _k,  U, false );
 
