@@ -1,6 +1,6 @@
 #! /bin/sh
 
-cmd="autoreconf -f -i"
+cmd="autoreconf -v -f -i"
 echo "Bootstrapping using $cmd ..."
 
 $cmd
