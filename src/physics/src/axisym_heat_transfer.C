@@ -31,7 +31,7 @@
 template< class Conductivity>
 GRINS::AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 									 const GetPot& input)
-      : Physics(physics_name)
+      : Physics(physics_name, input)
 {
   this->read_input_options(input);
   

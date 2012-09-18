@@ -30,7 +30,7 @@
 
 template<class Mu, class SH, class TC>
 GRINS::LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
-  : Physics(physics_name)
+  : Physics(physics_name, input)
 {
   this->read_input_options(input);
 

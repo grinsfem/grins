@@ -89,7 +89,7 @@ namespace GRINS
 
   public:
 
-    Physics( const GRINS::PhysicsName& physics_name );
+    Physics( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~Physics();
 
     //! Read options from GetPot input file. By default, nothing is read.

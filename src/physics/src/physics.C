@@ -28,10 +28,12 @@
 
 #include "physics.h"
 
-GRINS::Physics::Physics( const std::string& physics_name )
+GRINS::Physics::Physics( const std::string& physics_name,
+			 const GetPot& input )
   : _physics_name( physics_name ),
     _bc_handler(NULL)
 {
+  this->read_input_options(input);
   return;
 }
 
