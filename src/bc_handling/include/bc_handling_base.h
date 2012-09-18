@@ -35,7 +35,7 @@
 #include "fem_context.h"
 #include "dirichlet_boundaries.h"
 #include "dof_map.h"
-#include "periodic_boundaries.h"
+#include "periodic_boundary.h"
 
 //GRINS
 #include "variable_name_defaults.h"
