@@ -46,8 +46,30 @@ GRINS::Physics::~Physics()
 
 void GRINS::Physics::read_input_options( const GetPot& input )
 {
+  int num_ids = input.vector_variable_size( "Physics/"+this->_physics_name+"/enabled_subdomains" );
+
+  for( int i = 0; i < num_ids; i++ )
+    {
+      libMesh::subdomain_id_type dumvar = input( "Physics/"+this->_physics_name+"/enabled_subdomains", -1, i );
+      _enabled_subdomains.insert( dumvar );
+    }
+
   return;
 }
+
+bool GRINS::Physics::enabled_on_elem( const libMesh::Elem* elem )
+{
+  // Check if enabled_subdomains flag has been set
+  if( _enabled_subdomains.empty() ) 
+    return true;
+  
+  // Check if current physics is enabled on elem
+  if( _enabled_subdomains.find( elem->subdomain_id() ) == _enabled_subdomains.end() )
+    return false;
+
+  return true;
+}
+
 
 void GRINS::Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
 {

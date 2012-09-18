@@ -113,6 +113,8 @@ void GRINS::MultiphysicsSystem::init_context( libMesh::DiffContext &context )
 bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 							 libMesh::DiffContext& context )
 {
+  libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+  
   bool compute_jacobian = true;
   if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -121,7 +123,11 @@ bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->element_time_derivative( compute_jacobian, context, this );
+      // Only compute if physics is active on current subdomain or globally
+      if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	{
+	  (physics_iter->second)->element_time_derivative( compute_jacobian, context, this );
+	}
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -132,6 +138,8 @@ bool GRINS::MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 bool GRINS::MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						      libMesh::DiffContext& context )
 {
+  libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+
   bool compute_jacobian = true;
   if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -140,7 +148,11 @@ bool GRINS::MultiphysicsSystem::side_time_derivative( bool request_jacobian,
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->side_time_derivative( compute_jacobian, context, this );
+      // Only compute if physics is active on current subdomain or globally
+      if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	{
+	  (physics_iter->second)->side_time_derivative( compute_jacobian, context, this );
+	}
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -151,6 +163,8 @@ bool GRINS::MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 bool GRINS::MultiphysicsSystem::element_constraint( bool request_jacobian,
 						    libMesh::DiffContext& context )
 {
+  libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+
   bool compute_jacobian = true;
   if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -159,7 +173,11 @@ bool GRINS::MultiphysicsSystem::element_constraint( bool request_jacobian,
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->element_constraint( compute_jacobian, context, this );
+      // Only compute if physics is active on current subdomain or globally
+      if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	{
+	  (physics_iter->second)->element_constraint( compute_jacobian, context, this );
+	}
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -170,6 +188,8 @@ bool GRINS::MultiphysicsSystem::element_constraint( bool request_jacobian,
 bool GRINS::MultiphysicsSystem::side_constraint( bool request_jacobian,
 						 libMesh::DiffContext& context )
 {
+  libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+
   bool compute_jacobian = true;
   if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -178,7 +198,11 @@ bool GRINS::MultiphysicsSystem::side_constraint( bool request_jacobian,
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->side_constraint( compute_jacobian, context, this );
+      // Only compute if physics is active on current subdomain or globally
+      if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	{
+	  (physics_iter->second)->side_constraint( compute_jacobian, context, this );
+	}
     }
 
   // TODO: Need to think about the implications of this because there might be some
@@ -189,6 +213,8 @@ bool GRINS::MultiphysicsSystem::side_constraint( bool request_jacobian,
 bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
 					       libMesh::DiffContext& context )
 {
+  libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+
   bool compute_jacobian = true;
   if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -197,7 +223,11 @@ bool GRINS::MultiphysicsSystem::mass_residual( bool request_jacobian,
        physics_iter != _physics_list.end();
        physics_iter++ )
     {
-      (physics_iter->second)->mass_residual( compute_jacobian, context, this );
+      // Only compute if physics is active on current subdomain or globally
+      if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	{
+	  (physics_iter->second)->mass_residual( compute_jacobian, context, this );
+	}
     }
 
   // TODO: Need to think about the implications of this because there might be some

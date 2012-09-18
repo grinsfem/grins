@@ -98,6 +98,9 @@ namespace GRINS
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;
 
+    //! Find if current physics is active on supplied element
+    virtual bool enabled_on_elem( const libMesh::Elem* elem );
+
     //! Set which variables are time evolving.
     /*!
       Set those variables which evolve in time (as opposed to variables that behave like constraints).
@@ -156,6 +159,9 @@ namespace GRINS
     const PhysicsName& _physics_name;
 
     GRINS::BCHandlingBase* _bc_handler;
+
+    //! Subdomains on which the current Physics class is enabled
+    std::set<libMesh::subdomain_id_type> _enabled_subdomains;
     
 #ifdef USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
