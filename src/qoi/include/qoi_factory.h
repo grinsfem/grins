@@ -32,8 +32,10 @@
 #include "getpot.h"
 
 //GRINS
+#include "grins_physics_names.h"
 #include "qoi_names.h"
 #include "qoi_base.h"
+#include "average_nusselt_number.h"
 
 // shared_ptr
 #include "boost/tr1/memory.hpp"
@@ -52,9 +54,10 @@ namespace GRINS
 
   protected:
 
-    virtual void add_qoi( const std::string& qoi_name, std::tr1::shared_ptr<QoIBase>& qoi );
+    virtual void add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<QoIBase>& qoi );
 
-    virtual void check_qoi_physics_consistency( const std::string& qoi_name );
+    virtual void check_qoi_physics_consistency( const GetPot& input,
+						const std::string& qoi_name );
 
     virtual void echo_qoi_list( const std::string& qoi_name );
 

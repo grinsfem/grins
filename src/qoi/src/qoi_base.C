@@ -31,6 +31,7 @@
 namespace GRINS
 {
   QoIBase::QoIBase()
+    : DifferentiableQoI()
   {
     return;
   }

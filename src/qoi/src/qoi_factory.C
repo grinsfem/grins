@@ -43,14 +43,14 @@ namespace GRINS
   std::tr1::shared_ptr<QoIBase> QoIFactory::build(const GetPot& input)
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-    QoIName qoi_name = input("QoI/enabled_qois", "none" );
+    std::string qoi_name = input("QoI/enabled_qois", "none" );
 
     std::tr1::shared_ptr<QoIBase> qoi;
     
     this->add_qoi( input, qoi_name, qoi );
 
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-    this->check_qoi_physics_consistency( qoi_name );
+    this->check_qoi_physics_consistency( input, qoi_name );
 
     if( input( "screen-options/echo_qoi", true ) )
       {
@@ -74,7 +74,8 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::check_qoi_physics_consistency( const std::string& qoi_name )
+  void QoIFactory::check_qoi_physics_consistency( const GetPot& input, 
+						  const std::string& qoi_name )
   {
     int num_physics =  input.vector_variable_size("Physics/enabled_physics");
 

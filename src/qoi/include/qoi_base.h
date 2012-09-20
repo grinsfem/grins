@@ -31,6 +31,13 @@
 
 // libMesh
 #include "diff_qoi.h"
+#include "getpot.h"
+#include "fem_context.h"
+#include "fem_system.h"
+#include "quadrature.h"
+
+// GRINS
+#include "var_typedefs.h"
 
 namespace GRINS
 {
@@ -39,7 +46,7 @@ namespace GRINS
   public:
 
     QoIBase();
-    virtual QoIBase();
+    virtual ~QoIBase();
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,

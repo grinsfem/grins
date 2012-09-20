@@ -31,8 +31,9 @@
 namespace GRINS
 {
   AverageNusseltNumber::AverageNusseltNumber( const GetPot& input )
-    : assemble_qoi_sides(true)
+    : QoIBase()
   {
+    this->assemble_qoi_sides = true;
     this->read_input_options(input);
 
     return;
@@ -45,7 +46,9 @@ namespace GRINS
 
   void AverageNusseltNumber::read_input_options( const GetPot& input )
   {
+    // Read thermal conductivity
     this->_k = input( "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+
     if( this->_k < 0.0 )
       {
 	std::cerr << "Error: thermal conductivity for AverageNusseltNumber must be positive." << std::endl
@@ -53,52 +56,68 @@ namespace GRINS
 	libmesh_error();
       }
 
+    // Read boundary ids for which we want to compute
+    int num_bcs =  input.vector_variable_size("QoI/NusseltNumber/bc_ids");
+
+    if( num_bcs <= 0 )
+      {
+	std::cerr << "Error: Must specify at least one boundary id to compute"
+		  << " average Nusselt number." << std::endl
+		  << "Found: " << num_bcs << std::endl;
+      }
+
+    for( int i = 0; i < num_bcs; i++ )
+      {
+	_bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
+      }
+
     return;
   }
 
-  void init( const GetPot& input, const libMesh::FEMSystem& system )
+  void AverageNusseltNumber::init( const GetPot& input, const libMesh::FEMSystem& system )
   {
-    std::string T_var_name = input();
+    // Grab temperature variable index
+    std::string T_var_name = input("Physics/VariableNames/Temperature",
+				   T_var_name_default);
+
     this->_T_var = system.variable_number(T_var_name);
     return;
   }
 
-  void side_qoi( DiffContext& context, const QoISet& )
+  void AverageNusseltNumber::side_qoi( DiffContext& context, const QoISet& )
   {
     FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
       {
-	if( c.has_boundary_id( (*id) )
+	if( c.has_side_boundary_id( (*id) ) )
 	  {
-	    // Element Jacobian * quadrature weights for interior integration
-	    const std::vector<Real> &JxW = c.element_fe_var[this->_T_var]->get_JxW();
+	    FEBase* side_fe;
+	    c.get_side_fe<Real>(this->_T_var, side_fe);
+
+	    const std::vector<Real> &JxW = side_fe->get_JxW();
 	    
-	    unsigned int n_qpoints = (c.get_element_qrule())->n_points();
+	    const std::vector<Point>& normals = side_fe->get_normals();
+
+	    unsigned int n_qpoints = (c.get_side_qrule())->n_points();
 	    
-	    Number& qoi = c.side_qoi[0];
+	    Number& qoi = c.elem_qoi[0];
 	    
 	    // Loop over quadrature points  
 	    
 	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
 	      {
-		// Get co-ordinate locations of the current quadrature point
-		const Real xf = xyz[qp](0);
-		const Real yf = xyz[qp](1);
+		// Get the solution value at the quadrature point
+		Gradient grad_T = 0.0; 
+		c.side_gradient<Real>(this->_T_var, qp, grad_T);
 		
-		// If in the sub-domain omega, add the contribution to the integral R
-		if(fabs(xf - 0.875) <= 0.125 && fabs(yf - 0.125) <= 0.125)
-		  {
-		    // Get the solution value at the quadrature point
-		    Number T = c.interior_value(this->_T_var, qp);
-		    
-		    // Update the elemental increment dR for each qp
-		    dQoI_0 += JxW[qp] * T;
-		  }
-		
-	      }
-	  }
+		// Update the elemental increment dR for each qp
+		qoi += (this->_k)*(grad_T*normals[qp])*JxW[qp];
+	      } // quadrature loop
+
+	  } // end check on boundary id
+
       }
 
     return;

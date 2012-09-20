@@ -31,7 +31,8 @@ matprops_incdir = $(top_srcdir)/src/mat_props/include
 bc_handling_srcdir = $(top_srcdir)/src/bc_handling/src
 bc_handling_incdir = $(top_srcdir)/src/bc_handling/include
 
-
+qoi_srcdir = $(top_srcdir)/src/qoi/src
+qoi_incdir = $(top_srcdir)/src/qoi/include
 
 #----------------------------------------------
 # List of source files to build dynamic library
@@ -102,6 +103,10 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C
+
+qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
+          $(qoi_srcdir)/qoi_base.C \
+          $(qoi_srcdir)/qoi_factory.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -179,10 +184,14 @@ bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/axisym_inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h
 
+qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
+          $(qoi_incdir)/qoi_base.h \
+          $(qoi_incdir)/qoi_factory.h \
+          $(qoi_incdir)/qoi_names.h
 
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
-                  $(bc_handling_INC)
+                  $(bc_handling_INC) $(qoi_INC)
 
 libgrins_la_SOURCES = $(solver_SRC) \
                       $(physics_SRC) \
@@ -190,7 +199,8 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(utilities_SRC) \
                       $(visualization_SRC) \
                       $(matprops_SRC) \
-                      $(bc_handling_SRC)
+                      $(bc_handling_SRC) \
+                      $(qoi_SRC)
 
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
@@ -221,7 +231,7 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir)
+AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \
@@ -252,7 +262,8 @@ endif
 	$(visualization_INC) $(visualization_SRC) \
         $(matprops_INC) $(matprops_SRC) \
         $(bc_handling_INC) $(bc_handling_SRC) \
-        $(solver_SOURCES) $(grins_version_SOURCES)
+        $(solver_SOURCES) $(grins_version_SOURCES) \
+        $(qoi_SRC)
 	echo 'updated source license headers' >$@
 
 EXTRA_DIST = common
