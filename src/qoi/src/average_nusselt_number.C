@@ -56,41 +56,52 @@ namespace GRINS
     return;
   }
 
+  void init( const GetPot& input, const libMesh::FEMSystem& system )
+  {
+    std::string T_var_name = input();
+    this->_T_var = system.variable_number(T_var_name);
+    return;
+  }
+
   void side_qoi( DiffContext& context, const QoISet& )
   {
     FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-    // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = c.element_fe_var[this->_T_var]->get_JxW();
-    
-    const std::vector<Point> &xyz = c.element_fe_var[this->_T_var]->get_xyz();
-
-    unsigned int n_qpoints = (c.get_element_qrule())->n_points();
-    
-    Number&  qoi = c.side_qoi[0];
-  
-    // Loop over quadrature points  
-    
-    for (unsigned int qp = 0; qp != n_qpoints; qp++)
+    for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
+	 id != _bc_ids.end(); id++ )
       {
-	// Get co-ordinate locations of the current quadrature point
-	const Real xf = xyz[qp](0);
-	const Real yf = xyz[qp](1);
-	
-	// If in the sub-domain omega, add the contribution to the integral R
-	if(fabs(xf - 0.875) <= 0.125 && fabs(yf - 0.125) <= 0.125)
+	if( c.has_boundary_id( (*id) )
 	  {
-	    // Get the solution value at the quadrature point
-	    Number T = c.interior_value(this->_T_var, qp);
+	    // Element Jacobian * quadrature weights for interior integration
+	    const std::vector<Real> &JxW = c.element_fe_var[this->_T_var]->get_JxW();
 	    
-	    // Update the elemental increment dR for each qp
-	    dQoI_0 += JxW[qp] * T;
+	    unsigned int n_qpoints = (c.get_element_qrule())->n_points();
+	    
+	    Number& qoi = c.side_qoi[0];
+	    
+	    // Loop over quadrature points  
+	    
+	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
+	      {
+		// Get co-ordinate locations of the current quadrature point
+		const Real xf = xyz[qp](0);
+		const Real yf = xyz[qp](1);
+		
+		// If in the sub-domain omega, add the contribution to the integral R
+		if(fabs(xf - 0.875) <= 0.125 && fabs(yf - 0.125) <= 0.125)
+		  {
+		    // Get the solution value at the quadrature point
+		    Number T = c.interior_value(this->_T_var, qp);
+		    
+		    // Update the elemental increment dR for each qp
+		    dQoI_0 += JxW[qp] * T;
+		  }
+		
+	      }
 	  }
-	
       }
-    
-    // Update the computed value of the qoi
-    c.side_qoi[0] += dQoI_0
+
+    return;
   }
 
 } //namespace GRINS

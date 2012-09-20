@@ -45,12 +45,20 @@ namespace GRINS
 
     virtual void side_qoi( DiffContext& context, const QoISet& qoi_indices );
 
+    virtual void init( const GetPot& input, const libMesh::FEMSystem& system );
+
   protected:
 
     virtual void read_input_options( const GetPot& input );
 
     //! Thermal conductivity
     Real _k;
+
+    //! Temperature variable index
+    VariableIndex _T_var;
+
+    //! List of boundary ids for which we want to compute this QoI
+    std::set<libMesh::boundary_id_type> _bc_ids;
 
   private:
     AverageNusseltNumber();
