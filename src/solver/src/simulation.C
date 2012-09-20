@@ -37,6 +37,8 @@ GRINS::Simulation::Simulation( const GetPot& input,
   :  _mesh( mesh_builder->build() ),
      _equation_system( new libMesh::EquationSystems( *_mesh ) ),
      _solver( solver_factory->build() ),
+     _system_name( input("screen-options/system_name", "GRINS" ) ),
+     _multiphysics_system( &(_equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name )) ),
      _vis( vis_factory->build() ),
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
@@ -50,7 +52,23 @@ GRINS::Simulation::Simulation( const GetPot& input,
 
   GRINS::PhysicsList physics_list = physics_factory->build(input);
 
-  _solver->initialize( input, _equation_system, physics_list, bc_factory );
+  _multiphysics_system->attach_physics_list( physics_list );
+
+  _multiphysics_system->read_input_options( input );
+
+  // This *must* be done before equation_system->init
+  if( bc_factory )
+    {
+      this->attach_dirichlet_bc_funcs( bc_factory->build_dirichlet(), _multiphysics_system );
+    }
+
+  _solver->initialize( input, _equation_system, _multiphysics_system );
+
+  // This *must* be done after equation_system->init
+  if( bc_factory )
+    {
+      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *_equation_system ), _multiphysics_system );
+    }
 
   this->check_for_restart( input );
 
@@ -66,7 +84,7 @@ void GRINS::Simulation::run()
 {
   this->print_sim_info();
   
-  _solver->solve( _equation_system, _vis, _output_vis, _output_residual );
+  _solver->solve(  _multiphysics_system, _equation_system, _vis, _output_vis, _output_residual );
 
   return;
 }
@@ -127,10 +145,43 @@ void GRINS::Simulation::check_for_restart( const GetPot& input )
   return;
 }
 
+void GRINS::Simulation::attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCContainer > neumann_bcs,
+						 GRINS::MultiphysicsSystem* system )
+{
+  //_neumann_bc_funcs = neumann_bcs;
+
+  if( neumann_bcs.size() > 0 )
+    {
+      for( std::map< std::string, GRINS::NBCContainer >::iterator bc = neumann_bcs.begin();
+	   bc != neumann_bcs.end();
+	   bc++ )
+	{
+	  std::tr1::shared_ptr<GRINS::Physics> physics = system->get_physics( bc->first );
+	  physics->attach_neumann_bound_func( bc->second );
+	}
+    }
+
+  return;
+}
+
+void GRINS::Simulation::attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
+						   GRINS::MultiphysicsSystem* system )
+{
+  for( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >::const_iterator it = dbc_map.begin();
+       it != dbc_map.end();
+       it++ )
+    {
+      std::tr1::shared_ptr<GRINS::Physics> physics = system->get_physics( it->first );
+      
+      physics->attach_dirichlet_bound_func( it->second );
+    }
+  return;
+}
+
 #ifdef USE_GRVY_TIMERS
 void GRINS::Simulation::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {
-  _solver->attach_grvy_timer( grvy_timer );
+  this->_multiphysics_system->attach_grvy_timer( grvy_timer );
   return;
 }
 #endif

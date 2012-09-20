@@ -70,19 +70,30 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
-    void check_for_restart( const GetPot& input );
-
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 
   private:
+    
+    void check_for_restart( const GetPot& input );
+
+    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
+				  GRINS::MultiphysicsSystem* system );
+    
+    void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
+				    GRINS::MultiphysicsSystem* system );
 
     std::tr1::shared_ptr<libMesh::Mesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
 
     std::tr1::shared_ptr<GRINS::Solver> _solver;
+
+    //! GRINS::Multiphysics system name
+    std::string _system_name;
+    
+    GRINS::MultiphysicsSystem* _multiphysics_system;
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
 

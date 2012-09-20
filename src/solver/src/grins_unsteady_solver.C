@@ -43,11 +43,11 @@ GRINS::UnsteadySolver::~UnsteadySolver()
   return;
 }
 
-void GRINS::UnsteadySolver::init_time_solver()
+void GRINS::UnsteadySolver::init_time_solver(GRINS::MultiphysicsSystem* system)
 {
-  libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(this->_system) );
+  libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
 
-  this->_system->time_solver = libMesh::AutoPtr<TimeSolver>(time_solver);
+  system->time_solver = libMesh::AutoPtr<TimeSolver>(time_solver);
 
   // Set theta parameter for time-stepping scheme
   time_solver->theta = this->_theta;
@@ -55,12 +55,13 @@ void GRINS::UnsteadySolver::init_time_solver()
   return;
 }
 
-void GRINS::UnsteadySolver::solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+void GRINS::UnsteadySolver::solve( GRINS::MultiphysicsSystem* system,
+				   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 				   std::tr1::shared_ptr<GRINS::Visualization> vis,
 				   bool output_vis,
 				   bool output_residual )
 {
-  this->_system->deltat = this->_deltat;
+  system->deltat = this->_deltat;
   
   Real time;
 
@@ -73,16 +74,16 @@ void GRINS::UnsteadySolver::solve( std::tr1::shared_ptr<libMesh::EquationSystems
 		<< "==========================================================" << std::endl;
 
       // GRVY timers contained in here (if enabled)
-      this->_system->solve();
+      system->solve();
 
-      time = this->_system->time;
+      time = system->time;
 
       if( output_vis ) vis->output( equation_system, t_step, time );
 
-      if( output_residual ) vis->output_residual( equation_system, _system, t_step, time );
+      if( output_residual ) vis->output_residual( equation_system, system, t_step, time );
 
       // Advance to the next timestep
-      this->_system->time_solver->advance_timestep();
+      system->time_solver->advance_timestep();
     }
 
   return;

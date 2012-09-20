@@ -46,14 +46,17 @@ namespace GRINS
     SteadySolver( const GetPot& input );
     virtual ~SteadySolver();
 
-    virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
+    virtual void solve( GRINS::MultiphysicsSystem* system,
+			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
 			std::tr1::shared_ptr<GRINS::Visualization> vis = 
 			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
 			bool output_residual = false );
 
-    virtual void init_time_solver();
+  protected:
+
+    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
   };
 } // namespace GRINS

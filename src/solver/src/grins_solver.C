@@ -31,8 +31,7 @@
 #include "grins_solver.h"
 
 GRINS::Solver::Solver( const GetPot& input )
-  : _system(NULL),
-    _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
+  : _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
     _relative_step_tolerance( input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 ) ),
     _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
     _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-15 ) ),
@@ -40,8 +39,7 @@ GRINS::Solver::Solver( const GetPot& input )
     _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
     _initial_linear_tolerance( input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 ) ),
     _solver_quiet( input("screen-options/solver_quiet", false ) ),
-    _solver_verbose( input("screen-options/solver_verbose", false ) ),
-    _system_name( input("screen-options/system_name", "GRINS" ) )
+    _solver_verbose( input("screen-options/solver_verbose", false ) )
 {
   return;
 }
@@ -54,36 +52,17 @@ GRINS::Solver::~Solver()
 
 void GRINS::Solver::initialize( const GetPot& input, 
 				std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-				GRINS::PhysicsList& physics_list,
-				GRINS::BoundaryConditionsFactory* bc_factory )
+				GRINS::MultiphysicsSystem* system )
 {
-  // Declare the system and its variables.
-  _system = &(equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name ));
-
-  _system->attach_physics_list( physics_list );
-
-  _system->read_input_options( input );
-
-  // This *must* be done before equation_system->init
-  if( bc_factory )
-    {
-      this->attach_dirichlet_bc_funcs( bc_factory->build_dirichlet() );
-    }
-
+ 
   // Defined in subclasses depending on the solver used.
-  this->init_time_solver();
+  this->init_time_solver(system);
 
   // Initialize the system
   equation_system->init();
 
-  // This *must* be done after equation_system->init
-  if( bc_factory )
-    {
-      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *equation_system ) );
-    }
-
   // Get diff solver to set options
-  libMesh::DiffSolver &solver = *(this->_system->time_solver->diff_solver().get());
+  libMesh::DiffSolver &solver = *(system->time_solver->diff_solver().get());
 
   // Set linear/nonlinear solver options
   this->set_solver_options( solver );
@@ -106,48 +85,4 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
-
-void GRINS::Solver::attach_neumann_bc_funcs( std::map< std::string, GRINS::NBCContainer > neumann_bcs )
-{
-  _neumann_bc_funcs = neumann_bcs;
-
-  if( _neumann_bc_funcs.size() > 0 )
-    {
-      for( std::map< std::string, GRINS::NBCContainer >::iterator bc = _neumann_bc_funcs.begin();
-	   bc != _neumann_bc_funcs.end();
-	   bc++ )
-	{
-	  std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( bc->first );
-	  physics->attach_neumann_bound_func( bc->second );
-	}
-    }
-
-  return;
-}
-
-void GRINS::Solver::attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map )
-{
-  for( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >::const_iterator it = dbc_map.begin();
-       it != dbc_map.end();
-       it++ )
-    {
-      std::tr1::shared_ptr<GRINS::Physics> physics = _system->get_physics( it->first );
-      
-      physics->attach_dirichlet_bound_func( it->second );
-    }
-  return;
-}
-
-
-#ifdef USE_GRVY_TIMERS
-void GRINS::Solver::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-{
-  _timer = grvy_timer;
-
-  // Attach timer to system
-  this->_system->attach_grvy_timer( grvy_timer );
-
-  return;
-}
-#endif
 

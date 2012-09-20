@@ -63,30 +63,17 @@ namespace GRINS
 
     virtual void initialize( const GetPot& input, 
 			     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-			     GRINS::PhysicsList& physics_list,
-			     GRINS::BoundaryConditionsFactory* bc_factory = NULL );
+			     GRINS::MultiphysicsSystem* system );
     
-    virtual void solve( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
+    virtual void solve( GRINS::MultiphysicsSystem* system,
+			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
 			std::tr1::shared_ptr<GRINS::Visualization> vis = 
 			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
 			bool output_residual = false )=0;
 
-    virtual void init_time_solver()=0;
-
-    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs );
-    
-    void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map );
-
-
-#ifdef USE_GRVY_TIMERS
-    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-#endif
-
   protected:
-
-    GRINS::MultiphysicsSystem* _system;
 
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
@@ -99,8 +86,7 @@ namespace GRINS
 
     // Screen display options
     bool _solver_quiet;
-    bool _solver_verbose;
-    std::string _system_name;
+    bool _solver_verbose;    
     
     /* Keep copies of the boundary conditions around
        in case they need to be updated during a solve;
@@ -109,9 +95,7 @@ namespace GRINS
 
     void set_solver_options( libMesh::DiffSolver& solver );
 
-#ifdef USE_GRVY_TIMERS
-    GRVY::GRVY_Timer_Class* _timer;
-#endif
+    virtual void init_time_solver(GRINS::MultiphysicsSystem* system)=0;
 
   };
 
