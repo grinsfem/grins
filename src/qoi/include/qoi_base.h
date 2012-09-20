@@ -41,7 +41,13 @@ namespace GRINS
     QoIBase();
     virtual QoIBase();
 
-    /**
+    /*!
+     * Method to allow QoI to cache any system information needed for QoI calculation,
+     * for example, solution variable indices.
+     */
+    virtual void init( const GetPot& input, const libMesh::FEMSystem& system ){};
+
+    /*!
      * We call the base class then grab the sys_qoi and cache it locally to output later.
      * If the QoI is not expressable as a sum over elements, then this will need to be
      * overridden with the correct libMesh::Parallel operations.
@@ -49,7 +55,7 @@ namespace GRINS
     virtual void parallel_op( std::vector<Number>& sys_qoi, std::vector<Number>& local_qoi,
 			      const QoISet& qoi_indices );
 
-    /**
+    /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.
      */
     virtual void output_qoi( std::ostream& out );
