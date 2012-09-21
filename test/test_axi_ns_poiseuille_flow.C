@@ -58,8 +58,8 @@ class AxiParabolicBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  AxiParabolicBCFactory( const GetPot& input )
-    : GRINS::BoundaryConditionsFactory(input)
+  AxiParabolicBCFactory( )
+    : GRINS::BoundaryConditionsFactory()
   { return; };
 
   ~AxiParabolicBCFactory(){return;};
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  AxiParabolicBCFactory bc_factory( libMesh_inputfile );
+  AxiParabolicBCFactory bc_factory;
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,

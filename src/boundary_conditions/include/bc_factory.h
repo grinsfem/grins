@@ -52,7 +52,7 @@ namespace GRINS
   {
   public:
     
-    BoundaryConditionsFactory( const GetPot& input );
+    BoundaryConditionsFactory( );
 
     virtual ~BoundaryConditionsFactory();
 

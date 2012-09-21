@@ -46,8 +46,8 @@ class InjectionBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  InjectionBCFactory( const GetPot& input )
-    : GRINS::BoundaryConditionsFactory(input)
+  InjectionBCFactory( )
+    : GRINS::BoundaryConditionsFactory()
   { return; };
 
   ~InjectionBCFactory(){return;};
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  InjectionBCFactory bc_factory( libMesh_inputfile );
+  InjectionBCFactory bc_factory;
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,

@@ -31,7 +31,7 @@
 namespace GRINS
 {
 
-  BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
+  BoundaryConditionsFactory::BoundaryConditionsFactory( )
   {
     return;
   }

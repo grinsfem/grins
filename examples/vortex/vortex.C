@@ -46,8 +46,8 @@ class VortexBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  VortexBCFactory( const GetPot& input )
-    : GRINS::BoundaryConditionsFactory(input)
+  VortexBCFactory( )
+    : GRINS::BoundaryConditionsFactory()
   { return; };
 
   ~VortexBCFactory(){return;};
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  VortexBCFactory bc_factory( libMesh_inputfile );
+  VortexBCFactory bc_factory;
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
