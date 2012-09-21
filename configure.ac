@@ -7,7 +7,9 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([silent-rules no-define])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.10 no-define])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)]) # use silent rules where available - automake 1.11
+
 LT_INIT
 
 dnl Release versioning
