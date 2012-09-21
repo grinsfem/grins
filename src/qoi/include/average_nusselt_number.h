@@ -46,7 +46,7 @@ namespace GRINS
 
     virtual ~AverageNusseltNumber();
 
-    virtual libMesh::AutoPtr<DifferentiableQoI> clone();
+    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
 
     virtual void side_qoi( DiffContext& context, const QoISet& qoi_indices );
 
