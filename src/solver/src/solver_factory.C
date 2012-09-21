@@ -28,9 +28,7 @@
 
 #include "solver_factory.h"
 
-GRINS::SolverFactory::SolverFactory(const GetPot& input)
-  :_transient( input("unsteady-solver/transient", false ) ),
-   _input( input )
+GRINS::SolverFactory::SolverFactory()
 {
   return;
 }
@@ -40,17 +38,19 @@ GRINS::SolverFactory::~SolverFactory()
   return;
 }
 
-std::tr1::shared_ptr<GRINS::Solver> GRINS::SolverFactory::build()
+std::tr1::shared_ptr<GRINS::Solver> GRINS::SolverFactory::build(const GetPot& input)
 {
+  bool transient = input("unsteady-solver/transient", false );
+
   GRINS::Solver* solver;
 
-  if(_transient)
+  if(transient)
     {
-      solver = new GRINS::UnsteadySolver( _input );
+      solver = new GRINS::UnsteadySolver( input );
     }
   else
     {
-      solver = new GRINS::SteadySolver( _input );
+      solver = new GRINS::SteadySolver( input );
     }
 
   return std::tr1::shared_ptr<GRINS::Solver>(solver);

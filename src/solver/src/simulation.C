@@ -36,7 +36,7 @@ GRINS::Simulation::Simulation( const GetPot& input,
 			       GRINS::BoundaryConditionsFactory* bc_factory )
   :  _mesh( mesh_builder->build() ),
      _equation_system( new libMesh::EquationSystems( *_mesh ) ),
-     _solver( solver_factory->build() ),
+     _solver( solver_factory->build(input) ),
      _system_name( input("screen-options/system_name", "GRINS" ) ),
      _multiphysics_system( &(_equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name )) ),
      _vis( vis_factory->build(input) ),

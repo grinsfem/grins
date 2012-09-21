@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
   GRINS::PhysicsFactory physics_factory;
 
   // PhysicsFactory handles which GRINS::Solver to use to solve the problem
-  GRINS::SolverFactory solver_factory( libMesh_inputfile );
+  GRINS::SolverFactory solver_factory;
 
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory;

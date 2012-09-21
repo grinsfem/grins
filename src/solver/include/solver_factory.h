@@ -46,20 +46,13 @@ namespace GRINS
   {
   public:
 
-    SolverFactory(const GetPot& input);
+    SolverFactory();
     virtual ~SolverFactory();
 
     //! Builds GRINS::Solver object.
     /*! Users should override this method to construct 
         their own solvers. */
-    virtual std::tr1::shared_ptr<GRINS::Solver> build();
-
-  protected:
-
-    //! All we need to distinguish between steady and unsteady solver.
-    bool _transient;
-
-    const GetPot& _input;
+    virtual std::tr1::shared_ptr<GRINS::Solver> build(const GetPot& input);
 
   };
 }
