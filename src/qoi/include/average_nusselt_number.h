@@ -40,6 +40,10 @@ namespace GRINS
   public:
 
     AverageNusseltNumber( const GetPot& input );
+
+    AverageNusseltNumber( Real k, VariableIndex T_var, 
+			  const std::set<libMesh::boundary_id_type>& bc_ids);
+
     virtual ~AverageNusseltNumber();
 
     virtual libMesh::AutoPtr<DifferentiableQoI> clone();

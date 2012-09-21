@@ -34,14 +34,30 @@ namespace GRINS
     : QoIBase()
   {
     this->assemble_qoi_sides = true;
+    
     this->read_input_options(input);
 
+    return;
+  }
+
+  AverageNusseltNumber::AverageNusseltNumber( Real k, VariableIndex T_var, 
+					      const std::set<libMesh::boundary_id_type>& bc_ids)
+    : QoIBase(),
+      _k(k),
+      _T_var(T_var),
+      _bc_ids(bc_ids)
+  {
     return;
   }
 
   AverageNusseltNumber::~AverageNusseltNumber()
   {
     return;
+  }
+
+  libMesh::AutoPtr<libMesh::DifferentiableQoI> AverageNusseltNumber::clone()
+  {
+    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new AverageNusseltNumber( _k, _T_var, _bc_ids ) );
   }
 
   void AverageNusseltNumber::read_input_options( const GetPot& input )
