@@ -24,16 +24,10 @@ namespace GRINS
   {
   public:
 
-    VisualizationFactory( const GetPot& input );
+    VisualizationFactory();
     ~VisualizationFactory();
 
-    virtual std::tr1::shared_ptr<GRINS::Visualization> build();
-
-  protected:
-
-    bool _transient;
-    
-    const GetPot& _input;
+    virtual std::tr1::shared_ptr<GRINS::Visualization> build(const GetPot& input);
   };
 }
 #endif //GRINS_VISUALIZATION_FACTORY_H

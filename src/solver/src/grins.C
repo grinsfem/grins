@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   GRINS::SolverFactory solver_factory( libMesh_inputfile );
 
   // VisualizationFactory handles the type of visualization for the simulation
-  GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
+  GRINS::VisualizationFactory vis_factory;
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,

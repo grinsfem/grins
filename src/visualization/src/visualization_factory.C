@@ -28,9 +28,7 @@
 
 #include "visualization_factory.h"
 
-GRINS::VisualizationFactory::VisualizationFactory( const GetPot& input )
-  : _transient( input("unsteady-solver/transient", false ) ),
-    _input( input )
+GRINS::VisualizationFactory::VisualizationFactory(  )
 {
   return;
 }
@@ -40,14 +38,16 @@ GRINS::VisualizationFactory::~VisualizationFactory()
   return;
 }
 
-std::tr1::shared_ptr<GRINS::Visualization> GRINS::VisualizationFactory::build()
+std::tr1::shared_ptr<GRINS::Visualization> GRINS::VisualizationFactory::build( const GetPot& input )
 {
+  bool transient = input("unsteady-solver/transient", false );
+
   GRINS::Visualization* vis;
 
-  if(_transient) 
-    vis = new UnsteadyVisualization( _input );
+  if(transient) 
+    vis = new UnsteadyVisualization( input );
   else
-    vis = new SteadyVisualization( _input );
+    vis = new SteadyVisualization( input );
 
   return std::tr1::shared_ptr<GRINS::Visualization>( vis );
 }
