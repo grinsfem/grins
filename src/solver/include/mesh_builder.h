@@ -49,27 +49,14 @@ namespace GRINS
     //! This Object handles building a libMesh::Mesh
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
         mesh is built; or is read from input from a specified file. */
-    MeshBuilder( const GetPot& input );
+    MeshBuilder();
     ~MeshBuilder();
 
     void read_input_options( const GetPot& input );
 
     //! Builds the libMesh::Mesh according to input options.
-    std::tr1::shared_ptr<libMesh::Mesh> build();
+    std::tr1::shared_ptr<libMesh::Mesh> build(const GetPot& input );
 
-  private:
-    
-    std::string _mesh_option;
-    std::string _mesh_filename;
-
-    double _domain_x1_min, _domain_x2_min, _domain_x3_min;
-    double _domain_x1_max, _domain_x2_max, _domain_x3_max;
-
-    int _mesh_nx1, _mesh_nx2, _mesh_nx3;
-
-    int _uniformly_refine;
-    
-    std::string _element_type;
   };
 
 } //End namespace block

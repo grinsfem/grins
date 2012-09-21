@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   LibMeshInit libmesh_init(argc, argv);
  
   // MeshBuilder for handling mesh construction
-  GRINS::MeshBuilder mesh_builder( libMesh_inputfile );
+  GRINS::MeshBuilder mesh_builder;
 
   // PhysicsFactory handles which GRINS::Physics objects to create
   GRINS::PhysicsFactory physics_factory;

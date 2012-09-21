@@ -34,7 +34,7 @@ GRINS::Simulation::Simulation( const GetPot& input,
 			       GRINS::SolverFactory* solver_factory,
 			       GRINS::VisualizationFactory* vis_factory,
 			       GRINS::BoundaryConditionsFactory* bc_factory )
-  :  _mesh( mesh_builder->build() ),
+  :  _mesh( mesh_builder->build(input) ),
      _equation_system( new libMesh::EquationSystems( *_mesh ) ),
      _solver( solver_factory->build(input) ),
      _system_name( input("screen-options/system_name", "GRINS" ) ),

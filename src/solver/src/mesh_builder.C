@@ -30,9 +30,8 @@
 
 #include <iostream>
 
-GRINS::MeshBuilder::MeshBuilder( const GetPot& input )
+GRINS::MeshBuilder::MeshBuilder()
 {
-  this->read_input_options( input );
   return;
 }
 
@@ -41,17 +40,30 @@ GRINS::MeshBuilder::~MeshBuilder()
   return;
 }
 
-void GRINS::MeshBuilder::read_input_options( const GetPot& input )
+std::tr1::shared_ptr<libMesh::Mesh> GRINS::MeshBuilder::build(const GetPot& input)
 {
-  // Grab common options
-  this->_uniformly_refine = input("mesh-options/uniformly_refine", 0);
+  // First, read all needed variables
+  std::string mesh_option = input("mesh-options/mesh_option", "NULL");
+  std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
 
-  // The user told us what to do to generate a mesh
-  if(input.have_variable("mesh-options/mesh_option"))
-    {
-      this->_mesh_option = input("mesh-options/mesh_option", "NULL");
-    }
-  else
+  Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
+  Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
+  Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
+
+  Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
+  Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
+  Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
+
+  int mesh_nx1 = input("mesh-options/mesh_nx1", -1);
+  int mesh_nx2 = input("mesh-options/mesh_nx2", -1);
+  int mesh_nx3 = input("mesh-options/mesh_nx3", -1);
+
+  int uniformly_refine = input("mesh-options/uniformly_refine", 0);
+    
+  std::string element_type = input("mesh-options/element_type", "NULL");
+
+  // Make sure the user told us what to do
+  if(mesh_option == "NULL")
     {
       std::cerr << " GRINS::MeshBuilder::read_input_options :"
                 << " mesh-options/mesh_option NOT specified "
@@ -59,129 +71,94 @@ void GRINS::MeshBuilder::read_input_options( const GetPot& input )
       libmesh_error();
     }
 
-  // If they want it read from a file, stash the filename
-  if(this->_mesh_option=="read_mesh_from_file")
-    {
-      if(input.have_variable("mesh-options/mesh_filename"))
-        {
-          this->_mesh_filename = input("mesh-options/mesh_filename", "NULL");
-        }
-      else
-        {
-	  // TODO: Need more consistent error handling.
-          std::cerr << " GRINS::MeshBuilder::read_input_options :"
-                    << " mesh-options/mesh_filename NOT specified "
-                    << std::endl;
-          libmesh_error();
-        }
-    }
-  // Otherwise, stash the necessary data to create a mesh
-  else
-    {
-      this->_domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
-      this->_domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
-      this->_domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
-
-      this->_domain_x1_max = input("mesh-options/domain_x1_max", 1.0);
-      this->_domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
-      this->_domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
-
-      this->_mesh_nx1 = input("mesh-options/mesh_nx1", 10);
-      this->_mesh_nx2 = input("mesh-options/mesh_nx2", 10);
-      this->_mesh_nx3 = input("mesh-options/mesh_nx3", 10);
-
-      this->_element_type = input("mesh-options/element_type", "NULL");
-    }
-
-  return;
-}
-
-std::tr1::shared_ptr<libMesh::Mesh> GRINS::MeshBuilder::build()
-{
   // Create Mesh object (defaults to dimension 1).
   libMesh::Mesh* mesh = new libMesh::Mesh();
 
-  if(this->_mesh_option=="read_mesh_from_file")
+  if(mesh_option=="read_mesh_from_file")
     {
       // According to Roy Stogner, the only read format
       // that won't properly reset the dimension is gmsh.
       /*! \todo Need to a check a GMSH meshes */
-      mesh->read(this->_mesh_filename);
+      mesh->read(mesh_filename);
     }
-  else if(this->_mesh_option=="create_1D_mesh")
+
+  else if(mesh_option=="create_1D_mesh")
     {
-      if(this->_element_type=="NULL")
+      if(element_type=="NULL")
 	{
-	  this->_element_type = "EDGE3";
+	  element_type = "EDGE3";
 	}
-
-      libMeshEnums::ElemType _element_enum_type =
-                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
-
+      
+      libMeshEnums::ElemType element_enum_type =
+	libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
+      
       libMesh::MeshTools::Generation::build_line(*mesh,
-						 this->_mesh_nx1,
-						 this->_domain_x1_min,
-						 this->_domain_x1_max,
-						 _element_enum_type);
+						 mesh_nx1,
+						 domain_x1_min,
+						 domain_x1_max,
+						 element_enum_type);
     }
-  else if(this->_mesh_option=="create_2D_mesh")
+      
+  else if(mesh_option=="create_2D_mesh")
     {
-      if(this->_element_type=="NULL")
+      if(element_type=="NULL")
 	{
-	  this->_element_type = "TRI6";
+	  element_type = "TRI6";
 	}
 
       // Reset mesh dimension to 2.
       mesh->set_mesh_dimension(2);
 
-      libMeshEnums::ElemType _element_enum_type =
-                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
+      libMeshEnums::ElemType element_enum_type =
+                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
 
       libMesh::MeshTools::Generation::build_square(*mesh,
-						   this->_mesh_nx1,
-						   this->_mesh_nx2,
-						   this->_domain_x1_min,
-						   this->_domain_x1_max,
-						   this->_domain_x2_min,
-						   this->_domain_x2_max,
-						   _element_enum_type);
+						   mesh_nx1,
+						   mesh_nx2,
+						   domain_x1_min,
+						   domain_x1_max,
+						   domain_x2_min,
+						   domain_x2_max,
+						   element_enum_type);
     }
-  else if(this->_mesh_option=="create_3D_mesh")
+
+  else if(mesh_option=="create_3D_mesh")
     {
-      if(this->_element_type=="NULL")
+      if(element_type=="NULL")
 	{
-	  this->_element_type = "TET10";
+	  element_type = "TET10";
 	}
 
       // Reset mesh dimension to 3.
       mesh->set_mesh_dimension(3);
 
-      libMeshEnums::ElemType _element_enum_type =
-                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(this->_element_type);
+      libMeshEnums::ElemType element_enum_type =
+                      libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
 
       libMesh::MeshTools::Generation::build_cube(*mesh,
-						 this->_mesh_nx1,
-						 this->_mesh_nx2,
-						 this->_mesh_nx3,
-						 this->_domain_x1_min,
-						 this->_domain_x1_max,
-						 this->_domain_x2_min,
-						 this->_domain_x2_max,
-						 this->_domain_x3_min,
-						 this->_domain_x3_max,
-						 _element_enum_type);
+						 mesh_nx1,
+						 mesh_nx2,
+						 mesh_nx3,
+						 domain_x1_min,
+						 domain_x1_max,
+						 domain_x2_min,
+						 domain_x2_max,
+						 domain_x3_min,
+						 domain_x3_max,
+						 element_enum_type);
     }
+
   else
     {
       std::cerr << " GRINS::MeshBuilder::build_mesh :"
-                << " mesh-options/mesh_option [" << this->_mesh_option
+                << " mesh-options/mesh_option [" << mesh_option
                 << "] NOT supported " << std::endl;
       libmesh_error();
     }
 
-  if( _uniformly_refine > 0 )
+  if( uniformly_refine > 0 )
     {
-      libMesh::MeshRefinement(*mesh).uniformly_refine(_uniformly_refine);
+      libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
     }
 
   return std::tr1::shared_ptr<libMesh::Mesh>(mesh);
