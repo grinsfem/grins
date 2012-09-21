@@ -28,24 +28,29 @@
 
 #include "bc_factory.h"
 
-GRINS::BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::BoundaryConditionsFactory::~BoundaryConditionsFactory( )
-{
-  return;
-}
+  BoundaryConditionsFactory::BoundaryConditionsFactory( const GetPot& input )
+  {
+    return;
+  }
 
-std::map< GRINS::PhysicsName, GRINS::NBCContainer > 
-GRINS::BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
-{
-  return std::map< GRINS::PhysicsName, GRINS::NBCContainer >();
-}
+  BoundaryConditionsFactory::~BoundaryConditionsFactory( )
+  {
+    return;
+  }
 
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > 
-GRINS::BoundaryConditionsFactory::build_dirichlet()
-{
-  return std::multimap< GRINS::PhysicsName, GRINS::DBCContainer >();
-}
+  std::map< PhysicsName, NBCContainer > 
+  BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
+  {
+    return std::map< PhysicsName, NBCContainer >();
+  }
+
+  std::multimap< PhysicsName, DBCContainer > 
+  BoundaryConditionsFactory::build_dirichlet()
+  {
+    return std::multimap< PhysicsName, DBCContainer >();
+  }
+
+} // namespace GRINS
