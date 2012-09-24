@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#ifndef GRINS_SIMULATION_H
+#define GRINS_SIMULATION_H
 
 #include "boost/tr1/memory.hpp"
 
@@ -35,14 +35,9 @@
 #include "getpot.h"
 
 // GRINS
-#include "physics_factory.h"
-#include "mesh_builder.h"
-#include "solver_factory.h"
-#include "grins_solver.h"
-#include "visualization_factory.h"
+#include "simulation_builder.h"
 #include "visualization.h"
 #include "boundary_conditions.h"
-#include "bc_factory.h"
 
 // GRVY
 #ifdef HAVE_GRVY
@@ -56,11 +51,7 @@ namespace GRINS
   public:
     
     Simulation( const GetPot& input,
-		GRINS::PhysicsFactory* physics_factory,
-		GRINS::MeshBuilder* mesh_builder,
-		GRINS::SolverFactory* solver_factory,
-		GRINS::VisualizationFactory* vis_factory,
-		GRINS::BoundaryConditionsFactory* bc_factory = NULL );
+		SimulationBuilder& sim_builder );
 
     ~Simulation();
 	
@@ -108,4 +99,4 @@ namespace GRINS
 
   };
 }
-#endif // SIMULATION_H
+#endif // GRINS_SIMULATION_H

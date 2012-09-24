@@ -29,17 +29,13 @@
 #include "simulation.h"
 
 GRINS::Simulation::Simulation( const GetPot& input,
-			       GRINS::PhysicsFactory* physics_factory,
-			       GRINS::MeshBuilder* mesh_builder,
-			       GRINS::SolverFactory* solver_factory,
-			       GRINS::VisualizationFactory* vis_factory,
-			       GRINS::BoundaryConditionsFactory* bc_factory )
-  :  _mesh( mesh_builder->build(input) ),
+			       SimulationBuilder& sim_builder )
+  :  _mesh( sim_builder.build_mesh(input) ),
      _equation_system( new libMesh::EquationSystems( *_mesh ) ),
-     _solver( solver_factory->build(input) ),
+     _solver( sim_builder.build_solver(input) ),
      _system_name( input("screen-options/system_name", "GRINS" ) ),
      _multiphysics_system( &(_equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name )) ),
-     _vis( vis_factory->build(input) ),
+     _vis( sim_builder.build_vis(input) ),
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
      _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
@@ -50,25 +46,19 @@ GRINS::Simulation::Simulation( const GetPot& input,
   libMesh::perflog.disable_logging();
   if( this->_print_log_info ) libMesh::perflog.enable_logging();
 
-  GRINS::PhysicsList physics_list = physics_factory->build(input);
+  GRINS::PhysicsList physics_list = sim_builder.build_physics(input);
 
   _multiphysics_system->attach_physics_list( physics_list );
 
   _multiphysics_system->read_input_options( input );
 
   // This *must* be done before equation_system->init
-  if( bc_factory )
-    {
-      this->attach_dirichlet_bc_funcs( bc_factory->build_dirichlet(), _multiphysics_system );
-    }
+  this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
 
   _solver->initialize( input, _equation_system, _multiphysics_system );
 
   // This *must* be done after equation_system->init
-  if( bc_factory )
-    {
-      this->attach_neumann_bc_funcs( bc_factory->build_neumann( *_equation_system ), _multiphysics_system );
-    }
+  this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
   this->check_for_restart( input );
 

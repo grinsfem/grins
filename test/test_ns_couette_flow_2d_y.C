@@ -82,23 +82,10 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
  
-  // MeshBuilder for handling mesh construction
-  GRINS::MeshBuilder mesh_builder;
-
-  // PhysicsFactory handles which GRINS::Physics objects to create
-  GRINS::PhysicsFactory physics_factory;
-
-  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
-  GRINS::SolverFactory solver_factory;
-
-  // VisualizationFactory handles the type of visualization for the simulation
-  GRINS::VisualizationFactory vis_factory;
+  GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   &physics_factory,
-			   &mesh_builder,
-			   &solver_factory,
-			   &vis_factory );
+			   sim_builder );
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");

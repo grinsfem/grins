@@ -31,7 +31,6 @@
 #include <cmath>
 
 // GRINS
-#include "mesh_builder.h"
 #include "simulation.h"
 
 // GRVY
@@ -74,23 +73,10 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
  
-  // MeshBuilder for handling mesh construction
-  GRINS::MeshBuilder mesh_builder;
-
-  // PhysicsFactory handles which GRINS::Physics objects to create
-  GRINS::PhysicsFactory physics_factory;
-
-  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
-  GRINS::SolverFactory solver_factory;
-
-  // VisualizationFactory handles the type of visualization for the simulation
-  GRINS::VisualizationFactory vis_factory;
+  GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   &physics_factory,
-			   &mesh_builder,
-			   &solver_factory,
-			   &vis_factory );
+			   sim_builder );
 
   //FIXME: We need to move this to within the Simulation object somehow...
   std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );

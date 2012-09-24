@@ -30,7 +30,6 @@
 #include <iostream>
 
 // GRINS
-#include "mesh_builder.h"
 #include "simulation.h"
 #include "parabolic_profile.h"
 
@@ -87,26 +86,14 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
  
-  // MeshBuilder for handling mesh construction
-  GRINS::MeshBuilder mesh_builder;
+  GRINS::SimulationBuilder sim_builder;
 
-  // PhysicsFactory handles which GRINS::Physics objects to create
-  GRINS::PhysicsFactory physics_factory;
+  std::tr1::shared_ptr<InjectionBCFactory> bc_factory( new InjectionBCFactory );
 
-  // PhysicsFactory handles which GRINS::Solver to use to solve the problem
-  GRINS::SolverFactory solver_factory;
-
-  // VisualizationFactory handles the type of visualization for the simulation
-  GRINS::VisualizationFactory vis_factory;
-
-  InjectionBCFactory bc_factory;
+  sim_builder.attach_bc_factory( bc_factory );
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   &physics_factory,
-			   &mesh_builder,
-			   &solver_factory,
-			   &vis_factory,
-			   &bc_factory );
+			   sim_builder );
 
   //FIXME: We need to move this to within the Simulation object somehow...
   std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );
