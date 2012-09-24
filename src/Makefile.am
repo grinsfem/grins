@@ -43,7 +43,8 @@ solver_SRC   = $(solver_srcdir)/grins_solver.C \
                $(solver_srcdir)/simulation.C \
                $(solver_srcdir)/solver_factory.C \
                $(solver_srcdir)/grins_steady_solver.C \
-               $(solver_srcdir)/grins_unsteady_solver.C
+               $(solver_srcdir)/grins_unsteady_solver.C \
+               $(solver_srcdir)/simulation_builder.C
 
 physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/physics.C \
@@ -119,7 +120,8 @@ solver_INC   = $(solver_incdir)/grins_solver.h \
                $(solver_incdir)/simulation.h \
                $(solver_incdir)/solver_factory.h \
                $(solver_incdir)/grins_steady_solver.h \
-               $(solver_incdir)/grins_unsteady_solver.h
+               $(solver_incdir)/grins_unsteady_solver.h \
+               $(solver_incdir)/simulation_builder.h
 
 physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/physics.h \

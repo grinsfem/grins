@@ -33,10 +33,7 @@
 #include "physics_factory.h"
 #include "mesh_builder.h"
 #include "solver_factory.h"
-#include "grins_solver.h"
 #include "visualization_factory.h"
-#include "visualization.h"
-#include "boundary_conditions.h"
 #include "bc_factory.h"
 
 namespace GRINS
@@ -50,6 +47,16 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::Mesh> build_mesh( const GetPot& input );
 
+    GRINS::PhysicsList build_physics( const GetPot& input );
+
+    std::tr1::shared_ptr<GRINS::Solver> build_solver( const GetPot& input );
+
+    std::tr1::shared_ptr<GRINS::Visualization> build_vis( const GetPot& input );
+
+    std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet_bcs();
+
+    std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
+
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 
     void attach_solver_factory( std::tr1::shared_ptr<SolverFactory> solver_factory );
@@ -58,7 +65,7 @@ namespace GRINS
     
     void attach_vis_factory( std::tr1::shared_ptr<VisualizationFactory> vis_factory );
 
-    void attach_bc_factory( std::tr1::shared_ptr<VisualizationFactory> bc_factory );
+    void attach_bc_factory( std::tr1::shared_ptr<BoundaryConditionsFactory> bc_factory );
 
   protected:
 
