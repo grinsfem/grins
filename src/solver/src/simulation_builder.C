@@ -35,7 +35,8 @@ namespace GRINS
       _mesh_builder( new MeshBuilder ),
       _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
-      _bc_factory( new BoundaryConditionsFactory )
+      _bc_factory( new BoundaryConditionsFactory ),
+      _qoi_factory( new QoIFactory )
   {
     return;
   }
@@ -75,6 +76,11 @@ namespace GRINS
     return;
   }
 
+  void SimulationBuilder::attach_qoi_factory( std::tr1::shared_ptr<QoIFactory> qoi_factory )
+  {
+    this->_qoi_factory = qoi_factory;
+  }
+
   std::tr1::shared_ptr<libMesh::Mesh> SimulationBuilder::build_mesh( const GetPot& input )
   {
     return (this->_mesh_builder)->build(input);
@@ -105,4 +111,9 @@ namespace GRINS
     return (this->_bc_factory)->build_neumann(equation_system);
   }
   
+  std::tr1::shared_ptr<QoIBase> SimulationBuilder::build_qoi( const GetPot& input )
+  {
+    return (this->_qoi_factory)->build(input);
+  }
+
 } //namespace GRINS
