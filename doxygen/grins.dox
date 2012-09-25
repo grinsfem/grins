@@ -570,8 +570,13 @@ WARN_LOGFILE           =
 INPUT                  = src/solver         \
                          src/physics              \
                          src/boundary_conditions  \
+                         src/bc_handling          \
+                         src/mat_props            \
                          src/funcs                \
                          src/visualization        \
+                         src/qoi                  \
+                         src/utilities            \
+                         src/solver               \
                          test                     \
 		       	 doxygen/grins.page       \
 			 doxygen/txt_common
