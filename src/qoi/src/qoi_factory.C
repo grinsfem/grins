@@ -47,15 +47,18 @@ namespace GRINS
 
     std::tr1::shared_ptr<QoIBase> qoi;
     
-    this->add_qoi( input, qoi_name, qoi );
-
-    /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-    this->check_qoi_physics_consistency( input, qoi_name );
-
-    if( input( "screen-options/echo_qoi", true ) )
+    if( qoi_name != "none" )
       {
+	this->add_qoi( input, qoi_name, qoi );
+	
 	/*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-	this->echo_qoi_list( qoi_name );
+	this->check_qoi_physics_consistency( input, qoi_name );
+	
+	if( input( "screen-options/echo_qoi", false ) )
+	  {
+	    /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
+	    this->echo_qoi_list( qoi_name );
+	  }
       }
 
     return qoi;
@@ -65,6 +68,7 @@ namespace GRINS
   {
     if( qoi_name == avg_nusselt )
       qoi.reset( new AverageNusseltNumber( input ) );
+
     else
       {
 	 libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
@@ -83,19 +87,21 @@ namespace GRINS
     libmesh_assert(num_physics > 1);
   
     std::set<std::string> requested_physics;
-    
+    std::set<std::string> required_physics;
+
     // Build Physics name set
     for( int i = 0; i < num_physics; i++ )
       {
 	requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
       }
   
-    /* If it's Nusselt, we'd better have HeatTransfer. HeatTransfer implicitly requires fluids,
-       so no need to check for those. `*/
+    /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes. 
+       HeatTransfer implicitly requires fluids, so no need to check for those. `*/
     if( qoi_name == avg_nusselt )
       {
-	if( requested_physics.find( heat_transfer ) == requested_physics.end() )
-	  this->consistency_error_msg( qoi_name, heat_transfer );
+	required_physics.insert(heat_transfer);
+	required_physics.insert(low_mach_navier_stokes);
+	this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
       
     return;
@@ -111,12 +117,41 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::consistency_error_msg( const std::string& qoi_name, const std::string& physics_name )
+  void QoIFactory::consistency_helper( const std::set<std::string>& requested_physics,
+				       const std::set<std::string>& required_physics, 
+				       const std::string& qoi_name )
+  {
+    bool physics_found = false;
+    for( std::set<std::string>::const_iterator name = required_physics.begin();
+	 name != required_physics.end();
+	 name++ )
+      {
+	if( requested_physics.find( (*name) ) != requested_physics.end() )
+	  physics_found = true;
+      }
+
+    if( !physics_found )
+      this->consistency_error_msg( qoi_name, required_physics );
+
+    return;
+  }
+
+  void QoIFactory::consistency_error_msg( const std::string& qoi_name, 
+					  const std::set<std::string>& required_physics )
   {
     libMesh::err << "================================================================" << std::endl
-	      << "Physics " << physics_name << " could not be found." << std::endl
-	      << "It is required for QoI " << qoi_name << std::endl
-	      << "================================================================" << std::endl;
+		 << "QoI " << qoi_name << std::endl
+		 << "requires one of the following physics which were not found:" <<std::endl;
+    
+    for( std::set<std::string>::const_iterator name = required_physics.begin();
+	 name != required_physics.end();
+	 name++ )
+      {
+	libMesh::err << *name << std::endl;
+      }
+  
+    libMesh::err << "================================================================" << std::endl;
+
     libmesh_error();
   }
 

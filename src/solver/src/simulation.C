@@ -57,8 +57,21 @@ GRINS::Simulation::Simulation( const GetPot& input,
 
   _solver->initialize( input, _equation_system, _multiphysics_system );
 
-  // This *must* be done after equation_system->init
+  // This *must* be done after equation_system->init in order to get variable indices
   this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
+
+  std::tr1::shared_ptr<QoIBase> qoi = sim_builder.build_qoi(input);
+
+  // If the user actually asks for a QoI, then we add it.
+  if( qoi.use_count() > 0 )
+    {
+      // This *must* be done after equation_system->init in order to get variable indices
+      qoi->init(input, *_multiphysics_system );
+      
+      /*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
+	but we also need to be able to get system variable numbers... */
+      _multiphysics_system->attach_qoi( &(*qoi) );
+    }
 
   this->check_for_restart( input );
 

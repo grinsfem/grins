@@ -61,7 +61,11 @@ namespace GRINS
 
     virtual void echo_qoi_list( const std::string& qoi_name );
 
-    void consistency_error_msg( const std::string& qoi_name, const std::string& physics_name );
+    void consistency_helper( const std::set<std::string>& requested_physics,
+			     const std::set<std::string>& required_physics, 
+			     const std::string& qoi_name );
+
+    void consistency_error_msg( const std::string& qoi_name, const std::set<std::string>& required_physics );
 
   };
 }
