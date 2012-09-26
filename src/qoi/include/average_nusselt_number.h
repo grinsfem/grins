@@ -41,9 +41,6 @@ namespace GRINS
 
     AverageNusseltNumber( const GetPot& input );
 
-    AverageNusseltNumber( Real k, VariableIndex T_var, 
-			  const std::set<libMesh::boundary_id_type>& bc_ids);
-
     virtual ~AverageNusseltNumber();
 
     virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
@@ -64,6 +61,9 @@ namespace GRINS
 
     //! List of boundary ids for which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;
+
+    //! Scaling constant
+    Real _scaling;
 
   private:
     AverageNusseltNumber();

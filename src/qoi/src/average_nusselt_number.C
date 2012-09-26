@@ -34,19 +34,9 @@ namespace GRINS
     : QoIBase()
   {
     this->assemble_qoi_sides = true;
-    
+    this->assemble_qoi_elements = false;
     this->read_input_options(input);
 
-    return;
-  }
-
-  AverageNusseltNumber::AverageNusseltNumber( Real k, VariableIndex T_var, 
-					      const std::set<libMesh::boundary_id_type>& bc_ids)
-    : QoIBase(),
-      _k(k),
-      _T_var(T_var),
-      _bc_ids(bc_ids)
-  {
     return;
   }
 
@@ -57,7 +47,7 @@ namespace GRINS
 
   libMesh::AutoPtr<libMesh::DifferentiableQoI> AverageNusseltNumber::clone()
   {
-    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new AverageNusseltNumber( _k, _T_var, _bc_ids ) );
+    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new AverageNusseltNumber( *this ) );
   }
 
   void AverageNusseltNumber::read_input_options( const GetPot& input )
@@ -80,12 +70,15 @@ namespace GRINS
 	std::cerr << "Error: Must specify at least one boundary id to compute"
 		  << " average Nusselt number." << std::endl
 		  << "Found: " << num_bcs << std::endl;
+	libmesh_error();
       }
 
     for( int i = 0; i < num_bcs; i++ )
       {
 	_bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
       }
+
+    this->_scaling = input( "QoI/NusseltNumber/scaling", 1.0 );
 
     return;
   }
@@ -129,7 +122,7 @@ namespace GRINS
 		c.side_gradient<Real>(this->_T_var, qp, grad_T);
 		
 		// Update the elemental increment dR for each qp
-		qoi += (this->_k)*(grad_T*normals[qp])*JxW[qp];
+		qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 	      } // quadrature loop
 
 	  } // end check on boundary id
