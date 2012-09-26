@@ -29,6 +29,9 @@
 #ifndef QOI_BASE_H
 #define QOI_BASE_H
 
+// system
+#include <iomanip>
+
 // libMesh
 #include "diff_qoi.h"
 #include "getpot.h"
@@ -55,6 +58,12 @@ namespace GRINS
     virtual void init( const GetPot& input, const libMesh::FEMSystem& system ){};
 
     /*!
+     * Method to allow QoI to resize libMesh::System storage of QoI computations.
+     * \todo Right now, we're only dealing with 1 QoI at a time. Need to generalize.
+     */
+    virtual void init_qoi( std::vector<Number>& sys_qoi );
+
+    /*!
      * We call the base class then grab the sys_qoi and cache it locally to output later.
      * If the QoI is not expressable as a sum over elements, then this will need to be
      * overridden with the correct libMesh::Parallel operations.
@@ -65,7 +74,7 @@ namespace GRINS
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.
      */
-    virtual void output_qoi( std::ostream& out );
+    virtual void output_qoi( std::ostream& out ) const;
 
   protected:
 

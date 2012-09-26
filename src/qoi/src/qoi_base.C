@@ -41,6 +41,12 @@ namespace GRINS
     return;
   }
 
+  void QoIBase::init_qoi( std::vector<Number>& sys_qoi )
+  {
+    sys_qoi.resize(1, 0.0);
+    return;
+  }
+
   void QoIBase::parallel_op( std::vector<Number>& sys_qoi, std::vector<Number>& local_qoi,
 			     const QoISet& qoi_indices )
   {
@@ -49,7 +55,7 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::output_qoi( std::ostream& out )
+  void QoIBase::output_qoi( std::ostream& out ) const
   {
     if( !_qoi_cache.empty() )
       {
@@ -57,7 +63,7 @@ namespace GRINS
 
 	for(  unsigned int i = 0; i < _qoi_cache.size(); i++ )
 	  {
-	    out << "QoI #" << i << " = " << _qoi_cache[i] << std::endl;
+	    out << "QoI #" << i << " = " << std::setprecision(10) << _qoi_cache[i] << std::endl;
 	  }
 
 	out << "========================================================================" << std::endl;

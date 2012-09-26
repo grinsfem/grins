@@ -36,9 +36,11 @@ GRINS::Simulation::Simulation( const GetPot& input,
      _system_name( input("screen-options/system_name", "GRINS" ) ),
      _multiphysics_system( &(_equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name )) ),
      _vis( sim_builder.build_vis(input) ),
+     _qoi( sim_builder.build_qoi(input) ),
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
      _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+     _print_qoi( input("screen-options/print_qoi", false ) ),
      _output_vis( input("vis-options/output_vis", false ) ),
      _output_residual( input( "vis-options/output_residual", false ) )
 {
@@ -60,17 +62,15 @@ GRINS::Simulation::Simulation( const GetPot& input,
   // This *must* be done after equation_system->init in order to get variable indices
   this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
-  std::tr1::shared_ptr<QoIBase> qoi = sim_builder.build_qoi(input);
-
   // If the user actually asks for a QoI, then we add it.
-  if( qoi.use_count() > 0 )
+  if( this->_qoi.use_count() > 0 )
     {
       // This *must* be done after equation_system->init in order to get variable indices
-      qoi->init(input, *_multiphysics_system );
+      this->_qoi->init(input, *_multiphysics_system );
       
       /*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
 	but we also need to be able to get system variable numbers... */
-      _multiphysics_system->attach_qoi( &(*qoi) );
+      _multiphysics_system->attach_qoi( &(*(this->_qoi)) );
     }
 
   this->check_for_restart( input );
@@ -86,8 +86,16 @@ GRINS::Simulation::~Simulation()
 void GRINS::Simulation::run()
 {
   this->print_sim_info();
-  
+
   _solver->solve(  _multiphysics_system, _equation_system, _vis, _output_vis, _output_residual );
+
+  if( this->_print_qoi )
+    {
+      _multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
+      //const libMesh::DifferentiableQoI* diff_qoi = this->_multiphysics_system->get_qoi();
+      const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+      my_qoi->output_qoi( std::cout );
+    }
 
   return;
 }

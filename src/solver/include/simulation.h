@@ -88,10 +88,13 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
 
+    std::tr1::shared_ptr<QoIBase> _qoi;
+
     // Screen display options
     bool _print_mesh_info;
     bool _print_log_info;
     bool _print_equation_system_info;
+    bool _print_qoi;
 
     // Visualization options
     bool _output_vis;
