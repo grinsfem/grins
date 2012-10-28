@@ -230,6 +230,24 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	}
     }
 
+  else if( physics_to_add == axisymmetric_electrostatics )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricElectrostatics(physics_to_add,input));
+    }
+
+  else if( physics_to_add == axisymmetric_magnetostatics )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricMagnetostatics(physics_to_add,input));
+    }
+
+  else if( physics_to_add == axisymmetric_lorentz_force )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricLorentzForce(physics_to_add,input));
+    }
+
   else
     {
       std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
@@ -341,6 +359,35 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 	  if( physics_list.find(heat_transfer) == physics_list.end() )
 	    {
 	      this->physics_consistency_error( physics->first, heat_transfer  );
+	    }
+	}
+
+      /* For AxisymmetricMagnetostatics, we'd better have AxisymmetricElectrostatics */
+      if( physics->first == axisymmetric_magnetostatics )
+	{
+	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	    }
+	}
+
+      /* For AxisymmetricLorentzForce, we'd better have AxisymmetricElectrostatics,
+         AxisymmetricMagnetostatic, and AxisymmetricIncompressibleNavierStokes */
+      if( physics->first == axisymmetric_lorentz_force )
+	{
+	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	    }
+
+	  if( physics_list.find(axisymmetric_magnetostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_magnetostatics );
+	    }
+
+	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
 	    }
 	}
     }
