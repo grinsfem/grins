@@ -43,6 +43,7 @@ test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 gaussian_profiles_SOURCES = gaussian_profiles.C
 
+
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_ns_couette_flow_2d_y_SOURCES)       \
@@ -81,6 +82,8 @@ shellfiles_src = bc_profile_tests.sh                \
                  test_thermally_driven_2d_flow.sh   \
                  test_axi_thermally_driven_flow.sh  \
                  test_thermally_driven_3d_flow.sh   \
+                 electromagnetics_test.sh           \
+                 test_magnetostatics.sh             \
                  finalize.sh 
 
 # Want these put with the distro so we can run make check
