@@ -62,23 +62,11 @@ namespace GRINS
   //! temperature
   const std::string T_var_name_default = "T";
   
-  //! Ex field
-  const std::string Ex_var_name_default = "Ex";
-  
-  //! Ey field
-  const std::string Ey_var_name_default = "Ey";
+  //! Electric Potential
+  const std::string V_var_name_default = "V";
 
-  //! Ez field
-  const std::string Ez_var_name_default = "Ez";
-
-  //! Bx field
-  const std::string Bx_var_name_default = "Bx";
-  
-  //! By field
-  const std::string By_var_name_default = "By";
-
-  //! Bz field
-  const std::string Bz_var_name_default = "Bz";
+  //! Magnetic Potential
+  const std::string A_var_name_default = "A";
 }
 
 #endif //VARIABLE_NAME_DEFAULTS_H
