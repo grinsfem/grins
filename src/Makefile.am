@@ -72,7 +72,10 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/stab_helper.C \
                $(physics_srcdir)/inc_navier_stokes_stab_helper.C \
                $(physics_srcdir)/heat_transfer_stab_helper.C \
-               $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C
+               $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C \
+               $(physics_srcdir)/axisym_electrostatics.C \
+               $(physics_srcdir)/axisym_magnetostatics.C \
+               $(physics_srcdir)/axisym_lorentz_force.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
@@ -103,7 +106,9 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/axisym_heat_transfer_bc_handling.C \
                   $(bc_handling_srcdir)/inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_inc_navier_stokes_bc_handling.C \
-                  $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C
+                  $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C \
+                  $(bc_handling_srcdir)/axisym_electrostatics_bc_handling.C \
+                  $(bc_handling_srcdir)/axisym_magnetostatics_bc_handling.C
 
 qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_base.C \
@@ -152,7 +157,10 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/stab_helper.h \
                $(physics_incdir)/inc_navier_stokes_stab_helper.h \
                $(physics_incdir)/heat_transfer_stab_helper.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h
+               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h \
+               $(physics_incdir)/axisym_electrostatics.h \
+               $(physics_incdir)/axisym_magnetostatics.h \
+               $(physics_incdir)/axisym_lorentz_force.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h \
@@ -184,7 +192,9 @@ bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h \
                   $(bc_handling_incdir)/inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/axisym_inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h
+                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/axisym_electrostatics_bc_handling.h \
+                  $(bc_handling_incdir)/axisym_magnetostatics_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_base.h \
@@ -236,7 +246,7 @@ endif
 AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
-               $(LIBMESH_INCLUDE) \
+               $(LIBMESH_CPPFLAGS) \
                $(GRVY_CFLAGS)
 
 #-------------
