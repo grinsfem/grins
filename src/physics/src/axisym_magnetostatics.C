@@ -1,0 +1,422 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010-2012 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
+//-----------------------------------------------------------------------el-
+//
+// $Id:$
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+#include "axisym_magnetostatics.h"
+#include "axisym_magnetostatics_bc_handling.h"
+
+namespace GRINS
+{
+  AxisymmetricMagnetostatics::AxisymmetricMagnetostatics(const std::string& physics_name, const GetPot& input )
+    : Physics(physics_name)
+  {
+    this->read_input_options(input);
+  
+    // This is deleted in the base class
+    _bc_handler = new GRINS::AxisymmetricMagnetostaticsBCHandling( physics_name, input );
+    
+    return;
+  }
+
+  AxisymmetricMagnetostatics::~AxisymmetricMagnetostatics(){return;}
+
+  void AxisymmetricMagnetostatics::read_input_options( const GetPot& input )
+  {
+    this->_A_FE_family =
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_magnetostatics+"/FE_family", "NEDELEC_ONE") );
+    
+    this->_A_order =
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_magnetostatics+"/A_order", "FIRST") );
+    
+    this->_V_FE_family =
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_electrostatics+"/FE_family", "LAGRANGE") );
+    
+    this->_V_order =
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_electrostatics+"/V_order", "SECOND") );
+    
+    this->_A_var_name = input("Physics/VariableNames/MagneticPotential", GRINS::A_var_name_default );
+
+    this->_V_var_name = input("Physics/VariableNames/ElectricPotential", GRINS::V_var_name_default );
+    
+    _sigma = input("Physics/AxisymmetricMagnetostatics/sigma", 1.0 );
+    _mu = input("Physics/AxisymmetricMagnetostatics/mu", 1.0 );
+
+    return;
+  }
+
+  void AxisymmetricMagnetostatics::init_variables( libMesh::FEMSystem* system )
+  {
+    // Get libMesh to assign an index for each variable
+    this->_dim = system->get_mesh().mesh_dimension();
+    
+    _A_var = system->add_variable( _A_var_name, _A_order, _A_FE_family);
+    
+    _V_var = system->add_variable( _V_var_name, _V_order, _V_FE_family);
+
+    return;
+  }
+
+  void AxisymmetricMagnetostatics::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    
+    system->time_evolving(_A_var);
+
+    return;
+  }
+
+  void AxisymmetricMagnetostatics::init_context( libMesh::DiffContext &context )
+  {
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    
+    FEGenericBase<RealGradient>* A_fe;
+    FEGenericBase<Real>* V_fe;
+    c.get_element_fe<RealGradient>( _A_var, A_fe );
+    c.get_element_fe<Real>( _V_var, V_fe );
+
+    FEGenericBase<RealGradient>* A_side_fe;
+    FEGenericBase<Real>* V_side_fe;
+    c.get_side_fe<RealGradient>( _A_var, A_side_fe );
+    c.get_side_fe<Real>( _V_var, V_side_fe );
+
+    // We should prerequest all the data
+    // we will need to build the linear system
+    // or evaluate a quantity of interest.
+    A_fe->get_JxW();
+    A_fe->get_phi();
+    A_fe->get_curl_phi();
+    A_fe->get_xyz();
+    
+    V_fe->get_JxW();
+    V_fe->get_phi();
+    V_fe->get_dphi();
+    V_fe->get_xyz();
+    
+    A_side_fe->get_JxW();
+    A_side_fe->get_phi();
+    A_side_fe->get_curl_phi();
+    A_side_fe->get_xyz();
+    
+    V_side_fe->get_JxW();
+    V_side_fe->get_phi();
+    V_side_fe->get_dphi();
+    V_side_fe->get_xyz();
+    
+    return;
+  }
+
+  bool AxisymmetricMagnetostatics::element_time_derivative( bool request_jacobian,
+							    libMesh::DiffContext& context,
+							    libMesh::FEMSystem* /*system*/ )
+  {
+#ifdef USE_GRVY_TIMERS
+    this->_timer->BeginTimer("AxisymmetricMagnetostatics::element_time_derivative");
+#endif
+
+    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_A_dofs = c.dof_indices_var[_A_var].size();
+    const unsigned int n_V_dofs = c.dof_indices_var[_V_var].size();
+  
+    // Get finite element object
+    FEGenericBase<RealGradient>* A_fe;
+    FEGenericBase<Real>* V_fe;
+    c.get_element_fe<RealGradient>( _A_var, A_fe );
+    c.get_element_fe<Real>( _V_var, V_fe );
+
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real> &JxW =
+      A_fe->get_JxW();
+
+    // The magnetic potential shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& A_phi =
+      A_fe->get_phi();
+    
+    // The electric potential shape function gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& A_curl_phi =
+      A_fe->get_curl_phi();
+    
+    // The electric potential shape function gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& V_gradphi =
+      V_fe->get_dphi();
+
+    // Physical location of the quadrature points
+    const std::vector<libMesh::Point>& qpoint =
+      A_fe->get_xyz();
+
+    // The subvectors and submatrices we need to fill:
+    libMesh::DenseSubVector<Number> &F_A = *c.elem_subresiduals[_A_var]; // R_{A}
+    
+    libMesh::DenseSubMatrix<Number> &K_AA = *c.elem_subjacobians[_A_var][_A_var]; // R_{A},{A}
+
+    libMesh::DenseSubMatrix<Number> &K_AV = *c.elem_subjacobians[_A_var][_V_var]; // R_{A},{V}
+
+    // Now we will build the element Jacobian and residual.
+    // Constructing the residual requires the solution and its
+    // gradient from the previous timestep.  This must be
+    // calculated at each quadrature point by summing the
+    // solution degree-of-freedom values by the appropriate
+    // weight functions.
+    unsigned int n_qpoints = c.element_qrule->n_points();
+    
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+	const libMesh::Number r = qpoint[qp](0);
+
+	// Compute the solution & its gradient at the old Newton iterate.
+	libMesh::Gradient curl_A, grad_V;
+
+	c.interior_gradient<Real>(_V_var, qp, grad_V);
+	c.interior_curl<RealGradient>(_A_var, qp, curl_A);
+
+	// Loop over magnetic potential dofs
+	for (unsigned int i=0; i != n_A_dofs; i++)
+	  {
+	    F_A(i) += (curl_A*A_curl_phi[i][qp]/_mu + _sigma*grad_V*A_phi[i][qp])*r*JxW[qp];
+
+	    if( request_jacobian )
+	      {
+		for (unsigned int j=0; j != n_V_dofs; j++)
+		  {
+		    K_AV(i,j) += _sigma*V_gradphi[j][qp]*A_phi[i][qp]*r*JxW[qp];
+		  }
+
+		for (unsigned int j=0; j != n_A_dofs; j++)
+		  {
+		    K_AA(i,j) += A_curl_phi[j][qp]*A_curl_phi[i][qp]/_mu*r*JxW[qp];
+		  }
+	      }
+	  } // magnetic potential dofs
+
+      } // end quadrature loop
+
+    return request_jacobian;
+  }
+
+  bool AxisymmetricMagnetostatics::element_constraint( bool request_jacobian,
+						       libMesh::DiffContext& /*context*/,
+						       libMesh::FEMSystem* /*system*/ )
+  {
+    return request_jacobian;
+  }
+
+  bool AxisymmetricMagnetostatics::side_time_derivative( bool request_jacobian,
+							 libMesh::DiffContext& context,
+							 libMesh::FEMSystem* system )
+  {
+#ifdef USE_GRVY_TIMERS
+    this->_timer->BeginTimer("AxisymmetricMagnetostatics::side_time_derivative");
+#endif
+    
+    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+    const GRINS::BoundaryID boundary_id =
+      system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
+    
+    libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+    
+    _bc_handler->apply_neumann_bcs( c, _A_var, request_jacobian, boundary_id );
+
+#ifdef USE_GRVY_TIMERS
+    this->_timer->EndTimer("AxisymmetricMagnetostatics::side_time_derivative");
+#endif
+    
+    return request_jacobian;
+  }
+  
+  bool AxisymmetricMagnetostatics::side_constraint( bool request_jacobian,
+						    libMesh::DiffContext& context,
+						    libMesh::FEMSystem* system )
+  {
+#ifdef USE_GRVY_TIMERS
+    //this->_timer->BeginTimer("AxisymmetricMagnetostatics::side_constraint");
+#endif
+    
+    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    
+    // Get finite element object
+    FEGenericBase<RealGradient>* side_fe = NULL;
+    c.get_side_fe<RealGradient>( _A_var, side_fe );
+
+    // First we get some references to cell-specific data that
+    // will be used to assemble the linear system.
+    
+    // Element Jacobian * quadrature weights for interior integration
+    const std::vector<Real> &JxW = side_fe->get_JxW();
+    
+    // The velocity shape functions at interior quadrature points.
+    const std::vector<std::vector<RealGradient> >& phi = side_fe->get_phi();
+    
+    // The number of local degrees of freedom in each variable
+    const unsigned int n_A_dofs = c.dof_indices_var[_A_var].size();
+    
+    const std::vector<Point>& normals = side_fe->get_normals();
+    
+    const std::vector<Point>& qpoint = side_fe->get_xyz();
+    
+    // The penalty value.  \frac{1}{\epsilon}
+    // in the discussion above.
+    const Real penalty = 1.e10;
+    
+    DenseSubMatrix<Number> &K = *c.elem_subjacobians[_A_var][_A_var];
+    DenseSubVector<Number> &F = *c.elem_subresiduals[_A_var];
+    
+    const unsigned int n_qpoints = (c.get_side_qrule())->n_points();
+    
+    GRINS::BoundaryID bc_id = system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
+    
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+	const libMesh::Number r = qpoint[qp](0);
+
+	Gradient A;
+	c.side_value<RealGradient>( _A_var, qp, A );
+	
+	if( _bc_handler->get_dirichlet_bc_type(bc_id) == AxisymmetricMagnetostaticsBCHandling::AXISYMMETRIC )
+	  {
+	    for (unsigned int i=0; i != n_A_dofs; i++)
+	      {
+		F(i) += penalty*(A*phi[i][qp])*JxW[qp];
+		
+		if (request_jacobian)
+		  {
+		    for (unsigned int j=0; j != n_A_dofs; j++)
+		      K(i,j) += penalty*(phi[j][qp]*phi[i][qp])*JxW[qp];
+		  }
+	      }
+
+	  }
+	else
+	  {
+	    RealGradient N( normals[qp](0), normals[qp](1) );
+	    
+	    Gradient NcA = A.cross(N);
+	    
+	    for (unsigned int i=0; i != n_A_dofs; i++)
+	      {
+		F(i) += penalty*NcA*(phi[i][qp].cross(N))*r*JxW[qp];
+		
+		if (request_jacobian)
+		  {
+		    for (unsigned int j=0; j != n_A_dofs; j++)
+		      K(i,j) += penalty*(phi[j][qp].cross(N))*(phi[i][qp].cross(N))*r*JxW[qp];
+		  }
+	      }
+	  }
+
+      } // End quadrature loop
+
+#ifdef USE_GRVY_TIMERS
+    this->_timer->EndTimer("AxisymmetricMagnetostatics::side_constraint");
+#endif
+
+    return request_jacobian;
+  }
+  
+
+  bool AxisymmetricMagnetostatics::mass_residual( bool request_jacobian,
+						  libMesh::DiffContext& context,
+						  libMesh::FEMSystem* system )
+{
+#ifdef USE_GRVY_TIMERS
+  this->_timer->BeginTimer("AxisymmetricMagnetostatics::mass_residual");
+#endif
+
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // Get finite element object
+  FEGenericBase<RealGradient>* A_fe;
+  FEGenericBase<Real>* V_fe;
+  c.get_element_fe<RealGradient>( _A_var, A_fe );
+  c.get_element_fe<Real>( _V_var, V_fe );
+
+  // First we get some references to cell-specific data that
+  // will be used to assemble the linear system.
+
+  // Element Jacobian * quadrature weights for interior integration.
+  const std::vector<libMesh::Real> &JxW =
+    A_fe->get_JxW();
+  
+  // The magnetic potential shape functions at interior quadrature points.
+  const std::vector<std::vector<libMesh::RealGradient> >& A_phi =
+    A_fe->get_phi();
+  
+  // The electric potential shape functions at interior quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& V_phi =
+    V_fe->get_phi();
+
+  // The subvectors and submatrices we need to fill:
+  DenseSubVector<Real> &F_A = *c.elem_subresiduals[_A_var];
+
+  DenseSubVector<Real> &F_V = *c.elem_subresiduals[_V_var];
+
+  DenseSubMatrix<Real> &M_AA = *c.elem_subjacobians[_A_var][_A_var];
+
+  DenseSubMatrix<Real> &M_VA = *c.elem_subjacobians[_V_var][_A_var];
+
+  unsigned int n_qpoints = c.element_qrule->n_points();
+
+  const std::vector<Point>& qpoint = A_fe->get_xyz();
+
+  for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+    {
+      const libMesh::Number r = qpoint[qp](0);
+
+      // For the mass residual, we need to be a little careful.
+      // The time integrator is handling the time-discretization
+      // for us so we need to supply M(u_fixed)*u for the residual.
+      // u_fixed will be given by the fixed_interior_* functions
+      // while u will be given by the interior_* functions.
+      Gradient A_dot;
+      c.fixed_interior_value<RealGradient>(_A_var, qp, A_dot);
+
+      /*
+      for (unsigned int i = 0; i != n_A_dofs; ++i)
+        {
+
+          if( request_jacobian )
+              {
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+                    
+                  }
+              }// End of check on Jacobian
+          
+        } // End of element dof loop
+      */      
+
+    } // End of the quadrature point loop
+
+#ifdef USE_GRVY_TIMERS
+  this->_timer->EndTimer("AxisymmetricMagnetostatics::mass_residual");
+#endif
+
+  return request_jacobian;
+}
+
+
+} // namespace GRINS
