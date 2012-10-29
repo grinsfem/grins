@@ -107,7 +107,8 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
 
 qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_base.C \
-          $(qoi_srcdir)/qoi_factory.C
+          $(qoi_srcdir)/qoi_factory.C \
+          $(qoi_srcdir)/vorticity.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -189,7 +190,8 @@ bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
 qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_base.h \
           $(qoi_incdir)/qoi_factory.h \
-          $(qoi_incdir)/qoi_names.h
+          $(qoi_incdir)/qoi_names.h \
+          $(qoi_incdir)/vorticity.h
 
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
