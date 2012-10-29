@@ -25,7 +25,7 @@ T0 = '300' #[K]
 R = '287.0' #[J/kg-K]
 
 # Gravity vector
-g = '0.0 0.0' #[m/s^2]
+g = '0.0 -9.81' #[m/s^2]
 
 conductivity_model = 'constant'
 viscosity_model = 'constant'
@@ -38,12 +38,14 @@ specific_heat_model = 'constant'
 # bottom heated part = 4
 
 vel_bc_ids = '1 2 3 4'
-vel_bc_types = 'inflow prescribed_normal_stress no_slip no_slip'
+vel_bc_types = 'inflow constant_normal_stress no_slip no_slip'
 
 temp_bc_ids = '1 2 3 4'
 temp_bc_types = 'isothermal adiabatic adiabatic isothermal'
 
-T_wall_1 = '600.0'
+T_wall_1 = '293.0'
+
+T_wall_4 = '439.5'
 
 enable_thermo_press_calc = 'true'
 
@@ -76,7 +78,7 @@ tau_factor = '0.005'
 
 [./Viscosity]
 
-mu = '0.005' #[kg/m-s]
+mu = '0.01178' #[kg/m-s]
 
 [../Conductivity]
 
