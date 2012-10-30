@@ -68,6 +68,8 @@ bc_types = 'parabolic_profile no_slip no_slip'
 
 parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
 parabolic_profile_var_1 = 'u'
+parabolic_profile_fix_1 = 'v'
+
 pin_pressure = 'false' 
 
 # Options for adaptivity
