@@ -72,5 +72,9 @@ namespace GRINS
     return;
   }
 
+  Number QoIBase::get_qoi( unsigned int qoi_index ) const
+  {
+    return _qoi_cache[qoi_index];
+  }
   
-}
+} // namespace GRINS

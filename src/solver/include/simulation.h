@@ -61,6 +61,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
+    Number get_qoi( unsigned int qoi_index ) const;
+
 #ifdef USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif

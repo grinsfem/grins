@@ -76,6 +76,14 @@ namespace GRINS
      */
     virtual void output_qoi( std::ostream& out ) const;
 
+    //! Accessor for value of QoI for given qoi_index.
+    /*!
+     * Returns value of QoI for qoi_index. Currently, we only store a single QoI,
+     * so qoi_index should be zero.
+     * \todo Maybe take a libMesh::QoISet instead?
+     */
+    Number get_qoi( unsigned int qoi_index ) const;
+
   protected:
 
     std::vector<Number> _qoi_cache;
