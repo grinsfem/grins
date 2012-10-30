@@ -32,7 +32,7 @@
 namespace GRINS
 {
   AxisymmetricMagnetostatics::AxisymmetricMagnetostatics(const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name)
+    : Physics(physics_name,input)
   {
     this->read_input_options(input);
   

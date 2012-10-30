@@ -69,6 +69,9 @@ namespace GRINS
     if( qoi_name == avg_nusselt )
       qoi.reset( new AverageNusseltNumber( input ) );
 
+    else if( qoi_name == vorticity )
+      qoi.reset( new Vorticity( input ) );
+
     else
       {
 	 libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
@@ -84,7 +87,7 @@ namespace GRINS
     int num_physics =  input.vector_variable_size("Physics/enabled_physics");
 
     // This should be checked other places, but let's be double sure.
-    libmesh_assert(num_physics > 1);
+    libmesh_assert(num_physics > 0);
   
     std::set<std::string> requested_physics;
     std::set<std::string> required_physics;

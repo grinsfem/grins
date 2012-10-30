@@ -149,13 +149,26 @@ void GRINS::IncompressibleNavierStokesBCHandling::init_bc_data( const GRINS::Bou
 	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func( new GRINS::ParabolicProfile(a,b,c,d,e,f) );
 	cont.set_func( func );
 	this->attach_dirichlet_bound_func( cont );
+	
+	// Set specified components of Dirichlet data to zero
+	std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
+
+	GRINS::DBCContainer cont_fix;
+	cont_fix.add_var_name( fix_var );
+	cont_fix.add_bc_id( bc_id );
+
+	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func_fix( new ZeroFunction<Number>() );
+	cont_fix.set_func( func_fix );
+	this->attach_dirichlet_bound_func( cont_fix );
       }
       break;
+
     case(INFLOW):
       {
 	this->set_dirichlet_bc_type( bc_id, bc_type );
       }
       break;
+
     default:
       {
 	// Call base class to detect any physics-common boundary conditions

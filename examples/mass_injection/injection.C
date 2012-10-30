@@ -136,14 +136,20 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point&, const Parameters &params, 
+Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
   Real value = 0.0;
 
   if( unknown_name == "T" )
-    value = params.get<Real>("T_init");
-
+    {
+      if( std::fabs( p(1) ) < 1.0e-9 && std::fabs( p(0) ) <= 0.1 )
+	{
+	  value = 600.0;
+	}
+      else
+	value = params.get<Real>("T_init");
+    }
   else if( unknown_name == "p0" )
     value = params.get<Real>("p0_init");
 

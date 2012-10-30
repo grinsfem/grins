@@ -35,15 +35,15 @@ specific_heat_model = 'constant'
 # injection site = 1
 # all others = 2
 
-vel_bc_ids = '1 2'
-vel_bc_types = 'inflow no_slip'
+vel_bc_ids = '1 2 3 4 5 6'
+vel_bc_types = 'inflow no_slip no_slip no_slip no_slip no_slip'
 
-temp_bc_ids = '1 2'
-temp_bc_types = 'isothermal adiabatic'
+temp_bc_ids = '1 2 3 4 5 6'
+temp_bc_types = 'isothermal adiabatic adiabatic adiabatic adiabatic adiabatic'
 
 T_wall_1 = '600.0'
 
-enable_thermo_press_calc = 'true'
+enable_thermo_press_calc = 'false'
 
 pin_pressure = true
 pin_location = '0.0 0.0'
@@ -91,7 +91,7 @@ cp = '1004.5' #[J/kg-K]
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'injection_grid.e'
+mesh_filename = 'new_grid.e'
 element_type = QUAD9
 
 uniformly_refine =  0 
@@ -101,12 +101,12 @@ uniformly_refine =  0
 [unsteady-solver]
 transient = true 
 theta = 1.0
-n_timesteps = 10
+n_timesteps = 1
 deltat = 0.0001
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  65 
+max_nonlinear_iterations =  2 
 max_linear_iterations = 250
 
 verify_analytic_jacobians = 0.0
@@ -130,7 +130,7 @@ output_format = 'ExodusII xdr'
 # Options for print info to the screen
 [screen-options]
 
-system_name = 'LowMachNavierStokes'
+system_name = 'MassInjection'
 
 print_equation_system_info = true
 print_mesh_info = true

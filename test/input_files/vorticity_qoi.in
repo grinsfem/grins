@@ -1,0 +1,80 @@
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file'
+mesh_filename = './grids/poiseuille_verification.e'
+uniformly_refine = 0
+
+# Options for time solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10 
+max_linear_iterations = 2500
+
+initial_linear_tolerance = 1.0e-12
+
+verify_analytic_jacobians = 1.e-6
+
+# Visualization options
+[vis-options]
+output_vis_time_series = false 
+output_vis = 'false' 
+vis_output_file_prefix = temp
+output_format = 'ExodusII'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'false' 
+print_mesh_info = 'false'
+print_log_info = 'false'
+solver_verbose = 'false'
+solver_quiet = 'true'
+
+echo_physics = 'false'
+echo_subdomains_per_physics = 'false'
+echo_qoi = 'false' # which QoIs activated
+print_qoi = 'false' # print numerical values of QoIs
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'Stokes'
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = 1.0
+mu = 1.0e-0
+
+[./VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+# Options for Stokes physics
+[../Stokes]
+
+bc_ids = '1 3 4'
+bc_types = 'parabolic_profile no_slip no_slip'
+
+parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_var_1 = 'u'
+parabolic_profile_fix_1 = 'v'
+
+pin_pressure = 'false' 
+
+# Options for adaptivity
+[QoI]
+enabled_qois = 'vorticity'
+[./Vorticity]
+enabled_subdomains = '2'
+[]
