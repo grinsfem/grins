@@ -116,6 +116,11 @@ std::tr1::shared_ptr<libMesh::EquationSystems> GRINS::Simulation::get_equation_s
   return _equation_system;
 }
 
+Number GRINS::Simulation::get_qoi( unsigned int qoi_index ) const
+{
+  return _qoi->get_qoi( qoi_index );
+}
+
 void GRINS::Simulation::check_for_restart( const GetPot& input )
 {
   const std::string restart_file = input( "restart-options/restart_file", "none" );

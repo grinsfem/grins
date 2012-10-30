@@ -8,6 +8,7 @@ check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += gaussian_profiles
+check_PROGRAMS += vorticity_qoi
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -42,6 +43,7 @@ test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
 test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 gaussian_profiles_SOURCES = gaussian_profiles.C
+vorticity_qoi_SOURCES = test_vorticity_qoi.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -51,7 +53,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_axi_ns_poiseuille_flow_SOURCES)     \
           $(test_axi_ns_con_cyl_flow_SOURCES)        \
           $(test_thermally_driven_flow_SOURCES)      \
-          $(gaussian_profiles_SOURCES)
+          $(gaussian_profiles_SOURCES)               \
+          $(vorticity_qoi_SOURCES)
 
 #Define tests to actually be run
 TESTS = bc_profile_tests.sh                \
@@ -67,6 +70,8 @@ TESTS = bc_profile_tests.sh                \
         test_thermally_driven_2d_flow.sh   \
         test_axi_thermally_driven_flow.sh  \
         test_thermally_driven_3d_flow.sh   \
+        test_qois.sh                       \
+        test_vorticity_qoi.sh              \
         finalize.sh
 
 shellfiles_src = bc_profile_tests.sh                \
@@ -81,6 +86,8 @@ shellfiles_src = bc_profile_tests.sh                \
                  test_thermally_driven_2d_flow.sh   \
                  test_axi_thermally_driven_flow.sh  \
                  test_thermally_driven_3d_flow.sh   \
+                 test_qois.sh                       \
+                 test_vorticity_qoi.sh              \
                  finalize.sh 
 
 # Want these put with the distro so we can run make check

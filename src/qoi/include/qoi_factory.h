@@ -36,6 +36,7 @@
 #include "qoi_names.h"
 #include "qoi_base.h"
 #include "average_nusselt_number.h"
+#include "vorticity.h"
 
 // shared_ptr
 #include "boost/tr1/memory.hpp"

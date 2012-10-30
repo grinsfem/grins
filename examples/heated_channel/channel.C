@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   // VisualizationFactory handles the type of visualization for the simulation
   GRINS::VisualizationFactory vis_factory( libMesh_inputfile );
 
-  InjectionBCFactory bc_factory( libMesh_inputfile );
+  ChannelBCFactory bc_factory( libMesh_inputfile );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   &physics_factory,
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point&, const Parameters &params, 
+Real initial_values( const Point&p, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
   Real value = 0.0;
@@ -159,6 +159,9 @@ Real initial_values( const Point&, const Parameters &params,
 
   else if( unknown_name == "p0" )
     value = params.get<Real>("p0_init");
+  
+  else if( unknown_name == "u" )
+    value = 0.6*p(1)*(1.0-p(1));
 
   else
     value = 0.0;
@@ -169,28 +172,16 @@ Real initial_values( const Point&, const Parameters &params,
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ChannelBCFactory::build_dirichlet( )
 {
   GRINS::DBCContainer cont;
-  cont.add_var_name( "v" );
+  cont.add_var_name( "u" );
   cont.add_bc_id( 1 );
   
-  const Real l = 0.2;
-
-  const Real mdot = 1.0;
-  const Real R = 287;
-  const Real T = 600;
-  const Real p0 = 1.0e5;
-  const Real rho = p0/(R*T);
-
-  const Real factor = 6.0*mdot/(l*l)/rho;
-
-  std::cout << "factor = " << factor << std::endl;
-  
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -factor, 0.0, 0.0, 0.0, 0.0, factor*l*l/4.0 ) );
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -0.6, 0.0, 0.0, 0.6, 0.0, 0.0 ) );
     
   cont.set_func( vel_func );
 
 
   GRINS::DBCContainer cont2;
-  cont2.add_var_name( "u" );
+  cont2.add_var_name( "v" );
   cont2.add_bc_id( 1 );
 
   std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );

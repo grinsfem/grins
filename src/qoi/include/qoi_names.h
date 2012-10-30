@@ -31,5 +31,6 @@
 namespace GRINS
 {
   const std::string avg_nusselt = "average_nusselt_number";
+  const std::string vorticity = "vorticity";
 }
 #endif //GRINS_QOI_NAMES_H
