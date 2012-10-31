@@ -120,9 +120,9 @@ void GRINS::Visualization::dump_visualization( std::tr1::shared_ptr<libMesh::Equ
 	  GMVIO(mesh).write_equation_systems( filename,
 					      *equation_system );
 	}
-      else if ((*format) == "vtu")
+      else if ((*format) == "pvtu")
 	{
-	  std::string filename = filename_prefix+".vtu";
+	  std::string filename = filename_prefix+".pvtu";
 	  VTKIO(mesh).write_equation_systems( filename,
 					      *equation_system );
 	}
@@ -146,6 +146,11 @@ void GRINS::Visualization::dump_visualization( std::tr1::shared_ptr<libMesh::Equ
 	  equation_system->write( filename,
 				  binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
 				  EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
+	}
+      else if ((*format) == "mesh_only" )
+	{
+	  std::string filename = filename_prefix+"_mesh.xda";
+	  equation_system->get_mesh().write( filename );
 	}
       else
 	{

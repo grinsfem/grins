@@ -70,7 +70,7 @@ void GRINS::AxisymmetricIncompressibleNavierStokes::read_input_options( const Ge
 
 
   // Read pressure pinning information
-  _pin_pressure = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_pressure", true );
+  _pin_pressure = input("Physics/"+axisymmetric_incomp_navier_stokes+"/pin_pressure", false );
 
   return;
 }
