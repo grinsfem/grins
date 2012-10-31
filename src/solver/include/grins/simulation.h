@@ -100,6 +100,7 @@ namespace GRINS
     //! GRINS::Multiphysics system name
     std::string _system_name;
     
+    // This needs to be a standard pointer, as _equation_system will own and destroy the object.
     GRINS::MultiphysicsSystem* _multiphysics_system;
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
@@ -117,6 +118,8 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
 
   private:
 

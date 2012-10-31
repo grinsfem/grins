@@ -37,6 +37,13 @@
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
+#include "physics_factory.h"
+#include "mesh_builder.h"
+#include "solver_factory.h"
+#include "visualization_factory.h"
+#include "bc_factory.h"
+#include "qoi_factory.h"
+#include "error_estimation_factory.h"
 
 namespace GRINS
 {
@@ -77,8 +84,9 @@ namespace GRINS
 
     void attach_postprocessing_factory( std::tr1::shared_ptr<PostprocessingFactory> postprocessing_factory );
 
-  protected:
+  void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
 
+  protected:
     
     std::tr1::shared_ptr<PhysicsFactory> _physics_factory;
     std::tr1::shared_ptr<MeshBuilder> _mesh_builder;
@@ -87,6 +95,7 @@ namespace GRINS
     std::tr1::shared_ptr<BoundaryConditionsFactory> _bc_factory;
     std::tr1::shared_ptr<QoIFactory> _qoi_factory;
     std::tr1::shared_ptr<PostprocessingFactory> _postprocessing_factory;
+    std::tr1::shared_ptr<ErrorEstimatorFactory> _error_estimator_factory;
       
   }; //class SimulationBuilder
 } // namespace GRINS

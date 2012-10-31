@@ -44,9 +44,17 @@ namespace GRINS
     return;
   }
 
-  SolverFactory::~SolverFactory()
+  if(transient)
   {
-    return;
+    solver = new GRINS::UnsteadySolver( input );
+  }
+  else if( mesh_adaptive )
+  {
+    solver = new GRINS::MeshAdaptiveSolver( input );
+  }
+  else
+  {
+    solver = new GRINS::SteadySolver( input );
   }
 
   std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
