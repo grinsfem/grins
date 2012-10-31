@@ -53,7 +53,7 @@ void GRINS::LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& inp
   // Other quantities read in base class
 
   // Read pressure pinning information
-  this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", true );
+  this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", false );
   
   return;
 }

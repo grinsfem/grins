@@ -31,7 +31,7 @@
 GRINS::IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
   : GRINS::IncompressibleNavierStokesBase(physics_name,input),
     _p_pinning(input,physics_name),
-    _pin_pressure( input("Physics/"+incompressible_navier_stokes+"/pin_pressure", true ) )
+    _pin_pressure( input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false ) )
 {
   this->read_input_options(input);
 
