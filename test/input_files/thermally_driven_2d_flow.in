@@ -62,6 +62,7 @@ mu = 1.0
 bc_ids = '2 3 1 0'
 bc_types = 'no_slip no_slip no_slip no_slip'
 
+pin_pressure = 'true'
 
 [../HeatTransfer]
 
