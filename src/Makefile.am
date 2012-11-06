@@ -95,9 +95,10 @@ visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
 matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/constant_conductivity.C   \
                $(matprops_srcdir)/constant_viscosity.C      \
-               $(matprops_srcdir)/constant_specific_heat.C \
-               $(matprops_srcdir)/constant_source_func.C \
-               $(matprops_srcdir)/chemical_species.C
+               $(matprops_srcdir)/constant_specific_heat.C  \
+               $(matprops_srcdir)/constant_source_func.C    \
+               $(matprops_srcdir)/chemical_species.C        \
+               $(matprops_srcdir)/chemical_mixture.C
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
@@ -181,7 +182,9 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/constant_viscosity.h      \
                $(matprops_incdir)/constant_specific_heat.h  \
                $(matprops_incdir)/constant_source_func.h    \
-               $(matprops_incdir)/chemical_species.h
+               $(matprops_incdir)/species_enum.h            \
+               $(matprops_incdir)/chemical_species.h        \
+               $(matprops_incdir)/chemical_mixture.h
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \

@@ -9,6 +9,7 @@ check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
+check_PROGRAMS += chem_mixture
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -44,6 +45,7 @@ test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 gaussian_profiles_SOURCES = gaussian_profiles.C
 vorticity_qoi_SOURCES = test_vorticity_qoi.C
+chem_mixture_SOURCES = chem_mixture.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -59,6 +61,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
 #Define tests to actually be run
 TESTS = bc_profile_tests.sh                \
         gaussian_profiles                  \
+        test_chemistry.sh                  \
+        chem_mixture                       \
         navier_stokes_tests.sh             \
         test_ns_couette_flow_2d_x.sh       \
         test_ns_couette_flow_2d_y.sh       \
@@ -75,6 +79,7 @@ TESTS = bc_profile_tests.sh                \
         finalize.sh
 
 shellfiles_src = bc_profile_tests.sh                \
+                 test_chemistry.sh                  \
                  navier_stokes_tests.sh             \
                  test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
