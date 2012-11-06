@@ -79,11 +79,11 @@ namespace GRINS
     { libmesh_error(); }
 
     //! Returns a descriptive name for this species.
-    const std::string & species () const 
+    const std::string & species() const 
     { return _name; }
       
     //!Returns the molar mass in (g/mol) or (kg/kmol).
-    Real molar_mass () const
+    Real molar_mass() const
     { return _mol_wght; }
 
     //! Returns the species ideal gas constant 
@@ -92,53 +92,53 @@ namespace GRINS
      * \f$ R\f$ is the universal gas constant and
      * \f$ M \f$ is the species molar mass.
      */
-    Real gas_constant () const 
+    Real gas_constant() const 
     { return _R; }
 
     //! Returns formation enthalpy in units of [J/kg]
-    Real formation_enthalpy () const 
+    Real formation_enthalpy() const 
     { return _h_form; }
     
     //! Returns number of translational degrees of freedom
-    Real n_tr_dofs () const 
+    Real n_tr_dofs() const 
     { return _n_tr_dofs; }
     
     //! Returns electrical charge number
-    int charge () const 
+    int charge() const 
     { return _charge; }
 
     //! Returns true if the chemical species has vibrational degrees 
-    bool has_vibrational_modes () const 
+    bool has_vibrational_modes() const 
     { return !_theta_v.empty(); }
 
     //! Returns true if the chemical species has vibrational degrees of freedom.
-    unsigned int n_vibrational_modes () const
+    unsigned int n_vibrational_modes() const
     {
       libmesh_assert (_theta_v.size() == _ndg_v.size());
       return _theta_v.size();
     }
 
     //!Characteristic vibrational temperature [K].
-    const std::vector<Real> & theta_v () const
+    const std::vector<Real> & theta_v() const
     { return _theta_v; }
 
     //! Degeneracies for each vibrational mode.
-    const std::vector<unsigned int> & ndg_v () const 
+    const std::vector<unsigned int> & ndg_v() const 
     { return _ndg_v; }
 
     //! Characteristic electronic excitation temperatures [K].
-    const std::vector<Real> & theta_e () const 
+    const std::vector<Real> & theta_e() const 
     { return _theta_e; }
 
     //! Degeneracies for each electronic modes.
-    const std::vector<unsigned int> & ndg_e () const
+    const std::vector<unsigned int> & ndg_e() const
     { return _ndg_e; }
 
     //! Formatted print
     /*!
      * Defaults to \p std::cout.
      */
-    void print (std::ostream &os = std::cout) const;
+    void print(std::ostream &os = std::cout) const;
 
     //!Formatted print 
     /*!
