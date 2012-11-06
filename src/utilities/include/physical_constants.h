@@ -1,0 +1,49 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010-2012 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
+//-----------------------------------------------------------------------el-
+//
+// $Id$
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+#ifndef GRINS_PHYSICAL_CONSTANTS_H
+#define GRINS_PHYSICAL_CONSTANTS_H
+
+namespace GRINS
+{
+  namespace Constants
+  {
+    /**
+     * Universal Gas Constant, R, expressed in J/(kmol-K)
+     */
+    const Real R_universal = 8314.472;
+
+    /**
+     * Avogadro's number, particles per mole.
+     */
+    const Real Avogadro = 6.02214179e23;
+
+  } // namespace Constants
+} // namespace GRINS
+
+#endif //GRINS_PHYSICAL_CONSTANTS_H

@@ -167,7 +167,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/pressure_pinning.h \
                           $(boundary_conditions_incdir)/pbc_container.h
 
-utilities_INC = $(utilities_incdir)/grins_version.h
+utilities_INC = $(utilities_incdir)/grins_version.h \
+                $(utilities_incdir)/physical_constants.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
