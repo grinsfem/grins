@@ -86,7 +86,7 @@ namespace GRINS
     Real molar_mass() const
     { return _mol_wght; }
 
-    //! Returns the species ideal gas constant 
+    //! Returns the species ideal gas constant in [J/kg-K]
     /*!
      * \f$ R \equiv \frac{\hat{R}}{M} \f$ where
      * \f$ R\f$ is the universal gas constant and

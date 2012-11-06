@@ -30,7 +30,7 @@
 #include "chemical_mixture.h"
 
 int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
-		  const std::map<GRINS::Species,GRINS::ChemicalSpecies*>& chemical_species,
+		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
 		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
 		  Real n_tr_dofs, int charge );
@@ -49,7 +49,7 @@ int main()
   GRINS::ChemicalMixture chem_mixture( species_str_list );
 
   const std::map<std::string,GRINS::Species>& species_name_map = chem_mixture.species_name_map();
-  const std::map<GRINS::Species,GRINS::ChemicalSpecies*>& chemical_species = chem_mixture.chemical_species();
+  const std::vector<GRINS::ChemicalSpecies*>& chemical_species = chem_mixture.chemical_species();
   const std::vector<GRINS::Species> species_list = chem_mixture.species_list();
 
   int return_flag = 0;
@@ -68,6 +68,12 @@ int main()
   // Check N2 properties
   {
     Real molar_mass = 28.01600;
+    if( molar_mass != chem_mixture.M(0) )
+      {
+	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
+		  << "molar mass = " << chem_mixture.M(0) << std::endl;
+	return_flag = 1;
+      }
     return_flag = test_species( species_name_map, chemical_species, "N2",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 0.0, 2.5, 0);
   }
@@ -75,6 +81,12 @@ int main()
   // Check O2 properties
   {
     Real molar_mass = 32.00000;
+    if( molar_mass != chem_mixture.M(1) )
+      {
+	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
+		  << "molar mass = " << chem_mixture.M(1) << std::endl;
+	return_flag = 1;
+      }
     return_flag = test_species( species_name_map, chemical_species, "O2",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 0.0, 2.5, 0);
   }
@@ -82,6 +94,12 @@ int main()
   // Check N properties
   {
     Real molar_mass = 14.00800;
+    if( molar_mass != chem_mixture.M(2) )
+      {
+	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
+		  << "molar mass = " << chem_mixture.M(2) << std::endl;
+	return_flag = 1;
+      }
     return_flag = test_species( species_name_map, chemical_species, "N",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 3.3621610000e7, 1.5, 0);
   }
@@ -89,6 +107,12 @@ int main()
   // Check O properties
   {
     Real molar_mass = 16.00000;
+    if( molar_mass != chem_mixture.M(3) )
+      {
+	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
+		  << "molar mass = " << chem_mixture.M(3) << std::endl;
+	return_flag = 1;
+      }
     return_flag = test_species( species_name_map, chemical_species, "O",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 1.5420000000e7, 1.5, 0);
   }
@@ -96,6 +120,12 @@ int main()
   // Check NO properties
   {
     Real molar_mass = 30.00800;
+    if( molar_mass != chem_mixture.M(4) )
+      {
+	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
+		  << "molar mass = " << chem_mixture.M(4) << std::endl;
+	return_flag = 1;
+      }
     return_flag = test_species( species_name_map, chemical_species, "NO",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 2.9961230000e6, 2.5, 0);
   }
@@ -104,7 +134,7 @@ int main()
 }
 
 int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
-		  const std::map<GRINS::Species,GRINS::ChemicalSpecies*>& chemical_species,
+		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
 		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
 		  Real n_tr_dofs, int charge )
@@ -113,7 +143,7 @@ int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
   int return_flag = 0;
 
   GRINS::Species species = species_name_map.find( species_name )->second;
-  const GRINS::ChemicalSpecies& chem_species = *(chemical_species.find( species )->second);
+  const GRINS::ChemicalSpecies& chem_species = *(chemical_species[species]);
 
   if( chem_species.species() != species_name )
     {

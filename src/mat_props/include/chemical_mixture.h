@@ -33,6 +33,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <algorithm>
 
 // GRINS
 #include "species_enum.h"
@@ -56,11 +57,19 @@ namespace GRINS
     const std::vector<Species>& species_list() const
     { return _species_list; }
 
-    const std::map<Species,ChemicalSpecies*>& chemical_species() const
+    const std::vector<ChemicalSpecies*>& chemical_species() const
     { return _chemical_species; }
 
     const std::map<std::string,Species>& species_name_map() const
     { return _species_name_map; }
+
+    //! Gas constant for species s in [J/kg-K]
+    Real R( const unsigned int s ) const
+    { return (_chemical_species[s])->gas_constant(); }
+
+    //! Molecular weight (molar mass) in [g/mol] or [kg/kmol]
+    Real M( const unsigned int s ) const
+    { return (_chemical_species[s])->molar_mass(); }
 
   protected:
 
@@ -78,7 +87,7 @@ namespace GRINS
     void skip_comment_lines( std::istream &in, const char comment_start);
 
     std::vector<Species> _species_list;
-    std::map<Species,ChemicalSpecies*> _chemical_species;
+    std::vector<ChemicalSpecies*> _chemical_species;
     std::map<std::string,Species> _species_name_map;
     
   private:

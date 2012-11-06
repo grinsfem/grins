@@ -50,6 +50,12 @@ namespace GRINS
 
   ChemicalMixture::~ChemicalMixture()
   {
+    for( std::vector<ChemicalSpecies*>::iterator it = _chemical_species.begin();
+	 it < _chemical_species.end(); ++it )
+      {
+	delete (*it);
+      }
+
     return;
   }
 
@@ -60,6 +66,8 @@ namespace GRINS
     std::string name;
     Real mol_wght, h_form, n_tr_dofs;
     int charge;
+
+    _chemical_species.resize( _species_list.size() );
 
     while (in.good())
       {
@@ -86,13 +94,17 @@ namespace GRINS
 
 	    // insert these data into the species_chemistry_map
 	    Species species = this->_species_name_map[name];
-	    
-	    _chemical_species.insert 
-	      (std::make_pair(species,
-			      new ChemicalSpecies(name, mol_wght, h_form, n_tr_dofs, charge)));
-	    
 
-	    libmesh_assert (this->_chemical_species[species]->species() == name);
+	    // using default comparison:
+	    std::vector<Species>::iterator it = std::search_n( _species_list.begin(), 
+							       _species_list.end(), 1, species);
+	    if( it != _species_list.end() )
+	      {
+		unsigned int index = static_cast<unsigned int>(it - _species_list.begin());
+		
+		_chemical_species[index] = new ChemicalSpecies(name, mol_wght, h_form, n_tr_dofs, charge);
+	      }
+
 	  }
       }
   }
