@@ -29,7 +29,7 @@
 // GRINS
 #include "chemical_mixture.h"
 
-int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
+int test_species( const unsigned int species,
 		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
 		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
@@ -67,73 +67,78 @@ int main()
 
   // Check N2 properties
   {
+    unsigned int index = 0;
     Real molar_mass = 28.01600;
-    if( molar_mass != chem_mixture.M(0) )
+    if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
-		  << "molar mass = " << chem_mixture.M(0) << std::endl;
+		  << "molar mass = " << chem_mixture.M(index) << std::endl;
 	return_flag = 1;
       }
-    return_flag = test_species( species_name_map, chemical_species, "N2",
+    return_flag = test_species( index, chemical_species, "N2",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 0.0, 2.5, 0);
   }
   
   // Check O2 properties
   {
+    unsigned int index = 1;
     Real molar_mass = 32.00000;
-    if( molar_mass != chem_mixture.M(1) )
+    if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
-		  << "molar mass = " << chem_mixture.M(1) << std::endl;
+		  << "molar mass = " << chem_mixture.M(index) << std::endl;
 	return_flag = 1;
       }
-    return_flag = test_species( species_name_map, chemical_species, "O2",
+    return_flag = test_species( index, chemical_species, "O2",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 0.0, 2.5, 0);
   }
 
   // Check N properties
   {
+    unsigned int index = 2;
     Real molar_mass = 14.00800;
-    if( molar_mass != chem_mixture.M(2) )
+    if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
-		  << "molar mass = " << chem_mixture.M(2) << std::endl;
+		  << "molar mass = " << chem_mixture.M(index) << std::endl;
 	return_flag = 1;
       }
-    return_flag = test_species( species_name_map, chemical_species, "N",
+    return_flag = test_species( index, chemical_species, "N",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 3.3621610000e7, 1.5, 0);
   }
 
   // Check O properties
   {
+    unsigned int index = 3;
     Real molar_mass = 16.00000;
-    if( molar_mass != chem_mixture.M(3) )
+    if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
-		  << "molar mass = " << chem_mixture.M(3) << std::endl;
+		  << "molar mass = " << chem_mixture.M(index) << std::endl;
 	return_flag = 1;
       }
-    return_flag = test_species( species_name_map, chemical_species, "O",
+    return_flag = test_species( index, chemical_species, "O",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 1.5420000000e7, 1.5, 0);
   }
 
   // Check NO properties
   {
+    unsigned int index = 4;
     Real molar_mass = 30.00800;
-    if( molar_mass != chem_mixture.M(4) )
+    if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
-		  << "molar mass = " << chem_mixture.M(4) << std::endl;
+		  << "molar mass = " << chem_mixture.M(index) << std::endl;
 	return_flag = 1;
       }
-    return_flag = test_species( species_name_map, chemical_species, "NO",
+    return_flag = test_species( index, chemical_species, "NO",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 2.9961230000e6, 2.5, 0);
   }
   
   return return_flag;
 }
 
-int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
+int test_species( const unsigned int species,
 		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
 		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
@@ -142,7 +147,6 @@ int test_species( const std::map<std::string,GRINS::Species>& species_name_map,
 
   int return_flag = 0;
 
-  GRINS::Species species = species_name_map.find( species_name )->second;
   const GRINS::ChemicalSpecies& chem_species = *(chemical_species[species]);
 
   if( chem_species.species() != species_name )
