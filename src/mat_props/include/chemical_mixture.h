@@ -81,16 +81,17 @@ namespace GRINS
 
     //! Molecular weight (molar mass) for mixture in [g/mol] or [kg/kmol]
     /*!
-     * \f$ \frac{1}{\bar{M}} = \sum_s \frac{w_s}{M_s} \f$ where
-     * \f$ w_s \f$ is the mass fraction of species \f$ s \f$ and
-     * \f$ M_s \f% is the molecular weight (molar mass) of species \f$ s \f$
+      \f$ \frac{1}{M} = \sum_s \frac{w_s}{M_s}\f$ where
+      \f$ w_s \f$ is the mass fraction of species \f$ s \f$ and
+      \f$ M_s \f$ is the molecular weight (molar mass) of species \f$ s \f$
      */
     Real M( const std::vector<Real>& mass_fractions ) const;
 
     //! Species mole fraction
     /*! Given mixture molar mass M and mass fraction for species,
      * compute species mole fraction using the relationship
-     * \f$ w_i = x_i \frac{M_i}{M} \f$ */
+     * \f$ w_i = x_i \frac{M_i}{M} \f$ 
+     */
     inline
     Real X( unsigned int species, Real M, Real mass_fraction )
     { return mass_fraction*M/this->M(species); }
