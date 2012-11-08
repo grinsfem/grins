@@ -76,6 +76,14 @@ namespace GRINS
     { return this->_thermo.cp(cache); }
 
     inline
+    Real cp( Real T, unsigned int species )
+    { return this->_thermo.cp(T,species); }
+
+    inline
+    Real cp( Real T, const std::vector<Real>& mass_fractions )
+    { return this->_thermo.cp(T); }
+
+    inline
     Real cv( const CachedQuantities& cache, unsigned int species )
     { return this->_thermo.cv(cache,species); }
 
@@ -83,6 +91,13 @@ namespace GRINS
     Real cv( const CachedQuantities& cache )
     { return this->_thermo.cv(cache); }
 
+    inline
+    Real cv( Real T, unsigned int species )
+    { return this->_thermo.cv(T,species); }
+
+    inline
+    Real cv( Real T, const std::vector<Real>& mass_fractions )
+    { return this->_thermo.cv(T); }
 
     // Transport quantities
     inline
@@ -109,18 +124,18 @@ namespace GRINS
     
     std::vector<std::string> read_species_list( const GetPot& input );
 
+    //! Stash data for the requested chemical mixture
+    /*!
+     * A reference will be cached in Thermo, Transport, and Kinetics objects as
+     * needed. The intent is for this object to maintain ownership.
+     */
+    ChemicalMixture _chem_mixture;
+    
     Thermo _thermo;
     
     Transport _transport;
 
     Kinetics _kinetics;
-    
-    //! Stash data for the requested chemical mixture
-    /*!
-     * A reference will be cached in Thermo, Transport, and Kinetics objects as
-     * needed.
-     */
-    ChemicalMixture _chem_mixture;
 
   };
 }

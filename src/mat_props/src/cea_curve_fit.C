@@ -26,36 +26,42 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#include "cea_curve_fit.h"
+
 namespace GRINS
 {
-  template<typename Thermo, typename Transport, typename Kinetics>
-  IdealGasMixture<Thermo,Transport,Kinetics>::IdealGasMixture( const GetPot& input )
-    : _chem_mixture( this->read_species_list(input) ), /* This *must* be done before the others */
-      _thermo( input, _chem_mixture ),
-      _transport( input, chem_mixture ),
-      _kinetics( input, chem_mixture )
+  CEACurveFit::CEACurveFit( const std::vector<Real>& coeffs )
+    : _n_coeffs(10),
+      _coefficients(coeffs)
   {
     return;
   }
 
-  template<typename Thermo, typename Transport, typename Kinetics>
-  IdealGasMixture<Thermo,Transport,Kinetics>::~IdealGasMixture()
+  CEACurveFit::~CEACurveFit()
   {
     return;
   }
 
-  template<typename Thermo, typename Transport, typename Kinetics>
-  std::vector<std::string> IdealGasMixture<Thermo,Transport,Kinetics>::read_species_list( const GetPot& input )
+  unsigned int CEACurveFit::curve_interval (const Real T) const
   {
-    unsigned int n_species = input.vector_variable_size("Physics/Chemistry/species");
-    std::vector<std::string> species_names( n_species, "DIE!" );
+    unsigned int interval = -1;
 
-    for( unsigned int i = 0; i < n_species; i++ )
+    /* CEA thermodynamic intervals are:
+       [200-1,000], [1,000-6,000], [6,000-20,000] K */
+    if (T > 6000.)	  
       {
-	species_names[i] = input( "Physics/Chemistry/species", "DIE!", i );
+	interval = 2;
+      }
+    else if (T > 1000.)
+      {
+	interval =  1;
+      }
+    else
+      {
+	interval = 0;
       }
 
-    return species_names;
+    return interval;
   }
-  
-} // namespace GRINS
+
+}

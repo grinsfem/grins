@@ -85,7 +85,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/pressure_pinning.C \
                           $(boundary_conditions_srcdir)/pbc_container.C
 
-utilities_SRC = $(utilities_srcdir)/grins_version.C
+utilities_SRC = $(utilities_srcdir)/grins_version.C \
+                $(utilities_srcdir)/input_utils.C
 
 visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
                     $(visualization_srcdir)/unsteady_visualization.C \
@@ -170,7 +171,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/pbc_container.h
 
 utilities_INC = $(utilities_incdir)/grins_version.h \
-                $(utilities_incdir)/physical_constants.h
+                $(utilities_incdir)/physical_constants.h \
+                $(utilities_incdir)/input_utils.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
