@@ -54,22 +54,38 @@ namespace GRINS
     ChemicalMixture( const std::vector<std::string>& species_list );
     ~ChemicalMixture();
 
+    inline
     const std::vector<Species>& species_list() const
     { return _species_list; }
 
+    inline
     const std::vector<ChemicalSpecies*>& chemical_species() const
     { return _chemical_species; }
 
+    inline
     const std::map<std::string,Species>& species_name_map() const
     { return _species_name_map; }
 
     //! Gas constant for species s in [J/kg-K]
+    inline
     Real R( const unsigned int s ) const
     { return (_chemical_species[s])->gas_constant(); }
 
-    //! Molecular weight (molar mass) in [g/mol] or [kg/kmol]
+    //! Gas constant for mixture in [J/kg-K]
+    Real R( const std::vector<Real>& mass_fractions ) const;
+    
+    //! Molecular weight (molar mass) for species s in [g/mol] or [kg/kmol]
+    inline
     Real M( const unsigned int s ) const
     { return (_chemical_species[s])->molar_mass(); }
+
+    //! Molecular weight (molar mass) for mixture in [g/mol] or [kg/kmol]
+    /*!
+     * \f$ \frac{1}{\bar{M}} = \sum_s \frac{w_s}{M_s} \f$ where
+     * \f$ w_s \f$ is the mass fraction of species \f$ s \f$ and
+     * \f$ M_s \f% is the molecular weight (molar mass) of species \f$ s \f$
+     */
+    Real M( const std::vector<Real>& mass_fractions ) const;
 
   protected:
 

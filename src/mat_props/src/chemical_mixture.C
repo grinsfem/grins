@@ -59,6 +59,32 @@ namespace GRINS
     return;
   }
 
+  Real ChemicalMixture::R( const std::vector<Real>& mass_fractions ) const
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
+    
+    Real R = 0.0;
+    for( unsigned int s = 0; s < mass_fractions.size(); s++ )
+      {
+	R += mass_fractions[s]*this->R(s);
+      }
+
+    return R;
+  }
+
+  Real ChemicalMixture::M( const std::vector<Real>& mass_fractions ) const
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
+
+    Real M = 0.0;
+    for( unsigned int s = 0; s < mass_fractions.size(); s++ )
+      {
+	M += mass_fractions[s]/(this->M(s));
+      }
+
+    return 1.0/M;
+  }
+
   void ChemicalMixture::read_species_data( std::istream& in )
   {
     this->skip_comment_lines(in, '#');

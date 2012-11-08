@@ -26,14 +26,17 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// C++
+#include <iomanip>
+
 // GRINS
 #include "chemical_mixture.h"
 
 int test_species( const unsigned int species,
 		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
-		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
-		  Real n_tr_dofs, int charge );
+		  double molar_mass, double gas_constant, double formation_enthalpy, 
+		  double n_tr_dofs, int charge );
 
 int main()
 {
@@ -68,7 +71,7 @@ int main()
   // Check N2 properties
   {
     unsigned int index = 0;
-    Real molar_mass = 28.01600;
+    double molar_mass = 28.01600;
     if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
@@ -82,7 +85,7 @@ int main()
   // Check O2 properties
   {
     unsigned int index = 1;
-    Real molar_mass = 32.00000;
+    double molar_mass = 32.00000;
     if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
@@ -96,7 +99,7 @@ int main()
   // Check N properties
   {
     unsigned int index = 2;
-    Real molar_mass = 14.00800;
+    double molar_mass = 14.00800;
     if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
@@ -110,7 +113,7 @@ int main()
   // Check O properties
   {
     unsigned int index = 3;
-    Real molar_mass = 16.00000;
+    double molar_mass = 16.00000;
     if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
@@ -124,7 +127,7 @@ int main()
   // Check NO properties
   {
     unsigned int index = 4;
-    Real molar_mass = 30.00800;
+    double molar_mass = 30.00800;
     if( molar_mass != chem_mixture.M(index) )
       {
 	std::cerr << "Error: Molar mass inconsistency in mixture" << std::endl
@@ -134,6 +137,30 @@ int main()
     return_flag = test_species( index, chemical_species, "NO",
 				molar_mass, GRINS::Constants::R_universal/molar_mass, 2.9961230000e6, 2.5, 0);
   }
+
+  std::vector<double> mass_fractions( 5, 0.2 );
+
+  double R_exact = GRINS::Constants::R_universal*( 0.2/28.016 + 0.2/32.0 + 0.2/14.008 + 0.2/16.0 + 0.2/30.008 );
+  double M_exact = 1.0/( 0.2*( 1.0/28.016 + 1.0/32.0 + 1.0/14.008 + 1.0/16.0 + 1.0/30.008) );
+
+  double tol = 1.0e-15;
+  if( std::fabs( (chem_mixture.R(mass_fractions) - R_exact)/R_exact) > tol )
+    {
+      std::cerr << "Error: Mismatch in mixture gas constant." << std::endl
+		<< std::setprecision(16) << std::scientific
+		<< "R       = " << chem_mixture.R(mass_fractions) << std::endl
+		<< "R_exact = " << R_exact <<  std::endl;
+      return_flag = 1;
+    }
+
+  if( std::fabs( (chem_mixture.M(mass_fractions) - M_exact)/M_exact ) > tol )
+    {
+      std::cerr << "Error: Mismatch in mixture molar mass." << std::endl
+		<< std::setprecision(16) << std::scientific
+		<< "M       = " << chem_mixture.M(mass_fractions) << std::endl
+		<< "M_exact = " << M_exact << std::endl;
+      return_flag = 1;
+    }
   
   return return_flag;
 }
@@ -141,8 +168,8 @@ int main()
 int test_species( const unsigned int species,
 		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,
 		  const std::string& species_name,
-		  Real molar_mass, Real gas_constant, Real formation_enthalpy, 
-		  Real n_tr_dofs, int charge )
+		  double molar_mass, double gas_constant, double formation_enthalpy, 
+		  double n_tr_dofs, int charge )
 {
 
   int return_flag = 0;
