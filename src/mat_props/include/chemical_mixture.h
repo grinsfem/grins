@@ -36,6 +36,7 @@
 #include <algorithm>
 
 // GRINS
+#include "input_utils.h"
 #include "species_enum.h"
 #include "chemical_species.h"
 
@@ -111,14 +112,6 @@ namespace GRINS
     void build_inverse_name_map();
     void read_species_data();
     void read_species_data( std::istream& in );
-    
-    /*!
-      Skip comment lines in the header of an ASCII
-      text file prefixed with the comment character
-      'comment_start'.
-      Originally taken from FIN-S.
-     */
-    void skip_comment_lines( std::istream &in, const char comment_start);
 
     std::vector<Species> _species_list;
     std::vector<ChemicalSpecies*> _chemical_species;

@@ -106,7 +106,7 @@ namespace GRINS
 
   void ChemicalMixture::read_species_data( std::istream& in )
   {
-    this->skip_comment_lines(in, '#');
+    GRINS::skip_comment_lines(in, '#');
 
     std::string name;
     Real mol_wght, h_form, n_tr_dofs;
@@ -315,18 +315,6 @@ namespace GRINS
       }
 
     return;
-  }
-
-  void ChemicalMixture::skip_comment_lines( std::istream &in, const char comment_start)
-  {
-    char c, line[256];
-    
-    while (in.get(c), c==comment_start) 
-      in.getline (line, 255);
-    
-    // put back first character of
-    // first non-comment line
-    in.putback (c);
   }
 
 } // namespace GRINS
