@@ -43,9 +43,9 @@ namespace GRINS
 {
   //! Class storing chemical mixture properties
   /*!
-   * This class manages the list of ChemicalSpecies for a requested set
-   * of species from input.
-   * \todo This should probably be a singleton class, but being lazy for now.
+    This class manages the list of ChemicalSpecies for a requested set
+    of species from input.
+    \todo This should probably be a singleton class, but being lazy for now.
    */
   class ChemicalMixture
   {
@@ -65,6 +65,10 @@ namespace GRINS
     inline
     const std::map<std::string,Species>& species_name_map() const
     { return _species_name_map; }
+
+    inline
+    const std::map<Species,std::string>& species_inverse_name_map() const
+    { return _species_inv_name_map; }
 
     //! Gas constant for species s in [J/kg-K]
     inline
@@ -88,9 +92,10 @@ namespace GRINS
     Real M( const std::vector<Real>& mass_fractions ) const;
 
     //! Species mole fraction
-    /*! Given mixture molar mass M and mass fraction for species,
-     * compute species mole fraction using the relationship
-     * \f$ w_i = x_i \frac{M_i}{M} \f$ 
+    /*! 
+      Given mixture molar mass M and mass fraction for species,
+      compute species mole fraction using the relationship
+      \f$ w_i = x_i \frac{M_i}{M} \f$ 
      */
     inline
     Real X( unsigned int species, Real M, Real mass_fraction )
@@ -103,21 +108,22 @@ namespace GRINS
   protected:
 
     void init_species_name_map();
-
+    void build_inverse_name_map();
     void read_species_data();
     void read_species_data( std::istream& in );
     
     /*!
-     * Skip comment lines in the header of an ASCII
-     * text file prefixed with the comment character
-     * 'comment_start'.
-     * Originally taken from FIN-S.
+      Skip comment lines in the header of an ASCII
+      text file prefixed with the comment character
+      'comment_start'.
+      Originally taken from FIN-S.
      */
     void skip_comment_lines( std::istream &in, const char comment_start);
 
     std::vector<Species> _species_list;
     std::vector<ChemicalSpecies*> _chemical_species;
     std::map<std::string,Species> _species_name_map;
+    std::map<Species,std::string> _species_inv_name_map;
     
   private:
     ChemicalMixture();

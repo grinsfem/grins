@@ -34,6 +34,9 @@ namespace GRINS
   {
     // Build up name map for all possible species
     this->init_species_name_map();
+    
+    // Build up inverse name map
+    this->build_inverse_name_map();
 
     // Populate species list for requested species
     _species_list.reserve( species_list.size() );
@@ -50,6 +53,7 @@ namespace GRINS
 
   ChemicalMixture::~ChemicalMixture()
   {
+    // Clean up all the ChemicalSpecies we stored
     for( std::vector<ChemicalSpecies*>::iterator it = _chemical_species.begin();
 	 it < _chemical_species.end(); ++it )
       {
@@ -298,6 +302,17 @@ namespace GRINS
     _species_name_map["Si"   ] = Si;   
     _species_name_map["SiO"  ] = SiO;  
     _species_name_map["e"    ] = e;
+
+    return;
+  }
+
+  void ChemicalMixture::build_inverse_name_map()
+  {
+    for( std::map<std::string,Species>::const_iterator it = _species_name_map.begin();
+	 it != _species_name_map.end(); ++it )
+      {
+	_species_inv_name_map.insert( std::make_pair( it->second, it->first ) );
+      }
 
     return;
   }

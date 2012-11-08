@@ -52,11 +52,13 @@ int main()
   GRINS::ChemicalMixture chem_mixture( species_str_list );
 
   const std::map<std::string,GRINS::Species>& species_name_map = chem_mixture.species_name_map();
+  const std::map<GRINS::Species,std::string>& species_inverse_name_map = chem_mixture.species_inverse_name_map();
   const std::vector<GRINS::ChemicalSpecies*>& chemical_species = chem_mixture.chemical_species();
   const std::vector<GRINS::Species> species_list = chem_mixture.species_list();
 
   int return_flag = 0;
 
+  // Check name map consistency
   for( unsigned int i = 0; i < n_species; i++ )
     {
       if( species_name_map.find( species_str_list[i] )->second != species_list[i] )
@@ -64,6 +66,18 @@ int main()
 	  std::cerr << "Error: species name map and species list ordering mismatch" << std::endl
 		    << "species_name_map = " << species_name_map.find( species_str_list[i] )->second
 		    << ", species_list = " << species_list[i] << std::endl;
+	  return_flag = 1;
+	}
+    }
+
+  // Check inverse name map consistency
+  for( unsigned int i = 0; i < n_species; i++ )
+    {
+      if( species_inverse_name_map.find( species_list[i] )->second != species_str_list[i] )
+	{
+	  std::cerr << "Error: species inverse name map and species list ordering mismatch" << std::endl
+		    << "species_inverse_name_map = " << species_inverse_name_map.find( species_list[i] )->second
+		    << ", species_str_list = " << species_str_list[i] << std::endl;
 	  return_flag = 1;
 	}
     }
