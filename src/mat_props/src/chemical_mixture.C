@@ -85,6 +85,21 @@ namespace GRINS
     return 1.0/M;
   }
 
+  void ChemicalMixture:: X( Real M, const std::vector<Real>& mass_fractions, 
+			    std::vector<Real>& mole_fractions )
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
+
+    mole_fractions.resize( mass_fractions.size() );
+
+    for( unsigned int s = 0; s < mass_fractions.size(); s++ )
+      {
+	mole_fractions[s] = this->X(s, M, mass_fractions[s]);
+      }
+
+    return;
+  }
+
   void ChemicalMixture::read_species_data( std::istream& in )
   {
     this->skip_comment_lines(in, '#');

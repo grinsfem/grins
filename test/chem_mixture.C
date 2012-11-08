@@ -142,6 +142,13 @@ int main()
 
   double R_exact = GRINS::Constants::R_universal*( 0.2/28.016 + 0.2/32.0 + 0.2/14.008 + 0.2/16.0 + 0.2/30.008 );
   double M_exact = 1.0/( 0.2*( 1.0/28.016 + 1.0/32.0 + 1.0/14.008 + 1.0/16.0 + 1.0/30.008) );
+  
+  std::vector<double> X_exact(5, 0.0);
+  X_exact[0] = 0.2*M_exact/28.016;
+  X_exact[1] = 0.2*M_exact/32.0;
+  X_exact[2] = 0.2*M_exact/14.008;
+  X_exact[3] = 0.2*M_exact/16.0;
+  X_exact[4] = 0.2*M_exact/30.008;
 
   double tol = 1.0e-15;
   if( std::fabs( (chem_mixture.R(mass_fractions) - R_exact)/R_exact) > tol )
@@ -160,6 +167,20 @@ int main()
 		<< "M       = " << chem_mixture.M(mass_fractions) << std::endl
 		<< "M_exact = " << M_exact << std::endl;
       return_flag = 1;
+    }
+  
+  std::vector<double> X;
+  chem_mixture.X( chem_mixture.M(mass_fractions), mass_fractions, X );
+  for( unsigned int s = 0; s < 5; s++ )
+    {
+      if( std::fabs( (X[s] - X_exact[s])/X_exact[s]) > tol )
+	{
+	  std::cerr << "Error: Mismatch in mole fraction for species " << s << std::endl
+		    << std::setprecision(16) << std::scientific
+		    << "X       = " << X[s] << std::endl
+		    << "X_exact = " << X_exact[s] << std::endl;
+	  return_flag = 1;
+	}
     }
   
   return return_flag;
