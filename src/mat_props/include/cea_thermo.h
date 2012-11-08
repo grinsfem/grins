@@ -29,6 +29,15 @@
 #ifndef GRINS_CEA_THERMO_H
 #define GRINS_CEA_THERMO_H
 
+// libMesh
+#include "getpot.h"
+#include "libmesh_common.h"
+
+// GRINS
+#include "chemical_mixture.h"
+#include "cea_curve_fit.h"
+#include "reacting_flow_cache.h"
+
 namespace GRINS
 {
   class CEAThermodynamics
@@ -39,11 +48,11 @@ namespace GRINS
     ~CEAThermodynamics();
 
     inline
-    Real cp( const CachedQuantities& cache, unsigned int species )
+    Real cp( const ReactingFlowCache& cache, unsigned int species )
     { return this->cp(cache.T(),species); }
 
     inline
-    Real cp( const CachedQuantities& cache )
+    Real cp( const ReactingFlowCache& cache )
     { return this->cp(cache.T(),cache.mass_fractions()); }
 
     Real cp( Real T, unsigned int species );
@@ -51,11 +60,11 @@ namespace GRINS
     Real cp( Real T, const std::vector<Real>& mass_fractions );
 
     inline
-    Real cv( const CachedQuantities& cache, unsigned int species )
+    Real cv( const ReactingFlowCache& cache, unsigned int species )
     { return this->cv(cache.T(),species); }
 
     inline
-    Real cv( const CachedQuantities& cache )
+    Real cv( const ReactingFlowCache& cache )
     { return this->cv(cache.T(),cache.mass_fractions()); }
 
     inline
@@ -64,7 +73,7 @@ namespace GRINS
 
     inline
     Real cv( Real T, const std::vector<Real>& mass_fractions )
-    { return this->cp(T,mass_fractions) - _chem_mixture.R(); }
+    { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
 
   protected:
 

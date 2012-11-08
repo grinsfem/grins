@@ -26,6 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#include "ideal_gas_mixture.h"
+
 namespace GRINS
 {
   template<typename Thermo, typename Transport, typename Kinetics>

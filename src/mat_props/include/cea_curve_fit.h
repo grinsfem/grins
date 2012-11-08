@@ -29,6 +29,9 @@
 #ifndef GRINS_CEA_CURVE_FIT_H
 #define GRINS_CEA_CURVE_FIT_H
 
+// GRINS
+#include "chemical_mixture.h"
+
 namespace GRINS
 {
   class CEACurveFit
@@ -60,7 +63,7 @@ namespace GRINS
     inline
     const Real* coefficients(const unsigned int interval) const
     {
-      libmesh_assert_less( interval, this->n_curve_intervals() );
+      libmesh_assert_less( interval, this->n_intervals() );
       libmesh_assert_less_equal( _n_coeffs*(interval+1), _coefficients.size() );
       
       return &_coefficients[_n_coeffs*interval];

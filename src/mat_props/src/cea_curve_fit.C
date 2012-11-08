@@ -42,12 +42,13 @@ namespace GRINS
     return;
   }
 
-  unsigned int CEACurveFit::curve_interval (const Real T) const
+  unsigned int CEACurveFit::interval (const Real T) const
   {
     unsigned int interval = -1;
 
     /* CEA thermodynamic intervals are:
        [200-1,000], [1,000-6,000], [6,000-20,000] K */
+    /*! \todo This could be generalized */
     if (T > 6000.)	  
       {
 	interval = 2;

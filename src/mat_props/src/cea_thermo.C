@@ -78,7 +78,7 @@ namespace GRINS
 
   Real CEAThermodynamics::cp( Real T, const std::vector<Real>& mass_fractions )
   {
-    libmesh_assert_equal( mass_fractions.size(), _species_curve_fits.size() );
+    libmesh_assert_equal_to( mass_fractions.size(), _species_curve_fits.size() );
 
     Real cp = 0.0;
 
@@ -153,22 +153,23 @@ namespace GRINS
 		
 	/* Idea is to make sure curve fit object order is the same as the species order
 	   in the ChemicalMixture for consistency. */
-	Species species = _chem_mixture.species_list()[name];
+	Species species = (_chem_mixture.species_list())[ _chem_mixture.species_name_map().find(name)->second ];
 	
-	libmesh_assert_equal( _chem_mixture.species_name_map[species], name );
+	libmesh_assert_equal_to( _chem_mixture.species_inverse_name_map().find(species)->second, name );
 
 	// using default comparison:
-	std::vector<Species>::iterator it = std::search_n( _chem_mixture.species_list().begin(), 
-							   _chem_mixture.species_list().end(), 
-							   1, species);
+	std::vector<Species>::const_iterator it = std::search_n( _chem_mixture.species_list().begin(), 
+								 _chem_mixture.species_list().end(), 
+								 1, species);
 
-	if( it != _species_list.end() )
+	if( it != _chem_mixture.species_list().end() )
 	  {
-	    unsigned int index = static_cast<unsigned int>(it - _chem_mixture.species_list.begin());
+	    unsigned int index = static_cast<unsigned int>(it - _chem_mixture.species_list().begin());
 		
 	    _species_curve_fits[index] = new CEACurveFit(coeffs);
 	  }
 
+      }
 
     return;
   }

@@ -29,6 +29,17 @@
 #ifndef GRINS_IDEAL_GAS_MIXTURE_H
 #define GRINS_IDEAL_GAS_MIXTURE_H
 
+// GRINS
+#include "reacting_flow_cache.h"
+#include "chemical_mixture.h"
+
+// GRINS Thermo classes
+#include "cea_thermo.h"
+
+// GRINS Transport classes
+
+// GRINS Kinetics classes
+
 namespace GRINS
 {
   template<typename Thermo, typename Transport, typename Kinetics>
@@ -68,11 +79,11 @@ namespace GRINS
 
     // Thermodynamic quantities
     inline
-    Real cp( const CachedQuantities& cache, unsigned int species )
+    Real cp( const ReactingFlowCache& cache, unsigned int species )
     { return this->_thermo.cp(cache,species); }
 
     inline
-    Real cp( const CachedQuantities& cache )
+    Real cp( const ReactingFlowCache& cache )
     { return this->_thermo.cp(cache); }
 
     inline
@@ -84,11 +95,11 @@ namespace GRINS
     { return this->_thermo.cp(T); }
 
     inline
-    Real cv( const CachedQuantities& cache, unsigned int species )
+    Real cv( const ReactingFlowCache& cache, unsigned int species )
     { return this->_thermo.cv(cache,species); }
 
     inline
-    Real cv( const CachedQuantities& cache )
+    Real cv( const ReactingFlowCache& cache )
     { return this->_thermo.cv(cache); }
 
     inline
@@ -101,24 +112,24 @@ namespace GRINS
 
     // Transport quantities
     inline
-    Real mu( const CachedQuantities& cache, unsigned int species )
+    Real mu( const ReactingFlowCache& cache, unsigned int species )
     { return this->_transport.mu(cache,species); }
 
     inline
-    Real mu( const CachedQuantities& cache )
+    Real mu( const ReactingFlowCache& cache )
     { return this->_transport.mu(cache); }
 
     inline
-    Real k( const CachedQuantities& cache, unsigned int species )
+    Real k( const ReactingFlowCache& cache, unsigned int species )
     { return this->_transport.k(cache,species); }
 
     inline
-    Real k( const CachedQuantities& cache )
+    Real k( const ReactingFlowCache& cache )
     { return this->_transport.k(cache,species); }
 
     // Kinetics quantites
-    void omega_dot( const CachedQuantities& cache, std::vector<Real>& omega );
-    Real omega_dot( const CachedQuantities& cache, unsigned int species );
+    void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega );
+    Real omega_dot( const ReactingFlowCache& cache, unsigned int species );
 
   protected:
     

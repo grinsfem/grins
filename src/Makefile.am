@@ -86,7 +86,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/pbc_container.C
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C \
-                $(utilities_srcdir)/input_utils.C
+                $(utilities_srcdir)/input_utils.C \
+                $(utilities_srcdir)/reacting_flow_cache.C
 
 visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
                     $(visualization_srcdir)/unsteady_visualization.C \
@@ -99,7 +100,9 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/constant_specific_heat.C  \
                $(matprops_srcdir)/constant_source_func.C    \
                $(matprops_srcdir)/chemical_species.C        \
-               $(matprops_srcdir)/chemical_mixture.C
+               $(matprops_srcdir)/chemical_mixture.C        \
+               $(matprops_srcdir)/cea_curve_fit.C           \
+               $(matprops_srcdir)/cea_thermo.C
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
@@ -172,7 +175,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
 
 utilities_INC = $(utilities_incdir)/grins_version.h \
                 $(utilities_incdir)/physical_constants.h \
-                $(utilities_incdir)/input_utils.h
+                $(utilities_incdir)/input_utils.h \
+                $(utilities_incdir)/reacting_flow_cache.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
@@ -186,7 +190,9 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/constant_source_func.h    \
                $(matprops_incdir)/species_enum.h            \
                $(matprops_incdir)/chemical_species.h        \
-               $(matprops_incdir)/chemical_mixture.h
+               $(matprops_incdir)/chemical_mixture.h        \
+               $(matprops_incdir)/cea_curve_fit.h           \
+               $(matprops_incdir)/cea_thermo.h
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \
