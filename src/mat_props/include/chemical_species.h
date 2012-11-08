@@ -79,10 +79,12 @@ namespace GRINS
     { libmesh_error(); }
 
     //! Returns a descriptive name for this species.
+    inline
     const std::string & species() const 
     { return _name; }
       
     //!Returns the molar mass in (g/mol) or (kg/kmol).
+    inline
     Real molar_mass() const
     { return _mol_wght; }
 
@@ -92,26 +94,32 @@ namespace GRINS
      * \f$ R\f$ is the universal gas constant and
      * \f$ M \f$ is the species molar mass.
      */
+    inline
     Real gas_constant() const 
     { return _R; }
 
     //! Returns formation enthalpy in units of [J/kg]
+    inline
     Real formation_enthalpy() const 
     { return _h_form; }
     
     //! Returns number of translational degrees of freedom
+    inline
     Real n_tr_dofs() const 
     { return _n_tr_dofs; }
     
     //! Returns electrical charge number
+    inline
     int charge() const 
     { return _charge; }
 
     //! Returns true if the chemical species has vibrational degrees 
+    inline
     bool has_vibrational_modes() const 
     { return !_theta_v.empty(); }
 
     //! Returns true if the chemical species has vibrational degrees of freedom.
+    inline
     unsigned int n_vibrational_modes() const
     {
       libmesh_assert (_theta_v.size() == _ndg_v.size());
@@ -119,18 +127,22 @@ namespace GRINS
     }
 
     //!Characteristic vibrational temperature [K].
+    inline
     const std::vector<Real> & theta_v() const
     { return _theta_v; }
 
     //! Degeneracies for each vibrational mode.
+    inline
     const std::vector<unsigned int> & ndg_v() const 
     { return _ndg_v; }
 
     //! Characteristic electronic excitation temperatures [K].
+    inline
     const std::vector<Real> & theta_e() const 
     { return _theta_e; }
 
     //! Degeneracies for each electronic modes.
+    inline
     const std::vector<unsigned int> & ndg_e() const
     { return _ndg_e; }
 
