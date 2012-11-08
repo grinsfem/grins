@@ -153,9 +153,7 @@ namespace GRINS
 		
 	/* Idea is to make sure curve fit object order is the same as the species order
 	   in the ChemicalMixture for consistency. */
-	Species species = (_chem_mixture.species_list())[ _chem_mixture.species_name_map().find(name)->second ];
-	
-	libmesh_assert_equal_to( _chem_mixture.species_inverse_name_map().find(species)->second, name );
+	Species species =  _chem_mixture.species_name_map().find(name)->second;
 
 	// using default comparison:
 	std::vector<Species>::const_iterator it = std::search_n( _chem_mixture.species_list().begin(), 
@@ -164,6 +162,7 @@ namespace GRINS
 
 	if( it != _chem_mixture.species_list().end() )
 	  {
+	    libmesh_assert_equal_to( _chem_mixture.species_inverse_name_map().find(species)->second, name );
 	    unsigned int index = static_cast<unsigned int>(it - _chem_mixture.species_list().begin());
 		
 	    _species_curve_fits[index] = new CEACurveFit(coeffs);
