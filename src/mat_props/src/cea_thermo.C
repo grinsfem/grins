@@ -60,7 +60,7 @@ namespace GRINS
     return;
   }
 
-  Real CEAThermodynamics::cp( Real T, unsigned int species )
+  Real CEAThermodynamics::cp( Real T, unsigned int species ) const
   {
     Real cp = 0.0;
 
@@ -76,7 +76,7 @@ namespace GRINS
     return cp;
   }
 
-  Real CEAThermodynamics::cp( Real T, const std::vector<Real>& mass_fractions )
+  Real CEAThermodynamics::cp( Real T, const std::vector<Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _species_curve_fits.size() );
 
@@ -90,7 +90,7 @@ namespace GRINS
     return cp;
   }
 
-  Real CEAThermodynamics::cp_over_R( Real T, unsigned int species )
+  Real CEAThermodynamics::cp_over_R( Real T, unsigned int species ) const
   {
     libmesh_assert_less( species, _species_curve_fits.size() );
     libmesh_assert_less( _species_curve_fits[species]->interval(T),
@@ -103,7 +103,7 @@ namespace GRINS
     const Real T2 = T*T;
     const Real T3 = T2*T;
     const Real T4 = T2*T2;
-    
+
     /* cp/R =  a0*T^-2   + a1*T^-1     + a2     + a3*T   + a4*T^2   + a5*T^3  + a6*T^4 */
     return a[0]/T2 + a[1]/T + a[2] + a[3]*T + a[4]*T2 + a[5]*T3 + a[6]*T4;
   }

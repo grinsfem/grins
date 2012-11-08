@@ -29,6 +29,9 @@
 #ifndef GRINS_CEA_THERMO_H
 #define GRINS_CEA_THERMO_H
 
+// C++
+#include <iomanip>
+
 // libMesh
 #include "getpot.h"
 #include "libmesh_common.h"
@@ -48,31 +51,31 @@ namespace GRINS
     ~CEAThermodynamics();
 
     inline
-    Real cp( const ReactingFlowCache& cache, unsigned int species )
+    Real cp( const ReactingFlowCache& cache, unsigned int species ) const
     { return this->cp(cache.T(),species); }
 
     inline
-    Real cp( const ReactingFlowCache& cache )
+    Real cp( const ReactingFlowCache& cache ) const
     { return this->cp(cache.T(),cache.mass_fractions()); }
 
-    Real cp( Real T, unsigned int species );
+    Real cp( Real T, unsigned int species ) const;
 
-    Real cp( Real T, const std::vector<Real>& mass_fractions );
+    Real cp( Real T, const std::vector<Real>& mass_fractions ) const;
 
     inline
-    Real cv( const ReactingFlowCache& cache, unsigned int species )
+    Real cv( const ReactingFlowCache& cache, unsigned int species ) const
     { return this->cv(cache.T(),species); }
 
     inline
-    Real cv( const ReactingFlowCache& cache )
+    Real cv( const ReactingFlowCache& cache ) const
     { return this->cv(cache.T(),cache.mass_fractions()); }
 
     inline
-    Real cv( Real T, unsigned int species )
+    Real cv( Real T, unsigned int species ) const
     { return this->cp(T,species) - _chem_mixture.R(species); }
 
     inline
-    Real cv( Real T, const std::vector<Real>& mass_fractions )
+    Real cv( Real T, const std::vector<Real>& mass_fractions ) const
     { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
 
   protected:
@@ -81,7 +84,7 @@ namespace GRINS
 
     void read_thermodynamic_table( std::istream& in );
 
-    Real cp_over_R( Real T, unsigned int species );
+    Real cp_over_R( Real T, unsigned int species ) const;
 
     const ChemicalMixture& _chem_mixture;
 
