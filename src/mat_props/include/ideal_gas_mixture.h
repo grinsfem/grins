@@ -39,28 +39,67 @@ namespace GRINS
     IdealGasMixture( const GetPot& input );
     ~IdealGasMixture();
 
+    // Chemistry quantities
+    inline
+    Real R( unsigned int species )
+    { return this->_chem_mixture.R(species); }
+
+    inline
+    Real R( const std::vector<Real>& mass_fractions )
+    { return this->_chem_mixture.R(mass_fractions); }
+
+    inline
+    Real M( unsigned int species )
+    { return this->_chem_mixture.M(species); }
+
+    inline
+    Real M( const std::vector<Real>& mass_fractions )
+    { return this->_chem_mixture.M(mass_fractions); }
+
+    inline
+    Real X( unsigned int species, Real M, Real mass_fraction )
+    { return this->_chem_mixture.X(species,M,mass_fraction); }
+
+    inline
+    void X( Real M, const std::vector<Real>& mass_fractions, 
+	    std::vector<Real>& mole_fractions )
+    { return this->_chem_mixture.X(M,mass_fractions,mole_fractions); }
+
+
     // Thermodynamic quantities
-    void cp( const CachedQuantities& cache, std::vector<Real>& cp_values );
-    Real cp( const CachedQuantities& cache, unsigned int species );
+    inline
+    Real cp( const CachedQuantities& cache, unsigned int species )
+    { return this->_thermo.cp(cache,species); }
 
-    void cv( const CachedQuantities& cache, std::vector<Real>& cp_values );
-    Real cv( const CachedQuantities& cache, unsigned int species );
+    inline
+    Real cp( const CachedQuantities& cache )
+    { return this->_thermo.cp(cache); }
 
-    Real R( unsigned int species );
-    Real R( const std::vector<Real>& mass_fractions );
+    inline
+    Real cv( const CachedQuantities& cache, unsigned int species )
+    { return this->_thermo.cv(cache,species); }
 
-    Real M( unsigned int species );
-    Real M( const std::vector<Real>& mass_fractions );
+    inline
+    Real cv( const CachedQuantities& cache )
+    { return this->_thermo.cv(cache); }
 
-    Real X( Real M, Real mass_fraction  );
-    void X( Real M, const std::vector<Real>& mass_fractions, std::vector<Real>& mole_fractions );
 
     // Transport quantities
-    void mu( const CachedQuantities& cache, std::vector<Real>& mu_values );
-    Real mu( const CachedQuantities& cache, unsigned int species );
+    inline
+    Real mu( const CachedQuantities& cache, unsigned int species )
+    { return this->_transport.mu(cache,species); }
 
-    void k( const CachedQuantities& cache, std::vector<Real>& k_values );
-    Real k( const CachedQuantities& cache, unsigned int species );
+    inline
+    Real mu( const CachedQuantities& cache )
+    { return this->_transport.mu(cache); }
+
+    inline
+    Real k( const CachedQuantities& cache, unsigned int species )
+    { return this->_transport.k(cache,species); }
+
+    inline
+    Real k( const CachedQuantities& cache )
+    { return this->_transport.k(cache,species); }
 
     // Kinetics quantites
     void omega_dot( const CachedQuantities& cache, std::vector<Real>& omega );
@@ -78,10 +117,10 @@ namespace GRINS
     
     //! Stash data for the requested chemical mixture
     /*!
-     * A pointer will be passed to Thermo, Transport, and Kinetics objects as
+     * A reference will be cached in Thermo, Transport, and Kinetics objects as
      * needed.
      */
-    std::tr1::shared_ptr<ChemicalMixture> _chem_mixture;
+    ChemicalMixture _chem_mixture;
 
   };
 }

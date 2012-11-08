@@ -30,7 +30,7 @@ namespace GRINS
 {
   template<typename Thermo, typename Transport, typename Kinetics>
   IdealGasMixture<Thermo,Transport,Kinetics>::IdealGasMixture( const GetPot& input )
-    : _chem_mixture( new ChemicalMixture( this->read_species_list(input) ) ),
+    : _chem_mixture( this->read_species_list(input) ),
       _thermo( input, _chem_mixture ),
       _transport( input, chem_mixture ),
       _kinetics( input, chem_mixture )
