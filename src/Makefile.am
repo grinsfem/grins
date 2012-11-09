@@ -102,7 +102,8 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/chemical_species.C        \
                $(matprops_srcdir)/chemical_mixture.C        \
                $(matprops_srcdir)/cea_curve_fit.C           \
-               $(matprops_srcdir)/cea_thermo.C
+               $(matprops_srcdir)/cea_thermo.C              \
+               $(matprops_srcdir)/blottner_viscosity.C
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
@@ -192,7 +193,8 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/chemical_species.h        \
                $(matprops_incdir)/chemical_mixture.h        \
                $(matprops_incdir)/cea_curve_fit.h           \
-               $(matprops_incdir)/cea_thermo.h
+               $(matprops_incdir)/cea_thermo.h              \
+               $(matprops_incdir)/blottner_viscosity.h
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \
