@@ -1,0 +1,62 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010-2012 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
+//-----------------------------------------------------------------------el-
+//
+// $Id$
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+#include "cantera_singleton.h"
+
+namespace GRINS
+{
+#ifdef HAVE_CANTERA
+  //Note the shared_ptr default constructor is such that it looks like a NULL pointer.
+  std::tr1::shared_ptr<Cantera::IdealGasMix> CanteraSingleton::_cantera = 
+    std::tr1::shared_ptr<Cantera::IdealGasMix>();
+
+  Cantera::IdealGasMix& CanteraSingleton::cantera_instance( const GetPot& input )
+  {
+    // Pointer is null, so we create an instance.
+    if( !_cantera )
+      {
+	const std::string cantera_chem_file = input( "Physics/Chemistry/chem_file", "DIE!" );
+	const std::string mixture = input( "Physics/Chemistry/mixture", "DIE!" );
+
+	try
+	  {
+	    _cantera.reset( new Cantera::IdealGasMix( cantera_chem_file, mixture ) );
+	  }
+	catch(Cantera::CanteraError)
+	  {
+	    Cantera::showErrors(std::cerr);
+	    libmesh_error();
+	  }
+      }
+    
+    // Return a reference
+    return *(_cantera.get());
+  }
+
+#endif //HAVE_CANTERA
+}

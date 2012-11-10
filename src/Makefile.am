@@ -103,7 +103,8 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/chemical_mixture.C        \
                $(matprops_srcdir)/cea_curve_fit.C           \
                $(matprops_srcdir)/cea_thermo.C              \
-               $(matprops_srcdir)/blottner_viscosity.C
+               $(matprops_srcdir)/blottner_viscosity.C      \
+               $(matprops_srcdir)/cantera_singleton.C
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
@@ -194,7 +195,8 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/chemical_mixture.h        \
                $(matprops_incdir)/cea_curve_fit.h           \
                $(matprops_incdir)/cea_thermo.h              \
-               $(matprops_incdir)/blottner_viscosity.h
+               $(matprops_incdir)/blottner_viscosity.h      \
+               $(matprops_incdir)/cantera_singleton.h
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \
@@ -257,13 +259,20 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \
                $(GRVY_CFLAGS)
 
+#----------------
+# Cantera support
+#----------------
+if CANTERA_ENABLED
+   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
+   libgrins_la_LIBADD  += $(CANTERA_LDFLAGS)
+endif
+
 #-------------
 # MASA support
 #-------------
-
 if MASA_ENABLED
-  AM_CPPFLAGS           += $(MASA_CXXFLAGS)
-  LIBS                  += $(MASA_LIBS)
+  AM_CPPFLAGS += $(MASA_CXXFLAGS)
+  AM_LDFLAGS  = $(MASA_LIBS)
 endif
 
 if CODE_COVERAGE_ENABLED

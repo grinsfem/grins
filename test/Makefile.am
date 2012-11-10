@@ -12,6 +12,10 @@ check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += chem_mixture
 check_PROGRAMS += cea_thermo_test
 
+if CANTERA_ENABLED
+  check_PROGRAMS += cantera_chem_thermo_test
+endif
+
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
               -I$(top_srcdir)/src/boundary_conditions/include \
@@ -27,10 +31,17 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
 
 AM_LDFLAGS = $(LIBGRINS_LIBS)
 
+#----------------
+# Cantera support
+#----------------
+if CANTERA_ENABLED
+   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
+   AM_LDFLAGS += $(CANTERA_LDFLAGS)
+endif
+
 #--------------
 # MASA support
 #--------------
-
 if MASA_ENABLED
   AM_CPPFLAGS           += $(MASA_CXXFLAGS)
   AM_LDFLAGS            += $(MASA_LIBS)
@@ -49,6 +60,10 @@ vorticity_qoi_SOURCES = test_vorticity_qoi.C
 chem_mixture_SOURCES = chem_mixture.C
 cea_thermo_test_SOURCES = cea_thermo_test.C
 
+if CANTERA_ENABLED
+  cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
+endif
+
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_ns_couette_flow_2d_y_SOURCES)       \
@@ -65,21 +80,26 @@ TESTS = bc_profile_tests.sh                \
         gaussian_profiles                  \
         test_chemistry.sh                  \
         chem_mixture                       \
-        cea_thermo_test                    \
-        navier_stokes_tests.sh             \
-        test_ns_couette_flow_2d_x.sh       \
-        test_ns_couette_flow_2d_y.sh       \
-        test_stokes_poiseuille_flow.sh     \
-        test_ns_poiseuille_flow.sh         \
-        test_axi_ns_poiseuille_flow.sh     \
-        test_axi_ns_con_cyl_flow.sh        \
-        thermally_driven_flow_tests.sh     \
-        test_thermally_driven_2d_flow.sh   \
-        test_axi_thermally_driven_flow.sh  \
-        test_thermally_driven_3d_flow.sh   \
-        test_qois.sh                       \
-        test_vorticity_qoi.sh              \
-        finalize.sh
+        cea_thermo_test
+
+if CANTERA_ENABLED
+  TESTS += cantera_chem_thermo_test
+endif
+
+TESTS += navier_stokes_tests.sh             \
+         test_ns_couette_flow_2d_x.sh       \
+         test_ns_couette_flow_2d_y.sh       \
+         test_stokes_poiseuille_flow.sh     \
+         test_ns_poiseuille_flow.sh         \
+         test_axi_ns_poiseuille_flow.sh     \
+         test_axi_ns_con_cyl_flow.sh        \
+         thermally_driven_flow_tests.sh     \
+         test_thermally_driven_2d_flow.sh   \
+         test_axi_thermally_driven_flow.sh  \
+         test_thermally_driven_3d_flow.sh   \
+         test_qois.sh                       \
+         test_vorticity_qoi.sh              \
+         finalize.sh
 
 shellfiles_src = bc_profile_tests.sh                \
                  test_chemistry.sh                  \
