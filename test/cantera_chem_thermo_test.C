@@ -28,20 +28,32 @@
 
 #include <iomanip>
 #include "cantera_singleton.h"
+#include "cantera_thermo.h"
 
 int main()
 {
   GetPot input( "./input_files/cantera_chem_thermo.in" );
 
+  std::vector<std::string> species(5);
+  species[0] = input( "Physics/Chemistry/species", "DIE!", 0 );
+  species[1] = input( "Physics/Chemistry/species", "DIE!", 1 );
+  species[2] = input( "Physics/Chemistry/species", "DIE!", 2 );
+  species[3] = input( "Physics/Chemistry/species", "DIE!", 3 );
+  species[4] = input( "Physics/Chemistry/species", "DIE!", 4 );
+
+  GRINS::ChemicalMixture chem_mixture(species);
+
   Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance( input );
 
+  GRINS::CanteraThermodynamics cantera_thermo(input,chem_mixture);
+  
   double T = 1500.0;
 
   double P = 100000.0;
 
   std::vector<double> Y(5,0.2);
-  //Y[0] = 0.78;
-  //Y[1] = 0.22;
+
+  GRINS::ReactingFlowCache cache(T,P,Y);
 
   cantera.setState_TPY(T,P,&Y[0]);
 
@@ -49,8 +61,8 @@ int main()
 
   cantera.getNetProductionRates(&omega_dot[0]);
   const double e = cantera.intEnergy_mass();
-  const double cv = cantera.cv_mass();
-  const double cp = cantera.cp_mass();
+  const double cv = cantera_thermo.cv( cache );
+  const double cp = cantera_thermo.cp( cache );
 
   int return_flag = 0;
   
