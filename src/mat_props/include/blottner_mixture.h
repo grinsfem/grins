@@ -39,7 +39,7 @@ namespace GRINS
   {
   public:
 
-    BlottnerMixture();
+    BlottnerMixture( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~BlottnerMixture();
 
     Real mu( const ReactingFlowCache& cache, unsigned int species )
@@ -51,6 +51,8 @@ namespace GRINS
   protected:
 
     void read_blottner_table();
+
+    const ChemicalMixture& _chem_mixture;
 
     std::vector<BlottnerViscosity*> _species_viscosities;
 
