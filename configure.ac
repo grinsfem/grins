@@ -219,8 +219,8 @@ if test "$enable_cantera" != no; then
    fi
 fi
 
-   AC_SUBST(HAVE_CANTERA)
-   AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
+AC_SUBST(HAVE_CANTERA)
+AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
  
 dnl-------------------
