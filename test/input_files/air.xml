@@ -23,7 +23,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air5sp     -->
@@ -40,7 +40,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air7sp     -->
@@ -57,7 +57,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air11sp     -->
@@ -74,7 +74,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air10sp     -->
@@ -91,7 +91,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air13sp     -->
@@ -108,7 +108,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- air8sp_CO2 -->
@@ -125,7 +125,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- air9sp_CO2 -->
@@ -142,7 +142,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air18sp     -->
@@ -159,7 +159,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air20sp     -->
@@ -176,7 +176,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air21sp     -->
@@ -193,7 +193,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
   <!-- phase air22sp     -->
@@ -210,7 +210,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="Mix"/>
+    <transport model="Pecos"/>
   </phase>
 
 

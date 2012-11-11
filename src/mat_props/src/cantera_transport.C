@@ -26,50 +26,42 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "cantera_thermo.h"
+#include "cantera_transport.h"
 
 #ifdef HAVE_CANTERA
 
 namespace GRINS
 {
-  CanteraThermodynamics::CanteraThermodynamics( const GetPot& input, 
-						const ChemicalMixture& chem_mixture )
+
+  CanteraTransport::CanteraTransport( const GetPot& input, const ChemicalMixture& chem_mixture )
     : _chem_mixture(chem_mixture),
-      _cantera_gas( CanteraSingleton::cantera_instance(input) )
+      _cantera_gas( CanteraSingleton::cantera_instance(input) ),
+      _cantera_transport( Cantera::newTransportMgr("Pecos", &_cantera_gas) )
   {
     return;
   }
 
-  CanteraThermodynamics::~CanteraThermodynamics()
+  CanteraTransport::~CanteraTransport()
   {
+    delete _cantera_transport;
     return;
   }
 
-  Real CanteraThermodynamics::cp( const ReactingFlowCache&, 
-				  unsigned int )
-  {
-    libmesh_not_implemented();
-    return 0.0; /* dummy */
-  }
-
-  Real CanteraThermodynamics::cp( const ReactingFlowCache& cache )
+  Real CanteraTransport::mu( const ReactingFlowCache& cache )
   {
     const Real T = cache.T();
-    
     const Real P = cache.P();
-
     const std::vector<Real>& Y = cache.mass_fractions();
-    
-    Real cp = 0.0;
- 
+
+    Real mu = 0.0;
+
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-
+    
     try
       {
-	_cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	cp = _cantera_gas.cp_mass();
+	_cantera_gas.setState_TPY(T, P, &Y[0]);
+	mu =  _cantera_transport->viscosity();
       }
     catch(Cantera::CanteraError)
       {
@@ -79,34 +71,24 @@ namespace GRINS
 
     lock.release();
 
-    return cp;
+    return mu;
   }
 
-  Real CanteraThermodynamics::cv( const ReactingFlowCache&, 
-				  unsigned int )
-  {
-    libmesh_not_implemented();
-    return 0.0; /* dummy */
-  }
-
-  Real CanteraThermodynamics::cv( const ReactingFlowCache& cache )
+  Real CanteraTransport::k( const ReactingFlowCache& cache )
   {
     const Real T = cache.T();
-    
     const Real P = cache.P();
-
     const std::vector<Real>& Y = cache.mass_fractions();
-    
-    Real cv = 0.0;
+
+    Real k = 0.0;
 
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-
+    
     try
       {
-	_cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	cv = _cantera_gas.cv_mass();
+	_cantera_gas.setState_TPY(T, P, &Y[0]);
+	k =  _cantera_transport->thermalConductivity();
       }
     catch(Cantera::CanteraError)
       {
@@ -116,7 +98,7 @@ namespace GRINS
 
     lock.release();
 
-    return cv;
+    return k;
   }
 
 } // namespace GRINS

@@ -79,49 +79,17 @@ namespace GRINS
 
     // Thermodynamic quantities
     inline
-    Real cp( const ReactingFlowCache& cache, unsigned int species )
-    { return this->_thermo.cp(cache,species); }
-
-    inline
     Real cp( const ReactingFlowCache& cache )
     { return this->_thermo.cp(cache); }
-
-    inline
-    Real cp( Real T, unsigned int species )
-    { return this->_thermo.cp(T,species); }
-
-    inline
-    Real cp( Real T, const std::vector<Real>& mass_fractions )
-    { return this->_thermo.cp(T); }
-
-    inline
-    Real cv( const ReactingFlowCache& cache, unsigned int species )
-    { return this->_thermo.cv(cache,species); }
 
     inline
     Real cv( const ReactingFlowCache& cache )
     { return this->_thermo.cv(cache); }
 
-    inline
-    Real cv( Real T, unsigned int species )
-    { return this->_thermo.cv(T,species); }
-
-    inline
-    Real cv( Real T, const std::vector<Real>& mass_fractions )
-    { return this->_thermo.cv(T); }
-
     // Transport quantities
-    inline
-    Real mu( const ReactingFlowCache& cache, unsigned int species )
-    { return this->_transport.mu(cache,species); }
-
     inline
     Real mu( const ReactingFlowCache& cache )
     { return this->_transport.mu(cache); }
-
-    inline
-    Real k( const ReactingFlowCache& cache, unsigned int species )
-    { return this->_transport.k(cache,species); }
 
     inline
     Real k( const ReactingFlowCache& cache )

@@ -176,6 +176,9 @@ if test "$enable_cantera" != no; then
    if (test -f $CANTERA_PREFIX/lib/libctf2c_shared*); then
       LDFLAGS="$LDFLAGS -lctf2c_shared"
    fi
+   if (test -f $CANTERA_PREFIX/lib/libexecstream_shared*); then
+      LDFLAGS="$LDFLAGS -lexecstream_shared"
+   fi
 
    CANTERA_CPPFLAGS="${CPPFLAGS}"
    CANTERA_LDFLAGS="${LDFLAGS}"
