@@ -36,7 +36,7 @@ namespace GRINS
   CanteraTransport::CanteraTransport( const GetPot& input, const ChemicalMixture& chem_mixture )
     : _chem_mixture(chem_mixture),
       _cantera_gas( CanteraSingleton::cantera_instance(input) ),
-      _cantera_transport( Cantera::newTransportMgr("Pecos", &_cantera_gas) )
+      _cantera_transport( Cantera::newTransportMgr("Mix", &_cantera_gas) )
   {
     return;
   }
@@ -58,6 +58,8 @@ namespace GRINS
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
     
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
     try
       {
 	_cantera_gas.setState_TPY(T, P, &Y[0]);
@@ -85,6 +87,8 @@ namespace GRINS
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
     
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
     try
       {
 	_cantera_gas.setState_TPY(T, P, &Y[0]);
@@ -99,6 +103,35 @@ namespace GRINS
     lock.release();
 
     return k;
+  }
+
+  void CanteraTransport::D( const ReactingFlowCache& cache, std::vector<Real>& D )
+  {
+    const Real T = cache.T();
+    const Real P = cache.P();
+    const std::vector<Real>& Y = cache.mass_fractions();
+
+    libmesh_assert_equal_to( Y.size(), D.size() );
+
+    Threads::spin_mutex cantera_mutex;
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+    
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
+    try
+      {
+	_cantera_gas.setState_TPY(T, P, &Y[0]);
+	_cantera_transport->getMixDiffCoeffsMass(&D[0]);
+      }
+    catch(Cantera::CanteraError)
+      {
+	Cantera::showErrors(std::cerr);
+	libmesh_error();
+      }
+
+    lock.release();
+
+    return;
   }
 
 } // namespace GRINS

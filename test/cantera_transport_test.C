@@ -21,7 +21,7 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id: cantera_chem_thermo_test.C 34504 2012-11-10 06:08:51Z pbauman $
+// $Id$
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -31,7 +31,7 @@
 
 int main()
 {
-  GetPot input( "./input_files/cantera_chem_thermo.in" );
+  GetPot input( "./input_files/cantera_transport.in" );
 
   std::vector<std::string> species(5);
   species[0] = input( "Physics/Chemistry/species", "DIE!", 0 );
@@ -44,7 +44,7 @@ int main()
 
   GRINS::CanteraTransport cantera_trans(input,chem_mixture);
 
-  double T = 1500.0;
+  double T = 1000.0;
 
   double P = 100000.0;
 
@@ -54,14 +54,65 @@ int main()
 
   const double mu = cantera_trans.mu(cache);
   const double k = cantera_trans.k(cache);
+  
+  std::vector<Real> D(5,0.0);
+
+  cantera_trans.D(cache, D);
 
   int return_flag = 0;
 
   const double tol = 1.0e-15;
 
+  const double mu_reg = 4.2134235819759682e-05;
+  const double k_reg = 5.7138665373733508e-02;
+  std::vector<Real> D_reg(5,0.0);
+  D_reg[0] = 1.7611544183904180e-04;
+  D_reg[1] = 1.7169898621123060e-04;
+  D_reg[2] = 1.7379080956310527e-04;
+  D_reg[3] = 2.6991049091576078e-04;
+  D_reg[4] = 2.6488528311729070e-04;
+
+  if( std::fabs( (mu_reg - mu)/mu ) > tol )
+    {
+      std::cerr << "Error: Mismatch in viscosity." << std::endl
+		<< std::setprecision(16) << std::scientific
+		<< "mu     = " << mu << std::endl
+		<< "mu_reg = " << mu_reg << std::endl;
+      return_flag = 1;
+    }
+
+  if( std::fabs( (k_reg - k)/k ) > tol )
+    {
+      std::cerr << "Error: Mismatch in thermal conductivity." << std::endl
+		<< std::setprecision(16) << std::scientific
+		<< "k     = " << k << std::endl
+		<< "k_reg = " << k_reg << std::endl;
+      return_flag = 1;
+    }
+
+  for( unsigned int i = 0; i < 5; i++ )
+    {
+      if( std::fabs( (D_reg[i] - D[i])/D[i] ) > tol )
+	{
+	  std::cerr << "Error: Mismatch in diffusion coefficient." << std::endl
+		    << std::setprecision(16) << std::scientific
+		    << "i = " << i << std::endl
+		    << "D     = " << D[i] << std::endl
+		    << "D_reg = " << D_reg[i] << std::endl;
+	  return_flag = 1;
+	}
+    }
+  /*
   std::cout << std::setprecision(16) << std::scientific
 	    << "mu = " << mu << std::endl
 	    << "k = " << k << std::endl;
+  for( unsigned int i = 0; i < 5; i++ )
+    {
+      std::cout << std::setprecision(16) << std::scientific
+		<< "D[" << i << "] = " << D[i]
+		<< std::endl;
+    }
+  */
 
   return return_flag;
 }

@@ -59,6 +59,9 @@ namespace GRINS
 
     Real k( const ReactingFlowCache& cache );
 
+    void D( const ReactingFlowCache& cache,
+	    std::vector<Real>& D );
+
   protected:
 
     const ChemicalMixture& _chem_mixture;
