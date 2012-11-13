@@ -95,6 +95,10 @@ namespace GRINS
     Real k( const ReactingFlowCache& cache )
     { return this->_transport.k(cache,species); }
 
+    inline
+    void D( const ReactingFlowCache& cache, std::vector<Real>& D )
+    { return this->_transport.D(cache,species); }
+
     // Kinetics quantites
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega );
     Real omega_dot( const ReactingFlowCache& cache, unsigned int species );
