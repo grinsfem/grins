@@ -61,7 +61,7 @@ int main()
 
   int return_flag = 0;
 
-  const double tol = 1.0e-15;
+  const double tol = 6.0e-15;
 
   const double mu_reg = 4.2134235819759682e-05;
   const double k_reg = 5.7138665373733508e-02;
