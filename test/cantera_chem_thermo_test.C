@@ -29,6 +29,7 @@
 #include <iomanip>
 #include "cantera_singleton.h"
 #include "cantera_thermo.h"
+#include "cantera_kinetics.h"
 
 int main()
 {
@@ -47,6 +48,8 @@ int main()
 
   GRINS::CanteraThermodynamics cantera_thermo(input,chem_mixture);
   
+  GRINS::CanteraKinetics cantera_kinetics(input,chem_mixture);
+
   double T = 1500.0;
 
   double P = 100000.0;
@@ -55,14 +58,15 @@ int main()
 
   GRINS::ReactingFlowCache cache(T,P,Y);
 
-  cantera.setState_TPY(T,P,&Y[0]);
-
   std::vector<double> omega_dot(5,0.0);
 
-  cantera.getNetProductionRates(&omega_dot[0]);
-  const double e = cantera.intEnergy_mass();
+  cantera_kinetics.omega_dot(cache,omega_dot);
+  
   const double cv = cantera_thermo.cv( cache );
   const double cp = cantera_thermo.cp( cache );
+
+  cantera.setState_TPY(T,P,&Y[0]);
+  const double e = cantera.intEnergy_mass();
 
   int return_flag = 0;
   
