@@ -33,12 +33,15 @@
 #include "reacting_flow_cache.h"
 #include "chemical_mixture.h"
 
-// GRINS Thermo classes
+// Thermo classes
 #include "cea_thermo.h"
+#include "cantera_thermo.h"
 
-// GRINS Transport classes
+// Transport classes
+#include "cantera_transport.h"
 
-// GRINS Kinetics classes
+// Kinetics classes
+#include "cantera_kinetics.h"
 
 namespace GRINS
 {
@@ -93,15 +96,15 @@ namespace GRINS
 
     inline
     Real k( const ReactingFlowCache& cache )
-    { return this->_transport.k(cache,species); }
+    { return this->_transport.k(cache); }
 
     inline
     void D( const ReactingFlowCache& cache, std::vector<Real>& D )
-    { return this->_transport.D(cache,species); }
+    { return this->_transport.D(cache,D); }
 
     // Kinetics quantites
-    void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega );
-    Real omega_dot( const ReactingFlowCache& cache, unsigned int species );
+    void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot )
+    { return this->_kinetics.omega_dot(cache,omega_dot); }
 
   protected:
     

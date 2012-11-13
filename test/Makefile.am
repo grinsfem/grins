@@ -15,6 +15,7 @@ check_PROGRAMS += cea_thermo_test
 if CANTERA_ENABLED
   check_PROGRAMS += cantera_chem_thermo_test
   check_PROGRAMS += cantera_transport_test
+  check_PROGRAMS += ideal_gas_mixture_cantera
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
@@ -64,6 +65,7 @@ cea_thermo_test_SOURCES = cea_thermo_test.C
 if CANTERA_ENABLED
   cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
   cantera_transport_test_SOURCES = cantera_transport_test.C
+  ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
 endif
 
 # List of source files for license stamping
@@ -87,6 +89,7 @@ TESTS = bc_profile_tests.sh                \
 if CANTERA_ENABLED
   TESTS += cantera_chem_thermo_test
   TESTS += cantera_transport_test
+  TESTS += ideal_gas_mixture_cantera
 endif
 
 TESTS += navier_stokes_tests.sh             \

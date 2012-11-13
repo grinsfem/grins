@@ -34,8 +34,8 @@ namespace GRINS
   IdealGasMixture<Thermo,Transport,Kinetics>::IdealGasMixture( const GetPot& input )
     : _chem_mixture( this->read_species_list(input) ), /* This *must* be done before the others */
       _thermo( input, _chem_mixture ),
-      _transport( input, chem_mixture ),
-      _kinetics( input, chem_mixture )
+      _transport( input, _chem_mixture ),
+      _kinetics( input, _chem_mixture )
   {
     return;
   }
@@ -60,4 +60,8 @@ namespace GRINS
     return species_names;
   }
   
+
+  // Instantiate
+  template class IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics>;
+
 } // namespace GRINS
