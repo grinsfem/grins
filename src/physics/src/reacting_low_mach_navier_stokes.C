@@ -141,10 +141,23 @@ namespace GRINS
     const libMesh::NumberVectorValue& U = cache.U();
     libMesh::Number divU = cache.divU();
     const libMesh::Gradient& grad_T = cache.grad_T();
+    Real M = cache.M();
+    const std::vector<Real>& M_species = cache.M_species();
+    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions();
+
+    libmesh_assert_equal_to( M_species.size(), this->_n_species );
+    libmesh_assert_equal_to( grad_w.size(), this->_n_species );
+    
+    libMesh::Gradient mass_term(0.0,0.0,0.0);
+    for(unsigned int s=0; s < this->_n_species; s++ )
+      {
+	mass_term += grad_w[s]/M_species[s];
+      }
+    mass_term *= M;
     
     for (unsigned int i=0; i != n_p_dofs; i++)
       {
-	Fp(i) += MOLAR_MASS_TERM (-U*grad_T/T + divU)*p_phi[i][qp]*JxW[qp];
+	Fp(i) += (-U*(mass_term + grad_T/T) + divU)*p_phi[i][qp]*JxW[qp];
       }
 
     return;
