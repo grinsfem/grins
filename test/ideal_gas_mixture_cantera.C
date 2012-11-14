@@ -57,6 +57,9 @@ int main()
 
   gas.D(cache, D);
 
+  std::vector<double> h(5,0.0);
+  gas.h(cache,h);
+
   int return_flag = 0;
   
   double tol = 1.0e-15;
@@ -128,6 +131,26 @@ int main()
 		    << "i = " << i << std::endl
 		    << "D     = " << D[i] << std::endl
 		    << "D_reg = " << D_reg[i] << std::endl;
+	  return_flag = 1;
+	}
+    }
+
+  std::vector<double> h_reg(5,0.0);
+  h_reg[0] = 1.3708031466651920e+06;
+  h_reg[1] = 1.2691593487863187e+06;
+  h_reg[2] = 4.3657076051206365e+06;
+  h_reg[3] = 3.5526729566942364e+07;
+  h_reg[4] = 1.7154371363422986e+07;
+
+  for( unsigned int i = 0; i < 5; i++ )
+    {
+      if( std::fabs( (h[i] - h_reg[i])/h_reg[i] ) > tol )
+	{
+	  std::cerr << "Error: Mismatch in internal energy." << std::endl
+		    << std::setprecision(16) << std::scientific
+		    << "i = " << i << std::endl
+		    << "h = " << h[i] << std::endl
+		    << "h_reg = " << h_reg[i] << std::endl;
 	  return_flag = 1;
 	}
     }
