@@ -53,6 +53,8 @@ namespace GRINS
     const Real P = cache.P();
     const std::vector<Real>& Y = cache.mass_fractions();
 
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+
     Real mu = 0.0;
 
     Threads::spin_mutex cantera_mutex;
@@ -81,6 +83,8 @@ namespace GRINS
     const Real T = cache.T();
     const Real P = cache.P();
     const std::vector<Real>& Y = cache.mass_fractions();
+
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     Real k = 0.0;
 
@@ -112,6 +116,7 @@ namespace GRINS
     const std::vector<Real>& Y = cache.mass_fractions();
 
     libmesh_assert_equal_to( Y.size(), D.size() );
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);

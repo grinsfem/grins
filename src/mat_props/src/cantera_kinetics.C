@@ -51,7 +51,8 @@ namespace GRINS
     const std::vector<Real>& Y = cache.mass_fractions();
 
     libmesh_assert_equal_to( Y.size(), omega_dot.size() );
-
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+    
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
     

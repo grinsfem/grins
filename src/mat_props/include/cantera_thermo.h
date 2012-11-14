@@ -49,33 +49,13 @@ namespace GRINS
     CanteraThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CanteraThermodynamics();
 
-    inline
-    Real cp( Real, unsigned int )
-    { libmesh_error();
-      return 0.0; /*dummy*/ }
-
-    inline
-    Real cp( Real, const std::vector<Real>& )
-    { libmesh_error();
-      return 0.0; /*dummy*/ }
-
-    Real cp( const ReactingFlowCache& cache, unsigned int species );
-
     Real cp( const ReactingFlowCache& cache );
 
-    inline
-    Real cv( Real, unsigned int )
-    { libmesh_error();
-      return 0.0; /*dummy*/ }
-
-    inline
-    Real cv( Real, const std::vector<Real>& )
-    { libmesh_error();
-      return 0.0; /*dummy*/ }
-
-    Real cv( const ReactingFlowCache& cache, unsigned int species );
-
     Real cv( const ReactingFlowCache& cache );
+
+    Real h(const ReactingFlowCache& cache, unsigned int species);
+
+    void h(const ReactingFlowCache& cache, std::vector<Real>& h);
 
   protected:
 

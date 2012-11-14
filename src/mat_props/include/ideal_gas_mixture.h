@@ -88,6 +88,14 @@ namespace GRINS
     inline
     Real cv( const ReactingFlowCache& cache )
     { return this->_thermo.cv(cache); }
+    
+    inline 
+    Real h(const ReactingFlowCache& cache, unsigned int species)
+    { return this->_thermo.h(cache,species); }
+
+    inline
+    void h(const ReactingFlowCache& cache, std::vector<Real>& h)
+    { return this->_thermo.h(cache,h); }
 
     // Transport quantities
     inline

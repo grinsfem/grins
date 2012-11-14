@@ -45,13 +45,6 @@ namespace GRINS
     return;
   }
 
-  Real CanteraThermodynamics::cp( const ReactingFlowCache&, 
-				  unsigned int )
-  {
-    libmesh_not_implemented();
-    return 0.0; /* dummy */
-  }
-
   Real CanteraThermodynamics::cp( const ReactingFlowCache& cache )
   {
     const Real T = cache.T();
@@ -60,11 +53,15 @@ namespace GRINS
 
     const std::vector<Real>& Y = cache.mass_fractions();
     
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+
     Real cp = 0.0;
  
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
     try
       {
 	_cantera_gas.setState_TPY( T, P, &Y[0] );
@@ -82,13 +79,6 @@ namespace GRINS
     return cp;
   }
 
-  Real CanteraThermodynamics::cv( const ReactingFlowCache&, 
-				  unsigned int )
-  {
-    libmesh_not_implemented();
-    return 0.0; /* dummy */
-  }
-
   Real CanteraThermodynamics::cv( const ReactingFlowCache& cache )
   {
     const Real T = cache.T();
@@ -97,11 +87,15 @@ namespace GRINS
 
     const std::vector<Real>& Y = cache.mass_fractions();
     
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+
     Real cv = 0.0;
 
     Threads::spin_mutex cantera_mutex;
     Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
     try
       {
 	_cantera_gas.setState_TPY( T, P, &Y[0] );
@@ -117,6 +111,78 @@ namespace GRINS
     lock.release();
 
     return cv;
+  }
+
+  Real CanteraThermodynamics::h(const ReactingFlowCache& cache, unsigned int species)
+  {
+    const Real T = cache.T();
+    
+    const Real P = cache.P();
+
+    const std::vector<Real>& Y = cache.mass_fractions();
+
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+
+    std::vector<Real> h_RT( Y.size(), 0.0 );
+
+    Threads::spin_mutex cantera_mutex;
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+    
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
+    try
+      {
+	_cantera_gas.setState_TPY( T, P, &Y[0] );
+	  
+	_cantera_gas.getEnthalpy_RT( &h_RT[0] );
+      }
+    catch(Cantera::CanteraError)
+      {
+	Cantera::showErrors(std::cerr);
+	libmesh_error();
+      }
+
+    lock.release();
+
+    return h_RT[species]*_chem_mixture.R(species)*T;
+  }
+
+  void CanteraThermodynamics::h(const ReactingFlowCache& cache, std::vector<Real>& h)
+  {
+    const Real T = cache.T();
+    
+    const Real P = cache.P();
+
+    const std::vector<Real>& Y = cache.mass_fractions();
+
+    libmesh_assert_equal_to( Y.size(), h.size() );
+    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+
+    Threads::spin_mutex cantera_mutex;
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+    
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
+    try
+      {
+	_cantera_gas.setState_TPY( T, P, &Y[0] );
+	  
+	_cantera_gas.getEnthalpy_RT( &h[0] );
+      }
+    catch(Cantera::CanteraError)
+      {
+	Cantera::showErrors(std::cerr);
+	libmesh_error();
+      }
+
+    lock.release();
+
+    for( unsigned int s = 0; s < h.size(); s++ )
+      {
+	h[s] *= _chem_mixture.R(s)*T;
+      }
+
+    return;
   }
 
 } // namespace GRINS
