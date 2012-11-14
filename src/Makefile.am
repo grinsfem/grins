@@ -72,7 +72,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/stab_helper.C \
                $(physics_srcdir)/inc_navier_stokes_stab_helper.C \
                $(physics_srcdir)/heat_transfer_stab_helper.C \
-               $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C
+               $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C \
+               $(physics_srcdir)/reacting_low_mach_navier_stokes_base.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
@@ -165,7 +166,8 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/stab_helper.h \
                $(physics_incdir)/inc_navier_stokes_stab_helper.h \
                $(physics_incdir)/heat_transfer_stab_helper.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h
+               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h \
+               $(physics_incdir)/reacting_low_mach_navier_stokes_base.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/boundary_conditions.h \
