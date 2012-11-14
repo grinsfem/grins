@@ -84,8 +84,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingFlowCache::set_velocity_grads( libMesh::Gradient& grad_u, libMesh::Gradient& grad_v,
-					      libMesh::Gradient& grad_w )
+  void ReactingFlowCache::set_velocity_grads( const libMesh::Gradient& grad_u, const libMesh::Gradient& grad_v,
+					      const libMesh::Gradient& grad_w )
   {
     _grad_u = grad_u;
     _grad_v = grad_v;
@@ -95,14 +95,14 @@ namespace GRINS
     return;
   }
 
-  void ReactingFlowCache::set_p_hyrdo( Real p_hydro )
+  void ReactingFlowCache::set_p_hydro( Real p_hydro )
   {
     _p_hydro = p_hydro;
     _p_hydro_set = true;
     return;
   }
 
-  void ReactingFlowCache::set_temp_grad( libMesh::Gradient& grad_T )
+  void ReactingFlowCache::set_temp_grad( const libMesh::Gradient& grad_T )
   {
     _grad_T = grad_T;
     _grad_T_set = true;

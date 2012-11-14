@@ -205,9 +205,27 @@ namespace GRINS
       std::vector<Real> h(this->_n_species,0.0);
       this->_gas_mixture.h(cache,h);
       cache.set_thermo_props( this->_gas_mixture.cp(cache), h);
+
+      std::vector<Real> D(this->_n_species,0.0);
+      this->_gas_mixture.D(cache,D);
+      cache.set_transport_props( this->_gas_mixture.mu(cache),this->_gas_mixture.k(cache), D);
     }
 
-    
+    if( this->_dim < 3 )
+      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp) );
+    else
+      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp),
+			    c.interior_value(this->_w_var, qp) );
+
+    if( this->_dim < 3 )
+      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp) );
+    else
+      cache.set_velocity_grads( c.interior_gradient(this->_u_var, qp), c.interior_gradient(this->_v_var, qp),
+				c.interior_gradient(this->_w_var, qp) );
+
+    cache.set_p_hydro( c.interior_value(this->_p_var,qp) );
+
+    cache.set_temp_grad( c.interior_gradient(this->_T_var,qp) );
 
     return;
   }

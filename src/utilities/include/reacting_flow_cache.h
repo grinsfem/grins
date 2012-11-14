@@ -110,12 +110,12 @@ namespace GRINS
     void set_transport_props( Real mu, Real k, std::vector<Real>& D );
     
     void set_velocities( Real u, Real v, Real w = 0.0 );
-    void set_velocity_grads( libMesh::Gradient& grad_u, libMesh::Gradient& grad_v,
-			     libMesh::Gradient& grad_w );
+    void set_velocity_grads( const libMesh::Gradient& grad_u, const libMesh::Gradient& grad_v,
+			     const libMesh::Gradient& grad_w );
 
-    void set_p_hyrdo( Real p_hydro );
+    void set_p_hydro( Real p_hydro );
 
-    void set_temp_grad( libMesh::Gradient& grad_T );
+    void set_temp_grad( const libMesh::Gradient& grad_T );
 
   protected:
 
