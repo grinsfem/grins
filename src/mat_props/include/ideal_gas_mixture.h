@@ -55,28 +55,28 @@ namespace GRINS
 
     // Chemistry quantities
     inline
-    Real R( unsigned int species )
+    Real R( unsigned int species ) const
     { return this->_chem_mixture.R(species); }
 
     inline
-    Real R( const std::vector<Real>& mass_fractions )
+    Real R( const std::vector<Real>& mass_fractions ) const
     { return this->_chem_mixture.R(mass_fractions); }
 
     inline
-    Real M( unsigned int species )
+    Real M( unsigned int species ) const
     { return this->_chem_mixture.M(species); }
 
     inline
-    Real M( const std::vector<Real>& mass_fractions )
+    Real M( const std::vector<Real>& mass_fractions ) const
     { return this->_chem_mixture.M(mass_fractions); }
 
     inline
-    Real X( unsigned int species, Real M, Real mass_fraction )
+    Real X( unsigned int species, Real M, Real mass_fraction ) const
     { return this->_chem_mixture.X(species,M,mass_fraction); }
 
     inline
     void X( Real M, const std::vector<Real>& mass_fractions, 
-	    std::vector<Real>& mole_fractions )
+	    std::vector<Real>& mole_fractions ) const
     { return this->_chem_mixture.X(M,mass_fractions,mole_fractions); }
 
 

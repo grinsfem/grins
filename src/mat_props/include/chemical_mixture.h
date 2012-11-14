@@ -99,12 +99,12 @@ namespace GRINS
       \f$ w_i = x_i \frac{M_i}{M} \f$ 
      */
     inline
-    Real X( unsigned int species, Real M, Real mass_fraction )
+    Real X( unsigned int species, Real M, Real mass_fraction ) const
     { return mass_fraction*M/this->M(species); }
 
     //! All species mole fractions
     void X( Real M, const std::vector<Real>& mass_fractions, 
-	    std::vector<Real>& mole_fractions );
+	    std::vector<Real>& mole_fractions ) const;
 
   protected:
 

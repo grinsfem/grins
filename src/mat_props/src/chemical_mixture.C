@@ -90,7 +90,7 @@ namespace GRINS
   }
 
   void ChemicalMixture:: X( Real M, const std::vector<Real>& mass_fractions, 
-			    std::vector<Real>& mole_fractions )
+			    std::vector<Real>& mole_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
 
