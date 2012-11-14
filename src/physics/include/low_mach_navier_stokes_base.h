@@ -156,10 +156,11 @@ namespace GRINS
     bool _enable_thermo_press_calc;
 
   private:
+
     LowMachNavierStokesBase();
 
   };
 
-} //End namespace block
+} // namespace GRINS
 
 #endif // LOW_MACH_NAVIER_STOKES_BASE_H
