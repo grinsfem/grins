@@ -198,6 +198,15 @@ namespace GRINS
 									    ReactingFlowCache& cache, 
 									    unsigned int qp )
   {
+    cache.set_chemistry_props( this->_gas_mixture.R(cache.mass_fractions()), 
+			       this->_gas_mixture.M(cache.mass_fractions()) );
+
+    {
+      std::vector<Real> h(this->_n_species,0.0);
+      this->_gas_mixture.h(cache,h);
+      cache.set_thermo_props( this->_gas_mixture.cp(cache), h);
+    }
+
     
 
     return;
