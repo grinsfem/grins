@@ -193,6 +193,16 @@ namespace GRINS
     return;
   }
 
+  template<class Mixture>
+  void ReactingLowMachNavierStokesBase<Mixture>::build_reacting_flow_cache( const libMesh::FEMContext& c, 
+									    ReactingFlowCache& cache, 
+									    unsigned int qp )
+  {
+    
+
+    return;
+  }
+
   //Instantiate
 #ifdef HAVE_CANTERA
   template class ReactingLowMachNavierStokesBase< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;

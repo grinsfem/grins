@@ -102,6 +102,8 @@ namespace GRINS
 	ReactingFlowCache cache( c.interior_value(this->_T_var, qp), 
 				 this->get_p0_steady(c,qp), Y );
 
+	this->build_reacting_flow_cache(c, cache, qp);
+
 	this->assemble_mass_time_deriv(c, cache, qp);
 	this->assemble_species_time_deriv(c, cache, qp);
 	this->assemble_momentum_time_deriv(c, cache, qp);
@@ -111,7 +113,7 @@ namespace GRINS
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
       {
-	this->_p_pinning.pin_value( context, request_jacobian, this->_p_var);
+	this->_p_pinning.pin_value( context, request_jacobian, this->_p_var );
       }
 
     return request_jacobian;
@@ -119,7 +121,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv(libMesh::FEMContext& c, 
-								      ReactingFlowCache& cache, 
+								      const ReactingFlowCache& cache, 
 								      unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
@@ -136,9 +138,9 @@ namespace GRINS
     libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
     
     libMesh::Number T = cache.T();
-    libMesh::NumberVectorValue U = ;
-    libMesh::Number divU = ;
-    libMeshGradient grad_T = ;
+    const libMesh::NumberVectorValue& U = cache.U();
+    libMesh::Number divU = cache.divU();
+    const libMesh::Gradient& grad_T = cache.grad_T();
     
     for (unsigned int i=0; i != n_p_dofs; i++)
       {
@@ -150,7 +152,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_species_time_deriv(libMesh::FEMContext& c, 
-									 ReactingFlowCache& cache, 
+									 const ReactingFlowCache& cache, 
 									 unsigned int qp)
   {
     
@@ -159,7 +161,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_momentum_time_deriv(libMesh::FEMContext& c, 
-									  ReactingFlowCache& cache, 
+									  const ReactingFlowCache& cache, 
 									  unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
@@ -186,14 +188,14 @@ namespace GRINS
     libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{v}
     libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
     
-    libMesh::Number rho = ;
-    libMesh::NumberVectorValue U = ;
-    libMesh::Number divU = ;
-    libMesh::Number mu = ;
-    libMesh::Number p = ;
-    libMesh::Gradient grad_u = ;
-    libMesh::Gradient grad_v = ;
-    libMesh::Gradient grad_w = ;
+    libMesh::Number rho = cache.rho();
+    const libMesh::NumberVectorValue& U = cache.U();
+    libMesh::Number divU = cache.divU();
+    libMesh::Number mu = cache.mu();
+    libMesh::Number p = cache.p_hydro();
+    const libMesh::Gradient& grad_u = cache.grad_u();
+    const libMesh::Gradient& grad_v = cache.grad_v();
+    const libMesh::Gradient& grad_w = cache.grad_w();
 
     libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) ); 
     libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
@@ -238,7 +240,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv(libMesh::FEMContext& c, 
-									ReactingFlowCache& cache, 
+									const ReactingFlowCache& cache, 
 									unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
@@ -258,11 +260,11 @@ namespace GRINS
 
     libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[this->_T_var]; // R_{T}
 
-    libMesh::Number rho = ;
-    libMesh::NumberVectorValue U = ;
-    libMesh::Number cp = ;
-    libMesh::Number k = ;
-    libMesh::Gradient grad_T = ;
+    libMesh::Number rho = cache.rho() ;
+    const libMesh::NumberVectorValue& U = cache.U();
+    libMesh::Number cp = cache.cp();
+    libMesh::Number k = cache.k();
+    const libMesh::Gradient& grad_T = cache.grad_T();
     
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
