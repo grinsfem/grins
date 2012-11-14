@@ -194,6 +194,8 @@ namespace GRINS
   }
 
   //Instantiate
+#ifdef HAVE_CANTERA
   template class ReactingLowMachNavierStokesBase< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
+#endif
 
 } // namespace GRINS

@@ -62,6 +62,8 @@ namespace GRINS
   
 
   // Instantiate
+#ifdef HAVE_CANTERA
   template class IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics>;
+#endif
 
 } // namespace GRINS
