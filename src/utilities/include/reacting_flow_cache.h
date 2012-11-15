@@ -70,12 +70,28 @@ namespace GRINS
     { libmesh_assert(_mf_grad_set); return _mass_fractions_grad; }
 
     inline
+    Real M() const
+    { libmesh_assert(_chem_props_set); return _M; }
+
+    inline
+    Real R() const
+    { libmesh_assert(_chem_props_set); return _R; }
+
+    inline
+    const std::vector<Real>& omega_dot() const
+    { libmesh_assert(_chem_props_set); return _omega_dot; }
+
+    inline
     Real rho() const
     { libmesh_assert(_chem_props_set); return _rho; }
 
     inline
     Real cp() const
     { libmesh_assert(_thermo_props_set); return _cp; }
+
+    inline
+    const std::vector<Real>& species_enthalpy() const
+    { libmesh_assert(_thermo_props_set); return _h; }
 
     inline
     Real k() const
@@ -109,7 +125,7 @@ namespace GRINS
     const libMesh::Gradient& grad_w() const
     { libmesh_assert(_vel_grad_set); return _grad_w; }
 
-    void set_chemistry_props( Real R, Real M );
+    void set_chemistry_props( Real R, Real M, const std::vector<Real>& omega_dot );
     void set_thermo_props( Real cp, std::vector<Real>& h );
     void set_transport_props( Real mu, Real k, std::vector<Real>& D );
     
@@ -134,6 +150,8 @@ namespace GRINS
 
     Real _R;
     Real _M;
+    std::vector<Real> _omega_dot;
+
     Real _cp;
     std::vector<Real> _h;
     Real _mu;

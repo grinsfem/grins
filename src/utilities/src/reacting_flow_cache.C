@@ -44,6 +44,7 @@ namespace GRINS
       _grad_T_set(false),
       _mf_grad_set(false)
   {
+    /*! \todo We need to preallocate the storage here. */
     return;
   }
 
@@ -52,10 +53,11 @@ namespace GRINS
     return;
   }
 
-  void ReactingFlowCache::set_chemistry_props( Real R, Real M )
+  void ReactingFlowCache::set_chemistry_props( Real R, Real M, const std::vector<Real>& omega_dot )
   {
     _R = R;
     _M = M;
+    _omega_dot = omega_dot;
     _rho = _P/(_R*_T);
     _chem_props_set = true;
     return;

@@ -198,9 +198,7 @@ namespace GRINS
 									    ReactingFlowCache& cache, 
 									    unsigned int qp )
   {
-    cache.set_chemistry_props( this->_gas_mixture.R(cache.mass_fractions()), 
-			       this->_gas_mixture.M(cache.mass_fractions()) );
-
+    
     {
       std::vector<Real> h(this->_n_species,0.0);
       this->_gas_mixture.h(cache,h);
@@ -216,6 +214,13 @@ namespace GRINS
 	  mass_fractions_grad[s] = c.interior_gradient(this->_species_vars[s],qp);
 	}
       cache.set_mass_fractions_grad(mass_fractions_grad);
+
+      std::vector<Real> omega_dot(this->_n_species);
+      this->_gas_mixture.omega_dot(cache,omega_dot);
+      
+      cache.set_chemistry_props( this->_gas_mixture.R(cache.mass_fractions()), 
+				 this->_gas_mixture.M(cache.mass_fractions()),
+				 omega_dot );
     }
 
     if( this->_dim < 3 )
