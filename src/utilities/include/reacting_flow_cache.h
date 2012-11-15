@@ -65,6 +65,10 @@ namespace GRINS
     const std::vector<Real>& mass_fractions() const
     { return _mass_fractions; }
 
+    inline 
+    const std::vector<libMesh::Gradient>& mass_fractions_grad() const
+    { libmesh_assert(_mf_grad_set); return _mass_fractions_grad; }
+
     inline
     Real rho() const
     { libmesh_assert(_chem_props_set); return _rho; }
@@ -117,11 +121,14 @@ namespace GRINS
 
     void set_temp_grad( const libMesh::Gradient& grad_T );
 
+    void set_mass_fractions_grad( const std::vector<libMesh::Gradient>& mass_fractions_grad );
+
   protected:
 
     const Real _T;
     const Real _P;
     const std::vector<Real> _mass_fractions;
+    std::vector<libMesh::Gradient> _mass_fractions_grad;
 
     Real _rho;
 
@@ -150,6 +157,7 @@ namespace GRINS
     bool _vel_grad_set;
     bool _p_hydro_set;
     bool _grad_T_set;
+    bool _mf_grad_set;
 
   private:
     

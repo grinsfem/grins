@@ -209,6 +209,13 @@ namespace GRINS
       std::vector<Real> D(this->_n_species,0.0);
       this->_gas_mixture.D(cache,D);
       cache.set_transport_props( this->_gas_mixture.mu(cache),this->_gas_mixture.k(cache), D);
+
+      std::vector<libMesh::Gradient> mass_fractions_grad(this->_n_species);
+      for( unsigned int s = 0; s < this->_n_species; s++ )
+	{
+	  mass_fractions_grad[s] = c.interior_gradient(this->_species_vars[s],qp);
+	}
+      cache.set_mass_fractions_grad(mass_fractions_grad);
     }
 
     if( this->_dim < 3 )

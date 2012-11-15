@@ -41,7 +41,8 @@ namespace GRINS
       _vel_set(false),
       _vel_grad_set(false),
       _p_hydro_set(false),
-      _grad_T_set(false)
+      _grad_T_set(false),
+      _mf_grad_set(false)
   {
     return;
   }
@@ -108,4 +109,11 @@ namespace GRINS
     _grad_T_set = true;
     return;
   }
-}
+
+  void ReactingFlowCache:: set_mass_fractions_grad( const std::vector<libMesh::Gradient>& mass_fractions_grad )
+  {
+    _mass_fractions_grad = mass_fractions_grad;
+    _mf_grad_set = true;
+  }
+
+} // namespace GRINS
