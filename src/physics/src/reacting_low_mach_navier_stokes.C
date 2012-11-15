@@ -99,6 +99,14 @@ namespace GRINS
 	  }
 
 	// Build up cache at element interior quadrature point
+	/*! \todo Ought to rethink constructing this at every quadrature point. Perhaps
+	          add a "reset" method (or something similar) that just clears everything
+	          so we don't have to keep deallocating/reallocating. Probably will require
+	          adding libmesh_asserts in the themro/transport/chemistry calculations since
+	          we assume at least T, P, and Y are already present in the cache.
+	          Actually, what we want to do is have the cache built once per element
+	          (thus caching at every quadrature point), so this can be reused for multiple
+	          Physics classes. */
 	ReactingFlowCache cache( c.interior_value(this->_T_var, qp), 
 				 this->get_p0_steady(c,qp), Y );
 
@@ -142,16 +150,14 @@ namespace GRINS
     libMesh::Number divU = cache.divU();
     const libMesh::Gradient& grad_T = cache.grad_T();
     Real M = cache.M();
-    const std::vector<Real>& M_species = cache.M_species();
-    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions();
+    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions_grad();
 
-    libmesh_assert_equal_to( M_species.size(), this->_n_species );
     libmesh_assert_equal_to( grad_w.size(), this->_n_species );
     
     libMesh::Gradient mass_term(0.0,0.0,0.0);
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
-	mass_term += grad_w[s]/M_species[s];
+	mass_term += grad_w[s]/this->_gas_mixture.M(s);
       }
     mass_term *= M;
     
@@ -168,7 +174,40 @@ namespace GRINS
 									 const ReactingFlowCache& cache, 
 									 unsigned int qp)
   {
+    // Convenience
+    const VariableIndex s0_var = this->_species_vars[0];
     
+    /* The number of local degrees of freedom in each species variable.
+       We assume the same number of dofs for each species */
+    const unsigned int n_s_dofs = c.dof_indices_var[s0_var].size();
+    
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real> &JxW = c.element_fe_var[s0_var]->get_JxW();
+    
+    // The species shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& s_phi = c.element_fe_var[s0_var]->get_phi();
+
+    // The species shape function gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = c.element_fe_var[s0_var]->get_dphi();
+
+    libMesh::Number rho = cache.rho();
+    const libMesh::NumberVectorValue& U = cache.U();
+    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions_grad();
+    const std::vector<Real>& D = cache.D();
+    const std::vector<Real>& omega_dot = cache.omega_dot();
+
+    for(unsigned int s=0; s < this->_n_species; s++ )
+      {
+	libMesh::DenseSubVector<Number> &Fs = *c.elem_subresiduals[this->_species_vars[s]]; // R_{s}
+
+	for (unsigned int i=0; i != n_s_dofs; i++)
+	  {
+	    /*! \todo Need to add SCEBD term. */
+	    Fs(i) += ( ( rho*(U*grad_w[s]) - omega_dot[s] )*s_phi[i][qp] 
+		       + rho*D[s]*(grad_w[s]*s_grad_phi[i][qp])        )*JxW[qp];
+	  }
+      }
+
     return;
   }
 
@@ -278,12 +317,13 @@ namespace GRINS
     libMesh::Number cp = cache.cp();
     libMesh::Number k = cache.k();
     const libMesh::Gradient& grad_T = cache.grad_T();
-    
+    const std::vector<Real>& omega_dot = cache.omega_dot();
+    const std::vector<Real>& h = cache.species_enthalpy();
+
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
-	FT(i) += ( -rho*cp*U*grad_T*T_phi[i][qp] // convection term
-		   - k*grad_T*T_gradphi[i][qp]            // diffusion term
-		   )*JxW[qp]; 
+	FT(i) += ( ( -rho*cp*U*grad_T + h[s]*omega_dot[s] )*T_phi[i][qp] // convection term + chemistry term
+		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp]; 
       }
 
     return;
