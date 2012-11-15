@@ -74,6 +74,22 @@ namespace GRINS
 
   protected:
 
+    void assemble_mass_time_deriv(libMesh::FEMContext& c, 
+				  const ReactingFlowCache& cache, 
+				  unsigned int qp);
+
+    void assemble_species_time_deriv(libMesh::FEMContext& c, 
+				     const ReactingFlowCache& cache, 
+				     unsigned int qp);
+
+    void assemble_momentum_time_deriv(libMesh::FEMContext& c, 
+				      const ReactingFlowCache& cache, 
+				      unsigned int qp);
+
+    void assemble_energy_time_deriv(libMesh::FEMContext& c, 
+				    const ReactingFlowCache& cache, 
+				    unsigned int qp);
+
     //! Enable pressure pinning
     bool _pin_pressure;
     

@@ -127,6 +127,80 @@ namespace GRINS
     return request_jacobian;
   }
 
+
+  template<class Mixture>
+  bool ReactingLowMachNavierStokes<Mixture>::element_constraint( bool request_jacobian,
+								 libMesh::DiffContext& context,
+								 libMesh::FEMSystem* system )
+  {
+#ifdef USE_GRVY_TIMERS
+    //this->_timer->BeginTimer("LowMachNavierStokes::element_constraint");
+#endif
+
+    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+#ifdef USE_GRVY_TIMERS
+    //this->_timer->EndTimer("LowMachNavierStokes::element_constraint");
+#endif
+
+    return request_jacobian;
+  }
+
+  template<class Mixture>
+  bool ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool request_jacobian,
+								   libMesh::DiffContext& context,
+								   libMesh::FEMSystem* system )
+  {
+    /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
+    /*
+    if( this->_enable_thermo_press_calc )
+      {
+#ifdef USE_GRVY_TIMERS
+	this->_timer->BeginTimer("LowMachNavierStokes::side_time_derivative");
+#endif
+	FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+	this->assemble_thermo_press_side_time_deriv( request_jacobian, c, system );
+
+#ifdef USE_GRVY_TIMERS
+	this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
+#endif
+      }
+    */
+    return request_jacobian;
+  }
+
+  template<class Mixture>
+  bool ReactingLowMachNavierStokes<Mixture>::side_constraint( bool request_jacobian,
+								libMesh::DiffContext& context,
+								libMesh::FEMSystem* system )
+  {
+#ifdef USE_GRVY_TIMERS
+    //this->_timer->BeginTimer("ReactingLowMachNavierStokes::side_constraint");
+#endif
+
+    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+#ifdef USE_GRVY_TIMERS
+    //this->_timer->EndTimer("ReactingLowMachNavierStokes::side_constraint");
+#endif
+
+    return request_jacobian;
+  }
+
+  template<class Mixture>
+  bool ReactingLowMachNavierStokes<Mixture>::mass_residual( bool request_jacobian,
+							    libMesh::DiffContext& context,
+							    libMesh::FEMSystem* system )
+  {
+    libmesh_not_implemented();
+    /*
+    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    */
+    return request_jacobian;
+  }
+
+
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv(libMesh::FEMContext& c, 
 								      const ReactingFlowCache& cache, 
@@ -320,9 +394,15 @@ namespace GRINS
     const std::vector<Real>& omega_dot = cache.omega_dot();
     const std::vector<Real>& h = cache.species_enthalpy();
 
+    Real chem_term = 0.0;
+    for(unsigned int s=0; s < this->_n_species; s++ )
+      {
+	chem_term += h[s]*omega_dot[s];
+      }
+
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
-	FT(i) += ( ( -rho*cp*U*grad_T + h[s]*omega_dot[s] )*T_phi[i][qp] // convection term + chemistry term
+	FT(i) += ( ( -rho*cp*U*grad_T + chem_term )*T_phi[i][qp] // convection term + chemistry term
 		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp]; 
       }
 
