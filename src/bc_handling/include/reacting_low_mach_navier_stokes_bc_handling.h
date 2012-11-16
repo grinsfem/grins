@@ -55,18 +55,20 @@ namespace GRINS
 
   protected:
 
+     // We need a another container to stash dirichlet values for the speccies
+    std::map< GRINS::BoundaryID, std::vector<Real> > _species_values;
+
+    // We also need another map container
+    std::map< GRINS::BoundaryID, GRINS::BCType> _species_bc_map;
+
+    unsigned int _n_species;
+    std::vector<std::string> _species_var_names;
+
   private:
 
     ReactingLowMachNavierStokesBCHandling();
 
-    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL,
-		       ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
-
-    // We need a another container to stash dirichlet values for the speccies
-    std::map< GRINS::BoundaryID, Real > _species _values;
-
-    // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
+    enum LMNS_BC_TYPES{ZERO_FLUX=0, PRESCRIBED_SPECIES, CATALYTIC_WALL};
 
   };
 }

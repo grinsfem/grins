@@ -74,6 +74,7 @@ namespace GRINS
     _species_var_names.reserve(this->_n_species);
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
+	/*! \todo Make this prefix string an input option */
 	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", i ));
 	_species_var_names.push_back( var_name );
       }

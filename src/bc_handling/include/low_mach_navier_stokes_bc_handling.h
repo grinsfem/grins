@@ -65,18 +65,18 @@ namespace GRINS
 
     std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
 
+    // We need a second container to stash dirichlet values for the energy equation
+    std::map< GRINS::BoundaryID, Real > _T_values;
+
+    // We also need another map container
+    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
+
   private:
 
     LowMachNavierStokesBCHandling();
 
     enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL,
 		       ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
-
-    // We need a second container to stash dirichlet values for the energy equation
-    std::map< GRINS::BoundaryID, Real > _T_values;
-
-    // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
 
   };
 }
