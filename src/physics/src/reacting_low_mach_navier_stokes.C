@@ -37,6 +37,9 @@ namespace GRINS
   {
     this->read_input_options(input);
 
+    // This is deleted in the base class
+    this->_bc_handler = new ReactingLowMachNavierStokesBCHandling( physics_name, input );
+
     return;
   }
 

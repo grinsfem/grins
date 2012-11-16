@@ -117,7 +117,8 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/axisym_heat_transfer_bc_handling.C \
                   $(bc_handling_srcdir)/inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_inc_navier_stokes_bc_handling.C \
-                  $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C
+                  $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C \
+                  $(bc_handling_srcdir)/reacting_low_mach_navier_stokes_bc_handling.C
 
 qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_base.C \
@@ -215,7 +216,8 @@ bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h \
                   $(bc_handling_incdir)/inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/axisym_inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h
+                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/reacting_low_mach_navier_stokes_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_base.h \

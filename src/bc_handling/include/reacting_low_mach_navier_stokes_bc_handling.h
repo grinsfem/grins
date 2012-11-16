@@ -53,10 +53,14 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
+    void set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type );
+    void set_species_bc_values( GRINS::BoundaryID bc_id, const std::vector<Real>& species_values );
+    Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;
+
   protected:
 
      // We need a another container to stash dirichlet values for the speccies
-    std::map< GRINS::BoundaryID, std::vector<Real> > _species_values;
+    std::map< GRINS::BoundaryID, std::vector<Real> > _species_bc_values;
 
     // We also need another map container
     std::map< GRINS::BoundaryID, GRINS::BCType> _species_bc_map;
@@ -68,7 +72,8 @@ namespace GRINS
 
     ReactingLowMachNavierStokesBCHandling();
 
-    enum LMNS_BC_TYPES{ZERO_FLUX=0, PRESCRIBED_SPECIES, CATALYTIC_WALL};
+    // Needs to start larger than the LMNS_BC_TYPES end
+    enum RLMNS_BC_TYPES{ZERO_SPECIES_FLUX=20, PRESCRIBED_SPECIES, CATALYTIC_WALL};
 
   };
 }

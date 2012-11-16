@@ -61,9 +61,9 @@ namespace GRINS
   {
     int bc_type_out;
 
-    if( bc_type == "zero flux" )
+    if( bc_type == "zero_species_flux" )
       {
-	bc_type_out = ZERO_FLUX;
+	bc_type_out = ZERO_SPECIES_FLUX;
       }
     else if( bc_type == "prescribed_species" )
       {
@@ -88,13 +88,14 @@ namespace GRINS
   {
     switch(bc_type)
       {
-      case(ZERO_FLUX)
+      case(ZERO_SPECIES_FLUX):
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
-      case(PRESCRIBED_SPECIES)
+	break;
+      case(PRESCRIBED_SPECIES):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	  this->set_species_bc_type( bc_id, bc_type );
 
 	  unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_string);
 
@@ -124,8 +125,101 @@ namespace GRINS
 
 	  this->set_species_bc_values( bc_id, species_mass_fracs );
 	}
-
+	break;
+      case(CATALYTIC_WALL):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
+      default:
+	{
+	  LowMachNavierStokesBCHandling::init_bc_data( bc_id, bc_id_string, bc_type, input );
+	}
       } //switch(bc_type)
+
+    return;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+								       libMesh::DofMap& dof_map,
+								       GRINS::BoundaryID bc_id,
+								       GRINS::BCType bc_type ) const
+  {
+    std::vector<VariableIndex> species_vars(_n_species,-1);
+    for( unsigned int s = 0; s < _n_species; s++ )
+      {
+	species_vars[s] = system->variable_number( _species_var_names[s] );
+      }
+
+    switch( bc_type )
+      {
+      case(ZERO_SPECIES_FLUX):
+	// Do nothing BC
+	break;
+      case(PRESCRIBED_SPECIES):
+	{
+	  std::set<GRINS::BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+
+	  for( unsigned int s = 0; s < _n_species; s++ )
+	    {
+	      std::vector<GRINS::VariableIndex> dbc_vars(1,species_vars[s]);
+
+	      ConstFunction<Number> species_func( this->get_species_bc_value(bc_id,s) );
+
+	      libMesh::DirichletBoundary species_dbc( dbc_ids, 
+						      dbc_vars, 
+						      &species_func );
+	    
+	      dof_map.add_dirichlet_boundary( species_dbc );
+	    }
+	}
+	break;
+      case(CATALYTIC_WALL):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
+      default:
+	{
+	  LowMachNavierStokesBCHandling::user_init_dirichlet_bcs(system,dof_map,bc_id,bc_type);
+	}
+      } //switch( bc_type )
+
+    return;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type )
+  {
+    _species_bc_map[bc_id] = bc_type;
+    return;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::set_species_bc_values( GRINS::BoundaryID bc_id, 
+								     const std::vector<Real>& species_values )
+  {
+    _species_bc_values[bc_id] = species_values;
+    return;
+  }
+
+  Real ReactingLowMachNavierStokesBCHandling::get_species_bc_value( GRINS::BoundaryID bc_id, 
+								    unsigned int species ) const
+  {
+    return (_species_bc_values.find(bc_id)->second)[species];
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::init_dirichlet_bcs( libMesh::FEMSystem* system ) const
+  {
+    LowMachNavierStokesBCHandling::init_dirichlet_bcs(system);
+
+    libMesh::DofMap& dof_map = system->get_dof_map();
+
+    for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _species_bc_map.begin();
+	 it != _species_bc_map.end();
+	 it++ )
+      {
+	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
+      }
 
     return;
   }
