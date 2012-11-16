@@ -22,6 +22,14 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_CPPFLAGS) \
                $(GRVY_CFLAGS)
 
+#----------------
+# Cantera support
+#----------------
+if CANTERA_ENABLED
+   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
+   AM_LIBADD    = $(CANTERA_LDFLAGS)
+endif
+
 MAINTAINERCLEANFILES = Makefile.in
 
 #---------------------------------

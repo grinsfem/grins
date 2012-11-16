@@ -229,6 +229,27 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	  this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
 	}
     }
+  else if( physics_to_add == reacting_low_mach_navier_stokes )
+    {
+      std::string chem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/chemistry_library", "cantera" );
+      std::string thermo_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermodynamics_library", "cantera" );
+      std::string transport_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/transport_library", "cantera" );
+
+      if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
+	{
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,CanteraTransport,CanteraKinetics > >(physics_to_add,input));
+	}
+      else
+	{
+	  std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl
+		    << "       for ReactingLowMachNavierStokes physics." << std::endl
+		    << "       chemistry library      = " << chem_lib << std::endl
+		    << "       thermodynamics library = " << thermo_lib << std::endl
+		    << "       transport library = " << transport_lib << std::endl;
+	  libmesh_error();
+	}
+    }
 
   else
     {
@@ -306,7 +327,8 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 	    }
 	}
 
-      /* For LowMachNavierStokes, there should be nothing else loaded. */
+      /* For LowMachNavierStokes, there should be nothing else loaded, except
+         for stabilization. */
       if( physics->first == low_mach_navier_stokes )
 	{
 	  if( physics_list.size() > 2 )
@@ -341,6 +363,27 @@ void GRINS::PhysicsFactory::check_physics_consistency( const GRINS::PhysicsList&
 	  if( physics_list.find(heat_transfer) == physics_list.end() )
 	    {
 	      this->physics_consistency_error( physics->first, heat_transfer  );
+	    }
+	}
+
+      /* For ReactingLowMachNavierStokes, there should be nothing else loaded, except
+         for stabilization. */
+      if( physics->first == reacting_low_mach_navier_stokes )
+	{
+	  if( physics_list.size() > 2 )
+	    {
+	      std::cerr << "=======================================================" << std::endl
+			<< "Error: For physics " << reacting_low_mach_navier_stokes << std::endl
+			<< "only one stabilization physics is allowed. Detected the" << std::endl
+			<< "following:" << std::endl;
+	      for( GRINS::PhysicsListIter iter = physics_list.begin();
+		   iter != physics_list.end();
+		   iter++ )
+		{
+		  std::cerr << physics->first << std::endl;
+		}
+	      std::cerr << "=======================================================" << std::endl;
+	      libmesh_error();
 	    }
 	}
     }
