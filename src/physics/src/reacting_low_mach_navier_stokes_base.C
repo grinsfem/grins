@@ -217,6 +217,11 @@ namespace GRINS
 
       std::vector<Real> omega_dot(this->_n_species);
       this->_gas_mixture.omega_dot(cache,omega_dot);
+      for( unsigned int s = 0; s < this->_n_species; s++ )
+	{
+	  // convert [kmol/m^3-s] to [kg/m^3-s]
+	  omega_dot[s] *= this->_gas_mixture.M(s);
+	}
       
       cache.set_chemistry_props( this->_gas_mixture.R(cache.mass_fractions()), 
 				 this->_gas_mixture.M(cache.mass_fractions()),

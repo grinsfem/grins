@@ -25,25 +25,21 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
-#define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#ifndef GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#define GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
-//libMesh
-#include "zero_function.h"
-
-//GRINS
-#include "bc_handling_base.h"
+// GRINS
+#include "low_mach_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
-  //! Base class for reading and handling boundary conditions for physics classes
-  class LowMachNavierStokesBCHandling : public BCHandlingBase
+  class ReactingLowMachNavierStokesBCHandling : public LowMachNavierStokesBCHandling
   {
   public:
-    
-    LowMachNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
-    
-    virtual ~LowMachNavierStokesBCHandling();
+
+    ReactingLowMachNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
+
+    virtual ~ReactingLowMachNavierStokesBCHandling();
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
@@ -55,29 +51,24 @@ namespace GRINS
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
 					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
 
-    void set_temp_bc_type( GRINS::BoundaryID bc_id, int bc_type );
-    void set_temp_bc_value( GRINS::BoundaryID bc_id, Real value );
-    Real get_temp_bc_value( GRINS::BoundaryID bc_id ) const;
-
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
   protected:
 
-    std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
-
   private:
 
-    LowMachNavierStokesBCHandling();
+    ReactingLowMachNavierStokesBCHandling();
 
     enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL,
 		       ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
 
-    // We need a second container to stash dirichlet values for the energy equation
-    std::map< GRINS::BoundaryID, Real > _T_values;
+    // We need a another container to stash dirichlet values for the speccies
+    std::map< GRINS::BoundaryID, Real > _species _values;
 
     // We also need another map container
     std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
 
   };
 }
-#endif // LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+
+#endif // GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
