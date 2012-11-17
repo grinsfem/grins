@@ -28,11 +28,14 @@
 #ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 #define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
+#include "boost/tr1/memory.hpp"
+
 //libMesh
 #include "zero_function.h"
 
 //GRINS
 #include "bc_handling_base.h"
+#include "parabolic_profile.h"
 
 namespace GRINS
 {
@@ -75,7 +78,7 @@ namespace GRINS
 
     LowMachNavierStokesBCHandling();
 
-    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL,
+    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, PARABOLIC_PROFILE, ISOTHERMAL_WALL,
 		       ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
 
   };
