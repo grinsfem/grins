@@ -290,7 +290,8 @@ AC_OUTPUT( Makefile \
            examples/cavity_benchmark/Makefile \
 	   examples/rayleigh_taylor/Makefile \
            examples/mass_injection/Makefile \
-           examples/vortex/Makefile )
+           examples/vortex/Makefile \
+           examples/rlmns/Makefile )
 
 
 
