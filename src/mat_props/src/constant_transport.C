@@ -36,6 +36,10 @@ namespace GRINS
       _k( input( "Physics/Transport/thermal_conductivity", -1.0 ) ),
       _Le( input( "Physics/Transport/Lewis_number", -1.0 ) )
   {
+    libmesh_assert_greater( _mu, 0.0 );
+    libmesh_assert_greater( _k, 0.0 );
+    libmesh_assert_greater( _Le, 0.0 );
+
     return;
   }
 
