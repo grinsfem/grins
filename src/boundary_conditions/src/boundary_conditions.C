@@ -71,6 +71,37 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
   return;
 }
 
+void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::DiffContext &context,
+						      const GRINS::VariableIndex var,
+						      const libMesh::Real sign,
+						      Real value ) const
+{
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // The number of local degrees of freedom in each variable.
+  const unsigned int n_var_dofs = c.dof_indices_var[var].size();
+
+  // Element Jacobian * quadrature weight for side integration.
+  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[var]->get_JxW();
+
+  // The var shape functions at side quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& var_phi_side =
+    c.side_fe_var[var]->get_phi();
+
+  libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
+
+  unsigned int n_qpoints = c.side_qrule->n_points();
+  for (unsigned int qp=0; qp != n_qpoints; qp++)
+    {
+      for (unsigned int i=0; i != n_var_dofs; i++)
+	{
+	  F_var(i) += sign*value*var_phi_side[i][qp]*JxW_side[qp];
+	}
+    }
+
+  return;
+}
+
 void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext &context,
 							    const GRINS::VariableIndex var,
 							    const Real sign,
@@ -177,7 +208,7 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 		{
 		  for (unsigned int j=0; j != n_var2_dofs; j++)
 		    {
-		      K_var(i,j) += JxW_side[qp]*jac_value*normals[qp]*
+		      K_var(i,j) += sign*JxW_side[qp]*jac_value*normals[qp]*
 			var_phi_side[i][qp]*var2_phi_side[j][qp];
 		    }
 		}
@@ -186,6 +217,84 @@ void GRINS::BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
     }
   return;
 }
+
+
+void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::DiffContext &context,
+						      const bool request_jacobian,
+						      const GRINS::VariableIndex var,
+						      const Real sign,
+						      const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+{
+  FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
+  // The number of local degrees of freedom
+  const unsigned int n_var_dofs = c.dof_indices_var[var].size();
+  
+  // Element Jacobian * quadrature weight for side integration.
+  const std::vector<libMesh::Real> &JxW_side = c.side_fe_var[var]->get_JxW();
+
+  // The var shape functions at side quadrature points.
+  const std::vector<std::vector<libMesh::Real> >& var_phi_side =
+    c.side_fe_var[var]->get_phi();
+
+  libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
+  libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+
+  unsigned int n_qpoints = c.side_qrule->n_points();
+
+  for (unsigned int qp=0; qp != n_qpoints; qp++)
+    {
+      const Real bc_value = neumann_func->normal_value( c, qp );
+      const Real jac_value = neumann_func->normal_derivative( c, qp );
+
+      for (unsigned int i=0; i != n_var_dofs; i++)
+	{
+	  F_var(i) += sign*bc_value*var_phi_side[i][qp]*JxW_side[qp];
+
+	  if (request_jacobian)
+	    {
+	      for (unsigned int j=0; j != n_var_dofs; j++)
+		{
+		  K_var(i,j) += sign*jac_value*
+		    var_phi_side[i][qp]*var_phi_side[j][qp]*JxW_side[qp];
+		}
+	    }
+	}
+    } // End quadrature loop
+
+  // Now must take care of the case that the boundary condition depends on variables
+  // other than var.
+  std::vector<GRINS::VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
+
+  if( (other_jac_vars.size() > 0) && request_jacobian )
+    {
+      for( std::vector<GRINS::VariableIndex>::const_iterator var2 = other_jac_vars.begin();
+	   var2 != other_jac_vars.end();
+	   var2++ )
+	{
+	  const unsigned int n_var2_dofs = c.dof_indices_var[*var2].size();
+	  const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
+	    c.side_fe_var[*var2]->get_phi();
+
+	  for (unsigned int qp=0; qp != n_qpoints; qp++)
+	    {
+	      const Real jac_value = neumann_func->normal_derivative( c, qp, *var2 );
+
+	      for (unsigned int i=0; i != n_var_dofs; i++)
+		{
+		  for (unsigned int j=0; j != n_var2_dofs; j++)
+		    {
+		      K_var(i,j) += sign*jac_value*
+			var_phi_side[i][qp]*var2_phi_side[j][qp]*JxW_side[qp];
+		    }
+		}
+	    }
+	} // End loop over auxillary Jacobian variables
+    }
+  return;
+}
+
+
 
 void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext &context,
 							    const bool request_jacobian,
