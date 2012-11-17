@@ -45,6 +45,9 @@ namespace GRINS
       _mf_grad_set(false)
   {
     /*! \todo We need to preallocate the storage here. */
+    libmesh_assert_greater(T,0.0);
+    libmesh_assert_greater(P,0.0);
+    
     return;
   }
 
