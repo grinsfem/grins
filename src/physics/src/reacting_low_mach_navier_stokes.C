@@ -98,7 +98,11 @@ namespace GRINS
 	Y.reserve(this->_n_species);
 	for( unsigned int s = 0; s < this->_n_species; s++ )
 	  {
-	    Y.push_back( c.interior_value(this->_species_vars[s],qp) );
+	    /*! \todo Need to figure out something smarter for controling species
+	              that go slightly negative. */
+	    const Real value = std::max( c.interior_value(this->_species_vars[s],qp), 0.0 );
+	    libmesh_assert_greater_equal(value,0.0);
+	    Y.push_back(value);
 	  }
 
 	// Build up cache at element interior quadrature point
@@ -220,7 +224,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       c.element_fe_var[this->_p_var]->get_phi();
     
-    libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<Number>& Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
     
     libMesh::Number T = cache.T();
     const libMesh::NumberVectorValue& U = cache.U();
@@ -238,9 +242,14 @@ namespace GRINS
       }
     mass_term *= M;
     
+    const libMesh::Number term1 = -U*(mass_term + grad_T/T);
+
+    const libMesh::Number termf = (term1 + divU)*JxW[qp];
+      
     for (unsigned int i=0; i != n_p_dofs; i++)
       {
-	Fp(i) += (-U*(mass_term + grad_T/T) + divU)*p_phi[i][qp]*JxW[qp];
+	Fp(i) += termf*p_phi[i][qp];
+	libmesh_assert( !libmesh_isnan(Fp(i)) );
       }
 
     return;
@@ -277,11 +286,15 @@ namespace GRINS
       {
 	libMesh::DenseSubVector<Number> &Fs = *c.elem_subresiduals[this->_species_vars[s]]; // R_{s}
 
+	const Real term1 = rho*(U*grad_w[s]) - omega_dot[s];
+	const libMesh::Gradient term2 = rho*D[s]*grad_w[s];
+
 	for (unsigned int i=0; i != n_s_dofs; i++)
 	  {
 	    /*! \todo Need to add SCEBD term. */
-	    Fs(i) += ( ( rho*(U*grad_w[s]) - omega_dot[s] )*s_phi[i][qp] 
-		       + rho*D[s]*(grad_w[s]*s_grad_phi[i][qp])        )*JxW[qp];
+	    Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*JxW[qp];
+
+	    libmesh_assert( !libmesh_isnan(Fs(i)) );
 	  }
       }
 
@@ -347,12 +360,16 @@ namespace GRINS
 		   + rho*this->_g(0)*u_phi[i][qp]                 // hydrostatic term
 		   )*JxW[qp]; 
 
+	libmesh_assert( !libmesh_isnan(Fu(i)) );
+
 	Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]                 // convection term
 		   + p*u_gradphi[i][qp](1)                           // pressure term
 		   - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
 			 - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
 		   + rho*this->_g(1)*u_phi[i][qp]                 // hydrostatic term
 		   )*JxW[qp];
+
+	libmesh_assert( !libmesh_isnan(Fv(i)) );
 
 	if (this->_dim == 3)
 	  {
@@ -362,6 +379,8 @@ namespace GRINS
 			     - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
 		       + rho*this->_g(2)*u_phi[i][qp]                 // hydrostatic term
 		       )*JxW[qp];
+
+	    libmesh_assert( !libmesh_isnan(Fw(i)) );
 	  }
       }
     return;
@@ -403,10 +422,14 @@ namespace GRINS
 	chem_term += h[s]*omega_dot[s];
       }
 
+    libmesh_assert( !libmesh_isnan(chem_term) );
+
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
 	FT(i) += ( ( -rho*cp*U*grad_T + chem_term )*T_phi[i][qp] // convection term + chemistry term
-		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp]; 
+		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp];
+
+	libmesh_assert( !libmesh_isnan(FT(i)) );
       }
 
     return;
@@ -415,6 +438,7 @@ namespace GRINS
   // Instantiate
 #ifdef HAVE_CANTERA
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
+  //template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics> >;
 #endif
 
 } // namespace GRINS
