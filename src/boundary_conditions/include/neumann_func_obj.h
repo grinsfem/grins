@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef NEUMANN_FUNC_OBJ_H 
-#define NEUMANN_FUNC_OBJ_H
+#ifndef GRINS_NEUMANN_FUNC_OBJ_H 
+#define GRINS_NEUMANN_FUNC_OBJ_H
 
 // libMesh stuff
 #include "libmesh.h"
@@ -72,7 +72,7 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual Real normal_derivative( const libMesh::FEMContext& context, const unsigned qp ) = 0;
+    virtual Real normal_derivative( const libMesh::FEMContext& context, const unsigned qp );
 
     //! If needed, returns the derivative with respect to other variables in the system.
     /*! By default, does nothing. User should reimplement is this is needed.
@@ -101,4 +101,4 @@ namespace GRINS
   
 } // namespace GRINS
 
-#endif // NEUMANN_FUNC_OBJ_H
+#endif // GRINS_NEUMANN_FUNC_OBJ_H
