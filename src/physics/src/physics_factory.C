@@ -240,6 +240,11 @@ void GRINS::PhysicsFactory::add_physics( const GetPot& input,
 	  physics_list[physics_to_add] = 
 	    PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,CanteraTransport,CanteraKinetics > >(physics_to_add,input));
 	}
+      else if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "grins_constant" )
+	{
+	  physics_list[physics_to_add] = 
+	    PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
+	}
       else
 	{
 	  std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl

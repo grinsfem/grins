@@ -38,6 +38,7 @@
 #include "cantera_thermo.h"
 
 // Transport classes
+#include "constant_transport.h"
 #include "cantera_transport.h"
 
 // Kinetics classes
