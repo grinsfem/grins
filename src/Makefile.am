@@ -110,7 +110,8 @@ matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/cantera_thermo.C          \
                $(matprops_srcdir)/cantera_transport.C       \
                $(matprops_srcdir)/cantera_kinetics.C        \
-               $(matprops_srcdir)/ideal_gas_mixture.C
+               $(matprops_srcdir)/ideal_gas_mixture.C       \
+               $(matprops_srcdir)/constant_transport.C
 
 bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/heat_transfer_bc_handling.C \
@@ -209,7 +210,8 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/cantera_thermo.h          \
                $(matprops_incdir)/cantera_transport.h       \
                $(matprops_incdir)/cantera_kinetics.h        \
-               $(matprops_incdir)/ideal_gas_mixture.h
+               $(matprops_incdir)/ideal_gas_mixture.h       \
+               $(matprops_incdir)/constant_transport.h
 
 bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/heat_transfer_bc_handling.h \
