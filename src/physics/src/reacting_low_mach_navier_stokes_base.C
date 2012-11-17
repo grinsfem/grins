@@ -87,7 +87,6 @@ namespace GRINS
 
     // Read thermodynamic state info
     _p0 = input("Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-    _T0 = input("Physics/"+reacting_low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
 
     _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
@@ -203,11 +202,10 @@ namespace GRINS
     {
       std::vector<Real> h(this->_n_species,0.0);
       this->_gas_mixture.h(cache,h);
-      cache.set_thermo_props( this->_gas_mixture.cp(cache), h);
 
-      std::vector<Real> D(this->_n_species,0.0);
-      this->_gas_mixture.D(cache,D);
-      cache.set_transport_props( this->_gas_mixture.mu(cache),this->_gas_mixture.k(cache), D);
+      const Real cp = this->_gas_mixture.cp(cache);
+      libmesh_assert_greater( cp, 0.0 );
+      cache.set_thermo_props( cp, h);
 
       std::vector<libMesh::Gradient> mass_fractions_grad(this->_n_species);
       for( unsigned int s = 0; s < this->_n_species; s++ )
@@ -220,6 +218,7 @@ namespace GRINS
       this->_gas_mixture.omega_dot(cache,omega_dot);
       for( unsigned int s = 0; s < this->_n_species; s++ )
 	{
+	  libmesh_assert( !libmesh_isnan(omega_dot[s]) );
 	  // convert [kmol/m^3-s] to [kg/m^3-s]
 	  omega_dot[s] *= this->_gas_mixture.M(s);
 	}
@@ -227,6 +226,19 @@ namespace GRINS
       cache.set_chemistry_props( this->_gas_mixture.R(cache.mass_fractions()), 
 				 this->_gas_mixture.M(cache.mass_fractions()),
 				 omega_dot );
+      libmesh_assert_greater( cache.rho(), 0.0 );
+
+      std::vector<Real> D(this->_n_species,0.0);
+      //this->_gas_mixture.D(cache,D);
+
+      const Real mu = this->_gas_mixture.mu(cache);
+      libmesh_assert_greater( mu, 0.0 );
+      
+      const Real k = this->_gas_mixture.k(cache);
+      libmesh_assert_greater( k, 0.0 );
+
+      this->_gas_mixture.D( cache, D);
+      cache.set_transport_props( mu, k, D);
     }
 
     if( this->_dim < 3 )
@@ -236,7 +248,8 @@ namespace GRINS
 			    c.interior_value(this->_w_var, qp) );
 
     if( this->_dim < 3 )
-      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp) );
+      cache.set_velocity_grads( c.interior_gradient(this->_u_var, qp), c.interior_gradient(this->_v_var, qp),
+				libMesh::Gradient() );
     else
       cache.set_velocity_grads( c.interior_gradient(this->_u_var, qp), c.interior_gradient(this->_v_var, qp),
 				c.interior_gradient(this->_w_var, qp) );
