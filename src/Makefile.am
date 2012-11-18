@@ -188,7 +188,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
 utilities_INC = $(utilities_incdir)/grins_version.h \
                 $(utilities_incdir)/physical_constants.h \
                 $(utilities_incdir)/input_utils.h \
-                $(utilities_incdir)/reacting_flow_cache.h
+                $(utilities_incdir)/reacting_flow_cache.h \
+                $(utilities_incdir)/math_constants.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
