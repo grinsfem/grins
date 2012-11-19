@@ -95,14 +95,36 @@ namespace GRINS
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id ) const
     {
-      return (((_neumann_bound_funcs.find(bc_id))->second).find(var_id))->second;
+      NeumannBCsMap::const_iterator rit;
+
+      std::pair< NBCContainer::const_iterator, NBCContainer::const_iterator > ret = _neumann_bound_funcs.equal_range(bc_id);
+      for( NBCContainer::const_iterator it = ret.first; it != ret.second; ++it )
+	{
+	  // Here, we use the fact that there's only 1 function per variable.
+	  NeumannBCsMap::const_iterator mit = it->second.find(var_id);
+	  if( mit != it->second.end() )
+	    rit = mit;
+	}
+
+      return rit->second;
     }
 
     inline 
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id )
     {
-      return (((_neumann_bound_funcs.find(bc_id))->second).find(var_id))->second;
+      NeumannBCsMap::iterator rit;
+
+      std::pair< NBCContainer::iterator, NBCContainer::iterator > ret = _neumann_bound_funcs.equal_range(bc_id);
+      for( NBCContainer::iterator it = ret.first; it != ret.second; ++it )
+	{
+	  // Here, we use the fact that there's only 1 function per variable.
+	  NeumannBCsMap::iterator mit = it->second.find(var_id);
+	  if( mit != it->second.end() )
+	    rit = mit;
+	}
+
+      return rit->second;
     }
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;

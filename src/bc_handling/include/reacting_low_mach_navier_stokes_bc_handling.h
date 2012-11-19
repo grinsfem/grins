@@ -73,7 +73,10 @@ namespace GRINS
     ReactingLowMachNavierStokesBCHandling();
 
     // Needs to start larger than the LMNS_BC_TYPES end
-    enum RLMNS_BC_TYPES{ZERO_SPECIES_FLUX=20, PRESCRIBED_SPECIES, CATALYTIC_WALL};
+    enum RLMNS_BC_TYPES{ZERO_SPECIES_FLUX=20, 
+			PRESCRIBED_SPECIES, 
+			CATALYTIC_WALL,
+			GENERAL_SPECIES };
 
   };
 }

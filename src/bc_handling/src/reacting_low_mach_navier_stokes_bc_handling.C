@@ -72,7 +72,11 @@ namespace GRINS
     else if( bc_type == "catalytic_wall" )
       {
 	bc_type_out = CATALYTIC_WALL;
-      }      
+      }
+    else if( bc_type == "general_species" )
+      {
+	bc_type_out = GENERAL_SPECIES;
+      }
     else
       {
 	bc_type_out = LowMachNavierStokesBCHandling::string_to_int( bc_type );
@@ -124,6 +128,11 @@ namespace GRINS
 	    }
 
 	  this->set_species_bc_values( bc_id, species_mass_fracs );
+	}
+	break;
+      case(GENERAL_SPECIES):
+	{
+	  this->set_species_bc_type( bc_id, bc_type );
 	}
 	break;
       case(CATALYTIC_WALL):
@@ -179,6 +188,8 @@ namespace GRINS
 	{
 	  libmesh_not_implemented();
 	}
+      case(GENERAL_SPECIES):
+	// This case is handled in the BoundaryConditionFactory classes.
 	break;
       default:
 	{

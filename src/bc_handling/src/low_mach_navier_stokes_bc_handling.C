@@ -73,6 +73,9 @@ int GRINS::LowMachNavierStokesBCHandling::string_to_int( const std::string& bc_t
 
   else if( bc_type == "isothermal" )
     bc_type_out = ISOTHERMAL_WALL;
+
+  else if( bc_type == "general_isothermal" )
+    bc_type_out = GENERAL_ISOTHERMAL_WALL;
   
   else if( bc_type == "adiabatic" )
     bc_type_out = ADIABATIC_WALL;
@@ -193,6 +196,12 @@ void GRINS::LowMachNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID
       }
       break;
       
+    case(GENERAL_ISOTHERMAL_WALL):
+      {
+	this->set_temp_bc_type( bc_id, bc_type );
+      }
+      break;
+
     case(ADIABATIC_WALL):
       {
 	this->set_neumann_bc_type( bc_id, bc_type );
@@ -331,6 +340,9 @@ void GRINS::LowMachNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEM
 	
 	dof_map.add_dirichlet_boundary( t_dbc );
       }
+      break;
+    case(GENERAL_ISOTHERMAL_WALL):
+      // This case is handled in the BoundaryConditionFactory classes.
       break;
     default:
       {
