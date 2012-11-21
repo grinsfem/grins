@@ -273,7 +273,7 @@ endif
 AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
-               $(LIBMESH_INCLUDE) \
+               $(LIBMESH_CPPFLAGS) \
                $(GRVY_CFLAGS)
 
 #----------------
