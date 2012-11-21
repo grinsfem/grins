@@ -4,7 +4,10 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen examples
-EXTRA_DIST       = CHANGES LICENSE COPYING examples docs
+EXTRA_DIST       = CHANGES LICENSE COPYING examples docs contrib
+
+contribm4dir = $(prefix)/contrib/m4
+contribm4_DATA = $(top_srcdir)/contrib/m4/*
 
 examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
