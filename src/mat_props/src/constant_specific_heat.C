@@ -28,20 +28,24 @@
 
 #include "constant_specific_heat.h"
 
-
-GRINS::ConstantSpecificHeat::ConstantSpecificHeat()
-  : GRINS::ConstantFunction()
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConstantSpecificHeat::~ConstantSpecificHeat()
-{
-  return;
-}
+  ConstantSpecificHeat::ConstantSpecificHeat()
+    : ConstantFunction()
+  {
+    return;
+  }
 
-void GRINS::ConstantSpecificHeat::read_input_options( const GetPot& input )
-{
-  _value = input( "Materials/SpecificHeat/cp", -1.0 );
-  return;
-}
+  ConstantSpecificHeat::~ConstantSpecificHeat()
+  {
+    return;
+  }
+
+  void ConstantSpecificHeat::read_input_options( const GetPot& input )
+  {
+    _value = input( "Materials/SpecificHeat/cp", -1.0 );
+    return;
+  }
+
+} // namespace GRINS

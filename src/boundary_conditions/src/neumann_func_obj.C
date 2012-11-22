@@ -28,25 +28,30 @@
 
 #include "neumann_func_obj.h"
 
-GRINS::NeumannFuncObj::NeumannFuncObj( )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::NeumannFuncObj::~NeumannFuncObj( )
-{
-  return;
-}
+  NeumannFuncObj::NeumannFuncObj( )
+  {
+    return;
+  }
 
-libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext& context, 
-						  const unsigned int qp,
-						  const GRINS::VariableIndex jac_var )
-{
-  // By default, does nothing.
-  return libMesh::Point(0.0,0.0,0.0);
-}
+  NeumannFuncObj::~NeumannFuncObj( )
+  {
+    return;
+  }
 
-std::vector<GRINS::VariableIndex> GRINS::NeumannFuncObj:: get_other_jac_vars()
-{
-  return _jac_vars;
-}
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext& context, 
+					     const unsigned int qp,
+					     const VariableIndex jac_var )
+  {
+    // By default, does nothing.
+    return libMesh::Point(0.0,0.0,0.0);
+  }
+
+  std::vector<VariableIndex> NeumannFuncObj:: get_other_jac_vars()
+  {
+    return _jac_vars;
+  }
+
+} // namespace GRINS

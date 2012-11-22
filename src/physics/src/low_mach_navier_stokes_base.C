@@ -28,158 +28,163 @@
 
 #include "low_mach_navier_stokes_base.h"
 
-template<class Mu, class SH, class TC>
-GRINS::LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
-  : Physics(physics_name, input)
+namespace GRINS
 {
-  this->read_input_options(input);
 
-  return;
-}
+  template<class Mu, class SH, class TC>
+  LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
+    : Physics(physics_name, input)
+  {
+    this->read_input_options(input);
 
-template<class Mu, class SH, class TC>
-GRINS::LowMachNavierStokesBase<Mu,SH,TC>::~LowMachNavierStokesBase()
-{
-  return;
-}
+    return;
+  }
 
-template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::read_input_options( const GetPot& input )
-{
-  // Read FE info
-  this->_V_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
+  template<class Mu, class SH, class TC>
+  LowMachNavierStokesBase<Mu,SH,TC>::~LowMachNavierStokesBase()
+  {
+    return;
+  }
 
-  this->_P_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokesBase<Mu,SH,TC>::read_input_options( const GetPot& input )
+  {
+    // Read FE info
+    this->_V_FE_family =
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
 
-  this->_T_FE_family =
-    libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
+    this->_P_FE_family =
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
 
-  this->_V_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/V_order", "SECOND") );
+    this->_T_FE_family =
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
 
-  this->_P_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
+    this->_V_order =
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/V_order", "SECOND") );
 
-  this->_T_order =
-    libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
+    this->_P_order =
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
 
-  // Read variable naming info
-  this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
-  this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
-  this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
-  this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
-  this->_T_var_name = input("Physics/VariableNames/temperature", GRINS::T_var_name_default );
+    this->_T_order =
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
 
-  // Read material parameters
-  this->_mu.read_input_options( input );
-  this->_cp.read_input_options( input );
-  this->_k.read_input_options( input );
+    // Read variable naming info
+    this->_u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
+    this->_v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
+    this->_w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
+    this->_p_var_name = input("Physics/VariableNames/pressure", p_var_name_default );
+    this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
-  // Read thermodynamic state info
-  _p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-  _T0 = input("Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
-  _R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
+    // Read material parameters
+    this->_mu.read_input_options( input );
+    this->_cp.read_input_options( input );
+    this->_k.read_input_options( input );
 
-  if( _R <= 0.0 )
-    {
-      std::cerr << "=========================================" << std::endl
-		<< " Error: Gas constant R must be positive. " << std::endl
-		<< " Detected value R = " << _R << std::endl
-		<< "=========================================" << std::endl;
-      libmesh_error();
-    }
+    // Read thermodynamic state info
+    _p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    _T0 = input("Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
+    _R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
 
-  _p0_over_R = _p0/_R;
+    if( _R <= 0.0 )
+      {
+	std::cerr << "=========================================" << std::endl
+		  << " Error: Gas constant R must be positive. " << std::endl
+		  << " Detected value R = " << _R << std::endl
+		  << "=========================================" << std::endl;
+	libmesh_error();
+      }
 
-  _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
+    _p0_over_R = _p0/_R;
 
-  if( _enable_thermo_press_calc )
-    {
-      _p0_var_name = input("Physics/VariableNames/thermo_presure", "p0" );
-    }
+    _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
-  // Read gravity vector
-  unsigned int g_dim = input.vector_variable_size("Physics/"+low_mach_navier_stokes+"/g");
+    if( _enable_thermo_press_calc )
+      {
+	_p0_var_name = input("Physics/VariableNames/thermo_presure", "p0" );
+      }
 
-  _g(0) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 0 );
-  _g(1) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 1 );
+    // Read gravity vector
+    unsigned int g_dim = input.vector_variable_size("Physics/"+low_mach_navier_stokes+"/g");
+
+    _g(0) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 1 );
   
-  if( g_dim == 3)
-    _g(2) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 2 );
+    if( g_dim == 3)
+      _g(2) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 2 );
   
-  return;
-}
+    return;
+  }
 
-template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::init_variables( libMesh::FEMSystem* system )
-{
-  // Get libMesh to assign an index for each variable
-  this->_dim = system->get_mesh().mesh_dimension();
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokesBase<Mu,SH,TC>::init_variables( libMesh::FEMSystem* system )
+  {
+    // Get libMesh to assign an index for each variable
+    this->_dim = system->get_mesh().mesh_dimension();
 
-  _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
-  _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
+    _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
+    _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
 
-  if (_dim == 3)
-    _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
-  else
-    _w_var = _u_var;
+    if (_dim == 3)
+      _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
+    else
+      _w_var = _u_var;
 
-  _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
-  _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
+    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
 
-  /* If we need to compute the thermodynamic pressure, we force this to be a first
-     order scalar variable. */
-  if( _enable_thermo_press_calc )
-    _p0_var = system->add_variable( _p0_var_name, FIRST, SCALAR);
+    /* If we need to compute the thermodynamic pressure, we force this to be a first
+       order scalar variable. */
+    if( _enable_thermo_press_calc )
+      _p0_var = system->add_variable( _p0_var_name, FIRST, SCALAR);
 
-  return;
-}
+    return;
+  }
 
-template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::set_time_evolving_vars( libMesh::FEMSystem* system )
-{
-  const unsigned int dim = system->get_mesh().mesh_dimension();
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokesBase<Mu,SH,TC>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    const unsigned int dim = system->get_mesh().mesh_dimension();
 
-  system->time_evolving(_u_var);
-  system->time_evolving(_v_var);
+    system->time_evolving(_u_var);
+    system->time_evolving(_v_var);
 
-  if (dim == 3)
-    system->time_evolving(_w_var);
+    if (dim == 3)
+      system->time_evolving(_w_var);
 
-  system->time_evolving(_T_var);
-  system->time_evolving(_p_var);
+    system->time_evolving(_T_var);
+    system->time_evolving(_p_var);
 
-  if( _enable_thermo_press_calc )
-    system->time_evolving(_p0_var);
+    if( _enable_thermo_press_calc )
+      system->time_evolving(_p0_var);
 
-  return;
-}
+    return;
+  }
 
-template<class Mu, class SH, class TC>
-void GRINS::LowMachNavierStokesBase<Mu,SH,TC>::init_context( libMesh::DiffContext &context )
-{
-  libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokesBase<Mu,SH,TC>::init_context( libMesh::DiffContext &context )
+  {
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
-  // We should prerequest all the data
-  // we will need to build the linear system
-  // or evaluate a quantity of interest.
-  c.element_fe_var[_u_var]->get_JxW();
-  c.element_fe_var[_u_var]->get_phi();
-  c.element_fe_var[_u_var]->get_dphi();
-  c.element_fe_var[_u_var]->get_xyz();
+    // We should prerequest all the data
+    // we will need to build the linear system
+    // or evaluate a quantity of interest.
+    c.element_fe_var[_u_var]->get_JxW();
+    c.element_fe_var[_u_var]->get_phi();
+    c.element_fe_var[_u_var]->get_dphi();
+    c.element_fe_var[_u_var]->get_xyz();
 
-  c.element_fe_var[_T_var]->get_JxW();
-  c.element_fe_var[_T_var]->get_phi();
-  c.element_fe_var[_T_var]->get_dphi();
-  c.element_fe_var[_T_var]->get_xyz();
+    c.element_fe_var[_T_var]->get_JxW();
+    c.element_fe_var[_T_var]->get_phi();
+    c.element_fe_var[_T_var]->get_dphi();
+    c.element_fe_var[_T_var]->get_xyz();
 
-  c.element_fe_var[_p_var]->get_phi();
-  c.element_fe_var[_p_var]->get_xyz();
+    c.element_fe_var[_p_var]->get_phi();
+    c.element_fe_var[_p_var]->get_xyz();
 
-  return;
-}
+    return;
+  }
+
+} // namespace GRINS
 
 // Instantiate
 template class GRINS::LowMachNavierStokesBase<GRINS::ConstantViscosity,GRINS::ConstantSpecificHeat,GRINS::ConstantConductivity>;

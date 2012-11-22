@@ -28,48 +28,53 @@
 
 #include "dbc_container.h"
 
-GRINS::DBCContainer::DBCContainer()
-  : _var_names( std::vector<GRINS::VariableName>() ),
-    _bc_ids( std::set<GRINS::BoundaryID>() ),
-    _func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> >() )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::DBCContainer::~DBCContainer()
-{
-  return;
-}
+  DBCContainer::DBCContainer()
+    : _var_names( std::vector<VariableName>() ),
+      _bc_ids( std::set<BoundaryID>() ),
+      _func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> >() )
+  {
+    return;
+  }
 
-void GRINS::DBCContainer::add_var_name( const GRINS::VariableName& var )
-{
-  _var_names.push_back( var );
-  return;
-}
+  DBCContainer::~DBCContainer()
+  {
+    return;
+  }
 
-void GRINS::DBCContainer::add_bc_id( const GRINS::BoundaryID bc_id )
-{
-  _bc_ids.insert( bc_id );
-  return;
-}
+  void DBCContainer::add_var_name( const VariableName& var )
+  {
+    _var_names.push_back( var );
+    return;
+  }
 
-void GRINS::DBCContainer::set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func )
-{
-  _func = func;
-  return;
-}
+  void DBCContainer::add_bc_id( const BoundaryID bc_id )
+  {
+    _bc_ids.insert( bc_id );
+    return;
+  }
 
-std::vector<GRINS::VariableName> GRINS::DBCContainer::get_var_names() const
-{
-  return _var_names;
-}
+  void DBCContainer::set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func )
+  {
+    _func = func;
+    return;
+  }
 
-std::set<GRINS::BoundaryID> GRINS::DBCContainer::get_bc_ids() const
-{
-  return _bc_ids;
-}
+  std::vector<VariableName> DBCContainer::get_var_names() const
+  {
+    return _var_names;
+  }
 
-std::tr1::shared_ptr<libMesh::FunctionBase<Number> > GRINS::DBCContainer::get_func() const
-{
-  return _func;
-}
+  std::set<BoundaryID> DBCContainer::get_bc_ids() const
+  {
+    return _bc_ids;
+  }
+
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > DBCContainer::get_func() const
+  {
+    return _func;
+  }
+
+} // namespace GRINS

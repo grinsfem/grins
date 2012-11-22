@@ -28,15 +28,20 @@
 
 #include "heat_transfer_stab_helper.h"
 
-GRINS::HeatTransferStabilizationHelper::HeatTransferStabilizationHelper(const GetPot& input)
-  : StabilizationHelper(),
-    _C( input("Stabilization/tau_constant", 1 ) ),
-    _tau_factor( input("Stabilization/tau_factor", 0.5 ) )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
-{
-  return;
-}
+  HeatTransferStabilizationHelper::HeatTransferStabilizationHelper(const GetPot& input)
+    : StabilizationHelper(),
+      _C( input("Stabilization/tau_constant", 1 ) ),
+      _tau_factor( input("Stabilization/tau_factor", 0.5 ) )
+  {
+    return;
+  }
+
+  HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
+  {
+    return;
+  }
+
+} // namespace GRINS

@@ -28,204 +28,209 @@
 
 #include "axisym_inc_navier_stokes_bc_handling.h"
 
-GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::AxisymmetricIncompressibleNavierStokesBCHandling(const std::string& physics_name,
-													  const GetPot& input)
-  : BCHandlingBase(physics_name)
+namespace GRINS
 {
-  _u_r_var_name = input("Physics/VariableNames/r_velocity", GRINS::u_r_var_name_default );
-  _u_z_var_name = input("Physics/VariableNames/z_velocity", GRINS::v_var_name_default );
 
-  std::string id_str = "Physics/"+_physics_name+"/bc_ids";
-  std::string bc_str = "Physics/"+_physics_name+"/bc_types";
+  AxisymmetricIncompressibleNavierStokesBCHandling::AxisymmetricIncompressibleNavierStokesBCHandling(const std::string& physics_name,
+												     const GetPot& input)
+    : BCHandlingBase(physics_name)
+  {
+    _u_r_var_name = input("Physics/VariableNames/r_velocity", u_r_var_name_default );
+    _u_z_var_name = input("Physics/VariableNames/z_velocity", v_var_name_default );
 
-  this->read_bc_data( input, id_str, bc_str );
+    std::string id_str = "Physics/"+_physics_name+"/bc_ids";
+    std::string bc_str = "Physics/"+_physics_name+"/bc_types";
 
-  return;
-}
+    this->read_bc_data( input, id_str, bc_str );
 
-GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::~AxisymmetricIncompressibleNavierStokesBCHandling()
-{
-  return;
-}
+    return;
+  }
 
-int GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::string_to_int( const std::string& bc_type ) const
-{
-  INS_BC_TYPES bc_type_out;
+  AxisymmetricIncompressibleNavierStokesBCHandling::~AxisymmetricIncompressibleNavierStokesBCHandling()
+  {
+    return;
+  }
 
-  if( bc_type == "no_slip" )
-    bc_type_out = NO_SLIP;
+  int AxisymmetricIncompressibleNavierStokesBCHandling::string_to_int( const std::string& bc_type ) const
+  {
+    INS_BC_TYPES bc_type_out;
 
-  else if( bc_type == "prescribed_vel" )
-    bc_type_out = PRESCRIBED_VELOCITY;
+    if( bc_type == "no_slip" )
+      bc_type_out = NO_SLIP;
 
-  else if( bc_type == "inflow" )
-    bc_type_out = INFLOW;
+    else if( bc_type == "prescribed_vel" )
+      bc_type_out = PRESCRIBED_VELOCITY;
 
-  else if( bc_type == "axisymmetric" )
-    bc_type_out = AXISYMMETRIC;
+    else if( bc_type == "inflow" )
+      bc_type_out = INFLOW;
 
-  else
-    {
-      std::cerr << "=========================================================="  << std::endl
-		<< "Error: Invalid bc_type " << bc_type                          << std::endl
-		<< "       Physics class is " << _physics_name                   << std::endl
-		<< "=========================================================="  << std::endl;
-      libmesh_error();
-    }
+    else if( bc_type == "axisymmetric" )
+      bc_type_out = AXISYMMETRIC;
 
-  return bc_type_out;
-}
-
-void GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID bc_id, 
-									    const std::string& bc_id_string, 
-									    const int bc_type, 
-									    const GetPot& input )
-{
-  switch(bc_type)
-    {
-    case(NO_SLIP):
+    else
       {
-	this->set_dirichlet_bc_type( bc_id, bc_type );
+	std::cerr << "=========================================================="  << std::endl
+		  << "Error: Invalid bc_type " << bc_type                          << std::endl
+		  << "       Physics class is " << _physics_name                   << std::endl
+		  << "=========================================================="  << std::endl;
+	libmesh_error();
       }
-      break;
-    case(PRESCRIBED_VELOCITY):
+
+    return bc_type_out;
+  }
+
+  void AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( const BoundaryID bc_id, 
+								       const std::string& bc_id_string, 
+								       const int bc_type, 
+								       const GetPot& input )
+  {
+    switch(bc_type)
       {
-	this->set_dirichlet_bc_type( bc_id, bc_type );
+      case(NO_SLIP):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(PRESCRIBED_VELOCITY):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	
-	/* Force the user to specify 2 velocity components regardless of dimension. */
-	int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
-	if( n_vel_comps != 2 )
+	  /* Force the user to specify 2 velocity components regardless of dimension. */
+	  int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
+	  if( n_vel_comps != 2 )
+	    {
+	      std::cerr << "Error: Must specify 2 velocity components when inputting"
+			<< std::endl
+			<< "       prescribed velocities. Found " << n_vel_comps
+			<< " velocity components."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	
+	  this->set_dirichlet_bc_value( bc_id, 
+					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 ),
+					0 );
+
+	  this->set_dirichlet_bc_value( bc_id, 
+					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 ),
+					1 );
+	}
+	break;
+      case(INFLOW):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(AXISYMMETRIC):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      default:
+	{
+	  std::cerr << "==========================================================" 
+		    << "Error: Invalid BC type for " << _physics_name << std::endl
+		    << "       Detected BC type was " << bc_type << std::endl
+		    << "==========================================================" << std::endl;
+	  libmesh_error();
+	}
+      } // End switch(bc_type)
+  
+    return;
+  }
+
+  void AxisymmetricIncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+										  libMesh::DofMap& dof_map,
+										  BoundaryID bc_id,
+										  BCType bc_type ) const
+  {
+    VariableIndex u_r_var = system->variable_number( _u_r_var_name );
+    VariableIndex u_z_var = system->variable_number( _u_z_var_name );
+
+    switch( bc_type )
+      {
+      case(NO_SLIP):
+	{
+	  std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(u_r_var);
+	  dbc_vars.push_back(u_z_var);
+	
+	  ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+	}
+	break;
+      case(PRESCRIBED_VELOCITY):
+	{
+	  std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	
+	  // This is inefficient, but it shouldn't matter because
+	  // everything gets cached on the libMesh side so it should
+	  // only affect performance at startup.
 	  {
-	    std::cerr << "Error: Must specify 2 velocity components when inputting"
-		      << std::endl
-		      << "       prescribed velocities. Found " << n_vel_comps
-		      << " velocity components."
-		      << std::endl;
-	    libmesh_error();
+	    dbc_vars.push_back(u_r_var);
+	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
+	  
+	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
+					       dbc_vars, 
+					       &vel_func );
+	  
+	    dof_map.add_dirichlet_boundary( vel_dbc );
+	    dbc_vars.clear();
 	  }
 	
-	this->set_dirichlet_bc_value( bc_id, 
-				      input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 ),
-				      0 );
-
-	this->set_dirichlet_bc_value( bc_id, 
-				      input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 ),
-				      1 );
-      }
-      break;
-    case(INFLOW):
-      {
-	this->set_dirichlet_bc_type( bc_id, bc_type );
-      }
-      break;
-    case(AXISYMMETRIC):
-      {
-	this->set_dirichlet_bc_type( bc_id, bc_type );
-      }
-      break;
-    default:
-      {
-	std::cerr << "==========================================================" 
-		  << "Error: Invalid BC type for " << _physics_name << std::endl
-		  << "       Detected BC type was " << bc_type << std::endl
-		  << "==========================================================" << std::endl;
-	libmesh_error();
-      }
-    } // End switch(bc_type)
-  
-  return;
-}
-
-void GRINS::AxisymmetricIncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
-										       libMesh::DofMap& dof_map,
-										       GRINS::BoundaryID bc_id,
-										       GRINS::BCType bc_type ) const
-{
-  GRINS::VariableIndex u_r_var = system->variable_number( _u_r_var_name );
-  GRINS::VariableIndex u_z_var = system->variable_number( _u_z_var_name );
-
-  switch( bc_type )
-    {
-    case(NO_SLIP):
-      {
-	std::set<GRINS::BoundaryID> dbc_ids;
-	dbc_ids.insert(bc_id);
-	
-	std::vector<GRINS::VariableIndex> dbc_vars;
-	dbc_vars.push_back(u_r_var);
-	dbc_vars.push_back(u_z_var);
-	
-	ZeroFunction<Number> zero;
-	
-	libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+	  {
+	    dbc_vars.push_back(u_z_var);
+	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
+	  
+	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 					       dbc_vars, 
-					       &zero );
-	
-	dof_map.add_dirichlet_boundary( no_slip_dbc );
-      }
-      break;
-    case(PRESCRIBED_VELOCITY):
-      {
-	std::set<GRINS::BoundaryID> dbc_ids;
-	dbc_ids.insert(bc_id);
-	
-	std::vector<GRINS::VariableIndex> dbc_vars;
-	
-	// This is inefficient, but it shouldn't matter because
-	// everything gets cached on the libMesh side so it should
-	// only affect performance at startup.
+					       &vel_func );
+	  
+	    dof_map.add_dirichlet_boundary( vel_dbc );
+	    dbc_vars.clear();
+	  }
+	}
+	break;
+      case(AXISYMMETRIC):
 	{
+	  std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
 	  dbc_vars.push_back(u_r_var);
-	  ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
-	  
-	  libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-					     dbc_vars, 
-					     &vel_func );
-	  
-	  dof_map.add_dirichlet_boundary( vel_dbc );
-	  dbc_vars.clear();
-	}
 	
+	  ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+	}
+	break;
+      case(INFLOW):
+	// This case is handled in the BoundaryConditionFactory classes.
+	break;
+      default:
 	{
-	  dbc_vars.push_back(u_z_var);
-	  ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
-	  
-	  libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-					     dbc_vars, 
-					     &vel_func );
-	  
-	  dof_map.add_dirichlet_boundary( vel_dbc );
-	  dbc_vars.clear();
+	  std::cerr << "Invalid BCType " << bc_type << std::endl;
+	  libmesh_error();
 	}
-      }
-      break;
-    case(AXISYMMETRIC):
-      {
-	std::set<GRINS::BoundaryID> dbc_ids;
-	dbc_ids.insert(bc_id);
-	
-	std::vector<GRINS::VariableIndex> dbc_vars;
-	dbc_vars.push_back(u_r_var);
-	
-	ZeroFunction<Number> zero;
-	
-	libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
-					       dbc_vars, 
-					       &zero );
-	
-	dof_map.add_dirichlet_boundary( no_slip_dbc );
-      }
-      break;
-    case(INFLOW):
-      // This case is handled in the BoundaryConditionFactory classes.
-      break;
-    default:
-      {
-	std::cerr << "Invalid GRINS::BCType " << bc_type << std::endl;
-	libmesh_error();
-      }
       
-    }// end switch
+      }// end switch
 
-  return;
-}
+    return;
+  }
+
+} // namespace GRINS

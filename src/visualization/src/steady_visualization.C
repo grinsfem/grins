@@ -28,37 +28,42 @@
 
 #include "steady_visualization.h"
 
-GRINS::SteadyVisualization::SteadyVisualization(const GetPot& input)
-  : Visualization(input)
+namespace GRINS
 {
-  return;
-}
 
-GRINS::SteadyVisualization::~SteadyVisualization()
-{
-  return;
-}
+  SteadyVisualization::SteadyVisualization(const GetPot& input)
+    : Visualization(input)
+  {
+    return;
+  }
 
-void GRINS::SteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-						  GRINS::MultiphysicsSystem* system,
-						  const unsigned int,
-						  const Real )
-{
-  std::string filename = this->_vis_output_file_prefix+"_residual";
+  SteadyVisualization::~SteadyVisualization()
+  {
+    return;
+  }
 
-  // Idea is that this->rhs stashes the residual. Thus, when we swap
-  // with the solution, we should be dumping the residual. Then, we swap
-  // back once we're done outputting.
+  void SteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+					     MultiphysicsSystem* system,
+					     const unsigned int,
+					     const Real )
+  {
+    std::string filename = this->_vis_output_file_prefix+"_residual";
 
-  // Swap solution with computed residual
-  system->solution->swap( *(system->rhs) );
-  equation_system->update();
+    // Idea is that this->rhs stashes the residual. Thus, when we swap
+    // with the solution, we should be dumping the residual. Then, we swap
+    // back once we're done outputting.
+
+    // Swap solution with computed residual
+    system->solution->swap( *(system->rhs) );
+    equation_system->update();
   
-  this->dump_visualization( equation_system, filename, 0.0 );
+    this->dump_visualization( equation_system, filename, 0.0 );
   
-  // Now swap back and reupdate
-  system->solution->swap( *(system->rhs) );
-  equation_system->update();
+    // Now swap back and reupdate
+    system->solution->swap( *(system->rhs) );
+    equation_system->update();
 
-  return;
-}
+    return;
+  }
+
+} // namespace GRINS
