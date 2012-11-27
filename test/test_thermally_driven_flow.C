@@ -43,6 +43,34 @@
 #include "grvy.h"
 #endif
 
+namespace GRINS
+{
+  class ThermallyDrivenFlowTestBCFactory : public BoundaryConditionsFactory
+  {
+  public:
+    ThermallyDrivenFlowTestBCFactory( const GetPot& input ): _input(input){};
+    virtual ~ThermallyDrivenFlowTestBCFactory(){};
+    
+    virtual std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
+  private:
+    const GetPot& _input;
+  };
+
+  class ZeroFluxBC : public NeumannFuncObj
+  {
+  public:
+
+    ZeroFluxBC(){};
+    virtual ~ZeroFluxBC(){};
+
+    virtual libMesh::Point value( const libMesh::FEMContext&, const unsigned int )
+    { return libMesh::Point(0.0,0.0,0.0); }
+
+    virtual libMesh::Point derivative( const libMesh::FEMContext&, const unsigned int )
+    { return libMesh::Point(0.0,0.0,0.0); }
+  };
+} // namespace GRINS
+
 int main(int argc, char* argv[]) 
 {
 #ifdef USE_GRVY_TIMERS
@@ -72,6 +100,8 @@ int main(int argc, char* argv[])
   LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
+
+  sim_builder.attach_bc_factory( std::tr1::shared_ptr<GRINS::BoundaryConditionsFactory>( new GRINS::ThermallyDrivenFlowTestBCFactory( libMesh_inputfile ) ) );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder );
@@ -162,4 +192,37 @@ int main(int argc, char* argv[])
     }
 
  return return_flag;
+}
+
+
+std::map< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTestBCFactory::build_neumann( libMesh::EquationSystems& es )
+{
+  std::map< std::string, GRINS::NBCContainer > nbcs;
+
+  /* Hack to work around the fact that we're using this test for the axisymmetric
+     case as well the fact I'm and idiot in the design of the axisymmetric cases. */
+  if( _input("Physics/enabled_physics", "DIE!", 1) != std::string("HeatTransfer") )
+    {
+      // Do nothing.
+    }
+  else
+    {
+      // These are hardcoded for the 2D and 3D tests, *not* the axisymmetric test.
+      const libMesh::System& system = es.get_system("GRINS");
+      const GRINS::VariableIndex T_var = system.variable_number("T");
+
+      std::tr1::shared_ptr<GRINS::NeumannFuncObj> func( new ZeroFluxBC );
+
+      GRINS::NeumannBCsMap bc_map;
+
+      bc_map.insert( GRINS::NBCMapPair( T_var, func ) );
+
+      GRINS::NBCContainer nbc_container;
+      nbc_container.insert( GRINS::NBCContainerPair(0, bc_map ) );
+
+  
+      nbcs.insert( std::pair< std::string, GRINS::NBCContainer >( "HeatTransfer", nbc_container ) );
+    }
+
+  return nbcs;
 }
