@@ -64,7 +64,7 @@ namespace GRINS
 
     AxisymmetricIncompressibleNavierStokesBCHandling();
 
-    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, AXISYMMETRIC};
+    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, GENERAL_VELOCITY, AXISYMMETRIC};
 
   };
 }

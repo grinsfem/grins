@@ -61,8 +61,8 @@ namespace GRINS
     else if( bc_type == "prescribed_vel" )
       bc_type_out = PRESCRIBED_VELOCITY;
 
-    else if( bc_type == "inflow" )
-      bc_type_out = INFLOW;
+    else if( bc_type == "general_velocity" )
+      bc_type_out = GENERAL_VELOCITY;
 
     else if( bc_type == "axisymmetric" )
       bc_type_out = AXISYMMETRIC;
@@ -116,7 +116,7 @@ namespace GRINS
 					1 );
 	}
 	break;
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
@@ -219,7 +219,7 @@ namespace GRINS
 	  dof_map.add_dirichlet_boundary( no_slip_dbc );
 	}
 	break;
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
       default:

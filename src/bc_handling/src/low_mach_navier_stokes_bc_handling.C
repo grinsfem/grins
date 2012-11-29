@@ -68,8 +68,8 @@ namespace GRINS
     else if( bc_type == "prescribed_vel" )
       bc_type_out = PRESCRIBED_VELOCITY;
 
-    else if( bc_type == "inflow" )
-      bc_type_out = INFLOW;
+    else if( bc_type == "general_velocity" )
+      bc_type_out = GENERAL_VELOCITY;
 
     else if( bc_type == "isothermal" )
       bc_type_out = ISOTHERMAL_WALL;
@@ -135,7 +135,7 @@ namespace GRINS
 					2 );
 	}
 	break;
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
@@ -266,7 +266,7 @@ namespace GRINS
 	    }  
 	}
 	break;
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
       case(ISOTHERMAL_WALL):

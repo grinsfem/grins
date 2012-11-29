@@ -65,8 +65,8 @@ namespace GRINS
     else if( bc_type == "parabolic_profile" )
       bc_type_out = PARABOLIC_PROFILE;
 
-    else if( bc_type == "inflow" )
-      bc_type_out = INFLOW;
+    else if( bc_type == "general_velocity" )
+      bc_type_out = GENERAL_VELOCITY;
 
     else
       {
@@ -166,7 +166,7 @@ namespace GRINS
 	}
 	break;
 
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
@@ -266,7 +266,7 @@ namespace GRINS
       case(PARABOLIC_PROFILE):
 	// This case is handled init_dirichlet_bc_func_objs
 	break;
-      case(INFLOW):
+      case(GENERAL_VELOCITY):
 	// This case is handled in the init_dirichlet_bc_func_objs
 	break;
       default:

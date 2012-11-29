@@ -69,8 +69,13 @@ namespace GRINS
 
     LowMachNavierStokesBCHandling();
 
-    enum LMNS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, INFLOW, ISOTHERMAL_WALL,
-		       ADIABATIC_WALL, PRESCRIBED_HEAT_FLUX, GENERAL_HEAT_FLUX};
+    enum LMNS_BC_TYPES{NO_SLIP=0, 
+		       PRESCRIBED_VELOCITY, 
+		       GENERAL_VELOCITY,
+		       ISOTHERMAL_WALL,
+		       ADIABATIC_WALL, 
+		       PRESCRIBED_HEAT_FLUX,
+		       GENERAL_HEAT_FLUX};
 
     // We need a second container to stash dirichlet values for the energy equation
     std::map< GRINS::BoundaryID, Real > _T_values;
