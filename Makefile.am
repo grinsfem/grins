@@ -47,8 +47,8 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        config.status                            \
                        config.sub                               \
                        configure                                \
-                       config.h                                 \
-                       config.h.in                              \
+                       grins_config.h                           \
+                       grins_config.h.in                        \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \

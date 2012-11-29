@@ -32,7 +32,7 @@
 #include "boost/tr1/memory.hpp"
 
 // GRINS
-#include "config.h"
+#include "grins_config.h"
 #include "multiphysics_sys.h"
 #include "visualization.h"
 #include "bc_factory.h"

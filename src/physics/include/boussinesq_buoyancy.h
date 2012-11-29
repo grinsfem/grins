@@ -29,7 +29,7 @@
 #ifndef BOUSSINESQ_BUOYANCY_H
 #define BOUSSINESQ_BUOYANCY_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include "libmesh.h"
 #include "boundary_info.h"

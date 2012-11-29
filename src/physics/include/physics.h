@@ -28,7 +28,7 @@
 #ifndef PHYSICS_SYS_H
 #define PHYSICS_SYS_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include <string>
 

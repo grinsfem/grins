@@ -42,7 +42,7 @@
 #include "fem_context.h"
 
 //GRINS
-#include "config.h"
+#include "grins_config.h"
 #include "physics.h"
 #include "heat_transfer_bc_handling.h"
 

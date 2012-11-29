@@ -29,7 +29,7 @@
 #ifndef MULTIPHYSICS_SYS_H
 #define MULTIPHYSICS_SYS_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include <string>
 
