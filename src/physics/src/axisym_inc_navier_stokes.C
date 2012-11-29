@@ -128,7 +128,7 @@ namespace GRINS
 									libMesh::DiffContext& context,
 									libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
@@ -268,7 +268,7 @@ namespace GRINS
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
@@ -279,7 +279,7 @@ namespace GRINS
 								   libMesh::DiffContext& context,
 								   libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
@@ -365,7 +365,7 @@ namespace GRINS
       }
   
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
@@ -384,13 +384,13 @@ namespace GRINS
 								libMesh::DiffContext& context,
 								libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
 #endif
 

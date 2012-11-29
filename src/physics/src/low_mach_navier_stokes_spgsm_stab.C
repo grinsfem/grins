@@ -58,7 +58,7 @@ namespace GRINS
 										 libMesh::DiffContext& context,
 										 libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::element_time_derivative");
 #endif
 
@@ -68,7 +68,7 @@ namespace GRINS
     this->assemble_momentum_time_deriv( request_jacobian, c, system );
     this->assemble_energy_time_deriv( request_jacobian, c, system );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::element_time_derivative");
 #endif
     return request_jacobian;
@@ -79,7 +79,7 @@ namespace GRINS
 								       libMesh::DiffContext& context,
 								       libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::mass_residual");
 #endif
 
@@ -89,7 +89,7 @@ namespace GRINS
     this->assemble_momentum_mass_residual( request_jacobian, c, system );
     this->assemble_energy_mass_residual( request_jacobian, c, system );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::mass_residual");
 #endif
     return request_jacobian;
@@ -514,13 +514,13 @@ namespace GRINS
 									    libMesh::DiffContext& context,
 									    libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::element_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::element_constraint");
 #endif
 
@@ -532,12 +532,12 @@ namespace GRINS
 									      libMesh::DiffContext& context,
 									      libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::side_time_derivative");
 #endif
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::side_time_derivative");
 #endif
 
@@ -549,13 +549,13 @@ namespace GRINS
 									 libMesh::DiffContext& context,
 									 libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::side_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::side_constraint");
 #endif
 

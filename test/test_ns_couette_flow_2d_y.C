@@ -39,7 +39,7 @@
 #include "exact_solution.h"
 
 // GRVY
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
 
@@ -56,7 +56,7 @@ Gradient exact_derivative( const Point& p,
 int main(int argc, char* argv[]) 
 {
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   GRVY::GRVY_Timer_Class grvy_timer;
   grvy_timer.Init("GRINS Timer");
 #endif
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
 
   // Attach GRVY timer to solver
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 
   grins.run();
   
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.Finalize();
 #endif
 

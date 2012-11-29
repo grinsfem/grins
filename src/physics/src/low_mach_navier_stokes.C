@@ -89,7 +89,7 @@ namespace GRINS
 							       libMesh::DiffContext& context,
 							       libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokes::element_time_derivative");
 #endif
 
@@ -108,7 +108,7 @@ namespace GRINS
     if( this->_enable_thermo_press_calc )
       this->assemble_thermo_press_elem_time_deriv( request_jacobian, c, system );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("LowMachNavierStokes::element_time_derivative");
 #endif
 
@@ -120,13 +120,13 @@ namespace GRINS
 							  libMesh::DiffContext& context,
 							  libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("LowMachNavierStokes::element_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("LowMachNavierStokes::element_constraint");
 #endif
 
@@ -141,14 +141,14 @@ namespace GRINS
   {
     if( this->_enable_thermo_press_calc )
       {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
 	this->_timer->BeginTimer("LowMachNavierStokes::side_time_derivative");
 #endif
 	FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
 	this->assemble_thermo_press_side_time_deriv( request_jacobian, c, system );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
 	this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
 #endif
       }
@@ -161,13 +161,13 @@ namespace GRINS
 						       libMesh::DiffContext& context,
 						       libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("LowMachNavierStokes::side_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("LowMachNavierStokes::side_constraint");
 #endif
 

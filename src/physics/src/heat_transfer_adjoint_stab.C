@@ -54,7 +54,7 @@ namespace GRINS
 								  libMesh::DiffContext& context,
 								  libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_time_derivative");
 #endif
 
@@ -104,7 +104,7 @@ namespace GRINS
 
       }
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("HeatTransferAdjointStabilization::element_time_derivative");
 #endif
     return request_jacobian;
@@ -114,7 +114,7 @@ namespace GRINS
 							libMesh::DiffContext& context,
 							libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::mass_residual");
 #endif
 
@@ -162,7 +162,7 @@ namespace GRINS
 
       }
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("HeatTransferAdjointStabilization::mass_residual");
 #endif
     return request_jacobian;
@@ -172,13 +172,13 @@ namespace GRINS
 							     libMesh::DiffContext& context,
 							     libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("HeatTransferAdjointStabilization::element_constraint");
 #endif
 
@@ -189,12 +189,12 @@ namespace GRINS
 							       libMesh::DiffContext& context,
 							       libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("HeatTransferAdjointStabilization::side_time_derivative");
 #endif
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("HeatTransferAdjointStabilization::side_time_derivative");
 #endif
 
@@ -205,13 +205,13 @@ namespace GRINS
 							  libMesh::DiffContext& context,
 							  libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("HeatTransferAdjointStabilization::side_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("HeatTransferAdjointStabilization::side_constraint");
 #endif
 

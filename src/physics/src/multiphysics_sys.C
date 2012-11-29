@@ -250,7 +250,7 @@ namespace GRINS
   }
 
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {
     _timer = grvy_timer;

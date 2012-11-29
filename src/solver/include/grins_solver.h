@@ -48,7 +48,7 @@
 #include "steady_solver.h"
 #include "boundary_conditions.h"
 
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif
 

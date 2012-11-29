@@ -54,7 +54,7 @@ namespace GRINS
 										libMesh::DiffContext& context,
 										libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_time_derivative");
 #endif
 
@@ -130,7 +130,7 @@ namespace GRINS
 
       }
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::element_time_derivative");
 #endif
     return request_jacobian;
@@ -140,7 +140,7 @@ namespace GRINS
 								      libMesh::DiffContext& context,
 								      libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
 #endif
 
@@ -212,7 +212,7 @@ namespace GRINS
 
       }
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
 #endif
     return request_jacobian;
@@ -222,13 +222,13 @@ namespace GRINS
 									   libMesh::DiffContext& context,
 									   libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
 #endif
 
@@ -239,12 +239,12 @@ namespace GRINS
 									     libMesh::DiffContext& context,
 									     libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
 #endif
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
 #endif
 
@@ -255,13 +255,13 @@ namespace GRINS
 									libMesh::DiffContext& context,
 									libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
 #endif
 
     //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
 #endif
 

@@ -64,7 +64,7 @@ namespace GRINS
 						    libMesh::DiffContext& context,
 						    libMesh::FEMSystem* system )
   {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancy::element_time_derivative");
 #endif
   
@@ -141,7 +141,7 @@ namespace GRINS
 	  } // End i dof loop
       } // End quadrature loop
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("BoussinesqBuoyancy::element_time_derivative");
 #endif
 
