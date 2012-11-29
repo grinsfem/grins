@@ -213,12 +213,9 @@ std::map< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTe
 
       std::tr1::shared_ptr<GRINS::NeumannFuncObj> func( new ZeroFluxBC );
 
-      GRINS::NeumannBCsMap bc_map;
-
-      bc_map.insert( GRINS::NBCMapPair( T_var, func ) );
-
       GRINS::NBCContainer nbc_container;
-      nbc_container.insert( GRINS::NBCContainerPair(0, bc_map ) );
+      nbc_container.set_bc_id(0);
+      nbc_container.add_var_func_pair( T_var, func );
 
   
       nbcs.insert( std::pair< std::string, GRINS::NBCContainer >( "HeatTransfer", nbc_container ) );

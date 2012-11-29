@@ -25,13 +25,48 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BC_TYPES_H
-#define BC_TYPES_H
 
-#include "neumann_func_obj.h"
+#include "nbc_container.h"
 
 namespace GRINS
 {
-  typedef int BCType;
-}
-#endif //BC_TYPES_H
+  NBCContainer::NBCContainer()
+  {
+    return;
+  }
+
+  NBCContainer::~NBCContainer()
+  {
+    return;
+  }
+
+  void NBCContainer::set_bc_id( BoundaryID bc_id )
+  {
+    _bc_id = bc_id;
+    return;
+  }
+
+  BoundaryID NBCContainer::get_bc_id() const
+  {
+    return _bc_id;
+  }
+
+  void NBCContainer::add_var_func_pair( VariableIndex var, 
+					std::tr1::shared_ptr<NeumannFuncObj> func )
+  {
+    if( _funcs.find(var) != _funcs.end() )
+      {
+	std::cerr << "Error: Can only specify one function per variable" << std::endl;
+	libmesh_error();
+      }
+
+    _funcs.insert( std::make_pair( var, func ) );
+    return;
+  }
+
+  std::tr1::shared_ptr<NeumannFuncObj> NBCContainer::get_func( VariableIndex var ) const
+  {
+    return _funcs.find(var)->second;
+  }
+
+} // namespace GRINS

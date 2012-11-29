@@ -47,7 +47,6 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 #include "boundary_conditions.h"
-#include "bc_types.h"
 
 #ifdef HAVE_GRVY
 #include "grvy.h" // GRVY timers

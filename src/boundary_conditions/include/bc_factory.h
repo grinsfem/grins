@@ -37,10 +37,10 @@
 #include "equation_systems.h"
 
 // GRINS stuff
-#include "bc_types.h"
 #include "var_typedefs.h"
 #include "grins_physics_names.h"
 #include "dbc_container.h"
+#include "nbc_container.h"
 
 namespace GRINS
 {

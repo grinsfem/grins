@@ -45,7 +45,7 @@ namespace GRINS
 
   void BCHandlingBase::attach_neumann_bound_func( NBCContainer& neumann_bcs )
   {
-    _neumann_bound_funcs = neumann_bcs;
+    _neumann_bound_funcs.insert( std::make_pair( neumann_bcs.get_bc_id(), neumann_bcs ) );
     return;
   }
 

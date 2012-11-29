@@ -28,7 +28,6 @@
 #ifndef BOUNDARY_CONDITIONS_H
 #define BOUNDARY_CONDITIONS_H
 
-#include "bc_types.h"
 #include "var_typedefs.h"
 #include "neumann_func_obj.h"
 
