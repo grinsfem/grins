@@ -164,7 +164,7 @@ namespace GRINS
     return;
   }
 
-  void Simulation::attach_neumann_bc_funcs( std::map< std::string, NBCContainer > neumann_bcs,
+  void Simulation::attach_neumann_bc_funcs( std::multimap< std::string, NBCContainer > neumann_bcs,
 					    MultiphysicsSystem* system )
   {
     //_neumann_bc_funcs = neumann_bcs;

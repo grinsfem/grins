@@ -71,7 +71,7 @@ namespace GRINS
     
     void check_for_restart( const GetPot& input );
 
-    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
+    void attach_neumann_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
 				  GRINS::MultiphysicsSystem* system );
     
     void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,

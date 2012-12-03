@@ -41,10 +41,10 @@ namespace GRINS
     return;
   }
 
-  std::map< PhysicsName, NBCContainer > 
+  std::multimap< PhysicsName, NBCContainer > 
   BoundaryConditionsFactory::build_neumann( libMesh::EquationSystems& equation_system )
   {
-    return std::map< PhysicsName, NBCContainer >();
+    return std::multimap< PhysicsName, NBCContainer >();
   }
 
   std::multimap< PhysicsName, DBCContainer > 

@@ -51,7 +51,7 @@ namespace GRINS
     ThermallyDrivenFlowTestBCFactory( const GetPot& input ): _input(input){};
     virtual ~ThermallyDrivenFlowTestBCFactory(){};
     
-    virtual std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
+    virtual std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
   private:
     const GetPot& _input;
   };
@@ -195,9 +195,9 @@ int main(int argc, char* argv[])
 }
 
 
-std::map< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTestBCFactory::build_neumann( libMesh::EquationSystems& es )
+std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTestBCFactory::build_neumann( libMesh::EquationSystems& es )
 {
-  std::map< std::string, GRINS::NBCContainer > nbcs;
+  std::multimap< std::string, GRINS::NBCContainer > nbcs;
 
   /* Hack to work around the fact that we're using this test for the axisymmetric
      case as well the fact I'm and idiot in the design of the axisymmetric cases. */

@@ -56,7 +56,7 @@ namespace GRINS
 
     std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet_bcs();
 
-    std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
+    std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
 
     std::tr1::shared_ptr<QoIBase> build_qoi( const GetPot& input );
 

@@ -106,7 +106,7 @@ namespace GRINS
     return (this->_bc_factory)->build_dirichlet();
   }
 
-  std::map< GRINS::PhysicsName, GRINS::NBCContainer > SimulationBuilder::build_neumann_bcs( libMesh::EquationSystems& equation_system )
+  std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > SimulationBuilder::build_neumann_bcs( libMesh::EquationSystems& equation_system )
   {
     return (this->_bc_factory)->build_neumann(equation_system);
   }

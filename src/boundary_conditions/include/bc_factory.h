@@ -65,7 +65,7 @@ namespace GRINS
     //! Builds all Neumann boundary condition function objects needed
     /*! This is done for each physics. Thus, the container returned maps between each physics 
       and set of Neumann boundary conditions for that physics. */
-    virtual std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
+    virtual std::multimap< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
  
   }; // class BoundaryConditionsFactory
 
