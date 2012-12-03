@@ -29,7 +29,7 @@
 #ifndef MULTIPHYSICS_SYS_H
 #define MULTIPHYSICS_SYS_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include <string>
 
@@ -45,7 +45,7 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 // GRVY timers
 #include "grvy.h"
 #endif
@@ -127,7 +127,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif    
@@ -141,7 +141,7 @@ namespace GRINS
 
     bool _use_numerical_jacobians_only;
     
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
 

@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef DBC_CONTAINER_H
-#define DBC_CONTAINER_H
+#ifndef GRINS_DBC_CONTAINER_H
+#define GRINS_DBC_CONTAINER_H
 
 #include <vector>
 #include <set>
@@ -44,7 +44,7 @@ namespace GRINS
 {
   //! Simple helper class to setup general Dirichlet boundary conditions
   /*! This class is to temporarily stash data necessary for setting
-      up libMesh::DirichletBoundary objects. Actually instantiation
+      up libMesh::DirichletBoundary objects. Actual instantiation
       of libMesh::DirichletBoundary object is handled internally by
       GRINS::Physics::init_user_dirichlet_bcs. For each Dirichlet bc
       function, there is a unique DBCContainer object. */
@@ -77,4 +77,4 @@ namespace GRINS
     
   };
 }
-#endif //DBC_CONTAINER_H
+#endif // GRINS_DBC_CONTAINER_H

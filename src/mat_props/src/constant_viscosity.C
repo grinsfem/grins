@@ -28,20 +28,24 @@
 
 #include "constant_viscosity.h"
 
-
-GRINS::ConstantViscosity::ConstantViscosity()
-  : GRINS::ConstantFunction()
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConstantViscosity::~ConstantViscosity()
-{
-  return;
-}
+  ConstantViscosity::ConstantViscosity()
+    : ConstantFunction()
+  {
+    return;
+  }
 
-void GRINS::ConstantViscosity::read_input_options( const GetPot& input )
-{
-  _value = input( "Materials/Viscosity/mu", -1.0 );
-  return;
-}
+  ConstantViscosity::~ConstantViscosity()
+  {
+    return;
+  }
+
+  void ConstantViscosity::read_input_options( const GetPot& input )
+  {
+    _value = input( "Materials/Viscosity/mu", -1.0 );
+    return;
+  }
+
+} // namespace GRINS

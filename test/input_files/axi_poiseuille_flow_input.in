@@ -61,7 +61,7 @@ mu = 1.0
 # i = top    -> 1
 
 bc_ids = '1 3 2 0'
-bc_types = 'no_slip axisymmetric inflow inflow'
+bc_types = 'no_slip axisymmetric general_velocity general_velocity'
 
 
 pin_pressure = true 

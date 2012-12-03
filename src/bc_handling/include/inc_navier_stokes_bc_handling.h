@@ -65,8 +65,10 @@ namespace GRINS
 
     IncompressibleNavierStokesBCHandling();
 
-    enum INS_BC_TYPES{NO_SLIP=1, PRESCRIBED_VELOCITY, 
-		      PARABOLIC_PROFILE,INFLOW};
+    enum INS_BC_TYPES{NO_SLIP=1, 
+		      PRESCRIBED_VELOCITY, 
+		      PARABOLIC_PROFILE,
+		      GENERAL_VELOCITY};
 
   };
 }

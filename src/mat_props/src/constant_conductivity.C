@@ -28,20 +28,24 @@
 
 #include "constant_conductivity.h"
 
-
-GRINS::ConstantConductivity::ConstantConductivity()
-  : GRINS::ConstantFunction()
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConstantConductivity::~ConstantConductivity()
-{
-  return;
-}
+  ConstantConductivity::ConstantConductivity()
+    : ConstantFunction()
+  {
+    return;
+  }
 
-void GRINS::ConstantConductivity::read_input_options( const GetPot& input )
-{
-  _value = input( "Materials/Conductivity/k", -1.0 );
-  return;
+  ConstantConductivity::~ConstantConductivity()
+  {
+    return;
+  }
+
+  void ConstantConductivity::read_input_options( const GetPot& input )
+  {
+    _value = input( "Materials/Conductivity/k", -1.0 );
+    return;
+  }
+
 }

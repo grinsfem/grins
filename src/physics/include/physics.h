@@ -28,7 +28,7 @@
 #ifndef PHYSICS_SYS_H
 #define PHYSICS_SYS_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include <string>
 
@@ -48,7 +48,7 @@
 #include "grins_physics_names.h"
 #include "bc_handling_base.h"
 
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif
 
@@ -147,7 +147,7 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 
@@ -163,7 +163,7 @@ namespace GRINS
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;
     
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
 

@@ -4,7 +4,10 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen examples
-EXTRA_DIST       = CHANGES LICENSE COPYING examples docs
+EXTRA_DIST       = CHANGES LICENSE COPYING examples docs contrib
+
+contribm4dir = $(prefix)/contrib/m4
+contribm4_DATA = $(top_srcdir)/contrib/m4/*
 
 examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
@@ -35,6 +38,9 @@ AUX_DIST        += build-aux/config.sub
 AUX_DIST        += build-aux/depcomp
 AUX_DIST        += build-aux/ltmain.sh
 
+# Additional files to be deleted by 'make distclean'
+DISTCLEANFILES = _configs.sed
+
 # Files to be deleted by 'make maintainer-clean'
 MAINTAINERCLEANFILES = aclocal.m4                               \
                        aminclude.am                             \
@@ -44,8 +50,8 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        config.status                            \
                        config.sub                               \
                        configure                                \
-                       config.h                                 \
-                       config.h.in                              \
+                       grins_config.h                           \
+                       grins_config.h.tmp.in                    \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \

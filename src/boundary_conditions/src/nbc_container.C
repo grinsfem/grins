@@ -26,55 +26,47 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "dbc_container.h"
+#include "nbc_container.h"
 
 namespace GRINS
 {
-
-  DBCContainer::DBCContainer()
-    : _var_names( std::vector<VariableName>() ),
-      _bc_ids( std::set<BoundaryID>() ),
-      _func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> >() )
+  NBCContainer::NBCContainer()
   {
     return;
   }
 
-  DBCContainer::~DBCContainer()
+  NBCContainer::~NBCContainer()
   {
     return;
   }
 
-  void DBCContainer::add_var_name( const VariableName& var )
+  void NBCContainer::set_bc_id( BoundaryID bc_id )
   {
-    _var_names.push_back( var );
+    _bc_id = bc_id;
     return;
   }
 
-  void DBCContainer::add_bc_id( const BoundaryID bc_id )
+  BoundaryID NBCContainer::get_bc_id() const
   {
-    _bc_ids.insert( bc_id );
+    return _bc_id;
+  }
+
+  void NBCContainer::add_var_func_pair( VariableIndex var, 
+					std::tr1::shared_ptr<NeumannFuncObj> func )
+  {
+    if( _funcs.find(var) != _funcs.end() )
+      {
+	std::cerr << "Error: Can only specify one function per variable" << std::endl;
+	libmesh_error();
+      }
+
+    _funcs.insert( std::make_pair( var, func ) );
     return;
   }
 
-  void DBCContainer::set_func( std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func )
+  std::tr1::shared_ptr<NeumannFuncObj> NBCContainer::get_func( VariableIndex var ) const
   {
-    _func = func;
-    return;
-  }
-
-  std::vector<VariableName> DBCContainer::get_var_names() const
-  {
-    return _var_names;
-  }
-
-  std::set<BoundaryID> DBCContainer::get_bc_ids() const
-  {
-    return _bc_ids;
-  }
-
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > DBCContainer::get_func() const
-  {
-    return _func;
+    return _funcs.find(var)->second;
   }
 
 } // namespace GRINS

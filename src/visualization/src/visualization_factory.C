@@ -28,26 +28,31 @@
 
 #include "visualization_factory.h"
 
-GRINS::VisualizationFactory::VisualizationFactory(  )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::VisualizationFactory::~VisualizationFactory()
-{
-  return;
-}
+  VisualizationFactory::VisualizationFactory(  )
+  {
+    return;
+  }
 
-std::tr1::shared_ptr<GRINS::Visualization> GRINS::VisualizationFactory::build( const GetPot& input )
-{
-  bool transient = input("unsteady-solver/transient", false );
+  VisualizationFactory::~VisualizationFactory()
+  {
+    return;
+  }
 
-  GRINS::Visualization* vis;
+  std::tr1::shared_ptr<Visualization> VisualizationFactory::build( const GetPot& input )
+  {
+    bool transient = input("unsteady-solver/transient", false );
 
-  if(transient) 
-    vis = new UnsteadyVisualization( input );
-  else
-    vis = new SteadyVisualization( input );
+    Visualization* vis;
 
-  return std::tr1::shared_ptr<GRINS::Visualization>( vis );
-}
+    if(transient) 
+      vis = new UnsteadyVisualization( input );
+    else
+      vis = new SteadyVisualization( input );
+
+    return std::tr1::shared_ptr<Visualization>( vis );
+  }
+
+} // namespace GRINS

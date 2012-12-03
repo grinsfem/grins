@@ -29,7 +29,7 @@
 #ifndef AXISYM_LORENTZ_FORCE_H
 #define AXISYM_LORENTZ_FORCE_H
 
-#include "config.h"
+#include "grins_config.h"
 
 #include "libmesh.h"
 #include "boundary_info.h"

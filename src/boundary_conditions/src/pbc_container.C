@@ -28,48 +28,53 @@
 
 #include "pbc_container.h"
 
-GRINS::PBCContainer::PBCContainer()
-  : _master_id( -1 ),
-    _slave_id( -1 ),
-    _offset_vector( 0.0, 0.0, 0.0 )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::PBCContainer::~PBCContainer()
-{
-  return;
-}
+  PBCContainer::PBCContainer()
+    : _master_id( -1 ),
+      _slave_id( -1 ),
+      _offset_vector( 0.0, 0.0, 0.0 )
+  {
+    return;
+  }
 
-void GRINS::PBCContainer::set_master_bcid( const GRINS::BoundaryID bc_id )
-{
-  _master_id = bc_id;
-  return;
-}
+  PBCContainer::~PBCContainer()
+  {
+    return;
+  }
 
-void GRINS::PBCContainer::set_slave_bcid( const GRINS::BoundaryID bc_id )
-{
-  _slave_id = bc_id;
-  return;
-}
+  void PBCContainer::set_master_bcid( const BoundaryID bc_id )
+  {
+    _master_id = bc_id;
+    return;
+  }
 
-void GRINS::PBCContainer::set_offset_vector( const libMesh::RealVectorValue& offset_vector )
-{
-  _offset_vector = offset_vector;
-  return;
-}
+  void PBCContainer::set_slave_bcid( const BoundaryID bc_id )
+  {
+    _slave_id = bc_id;
+    return;
+  }
 
-GRINS::BoundaryID GRINS::PBCContainer::get_master_bcid() const
-{
-  return _master_id;
-}
+  void PBCContainer::set_offset_vector( const libMesh::RealVectorValue& offset_vector )
+  {
+    _offset_vector = offset_vector;
+    return;
+  }
 
-GRINS::BoundaryID GRINS::PBCContainer::get_slave_bcid() const
-{
-  return _slave_id;
-}
+  BoundaryID PBCContainer::get_master_bcid() const
+  {
+    return _master_id;
+  }
 
-const libMesh::RealVectorValue& GRINS::PBCContainer::get_offset_vector() const
-{
-  return _offset_vector;
-}
+  BoundaryID PBCContainer::get_slave_bcid() const
+  {
+    return _slave_id;
+  }
+
+  const libMesh::RealVectorValue& PBCContainer::get_offset_vector() const
+  {
+    return _offset_vector;
+  }
+
+} // namespace GRINS

@@ -86,7 +86,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/concentric_cylinder_profile.C \
                           $(boundary_conditions_srcdir)/dbc_container.C \
                           $(boundary_conditions_srcdir)/pressure_pinning.C \
-                          $(boundary_conditions_srcdir)/pbc_container.C
+                          $(boundary_conditions_srcdir)/pbc_container.C \
+                          $(boundary_conditions_srcdir)/nbc_container.C
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C
 
@@ -173,7 +174,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/concentric_cylinder_profile.h \
                           $(boundary_conditions_incdir)/dbc_container.h \
                           $(boundary_conditions_incdir)/pressure_pinning.h \
-                          $(boundary_conditions_incdir)/pbc_container.h
+                          $(boundary_conditions_incdir)/pbc_container.h \
+                          $(boundary_conditions_incdir)/nbc_container.h
 
 utilities_INC = $(utilities_incdir)/grins_version.h
 

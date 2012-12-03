@@ -28,13 +28,18 @@
 
 #include "constant_source_func.h"
 
-GRINS::ConstantSourceFunction::ConstantSourceFunction( const GetPot& input )
-  : _value( input("Physics/SourceFunction/value", 0.0) )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConstantSourceFunction::~ConstantSourceFunction()
-{
-  return;
-}
+  ConstantSourceFunction::ConstantSourceFunction( const GetPot& input )
+    : _value( input("Physics/SourceFunction/value", 0.0) )
+  {
+    return;
+  }
+
+  ConstantSourceFunction::~ConstantSourceFunction()
+  {
+    return;
+  }
+
+} // namespace GRINS

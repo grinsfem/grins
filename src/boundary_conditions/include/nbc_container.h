@@ -26,32 +26,45 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#ifndef GRINS_NBC_CONTAINER_H
+#define GRINS_NBC_CONTAINER_H
+
 #include "neumann_func_obj.h"
 
 namespace GRINS
 {
-
-  NeumannFuncObj::NeumannFuncObj( )
+  //! Simple helper class to setup general Neumann boundary conditions
+  /*! This class is to temporarily stash data necessary for setting
+      up GRINS::NeumannFuncObj objects. Actual instantiation
+      of GRINS::NeumannFuncObj object is handled internally by
+      BCHandling objects. This class is structured on a per-bc ID basis.
+      That is, each object works handles functions for one boundary ID at a time,
+      but can handle multiple variable/function pairs. Currently, it is assumed
+      one function per variable. */
+  class NBCContainer
   {
-    return;
-  }
+  public:
+    NBCContainer();
+    ~NBCContainer();
 
-  NeumannFuncObj::~NeumannFuncObj( )
-  {
-    return;
-  }
+    //! Add variable for which this boundary condition is to be applied. 
+    void set_bc_id( BoundaryID bc_id );
 
-  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext& context, 
-					     const unsigned int qp,
-					     const VariableIndex jac_var )
-  {
-    // By default, does nothing.
-    return libMesh::Point(0.0,0.0,0.0);
-  }
+    //! Add boundary id and corresponding functor object to be applied on that boundary
+    void add_var_func_pair( VariableIndex var, 
+			    std::tr1::shared_ptr<NeumannFuncObj> func );
 
-  std::vector<VariableIndex> NeumannFuncObj:: get_other_jac_vars()
-  {
-    return _jac_vars;
-  }
+    BoundaryID get_bc_id() const;
+
+    std::tr1::shared_ptr<NeumannFuncObj> get_func( VariableIndex var ) const;
+
+  protected:
+    
+    BoundaryID _bc_id;
+    std::map<VariableIndex,std::tr1::shared_ptr<NeumannFuncObj> > _funcs;
+
+  };
 
 } // namespace GRINS
+
+#endif // GRINS_NBC_CONTAINER_H

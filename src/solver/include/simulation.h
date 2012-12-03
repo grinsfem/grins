@@ -40,7 +40,7 @@
 #include "boundary_conditions.h"
 
 // GRVY
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
 
@@ -63,7 +63,7 @@ namespace GRINS
 
     Number get_qoi( unsigned int qoi_index ) const;
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 

@@ -28,37 +28,42 @@
 
 #include "grins_steady_solver.h"
 
-GRINS::SteadySolver::SteadySolver( const GetPot& input )
-  : Solver( input )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::SteadySolver::~SteadySolver()
-{
-  return;
-}
+  SteadySolver::SteadySolver( const GetPot& input )
+    : Solver( input )
+  {
+    return;
+  }
 
-void GRINS::SteadySolver::init_time_solver(GRINS::MultiphysicsSystem* system)
-{
-  libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
+  SteadySolver::~SteadySolver()
+  {
+    return;
+  }
 
-  system->time_solver = AutoPtr<TimeSolver>(time_solver);
-  return;
-}
+  void SteadySolver::init_time_solver(MultiphysicsSystem* system)
+  {
+    libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
-void GRINS::SteadySolver::solve( GRINS::MultiphysicsSystem* system,
-				 std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-				 std::tr1::shared_ptr<GRINS::Visualization> vis,
-				 bool output_vis, 
-				 bool output_residual )
-{
-  // GRVY timers contained in here (if enabled)
-  system->solve();
+    system->time_solver = AutoPtr<TimeSolver>(time_solver);
+    return;
+  }
 
-  if( output_vis ) vis->output( equation_system );
+  void SteadySolver::solve( MultiphysicsSystem* system,
+			    std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+			    std::tr1::shared_ptr<Visualization> vis,
+			    bool output_vis, 
+			    bool output_residual )
+  {
+    // GRVY timers contained in here (if enabled)
+    system->solve();
 
-  if( output_residual ) vis->output_residual( equation_system, system );
+    if( output_vis ) vis->output( equation_system );
 
-  return;
-}
+    if( output_residual ) vis->output_residual( equation_system, system );
+
+    return;
+  }
+
+} // namespace GRINS
