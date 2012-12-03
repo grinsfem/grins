@@ -13,6 +13,8 @@ examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
 #                  $(top_srcdir)/examples/rayleigh_taylor
 
+include_HEADERS = $(top_srcdir)/grins_config.h
+
 # Eliminate .svn directories in dist tarball
 dist-hook:
 	rm -rf `find $(distdir)/ -name .svn`
