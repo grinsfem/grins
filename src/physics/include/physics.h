@@ -147,6 +147,9 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
+    GRINS::BCHandlingBase* get_bc_handler()
+    { libmesh_assert(_bc_handler); return _bc_handler; }
+
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
