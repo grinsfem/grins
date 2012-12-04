@@ -132,8 +132,8 @@ bool GRINS::AxisymmetricLorentzForce::element_time_derivative( bool request_jaco
   // Get Jacobians
   libMesh::DenseSubMatrix<Number> &KrV = *c.elem_subjacobians[_u_r_var][_V_var]; // R_{r},{T}
   libMesh::DenseSubMatrix<Number> &KzV = *c.elem_subjacobians[_u_z_var][_V_var]; // R_{z},{T}
-  libMesh::DenseSubMatrix<Number> &KrA = *c.elem_subjacobians[_u_r_var][_V_var]; // R_{r},{T}
-  libMesh::DenseSubMatrix<Number> &KzA = *c.elem_subjacobians[_u_z_var][_V_var]; // R_{z},{T}
+  libMesh::DenseSubMatrix<Number> &KrA = *c.elem_subjacobians[_u_r_var][_A_var]; // R_{r},{T}
+  libMesh::DenseSubMatrix<Number> &KzA = *c.elem_subjacobians[_u_z_var][_A_var]; // R_{z},{T}
 
   // Now we will build the element Jacobian and residual.
   // Constructing the residual requires the solution and its
@@ -149,6 +149,7 @@ bool GRINS::AxisymmetricLorentzForce::element_time_derivative( bool request_jaco
 
       // Compute the solution & its gradient at the old Newton iterate.
       libMesh::Gradient grad_V, curl_A;
+
       c.interior_gradient<Real>(_V_var, qp, grad_V);
       c.interior_curl<RealGradient>(_A_var, qp, curl_A);
 
@@ -157,21 +158,21 @@ bool GRINS::AxisymmetricLorentzForce::element_time_derivative( bool request_jaco
       // for both at the same time.
       for (unsigned int i=0; i != n_u_dofs; i++)
         {
-	  Fr(i) += _sigma*grad_V(1)*curl_A(1)*vel_phi[i][qp]*r*JxW[qp];
-	  Fz(i) += -_sigma*grad_V(0)*curl_A(1)*vel_phi[i][qp]*r*JxW[qp];
+	  Fr(i) += _sigma*grad_V(1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+	  Fz(i) += -_sigma*grad_V(0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
 
 	  if (request_jacobian)
             {
               for (unsigned int j=0; j != n_V_dofs; j++)
 		{
-		  KrV(i,j) += _sigma*V_gradphi[j][qp](1)*curl_A(1)*vel_phi[i][qp]*r*JxW[qp];
-		  KzV(i,j) += -_sigma*V_gradphi[j][qp](0)*curl_A(1)*vel_phi[i][qp]*r*JxW[qp];
+		  KrV(i,j) += _sigma*V_gradphi[j][qp](1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+		  KzV(i,j) += -_sigma*V_gradphi[j][qp](0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
 		} // End j dof loop
 	      
 	      for (unsigned int j=0; j != n_A_dofs; j++)
 		{
-		  KrA(i,j) += _sigma*grad_V(1)*A_curl_phi[j][qp](1)*vel_phi[i][qp]*r*JxW[qp];
-		  KzA(i,j) += -_sigma*grad_V(0)*A_curl_phi[j][qp](1)*vel_phi[i][qp]*r*JxW[qp];
+		  KrA(i,j) += _sigma*grad_V(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		  KzA(i,j) += -_sigma*grad_V(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
 		} // End j dof loop
 
 	    } // End request_jacobian check
