@@ -215,11 +215,7 @@ AC_OUTPUT( Makefile \
            test/Makefile \
            doxygen/Makefile \
            doxygen/txt_common/about.page \
-           examples/Makefile \
-           examples/cavity_benchmark/Makefile \
-	   examples/rayleigh_taylor/Makefile \
-           examples/mass_injection/Makefile \
-           examples/vortex/Makefile )
+           examples/Makefile )
 
 
 
