@@ -11,7 +11,7 @@ AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define color-tests])
 AM_SILENT_RULES(yes)  # use silent rules where available - automake 1.11
 
 LT_INIT
@@ -198,6 +198,19 @@ DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen )
 dnl-------------------
 dnl Generate makefiles
 dnl-------------------
+AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	[chmod +x test/test_axi_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,      [chmod +x test/test_ns_couette_flow_2d_x.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,      [chmod +x test/test_ns_couette_flow_2d_y.sh])
+AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,        [chmod +x test/test_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,    [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,  [chmod +x test/test_thermally_driven_2d_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,  [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh, [chmod +x test/test_axi_thermally_driven_flow.sh])
+AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
+AC_CONFIG_FILES(test/test_magnetostatics.sh,            [chmod +x test/test_magnetostatics.sh])
+AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
+
 AC_OUTPUT( Makefile \
            src/Makefile src/utilities/include/grins_version.h \
            test/Makefile \

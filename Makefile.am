@@ -13,7 +13,7 @@ examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
 #                  $(top_srcdir)/examples/rayleigh_taylor
 
-include_HEADERS = $(top_srcdir)/grins_config.h
+include_HEADERS = $(top_builddir)/grins_config.h
 
 # Eliminate .svn directories in dist tarball
 dist-hook:

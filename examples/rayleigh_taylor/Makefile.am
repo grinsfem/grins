@@ -6,7 +6,7 @@ BUILT_SOURCES   = .license.stamp
 
 bin_PROGRAMS    = rt
 
-rt_SOURCES = rayleigh_taylor.C
+rt_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh_taylor.C
 rt_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \

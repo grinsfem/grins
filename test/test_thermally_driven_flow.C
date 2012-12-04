@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
 #endif
 
   // Check command line count.
-  if( argc < 2 )
+  if( argc < 3 )
     {
       // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
+      std::cerr << "Error: Must specify libMesh input file and solution file." << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
   EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
-  std::string solution_file = libMesh_inputfile( "ExactSolution/solution_file", "DIE!" );
+  std::string solution_file = std::string(argv[2]);
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );

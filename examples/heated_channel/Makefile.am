@@ -6,7 +6,7 @@ BUILT_SOURCES   = .license.stamp
 
 bin_PROGRAMS    = channel
 
-channel_SOURCES = channel.C
+channel_SOURCES = $(top_srcdir)/examples/heated_channel/channel.C
 channel_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
