@@ -6,7 +6,7 @@ BUILT_SOURCES   = .license.stamp
 
 bin_PROGRAMS    = injection
 
-injection_SOURCES = injection.C
+injection_SOURCES = $(top_srcdir)/examples/mass_injection/injection.C
 injection_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \

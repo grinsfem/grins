@@ -169,7 +169,7 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/pbc_container.h \
                           $(boundary_conditions_incdir)/nbc_container.h
 
-utilities_INC = $(utilities_incdir)/grins_version.h
+utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
@@ -237,7 +237,15 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
+AM_CPPFLAGS = -I$(solver_incdir) \
+              -I$(physics_incdir) \
+              -I$(boundary_conditions_incdir) \
+              -I$(utilities_incdir) \
+              -I$(visualization_incdir) \
+              -I$(matprops_incdir) \
+              -I$(bc_handling_incdir) \
+              -I$(qoi_incdir) \
+              -I$(top_builddir)/src/utilities/include #For grins_version.h
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \

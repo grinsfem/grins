@@ -6,7 +6,7 @@ BUILT_SOURCES   = .license.stamp
 
 bin_PROGRAMS    = vortex
 
-vortex_SOURCES = vortex.C
+vortex_SOURCES = $(top_srcdir)/examples/vortex/vortex.C
 vortex_LDADD = $(LIBGRINS_LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
