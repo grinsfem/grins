@@ -218,6 +218,14 @@ namespace GRINS
       this->_gas_mixture.omega_dot(cache,omega_dot);
       for( unsigned int s = 0; s < this->_n_species; s++ )
 	{
+	  if( libmesh_isnan(omega_dot[s]) )
+	    {
+	      std::cout << "T = " << cache.T() << ", p0 = " << cache.P() << std::endl;
+	      for( unsigned int ss = 0; ss < this->_n_species; ss++ )
+		std::cout << "Y[" << ss << "] = " << cache.mass_fractions()[ss] << std::endl;
+	    }
+	  std::cout.flush();
+
 	  libmesh_assert( !libmesh_isnan(omega_dot[s]) );
 	  // convert [kmol/m^3-s] to [kg/m^3-s]
 	  omega_dot[s] *= this->_gas_mixture.M(s);
@@ -228,15 +236,13 @@ namespace GRINS
 				 omega_dot );
       libmesh_assert_greater( cache.rho(), 0.0 );
 
-      std::vector<Real> D(this->_n_species,0.0);
-      //this->_gas_mixture.D(cache,D);
-
       const Real mu = this->_gas_mixture.mu(cache);
       libmesh_assert_greater( mu, 0.0 );
       
       const Real k = this->_gas_mixture.k(cache);
       libmesh_assert_greater( k, 0.0 );
 
+      std::vector<Real> D(this->_n_species,0.0);
       this->_gas_mixture.D( cache, D);
       cache.set_transport_props( mu, k, D);
     }

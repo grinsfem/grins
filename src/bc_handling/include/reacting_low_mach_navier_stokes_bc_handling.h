@@ -53,6 +53,12 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
+    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+					 GRINS::VariableIndex var,
+					 bool request_jacobian,
+					 GRINS::BoundaryID bc_id,
+					 GRINS::BCType bc_type ) const;
+
     void set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type );
     void set_species_bc_values( GRINS::BoundaryID bc_id, const std::vector<Real>& species_values );
     Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;

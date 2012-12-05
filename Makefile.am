@@ -10,8 +10,8 @@ examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
 #                  $(top_srcdir)/examples/rayleigh_taylor
 
-doxygendir = $(prefix)/doxygen
-doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
+#doxygendir = $(prefix)/doxygen
+#doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 
 # Eliminate .svn directories in dist tarball
 dist-hook:

@@ -132,7 +132,7 @@ namespace GRINS
 	break;
       case(GENERAL_SPECIES):
 	{
-	  this->set_species_bc_type( bc_id, bc_type );
+	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
       case(CATALYTIC_WALL):
@@ -232,6 +232,30 @@ namespace GRINS
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }
 
+    return;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+								      GRINS::VariableIndex var,
+								      bool request_jacobian,
+								      GRINS::BoundaryID bc_id,
+								      GRINS::BCType bc_type ) const
+  {
+    switch( bc_type )
+      {
+      case( GENERAL_SPECIES ):
+	{
+	  _bound_conds.apply_neumann_normal( context, request_jacobian, var, -1.0, 
+					     this->get_neumann_bound_func( bc_id, var ) );
+	}
+	break;
+      default:
+      {
+	std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
+		  << std::endl;
+	libmesh_error();
+      }
+      }
     return;
   }
 

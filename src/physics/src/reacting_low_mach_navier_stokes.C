@@ -114,8 +114,14 @@ namespace GRINS
 	          Actually, what we want to do is have the cache built once per element
 	          (thus caching at every quadrature point), so this can be reused for multiple
 	          Physics classes. */
-	ReactingFlowCache cache( c.interior_value(this->_T_var, qp), 
-				 this->get_p0_steady(c,qp), Y );
+	const Real T = c.interior_value(this->_T_var, qp);
+	libmesh_assert_greater(T, 0.0);
+
+
+	const Real p0 = this->get_p0_steady(c,qp);
+	libmesh_assert_greater(p0, 0.0);
+
+	ReactingFlowCache cache( T, p0, Y );
 
 	this->build_reacting_flow_cache(c, cache, qp);
 
@@ -159,21 +165,20 @@ namespace GRINS
 								   libMesh::FEMSystem* system )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
+
     /*
-    if( this->_enable_thermo_press_calc )
-      {
-#ifdef USE_GRVY_TIMERS
-	this->_timer->BeginTimer("LowMachNavierStokes::side_time_derivative");
-#endif
-	FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
-	this->assemble_thermo_press_side_time_deriv( request_jacobian, c, system );
+    const GRINS::BoundaryID boundary_id =
+      system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
 
-#ifdef USE_GRVY_TIMERS
-	this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
-#endif
-      }
+    libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+
+    this->_bc_handler->apply_neumann_bcs( c, this->_species_vars[3], request_jacobian, boundary_id );
+
+    this->_bc_handler->apply_neumann_bcs( c, this->_species_vars[1], request_jacobian, boundary_id );
     */
+
     return request_jacobian;
   }
 
@@ -286,8 +291,8 @@ namespace GRINS
       {
 	libMesh::DenseSubVector<Number> &Fs = *c.elem_subresiduals[this->_species_vars[s]]; // R_{s}
 
-	const Real term1 = rho*(U*grad_w[s]) - omega_dot[s];
-	const libMesh::Gradient term2 = rho*D[s]*grad_w[s];
+	const Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
+	const libMesh::Gradient term2 = -rho*D[s]*grad_w[s];
 
 	for (unsigned int i=0; i != n_s_dofs; i++)
 	  {
