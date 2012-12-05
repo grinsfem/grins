@@ -28,30 +28,35 @@
 
 #include "solver_factory.h"
 
-GRINS::SolverFactory::SolverFactory()
+namespace GRINS
 {
-  return;
-}
 
-GRINS::SolverFactory::~SolverFactory()
-{
-  return;
-}
+  SolverFactory::SolverFactory()
+  {
+    return;
+  }
 
-std::tr1::shared_ptr<GRINS::Solver> GRINS::SolverFactory::build(const GetPot& input)
-{
-  bool transient = input("unsteady-solver/transient", false );
+  SolverFactory::~SolverFactory()
+  {
+    return;
+  }
 
-  GRINS::Solver* solver;
+  std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
+  {
+    bool transient = input("unsteady-solver/transient", false );
 
-  if(transient)
-    {
-      solver = new GRINS::UnsteadySolver( input );
-    }
-  else
-    {
-      solver = new GRINS::SteadySolver( input );
-    }
+    Solver* solver;
 
-  return std::tr1::shared_ptr<GRINS::Solver>(solver);
-}
+    if(transient)
+      {
+	solver = new UnsteadySolver( input );
+      }
+    else
+      {
+	solver = new SteadySolver( input );
+      }
+
+    return std::tr1::shared_ptr<Solver>(solver);
+  }
+
+} // namespace GRINS

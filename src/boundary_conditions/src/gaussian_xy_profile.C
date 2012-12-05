@@ -28,46 +28,51 @@
 
 #include "gaussian_xy_profile.h"
 
-GRINS::GaussianXYProfile::GaussianXYProfile( const double a, const double mu, const double sigma,
-					     const double b )
-  : GaussianProfile(a,mu,sigma,b)
+namespace GRINS
 {
-  _initialized = true;
-  return;
-}
 
-GRINS::GaussianXYProfile::~GaussianXYProfile()
-{
-  return;
-}
+  GRINS::GaussianXYProfile::GaussianXYProfile( const double a, const double mu, const double sigma,
+					       const double b )
+    : GaussianProfile(a,mu,sigma,b)
+  {
+    _initialized = true;
+    return;
+  }
 
-libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::GaussianXYProfile::clone() const
-{
-  return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new GaussianXYProfile( _a, _mu, std::sqrt(_variance), _b ) );
-}
+  GRINS::GaussianXYProfile::~GaussianXYProfile()
+  {
+    return;
+  }
 
-libMesh::Number GRINS::GaussianXYProfile::operator()( const Point &p, 
-						      const Real )
-{
-  const double r = std::sqrt( p(0)*p(0) + p(1)*p(1) );
+  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::GaussianXYProfile::clone() const
+  {
+    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new GaussianXYProfile( _a, _mu, std::sqrt(_variance), _b ) );
+  }
+
+  libMesh::Number GRINS::GaussianXYProfile::operator()( const Point &p, 
+							const Real )
+  {
+    const double r = std::sqrt( p(0)*p(0) + p(1)*p(1) );
   
-  return this->eval( r );
-}
+    return this->eval( r );
+  }
 
-void GRINS::GaussianXYProfile::operator()( const Point &p, 
-					   const Real time, 
-					   libMesh::DenseVector<libMesh::Number> &output )
-{
-  for( unsigned int i = 0; i < output.size(); i++ )
-    {
-      output(i) = (*this)(p, time);
-    }
-  return;
-}
+  void GRINS::GaussianXYProfile::operator()( const Point &p, 
+					     const Real time, 
+					     libMesh::DenseVector<libMesh::Number> &output )
+  {
+    for( unsigned int i = 0; i < output.size(); i++ )
+      {
+	output(i) = (*this)(p, time);
+      }
+    return;
+  }
 
-libMesh::Number GRINS::GaussianXYProfile::operator()( unsigned int i,
-						     const Point &p, 
-						     const Real time )
-{
-  return (*this)(p, time);
-}
+  libMesh::Number GRINS::GaussianXYProfile::operator()( unsigned int i,
+							const Point &p, 
+							const Real time )
+  {
+    return (*this)(p, time);
+  }
+
+} // namespace GRINS

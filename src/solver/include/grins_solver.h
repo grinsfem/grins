@@ -32,7 +32,7 @@
 #include "boost/tr1/memory.hpp"
 
 // GRINS
-#include "config.h"
+#include "grins_config.h"
 #include "multiphysics_sys.h"
 #include "visualization.h"
 #include "bc_factory.h"
@@ -47,9 +47,8 @@
 #include "euler_solver.h"
 #include "steady_solver.h"
 #include "boundary_conditions.h"
-#include "bc_types.h"
 
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif
 

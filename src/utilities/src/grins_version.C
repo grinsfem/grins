@@ -28,38 +28,41 @@
 
 #include "grins_version.h"
 
-void GRINS::grins_version_stdout()
+namespace GRINS
 {
-  std::cout << "--------------------------------------------------------" << std::endl;
-  std::cout << "GRINS Package: Version = " << GRINS_LIB_VERSION;
-  std::cout << " (" << get_grins_version() << ")" << std::endl << std::endl;
-  
-  std::cout << GRINS_LIB_RELEASE << std::endl << std::endl;
-  
-  std::cout << "Build Date   = " << GRINS_BUILD_DATE     << std::endl;
-  std::cout << "Build Host   = " << GRINS_BUILD_HOST     << std::endl;
-  std::cout << "Build User   = " << GRINS_BUILD_USER     << std::endl;
-  std::cout << "Build Arch   = " << GRINS_BUILD_ARCH     << std::endl;
-  std::cout << "Build Rev    = " << GRINS_BUILD_VERSION  << std::endl << std::endl;
-  
-  std::cout << "C++ Config   = " << GRINS_CXX << " " << GRINS_CXXFLAGS << std::endl;
-  std::cout << "--------------------------------------------------------" << std::endl;
-  
-  return;
-}
 
-int GRINS::get_grins_version()
-{
-  /* Note: return format follows the versioning convention xx.yy.zz where
+  void grins_version_stdout()
+  {
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "GRINS Package: Version = " << GRINS_LIB_VERSION;
+    std::cout << " (" << get_grins_version() << ")" << std::endl << std::endl;
+  
+    std::cout << GRINS_LIB_RELEASE << std::endl << std::endl;
+  
+    std::cout << "Build Date   = " << GRINS_BUILD_DATE     << std::endl;
+    std::cout << "Build Host   = " << GRINS_BUILD_HOST     << std::endl;
+    std::cout << "Build User   = " << GRINS_BUILD_USER     << std::endl;
+    std::cout << "Build Arch   = " << GRINS_BUILD_ARCH     << std::endl;
+    std::cout << "Build Rev    = " << GRINS_BUILD_VERSION  << std::endl << std::endl;
+  
+    std::cout << "C++ Config   = " << GRINS_CXX << " " << GRINS_CXXFLAGS << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+  
+    return;
+  }
+
+  int get_grins_version()
+  {
+    /* Note: return format follows the versioning convention xx.yy.zz where
    
-     xx = major version number
-     yy = minor version number
-     zz = micro version number
+       xx = major version number
+       yy = minor version number
+       zz = micro version number
      
-     For example:
-     v.   0.23  -> 002300 = 2300
-     v   0.23.1 -> 002301 = 2301
-     v. 10.23.2 -> 102302         */
+       For example:
+       v.   0.23  -> 002300 = 2300
+       v   0.23.1 -> 002301 = 2301
+       v. 10.23.2 -> 102302         */
 
     int major_version = 0;
     int minor_version = 0;
@@ -78,4 +81,6 @@ int GRINS::get_grins_version()
 #endif
       
     return major_version*10000 + minor_version*100 + micro_version;
-}
+  }
+
+} // namespace GRINS

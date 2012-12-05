@@ -71,7 +71,7 @@ Cp = 1.0
 
 bc_ids = '3 0 2 1'
 
-bc_types = 'isothermal_wall adiabatic_wall adiabatic_wall isothermal_wall'
+bc_types = 'isothermal_wall general_heat_flux adiabatic_wall isothermal_wall'
 
 T_wall_1 = 1
 T_wall_3 = 10

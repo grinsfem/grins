@@ -28,44 +28,51 @@
 
 #include "neumann_func_obj.h"
 
-GRINS::NeumannFuncObj::NeumannFuncObj( )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::NeumannFuncObj::~NeumannFuncObj( )
-{
-  return;
-}
+  NeumannFuncObj::NeumannFuncObj( )
+  {
+    return;
+  }
 
-Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const unsigned int )
-{
-  // By default, does nothing.
-  return 0.0;
-}
+  NeumannFuncObj::~NeumannFuncObj( )
+  {
+    return;
+  }
 
-libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext&, 
-						  const unsigned int,
-						  const GRINS::VariableIndex )
-{
-  // By default, does nothing.
-  return libMesh::Point(0.0,0.0,0.0);
-}
+  Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const unsigned int )
+  {
+    // By default, does nothing.
+    return 0.0;
+  }
 
-Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned )
-{
-  // By default, does nothing.
-  return 0.0;
-}
+  libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext&, 
+						    const unsigned int,
+						    const GRINS::VariableIndex )
+  {
+    // By default, does nothing.
+    return libMesh::Point(0.0,0.0,0.0);
+  }
+  
 
-Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned int, 
-					       const GRINS::VariableIndex )
-{
-  // By default, does nothing.
-  return 0.0;
-}
+  Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned )
+  {
+    // By default, does nothing.
+    return 0.0;
+  }
 
-std::vector<GRINS::VariableIndex> GRINS::NeumannFuncObj:: get_other_jac_vars()
-{
-  return _jac_vars;
-}
+  Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned int, 
+						 const GRINS::VariableIndex )
+  {
+    // By default, does nothing.
+    return 0.0;
+  }
+
+  std::vector<GRINS::VariableIndex> GRINS::NeumannFuncObj:: get_other_jac_vars()
+  {
+    return _jac_vars;
+  }
+
+} // namespace GRINS
+

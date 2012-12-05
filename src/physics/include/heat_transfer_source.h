@@ -30,7 +30,7 @@
 #define HEAT_TRANSFER_SOURCE_H
 
 // GRINS
-#include "config.h"
+#include "grins_config.h"
 #include "heat_transfer_base.h"
 #include "constant_source_func.h"
 

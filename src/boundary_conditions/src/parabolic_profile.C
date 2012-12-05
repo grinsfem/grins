@@ -28,56 +28,61 @@
 
 #include "parabolic_profile.h"
 
-GRINS::ParabolicProfile::ParabolicProfile( )
-  : FunctionBase<Number>(),
-    _a(0.0), _b(0.0), _c(-4.0), _d(0.0), _e(4.0), _f(0.0)
+namespace GRINS
 {
-  _initialized=true;
-  return;
-}
 
-GRINS::ParabolicProfile::ParabolicProfile( const double a, const double b, const double c,
-					   const double d, const double e, const double f )
-  : FunctionBase<Number>(),
-    _a(a), _b(b), _c(c), _d(d), _e(e), _f(f)
-{
-  _initialized=true;
-  return;
-}
+  ParabolicProfile::ParabolicProfile( )
+    : FunctionBase<Number>(),
+      _a(0.0), _b(0.0), _c(-4.0), _d(0.0), _e(4.0), _f(0.0)
+  {
+    _initialized=true;
+    return;
+  }
 
-GRINS::ParabolicProfile::~ParabolicProfile()
-{
-  return;
-}
+  ParabolicProfile::ParabolicProfile( const double a, const double b, const double c,
+				      const double d, const double e, const double f )
+    : FunctionBase<Number>(),
+      _a(a), _b(b), _c(c), _d(d), _e(e), _f(f)
+  {
+    _initialized=true;
+    return;
+  }
 
-libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::ParabolicProfile::clone() const
-{
-  return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ParabolicProfile( _a, _b, _c, _d, _e, _f ) );
-}
+  ParabolicProfile::~ParabolicProfile()
+  {
+    return;
+  }
 
-libMesh::Number GRINS::ParabolicProfile::operator()( const Point &p, 
-						     const Real )
-{
-  const double x = p(0);
-  const double y = p(1);
+  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > ParabolicProfile::clone() const
+  {
+    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ParabolicProfile( _a, _b, _c, _d, _e, _f ) );
+  }
+
+  libMesh::Number ParabolicProfile::operator()( const Point &p, 
+						const Real )
+  {
+    const double x = p(0);
+    const double y = p(1);
   
-  return this->eval( _a, _b, _c, _d, _e, _f, x, y );
-}
+    return this->eval( _a, _b, _c, _d, _e, _f, x, y );
+  }
 
-void GRINS::ParabolicProfile::operator()( const Point &p, 
-					  const Real time, 
-					  libMesh::DenseVector<libMesh::Number> &output )
-{
-  for( unsigned int i = 0; i < output.size(); i++ )
-    {
-      output(i) = (*this)(p, time);
-    }
-  return;
-}
+  void ParabolicProfile::operator()( const Point &p, 
+				     const Real time, 
+				     libMesh::DenseVector<libMesh::Number> &output )
+  {
+    for( unsigned int i = 0; i < output.size(); i++ )
+      {
+	output(i) = (*this)(p, time);
+      }
+    return;
+  }
 
-libMesh::Number GRINS::ParabolicProfile::operator()( unsigned int i,
-						     const Point &p, 
-						     const Real time )
-{
-  return (*this)(p, time);
-}
+  libMesh::Number ParabolicProfile::operator()( unsigned int i,
+						const Point &p, 
+						const Real time )
+  {
+    return (*this)(p, time);
+  }
+
+} // namespace GRINS

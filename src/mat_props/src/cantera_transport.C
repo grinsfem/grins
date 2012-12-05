@@ -28,7 +28,7 @@
 
 #include "cantera_transport.h"
 
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
 
 namespace GRINS
 {
@@ -141,4 +141,4 @@ namespace GRINS
 
 } // namespace GRINS
 
-#endif //HAVE_CANTERA
+#endif //GRINS_HAVE_CANTERA

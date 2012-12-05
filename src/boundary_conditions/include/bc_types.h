@@ -33,12 +33,5 @@
 namespace GRINS
 {
   typedef int BCType;
-
-  typedef std::pair< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::NeumannFuncObj> > NBCMapPair;
-  typedef std::map< GRINS::VariableIndex, std::tr1::shared_ptr<GRINS::NeumannFuncObj> > NeumannBCsMap;
-
-  typedef std::pair< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainerPair;
-  typedef std::multimap< GRINS::BoundaryID, GRINS::NeumannBCsMap > NBCContainer;
-
 }
 #endif //BC_TYPES_H

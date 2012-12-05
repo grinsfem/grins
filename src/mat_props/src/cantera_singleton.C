@@ -30,7 +30,7 @@
 
 namespace GRINS
 {
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
   //Note the shared_ptr default constructor is such that it looks like a NULL pointer.
   std::tr1::shared_ptr<Cantera::IdealGasMix> CanteraSingleton::_cantera = 
     std::tr1::shared_ptr<Cantera::IdealGasMix>();
@@ -58,5 +58,5 @@ namespace GRINS
     return *(_cantera.get());
   }
 
-#endif //HAVE_CANTERA
+#endif //GRINS_HAVE_CANTERA
 }

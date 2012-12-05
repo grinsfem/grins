@@ -85,7 +85,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/concentric_cylinder_profile.C \
                           $(boundary_conditions_srcdir)/dbc_container.C \
                           $(boundary_conditions_srcdir)/pressure_pinning.C \
-                          $(boundary_conditions_srcdir)/pbc_container.C
+                          $(boundary_conditions_srcdir)/pbc_container.C \
+                          $(boundary_conditions_srcdir)/nbc_container.C
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C \
                 $(utilities_srcdir)/input_utils.C \
@@ -183,9 +184,10 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
                           $(boundary_conditions_incdir)/concentric_cylinder_profile.h \
                           $(boundary_conditions_incdir)/dbc_container.h \
                           $(boundary_conditions_incdir)/pressure_pinning.h \
-                          $(boundary_conditions_incdir)/pbc_container.h
+                          $(boundary_conditions_incdir)/pbc_container.h \
+                          $(boundary_conditions_incdir)/nbc_container.h
 
-utilities_INC = $(utilities_incdir)/grins_version.h \
+utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h \
                 $(utilities_incdir)/physical_constants.h \
                 $(utilities_incdir)/input_utils.h \
                 $(utilities_incdir)/reacting_flow_cache.h \
@@ -270,7 +272,15 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
+AM_CPPFLAGS = -I$(solver_incdir) \
+              -I$(physics_incdir) \
+              -I$(boundary_conditions_incdir) \
+              -I$(utilities_incdir) \
+              -I$(visualization_incdir) \
+              -I$(matprops_incdir) \
+              -I$(bc_handling_incdir) \
+              -I$(qoi_incdir) \
+              -I$(top_builddir)/src/utilities/include #For grins_version.h
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_CPPFLAGS) \

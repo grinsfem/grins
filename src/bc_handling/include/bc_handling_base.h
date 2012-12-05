@@ -40,11 +40,12 @@
 //GRINS
 #include "variable_name_defaults.h"
 #include "var_typedefs.h"
-#include "bc_types.h"
 #include "boundary_conditions.h"
 #include "grins_physics_names.h"
 #include "dbc_container.h"
 #include "pbc_container.h"
+#include "nbc_container.h"
+#include "bc_types.h"
 
 namespace GRINS
 {
@@ -95,36 +96,14 @@ namespace GRINS
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id ) const
     {
-      NeumannBCsMap::const_iterator rit;
-
-      std::pair< NBCContainer::const_iterator, NBCContainer::const_iterator > ret = _neumann_bound_funcs.equal_range(bc_id);
-      for( NBCContainer::const_iterator it = ret.first; it != ret.second; ++it )
-	{
-	  // Here, we use the fact that there's only 1 function per variable.
-	  NeumannBCsMap::const_iterator mit = it->second.find(var_id);
-	  if( mit != it->second.end() )
-	    rit = mit;
-	}
-
-      return rit->second;
+      return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
     }
 
     inline 
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id )
     {
-      NeumannBCsMap::iterator rit;
-
-      std::pair< NBCContainer::iterator, NBCContainer::iterator > ret = _neumann_bound_funcs.equal_range(bc_id);
-      for( NBCContainer::iterator it = ret.first; it != ret.second; ++it )
-	{
-	  // Here, we use the fact that there's only 1 function per variable.
-	  NeumannBCsMap::iterator mit = it->second.find(var_id);
-	  if( mit != it->second.end() )
-	    rit = mit;
-	}
-
-      return rit->second;
+      return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
     }
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
@@ -164,10 +143,8 @@ namespace GRINS
     //! Stash prescribed boundary fluxes
     std::map< GRINS::BoundaryID, libMesh::Point > _q_values;
 
-    //! Map between boundary id and general Neumann boundary functions
-    /*! The user may wish to set a different function for each variable in the physics class. 
-        By design, the user cannot set more than 1 function per variable.*/
-    GRINS::NBCContainer _neumann_bound_funcs;
+    
+    std::map< GRINS::BoundaryID, GRINS::NBCContainer > _neumann_bound_funcs;
 
     std::vector< GRINS::DBCContainer > _dirichlet_bound_funcs;
 

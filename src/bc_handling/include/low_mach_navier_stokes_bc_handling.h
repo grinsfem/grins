@@ -80,7 +80,7 @@ namespace GRINS
 
     enum LMNS_BC_TYPES{NO_SLIP=0, 
 		       PRESCRIBED_VELOCITY, 
-		       INFLOW, 
+		       GENERAL_VELOCITY, 
 		       PARABOLIC_PROFILE, 
 		       ISOTHERMAL_WALL,
 		       GENERAL_ISOTHERMAL_WALL,

@@ -28,13 +28,18 @@
 
 #include "grins_constant_function.h"
 
-GRINS::ConstantFunction::ConstantFunction()
- : _value( -1.0 )
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConstantFunction::~ConstantFunction()
-{
-  return;
-}
+  ConstantFunction::ConstantFunction()
+    : _value( -1.0 )
+  {
+    return;
+  }
+
+  ConstantFunction::~ConstantFunction()
+  {
+    return;
+  }
+
+} // namespace GRINS

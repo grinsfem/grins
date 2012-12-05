@@ -30,13 +30,13 @@
 #define GRINS_CANTERA_SINGLETON_H
 
 // GRINS
-#include "config.h"
+#include "grins_config.h"
 
 // Boost
 #include "boost/tr1/memory.hpp"
 
 // Cantera
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
 #include "cantera/IdealGasMix.h"
 #endif
 
@@ -45,7 +45,7 @@
 
 namespace GRINS
 {
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
 
   class CanteraSingleton
   {
@@ -64,7 +64,7 @@ namespace GRINS
     static std::tr1::shared_ptr<Cantera::IdealGasMix> _cantera;
   };
 
-#endif //HAVE_CANTERA
+#endif //GRINS_HAVE_CANTERA
 
 } // namespace GRINS
 

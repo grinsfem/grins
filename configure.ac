@@ -4,11 +4,15 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.61)
 AC_INIT(grins, 0.3.0, pbauman@ices.utexas.edu)
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADER(config.h)
+
+AC_CONFIG_HEADER(grins_config.h.tmp)
+dnl Prefixes everything in the temporary file with FINS_
+AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
+
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.10 no-define])
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)]) # use silent rules where available - automake 1.11
+AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define color-tests])
+AM_SILENT_RULES(yes)  # use silent rules where available - automake 1.11
 
 LT_INIT
 
@@ -281,17 +285,26 @@ DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen )
 dnl-------------------
 dnl Generate makefiles
 dnl-------------------
+AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	[chmod +x test/cantera_chem_thermo_test.sh])
+AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	[chmod +x test/test_axi_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,      [chmod +x test/test_ns_couette_flow_2d_x.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,      [chmod +x test/test_ns_couette_flow_2d_y.sh])
+AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,        [chmod +x test/test_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,    [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,  [chmod +x test/test_thermally_driven_2d_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,  [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh, [chmod +x test/test_axi_thermally_driven_flow.sh])
+AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
+AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
+
 AC_OUTPUT( Makefile \
-           src/Makefile src/utilities/include/grins_version.h \
+           src/Makefile 
+           src/utilities/include/grins_version.h \
            test/Makefile \
            doxygen/Makefile \
            doxygen/txt_common/about.page \
-           examples/Makefile \
-           examples/cavity_benchmark/Makefile \
-	   examples/rayleigh_taylor/Makefile \
-           examples/mass_injection/Makefile \
-           examples/vortex/Makefile \
-           examples/rlmns/Makefile )
+           examples/Makefile )
 
 
 

@@ -28,58 +28,63 @@
 
 #include "concentric_cylinder_profile.h"
 
-GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( )
-  : FunctionBase<Number>(),
-    _u0(2.0),
-    _r0(1.0),
-    _r1(2.0)
+namespace GRINS
 {
-  return;
-}
 
-GRINS::ConcentricCylinderProfile::ConcentricCylinderProfile( const double u0, 
-							     const double r0, 
-							     const double r1 )
-  : FunctionBase<Number>(),
-    _u0(u0),
-    _r0(r0),
-    _r1(r1)
-{
-  return;
-}
+  ConcentricCylinderProfile::ConcentricCylinderProfile( )
+    : FunctionBase<Number>(),
+      _u0(2.0),
+      _r0(1.0),
+      _r1(2.0)
+  {
+    return;
+  }
 
-GRINS::ConcentricCylinderProfile::~ConcentricCylinderProfile()
-{
-  return;
-}
+  ConcentricCylinderProfile::ConcentricCylinderProfile( const double u0, 
+							const double r0, 
+							const double r1 )
+    : FunctionBase<Number>(),
+      _u0(u0),
+      _r0(r0),
+      _r1(r1)
+  {
+    return;
+  }
 
-libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::ConcentricCylinderProfile::clone() const
-{
-  return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
-}
+  ConcentricCylinderProfile::~ConcentricCylinderProfile()
+  {
+    return;
+  }
 
-libMesh::Number GRINS::ConcentricCylinderProfile::operator()( const Point &p, 
-							      const Real )
-{
-  const double r = p(0);
+  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > ConcentricCylinderProfile::clone() const
+  {
+    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
+  }
+
+  libMesh::Number ConcentricCylinderProfile::operator()( const Point &p, 
+							 const Real )
+  {
+    const double r = p(0);
   
-  return this->eval( _u0, _r0, _r1, r );
-}
+    return this->eval( _u0, _r0, _r1, r );
+  }
 
-void GRINS::ConcentricCylinderProfile::operator()( const Point &p, 
-						   const Real time, 
-						   libMesh::DenseVector<libMesh::Number> &output )
-{
-  for( unsigned int i = 0; i < output.size(); i++ )
-    {
-      output(i) = (*this)(p, time);
-    }
-  return;
-}
+  void ConcentricCylinderProfile::operator()( const Point &p, 
+					      const Real time, 
+					      libMesh::DenseVector<libMesh::Number> &output )
+  {
+    for( unsigned int i = 0; i < output.size(); i++ )
+      {
+	output(i) = (*this)(p, time);
+      }
+    return;
+  }
 
-libMesh::Number GRINS::ConcentricCylinderProfile::operator()( unsigned int i,
-							      const Point &p, 
-							      const Real time )
-{
-  return (*this)(p, time);
-}
+  libMesh::Number ConcentricCylinderProfile::operator()( unsigned int i,
+							 const Point &p, 
+							 const Real time )
+  {
+    return (*this)(p, time);
+  }
+
+} // namespace GRINS

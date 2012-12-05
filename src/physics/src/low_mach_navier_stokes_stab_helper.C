@@ -28,13 +28,18 @@
 
 #include "low_mach_navier_stokes_stab_helper.h"
 
-GRINS::LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper(const GetPot& input)
-  : IncompressibleNavierStokesStabilizationHelper(input)
+namespace GRINS
 {
-  return;
-}
 
-GRINS::LowMachNavierStokesStabilizationHelper::~LowMachNavierStokesStabilizationHelper()
-{
-  return;
-}
+  LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper(const GetPot& input)
+    : IncompressibleNavierStokesStabilizationHelper(input)
+  {
+    return;
+  }
+
+  LowMachNavierStokesStabilizationHelper::~LowMachNavierStokesStabilizationHelper()
+  {
+    return;
+  }
+
+} // namespace GRINS

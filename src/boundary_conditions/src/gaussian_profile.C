@@ -28,18 +28,23 @@
 
 #include "gaussian_profile.h"
 
-GRINS::GaussianProfile::GaussianProfile( const double a, const double mu, const double sigma,
-					 const double b )
-  : FunctionBase<Number>(),
-    _a(a),
-    _mu(mu),
-    _variance(sigma*sigma),
-    _b(b)
+namespace GRINS
 {
-  return;
-}
 
-GRINS::GaussianProfile::~GaussianProfile()
-{
-  return;
-}
+  GaussianProfile::GaussianProfile( const double a, const double mu, const double sigma,
+				    const double b )
+    : libMesh::FunctionBase<Number>(),
+      _a(a),
+      _mu(mu),
+      _variance(sigma*sigma),
+      _b(b)
+  {
+    return;
+  }
+
+  GaussianProfile::~GaussianProfile()
+  {
+    return;
+  }
+
+} // namespace GRINS

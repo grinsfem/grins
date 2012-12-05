@@ -38,12 +38,12 @@
 #include "cantera_singleton.h"
 
 // Cantera
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
 // Needs to be included *after* cantera_singleton.h (i.e. cantera/IdealGasMix.h)
 #include "cantera/transport.h"
 #endif
 
-#ifdef HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
 
 namespace GRINS
 {
@@ -78,6 +78,6 @@ namespace GRINS
 
 } // namespace GRINS
 
-#endif // HAVE_CANTERA
+#endif // GRINS_HAVE_CANTERA
 
 #endif // GRINS_CANTERA_TRANSPORT_H

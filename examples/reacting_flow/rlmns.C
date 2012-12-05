@@ -25,10 +25,9 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#include "config.h"
+#include "grins_config.h"
 
 #include <iostream>
-#include <cmath>
 
 // GRINS
 #include "simulation.h"
@@ -89,10 +88,12 @@ int main(int argc, char* argv[])
       const libMesh::System& system = es->get_system(system_name);
       
       Parameters &params = es->parameters;
-      Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
 
-      Real& dummy_p0 = params.set<Real>("p0_init");
-      dummy_p0 = p0_init;
+      Real& w_N2 = params.set<Real>( "w_N2" );
+      w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 0 );
+      
+      Real& w_N = params.set<Real>( "w_N" );
+      w_N = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 1 );
 
       system.project_solution( initial_values, NULL, params );
     }
@@ -104,7 +105,7 @@ int main(int argc, char* argv[])
   grins.attach_grvy_timer( &grvy_timer );
 #endif
 
-grins.run();
+  grins.run();
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();
@@ -115,22 +116,19 @@ grins.run();
   return 0;
 }
 
-Real initial_values( const Point& p, const Parameters &params, 
+Real initial_values( const Point&, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
   Real value = 0.0;
 
-  if( unknown_name == "T" )
-    {
-      if( p(1) >= 0.5 ) value = 2.0;
-      else value = 1.0;
-    }
-  else if( unknown_name == "v" )
-    {
-      value = -0.00025*std::sqrt(5.0/3.0)*std::sin(4*3.14159265*p(0));
-    }
-  else if( unknown_name == "p0" )
-    value = params.get<Real>("p0_init");
+  if( unknown_name == "w_N2" )
+    value = params.get<Real>("w_N2");
+
+  else if( unknown_name == "w_N" )
+    value = params.get<Real>("w_N");
+
+  else if( unknown_name == "T" )
+    value = 1200;
 
   else
     value = 0.0;

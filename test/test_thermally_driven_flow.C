@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "config.h"
+#include "grins_config.h"
 
 #include <iostream>
 
@@ -39,22 +39,50 @@
 #include "exact_solution.h"
 
 // GRVY
-#ifdef HAVE_GRVY
+#ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
 
+namespace GRINS
+{
+  class ThermallyDrivenFlowTestBCFactory : public BoundaryConditionsFactory
+  {
+  public:
+    ThermallyDrivenFlowTestBCFactory( const GetPot& input ): _input(input){};
+    virtual ~ThermallyDrivenFlowTestBCFactory(){};
+    
+    virtual std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann( libMesh::EquationSystems& equation_system );
+  private:
+    const GetPot& _input;
+  };
+
+  class ZeroFluxBC : public NeumannFuncObj
+  {
+  public:
+
+    ZeroFluxBC(){};
+    virtual ~ZeroFluxBC(){};
+
+    virtual libMesh::Point value( const libMesh::FEMContext&, const unsigned int )
+    { return libMesh::Point(0.0,0.0,0.0); }
+
+    virtual libMesh::Point derivative( const libMesh::FEMContext&, const unsigned int )
+    { return libMesh::Point(0.0,0.0,0.0); }
+  };
+} // namespace GRINS
+
 int main(int argc, char* argv[]) 
 {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   GRVY::GRVY_Timer_Class grvy_timer;
   grvy_timer.Init("GRINS Timer");
 #endif
 
   // Check command line count.
-  if( argc < 2 )
+  if( argc < 3 )
     {
       // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
+      std::cerr << "Error: Must specify libMesh input file and solution file." << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
@@ -64,7 +92,7 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
@@ -73,10 +101,12 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
+  sim_builder.attach_bc_factory( std::tr1::shared_ptr<GRINS::BoundaryConditionsFactory>( new GRINS::ThermallyDrivenFlowTestBCFactory( libMesh_inputfile ) ) );
+
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder );
 
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
 
   // Attach GRVY timer to solver
@@ -97,7 +127,7 @@ int main(int argc, char* argv[])
   EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
-  std::string solution_file = libMesh_inputfile( "ExactSolution/solution_file", "DIE!" );
+  std::string solution_file = std::string(argv[2]);
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );
@@ -162,4 +192,34 @@ int main(int argc, char* argv[])
     }
 
  return return_flag;
+}
+
+
+std::map< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTestBCFactory::build_neumann( libMesh::EquationSystems& es )
+{
+  std::map< std::string, GRINS::NBCContainer > nbcs;
+
+  /* Hack to work around the fact that we're using this test for the axisymmetric
+     case as well the fact I'm and idiot in the design of the axisymmetric cases. */
+  if( _input("Physics/enabled_physics", "DIE!", 1) != std::string("HeatTransfer") )
+    {
+      // Do nothing.
+    }
+  else
+    {
+      // These are hardcoded for the 2D and 3D tests, *not* the axisymmetric test.
+      const libMesh::System& system = es.get_system("GRINS");
+      const GRINS::VariableIndex T_var = system.variable_number("T");
+
+      std::tr1::shared_ptr<GRINS::NeumannFuncObj> func( new ZeroFluxBC );
+
+      GRINS::NBCContainer nbc_container;
+      nbc_container.set_bc_id(0);
+      nbc_container.add_var_func_pair( T_var, func );
+
+  
+      nbcs.insert( std::pair< std::string, GRINS::NBCContainer >( "HeatTransfer", nbc_container ) );
+    }
+
+  return nbcs;
 }

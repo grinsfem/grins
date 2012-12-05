@@ -28,57 +28,62 @@
 
 #include "heat_transfer_stab_base.h"
 
-GRINS::HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
-								     const GetPot& input )
-  : GRINS::HeatTransferBase(physics_name,input),
-    _stab_helper( input )
+namespace GRINS
 {
-  this->read_input_options(input);
 
-  return;
-}
+  HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
+								const GetPot& input )
+    : HeatTransferBase(physics_name,input),
+      _stab_helper( input )
+  {
+    this->read_input_options(input);
 
-GRINS::HeatTransferStabilizationBase::~HeatTransferStabilizationBase()
-{
-  return;
-}
+    return;
+  }
 
-void GRINS::HeatTransferStabilizationBase::read_input_options( const GetPot& )
-{
-  return;
-}
+  HeatTransferStabilizationBase::~HeatTransferStabilizationBase()
+  {
+    return;
+  }
 
-void GRINS::HeatTransferStabilizationBase::init_context( libMesh::DiffContext &context )
-{
-  // First call base class
-  GRINS::HeatTransferBase::init_context(context);
+  void HeatTransferStabilizationBase::read_input_options( const GetPot& )
+  {
+    return;
+  }
 
-  libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+  void HeatTransferStabilizationBase::init_context( libMesh::DiffContext &context )
+  {
+    // First call base class
+    HeatTransferBase::init_context(context);
 
-  // We also need second derivatives, so initialize those.
-  c.element_fe_var[this->_T_var]->get_d2phi();
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
-  return;
-}
+    // We also need second derivatives, so initialize those.
+    c.element_fe_var[this->_T_var]->get_d2phi();
 
-libMesh::Real GRINS::HeatTransferStabilizationBase::compute_res_steady( libMesh::FEMContext& c,
-									unsigned int qp ) const
-{
-  libMesh::Gradient grad_T = c.fixed_interior_gradient(this->_T_var, qp);
-  libMesh::Tensor hess_T = c.fixed_interior_hessian(this->_T_var, qp);
+    return;
+  }
 
-  libMesh::RealGradient rhocpU( _rho*_Cp*c.fixed_interior_value(this->_u_var, qp), 
-				_rho*_Cp*c.fixed_interior_value(this->_v_var, qp) );
-  if(this->_dim == 3)
-    rhocpU(2) = _rho*_Cp*c.fixed_interior_value(this->_w_var, qp);
+  libMesh::Real HeatTransferStabilizationBase::compute_res_steady( libMesh::FEMContext& c,
+								   unsigned int qp ) const
+  {
+    libMesh::Gradient grad_T = c.fixed_interior_gradient(this->_T_var, qp);
+    libMesh::Tensor hess_T = c.fixed_interior_hessian(this->_T_var, qp);
 
-  return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
-}
+    libMesh::RealGradient rhocpU( _rho*_Cp*c.fixed_interior_value(this->_u_var, qp), 
+				  _rho*_Cp*c.fixed_interior_value(this->_v_var, qp) );
+    if(this->_dim == 3)
+      rhocpU(2) = _rho*_Cp*c.fixed_interior_value(this->_w_var, qp);
 
-libMesh::Real GRINS::HeatTransferStabilizationBase::compute_res_transient( libMesh::FEMContext& c,
-									   unsigned int qp ) const
-{
-  libMesh::Real T_dot = c.interior_value(this->_T_var, qp);
+    return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+  }
 
-  return _rho*_Cp*T_dot;
-}
+  libMesh::Real HeatTransferStabilizationBase::compute_res_transient( libMesh::FEMContext& c,
+								      unsigned int qp ) const
+  {
+    libMesh::Real T_dot = c.interior_value(this->_T_var, qp);
+
+    return _rho*_Cp*T_dot;
+  }
+
+} // namespace GRINS
