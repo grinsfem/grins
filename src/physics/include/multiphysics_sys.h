@@ -125,6 +125,9 @@ namespace GRINS
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context ); 
 
+    //! Query to check if a particular physics has been enabled
+    bool has_physics( const std::string physics_name );
+
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
 #ifdef GRINS_USE_GRVY_TIMERS

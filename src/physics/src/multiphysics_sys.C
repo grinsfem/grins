@@ -249,6 +249,15 @@ namespace GRINS
     return _physics_list[physics_name];
   }
 
+  bool MultiphysicsSystem::has_physics( const std::string physics_name )
+  {
+    bool has_physics = false;
+
+    if( _physics_list.find(physics_name) != _physics_list.end() )
+      has_physics = true;
+
+    return has_physics;
+  }
 
 #ifdef GRINS_USE_GRVY_TIMERS
   void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
