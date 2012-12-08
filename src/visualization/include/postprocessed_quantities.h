@@ -31,19 +31,43 @@
 
 namespace GRINS
 {
-  
-  class PostProcessedQuantities
+  template<class NumericType>
+  class PostProcessedQuantities : libMesh::FEMFunctionBase<NumericType>
   {
   public:
 
     PostProcessedQuantities( const GetPot& input );
     virtual ~PostProcessedQuantities();
 
+    /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
+    virtual void init_context( const libMesh::FEMContext & context);
+
+    virtual AutoPtr<libMesh::FEMFunctionBase<NumericType> > clone() const
+    { return AutoPtr<libMesh::FEMFunctionBase<NumericType> >( new PostProcessedQuantities(*this) ); }
+
+    virtual NumericType operator()( const libMesh::FEMContext& context, 
+				    const libMesh::Point& p,
+				    const Real time = 0. );
+
+    virtual void operator()( const libMesh::FEMContext& context, 
+			     const libMesh::Point& p,
+			     const Real time,
+			     libMesh::DenseVector<NumericType>& output );
+
+    virtual NumericType component( const libMesh::FEMContext& context, 
+				   unsigned int i,
+				   const libMesh::Point& p,
+				   Real time=0. );
+
+    /* Methods for GRINS usage below */
     virtual void initialize( const MultiphysicsSystem& system,
 			     const libMesh::EquationSystems& equation_systems );
 
     virtual void update_quantities( const MultiphysicsSystem& system,
 				    const libMesh::EquationSystems& equation_systems );
+
+    unsigned int n_quantities() const
+    {return _quantities.size();}
 
   protected:
 
@@ -71,6 +95,8 @@ namespace GRINS
     std::vector<QuantityList> _quantities;
     std::map<std::string, QuantityList> _quantity_name_map;
     
+    MultiphysicsSystem* _multiphysics_sys;
+    std::tr1::shared_ptr<libMesh::FEMContext> _multiphysics_context;
 
     VariableIndex _u_var, _v_var, _w_var;
     VariableIndex _T_var;
