@@ -13,6 +13,7 @@ examplesdir      = $(prefix)/examples
 #examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
 #                  $(top_srcdir)/examples/rayleigh_taylor
 
+# includedir = $(prefix)/include/grins
 include_HEADERS = $(top_builddir)/grins_config.h
 
 # Eliminate .svn directories in dist tarball
@@ -54,6 +55,7 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        configure                                \
                        grins_config.h                           \
                        grins_config.h.tmp.in                    \
+                       grins_config.h.tmp.in~                   \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \
