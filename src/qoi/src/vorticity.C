@@ -99,8 +99,8 @@ namespace GRINS
 	  {
 	    Gradient grad_u = 0.;
 	    Gradient grad_v = 0.;
-	    c.interior_gradient<Real>( this->_u_var, qp, grad_u );
-	    c.interior_gradient<Real>( this->_v_var, qp, grad_v );
+	    c.interior_gradient( this->_u_var, qp, grad_u );
+	    c.interior_gradient( this->_v_var, qp, grad_v );
 	    qoi += (grad_v(0) - grad_u(1)) * JxW[qp];
 	  }
       }
