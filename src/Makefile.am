@@ -230,6 +230,7 @@ qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_names.h \
           $(qoi_incdir)/vorticity.h
 
+includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
                   $(bc_handling_INC) $(qoi_INC)
@@ -244,7 +245,7 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(qoi_SRC)
 
 if LIBMESH_LIBTOOL
-   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
+   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
 else
    libgrins_la_LIBADD = $(LIBMESH_LDFLAGS)
 endif

@@ -35,7 +35,7 @@ namespace GRINS
 {
   //! Default physics variable names
   /*!
-    These are the default string names for all the available physcis
+    These are the default string names for all the available physics
     variables. These can be reset by the user, but we provide sane defaults
     here.
    */

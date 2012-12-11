@@ -12,6 +12,7 @@ contribm4_DATA = $(top_srcdir)/contrib/m4/*
 #doxygendir = $(prefix)/doxygen
 #doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 
+includedir = $(prefix)/include/grins
 include_HEADERS = $(top_builddir)/grins_config.h
 
 # Eliminate .svn directories in dist tarball
@@ -53,6 +54,7 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        configure                                \
                        grins_config.h                           \
                        grins_config.h.tmp.in                    \
+                       grins_config.h.tmp.in~                   \
                        Makefile.in                              \
                        src/Makefile.in                          \
                        test/Makefile.in                         \

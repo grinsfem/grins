@@ -119,7 +119,7 @@ namespace GRINS
 	      {
 		// Get the solution value at the quadrature point
 		Gradient grad_T = 0.0; 
-		c.side_gradient<Real>(this->_T_var, qp, grad_T);
+		c.side_gradient(this->_T_var, qp, grad_T);
 		
 		// Update the elemental increment dR for each qp
 		qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
