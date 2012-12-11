@@ -94,6 +94,7 @@ namespace GRINS
 
     std::vector<QuantityList> _quantities;
     std::map<std::string, QuantityList> _quantity_name_map;
+    std::map<VariableIndex,QuantityList> _quantity_var_map;
     
     MultiphysicsSystem* _multiphysics_sys;
     std::tr1::shared_ptr<libMesh::FEMContext> _multiphysics_context;

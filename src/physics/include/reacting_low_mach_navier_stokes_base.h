@@ -68,44 +68,23 @@ namespace GRINS
     // Context initialization
     virtual void init_context( libMesh::DiffContext &context );
 
-    protected:
+    unsigned int n_species() const;
 
-    inline
-    libMesh::Real compute_rho( libMesh::Real T, libMesh::Real p0,
-			       const std::vector<Real>& mass_fractions) const
-    {
-      return p0/(this->_gas_mixture.R(mass_fractions)*T);
-    }
+    Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
 
-    inline 
-    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const
-    {
-      libMesh::Real p0;
-      if( this->_enable_thermo_press_calc )
-	{
-	  p0 = c.interior_value( _p0_var, qp );
-	}
-      else
-	{
-	  p0 = _p0;
-	}
-      return p0;
-    }
+    void mass_fractions( const libMesh::Point& p, const libMesh::FEMContext& c
+			 std::vector<Real>& mass_fracs ) const;
 
-    inline 
-    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const
-    {
-      libMesh::Real p0;
-      if( this->_enable_thermo_press_calc )
-	{
-	  p0 = c.fixed_interior_value( _p0_var, qp );
-	}
-      else
-	{
-	  p0 = _p0;
-	}
-      return p0;
-    }
+    libMesh::Real rho( libMesh::Real T, libMesh::Real p0,
+		       const std::vector<Real>& mass_fractions) const;
+
+    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const;
+ 
+    libMesh::Real get_p0_steady( libMesh::FEMContext& c, const libMesh::point p ) const;
+
+    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const;
+
+  protected:
 
     void build_reacting_flow_cache( const libMesh::FEMContext& c, 
 				    ReactingFlowCache& cache, unsigned int qp );
@@ -149,7 +128,72 @@ namespace GRINS
 
     ReactingLowMachNavierStokesBase();
 
-  };
+  }; // class ReactingLowMachNavierStokesBase
+
+  inline
+  unsigned int ReactingLowMachNavierStokesBase::n_species() const
+  { return _n_species; }
+
+  inline
+  Real ReactingLowMachNavierStokesBase::T( const libMesh::Point& p, 
+					   const libMesh::FEMContext& c ) const
+  { return c.point_value(_T_var,p); }
+
+  inline
+  libMesh::Real ReactingLowMachNavierStokesBase::rho( libMesh::Real T, 
+						      libMesh::Real p0,
+						      const std::vector<Real>& mass_fractions) const
+  {
+    return p0/(this->_gas_mixture.R(mass_fractions)*T);
+  }
+
+  inline
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( libMesh::FEMContext& c, 
+								unsigned int qp ) const
+  {
+    libMesh::Real p0;
+    if( this->_enable_thermo_press_calc )
+      {
+	p0 = c.interior_value( _p0_var, qp );
+      }
+    else
+      {
+	p0 = _p0;
+      }
+    return p0;
+  }
+
+  inline
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( libMesh::FEMContext& c, 
+								const libMesh::point p ) const
+  {
+    libMesh::Real p0;
+    if( this->_enable_thermo_press_calc )
+      {
+	p0 = c.point_value( _p0_var, p );
+      }
+    else
+      {
+	p0 = _p0;
+      }
+    return p0;
+  }
+
+  inline
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_transient( libMesh::FEMContext& c,
+								   unsigned int qp ) const
+  {
+    libMesh::Real p0;
+    if( this->_enable_thermo_press_calc )
+      {
+	p0 = c.fixed_interior_value( _p0_var, qp );
+      }
+    else
+      {
+	p0 = _p0;
+      }
+    return p0;
+  }
 
 } // namespace GRINS
 

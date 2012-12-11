@@ -95,7 +95,8 @@ namespace GRINS
 			    << std::endl;
 		  libmesh_error();
 		}
-	      output_system.add_variable("rho", FIRST);
+	      _T_var = system.variable_number("T");
+	      _quantity_var_map.insert( std::make_pair<output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY> );
 	    }
 	    break;
 	    
@@ -108,25 +109,45 @@ namespace GRINS
 			    << std::endl;
 		  libmesh_error();
 		}
-	      output_system.add_variable("rho", FIRST);
+	      _T_var = system.variable_number("T");
+	      _quantity_var_map.insert( std::make_pair<output_system.add_variable("rho", FIRST), MIXTURE_DENSITY> );
 	    }
 	    break;
 	    
 	  case(PERFECT_GAS_VISCOSITY):
+	    {
+	      libmesh_not_implemented();
+	    }
+	    break;
 	  case(SPECIES_VISCOSITY):
 	  case(MIXTURE_VISCOSITY):
 	  case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
+	    {
+	      libmesh_not_implemented();
+	    }
+	    break;
 	  case(SPECIES_THERMAL_CONDUCTIVITY):
 	  case(MIXTURE_THERMAL_CONDUCTIVITY):
 	  case(PERFECT_GAS_SPECIFIC_HEAT_P):
+	    {
+	      libmesh_not_implemented();
+	    }
+	    break;
 	  case(SPECIES_SPECIFIC_HEAT_P):
 	  case(MIXTURE_SPECIFIC_HEAT_P):
 	  case(PERFECT_GAS_SPECIFIC_HEAT_V):
+	    {
+	      libmesh_not_implemented();
+	    }
+	    break;
 	  case(SPECIES_SPECIFIC_HEAT_V):
 	  case(MIXTURE_SPECIFIC_HEAT_P):
 	  case(MOLE_FRACTIONS):
 	  case(OMEGA_DOT):
-	       break;
+	    {
+	      libmesh_not_implemented();
+	    }
+	    break;
 
 	  default:
 	    {
@@ -142,14 +163,97 @@ namespace GRINS
 
   template<class NumericType>
   NumericType PostProcessedQuantities<NumericType>::component( const libMesh::FEMContext& context, 
-							       unsigned int i,
+							       unsigned int var,
 							       const libMesh::Point& p,
 							       Real /*time*/ )
   {
-    // Check if the Elem* is the same between the incoming context and the cached one. If not,
-    // reinit the cached MultiphysicsSystem context
+    // Check if the Elem is the same between the incoming context and the cached one.
+    // If not, reinit the cached MultiphysicsSystem context
+    if( context.get_elem() != _multiphysics_context->get_elem() )
+      {
+	_multiphysics_context->pre_fe_reinit(_multiphysics_sys,context.get_elem());
+	_multiphysics_context->elem_fe_reinit();
+      }
 
     NumericType value = 0.0;
+
+    switch( _quantity_var_map.find(var)->second )
+      {
+
+      case(PERFECT_GAS_DENSITY):
+	{
+	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
+	  LowMachNavierStokes* low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
+
+	  Real p0 = low_mach_physics->get_p0_steady(var,p);
+	  
+	  Real T = _multiphysics_context.point_value(_T_var,p);
+
+	  value = low_mach_physics->compute_rho(T,p0);
+	}
+	break;
+	    
+      case(MIXTURE_DENSITY):
+	{
+	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
+	  LowMachNavierStokes* reacting_low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
+	  
+	  Real p0 = reacting_low_mach_physics->get_p0_steady(var,p);
+	  
+	  Real T = _multiphysics_context.point_value(_T_var,p);
+
+	  std::vector<Real> mass_fracs(reacting_low_mach_physics->n_species());
+	  for( unsigned int s = 0; s < reacting_low_mach_physics->n_species(); s++ )
+	    {
+	      mass_fracs[s] = _multiphysics_context.point_value(_species_vars[s],p);
+	    }
+	  
+	  value = reacting_low_mach_physics->compute_rho(T,p0,mass_fracs);
+	}
+	break;
+	    
+      case(PERFECT_GAS_VISCOSITY):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
+      case(SPECIES_VISCOSITY):
+      case(MIXTURE_VISCOSITY):
+      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
+	{
+	  libmesh_not_implemented();
+	}
+      break;
+      case(SPECIES_THERMAL_CONDUCTIVITY):
+      case(MIXTURE_THERMAL_CONDUCTIVITY):
+      case(PERFECT_GAS_SPECIFIC_HEAT_P):
+	{
+	  libmesh_not_implemented();
+	}
+      break;
+      case(SPECIES_SPECIFIC_HEAT_P):
+      case(MIXTURE_SPECIFIC_HEAT_P):
+      case(PERFECT_GAS_SPECIFIC_HEAT_V):
+	{
+	  libmesh_not_implemented();
+	}
+      break;
+      case(SPECIES_SPECIFIC_HEAT_V):
+      case(MIXTURE_SPECIFIC_HEAT_P):
+      case(MOLE_FRACTIONS):
+      case(OMEGA_DOT):
+	{
+	  libmesh_not_implemented();
+	}
+      break;
+
+      default:
+	{
+	  std::cerr << "Error: Invalid quantity " << *it << std::endl;
+	  libmesh_error();
+	}
+
+      } // end switch
 
     return value;
   }
