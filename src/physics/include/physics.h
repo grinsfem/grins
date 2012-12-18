@@ -47,6 +47,7 @@
 #include "boundary_conditions.h"
 #include "grins_physics_names.h"
 #include "bc_handling_base.h"
+#include "cached_values.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
@@ -146,6 +147,13 @@ namespace GRINS
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
+
+    virtual void init_cache( CachedValues& cache );
+
+    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache );
+
+    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache,
+				const std::vector<libMesh::Point>& points );
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );

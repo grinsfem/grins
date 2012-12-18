@@ -104,6 +104,22 @@ namespace GRINS
     return;
   }
 
+  void Physics::init_cache( CachedValues& )
+  {
+    return;
+  }
+
+  void Physics::compute_cache( libMesh::FEMContext&, CachedValues& )
+  {
+    return;
+  }
+
+  void Physics::compute_cache( libMesh::FEMContext&, CachedValues&,
+			       const std::vector<libMesh::Point>& )
+  {
+    return;
+  }
+
 #ifdef GRINS_USE_GRVY_TIMERS
   void Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {
