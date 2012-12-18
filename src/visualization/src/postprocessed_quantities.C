@@ -44,10 +44,10 @@ namespace GRINS
 
     for( unsigned int n = 0; n < n_quantities; n++ )
       {
-	names[n] = input("vis-options/output_vars", "DIE!", i);
+	names[n] = input("vis-options/output_vars", "DIE!", n);
 	
-	std::map<std::string, QuantityList>::const_iterator name_it = 
-	  _quantity_name_map.find(names[n])->second;
+	typename std::map<std::string, QuantityList>::const_iterator name_it = 
+	  _quantity_name_map.find(names[n]);
 	
 	if( name_it != _quantity_name_map.end() )
 	  {
@@ -71,8 +71,8 @@ namespace GRINS
   }
 
   template<class NumericType>
-  void PostProcessedQuantities<NumericType>::initialize( const MultiphysicsSystem& system,
-							 const libMesh::EquationSystems& equation_systems )
+  void PostProcessedQuantities<NumericType>::initialize( MultiphysicsSystem& system,
+							 libMesh::EquationSystems& equation_systems )
   {
     // Need to cache the MultiphysicsSystem
     _multiphysics_sys = &system;
@@ -81,7 +81,7 @@ namespace GRINS
 
     // Do sanity check for each of the variables and add variables to the output system as well as
     // cache needed VariableIndex for each of the variables needed from the MultiphysicsSystem
-    for( std::vector<QuantityList>::const_iterator it = _quantities.begin();
+    for( typename std::vector<QuantityList>::const_iterator it = _quantities.begin();
 	 it != _quantities.end(); it++ )
       {
 	switch( *it )
@@ -95,8 +95,7 @@ namespace GRINS
 			    << std::endl;
 		  libmesh_error();
 		}
-	      _T_var = system.variable_number("T");
-	      _quantity_var_map.insert( std::make_pair<output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY> );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
 	    }
 	    break;
 	    
@@ -109,8 +108,7 @@ namespace GRINS
 			    << std::endl;
 		  libmesh_error();
 		}
-	      _T_var = system.variable_number("T");
-	      _quantity_var_map.insert( std::make_pair<output_system.add_variable("rho", FIRST), MIXTURE_DENSITY> );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
 	    }
 	    break;
 	    
@@ -141,7 +139,7 @@ namespace GRINS
 	    }
 	    break;
 	  case(SPECIES_SPECIFIC_HEAT_V):
-	  case(MIXTURE_SPECIFIC_HEAT_P):
+	  case(MIXTURE_SPECIFIC_HEAT_V):
 	  case(MOLE_FRACTIONS):
 	  case(OMEGA_DOT):
 	    {
@@ -162,53 +160,63 @@ namespace GRINS
   }
 
   template<class NumericType>
+  void PostProcessedQuantities<NumericType>::update_quantities( const MultiphysicsSystem& system,
+								libMesh::EquationSystems& equation_systems )
+  {
+    libmesh_not_implemented();
+    return;
+  }
+  
+
+  template<class NumericType>
   NumericType PostProcessedQuantities<NumericType>::component( const libMesh::FEMContext& context, 
-							       unsigned int var,
+							       unsigned int component,
 							       const libMesh::Point& p,
 							       Real /*time*/ )
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
-    if( context.get_elem() != _multiphysics_context->get_elem() )
+    if( &(context.get_elem()) != &(_multiphysics_context->get_elem()) )
       {
-	_multiphysics_context->pre_fe_reinit(_multiphysics_sys,context.get_elem());
+	_multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
 	_multiphysics_context->elem_fe_reinit();
       }
 
     NumericType value = 0.0;
 
-    switch( _quantity_var_map.find(var)->second )
+    switch( _quantity_var_map.find(component)->second )
       {
 
       case(PERFECT_GAS_DENSITY):
 	{
 	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
+	  /*
 	  LowMachNavierStokes* low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
 
-	  Real p0 = low_mach_physics->get_p0_steady(var,p);
+	  Real p0 = low_mach_physics->get_p0_steady(_multiphysics_context,p);
 	  
-	  Real T = _multiphysics_context.point_value(_T_var,p);
+	  Real T = low_mach_physics->T(p,_multiphysics_context);
 
-	  value = low_mach_physics->compute_rho(T,p0);
+	  value = low_mach_physics->rho(T,p0);
+	  */
 	}
 	break;
 	    
       case(MIXTURE_DENSITY):
 	{
 	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
+	  /*
 	  LowMachNavierStokes* reacting_low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
 	  
-	  Real p0 = reacting_low_mach_physics->get_p0_steady(var,p);
+	  Real p0 = reacting_low_mach_physics->get_p0_steady(_multiphysics_context,p);
 	  
-	  Real T = _multiphysics_context.point_value(_T_var,p);
+	  Real T = reacting_low_mach_physics->T();
 
 	  std::vector<Real> mass_fracs(reacting_low_mach_physics->n_species());
-	  for( unsigned int s = 0; s < reacting_low_mach_physics->n_species(); s++ )
-	    {
-	      mass_fracs[s] = _multiphysics_context.point_value(_species_vars[s],p);
-	    }
+	  reacting_low_mach_physics->mass_fractions(p,_multiphysics_context ,mass_fracs);
 	  
-	  value = reacting_low_mach_physics->compute_rho(T,p0,mass_fracs);
+	  value = reacting_low_mach_physics->rho(T,p0,mass_fracs);
+	  */
 	}
 	break;
 	    
@@ -239,7 +247,7 @@ namespace GRINS
 	}
       break;
       case(SPECIES_SPECIFIC_HEAT_V):
-      case(MIXTURE_SPECIFIC_HEAT_P):
+      case(MIXTURE_SPECIFIC_HEAT_V):
       case(MOLE_FRACTIONS):
       case(OMEGA_DOT):
 	{
@@ -249,7 +257,7 @@ namespace GRINS
 
       default:
 	{
-	  std::cerr << "Error: Invalid quantity " << *it << std::endl;
+	  std::cerr << "Error: Invalid quantity " << _quantity_var_map.find(component)->second << std::endl;
 	  libmesh_error();
 	}
 
@@ -297,13 +305,13 @@ namespace GRINS
   }
 
   template<class NumericType>
-  void PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext&, const libMesh::Point& p,
+  void PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext& context, const libMesh::Point& p,
 							 const Real time,
 							 libMesh::DenseVector<NumericType>& output )
   {
     for( unsigned int i = 0; i != output.size(); i++ )
       {
-	output[i] = this->component(context,i,p,time);
+	output(i) = this->component(context,i,p,time);
       }
     return;
   }
@@ -318,6 +326,6 @@ namespace GRINS
   }
 
   // Instantiate
-  class template PostProcessedQuantities<Number>;
+  template class PostProcessedQuantities<Number>;
 
 } // namespace GRINS

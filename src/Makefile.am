@@ -95,7 +95,8 @@ utilities_SRC = $(utilities_srcdir)/grins_version.C \
 visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
                     $(visualization_srcdir)/unsteady_visualization.C \
                     $(visualization_srcdir)/visualization.C \
-                    $(visualization_srcdir)/visualization_factory.C
+                    $(visualization_srcdir)/visualization_factory.C \
+                    $(visualization_srcdir)/postprocessed_quantities.C
 
 matprops_SRC = $(matprops_srcdir)/grins_constant_function.C \
                $(matprops_srcdir)/constant_conductivity.C   \
@@ -196,7 +197,8 @@ utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h \
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
                     $(visualization_incdir)/visualization.h \
-                    $(visualization_incdir)/visualization_factory.h
+                    $(visualization_incdir)/visualization_factory.h \
+                    $(visualization_incdir)/postprocessed_quantities.h
 
 matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/constant_conductivity.h   \

@@ -29,6 +29,16 @@
 #ifndef GRINS_POSTPROCESSED_QUANTITIES_H
 #define GRINS_POSTPROCESSED_QUANTITIES_H
 
+//libMesh
+#include "getpot.h"
+#include "fem_function_base.h"
+#include "equation_systems.h"
+
+//GRINS
+#include "multiphysics_sys.h"
+#include "low_mach_navier_stokes.h"
+#include "reacting_low_mach_navier_stokes.h"
+
 namespace GRINS
 {
   template<class NumericType>
@@ -60,11 +70,11 @@ namespace GRINS
 				   Real time=0. );
 
     /* Methods for GRINS usage below */
-    virtual void initialize( const MultiphysicsSystem& system,
-			     const libMesh::EquationSystems& equation_systems );
+    virtual void initialize( MultiphysicsSystem& system,
+			     libMesh::EquationSystems& equation_systems );
 
     virtual void update_quantities( const MultiphysicsSystem& system,
-				    const libMesh::EquationSystems& equation_systems );
+				    libMesh::EquationSystems& equation_systems );
 
     unsigned int n_quantities() const
     {return _quantities.size();}
@@ -88,7 +98,7 @@ namespace GRINS
 		       MIXTURE_SPECIFIC_HEAT_P,
 		       PERFECT_GAS_SPECIFIC_HEAT_V,
 		       SPECIES_SPECIFIC_HEAT_V,
-		       MIXTURE_SPECIFIC_HEAT_P,
+		       MIXTURE_SPECIFIC_HEAT_V,
 		       MOLE_FRACTIONS,
 		       OMEGA_DOT };
 
@@ -98,12 +108,6 @@ namespace GRINS
     
     MultiphysicsSystem* _multiphysics_sys;
     std::tr1::shared_ptr<libMesh::FEMContext> _multiphysics_context;
-
-    VariableIndex _u_var, _v_var, _w_var;
-    VariableIndex _T_var;
-    std::vector<VariableIndex> _species_vars;
-
-    
 
   private:
 

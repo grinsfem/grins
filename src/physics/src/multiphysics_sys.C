@@ -249,7 +249,7 @@ namespace GRINS
     return _physics_list[physics_name];
   }
 
-  bool MultiphysicsSystem::has_physics( const std::string physics_name )
+  bool MultiphysicsSystem::has_physics( const std::string physics_name ) const
   {
     bool has_physics = false;
 

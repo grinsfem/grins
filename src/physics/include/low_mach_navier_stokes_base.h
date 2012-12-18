@@ -77,43 +77,15 @@ namespace GRINS
     // Context initialization
     virtual void init_context( libMesh::DiffContext &context );
 
+    libMesh::Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
+
+    libMesh::Real rho( libMesh::Real T, libMesh::Real p0 ) const;
+
+    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const;
+
+    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const;
+
   protected:
-
-    inline
-    libMesh::Real compute_rho( libMesh::Real T, libMesh::Real p0 ) const
-    {
-      return p0/(this->_R*T);
-    }
-
-    inline 
-    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const
-    {
-      libMesh::Real p0;
-      if( this->_enable_thermo_press_calc )
-	{
-	  p0 = c.interior_value( _p0_var, qp );
-	}
-      else
-	{
-	  p0 = _p0;
-	}
-      return p0;
-    }
-
-    inline 
-    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const
-    {
-      libMesh::Real p0;
-      if( this->_enable_thermo_press_calc )
-	{
-	  p0 = c.fixed_interior_value( _p0_var, qp );
-	}
-      else
-	{
-	  p0 = _p0;
-	}
-      return p0;
-    }
 
     //! Thermodynamic pressure divided by gas constant
     libMesh::Number _p0_over_R;
@@ -160,6 +132,52 @@ namespace GRINS
     LowMachNavierStokesBase();
 
   };
+
+  template<class V, class SH, class TC>
+  inline
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::T( const libMesh::Point& p, const libMesh::FEMContext& c ) const
+  {
+    return c.point_value(_T_var,p);
+  }
+
+  template<class V, class SH, class TC>
+  inline
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::rho( libMesh::Real T, libMesh::Real p0 ) const
+  {
+    return p0/(this->_R*T);
+  }
+  
+  template<class V, class SH, class TC>
+  inline 
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const
+  {
+    libMesh::Real p0;
+    if( this->_enable_thermo_press_calc )
+      {
+	p0 = c.interior_value( _p0_var, qp );
+      }
+    else
+      {
+	p0 = _p0;
+      }
+    return p0;
+  }
+
+  template<class V, class SH, class TC>
+  inline 
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const
+  {
+    libMesh::Real p0;
+    if( this->_enable_thermo_press_calc )
+      {
+	p0 = c.fixed_interior_value( _p0_var, qp );
+      }
+    else
+      {
+	p0 = _p0;
+      }
+    return p0;
+  }
 
 } // namespace GRINS
 

@@ -125,7 +125,7 @@ namespace GRINS
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
 	libMesh::Real T = c.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
@@ -194,7 +194,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = c.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 
@@ -305,7 +305,7 @@ namespace GRINS
 	  U(2) = w;
       
 	libMesh::Real T = c.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
@@ -364,7 +364,7 @@ namespace GRINS
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
 	libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
@@ -430,7 +430,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 
@@ -539,7 +539,7 @@ namespace GRINS
 	  U(2) = w;
 
 	libMesh::Real T = c.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( c, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( c, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
