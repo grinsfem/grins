@@ -26,54 +26,47 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_CACHED_VALUES_H
-#define GRINS_CACHED_VALUES_H
-
-//C++
-#include <set>
-#include <vector>
-#include <map>
-
-// libMesh
-#include "libmesh.h"
-
-// GRINS
-#include "cached_quantities_enum.h"
+#ifndef GRINS_CACHED_QUANTITIES_ENUM_H
+#define GRINS_CACHED_QUANTITIES_ENUM_H
 
 namespace GRINS
 {
-  class CachedValues
-  {
-  public:
 
-    CachedValues();
-    ~CachedValues();
-
-    void add_quantity( CachedQuantities quantity );
-
-    void add_quantities( const std::set<CachedQuantities>& cache_list );
-
-    void clear();
-
-    bool is_active(CachedQuantities quantity);
-
-    void set_values( CachedQuantities quantity, std::vector<Number>& values );
-
-    void set_vector_values( CachedQuantities quantity, std::vector<std::vector<Number> >& values );
-
-    const std::vector<Number>& get_cached_values( CachedQuantities quantity ) const;
-
-    const std::vector<std::vector<Number> >& get_cached_vector_values( CachedQuantities quantity ) const;
-
-  protected:
-    
-    std::set<CachedQuantities> _cache_list;
-
-    std::map<CachedQuantities,std::vector<Number> > _cached_values;
-    std::map<CachedQuantities,std::vector<std::vector<Number> >  > _cached_vector_values;
-    
-  };
+  enum CachedQuantities{ X_VELOCITY = 0,
+			 Y_VELOCITY,
+			 Z_VELOCITY,
+			 X_VELOCITY_GRAD,
+			 Y_VELOCITY_GRAD,
+			 Z_VELOCITY_GRAD,
+			 PRESSURE,
+			 THERMO_PRESSURE,
+			 TEMPERATURE,
+			 TEMPERATURE_GRAD,
+			 PERFECT_GAS_DENSITY,
+			 MIXTURE_DENSITY,
+			 PERFECT_GAS_VISCOSITY,
+			 SPECIES_VISCOSITY,
+			 MIXTURE_VISCOSITY,
+			 PERFECT_GAS_THERMAL_CONDUCTIVITY,
+			 SPECIES_THERMAL_CONDUCTIVITY,
+			 MIXTURE_THERMAL_CONDUCTIVITY,
+			 PERFECT_GAS_SPECIFIC_HEAT_P,
+			 SPECIES_SPECIFIC_HEAT_P,
+			 MIXTURE_SPECIFIC_HEAT_P,
+			 PERFECT_GAS_SPECIFIC_HEAT_V,
+			 SPECIES_SPECIFIC_HEAT_V,
+			 MIXTURE_SPECIFIC_HEAT_V,
+			 MASS_FRACTIONS,
+			 MASS_FRACTION_GRADIENTS,
+			 MOLE_FRACTIONS,
+			 MOLAR_MASS,
+			 SPECIES_GAS_CONSTANTS,
+			 MIXTURE_GAS_CONSTANT,
+			 DIFFUSION_COEFFS,
+			 SPECIES_ENTHALPY,
+			 OMEGA_DOT };
+  
 
 } // namespace GRINS
 
-#endif // GRINS_CACHED_VALUES_H
+#endif // GRINS_CACHED_QUANTITIES_ENUM_H

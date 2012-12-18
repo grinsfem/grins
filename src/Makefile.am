@@ -194,7 +194,8 @@ utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h \
                 $(utilities_incdir)/input_utils.h \
                 $(utilities_incdir)/reacting_flow_cache.h \
                 $(utilities_incdir)/math_constants.h \
-                $(utilities_incdir)/cached_values.h
+                $(utilities_incdir)/cached_values.h \
+                $(utilities_incdir)/cached_quantities_enum.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
