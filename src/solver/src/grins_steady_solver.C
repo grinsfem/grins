@@ -50,18 +50,16 @@ namespace GRINS
     return;
   }
 
-  void SteadySolver::solve( MultiphysicsSystem* system,
-			    std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-			    std::tr1::shared_ptr<Visualization> vis,
-			    bool output_vis, 
-			    bool output_residual )
+  void SteadySolver::solve( SolverContext& context )
   {
+    libmesh_assert( context.system );
+
     // GRVY timers contained in here (if enabled)
-    system->solve();
+    context.system->solve();
 
-    if( output_vis ) vis->output( equation_system );
+    if( context.output_vis ) context.vis->output( context.equation_system );
 
-    if( output_residual ) vis->output_residual( equation_system, system );
+    if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
 
     return;
   }

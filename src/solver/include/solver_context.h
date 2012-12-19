@@ -26,32 +26,39 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
+#ifndef GRINS_SOLVER_CONTEXT_H
+#define GRINS_SOLVER_CONTEXT_H
 
-//GRINS
-#include "grins_solver.h"
-#include "visualization.h"
+#include "boost/tr1/memory.hpp"
 
-//libMesh
-#include "auto_ptr.h"
+// libMesh
 #include "equation_systems.h"
+
+// GRINS
+#include "multiphysics_sys.h"
+#include "visualization.h"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  //! Simple class to hold objects passed to Solver::solve
+  /*! Allows some flexibility for adding objects needed to pass to the Solver::solve
+      method so that the solver can still be agnostic to creation etc. of those objects,
+      but can operate on them. 
+   */
+  class SolverContext
   {
   public:
+    
+    SolverContext();
+    ~SolverContext();
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
-
-    virtual void solve( SolverContext& context );
-
-  protected:
-
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    GRINS::MultiphysicsSystem* system;
+    std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
+    std::tr1::shared_ptr<GRINS::Visualization> vis;
+    bool output_vis;
+    bool output_residual;
 
   };
-} // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+}
+
+#endif // GRINS_SOLVER_CONTEXT_H
