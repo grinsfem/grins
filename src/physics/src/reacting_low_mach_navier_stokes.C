@@ -440,6 +440,42 @@ namespace GRINS
     return;
   }
 
+  template<class Mixture>
+  void ReactingLowMachNavierStokes<Mixture>::compute_cache( libMesh::FEMContext& context, 
+							    CachedValues& cache )
+  {
+    libmesh_not_implemented();
+    return;
+  }
+
+  template<class Mixture>
+  void ReactingLowMachNavierStokes<Mixture>::compute_cache( libMesh::FEMContext& context, 
+							    CachedValues& cache,
+							    const std::vector<libMesh::Point>& points)
+  {
+    if( cache.is_active(CachedQuantities::MIXTURE_DENSITY) )
+      {
+	std::vector<Real> rho_values;
+	rho_values.reserve( points.size() );
+
+	std::vector<Real> mass_fracs( this->_n_species );
+	
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    Real T = this->T(*point,context);
+	    Real p0 = this->get_p0_steady(context,*point);
+	    this->mass_fractions( *point, context, mass_fracs );
+
+	    rho_values.push_back(this->rho( T, p0, mass_fracs) );
+	  }
+
+	cache.set_values( CachedQuantities::MIXTURE_DENSITY, rho_values );
+      }
+
+    return;
+  }
+
   // Instantiate
 #ifdef GRINS_HAVE_CANTERA
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;

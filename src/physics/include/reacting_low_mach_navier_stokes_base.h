@@ -141,6 +141,24 @@ namespace GRINS
 						    const libMesh::FEMContext& c ) const
   { return c.point_value(_T_var,p); }
 
+  
+  template<class Mixture>
+  inline
+  void ReactingLowMachNavierStokesBase<Mixture>::mass_fractions( const libMesh::Point& p, 
+								 const libMesh::FEMContext& c,
+								 std::vector<Real>& mass_fracs ) const
+  {
+    libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
+
+    for( unsigned int var = 0; var < this->_n_species; var++ )
+      {
+	mass_fracs[var] = c.point_value(_species_vars[var],p);
+      }
+
+    return;
+  }
+  
+
   template<class Mixture>
   inline
   libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::rho( libMesh::Real T, 

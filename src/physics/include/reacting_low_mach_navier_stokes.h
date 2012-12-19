@@ -74,6 +74,11 @@ namespace GRINS
 				libMesh::DiffContext& context,
 				libMesh::FEMSystem* system );
 
+    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache );
+
+    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache,
+				const std::vector<libMesh::Point>& points );
+
   protected:
 
     void assemble_mass_time_deriv(libMesh::FEMContext& c, 

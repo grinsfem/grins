@@ -96,6 +96,8 @@ namespace GRINS
 		  libmesh_error();
 		}
 	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+
+	      _cache.add_quantity(CachedQuantities::PERFECT_GAS_DENSITY);
 	    }
 	    break;
 	    
@@ -109,6 +111,8 @@ namespace GRINS
 		  libmesh_error();
 		}
 	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
+
+	      _cache.add_quantity(CachedQuantities::MIXTURE_DENSITY);
 	    }
 	    break;
 	    

@@ -109,6 +109,8 @@ namespace GRINS
     MultiphysicsSystem* _multiphysics_sys;
     std::tr1::shared_ptr<libMesh::FEMContext> _multiphysics_context;
 
+    CachedValues _cache;
+
   private:
 
     PostProcessedQuantities();
