@@ -36,8 +36,6 @@
 
 //GRINS
 #include "multiphysics_sys.h"
-#include "low_mach_navier_stokes.h"
-#include "reacting_low_mach_navier_stokes.h"
 
 namespace GRINS
 {

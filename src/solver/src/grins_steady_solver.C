@@ -18,7 +18,7 @@
 // along with this library; if not, write to the Free Software
 // Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301 USA
-//
+ //
 //-----------------------------------------------------------------------el-
 //
 // $Id$
@@ -57,7 +57,11 @@ namespace GRINS
     // GRVY timers contained in here (if enabled)
     context.system->solve();
 
-    if( context.output_vis ) context.vis->output( context.equation_system );
+    if( context.output_vis ) 
+      {
+	context.postprocessing->update_quantities( *(context.system), *(context.equation_system) );
+	context.vis->output( context.equation_system );
+      }
 
     if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
 

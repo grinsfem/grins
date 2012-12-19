@@ -26,24 +26,34 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "solver_context.h"
+#ifndef GRINS_POSTPROCESSING_FACTORY_H
+#define GRINS_POSTPROCESSING_FACTORY_H
+
+#include "boost/tr1/memory.hpp"
+
+// libMesh
+#include "getpot.h"
+
+// GRINS
+#include "postprocessed_quantities.h"
 
 namespace GRINS
 {
-  SolverContext::SolverContext()
-    : system(NULL),
-      equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
-      output_vis( false ),
-      output_residual( false ),
-      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )
-  {
-    return;
-  }
 
-  SolverContext::~SolverContext()
+  //! This object handles constructing the postprocessing object to be used.
+  /*! To allow the user to easily extend the postprocesing capabilities,
+      the postprocessing construction is handled in this object. */
+  class PostprocessingFactory
   {
-    return;
-  }
+  public:
+    
+    PostprocessingFactory();
+    virtual ~PostprocessingFactory();
 
-}
+    virtual std::tr1::shared_ptr<PostProcessedQuantities<Real> > build(const GetPot& input);
+
+  };
+
+} // namespace GRINS
+
+#endif // GRINS_POSTPROCESSING_FACTORY_H

@@ -35,6 +35,7 @@
 #include "equation_systems.h"
 
 // GRINS
+#include "postprocessed_quantities.h"
 #include "multiphysics_sys.h"
 #include "visualization.h"
 
@@ -57,7 +58,7 @@ namespace GRINS
     std::tr1::shared_ptr<GRINS::Visualization> vis;
     bool output_vis;
     bool output_residual;
-
+    std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
   };
 }
 

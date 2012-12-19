@@ -323,6 +323,6 @@ namespace GRINS
   }
 
   // Instantiate
-  template class PostProcessedQuantities<Number>;
+  template class PostProcessedQuantities<Real>;
 
 } // namespace GRINS

@@ -92,6 +92,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<QoIBase> _qoi;
 
+    std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
+
     // Screen display options
     bool _print_mesh_info;
     bool _print_log_info;

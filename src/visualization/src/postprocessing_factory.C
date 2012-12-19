@@ -26,24 +26,23 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "solver_context.h"
+#include "postprocessing_factory.h"
 
 namespace GRINS
 {
-  SolverContext::SolverContext()
-    : system(NULL),
-      equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
-      output_vis( false ),
-      output_residual( false ),
-      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )
+  PostprocessingFactory::PostprocessingFactory()
   {
     return;
   }
 
-  SolverContext::~SolverContext()
+  PostprocessingFactory::~PostprocessingFactory()
   {
     return;
   }
 
-}
+  std::tr1::shared_ptr<PostProcessedQuantities<Real> > PostprocessingFactory::build(const GetPot& input)
+  {
+    return std::tr1::shared_ptr<PostProcessedQuantities<Real> >( new PostProcessedQuantities<Real>(input) );
+  }
+
+} // namespace GRINS
