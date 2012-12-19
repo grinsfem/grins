@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef SOLVER_FACTORY_H
-#define SOLVER_FACTORY_H
+#ifndef GRINS_SOLVER_FACTORY_H
+#define GRINS_SOLVER_FACTORY_H
 
 //libMesh
 #include "getpot.h"
@@ -55,5 +55,5 @@ namespace GRINS
     virtual std::tr1::shared_ptr<GRINS::Solver> build(const GetPot& input);
 
   };
-}
-#endif //SOLVER_FACTORY_H
+} // namespace GRINS
+#endif //GRINS_SOLVER_FACTORY_H
