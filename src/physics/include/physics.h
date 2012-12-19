@@ -150,10 +150,11 @@ namespace GRINS
 
     virtual void init_cache( CachedValues& cache );
 
-    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache );
+    virtual void compute_cache( const libMesh::FEMContext& context, CachedValues& cache );
 
-    virtual void compute_cache( libMesh::FEMContext& context, CachedValues& cache,
-				const std::vector<libMesh::Point>& points );
+    virtual void compute_cache( const libMesh::FEMContext& context, 
+				const std::vector<libMesh::Point>& points,
+				CachedValues& cache );
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );

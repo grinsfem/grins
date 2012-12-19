@@ -111,6 +111,8 @@ namespace GRINS
 
     CachedValues _cache;
 
+    libMesh::Point _prev_point;
+
   private:
 
     PostProcessedQuantities();

@@ -259,6 +259,31 @@ namespace GRINS
     return has_physics;
   }
 
+  void MultiphysicsSystem::compute_cache( const libMesh::FEMContext& context,
+					  CachedValues& cache )
+  {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_cache( context, cache );
+      }
+    return;
+  }
+
+  void MultiphysicsSystem::compute_cache( const libMesh::FEMContext& context,
+					  const std::vector<libMesh::Point>& points,
+					  CachedValues& cache )
+  {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_cache( context, points, cache );
+      }
+    return;
+  }
+
 #ifdef GRINS_USE_GRVY_TIMERS
   void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {

@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "reacting_low_mach_navier_stokes.h"
+
+// GRINS
+#include "cached_quantities_enum.h"
 
 namespace GRINS
 {
@@ -441,7 +445,7 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_cache( libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture>::compute_cache( const libMesh::FEMContext& context, 
 							    CachedValues& cache )
   {
     libmesh_not_implemented();
@@ -449,11 +453,11 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_cache( libMesh::FEMContext& context, 
-							    CachedValues& cache,
-							    const std::vector<libMesh::Point>& points)
+  void ReactingLowMachNavierStokes<Mixture>::compute_cache( const libMesh::FEMContext& context, 
+							    const std::vector<libMesh::Point>& points,
+							    CachedValues& cache )
   {
-    if( cache.is_active(CachedQuantities::MIXTURE_DENSITY) )
+    if( cache.is_active(Cache::MIXTURE_DENSITY) )
       {
 	std::vector<Real> rho_values;
 	rho_values.reserve( points.size() );
@@ -470,7 +474,7 @@ namespace GRINS
 	    rho_values.push_back(this->rho( T, p0, mass_fracs) );
 	  }
 
-	cache.set_values( CachedQuantities::MIXTURE_DENSITY, rho_values );
+	cache.set_values( Cache::MIXTURE_DENSITY, rho_values );
       }
 
     return;

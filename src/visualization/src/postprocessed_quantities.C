@@ -32,7 +32,8 @@ namespace GRINS
 {
   template<class NumericType>
   PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
-    : libMesh::FEMFunctionBase<NumericType>()
+    : libMesh::FEMFunctionBase<NumericType>(),
+      _prev_point(1.0e15,1.0e15,1.0e15) //Initialize to an absurd value
   {
     this->build_name_map();
 
@@ -97,7 +98,7 @@ namespace GRINS
 		}
 	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
 
-	      _cache.add_quantity(CachedQuantities::PERFECT_GAS_DENSITY);
+	      _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
 	    }
 	    break;
 	    
@@ -112,7 +113,7 @@ namespace GRINS
 		}
 	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
 
-	      _cache.add_quantity(CachedQuantities::MIXTURE_DENSITY);
+	      _cache.add_quantity(Cache::MIXTURE_DENSITY);
 	    }
 	    break;
 	    
@@ -186,6 +187,17 @@ namespace GRINS
 	_multiphysics_context->elem_fe_reinit();
       }
 
+    /* Optimization since we expect this function to be called many times with
+       the same point. _prev_point initialized to something absurd so this should 
+       always be false the first time. */
+    if( _prev_point != p )
+      {
+	_prev_point = p;
+	std::vector<libMesh::Point> point_vec(1,p);
+	this->_cache.clear();
+	_multiphysics_sys->compute_cache( *(this->_multiphysics_context), point_vec, this->_cache );
+      }
+
     NumericType value = 0.0;
 
     switch( _quantity_var_map.find(component)->second )
@@ -193,34 +205,15 @@ namespace GRINS
 
       case(PERFECT_GAS_DENSITY):
 	{
-	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
-	  /*
-	  LowMachNavierStokes* low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
-
-	  Real p0 = low_mach_physics->get_p0_steady(_multiphysics_context,p);
-	  
-	  Real T = low_mach_physics->T(p,_multiphysics_context);
-
-	  value = low_mach_physics->rho(T,p0);
-	  */
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::PERFECT_GAS_DENSITY)[0];
 	}
 	break;
 	    
       case(MIXTURE_DENSITY):
 	{
-	  std::tr1::shared_ptr<Physics> physics = _multiphysics_sys->get_physics(low_mach_navier_stokes);
-	  /*
-	  LowMachNavierStokes* reacting_low_mach_physics = libmesh_cast_ptr<LowMachNavierStokes*>(physics);
-	  
-	  Real p0 = reacting_low_mach_physics->get_p0_steady(_multiphysics_context,p);
-	  
-	  Real T = reacting_low_mach_physics->T();
-
-	  std::vector<Real> mass_fracs(reacting_low_mach_physics->n_species());
-	  reacting_low_mach_physics->mass_fractions(p,_multiphysics_context ,mass_fracs);
-	  
-	  value = reacting_low_mach_physics->rho(T,p0,mass_fracs);
-	  */
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::MIXTURE_DENSITY)[0];
 	}
 	break;
 	    
