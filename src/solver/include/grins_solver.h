@@ -36,6 +36,7 @@
 #include "multiphysics_sys.h"
 #include "visualization.h"
 #include "bc_factory.h"
+#include "solver_context.h"
 
 // libMesh
 #include "getpot.h"
@@ -64,13 +65,7 @@ namespace GRINS
 			     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			     GRINS::MultiphysicsSystem* system );
     
-    virtual void solve( GRINS::MultiphysicsSystem* system,
-			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
-			std::tr1::shared_ptr<libMesh::EquationSystems>(),
-			std::tr1::shared_ptr<GRINS::Visualization> vis = 
-			std::tr1::shared_ptr<GRINS::Visualization>(),
-			bool output_vis = false,
-			bool output_residual = false )=0;
+    virtual void solve( SolverContext& context )=0;
 
   protected:
 

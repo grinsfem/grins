@@ -26,32 +26,23 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
-
-//GRINS
-#include "grins_solver.h"
-#include "visualization.h"
-
-//libMesh
-#include "auto_ptr.h"
-#include "equation_systems.h"
+#include "solver_context.h"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  SolverContext::SolverContext()
+    : system(NULL),
+      equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
+      vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
+      output_vis( false ),
+      output_residual( false )
   {
-  public:
+    return;
+  }
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
+  SolverContext::~SolverContext()
+  {
+    return;
+  }
 
-    virtual void solve( SolverContext& context );
-
-  protected:
-
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
-
-  };
-} // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+}

@@ -41,13 +41,7 @@ namespace GRINS
     UnsteadySolver( const GetPot& input );
     virtual ~UnsteadySolver();
 
-    virtual void solve( GRINS::MultiphysicsSystem* system,
-			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
-			std::tr1::shared_ptr<libMesh::EquationSystems>(),
-			std::tr1::shared_ptr<GRINS::Visualization> vis = 
-			std::tr1::shared_ptr<GRINS::Visualization>(),
-			bool output_vis = false,
-			bool output_residual = false );
+    virtual void solve( SolverContext& context );
 
   protected:
 

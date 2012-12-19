@@ -49,7 +49,7 @@ T_wall_4 = '439.5'
 
 enable_thermo_press_calc = 'true'
 
-pin_pressure = true
+pin_pressure = 'false'
 pin_location = '0.0 0.0'
 pin_value = '0.0'
 
@@ -95,7 +95,7 @@ cp = '1004.5' #[J/kg-K]
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'injection_grid.e'
+mesh_filename = 'channel.e'
 element_type = QUAD9
 
 uniformly_refine =  0 
@@ -127,7 +127,7 @@ output_vis = true
 
 vis_output_file_prefix = 'injection' 
 
-output_residual = true
+output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 
@@ -147,9 +147,9 @@ print_element_jacobians = 'false'
 [../VariableNames]
 
 Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
+u_velocity = 'ux'
+v_velocity = 'uy'
+w_velocity = 'uz'
 pressure = 'p'
 
 []

@@ -90,7 +90,14 @@ namespace GRINS
   {
     this->print_sim_info();
 
-    _solver->solve(  _multiphysics_system, _equation_system, _vis, _output_vis, _output_residual );
+    SolverContext context;
+    context.system = _multiphysics_system;
+    context.equation_system = _equation_system;
+    context.vis = _vis;
+    context.output_vis = _output_vis;
+    context.output_residual = _output_residual;
+
+    _solver->solve( context );
 
     if( this->_print_qoi )
       {
