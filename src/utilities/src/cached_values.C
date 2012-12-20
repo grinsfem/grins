@@ -40,13 +40,13 @@ namespace GRINS
     return;
   }
 
-  void CachedValues::add_quantity( Cache::CachedQuantities quantity )
+  void CachedValues::add_quantity( unsigned int quantity )
   {
     _cache_list.insert(quantity);
     return;
   }
 
-  void CachedValues::add_quantities( const std::set<Cache::CachedQuantities>& cache_list )
+  void CachedValues::add_quantities( const std::set<unsigned int>& cache_list )
   {
     _cache_list.insert(cache_list.begin(), cache_list.end());
     return;
@@ -59,7 +59,7 @@ namespace GRINS
     return;
   }
 
-  bool CachedValues::is_active(Cache::CachedQuantities quantity)
+  bool CachedValues::is_active(unsigned int quantity)
   {
     bool value = false;
 
@@ -69,25 +69,25 @@ namespace GRINS
     return value;
   }
 
-  void CachedValues::set_values( Cache::CachedQuantities quantity, std::vector<Number>& values )
+  void CachedValues::set_values( unsigned int quantity, std::vector<Number>& values )
   {
     _cached_values.insert( std::make_pair( quantity, values ) );
     return;
   }
 
-  void CachedValues::set_vector_values( Cache::CachedQuantities quantity, std::vector<std::vector<Number> >& values )
+  void CachedValues::set_vector_values( unsigned int quantity, std::vector<std::vector<Number> >& values )
   {
     _cached_vector_values.insert( std::make_pair( quantity, values ) );
     return;
   }
 
-  const std::vector<Number>& CachedValues::get_cached_values( Cache::CachedQuantities quantity ) const
+  const std::vector<Number>& CachedValues::get_cached_values( unsigned int quantity ) const
   {
     libmesh_assert( _cached_values.find(quantity) != _cached_values.end() );
     return _cached_values.find(quantity)->second;
   }
 
-  const std::vector<std::vector<Number> >& CachedValues::get_cached_vector_values( Cache::CachedQuantities quantity ) const
+  const std::vector<std::vector<Number> >& CachedValues::get_cached_vector_values( unsigned int quantity ) const
   {
     libmesh_assert( _cached_vector_values.find(quantity) != _cached_vector_values.end() );
     return _cached_vector_values.find(quantity)->second;

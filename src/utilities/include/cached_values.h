@@ -49,28 +49,28 @@ namespace GRINS
     CachedValues();
     ~CachedValues();
 
-    void add_quantity( Cache::CachedQuantities quantity );
+    void add_quantity( unsigned int quantity );
 
-    void add_quantities( const std::set<Cache::CachedQuantities>& cache_list );
+    void add_quantities( const std::set<unsigned int>& cache_list );
 
     void clear();
 
-    bool is_active(Cache::CachedQuantities quantity);
+    bool is_active(unsigned int quantity);
 
-    void set_values( Cache::CachedQuantities quantity, std::vector<Number>& values );
+    void set_values( unsigned int quantity, std::vector<Number>& values );
 
-    void set_vector_values( Cache::CachedQuantities quantity, std::vector<std::vector<Number> >& values );
+    void set_vector_values( unsigned int quantity, std::vector<std::vector<Number> >& values );
 
-    const std::vector<Number>& get_cached_values( Cache::CachedQuantities quantity ) const;
+    const std::vector<Number>& get_cached_values( unsigned int quantity ) const;
 
-    const std::vector<std::vector<Number> >& get_cached_vector_values( Cache::CachedQuantities quantity ) const;
+    const std::vector<std::vector<Number> >& get_cached_vector_values( unsigned int quantity ) const;
 
   protected:
     
-    std::set<Cache::CachedQuantities> _cache_list;
+    std::set<unsigned int> _cache_list;
 
-    std::map<Cache::CachedQuantities,std::vector<Number> > _cached_values;
-    std::map<Cache::CachedQuantities,std::vector<std::vector<Number> >  > _cached_vector_values;
+    std::map<unsigned int,std::vector<Number> > _cached_values;
+    std::map<unsigned int,std::vector<std::vector<Number> >  > _cached_vector_values;
     
   };
 
