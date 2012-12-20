@@ -61,6 +61,10 @@ namespace GRINS
     // This *must* be done before equation_system->init
     this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
 
+    /* Postprocessing needs to be initialized before the solver since that's 
+       where equation_system gets init'ed */
+    _postprocessing->initialize( *_multiphysics_system, *_equation_system );
+
     _solver->initialize( input, _equation_system, _multiphysics_system );
 
     // This *must* be done after equation_system->init in order to get variable indices
@@ -76,8 +80,6 @@ namespace GRINS
 	  but we also need to be able to get system variable numbers... */
 	_multiphysics_system->attach_qoi( &(*(this->_qoi)) );
       }
-
-    _postprocessing->initialize( *_multiphysics_system, *_equation_system );
 
     this->check_for_restart( input );
 

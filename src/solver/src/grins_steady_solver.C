@@ -59,7 +59,7 @@ namespace GRINS
 
     if( context.output_vis ) 
       {
-	context.postprocessing->update_quantities( *(context.system), *(context.equation_system) );
+	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
 

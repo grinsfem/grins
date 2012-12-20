@@ -75,100 +75,108 @@ namespace GRINS
   void PostProcessedQuantities<NumericType>::initialize( MultiphysicsSystem& system,
 							 libMesh::EquationSystems& equation_systems )
   {
-    // Need to cache the MultiphysicsSystem
-    _multiphysics_sys = &system;
-
-    libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
-
-    // Do sanity check for each of the variables and add variables to the output system as well as
-    // cache needed VariableIndex for each of the variables needed from the MultiphysicsSystem
-    for( typename std::vector<QuantityList>::const_iterator it = _quantities.begin();
-	 it != _quantities.end(); it++ )
+    // Only need to initialize if the user requested any output quantities.
+    if( !_quantities.empty() )
       {
-	switch( *it )
+	// Need to cache the MultiphysicsSystem
+	_multiphysics_sys = &system;
+ 
+	libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
+
+	// Do sanity check for each of the variables and add variables to the output system as well as
+	// cache needed VariableIndex for each of the variables needed from the MultiphysicsSystem
+	for( typename std::vector<QuantityList>::const_iterator it = _quantities.begin();
+	     it != _quantities.end(); it++ )
 	  {
-	  case(PERFECT_GAS_DENSITY):
-	    {
-	      if( !system.has_physics(low_mach_navier_stokes) )
+	    switch( *it )
+	      {
+	      case(PERFECT_GAS_DENSITY):
 		{
-		  std::cerr << "Error: Must have "<< low_mach_navier_stokes 
-			    << " enable for perfect gas density calculation."
-			    << std::endl;
+		  if( !system.has_physics(low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< low_mach_navier_stokes 
+				<< " enable for perfect gas density calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+
+		  _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
+		}
+		break;
+	    
+	      case(MIXTURE_DENSITY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture gas density calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
+
+		  _cache.add_quantity(Cache::MIXTURE_DENSITY);
+		}
+		break;
+	    
+	      case(PERFECT_GAS_VISCOSITY):
+		{
+		  libmesh_not_implemented();
+		}
+		break;
+	      case(SPECIES_VISCOSITY):
+	      case(MIXTURE_VISCOSITY):
+	      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
+		{
+		  libmesh_not_implemented();
+		}
+	      break;
+	      case(SPECIES_THERMAL_CONDUCTIVITY):
+	      case(MIXTURE_THERMAL_CONDUCTIVITY):
+	      case(PERFECT_GAS_SPECIFIC_HEAT_P):
+		{
+		  libmesh_not_implemented();
+		}
+	      break;
+	      case(SPECIES_SPECIFIC_HEAT_P):
+	      case(MIXTURE_SPECIFIC_HEAT_P):
+	      case(PERFECT_GAS_SPECIFIC_HEAT_V):
+		{
+		  libmesh_not_implemented();
+		}
+	      break;
+	      case(SPECIES_SPECIFIC_HEAT_V):
+	      case(MIXTURE_SPECIFIC_HEAT_V):
+	      case(MOLE_FRACTIONS):
+	      case(OMEGA_DOT):
+		{
+		  libmesh_not_implemented();
+		}
+	      break;
+
+	      default:
+		{
+		  std::cerr << "Error: Invalid quantity " << *it << std::endl;
 		  libmesh_error();
 		}
-	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+	      } // end switch
 
-	      _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
-	    }
-	    break;
-	    
-	  case(MIXTURE_DENSITY):
-	    {
-	      if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		{
-		  std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			    << " enable for mixture gas density calculation."
-			    << std::endl;
-		  libmesh_error();
-		}
-	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
+	  } // end quantity loop
 
-	      _cache.add_quantity(Cache::MIXTURE_DENSITY);
-	    }
-	    break;
-	    
-	  case(PERFECT_GAS_VISCOSITY):
-	    {
-	      libmesh_not_implemented();
-	    }
-	    break;
-	  case(SPECIES_VISCOSITY):
-	  case(MIXTURE_VISCOSITY):
-	  case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
-	    {
-	      libmesh_not_implemented();
-	    }
-	    break;
-	  case(SPECIES_THERMAL_CONDUCTIVITY):
-	  case(MIXTURE_THERMAL_CONDUCTIVITY):
-	  case(PERFECT_GAS_SPECIFIC_HEAT_P):
-	    {
-	      libmesh_not_implemented();
-	    }
-	    break;
-	  case(SPECIES_SPECIFIC_HEAT_P):
-	  case(MIXTURE_SPECIFIC_HEAT_P):
-	  case(PERFECT_GAS_SPECIFIC_HEAT_V):
-	    {
-	      libmesh_not_implemented();
-	    }
-	    break;
-	  case(SPECIES_SPECIFIC_HEAT_V):
-	  case(MIXTURE_SPECIFIC_HEAT_V):
-	  case(MOLE_FRACTIONS):
-	  case(OMEGA_DOT):
-	    {
-	      libmesh_not_implemented();
-	    }
-	    break;
-
-	  default:
-	    {
-	      std::cerr << "Error: Invalid quantity " << *it << std::endl;
-	      libmesh_error();
-	    }
-	  } // end switch
-
-      } // end quantity loop
-
+      } // end if 
     return;
   }
 
   template<class NumericType>
-  void PostProcessedQuantities<NumericType>::update_quantities( const MultiphysicsSystem& system,
-								libMesh::EquationSystems& equation_systems )
+  void PostProcessedQuantities<NumericType>::update_quantities( libMesh::EquationSystems& equation_systems )
   {
-    libmesh_not_implemented();
+    // Only do the projection if the user actually added any quantities to compute.
+    if( !_quantities.empty() )
+      {
+	libMesh::System& output_system = equation_systems.get_system<libMesh::System>("interior_output");
+	output_system.project_solution(this);
+      }
     return;
   }
   
@@ -264,8 +272,27 @@ namespace GRINS
   }
     
   template<class NumericType>
-  void PostProcessedQuantities<NumericType>::init_context( const libMesh::FEMContext& )
+  void PostProcessedQuantities<NumericType>::init_context( const libMesh::FEMContext& context )
   {
+    // Make sure we prepare shape functions for our output variables.
+    for( typename std::map<VariableIndex,QuantityList>::const_iterator it = _quantity_var_map.begin();
+	 it != _quantity_var_map.end(); it++ )
+      {
+	libMesh::FEBase* elem_fe = NULL;
+	context.get_element_fe( it->first, elem_fe );
+	elem_fe->get_phi();
+	elem_fe->get_dphi();
+	elem_fe->get_JxW();
+	elem_fe->get_xyz();
+
+	libMesh::FEBase* side_fe = NULL;
+	context.get_side_fe( it->first, side_fe );
+	side_fe->get_phi();
+	side_fe->get_dphi();
+	side_fe->get_JxW();
+	side_fe->get_xyz();
+      }
+
     // Create the context we'll be using to compute MultiphysicsSystem quantities
     _multiphysics_context.reset( new libMesh::FEMContext( *_multiphysics_sys ) );
     _multiphysics_sys->init_context(*_multiphysics_context);

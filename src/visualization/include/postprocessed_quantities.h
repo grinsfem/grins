@@ -71,8 +71,7 @@ namespace GRINS
     virtual void initialize( MultiphysicsSystem& system,
 			     libMesh::EquationSystems& equation_systems );
 
-    virtual void update_quantities( const MultiphysicsSystem& system,
-				    libMesh::EquationSystems& equation_systems );
+    virtual void update_quantities( libMesh::EquationSystems& equation_systems );
 
     unsigned int n_quantities() const
     {return _quantities.size();}
