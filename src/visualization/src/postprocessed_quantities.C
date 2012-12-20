@@ -47,7 +47,7 @@ namespace GRINS
       {
 	names[n] = input("vis-options/output_vars", "DIE!", n);
 	
-	typename std::map<std::string, QuantityList>::const_iterator name_it = 
+	typename std::map<std::string, unsigned int>::const_iterator name_it = 
 	  _quantity_name_map.find(names[n]);
 	
 	if( name_it != _quantity_name_map.end() )
@@ -85,7 +85,7 @@ namespace GRINS
 
 	// Do sanity check for each of the variables and add variables to the output system as well as
 	// cache needed VariableIndex for each of the variables needed from the MultiphysicsSystem
-	for( typename std::vector<QuantityList>::const_iterator it = _quantities.begin();
+	for( typename std::vector<unsigned int>::const_iterator it = _quantities.begin();
 	     it != _quantities.end(); it++ )
 	  {
 	    switch( *it )
@@ -275,7 +275,7 @@ namespace GRINS
   void PostProcessedQuantities<NumericType>::init_context( const libMesh::FEMContext& context )
   {
     // Make sure we prepare shape functions for our output variables.
-    for( typename std::map<VariableIndex,QuantityList>::const_iterator it = _quantity_var_map.begin();
+    for( typename std::map<VariableIndex,unsigned int>::const_iterator it = _quantity_var_map.begin();
 	 it != _quantity_var_map.end(); it++ )
       {
 	libMesh::FEBase* elem_fe = NULL;
