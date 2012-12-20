@@ -110,6 +110,9 @@ namespace GRINS
 
     libMesh::Point _prev_point;
 
+    //! Place to cache species names for species-dependent quantities.
+    std::vector<std::string> _species_names;
+
   private:
 
     PostProcessedQuantities();

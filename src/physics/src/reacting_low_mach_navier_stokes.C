@@ -477,6 +477,30 @@ namespace GRINS
 	cache.set_values( Cache::MIXTURE_DENSITY, rho_values );
       }
 
+    if( cache.is_active(Cache::MOLE_FRACTIONS) )
+      {
+	std::vector<std::vector<Real> > mole_fractions;
+	mole_fractions.resize( points.size() );
+
+	for( unsigned int i = 0; i < points.size(); i++ )
+	  {
+	    mole_fractions[i].resize( this->_n_species );
+	  }
+
+	std::vector<Real> mass_fracs( this->_n_species );
+
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    this->mass_fractions( points[p], context, mass_fracs );
+
+	    Real M = this->_gas_mixture.M(mass_fracs);
+
+	    this->_gas_mixture.X(M,mass_fracs,mole_fractions[p]);
+	  }
+
+	cache.set_vector_values(Cache::MOLE_FRACTIONS, mole_fractions );
+      }
+
     return;
   }
 

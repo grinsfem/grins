@@ -60,6 +60,18 @@ namespace GRINS
 		      << std::endl;
 	    libmesh_error();
 	  }
+
+	// Need to cache species names if needed.
+	if( names[n] == std::string("mole_fractions") )
+	  {
+	    unsigned int species_size = input.vector_variable_size( "Physics/Chemistry/species" );
+	    _species_names.resize(species_size);
+	    
+	    for( unsigned int s = 0; s < species_size; s++ )
+	      {
+		_species_names[s] = input("Physics/Chemistry/species","DIE!",s);
+	      }
+	  }
       }
 
     return;
@@ -148,7 +160,27 @@ namespace GRINS
 	      break;
 	      case(SPECIES_SPECIFIC_HEAT_V):
 	      case(MIXTURE_SPECIFIC_HEAT_V):
+		{
+		  libmesh_not_implemented();
+		}
 	      case(MOLE_FRACTIONS):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture gas density calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      _quantity_var_map.insert( std::make_pair(output_system.add_variable("X_"+_species_names[s], FIRST), MOLE_FRACTIONS) );
+		    }
+
+		  _cache.add_quantity(Cache::MOLE_FRACTIONS);
+		}
+		break;
 	      case(OMEGA_DOT):
 		{
 		  libmesh_not_implemented();
@@ -253,7 +285,16 @@ namespace GRINS
       break;
       case(SPECIES_SPECIFIC_HEAT_V):
       case(MIXTURE_SPECIFIC_HEAT_V):
+	{
+	  libmesh_not_implemented();
+	}
+      break;
       case(MOLE_FRACTIONS):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_vector_values(Cache::MOLE_FRACTIONS)[0][component];
+	}
+	break;
       case(OMEGA_DOT):
 	{
 	  libmesh_not_implemented();
