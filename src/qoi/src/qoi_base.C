@@ -63,7 +63,10 @@ namespace GRINS
 
 	for(  unsigned int i = 0; i < _qoi_cache.size(); i++ )
 	  {
-	    out << "QoI #" << i << " = " << std::setprecision(10) << _qoi_cache[i] << std::endl;
+	    out << "QoI #" << i << " = " 
+		<< std::setprecision(16) 
+		<< std::scientific
+		<< _qoi_cache[i] << std::endl;
 	  }
 
 	out << "========================================================================" << std::endl;
