@@ -71,7 +71,7 @@ AC_ARG_ENABLE([libmesh-flags],
 
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
-   CXXFLAGS=`$LIBMESH_CONFIG --cxxflags`
+   CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
    CXXFLAGS="-O0 -g -Wall -fno-unsafe-math-optimizations"
