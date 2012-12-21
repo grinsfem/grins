@@ -86,7 +86,7 @@ tau_factor = '0.05'
 
 [restart-options]
 
-restart_file = 'restart.xdr'
+#restart_file = 'restart.xdr'
 
 []
 
