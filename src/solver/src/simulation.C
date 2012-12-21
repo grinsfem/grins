@@ -131,8 +131,7 @@ namespace GRINS
   Number Simulation::get_qoi( unsigned int qoi_index ) const
   {
     const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-    /*! \todo Hard coded to 1 qoi. Need to update to handle multiple qois. */
-    return qoi->get_qoi(0);
+    return qoi->get_qoi(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )
