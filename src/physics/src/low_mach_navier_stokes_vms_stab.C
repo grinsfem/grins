@@ -115,8 +115,6 @@ namespace GRINS
 
     unsigned int n_qpoints = c.element_qrule->n_points();
 
-    bool is_steady = (system->time_solver)->is_steady();
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
@@ -137,8 +135,8 @@ namespace GRINS
 	if( this->_dim == 3 )
 	  U(2) = c.interior_value( this->_w_var, qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, is_steady );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, this->_is_steady );
+	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, this->_is_steady );
 
 	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
 	libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
@@ -189,8 +187,6 @@ namespace GRINS
 
     unsigned int n_qpoints = c.element_qrule->n_points();
 
-    bool is_steady = (system->time_solver)->is_steady();
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = c.interior_value( this->_T_var, qp );
@@ -215,7 +211,7 @@ namespace GRINS
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 	libMesh::Real mu = this->_mu(T);
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, this->_is_steady );
 	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
 	libMesh::Real RC_s = this->compute_res_continuity_steady( c, qp );
@@ -273,8 +269,6 @@ namespace GRINS
 
     unsigned int n_qpoints = c.element_qrule->n_points();
 
-    bool is_steady = (system->time_solver)->is_steady();
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Number u, v, w;
@@ -303,8 +297,8 @@ namespace GRINS
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, is_steady );
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, is_steady );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, rho, U, mu, this->_is_steady );
+	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, qp, g, G, rho, U, k, cp, this->_is_steady );
 
 	libMesh::Real RE_s = this->compute_res_energy_steady( c, qp );
 	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );

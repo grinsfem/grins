@@ -86,6 +86,12 @@ namespace GRINS
 	(physics_iter->second)->set_time_evolving_vars( this );
       }
 
+    // Set whether the problem we're solving is steady or not
+    // Since the variable is static, just call one Physics class
+    {
+      (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
+    }
+
     // Initialize builtin BC's for each physics
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();

@@ -77,8 +77,6 @@ namespace GRINS
 
     unsigned int n_qpoints = c.element_qrule->n_points();
 
-    bool is_steady = (system->time_solver)->is_steady();
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::FEBase* fe = c.element_fe_var[this->_T_var];
@@ -91,7 +89,7 @@ namespace GRINS
 	if( this->_dim == 3 )
 	  U(2) = c.interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, G, _rho, _Cp, _k,  U, is_steady );
+	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( c, G, _rho, _Cp, _k,  U, this->_is_steady );
 
 	libMesh::Real RE_s = this->compute_res_steady( c, qp );
 
