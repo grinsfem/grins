@@ -175,7 +175,9 @@ namespace GRINS
 
 		  for( unsigned int s = 0; s < _species_names.size(); s++ )
 		    {
-		      _quantity_var_map.insert( std::make_pair(output_system.add_variable("X_"+_species_names[s], FIRST), MOLE_FRACTIONS) );
+		      VariableIndex var = output_system.add_variable("X_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, MOLE_FRACTIONS) );
 		    }
 
 		  _cache.add_quantity(Cache::MOLE_FRACTIONS);
@@ -292,7 +294,9 @@ namespace GRINS
       case(MOLE_FRACTIONS):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_vector_values(Cache::MOLE_FRACTIONS)[0][component];
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::MOLE_FRACTIONS)[0][species];
 	}
 	break;
       case(OMEGA_DOT):

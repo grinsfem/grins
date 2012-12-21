@@ -113,6 +113,9 @@ namespace GRINS
     //! Place to cache species names for species-dependent quantities.
     std::vector<std::string> _species_names;
 
+    //! Cache the map between species-components variable indices and species number
+    std::map<VariableIndex, unsigned int> _species_var_map;
+
   private:
 
     PostProcessedQuantities();

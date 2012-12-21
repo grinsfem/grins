@@ -27,7 +27,12 @@
 //--------------------------------------------------------------------------
 
 #include <iomanip>
+
+// GRINS
 #include "ideal_gas_mixture.h"
+#include "cantera_thermo.h"
+#include "cantera_transport.h"
+#include "cantera_kinetics.h"
 
 int main()
 {

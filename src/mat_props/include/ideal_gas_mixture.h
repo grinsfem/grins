@@ -29,20 +29,12 @@
 #ifndef GRINS_IDEAL_GAS_MIXTURE_H
 #define GRINS_IDEAL_GAS_MIXTURE_H
 
+// libMesh
+#include "getpot.h"
+
 // GRINS
 #include "reacting_flow_cache.h"
 #include "chemical_mixture.h"
-
-// Thermo classes
-#include "cea_thermo.h"
-#include "cantera_thermo.h"
-
-// Transport classes
-#include "constant_transport.h"
-#include "cantera_transport.h"
-
-// Kinetics classes
-#include "cantera_kinetics.h"
 
 namespace GRINS
 {

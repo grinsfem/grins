@@ -31,6 +31,11 @@
 
 // GRINS
 #include "cached_quantities_enum.h"
+#include "cea_thermo.h"
+#include "cantera_thermo.h"
+#include "constant_transport.h"
+#include "cantera_transport.h"
+#include "cantera_kinetics.h"
 
 namespace GRINS
 {

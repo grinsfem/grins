@@ -26,7 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "physics_factory.h"
+
+// GRINS
+#include "cea_thermo.h"
+#include "cantera_thermo.h"
+#include "constant_transport.h"
+#include "cantera_transport.h"
+#include "cantera_kinetics.h"
 
 namespace GRINS
 {
