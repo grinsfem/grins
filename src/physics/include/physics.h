@@ -101,6 +101,14 @@ namespace GRINS
     //! Find if current physics is active on supplied element
     virtual bool enabled_on_elem( const libMesh::Elem* elem );
 
+    //! Sets whether this physics is to be solved with a steady solver or not
+    /*! Since the member variable is static, only needs to be called on a single
+        physics. */
+    void set_is_steady( bool is_steady );
+
+    //! Returns whether or not this physics is being solved with a steady solver.
+    bool is_steady() const;
+
     //! Set which variables are time evolving.
     /*!
       Set those variables which evolve in time (as opposed to variables that behave like constraints).
@@ -163,6 +171,11 @@ namespace GRINS
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;
     
+    //! Caches whether or not the solver that's being used is steady or not.
+    /*! This is need, for example, in flow stabilization as the tau terms change
+        depending on whether the solver is steady or unsteady. */
+    static bool _is_steady;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif

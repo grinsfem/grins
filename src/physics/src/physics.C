@@ -30,6 +30,8 @@
 
 namespace GRINS
 {
+  // Initialize static members
+  bool Physics::_is_steady = false;
 
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
@@ -71,6 +73,17 @@ namespace GRINS
       return false;
 
     return true;
+  }
+
+  void Physics::set_is_steady( bool is_steady )
+  {
+    _is_steady = is_steady;
+    return;
+  }
+
+  bool Physics::is_steady() const
+  {
+    return _is_steady;
   }
 
 
