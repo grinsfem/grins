@@ -101,86 +101,81 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricIncompressibleNavierStokes::init_context( libMesh::DiffContext &context )
+  void AxisymmetricIncompressibleNavierStokes::init_context( libMesh::FEMContext& context )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    c.element_fe_var[_u_r_var]->get_JxW();
-    c.element_fe_var[_u_r_var]->get_phi();
-    c.element_fe_var[_u_r_var]->get_dphi();
-    c.element_fe_var[_u_r_var]->get_xyz();
+    context.element_fe_var[_u_r_var]->get_JxW();
+    context.element_fe_var[_u_r_var]->get_phi();
+    context.element_fe_var[_u_r_var]->get_dphi();
+    context.element_fe_var[_u_r_var]->get_xyz();
 
-    c.element_fe_var[_p_var]->get_phi();
-    c.element_fe_var[_p_var]->get_xyz();
+    context.element_fe_var[_p_var]->get_phi();
+    context.element_fe_var[_p_var]->get_xyz();
 
-    c.side_fe_var[_u_r_var]->get_JxW();
-    c.side_fe_var[_u_r_var]->get_phi();
-    c.side_fe_var[_u_r_var]->get_dphi();
-    c.side_fe_var[_u_r_var]->get_xyz();
+    context.side_fe_var[_u_r_var]->get_JxW();
+    context.side_fe_var[_u_r_var]->get_phi();
+    context.side_fe_var[_u_r_var]->get_dphi();
+    context.side_fe_var[_u_r_var]->get_xyz();
 
     return;
   }
 
-  bool AxisymmetricIncompressibleNavierStokes::element_time_derivative( bool request_jacobian,
-									libMesh::DiffContext& context,
-									libMesh::FEMSystem* system )
+  void AxisymmetricIncompressibleNavierStokes::element_time_derivative( bool compute_jacobian,
+									libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = c.dof_indices_var[_u_r_var].size();
-    const unsigned int n_p_dofs = c.dof_indices_var[_p_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
+    const unsigned int n_p_dofs = context.dof_indices_var[_p_var].size();
 
     // Check number of dofs is same for _u_r_var, _u_z_var
-    libmesh_assert (n_u_dofs == c.dof_indices_var[_u_z_var].size());
+    libmesh_assert (n_u_dofs == context.dof_indices_var[_u_z_var].size());
 
     // We get some references to cell-specific data that
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[_u_r_var]->get_JxW();
+      context.element_fe_var[_u_r_var]->get_JxW();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      c.element_fe_var[_u_r_var]->get_phi();
+      context.element_fe_var[_u_r_var]->get_phi();
 
     // The velocity shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& vel_gradphi =
-      c.element_fe_var[_u_r_var]->get_dphi();
+      context.element_fe_var[_u_r_var]->get_dphi();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      c.element_fe_var[_p_var]->get_phi();
+      context.element_fe_var[_p_var]->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      c.element_fe_var[_u_r_var]->get_xyz();
+      context.element_fe_var[_u_r_var]->get_xyz();
 
     // The subvectors and submatrices we need to fill:
     //
     // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
     // e.g., for \alpha = v and \beta = u we get: K{vu} = R_{v},{u}
     // Note that Kp_ur, Kp_uz and Fp comes as constraint.
-    libMesh::DenseSubVector<Number> &Fr = *c.elem_subresiduals[_u_r_var]; // R_{r}
-    libMesh::DenseSubVector<Number> &Fz = *c.elem_subresiduals[_u_z_var]; // R_{z}
+    libMesh::DenseSubVector<Number> &Fr = *context.elem_subresiduals[_u_r_var]; // R_{r}
+    libMesh::DenseSubVector<Number> &Fz = *context.elem_subresiduals[_u_z_var]; // R_{z}
 
-    libMesh::DenseSubMatrix<Number> &Krr = *c.elem_subjacobians[_u_r_var][_u_r_var]; // R_{r},{r}
-    libMesh::DenseSubMatrix<Number> &Krz = *c.elem_subjacobians[_u_r_var][_u_z_var]; // R_{r},{z}
+    libMesh::DenseSubMatrix<Number> &Krr = *context.elem_subjacobians[_u_r_var][_u_r_var]; // R_{r},{r}
+    libMesh::DenseSubMatrix<Number> &Krz = *context.elem_subjacobians[_u_r_var][_u_z_var]; // R_{r},{z}
 
-    libMesh::DenseSubMatrix<Number> &Kzr = *c.elem_subjacobians[_u_z_var][_u_r_var]; // R_{z},{r}
-    libMesh::DenseSubMatrix<Number> &Kzz = *c.elem_subjacobians[_u_z_var][_u_z_var]; // R_{z},{z}
+    libMesh::DenseSubMatrix<Number> &Kzr = *context.elem_subjacobians[_u_z_var][_u_r_var]; // R_{z},{r}
+    libMesh::DenseSubMatrix<Number> &Kzz = *context.elem_subjacobians[_u_z_var][_u_z_var]; // R_{z},{z}
 
-    libMesh::DenseSubMatrix<Number> &Krp = *c.elem_subjacobians[_u_r_var][_p_var]; // R_{r},{p}
-    libMesh::DenseSubMatrix<Number> &Kzp = *c.elem_subjacobians[_u_z_var][_p_var]; // R_{z},{p}
+    libMesh::DenseSubMatrix<Number> &Krp = *context.elem_subjacobians[_u_r_var][_p_var]; // R_{r},{p}
+    libMesh::DenseSubMatrix<Number> &Kzp = *context.elem_subjacobians[_u_z_var][_p_var]; // R_{z},{p}
 
 
     // Now we will build the element Jacobian and residual.
@@ -189,7 +184,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -197,13 +192,13 @@ namespace GRINS
       
 	// Compute the solution & its gradient at the old Newton iterate.
 	libMesh::Number p, u_r, u_z;
-	p   = c.interior_value(_p_var, qp);
-	u_r = c.interior_value(_u_r_var, qp);
-	u_z = c.interior_value(_u_z_var, qp);
+	p   = context.interior_value(_p_var, qp);
+	u_r = context.interior_value(_u_r_var, qp);
+	u_z = context.interior_value(_u_z_var, qp);
 
 	libMesh::Gradient gradu_r, gradu_z;
-	gradu_r = c.interior_gradient(_u_r_var, qp);
-	gradu_z = c.interior_gradient(_u_z_var, qp);
+	gradu_r = context.interior_gradient(_u_r_var, qp);
+	gradu_z = context.interior_gradient(_u_z_var, qp);
 
 	libMesh::NumberVectorValue U(u_r, u_z);
 
@@ -223,9 +218,9 @@ namespace GRINS
 		+ p*vel_gradphi[i][qp](1)            // pressure term
 		- _mu*(vel_gradphi[i][qp]*gradu_z) ); // diffusion term
 
-	    if (request_jacobian && c.elem_solution_derivative)
+	    if (compute_jacobian && context.elem_solution_derivative)
 	      {
-		libmesh_assert (c.elem_solution_derivative == 1.0);
+		libmesh_assert (context.elem_solution_derivative == 1.0);
 
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
@@ -263,7 +258,7 @@ namespace GRINS
 
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (request_jacobian && c.elem_solution_derivative)
+	      } // end - if (compute_jacobian && context.elem_solution_derivative)
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -272,65 +267,62 @@ namespace GRINS
     this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
-  bool AxisymmetricIncompressibleNavierStokes::element_constraint( bool request_jacobian,
-								   libMesh::DiffContext& context,
-								   libMesh::FEMSystem* system )
+  void AxisymmetricIncompressibleNavierStokes::element_constraint( bool compute_jacobian,
+								   libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = c.dof_indices_var[_u_r_var].size();
-    const unsigned int n_p_dofs = c.dof_indices_var[_p_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
+    const unsigned int n_p_dofs = context.dof_indices_var[_p_var].size();
 
     // We get some references to cell-specific data that
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[_u_r_var]->get_JxW();
+      context.element_fe_var[_u_r_var]->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      c.element_fe_var[_u_r_var]->get_phi();
+      context.element_fe_var[_u_r_var]->get_phi();
 
     // The velocity shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& vel_gradphi =
-      c.element_fe_var[_u_r_var]->get_dphi();
+      context.element_fe_var[_u_r_var]->get_dphi();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      c.element_fe_var[_p_var]->get_phi();
+      context.element_fe_var[_p_var]->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      c.element_fe_var[_u_r_var]->get_xyz();
+      context.element_fe_var[_u_r_var]->get_xyz();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[_p_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[_p_var]; // R_{p}
 
-    libMesh::DenseSubMatrix<Number> &Kpr = *c.elem_subjacobians[_p_var][_u_r_var]; // R_{p},{r}
-    libMesh::DenseSubMatrix<Number> &Kpz = *c.elem_subjacobians[_p_var][_u_z_var]; // R_{p},{z}
+    libMesh::DenseSubMatrix<Number> &Kpr = *context.elem_subjacobians[_p_var][_u_r_var]; // R_{p},{r}
+    libMesh::DenseSubMatrix<Number> &Kpz = *context.elem_subjacobians[_p_var][_u_z_var]; // R_{p},{z}
 
     // Add the constraint given by the continuity equation.
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Number r = u_qpoint[qp](0);
 
-	libMesh::Number u_r = c.interior_value(_u_r_var, qp);
+	libMesh::Number u_r = context.interior_value(_u_r_var, qp);
 
 	// Compute the velocity gradient at the old Newton iterate.
 	libMesh::Gradient gradu_r, gradu_z;
-	gradu_r = c.interior_gradient(_u_r_var, qp);
-	gradu_z = c.interior_gradient(_u_z_var, qp);
+	gradu_r = context.interior_gradient(_u_r_var, qp);
+	gradu_z = context.interior_gradient(_u_z_var, qp);
       
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
@@ -339,9 +331,9 @@ namespace GRINS
 	    Fp(i) += JxW[qp]*(  r*p_phi[i][qp]*(gradu_r(0) + gradu_z(1)) +
 				u_r*p_phi[i][qp] );
 
-	    if (request_jacobian && c.elem_solution_derivative)
+	    if (compute_jacobian && context.elem_solution_derivative)
 	      {
-		libmesh_assert (c.elem_solution_derivative == 1.0);
+		libmesh_assert (context.elem_solution_derivative == 1.0);
 
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
@@ -352,7 +344,7 @@ namespace GRINS
 
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (request_jacobian && c.elem_solution_derivative)
+	      } // end - if (compute_jacobian && context.elem_solution_derivative)
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -361,7 +353,7 @@ namespace GRINS
     // Pin p = p_value at p_point
     if( _pin_pressure )
       {
-	_p_pinning.pin_value( context, request_jacobian, _p_var );
+	_p_pinning.pin_value( context, compute_jacobian, _p_var );
       }
   
 
@@ -369,65 +361,37 @@ namespace GRINS
     this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
-
-  bool AxisymmetricIncompressibleNavierStokes::side_time_derivative( bool request_jacobian,
-								     libMesh::DiffContext& context,
-								     libMesh::FEMSystem* system )
+  void AxisymmetricIncompressibleNavierStokes::mass_residual( bool compute_jacobian,
+							      libMesh::FEMContext& context )
   {
-    return request_jacobian;
-  }
-
-  bool AxisymmetricIncompressibleNavierStokes::side_constraint( bool request_jacobian,
-								libMesh::DiffContext& context,
-								libMesh::FEMSystem* system )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
-#endif
-
-    return request_jacobian;
-  }
-
-  bool AxisymmetricIncompressibleNavierStokes::mass_residual( bool request_jacobian,
-							      libMesh::DiffContext& context,
-							      libMesh::FEMSystem* system )
-  {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
     const std::vector<Real> &JxW = 
-      c.element_fe_var[_u_r_var]->get_JxW();
+      context.element_fe_var[_u_r_var]->get_JxW();
 
     // The shape functions at interior quadrature points.
     // We assume the same for each flow variable
     const std::vector<std::vector<Real> >& u_phi = 
-      c.element_fe_var[_u_r_var]->get_phi();
+      context.element_fe_var[_u_r_var]->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      c.element_fe_var[_u_r_var]->get_xyz();
+      context.element_fe_var[_u_r_var]->get_xyz();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_u_dofs = c.dof_indices_var[_u_r_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_r = *c.elem_subresiduals[_u_r_var];
-    DenseSubVector<Real> &F_z = *c.elem_subresiduals[_u_z_var];
+    DenseSubVector<Real> &F_r = *context.elem_subresiduals[_u_r_var];
+    DenseSubVector<Real> &F_z = *context.elem_subresiduals[_u_z_var];
 
-    DenseSubMatrix<Real> &M_rr = *c.elem_subjacobians[_u_r_var][_u_r_var];
-    DenseSubMatrix<Real> &M_zz = *c.elem_subjacobians[_u_z_var][_u_z_var];
+    DenseSubMatrix<Real> &M_rr = *context.elem_subjacobians[_u_r_var][_u_r_var];
+    DenseSubMatrix<Real> &M_zz = *context.elem_subjacobians[_u_z_var][_u_z_var];
 
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -436,8 +400,8 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real u_r_dot = c.interior_value(_u_r_var, qp);
-	Real u_z_dot = c.interior_value(_u_z_var, qp);
+	Real u_r_dot = context.interior_value(_u_r_var, qp);
+	Real u_z_dot = context.interior_value(_u_z_var, qp);
       
 	const libMesh::Number r = u_qpoint[qp](0);
 
@@ -446,7 +410,7 @@ namespace GRINS
 	    F_r(i) += JxW[qp]*r*_rho*u_r_dot*u_phi[i][qp];
 	    F_z(i) += JxW[qp]*r*_rho*u_z_dot*u_phi[i][qp];
 
-	    if( request_jacobian )
+	    if( compute_jacobian )
               {
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
@@ -462,7 +426,7 @@ namespace GRINS
 	  } // End dof loop
       } // End quadrature loop
 
-    return request_jacobian;
+    return;
   }
 
 } // namespace GRINS

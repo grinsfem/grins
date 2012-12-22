@@ -75,29 +75,8 @@ namespace GRINS
     /*! This is the main part of the class. This will add the source term to
         the IncompressibleNavierStokes class.
      */
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
-
-    //! No boundary terms for BoussinesqBuoyancy.
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
-
-    //! No constraint terms for BoussinesqBuoyancy.
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
-
-    //! No boundary terms for BoussinesqBuoyancy.
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
-
-    //! No mass terms for BoussinesqBuoyancy.
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
   protected:
 

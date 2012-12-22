@@ -98,25 +98,20 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_context( libMesh::DiffContext &context )
+  void HeatTransferBase::init_context( libMesh::FEMContext& context )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    c.element_fe_var[_T_var]->get_JxW();
-    c.element_fe_var[_T_var]->get_phi();
-    c.element_fe_var[_T_var]->get_dphi();
-    c.element_fe_var[_T_var]->get_xyz();
+    context.element_fe_var[_T_var]->get_JxW();
+    context.element_fe_var[_T_var]->get_phi();
+    context.element_fe_var[_T_var]->get_dphi();
+    context.element_fe_var[_T_var]->get_xyz();
 
-    c.side_fe_var[_T_var]->get_JxW();
-    c.side_fe_var[_T_var]->get_phi();
-    c.side_fe_var[_T_var]->get_dphi();
-    c.side_fe_var[_T_var]->get_xyz();
-
-    //TODO: _u_var is registered so can we assume things related to _u_var
-    //      are available in FEMContext
+    context.side_fe_var[_T_var]->get_JxW();
+    context.side_fe_var[_T_var]->get_phi();
+    context.side_fe_var[_T_var]->get_dphi();
+    context.side_fe_var[_T_var]->get_xyz();
 
     return;
   }

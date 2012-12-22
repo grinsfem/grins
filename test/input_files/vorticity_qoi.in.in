@@ -35,7 +35,7 @@ print_log_info = 'false'
 solver_verbose = 'false'
 solver_quiet = 'true'
 
-echo_physics = 'false'
+echo_physics = 'true'
 echo_subdomains_per_physics = 'false'
 echo_qoi = 'false' # which QoIs activated
 print_qoi = 'false' # print numerical values of QoIs

@@ -297,6 +297,7 @@ AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh, [chmod +x test/test_axi_
 AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_ns_con_cyl_flow.sh])
 AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
+AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 
 AC_OUTPUT( Makefile \
            src/Makefile 

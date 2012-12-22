@@ -30,6 +30,8 @@
 
 namespace GRINS
 {
+  // Initialize static members
+  bool Physics::_is_steady = false;
 
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
@@ -73,8 +75,19 @@ namespace GRINS
     return true;
   }
 
+  void Physics::set_is_steady( bool is_steady )
+  {
+    _is_steady = is_steady;
+    return;
+  }
 
-  void Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
+  bool Physics::is_steady() const
+  {
+    return _is_steady;
+  }
+
+
+  void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
   {
     return;
   }
@@ -103,6 +116,11 @@ namespace GRINS
     _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
     return;
   }
+  
+  void Physics::init_context( libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
 
   void Physics::init_cache( CachedValues& )
   {
@@ -117,6 +135,36 @@ namespace GRINS
   void Physics::compute_cache( const libMesh::FEMContext&,
 			       const std::vector<libMesh::Point>&,
 			       CachedValues& )
+  {
+    return;
+  }
+
+  void Physics::element_time_derivative( bool /*compute_jacobian*/,
+					 libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::side_time_derivative( bool /*compute_jacobian*/,
+				      libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::element_constraint( bool /*compute_jacobian*/,
+				    libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::side_constraint( bool /*compute_jacobian*/,
+				 libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }   
+
+  void Physics::mass_residual( bool /*compute_jacobian*/,
+			       libMesh::FEMContext& /*context*/ )
   {
     return;
   }

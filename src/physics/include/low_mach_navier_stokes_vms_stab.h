@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_VMS_STAB_H
-#define LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
 
 //libMesh
 #include "time_solver.h"
@@ -47,54 +47,31 @@ namespace GRINS
     LowMachNavierStokesVMSStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~LowMachNavierStokesVMSStabilization();
 
-    //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( const GetPot& input );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
-
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
-
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
-
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
-
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    virtual void mass_residual( bool compute_jacobian,
+				libMesh::FEMContext& context );
 
   protected:
 
-    void assemble_continuity_time_deriv( bool request_jacobian,
-					 libMesh::FEMContext& context,
-					 libMesh::FEMSystem* system );
+    void assemble_continuity_time_deriv( bool compute_jacobian,
+					 libMesh::FEMContext& context );
 
-    void assemble_momentum_time_deriv( bool request_jacobian,
-				       libMesh::FEMContext& context,
-				       libMesh::FEMSystem* system );
+    void assemble_momentum_time_deriv( bool compute_jacobian,
+				       libMesh::FEMContext& context );
 
-    void assemble_energy_time_deriv( bool request_jacobian,
-				     libMesh::FEMContext& context,
-				     libMesh::FEMSystem* system );
+    void assemble_energy_time_deriv( bool compute_jacobian,
+				     libMesh::FEMContext& context );
 
-    void assemble_continuity_mass_residual( bool request_jacobian,
-					    libMesh::FEMContext& context,
-					    libMesh::FEMSystem* system );
+    void assemble_continuity_mass_residual( bool compute_jacobian,
+					    libMesh::FEMContext& context );
 
-    void assemble_momentum_mass_residual( bool request_jacobian,
-					  libMesh::FEMContext& context,
-					  libMesh::FEMSystem* system );
+    void assemble_momentum_mass_residual( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
-    void assemble_energy_mass_residual( bool request_jacobian,
-					libMesh::FEMContext& context,
-					libMesh::FEMSystem* system );
+    void assemble_energy_mass_residual( bool compute_jacobian,
+					libMesh::FEMContext& context );
     
   private:
     LowMachNavierStokesVMSStabilization();
@@ -103,4 +80,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif //GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H

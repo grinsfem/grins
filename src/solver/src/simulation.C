@@ -78,6 +78,9 @@ namespace GRINS
       
 	/*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
 	  but we also need to be able to get system variable numbers... */
+	/* Note that we are effectively transfering ownership of the qoi pointer because
+	   it will be cloned in _multiphysics_system and all the calculations are done there. */
+	
 	_multiphysics_system->attach_qoi( &(*(this->_qoi)) );
       }
 
@@ -108,7 +111,6 @@ namespace GRINS
     if( this->_print_qoi )
       {
 	_multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-	//const libMesh::DifferentiableQoI* diff_qoi = this->_multiphysics_system->get_qoi();
 	const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
 	my_qoi->output_qoi( std::cout );
       }
@@ -134,7 +136,8 @@ namespace GRINS
 
   Number Simulation::get_qoi( unsigned int qoi_index ) const
   {
-    return _qoi->get_qoi( qoi_index );
+    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+    return qoi->get_qoi(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )
