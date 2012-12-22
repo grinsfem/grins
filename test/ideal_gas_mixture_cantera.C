@@ -26,9 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+//C++
 #include <iomanip>
 
 // GRINS
+#include "grins_config.h"
 #include "ideal_gas_mixture.h"
 #include "cantera_thermo.h"
 #include "cantera_transport.h"
@@ -36,6 +38,7 @@
 
 int main()
 {
+#ifdef GRINS_HAVE_CANTERA
   GetPot input( "./input_files/cantera_transport.in" );
 
   GRINS::IdealGasMixture<GRINS::CanteraThermodynamics,GRINS::CanteraTransport,GRINS::CanteraKinetics> gas( input );
@@ -170,6 +173,10 @@ int main()
 		<< "k_reg = " << k_reg << std::endl;
       return_flag = 1;
     }
+#else // GRINS_HAVE_CANTERA
+  // automake expects 77 for a skipped test
+  int return_flag = 77;
+#endif
 
   return return_flag;
 }

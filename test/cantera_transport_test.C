@@ -26,11 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+//C++
 #include <iomanip>
+
+//GRINS
+#include "grins_config.h"
 #include "cantera_transport.h"
 
 int main()
 {
+#ifdef GRINS_HAVE_CANTERA
   GetPot input( "./input_files/cantera_transport.in" );
 
   std::vector<std::string> species(5);
@@ -113,6 +118,10 @@ int main()
 		<< std::endl;
     }
   */
+#else //GRINS_HAVE_CANTERA
+  // automake expects 77 for a skipped test
+  int return_flag = 77;
+#endif
 
   return return_flag;
 }

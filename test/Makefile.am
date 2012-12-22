@@ -13,11 +13,8 @@ check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += chem_mixture
 check_PROGRAMS += cea_thermo_test
 check_PROGRAMS += cantera_chem_thermo_test
-
-if CANTERA_ENABLED
-  check_PROGRAMS += cantera_transport_test
-  check_PROGRAMS += ideal_gas_mixture_cantera
-endif
+check_PROGRAMS += cantera_transport_test
+check_PROGRAMS += ideal_gas_mixture_cantera
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -64,11 +61,9 @@ low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavit
 chem_mixture_SOURCES = chem_mixture.C
 cea_thermo_test_SOURCES = cea_thermo_test.C
 cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
+cantera_transport_test_SOURCES = cantera_transport_test.C
+ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
 
-if CANTERA_ENABLED
-  cantera_transport_test_SOURCES = cantera_transport_test.C
-  ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
-endif
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -88,11 +83,8 @@ TESTS = gaussian_profiles                                       \
         cea_thermo_test
 
 TESTS += cantera_chem_thermo_test.sh
-
-if CANTERA_ENABLED
-  TESTS += cantera_transport_test
-  TESTS += ideal_gas_mixture_cantera
-endif
+TESTS += cantera_transport_test
+TESTS += ideal_gas_mixture_cantera
 
 TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/test_ns_couette_flow_2d_y.sh            \
