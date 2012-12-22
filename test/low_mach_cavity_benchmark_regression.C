@@ -91,16 +91,21 @@ int main(int argc, char* argv[])
   // and not even close to the real QoI for this problem.
   const Real exact_qoi = 4.8158910675853654e+00;
 
-  const Real tol = 1.0e-15;
+  const Real tol = 4.0e-13;
 
   int return_flag = 0;
 
-  if( std::fabs( (qoi-exact_qoi)/exact_qoi ) > tol )
+  Real rel_error = std::fabs( (qoi-exact_qoi)/exact_qoi );
+
+  if( rel_error > tol )
     {
       return_flag = 1;
-      std::cerr << "Error: QoI value mismatch." << std::endl
-		<< "Computed qoi = " << qoi << std::endl
-		<< "Exact qoi    = " << exact_qoi << std::endl;
+      std::cerr << std::setprecision(16)
+		<< std::scientific
+		<< "Error: QoI value mismatch." << std::endl
+		<< "Computed qoi   = " << qoi << std::endl
+		<< "Exact qoi      = " << exact_qoi << std::endl
+		<< "Relative error = " << rel_error << std::endl;
     }
 
   return return_flag;
