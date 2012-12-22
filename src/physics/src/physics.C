@@ -87,7 +87,7 @@ namespace GRINS
   }
 
 
-  void Physics::set_time_evolving_vars( libMesh::FEMSystem* system )
+  void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
   {
     return;
   }
@@ -116,7 +116,42 @@ namespace GRINS
     _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
     return;
   }
+  
+  void Physics::init_context( libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
 
+  void Physics::element_time_derivative( bool /*compute_jacobian*/,
+					 libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::side_time_derivative( bool /*compute_jacobian*/,
+				      libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::element_constraint( bool /*compute_jacobian*/,
+				    libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+
+  void Physics::side_constraint( bool /*compute_jacobian*/,
+				 libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }   
+
+  void Physics::mass_residual( bool /*compute_jacobian*/,
+			       libMesh::FEMContext& /*context*/ )
+  {
+    return;
+  }
+  
 #ifdef GRINS_USE_GRVY_TIMERS
   void Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {

@@ -119,30 +119,30 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context ) = 0;
+    virtual void init_context( libMesh::FEMContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context ) = 0;
+					  libMesh::FEMContext& context );
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context ) = 0;
+				       libMesh::FEMContext& context );
 
     //! Constraint part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context ) = 0;
+				     libMesh::FEMContext& context );
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context ) = 0;
+				  libMesh::FEMContext& context );
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context ) = 0;
+				libMesh::FEMContext& context );
 
     void init_bcs( libMesh::FEMSystem* system );
 
