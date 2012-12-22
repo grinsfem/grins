@@ -75,6 +75,13 @@ namespace GRINS
     return;
   }
 
+  void CachedValues::set_gradient_values( unsigned int quantity, 
+					  std::vector<libMesh::Gradient>& values )
+  {
+    _cached_gradient_values.insert( std::make_pair( quantity, values ) );
+    return;
+  }
+
   void CachedValues::set_vector_values( unsigned int quantity, std::vector<std::vector<Number> >& values )
   {
     _cached_vector_values.insert( std::make_pair( quantity, values ) );
@@ -85,6 +92,12 @@ namespace GRINS
   {
     libmesh_assert( _cached_values.find(quantity) != _cached_values.end() );
     return _cached_values.find(quantity)->second;
+  }
+
+  const std::vector<libMesh::Gradient>& CachedValues::get_cached_gradient_values( unsigned int quantity ) const
+  {
+    libmesh_assert( _cached_gradient_values.find(quantity) != _cached_gradient_values.end() );
+    return _cached_gradient_values.find(quantity)->second;
   }
 
   const std::vector<std::vector<Number> >& CachedValues::get_cached_vector_values( unsigned int quantity ) const

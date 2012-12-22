@@ -130,12 +130,14 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
+    void init_element_cache( CachedValues& cache ) const;
+
     void compute_element_cache( const libMesh::FEMContext& context,
-				CachedValues& cache );
+				CachedValues& cache ) const;
 
     void compute_element_cache( const libMesh::FEMContext& context,
 				const std::vector<libMesh::Point>& points,
-				CachedValues& cache );
+				CachedValues& cache ) const;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

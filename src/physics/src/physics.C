@@ -122,19 +122,20 @@ namespace GRINS
     return;
   }
 
-  void Physics::init_cache( CachedValues& )
+  void Physics::init_element_cache( CachedValues& ) const
   {
     return;
   }
 
-  void Physics::compute_element_cache( const libMesh::FEMContext&, CachedValues& )
+  void Physics::compute_element_cache( const libMesh::FEMContext&,
+				       CachedValues& ) const
   {
     return;
   }
 
   void Physics::compute_element_cache( const libMesh::FEMContext&,
 				       const std::vector<libMesh::Point>&,
-				       CachedValues& )
+				       CachedValues& ) const
   {
     return;
   }

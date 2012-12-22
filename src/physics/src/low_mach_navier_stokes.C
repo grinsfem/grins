@@ -738,10 +738,89 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
-							     CachedValues& cache )
+  void LowMachNavierStokes<Mu,SH,TC>::init_element_cache( CachedValues& cache ) const
   {
-    libmesh_not_implemented();
+    cache.add_quantity(Cache::X_VELOCITY);
+    cache.add_quantity(Cache::Y_VELOCITY);
+
+    cache.add_quantity(Cache::X_VELOCITY_GRAD);
+    cache.add_quantity(Cache::Y_VELOCITY_GRAD);
+
+    if(this->_dim > 2)
+      {
+	cache.add_quantity(Cache::Z_VELOCITY);
+	cache.add_quantity(Cache::Z_VELOCITY_GRAD);
+      }
+    cache.add_quantity(Cache::TEMPERATURE);
+    cache.add_quantity(Cache::TEMPERATURE_GRAD);
+
+    cache.add_quantity(Cache::PRESSURE);
+    cache.add_quantity(Cache::THERMO_PRESSURE);
+    
+    return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
+							     CachedValues& cache ) const
+  {
+    const unsigned int n_qpoints = context.element_qrule->n_points();
+
+    std::vector<Real> u, v, w, T, p, p0;
+    u.resize(n_qpoints);
+    v.resize(n_qpoints);
+    if( this->_dim > 2 )
+      w.resize(n_qpoints);
+    
+    T.resize(n_qpoints);
+    p.resize(n_qpoints);
+    p0.resize(n_qpoints);
+
+    std::vector<libMesh::Gradient> grad_u, grad_v, grad_w, grad_T;
+    grad_u.resize(n_qpoints);
+    grad_v.resize(n_qpoints);
+    if( this->_dim > 2 )
+      grad_w.resize(n_qpoints);
+    
+    grad_T.resize(n_qpoints);
+
+    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+      {
+	u[qp] = context.interior_value(this->_u_var, qp);
+	v[qp] = context.interior_value(this->_v_var, qp);
+
+	grad_u[qp] = context.interior_gradient(this->_u_var, qp);
+	grad_v[qp] = context.interior_gradient(this->_v_var, qp);
+	if( this->_dim > 2 )
+	  {
+	    w[qp] = context.interior_value(this->_w_var, qp);
+	    grad_w[qp] = context.interior_gradient(this->_w_var, qp);
+	  }
+	T[qp] = context.interior_value(this->_T_var, qp);
+	grad_T[qp] = context.interior_gradient(this->_T_var, qp);
+
+	p[qp] = context.interior_value(this->_p_var, qp);
+	p0[qp] = this->get_p0_steady(context, qp);
+      }
+    
+    cache.set_values(Cache::X_VELOCITY, u);
+    cache.set_values(Cache::Y_VELOCITY, v);
+    
+    cache.set_gradient_values(Cache::X_VELOCITY_GRAD, grad_u);
+    cache.set_gradient_values(Cache::Y_VELOCITY_GRAD, grad_v);
+    
+    if(this->_dim > 2)
+      {
+	cache.set_values(Cache::Z_VELOCITY, w);
+	cache.set_gradient_values(Cache::Z_VELOCITY_GRAD, grad_w);
+      }
+
+    cache.set_values(Cache::TEMPERATURE, T);
+    cache.set_gradient_values(Cache::TEMPERATURE_GRAD, grad_T);
+
+    cache.set_values(Cache::PRESSURE, p);
+    cache.set_values(Cache::THERMO_PRESSURE, p0);
+
     return;
   }
   
@@ -749,7 +828,7 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
 							     const std::vector<libMesh::Point>& points,
-							     CachedValues& cache )
+							     CachedValues& cache ) const
   {
     if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
       {

@@ -61,11 +61,11 @@ namespace GRINS
 				libMesh::FEMContext& context );
 
     virtual void compute_element_cache( const libMesh::FEMContext& context, 
-					CachedValues& cache );
+					CachedValues& cache ) const;
 
     virtual void compute_element_cache( const libMesh::FEMContext& context,
 					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+					CachedValues& cache ) const;
 
   protected:
 

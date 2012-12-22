@@ -145,8 +145,8 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool compute_jacobian,
-								   libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool /*compute_jacobian*/,
+								   libMesh::FEMContext& /*context*/ )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
 
@@ -405,7 +405,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
-								    CachedValues& cache )
+								    CachedValues& cache ) const
   {
     libmesh_not_implemented();
     return;
@@ -414,7 +414,7 @@ namespace GRINS
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
 								    const std::vector<libMesh::Point>& points,
-								    CachedValues& cache )
+								    CachedValues& cache ) const
   {
     if( cache.is_active(Cache::MIXTURE_DENSITY) )
       {

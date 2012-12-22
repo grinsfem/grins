@@ -81,7 +81,7 @@ namespace GRINS
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0 ) const;
 
-    libMesh::Real get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
 
     libMesh::Real get_p0_steady( const libMesh::FEMContext& c, const libMesh::Point& p ) const;
 
@@ -151,7 +151,8 @@ namespace GRINS
   
   template<class V, class SH, class TC>
   inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( libMesh::FEMContext& c, unsigned int qp ) const
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const libMesh::FEMContext& c,
+								 unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )

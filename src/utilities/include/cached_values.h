@@ -36,7 +36,7 @@
 
 // libMesh
 #include "libmesh.h"
-
+#include "exact_error_estimator.h" //libMesh::Gradient
 // GRINS
 #include "cached_quantities_enum.h"
 
@@ -59,9 +59,15 @@ namespace GRINS
 
     void set_values( unsigned int quantity, std::vector<Number>& values );
 
-    void set_vector_values( unsigned int quantity, std::vector<std::vector<Number> >& values );
+    void set_gradient_values( unsigned int quantity,
+			      std::vector<libMesh::Gradient>& values );
+
+    void set_vector_values( unsigned int quantity,
+			    std::vector<std::vector<Number> >& values );
 
     const std::vector<Number>& get_cached_values( unsigned int quantity ) const;
+    
+    const std::vector<libMesh::Gradient>& get_cached_gradient_values( unsigned int quantity ) const;
 
     const std::vector<std::vector<Number> >& get_cached_vector_values( unsigned int quantity ) const;
 
@@ -70,6 +76,7 @@ namespace GRINS
     std::set<unsigned int> _cache_list;
 
     std::map<unsigned int,std::vector<Number> > _cached_values;
+    std::map<unsigned int,std::vector<libMesh::Gradient> > _cached_gradient_values;
     std::map<unsigned int,std::vector<std::vector<Number> >  > _cached_vector_values;
     
   };

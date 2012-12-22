@@ -92,12 +92,15 @@ namespace GRINS
       (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
     }
 
-    // Initialize builtin BC's for each physics
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
+	// Initialize builtin BC's for each physics
 	(physics_iter->second)->init_bcs( this );
+
+	// Initialize cache for each physics
+	(physics_iter->second)->init_element_cache(_element_cache);
       }
 
     // Next, call parent init_data function to intialize everything.
@@ -128,6 +131,12 @@ namespace GRINS
   
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
+    // First, clear out cache
+    _element_cache.clear();
+
+    // Now compute cache for this element
+    this->compute_element_cache(c,_element_cache);
 
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -267,9 +276,20 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
-						  CachedValues& cache )
+  void MultiphysicsSystem::init_element_cache( CachedValues& cache ) const
   {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->init_element_cache( cache );
+      }
+    return;
+  }
+
+  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
+						  CachedValues& cache ) const
+  {    
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
@@ -281,7 +301,7 @@ namespace GRINS
 
   void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
 						  const std::vector<libMesh::Point>& points,
-						  CachedValues& cache )
+						  CachedValues& cache ) const
   {
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
