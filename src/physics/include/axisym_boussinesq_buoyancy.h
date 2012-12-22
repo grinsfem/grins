@@ -79,7 +79,8 @@ namespace GRINS
         the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context );
+					  libMesh::FEMContext& context,
+					  CachedValues& cache );
 
   protected:
 

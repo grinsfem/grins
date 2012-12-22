@@ -91,7 +91,8 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::element_time_derivative( bool compute_jacobian,
-								      libMesh::FEMContext& context )
+								      libMesh::FEMContext& context,
+								      CachedValues& /*cache*/ )
   {
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -405,7 +406,7 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
-								    CachedValues& cache ) const
+								    CachedValues& /*cache*/ ) const
   {
     libmesh_not_implemented();
     return;

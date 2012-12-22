@@ -47,7 +47,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesVMSStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-									       libMesh::FEMContext& context )
+									       libMesh::FEMContext& context,
+									       CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::element_time_derivative");

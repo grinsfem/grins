@@ -126,7 +126,8 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool compute_jacobian,
-									libMesh::FEMContext& context )
+									libMesh::FEMContext& context,
+									CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricHeatTransfer::element_time_derivative");

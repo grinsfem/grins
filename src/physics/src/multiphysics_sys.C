@@ -146,7 +146,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_time_derivative( compute_jacobian, c );
+	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
+							     _element_cache );
 	  }
       }
 
