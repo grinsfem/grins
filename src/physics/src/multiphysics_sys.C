@@ -108,12 +108,14 @@ namespace GRINS
 
   void MultiphysicsSystem::init_context( libMesh::DiffContext &context )
   {
+    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	(physics_iter->second)->init_context( context );
+	(physics_iter->second)->init_context( c );
       }
 
     return;
@@ -135,7 +137,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_time_derivative( compute_jacobian, context, this );
+	    (physics_iter->second)->element_time_derivative( compute_jacobian, c );
 	  }
       }
 
@@ -160,7 +162,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_time_derivative( compute_jacobian, context, this );
+	    (physics_iter->second)->side_time_derivative( compute_jacobian, c );
 	  }
       }
 
@@ -185,7 +187,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_constraint( compute_jacobian, context, this );
+	    (physics_iter->second)->element_constraint( compute_jacobian, c );
 	  }
       }
 
@@ -210,7 +212,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_constraint( compute_jacobian, context, this );
+	    (physics_iter->second)->side_constraint( compute_jacobian, c );
 	  }
       }
 
@@ -235,7 +237,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->mass_residual( compute_jacobian, context, this );
+	    (physics_iter->second)->mass_residual( compute_jacobian, c );
 	  }
       }
 

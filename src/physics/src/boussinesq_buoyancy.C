@@ -60,44 +60,41 @@ namespace GRINS
     return;
   }
 
-  bool BoussinesqBuoyancy::element_time_derivative( bool request_jacobian,
-						    libMesh::DiffContext& context,
-						    libMesh::FEMSystem* system )
+  void BoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
+						    libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancy::element_time_derivative");
 #endif
   
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     if (_dim != 3)
       _w_var = _u_var; // for convenience
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = c.dof_indices_var[_u_var].size();
-    const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[_u_var].size();
+    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[_u_var]->get_JxW();
+      context.element_fe_var[_u_var]->get_JxW();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      c.element_fe_var[_u_var]->get_phi();
+      context.element_fe_var[_u_var]->get_phi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      c.element_fe_var[_T_var]->get_phi();
+      context.element_fe_var[_T_var]->get_phi();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
+    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
+    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<Number> &KuT = *c.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
-    libMesh::DenseSubMatrix<Number> &KvT = *c.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
-    libMesh::DenseSubMatrix<Number> &KwT = *c.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
+    libMesh::DenseSubMatrix<Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
+    libMesh::DenseSubMatrix<Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
+    libMesh::DenseSubMatrix<Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -105,13 +102,13 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	// Compute the solution & its gradient at the old Newton iterate.
 	libMesh::Number T;
-	T = c.interior_value(_T_var, qp);
+	T = context.interior_value(_T_var, qp);
 
 	// First, an i-loop over the velocity degrees of freedom.
 	// We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -124,9 +121,8 @@ namespace GRINS
 	    if (_dim == 3)
 	      Fw(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
-	    if (request_jacobian && c.elem_solution_derivative)
+	    if (compute_jacobian)
 	      {
-		libmesh_assert (c.elem_solution_derivative == 1.0);
 		for (unsigned int j=0; j != n_T_dofs; j++)
 		  {
 		    KuT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
@@ -136,7 +132,7 @@ namespace GRINS
 		      KwT(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
 		  } // End j dof loop
-	      } // End request_jacobian check
+	      } // End compute_jacobian check
 
 	  } // End i dof loop
       } // End quadrature loop
@@ -145,35 +141,31 @@ namespace GRINS
     this->_timer->EndTimer("BoussinesqBuoyancy::element_time_derivative");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
-  bool BoussinesqBuoyancy::side_time_derivative( bool request_jacobian,
-						 libMesh::DiffContext&,
-						 libMesh::FEMSystem* )
+  void BoussinesqBuoyancy::side_time_derivative( bool compute_jacobian,
+						 libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
-  bool BoussinesqBuoyancy::element_constraint( bool request_jacobian,
-					       libMesh::DiffContext&,
-					       libMesh::FEMSystem* )
+  void BoussinesqBuoyancy::element_constraint( bool compute_jacobian,
+					       libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
-  bool BoussinesqBuoyancy::side_constraint( bool request_jacobian,
-					    libMesh::DiffContext&,
-					    libMesh::FEMSystem* )
+  void BoussinesqBuoyancy::side_constraint( bool compute_jacobian,
+					    libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
-  bool BoussinesqBuoyancy::mass_residual( bool request_jacobian,
-					  libMesh::DiffContext&,
-					  libMesh::FEMSystem* )
+  void BoussinesqBuoyancy::mass_residual( bool compute_jacobian,
+					  libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
 } // namespace GRINS

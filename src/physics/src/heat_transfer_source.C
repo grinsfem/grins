@@ -53,32 +53,29 @@ namespace GRINS
   }
 
   template< class SourceFunction >
-  bool HeatTransferSource<SourceFunction>::element_time_derivative( bool request_jacobian,
-								    libMesh::DiffContext& context,
-								    libMesh::FEMSystem* system )
+  void HeatTransferSource<SourceFunction>::element_time_derivative( bool compute_jacobian,
+								    libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferSource::element_time_derivative");
 #endif
   
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = c.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[_T_var]->get_JxW();
+      context.element_fe_var[_T_var]->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      c.element_fe_var[_T_var]->get_phi();
+      context.element_fe_var[_T_var]->get_phi();
 
     // Locations of quadrature points
-    const std::vector<libMesh::Point>& x_qp = c.element_fe_var[_T_var]->get_xyz();
+    const std::vector<libMesh::Point>& x_qp = context.element_fe_var[_T_var]->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -86,7 +83,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -102,39 +99,35 @@ namespace GRINS
     this->_timer->EndTimer("HeatTransferSource::element_time_derivative");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
   template< class SourceFunction >
-  bool HeatTransferSource<SourceFunction>::side_time_derivative( bool request_jacobian,
-								 libMesh::DiffContext&,
-								 libMesh::FEMSystem* )
+  void HeatTransferSource<SourceFunction>::side_time_derivative( bool compute_jacobian,
+								 libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
   template< class SourceFunction >
-  bool HeatTransferSource<SourceFunction>::element_constraint( bool request_jacobian,
-							       libMesh::DiffContext&,
-							       libMesh::FEMSystem* )
+  void HeatTransferSource<SourceFunction>::element_constraint( bool compute_jacobian,
+							       libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
   template< class SourceFunction >
-  bool HeatTransferSource<SourceFunction>::side_constraint( bool request_jacobian,
-							    libMesh::DiffContext&,
-							    libMesh::FEMSystem* )
+  void HeatTransferSource<SourceFunction>::side_constraint( bool compute_jacobian,
+							    libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
   template< class SourceFunction >
-  bool HeatTransferSource<SourceFunction>::mass_residual( bool request_jacobian,
-							  libMesh::DiffContext&,
-							  libMesh::FEMSystem* )
+  void HeatTransferSource<SourceFunction>::mass_residual( bool compute_jacobian,
+							  libMesh::FEMContext& )
   {
-    return request_jacobian;
+    return;
   }
 
 } // namespace GRINS

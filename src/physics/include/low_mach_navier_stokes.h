@@ -52,32 +52,27 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     // Context initialization
-    virtual void init_context( libMesh::DiffContext &context );
+    virtual void init_context( libMesh::FEMContext& context );
 
     // Time dependent part(s)
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
+    virtual void side_time_derivative( bool compute_jacobian,
+				       libMesh::FEMContext& context );
 
     // Constraint part(s)
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
+    virtual void element_constraint( bool compute_jacobian,
+				     libMesh::FEMContext& context );
     //! Handles Dirichlet boundary conditions
     /*! Note that for any generic function specifications, 
       any components not specified will be assigned a zero Dirichlet value. */
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
+    virtual void side_constraint( bool compute_jacobian,
+				  libMesh::FEMContext& context );
 
     // Mass matrix part(s)
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    virtual void mass_residual( bool compute_jacobian,
+				libMesh::FEMContext& context );
 
   protected:
 
@@ -87,46 +82,37 @@ namespace GRINS
     PressurePinning _p_pinning;
 
     //! Helper function
-    void assemble_mass_time_deriv( bool request_jacobian, 
-				   libMesh::FEMContext& context, 
-				   libMesh::FEMSystem* system );
+    void assemble_mass_time_deriv( bool compute_jacobian, 
+				   libMesh::FEMContext& context );
 
     //! Helper function
-    void assemble_momentum_time_deriv( bool request_jacobian, 
-				       libMesh::FEMContext& context, 
-				       libMesh::FEMSystem* system );
+    void assemble_momentum_time_deriv( bool compute_jacobian, 
+				       libMesh::FEMContext& context );
 
     //! Helper function
-    void assemble_energy_time_deriv( bool request_jacobian, 
-				     libMesh::FEMContext& context, 
-				     libMesh::FEMSystem* system );
+    void assemble_energy_time_deriv( bool compute_jacobian, 
+				     libMesh::FEMContext& context );
 
     //! Helper function
-    void assemble_continuity_mass_residual( bool request_jacobian, 
-					    libMesh::FEMContext& c, 
-					    libMesh::FEMSystem* system );
+    void assemble_continuity_mass_residual( bool compute_jacobian, 
+					    libMesh::FEMContext& c );
 
     //! Helper function
-    void assemble_momentum_mass_residual( bool request_jacobian, 
-					  libMesh::FEMContext& c, 
-					  libMesh::FEMSystem* system );
+    void assemble_momentum_mass_residual( bool compute_jacobian, 
+					  libMesh::FEMContext& c );
 
     //! Helper function
-    void assemble_energy_mass_residual( bool request_jacobian, 
-					libMesh::FEMContext& c, 
-					libMesh::FEMSystem* system );
+    void assemble_energy_mass_residual( bool compute_jacobian, 
+					libMesh::FEMContext& c );
 
-    void assemble_thermo_press_elem_time_deriv( bool request_jacobian, 
-						libMesh::FEMContext& c, 
-						libMesh::FEMSystem* system );
+    void assemble_thermo_press_elem_time_deriv( bool compute_jacobian, 
+						libMesh::FEMContext& c );
 
-    void assemble_thermo_press_side_time_deriv( bool request_jacobian, 
-						libMesh::FEMContext& c, 
-						libMesh::FEMSystem* system );
+    void assemble_thermo_press_side_time_deriv( bool compute_jacobian, 
+						libMesh::FEMContext& c );
 
-    void assemble_thermo_press_mass_residual( bool request_jacobian, 
-					      libMesh::FEMContext& c, 
-					      libMesh::FEMSystem* system );
+    void assemble_thermo_press_mass_residual( bool compute_jacobian, 
+					      libMesh::FEMContext& c );
 
   private:
     LowMachNavierStokes();

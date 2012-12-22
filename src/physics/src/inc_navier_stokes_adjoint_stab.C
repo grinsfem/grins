@@ -50,58 +50,55 @@ namespace GRINS
     return;
   }
 
-  bool IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool request_jacobian,
-										libMesh::DiffContext& context,
-										libMesh::FEMSystem* system )
+  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool compute_jacobian,
+										libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_time_derivative");
 #endif
 
-    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = c.dof_indices_var[this->_p_var].size();
-    const unsigned int n_u_dofs = c.dof_indices_var[this->_u_var].size();
+    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[this->_u_var]->get_JxW();
+      context.element_fe_var[this->_u_var]->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      c.element_fe_var[this->_p_var]->get_dphi();
+      context.element_fe_var[this->_p_var]->get_dphi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      c.element_fe_var[this->_u_var]->get_dphi();
+      context.element_fe_var[this->_u_var]->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      c.element_fe_var[this->_u_var]->get_d2phi();
+      context.element_fe_var[this->_u_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
-    libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
+	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( c.interior_value( this->_u_var, qp ),
-				 c.interior_value( this->_v_var, qp ) );
+	libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
+				 context.interior_value( this->_v_var, qp ) );
 	if( this->_dim == 3 )
-	  U(2) = c.interior_value( this->_w_var, qp );
+	  U(2) = context.interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
 	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( c, qp );
-	libMesh::Real RC = compute_res_continuity( c, qp );
+	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+	libMesh::Real RC = compute_res_continuity( context, qp );
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
@@ -131,60 +128,57 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::element_time_derivative");
 #endif
-    return request_jacobian;
+    return;
   }
 
-  bool IncompressibleNavierStokesAdjointStabilization::mass_residual( bool request_jacobian,
-								      libMesh::DiffContext& context,
-								      libMesh::FEMSystem* system )
+  void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool compute_jacobian,
+								      libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
 #endif
 
-    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = c.dof_indices_var[this->_p_var].size();
-    const unsigned int n_u_dofs = c.dof_indices_var[this->_u_var].size();
+    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[this->_u_var]->get_JxW();
+      context.element_fe_var[this->_u_var]->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      c.element_fe_var[this->_p_var]->get_dphi();
+      context.element_fe_var[this->_p_var]->get_dphi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      c.element_fe_var[this->_u_var]->get_dphi();
+      context.element_fe_var[this->_u_var]->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      c.element_fe_var[this->_u_var]->get_d2phi();
+      context.element_fe_var[this->_u_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
-    libMesh::DenseSubVector<Number> &Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
+    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = c.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, c, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, c, qp );
+	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( c.fixed_interior_value( this->_u_var, qp ),
-				 c.fixed_interior_value( this->_v_var, qp ) );
+	libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
+				 context.fixed_interior_value( this->_v_var, qp ) );
 	if( this->_dim == 3 )
-	  U(2) = c.fixed_interior_value( this->_w_var, qp );
+	  U(2) = context.fixed_interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( c, qp, g, G, this->_rho, U, this->_mu, false );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
 	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( c, qp );
+	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
@@ -213,12 +207,11 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
 #endif
-    return request_jacobian;
+    return;
   }
 
-  bool IncompressibleNavierStokesAdjointStabilization::element_constraint( bool request_jacobian,
-									   libMesh::DiffContext& context,
-									   libMesh::FEMSystem* system )
+  void IncompressibleNavierStokesAdjointStabilization::element_constraint( bool compute_jacobian,
+									   libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
@@ -230,12 +223,11 @@ namespace GRINS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
-  bool IncompressibleNavierStokesAdjointStabilization::side_time_derivative( bool request_jacobian,
-									     libMesh::DiffContext& context,
-									     libMesh::FEMSystem* system )
+  void IncompressibleNavierStokesAdjointStabilization::side_time_derivative( bool compute_jacobian,
+									     libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
@@ -246,12 +238,11 @@ namespace GRINS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
-  bool IncompressibleNavierStokesAdjointStabilization::side_constraint( bool request_jacobian,
-									libMesh::DiffContext& context,
-									libMesh::FEMSystem* system )
+  void IncompressibleNavierStokesAdjointStabilization::side_constraint( bool compute_jacobian,
+									libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
@@ -263,7 +254,7 @@ namespace GRINS
     //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
 #endif
 
-    return request_jacobian;
+    return;
   }
 
 } // namespace GRINS

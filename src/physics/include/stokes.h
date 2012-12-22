@@ -55,29 +55,24 @@ namespace GRINS
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
+    virtual void side_time_derivative( bool compute_jacobian,
+				       libMesh::FEMContext& context );
 
     // Constraint part(s)
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
+    virtual void element_constraint( bool compute_jacobian,
+				     libMesh::FEMContext& context );
     //! Handles Dirichlet boundary conditions
     /*! Note that for any generic function specifications, 
       any components not specified will be assigned a zero Dirichlet value. */
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
+    virtual void side_constraint( bool compute_jacobian,
+				  libMesh::FEMContext& context );
 
     // Mass matrix part(s)
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    virtual void mass_residual( bool compute_jacobian,
+				libMesh::FEMContext& context );
 
   protected:
 

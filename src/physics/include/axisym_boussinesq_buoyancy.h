@@ -77,35 +77,30 @@ namespace GRINS
     // Context initialization
     /*! Doesn't do anything for AxisymmetricBoussinesqBuoyancy since there
       are no new variables registered */
-    virtual void init_context( libMesh::DiffContext &context );
+    virtual void init_context( libMesh::FEMContext& context );
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
         the AxisymmetricIncompNavierStokes class.
      */
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context );
 
     //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
+    virtual void side_time_derivative( bool compute_jacobian,
+				       libMesh::FEMContext& context );
 
     //! No constraint terms for AxisymmetricBoussinesqBuoyancy.
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
+    virtual void element_constraint( bool compute_jacobian,
+				     libMesh::FEMContext& context );
 
     //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
+    virtual void side_constraint( bool compute_jacobian,
+				  libMesh::FEMContext& context );
 
     //! No mass terms for AxisymmetricBoussinesqBuoyancy.
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system ); 
+    virtual void mass_residual( bool compute_jacobian,
+				libMesh::FEMContext& context ); 
 
   protected:
 
