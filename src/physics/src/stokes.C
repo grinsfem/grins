@@ -351,7 +351,7 @@ namespace GRINS
 	Real w_dot = 0.0;
 
 	if( _dim == 3 )
-	  Real w_dot = context.interior_value(_w_var, qp);
+	  w_dot = context.interior_value(_w_var, qp);
       
 	for (unsigned int i = 0; i != n_u_dofs; ++i)
 	  {
