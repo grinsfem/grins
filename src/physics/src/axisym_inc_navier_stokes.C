@@ -103,8 +103,6 @@ namespace GRINS
 
   void AxisymmetricIncompressibleNavierStokes::init_context( libMesh::FEMContext& context )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
@@ -130,8 +128,6 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_time_derivative");
 #endif
-
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
@@ -281,8 +277,6 @@ namespace GRINS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
 #endif
 
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
     const unsigned int n_p_dofs = context.dof_indices_var[_p_var].size();
@@ -370,34 +364,9 @@ namespace GRINS
     return;
   }
 
-
-  void AxisymmetricIncompressibleNavierStokes::side_time_derivative( bool compute_jacobian,
-								     libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void AxisymmetricIncompressibleNavierStokes::side_constraint( bool compute_jacobian,
-								libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("AxisymmetricIncompressibleNavierStokes::side_constraint");
-#endif
-
-    return;
-  }
-
   void AxisymmetricIncompressibleNavierStokes::mass_residual( bool compute_jacobian,
 							      libMesh::FEMContext& context )
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
     const std::vector<Real> &JxW = 

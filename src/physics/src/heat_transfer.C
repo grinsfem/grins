@@ -171,13 +171,6 @@ namespace GRINS
     return;
   }
 
-  void HeatTransfer::element_constraint( bool compute_jacobian,
-					 libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-
   void HeatTransfer::side_time_derivative( bool compute_jacobian,
 					   libMesh::FEMContext& context )
   {
@@ -197,22 +190,6 @@ namespace GRINS
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("HeatTransfer::side_time_derivative");
-#endif
-
-    return;
-  }
-
-  void HeatTransfer::side_constraint( bool compute_jacobian,
-				      libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("HeatTransfer::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("HeatTransfer::side_constraint");
 #endif
 
     return;

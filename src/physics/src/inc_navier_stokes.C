@@ -49,11 +49,6 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokes::read_input_options( const GetPot& input )
-  {
-    return;
-  }
-
   void IncompressibleNavierStokes::element_time_derivative( bool compute_jacobian,
 							    libMesh::FEMContext& context )
   {
@@ -332,29 +327,6 @@ namespace GRINS
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
-#endif
-
-    return;
-  }
-
-
-  void IncompressibleNavierStokes::side_time_derivative( bool compute_jacobian,
-							 libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void IncompressibleNavierStokes::side_constraint( bool compute_jacobian,
-						    libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("IncompressibleNavierStokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("IncompressibleNavierStokes::side_constraint");
 #endif
 
     return;

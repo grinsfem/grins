@@ -46,11 +46,6 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationBase::read_input_options( const GetPot& input )
-  {
-    return;
-  }
-
   void IncompressibleNavierStokesStabilizationBase::init_context( libMesh::FEMContext& context )
   {
     // First call base class

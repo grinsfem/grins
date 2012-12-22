@@ -36,18 +36,11 @@ namespace GRINS
     : HeatTransferBase(physics_name,input),
       _source(input)
   {
-    this->read_input_options(input);
     return;
   }
 
   template< class SourceFunction >
   HeatTransferSource<SourceFunction>::~HeatTransferSource()
-  {
-    return;
-  }
-
-  template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::read_input_options( const GetPot& input )
   {
     return;
   }
@@ -99,34 +92,6 @@ namespace GRINS
     this->_timer->EndTimer("HeatTransferSource::element_time_derivative");
 #endif
 
-    return;
-  }
-
-  template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::side_time_derivative( bool compute_jacobian,
-								 libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::element_constraint( bool compute_jacobian,
-							       libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::side_constraint( bool compute_jacobian,
-							    libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::mass_residual( bool compute_jacobian,
-							  libMesh::FEMContext& )
-  {
     return;
   }
 

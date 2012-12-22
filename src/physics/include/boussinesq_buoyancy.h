@@ -78,22 +78,6 @@ namespace GRINS
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
-    //! No boundary terms for BoussinesqBuoyancy.
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    //! No constraint terms for BoussinesqBuoyancy.
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    //! No boundary terms for BoussinesqBuoyancy.
-    virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
-
-    //! No mass terms for BoussinesqBuoyancy.
-    virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context);
-
   protected:
 
     //! \f$ \rho_0 = \f$ reference density

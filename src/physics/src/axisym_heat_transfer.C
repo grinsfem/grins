@@ -247,13 +247,6 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::element_constraint( bool compute_jacobian,
-								   libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
 								     libMesh::FEMContext& context )
   {
@@ -273,23 +266,6 @@ namespace GRINS
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AxisymmetricHeatTransfer::side_time_derivative");
-#endif
-
-    return;
-  }
-
-  template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::side_constraint( bool compute_jacobian,
-								libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("AxisymmetricHeatTransfer::side_constraint");
 #endif
 
     return;

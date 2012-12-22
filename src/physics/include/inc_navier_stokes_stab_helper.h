@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_STAB_HELPER_H
-#define INC_NAVIER_STOKES_STAB_HELPER_H
+#ifndef GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
+#define GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
 
 //libMesh
 #include "getpot.h"
@@ -124,9 +124,9 @@ namespace GRINS
   
   inline
   libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau( libMesh::FEMContext& c,
-									    unsigned int qp,
+									    unsigned int /*qp*/,
 									    libMesh::Real mat_prop_sq,
-									    libMesh::RealGradient& g,
+									    libMesh::RealGradient& /*g*/,
 									    libMesh::RealTensor& G,
 									    libMesh::Real rho,
 									    libMesh::Gradient U,
@@ -141,4 +141,4 @@ namespace GRINS
   }
   
 }
-#endif // INC_NAVIER_STOKES_STAB_HELPER_H
+#endif // GRINS_INC_NAVIER_STOKES_STAB_HELPER_H

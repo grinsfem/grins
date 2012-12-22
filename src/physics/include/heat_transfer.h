@@ -74,13 +74,6 @@ namespace GRINS
     virtual void side_time_derivative( bool compute_jacobian,
 				       libMesh::FEMContext& context );
 
-    // Constraint part(s)
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
-
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );

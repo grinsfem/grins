@@ -74,33 +74,12 @@ namespace GRINS
     //! Initialization of AxisymmetricBoussinesqBuoyancy variables
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    // Context initialization
-    /*! Doesn't do anything for AxisymmetricBoussinesqBuoyancy since there
-      are no new variables registered */
-    virtual void init_context( libMesh::FEMContext& context );
-
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
         the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
-
-    //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    //! No constraint terms for AxisymmetricBoussinesqBuoyancy.
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    //! No boundary terms for AxisymmetricBoussinesqBuoyancy.
-    virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
-
-    //! No mass terms for AxisymmetricBoussinesqBuoyancy.
-    virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context ); 
 
   protected:
 

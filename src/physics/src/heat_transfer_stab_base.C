@@ -46,11 +46,6 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferStabilizationBase::read_input_options( const GetPot& )
-  {
-    return;
-  }
-
   void HeatTransferStabilizationBase::init_context( libMesh::FEMContext& context )
   {
     // First call base class

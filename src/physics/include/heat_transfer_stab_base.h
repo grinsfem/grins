@@ -44,9 +44,6 @@ namespace GRINS
 
     virtual ~HeatTransferStabilizationBase();
 
-    //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( const GetPot& input );
-
     //! Initialize context for added physics variables
     virtual void init_context( libMesh::FEMContext& context );
     

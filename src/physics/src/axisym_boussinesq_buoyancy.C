@@ -164,33 +164,4 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricBoussinesqBuoyancy::init_context( libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::side_time_derivative( bool compute_jacobian,
-							     libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::element_constraint( bool compute_jacobian,
-							   libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::side_constraint( bool compute_jacobian,
-							libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::mass_residual( bool compute_jacobian,
-						      libMesh::FEMContext& context )
-  {
-    return;
-  }
-
 } // namespace GRINS

@@ -36,8 +36,6 @@ namespace GRINS
       _p_pinning(input,physics_name),
       _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
   {
-    this->read_input_options(input);
-
     // This is deleted in the base class
     _bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
 
@@ -45,11 +43,6 @@ namespace GRINS
   }
 
   Stokes::~Stokes()
-  {
-    return;
-  }
-
-  void Stokes::read_input_options( const GetPot& input )
   {
     return;
   }
@@ -309,29 +302,6 @@ namespace GRINS
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("Stokes::element_constraint");
-#endif
-
-    return;
-  }
-
-
-  void Stokes::side_time_derivative( bool compute_jacobian,
-				     libMesh::FEMContext& context )
-  {
-    return;
-  }
-
-  void Stokes::side_constraint( bool compute_jacobian,
-				libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("Stokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("Stokes::side_constraint");
 #endif
 
     return;

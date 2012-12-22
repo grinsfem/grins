@@ -111,24 +111,6 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::element_constraint( bool compute_jacobian,
-							  libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokes::element_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokes::element_constraint");
-#endif
-
-    return;
-  }
-
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool compute_jacobian,
 							    libMesh::FEMContext& context )
   {
@@ -149,28 +131,9 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::side_constraint( bool compute_jacobian,
-						       libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokes::side_constraint");
-#endif
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool compute_jacobian,
 						     libMesh::FEMContext& context )
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     this->assemble_continuity_mass_residual( compute_jacobian, context );
 
     this->assemble_momentum_mass_residual( compute_jacobian, context );

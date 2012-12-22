@@ -46,20 +46,8 @@ namespace GRINS
     HeatTransferAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~HeatTransferAdjointStabilization();
 
-    //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( const GetPot& input );
-
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
-
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
 
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );

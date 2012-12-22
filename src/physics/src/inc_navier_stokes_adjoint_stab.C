@@ -45,11 +45,6 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesAdjointStabilization::read_input_options( const GetPot& input )
-  {
-    return;
-  }
-
   void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool compute_jacobian,
 										libMesh::FEMContext& context )
   {
@@ -207,53 +202,6 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
 #endif
-    return;
-  }
-
-  void IncompressibleNavierStokesAdjointStabilization::element_constraint( bool compute_jacobian,
-									   libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::element_constraint");
-#endif
-
-    return;
-  }
-
-  void IncompressibleNavierStokesAdjointStabilization::side_time_derivative( bool compute_jacobian,
-									     libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
-#endif
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_time_derivative");
-#endif
-
-    return;
-  }
-
-  void IncompressibleNavierStokesAdjointStabilization::side_constraint( bool compute_jacobian,
-									libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("IncompressibleNavierStokesAdjointStabilization::side_constraint");
-#endif
-
     return;
   }
 

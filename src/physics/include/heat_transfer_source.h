@@ -49,31 +49,12 @@ namespace GRINS
 
     ~HeatTransferSource();
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     //! Source term contribution for HeatTransferSource
     /*! This is the main part of the class. This will add the source term to
         the HeatTransfer class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
-
-    //! No boundary terms for HeatTransferSource.
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    //! No constraint terms for HeatTransferSource.
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    //! No boundary terms for HeatTransferSource.
-    virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
-
-    //! No mass terms for HeatTransferSource.
-    virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
 
   protected:
 

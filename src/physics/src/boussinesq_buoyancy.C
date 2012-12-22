@@ -144,28 +144,4 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancy::side_time_derivative( bool compute_jacobian,
-						 libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  void BoussinesqBuoyancy::element_constraint( bool compute_jacobian,
-					       libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  void BoussinesqBuoyancy::side_constraint( bool compute_jacobian,
-					    libMesh::FEMContext& )
-  {
-    return;
-  }
-
-  void BoussinesqBuoyancy::mass_residual( bool compute_jacobian,
-					  libMesh::FEMContext& )
-  {
-    return;
-  }
-
 } // namespace GRINS

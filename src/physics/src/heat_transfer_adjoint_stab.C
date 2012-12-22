@@ -35,17 +35,10 @@ namespace GRINS
 								      const GetPot& input )
     : HeatTransferStabilizationBase(physics_name,input)
   {
-    this->read_input_options(input);
-
     return;
   }
 
   HeatTransferAdjointStabilization::~HeatTransferAdjointStabilization()
-  {
-    return;
-  }
-
-  void HeatTransferAdjointStabilization::read_input_options( const GetPot& )
   {
     return;
   }
@@ -157,53 +150,6 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("HeatTransferAdjointStabilization::mass_residual");
 #endif
-    return;
-  }
-
-  void HeatTransferAdjointStabilization::element_constraint( bool compute_jacobian,
-							     libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("HeatTransferAdjointStabilization::element_constraint");
-#endif
-
-    return;
-  }
-
-  void HeatTransferAdjointStabilization::side_time_derivative( bool compute_jacobian,
-							       libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("HeatTransferAdjointStabilization::side_time_derivative");
-#endif
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("HeatTransferAdjointStabilization::side_time_derivative");
-#endif
-
-    return;
-  }
-
-  void HeatTransferAdjointStabilization::side_constraint( bool compute_jacobian,
-							  libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("HeatTransferAdjointStabilization::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("HeatTransferAdjointStabilization::side_constraint");
-#endif
-
     return;
   }
 

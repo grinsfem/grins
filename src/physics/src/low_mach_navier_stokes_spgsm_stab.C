@@ -30,7 +30,6 @@
 
 namespace GRINS
 {
-
   template<class Mu, class SH, class TC>
   LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::LowMachNavierStokesSPGSMStabilization( const std::string& physics_name, 
 											  const GetPot& input )
@@ -43,12 +42,6 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::~LowMachNavierStokesSPGSMStabilization()
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::read_input_options( const GetPot& input )
   {
     return;
   }
@@ -487,56 +480,6 @@ namespace GRINS
 	  }
 
       }
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::element_constraint( bool compute_jacobian,
-									    libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::element_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::element_constraint");
-#endif
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::side_time_derivative( bool compute_jacobian,
-									      libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::side_time_derivative");
-#endif
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::side_time_derivative");
-#endif
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::side_constraint( bool compute_jacobian,
-									 libMesh::FEMContext& context )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::side_constraint");
-#endif
 
     return;
   }
