@@ -738,8 +738,8 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_cache( const libMesh::FEMContext& context, 
-						     CachedValues& cache )
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
+							     CachedValues& cache )
   {
     libmesh_not_implemented();
     return;
@@ -747,9 +747,9 @@ namespace GRINS
   
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_cache( const libMesh::FEMContext& context, 
-							    const std::vector<libMesh::Point>& points,
-							    CachedValues& cache )
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
+							     const std::vector<libMesh::Point>& points,
+							     CachedValues& cache )
   {
     if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
       {

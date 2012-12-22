@@ -70,35 +70,30 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::init_context( libMesh::DiffContext &context )
+  void ReactingLowMachNavierStokes<Mixture>::init_context( libMesh::FEMContext& context )
   {
     // First call base class
     GRINS::ReactingLowMachNavierStokesBase<Mixture>::init_context(context);
 
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We also need the side shape functions, etc.
-    c.side_fe_var[this->_u_var]->get_JxW();
-    c.side_fe_var[this->_u_var]->get_phi();
-    c.side_fe_var[this->_u_var]->get_dphi();
-    c.side_fe_var[this->_u_var]->get_xyz();
+    context.side_fe_var[this->_u_var]->get_JxW();
+    context.side_fe_var[this->_u_var]->get_phi();
+    context.side_fe_var[this->_u_var]->get_dphi();
+    context.side_fe_var[this->_u_var]->get_xyz();
 
-    c.side_fe_var[this->_T_var]->get_JxW();
-    c.side_fe_var[this->_T_var]->get_phi();
-    c.side_fe_var[this->_T_var]->get_dphi();
-    c.side_fe_var[this->_T_var]->get_xyz();
+    context.side_fe_var[this->_T_var]->get_JxW();
+    context.side_fe_var[this->_T_var]->get_phi();
+    context.side_fe_var[this->_T_var]->get_dphi();
+    context.side_fe_var[this->_T_var]->get_xyz();
 
     return;
   }
 
   template<class Mixture>
-  bool ReactingLowMachNavierStokes<Mixture>::element_time_derivative( bool request_jacobian,
-								      libMesh::DiffContext& context,
-								      libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokes<Mixture>::element_time_derivative( bool compute_jacobian,
+								      libMesh::FEMContext& context )
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-    
-    unsigned int n_qpoints = c.element_qrule->n_points();
+    unsigned int n_qpoints = context.element_qrule->n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -109,7 +104,7 @@ namespace GRINS
 	  {
 	    /*! \todo Need to figure out something smarter for controling species
 	              that go slightly negative. */
-	    const Real value = std::max( c.interior_value(this->_species_vars[s],qp), 0.0 );
+	    const Real value = std::max( context.interior_value(this->_species_vars[s],qp), 0.0 );
 	    libmesh_assert_greater_equal(value,0.0);
 	    Y.push_back(value);
 	  }
@@ -123,122 +118,81 @@ namespace GRINS
 	          Actually, what we want to do is have the cache built once per element
 	          (thus caching at every quadrature point), so this can be reused for multiple
 	          Physics classes. */
-	const Real T = c.interior_value(this->_T_var, qp);
+	const Real T = context.interior_value(this->_T_var, qp);
 	libmesh_assert_greater(T, 0.0);
 
 
-	const Real p0 = this->get_p0_steady(c,qp);
+	const Real p0 = this->get_p0_steady(context,qp);
 	libmesh_assert_greater(p0, 0.0);
 
 	ReactingFlowCache cache( T, p0, Y );
 
-	this->build_reacting_flow_cache(c, cache, qp);
+	this->build_reacting_flow_cache(context, cache, qp);
 
-	this->assemble_mass_time_deriv(c, cache, qp);
-	this->assemble_species_time_deriv(c, cache, qp);
-	this->assemble_momentum_time_deriv(c, cache, qp);
-	this->assemble_energy_time_deriv(c, cache, qp);
+	this->assemble_mass_time_deriv(context, cache, qp);
+	this->assemble_species_time_deriv(context, cache, qp);
+	this->assemble_momentum_time_deriv(context, cache, qp);
+	this->assemble_energy_time_deriv(context, cache, qp);
       }
 
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
       {
-	this->_p_pinning.pin_value( context, request_jacobian, this->_p_var );
+	this->_p_pinning.pin_value( context, compute_jacobian, this->_p_var );
       }
 
-    return request_jacobian;
-  }
-
-
-  template<class Mixture>
-  bool ReactingLowMachNavierStokes<Mixture>::element_constraint( bool request_jacobian,
-								 libMesh::DiffContext& context,
-								 libMesh::FEMSystem* system )
-  {
-#ifdef USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("LowMachNavierStokes::element_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef USE_GRVY_TIMERS
-    //this->_timer->EndTimer("LowMachNavierStokes::element_constraint");
-#endif
-
-    return request_jacobian;
+    return;
   }
 
   template<class Mixture>
-  bool ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool request_jacobian,
-								   libMesh::DiffContext& context,
-								   libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool compute_jacobian,
+								   libMesh::FEMContext& context )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
 
     /*
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
     const GRINS::BoundaryID boundary_id =
-      system->get_mesh().boundary_info->boundary_id(c.elem, c.side);
+      system->get_mesh().boundary_info->boundary_id(context.elem, context.side);
 
     libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
 
-    this->_bc_handler->apply_neumann_bcs( c, this->_species_vars[3], request_jacobian, boundary_id );
+    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[3], compute_jacobian, boundary_id );
 
-    this->_bc_handler->apply_neumann_bcs( c, this->_species_vars[1], request_jacobian, boundary_id );
+    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[1], compute_jacobian, boundary_id );
     */
 
-    return request_jacobian;
+    return;
   }
 
   template<class Mixture>
-  bool ReactingLowMachNavierStokes<Mixture>::side_constraint( bool request_jacobian,
-								libMesh::DiffContext& context,
-								libMesh::FEMSystem* system )
-  {
-#ifdef USE_GRVY_TIMERS
-    //this->_timer->BeginTimer("ReactingLowMachNavierStokes::side_constraint");
-#endif
-
-    //FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-
-#ifdef USE_GRVY_TIMERS
-    //this->_timer->EndTimer("ReactingLowMachNavierStokes::side_constraint");
-#endif
-
-    return request_jacobian;
-  }
-
-  template<class Mixture>
-  bool ReactingLowMachNavierStokes<Mixture>::mass_residual( bool request_jacobian,
-							    libMesh::DiffContext& context,
-							    libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokes<Mixture>::mass_residual( bool compute_jacobian,
+							    libMesh::FEMContext& context )
   {
     libmesh_not_implemented();
     /*
     FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
     */
-    return request_jacobian;
+    return;
   }
 
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv(libMesh::FEMContext& c, 
+  void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv(libMesh::FEMContext& context, 
 								      const ReactingFlowCache& cache, 
 								      unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = c.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
     
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[this->_u_var]->get_JxW();
+      context.element_fe_var[this->_u_var]->get_JxW();
     
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      c.element_fe_var[this->_p_var]->get_phi();
+      context.element_fe_var[this->_p_var]->get_phi();
     
-    libMesh::DenseSubVector<Number>& Fp = *c.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
     
     libMesh::Number T = cache.T();
     const libMesh::NumberVectorValue& U = cache.U();
@@ -270,7 +224,7 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_species_time_deriv(libMesh::FEMContext& c, 
+  void ReactingLowMachNavierStokes<Mixture>::assemble_species_time_deriv(libMesh::FEMContext& context, 
 									 const ReactingFlowCache& cache, 
 									 unsigned int qp)
   {
@@ -279,16 +233,16 @@ namespace GRINS
     
     /* The number of local degrees of freedom in each species variable.
        We assume the same number of dofs for each species */
-    const unsigned int n_s_dofs = c.dof_indices_var[s0_var].size();
+    const unsigned int n_s_dofs = context.dof_indices_var[s0_var].size();
     
     // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW = c.element_fe_var[s0_var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW = context.element_fe_var[s0_var]->get_JxW();
     
     // The species shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& s_phi = c.element_fe_var[s0_var]->get_phi();
+    const std::vector<std::vector<libMesh::Real> >& s_phi = context.element_fe_var[s0_var]->get_phi();
 
     // The species shape function gradients at interior quadrature points.
-    const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = c.element_fe_var[s0_var]->get_dphi();
+    const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = context.element_fe_var[s0_var]->get_dphi();
 
     libMesh::Number rho = cache.rho();
     const libMesh::NumberVectorValue& U = cache.U();
@@ -298,7 +252,7 @@ namespace GRINS
 
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
-	libMesh::DenseSubVector<Number> &Fs = *c.elem_subresiduals[this->_species_vars[s]]; // R_{s}
+	libMesh::DenseSubVector<Number> &Fs = *context.elem_subresiduals[this->_species_vars[s]]; // R_{s}
 
 	const Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
 	const libMesh::Gradient term2 = -rho*D[s]*grad_w[s];
@@ -316,33 +270,33 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_momentum_time_deriv(libMesh::FEMContext& c, 
+  void ReactingLowMachNavierStokes<Mixture>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
 									  const ReactingFlowCache& cache, 
 									  unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = c.dof_indices_var[this->_u_var].size();
+    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
 
     // Check number of dofs is same for _u_var, v_var and w_var.
-    libmesh_assert (n_u_dofs == c.dof_indices_var[this->_v_var].size());
+    libmesh_assert (n_u_dofs == context.dof_indices_var[this->_v_var].size());
     if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == c.dof_indices_var[this->_w_var].size());
+      libmesh_assert (n_u_dofs == context.dof_indices_var[this->_w_var].size());
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[this->_u_var]->get_JxW();
+      context.element_fe_var[this->_u_var]->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      c.element_fe_var[this->_u_var]->get_phi();
+      context.element_fe_var[this->_u_var]->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      c.element_fe_var[this->_u_var]->get_dphi();
+      context.element_fe_var[this->_u_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fu = *c.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *c.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *c.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
+    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
+    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
     
     libMesh::Number rho = cache.rho();
     const libMesh::NumberVectorValue& U = cache.U();
@@ -401,26 +355,26 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv(libMesh::FEMContext& c, 
+  void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv(libMesh::FEMContext& context, 
 									const ReactingFlowCache& cache, 
 									unsigned int qp)
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = c.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      c.element_fe_var[this->_T_var]->get_JxW();
+      context.element_fe_var[this->_T_var]->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      c.element_fe_var[this->_T_var]->get_phi();
+      context.element_fe_var[this->_T_var]->get_phi();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      c.element_fe_var[this->_T_var]->get_dphi();
+      context.element_fe_var[this->_T_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &FT = *c.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     libMesh::Number rho = cache.rho() ;
     const libMesh::NumberVectorValue& U = cache.U();
@@ -450,17 +404,17 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_cache( const libMesh::FEMContext& context, 
-							    CachedValues& cache )
+  void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
+								    CachedValues& cache )
   {
     libmesh_not_implemented();
     return;
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_cache( const libMesh::FEMContext& context, 
-							    const std::vector<libMesh::Point>& points,
-							    CachedValues& cache )
+  void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
+								    const std::vector<libMesh::Point>& points,
+								    CachedValues& cache )
   {
     if( cache.is_active(Cache::MIXTURE_DENSITY) )
       {

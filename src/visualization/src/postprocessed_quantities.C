@@ -237,7 +237,7 @@ namespace GRINS
 	_prev_point = p;
 	std::vector<libMesh::Point> point_vec(1,p);
 	this->_cache.clear();
-	_multiphysics_sys->compute_cache( *(this->_multiphysics_context), point_vec, this->_cache );
+	_multiphysics_sys->compute_element_cache( *(this->_multiphysics_context), point_vec, this->_cache );
       }
 
     NumericType value = 0.0;

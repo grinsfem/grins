@@ -130,12 +130,12 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
-    void compute_cache( const libMesh::FEMContext& context,
-			CachedValues& cache );
+    void compute_element_cache( const libMesh::FEMContext& context,
+				CachedValues& cache );
 
-    void compute_cache( const libMesh::FEMContext& context,
-			const std::vector<libMesh::Point>& points,
-			CachedValues& cache );
+    void compute_element_cache( const libMesh::FEMContext& context,
+				const std::vector<libMesh::Point>& points,
+				CachedValues& cache );
 
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
@@ -150,6 +150,8 @@ namespace GRINS
     PhysicsList _physics_list;
 
     bool _use_numerical_jacobians_only;
+
+    CachedValues _element_cache;
     
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

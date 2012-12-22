@@ -174,36 +174,34 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::init_context( libMesh::DiffContext &context )
+  void ReactingLowMachNavierStokesBase<Mixture>::init_context( libMesh::FEMContext& context )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    c.element_fe_var[_species_vars[0]]->get_JxW();
-    c.element_fe_var[_species_vars[0]]->get_phi();
-    c.element_fe_var[_species_vars[0]]->get_dphi();
-    c.element_fe_var[_species_vars[0]]->get_xyz();
+    context.element_fe_var[_species_vars[0]]->get_JxW();
+    context.element_fe_var[_species_vars[0]]->get_phi();
+    context.element_fe_var[_species_vars[0]]->get_dphi();
+    context.element_fe_var[_species_vars[0]]->get_xyz();
 
-    c.element_fe_var[_u_var]->get_JxW();
-    c.element_fe_var[_u_var]->get_phi();
-    c.element_fe_var[_u_var]->get_dphi();
-    c.element_fe_var[_u_var]->get_xyz();
+    context.element_fe_var[_u_var]->get_JxW();
+    context.element_fe_var[_u_var]->get_phi();
+    context.element_fe_var[_u_var]->get_dphi();
+    context.element_fe_var[_u_var]->get_xyz();
 
-    c.element_fe_var[_T_var]->get_JxW();
-    c.element_fe_var[_T_var]->get_phi();
-    c.element_fe_var[_T_var]->get_dphi();
-    c.element_fe_var[_T_var]->get_xyz();
+    context.element_fe_var[_T_var]->get_JxW();
+    context.element_fe_var[_T_var]->get_phi();
+    context.element_fe_var[_T_var]->get_dphi();
+    context.element_fe_var[_T_var]->get_xyz();
 
-    c.element_fe_var[_p_var]->get_phi();
-    c.element_fe_var[_p_var]->get_xyz();
+    context.element_fe_var[_p_var]->get_phi();
+    context.element_fe_var[_p_var]->get_xyz();
 
     return;
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::build_reacting_flow_cache( const libMesh::FEMContext& c, 
+  void ReactingLowMachNavierStokesBase<Mixture>::build_reacting_flow_cache( const libMesh::FEMContext& context, 
 									    ReactingFlowCache& cache, 
 									    unsigned int qp )
   {
@@ -219,7 +217,7 @@ namespace GRINS
       std::vector<libMesh::Gradient> mass_fractions_grad(this->_n_species);
       for( unsigned int s = 0; s < this->_n_species; s++ )
 	{
-	  mass_fractions_grad[s] = c.interior_gradient(this->_species_vars[s],qp);
+	  mass_fractions_grad[s] = context.interior_gradient(this->_species_vars[s],qp);
 	}
       cache.set_mass_fractions_grad(mass_fractions_grad);
 
@@ -257,21 +255,21 @@ namespace GRINS
     }
 
     if( this->_dim < 3 )
-      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp) );
+      cache.set_velocities( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );
     else
-      cache.set_velocities( c.interior_value(this->_u_var, qp), c.interior_value(this->_v_var, qp),
-			    c.interior_value(this->_w_var, qp) );
+      cache.set_velocities( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp),
+			    context.interior_value(this->_w_var, qp) );
 
     if( this->_dim < 3 )
-      cache.set_velocity_grads( c.interior_gradient(this->_u_var, qp), c.interior_gradient(this->_v_var, qp),
+      cache.set_velocity_grads( context.interior_gradient(this->_u_var, qp), context.interior_gradient(this->_v_var, qp),
 				libMesh::Gradient() );
     else
-      cache.set_velocity_grads( c.interior_gradient(this->_u_var, qp), c.interior_gradient(this->_v_var, qp),
-				c.interior_gradient(this->_w_var, qp) );
+      cache.set_velocity_grads( context.interior_gradient(this->_u_var, qp), context.interior_gradient(this->_v_var, qp),
+				context.interior_gradient(this->_w_var, qp) );
 
-    cache.set_p_hydro( c.interior_value(this->_p_var,qp) );
+    cache.set_p_hydro( context.interior_value(this->_p_var,qp) );
 
-    cache.set_temp_grad( c.interior_gradient(this->_T_var,qp) );
+    cache.set_temp_grad( context.interior_gradient(this->_T_var,qp) );
 
     return;
   }
