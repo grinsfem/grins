@@ -25,12 +25,16 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef VAR_TYPEDEFS_H
-#define VAR_TYPEDEFS_H
+#ifndef GRINS_VAR_TYPEDEFS_H
+#define GRINS_VAR_TYPEDEFS_H
 
+// C++
 #include <string>
 #include <map>
 #include "boost/tr1/memory.hpp"
+
+// libMesh
+#include "id_types.h"
 
 namespace GRINS
 {
@@ -44,7 +48,7 @@ namespace GRINS
 
   //! More descriptive name of the type used for boundary ids
   /*! We make it a short int to be compatible with libMesh */
-  typedef short int BoundaryID;
+  typedef libMesh::boundary_id_type BoundaryID;
 
   //! Container for GRINS::Physics object pointers
   typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> > PhysicsList;
@@ -53,4 +57,4 @@ namespace GRINS
   typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> >::const_iterator PhysicsListIter;
 
 }
-#endif //VAR_TYPEDEFS_H
+#endif //GRINS_VAR_TYPEDEFS_H
