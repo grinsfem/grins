@@ -110,6 +110,22 @@ namespace GRINS
 	    Y.push_back(value);
 	  }
 
+#ifdef DEBUG
+	Real sum = 0.0;
+	Real tol = 1.0e-5;
+	for( unsigned int s = 0; s < this->_n_species; s++ )
+	  {
+	    sum += Y[s];
+	  }
+	
+	/*
+	std::cout << std::setprecision(16) << std::scientific
+		  << "sum = " << sum << std::endl;
+	*/
+	libmesh_assert_greater_equal(sum, 1.0-tol);
+	libmesh_assert_less_equal(sum,1.0+tol);
+#endif	
+
 	// Build up cache at element interior quadrature point
 	/*! \todo Ought to rethink constructing this at every quadrature point. Perhaps
 	          add a "reset" method (or something similar) that just clears everything
