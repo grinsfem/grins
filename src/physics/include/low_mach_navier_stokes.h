@@ -84,15 +84,18 @@ namespace GRINS
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian, 
-				   libMesh::FEMContext& context );
+				   libMesh::FEMContext& context,
+				   CachedValues& cache );
 
     //! Helper function
     void assemble_momentum_time_deriv( bool compute_jacobian, 
-				       libMesh::FEMContext& context );
+				       libMesh::FEMContext& context,
+				       CachedValues& cache );
 
     //! Helper function
     void assemble_energy_time_deriv( bool compute_jacobian, 
-				     libMesh::FEMContext& context );
+				     libMesh::FEMContext& context,
+				     CachedValues& cache );
 
     //! Helper function
     void assemble_continuity_mass_residual( bool compute_jacobian, 

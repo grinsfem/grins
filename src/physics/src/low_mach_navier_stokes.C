@@ -85,15 +85,15 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
 							       libMesh::FEMContext& context,
-							       CachedValues& /*cache*/ )
+							       CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokes::element_time_derivative");
 #endif
 
-    this->assemble_mass_time_deriv( compute_jacobian, context );
-    this->assemble_momentum_time_deriv( compute_jacobian, context );
-    this->assemble_energy_time_deriv( compute_jacobian, context );
+    this->assemble_mass_time_deriv( compute_jacobian, context, cache );
+    this->assemble_momentum_time_deriv( compute_jacobian, context, cache );
+    this->assemble_energy_time_deriv( compute_jacobian, context, cache );
 
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
@@ -149,7 +149,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian, 
-								libMesh::FEMContext& context )
+								libMesh::FEMContext& context,
+								CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
@@ -169,20 +170,21 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Number u, v, w, T;
-	u = context.interior_value(this->_u_var, qp);
-	v = context.interior_value(this->_v_var, qp);
+	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
 	if (this->_dim == 3)
-	  w = context.interior_value(this->_w_var, qp);
+	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
 
-	T = context.interior_value(this->_T_var, qp);
+	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
-	libMesh::Gradient grad_u, grad_v, grad_w, grad_T;
-	grad_u = context.interior_gradient(this->_u_var, qp);
-	grad_v = context.interior_gradient(this->_v_var, qp);
+	libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
+	libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+
+	libMesh::Gradient grad_w;
 	if (this->_dim == 3)
-	  grad_w = context.interior_gradient(this->_w_var, qp);
+	  grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
 
-	grad_T = context.interior_gradient( this->_T_var, qp);
+	libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
@@ -205,7 +207,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian, 
-								    libMesh::FEMContext& context )
+								    libMesh::FEMContext& context,
+								    CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
@@ -234,19 +237,22 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w, p, T;
-	u = context.interior_value(this->_u_var, qp);
-	v = context.interior_value(this->_v_var, qp);
+	libMesh::Number u, v, w, p, p0, T;
+	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
 	if (this->_dim == 3)
-	  w = context.interior_value(this->_w_var, qp);
-	p = context.interior_value(this->_p_var, qp);
-	T = context.interior_value(this->_T_var, qp);
+	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
 
-	libMesh::Gradient grad_u, grad_v, grad_w;
-	grad_u = context.interior_gradient(this->_u_var, qp);
-	grad_v = context.interior_gradient(this->_v_var, qp);
+	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+	p = cache.get_cached_values(Cache::PRESSURE)[qp];
+	p0 = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+
+	libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
+	libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+
+	libMesh::Gradient grad_w;
 	if (this->_dim == 3)
-	  grad_w = context.interior_gradient(this->_w_var, qp);
+	  grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
 
 	libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) ); 
 	libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
@@ -266,7 +272,7 @@ namespace GRINS
 	if (this->_dim == 3)
 	  divU += grad_w(2);
 
-	libMesh::Number rho = this->rho( T, this->get_p0_steady(context,qp) );
+	libMesh::Number rho = this->rho( T, p0 );
       
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
@@ -362,7 +368,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool compute_jacobian, 
-								  libMesh::FEMContext& context )
+								  libMesh::FEMContext& context,
+								  CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
@@ -384,15 +391,16 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w, T;
-	u = context.interior_value(this->_u_var, qp);
-	v = context.interior_value(this->_v_var, qp);
+	libMesh::Number u, v, w, T, p0;
+	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
 	if (this->_dim == 3)
-	  w = context.interior_value(this->_w_var, qp);
-	T = context.interior_value(this->_T_var, qp);
+	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
 
-	libMesh::Gradient grad_T;
-	grad_T = context.interior_gradient(this->_T_var, qp);
+	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+	p0 = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+
+	libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
@@ -401,7 +409,7 @@ namespace GRINS
 	libMesh::Number k = this->_k(T);
 	libMesh::Number cp = this->_cp(T);
 
-	libMesh::Number rho = this->rho( T, this->get_p0_steady(context,qp) );
+	libMesh::Number rho = this->rho( T, p0 );
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
