@@ -78,13 +78,14 @@ namespace GRINS
   void CachedValues::set_gradient_values( unsigned int quantity, 
 					  std::vector<libMesh::Gradient>& values )
   {
-    _cached_gradient_values.insert( std::make_pair( quantity, values ) );
+    // Using insert() breaks here. Not entirely sure why...
+    _cached_gradient_values[quantity] = values;
     return;
   }
 
   void CachedValues::set_vector_values( unsigned int quantity, std::vector<std::vector<Number> >& values )
   {
-    _cached_vector_values.insert( std::make_pair( quantity, values ) );
+    _cached_vector_values[quantity] =  values;
     return;
   }
 
