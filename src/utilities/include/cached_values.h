@@ -65,11 +65,16 @@ namespace GRINS
     void set_vector_values( unsigned int quantity,
 			    std::vector<std::vector<Number> >& values );
 
+    void set_vector_gradient_values( unsigned int quantity,
+				     std::vector<std::vector<libMesh::Gradient> >& values );
+
     const std::vector<Number>& get_cached_values( unsigned int quantity ) const;
     
     const std::vector<libMesh::Gradient>& get_cached_gradient_values( unsigned int quantity ) const;
 
     const std::vector<std::vector<Number> >& get_cached_vector_values( unsigned int quantity ) const;
+
+    const std::vector<std::vector<libMesh::Gradient> >& get_cached_vector_gradient_values( unsigned int quantity ) const;
 
   protected:
     
@@ -78,6 +83,7 @@ namespace GRINS
     std::map<unsigned int,std::vector<Number> > _cached_values;
     std::map<unsigned int,std::vector<libMesh::Gradient> > _cached_gradient_values;
     std::map<unsigned int,std::vector<std::vector<Number> >  > _cached_vector_values;
+    std::map<unsigned int,std::vector<std::vector<libMesh::Gradient> >  > _cached_vector_gradient_values;
     
   };
 
