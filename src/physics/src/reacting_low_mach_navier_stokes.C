@@ -92,7 +92,7 @@ namespace GRINS
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::element_time_derivative( bool compute_jacobian,
 								      libMesh::FEMContext& context,
-								      CachedValues& /*cache*/ )
+								      CachedValues& cache )
   {
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -142,14 +142,14 @@ namespace GRINS
 	const Real p0 = this->get_p0_steady(context,qp);
 	libmesh_assert_greater(p0, 0.0);
 
-	ReactingFlowCache cache( T, p0, Y );
+	ReactingFlowCache rfcache( T, p0, Y );
 
-	this->build_reacting_flow_cache(context, cache, qp);
+	this->build_reacting_flow_cache(context, rfcache, qp);
 
-	this->assemble_mass_time_deriv(context, cache, qp);
-	this->assemble_species_time_deriv(context, cache, qp);
-	this->assemble_momentum_time_deriv(context, cache, qp);
-	this->assemble_energy_time_deriv(context, cache, qp);
+	this->assemble_mass_time_deriv(context, qp, cache);
+	this->assemble_species_time_deriv(context, rfcache, qp);
+	this->assemble_momentum_time_deriv(context, rfcache, qp);
+	this->assemble_energy_time_deriv(context, rfcache, qp);
       }
 
     // Pin p = p_value at p_point
@@ -182,8 +182,8 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::mass_residual( bool compute_jacobian,
-							    libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokes<Mixture>::mass_residual( bool /*compute_jacobian*/,
+							    libMesh::FEMContext& /*context*/ )
   {
     libmesh_not_implemented();
     /*
@@ -194,9 +194,9 @@ namespace GRINS
 
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv(libMesh::FEMContext& context, 
-								      const ReactingFlowCache& cache, 
-								      unsigned int qp)
+  void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
+								       unsigned int qp,
+								       const CachedValues& cache)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
@@ -211,19 +211,40 @@ namespace GRINS
     
     libMesh::DenseSubVector<Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
     
-    libMesh::Number T = cache.T();
-    const libMesh::NumberVectorValue& U = cache.U();
-    libMesh::Number divU = cache.divU();
-    const libMesh::Gradient& grad_T = cache.grad_T();
-    Real M = cache.M();
-    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions_grad();
+    libMesh::Number u, v, w, T;
+    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+    if (this->_dim == 3)
+      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
+    
+    T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
-    libmesh_assert_equal_to( grad_w.size(), this->_n_species );
+    libMesh::NumberVectorValue U(u,v);
+    if (this->_dim == 3)
+      U(2) = w;
+
+    libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
+    libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+
+    libMesh::Gradient grad_w;
+    if (this->_dim == 3)
+      grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
+
+    libMesh::Number divU = grad_u(0) + grad_v(1);
+    if (this->_dim == 3)
+      divU += grad_w(2);
+
+    libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
+
+    Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
+
+    std::vector<libMesh::Gradient> grad_ws = cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
+    libmesh_assert_equal_to( grad_ws.size(), this->_n_species );
     
     libMesh::Gradient mass_term(0.0,0.0,0.0);
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
-	mass_term += grad_w[s]/this->_gas_mixture.M(s);
+	mass_term += grad_ws[s]/this->_gas_mixture.M(s);
       }
     mass_term *= M;
     
@@ -444,6 +465,8 @@ namespace GRINS
     cache.add_quantity(Cache::MASS_FRACTIONS);
     cache.add_quantity(Cache::MASS_FRACTIONS_GRAD);
 
+    cache.add_quantity(Cache::MOLAR_MASS);
+
     return;
   }
 
@@ -476,6 +499,9 @@ namespace GRINS
     mass_fractions.resize(n_qpoints);
     grad_mass_fractions.resize(n_qpoints);
 
+    std::vector<Real> M;
+    M.resize(n_qpoints);
+
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	u[qp] = context.interior_value(this->_u_var, qp);
@@ -504,6 +530,8 @@ namespace GRINS
 	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars[s],qp), 0.0 );
 	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars[s],qp);
 	  }
+	
+	M[qp] = this->_gas_mixture.M( mass_fractions[qp] );
       }
     
     cache.set_values(Cache::X_VELOCITY, u);
@@ -526,6 +554,8 @@ namespace GRINS
 
     cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fractions);
     cache.set_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD, grad_mass_fractions);
+
+    cache.set_values(Cache::MOLAR_MASS, M);
 
     return;
   }
