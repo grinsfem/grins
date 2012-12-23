@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 #ifdef GRINS_HAVE_CANTERA
   return_flag = run(argc,argv,libMesh_inputfile);
 #else
-  if( libMesh_inputfile("Physics/ReactingLowMachNavierStokes/chemistry_library", "DIE!") == "cantera" )
+  if( std::string( libMesh_inputfile("Physics/ReactingLowMachNavierStokes/chemistry_library", "DIE!") ) == std::string("cantera") )
     {
       return_flag = 77;
     }
