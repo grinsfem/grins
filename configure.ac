@@ -298,6 +298,9 @@ AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_
 AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
+AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh, [chmod +x test/reacting_low_mach_cantera_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
+AC_CONFIG_FILES(test/input_files/air_2sp.xml)
 
 AC_OUTPUT( Makefile \
            src/Makefile 

@@ -15,6 +15,7 @@ check_PROGRAMS += cea_thermo_test
 check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_transport_test
 check_PROGRAMS += ideal_gas_mixture_cantera
+check_PROGRAMS += reacting_low_mach_regression
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -63,7 +64,7 @@ cea_thermo_test_SOURCES = cea_thermo_test.C
 cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
 cantera_transport_test_SOURCES = cantera_transport_test.C
 ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
-
+reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -75,7 +76,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_thermally_driven_flow_SOURCES)      \
           $(gaussian_profiles_SOURCES)               \
           $(vorticity_qoi_SOURCES)                   \
-          $(low_mach_cavity_benchmark_regression_SOURCES)
+          $(low_mach_cavity_benchmark_regression_SOURCES) \
+          $(reacting_low_mach_cantera_regression_SOURCES)
 
 #Define tests to actually be run
 TESTS = gaussian_profiles                                       \
@@ -96,7 +98,8 @@ TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/test_axi_thermally_driven_flow.sh       \
          $(top_builddir)/test/test_thermally_driven_3d_flow.sh        \
          $(top_builddir)/test/test_vorticity_qoi.sh                   \
-         $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh
+         $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
+         $(top_builddir)/test/reacting_low_mach_cantera_regression.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
@@ -109,7 +112,8 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_thermally_driven_3d_flow.sh   \
                  test_vorticity_qoi.sh              \
                  low_mach_cavity_benchmark_regression.sh \
-                 cantera_chem_thermo_test.sh
+                 cantera_chem_thermo_test.sh \
+                 reacting_low_mach_cantera_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data
