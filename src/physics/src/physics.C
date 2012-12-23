@@ -86,7 +86,6 @@ namespace GRINS
     return _is_steady;
   }
 
-
   void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
   {
     return;
