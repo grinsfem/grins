@@ -77,8 +77,8 @@ namespace GRINS
 				  const CachedValues& cache);
 
     void assemble_species_time_deriv(libMesh::FEMContext& c, 
-				     const ReactingFlowCache& cache, 
-				     unsigned int qp);
+				     unsigned int qp,
+				     const CachedValues& cache);
 
     void assemble_momentum_time_deriv(libMesh::FEMContext& c, 
 				      unsigned int qp,

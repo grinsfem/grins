@@ -122,8 +122,8 @@ namespace GRINS
 	std::cout << std::setprecision(16) << std::scientific
 		  << "sum = " << sum << std::endl;
 	*/
-	libmesh_assert_greater_equal(sum, 1.0-tol);
-	libmesh_assert_less_equal(sum,1.0+tol);
+	//libmesh_assert_greater_equal(sum, 1.0-tol);
+	//libmesh_assert_less_equal(sum,1.0+tol);
 #endif	
 
 	// Build up cache at element interior quadrature point
@@ -147,7 +147,7 @@ namespace GRINS
 	this->build_reacting_flow_cache(context, rfcache, qp);
 
 	this->assemble_mass_time_deriv(context, qp, cache);
-	this->assemble_species_time_deriv(context, rfcache, qp);
+	this->assemble_species_time_deriv(context, qp, cache);
 	this->assemble_momentum_time_deriv(context, qp, cache);
 	this->assemble_energy_time_deriv(context, rfcache, qp);
       }
@@ -196,7 +196,7 @@ namespace GRINS
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
 								       unsigned int qp,
-								       const CachedValues& cache)
+								       const CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
@@ -263,8 +263,8 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_species_time_deriv(libMesh::FEMContext& context, 
-									 const ReactingFlowCache& cache, 
-									 unsigned int qp)
+									 unsigned int qp,
+									 const CachedValues& cache)
   {
     // Convenience
     const VariableIndex s0_var = this->_species_vars[0];
@@ -282,15 +282,32 @@ namespace GRINS
     // The species shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = context.element_fe_var[s0_var]->get_dphi();
 
-    libMesh::Number rho = cache.rho();
-    const libMesh::NumberVectorValue& U = cache.U();
-    const std::vector<libMesh::Gradient>& grad_w = cache.mass_fractions_grad();
-    const std::vector<Real>& D = cache.D();
-    const std::vector<Real>& omega_dot = cache.omega_dot();
+    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+
+    libMesh::Number u, v, w;
+    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+    if (this->_dim == 3)
+      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
+
+    libMesh::NumberVectorValue U(u,v);
+    if (this->_dim == 3)
+      U(2) = w;
+
+    std::vector<libMesh::Gradient> grad_w = 
+      cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
+    libmesh_assert_equal_to( grad_w.size(), this->_n_species );
+
+    const std::vector<Real>& D = 
+      cache.get_cached_vector_values(Cache::DIFFUSION_COEFFS)[qp];
+
+    const std::vector<Real>& omega_dot = 
+      cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
 
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
-	libMesh::DenseSubVector<Number> &Fs = *context.elem_subresiduals[this->_species_vars[s]]; // R_{s}
+	libMesh::DenseSubVector<Number> &Fs = 
+	  *context.elem_subresiduals[this->_species_vars[s]]; // R_{s}
 
 	const Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
 	const libMesh::Gradient term2 = -rho*D[s]*grad_w[s];
@@ -487,6 +504,14 @@ namespace GRINS
 
     cache.add_quantity(Cache::MIXTURE_VISCOSITY);
 
+    cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
+
+    cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
+
+    cache.add_quantity(Cache::DIFFUSION_COEFFS);
+
+    cache.add_quantity(Cache::OMEGA_DOT);
+    
     return;
   }
 
@@ -589,12 +614,41 @@ namespace GRINS
     std::vector<Real> mu;
     mu.resize(n_qpoints);
 
+    std::vector<Real> cp;
+    cp.resize(n_qpoints);
+
+    std::vector<Real> k;
+    k.resize(n_qpoints);
+
+    std::vector<std::vector<Real> > omega_dot;
+    omega_dot.resize(n_qpoints);
+
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	mu[qp] = this->_gas_mixture.mu(cache,qp);
+	cp[qp] = this->_gas_mixture.cp(cache,qp);
+	k[qp]  = this->_gas_mixture.k(cache,qp);
+	
+	omega_dot[qp].resize(this->_n_species);
+	this->_gas_mixture.omega_dot( cache, qp, omega_dot[qp] );
       }
 
     cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
+    cache.set_values(Cache::MIXTURE_SPECIFIC_HEAT_P, cp);
+    cache.set_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY, k);
+    cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
+
+    /* Diffusion coefficients need rho, cp, k computed first */
+    std::vector<std::vector<Real> > D;
+    D.resize(n_qpoints);
+
+    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+      {
+	D[qp].resize(this->_n_species);
+	this->_gas_mixture.D( cache, qp, D[qp] );
+      }
+
+    cache.set_vector_values(Cache::DIFFUSION_COEFFS, D);
 
     return;
   }
