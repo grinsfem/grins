@@ -49,24 +49,36 @@ int main()
 
   std::vector<double> Y(5,0.2);
 
-  GRINS::ReactingFlowCache cache(T,P,Y);
+  GRINS::CachedValues cache;
+
+  cache.add_quantity(GRINS::Cache::TEMPERATURE);
+  cache.add_quantity(GRINS::Cache::THERMO_PRESSURE);
+  cache.add_quantity(GRINS::Cache::MASS_FRACTIONS);
+
+  std::vector<double> Tqp(1,T);
+  std::vector<double> Pqp(1,P);
+  std::vector<std::vector<double> > Yqp(1,Y);
+
+  cache.set_values(GRINS::Cache::TEMPERATURE, Tqp);
+  cache.set_values(GRINS::Cache::THERMO_PRESSURE, Pqp);
+  cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
 
   std::vector<double> omega_dot(5,0.0);
 
-  gas.omega_dot(cache,omega_dot);
+  gas.omega_dot( cache, 0, omega_dot );
 
-  const double cv = gas.cv( cache );
-  const double cp = gas.cp( cache );
+  const double cv = gas.cv( cache, 0 );
+  const double cp = gas.cp( cache, 0 );
 
-  const double mu = gas.mu(cache);
-  const double k = gas.k(cache);
+  const double mu = gas.mu( cache, 0 );
+  const double k = gas.k( cache, 0 );
   
   std::vector<Real> D(5,0.0);
 
-  gas.D(cache, D);
+  gas.D( cache, 0, D );
 
   std::vector<double> h(5,0.0);
-  gas.h(cache,h);
+  gas.h( cache, 0, h );
 
   int return_flag = 0;
   
@@ -93,11 +105,18 @@ int main()
     }
 
   std::vector<double> od_reg(5,0.0);
+  /* Values before rescaling omega dot by molar mass
   od_reg[0] = 3.3421893152544762e+03;
   od_reg[1] = -1.0546740386620191e+04;
   od_reg[2] = 8.6026851320309106e+03;
   od_reg[3] = -1.5287063762539863e+04;
-  od_reg[4] = 1.2490795641209472e+04;
+  od_reg[4] = 1.2490795641209472e+04; */
+
+  od_reg[0] = 9.3634775856169406e+04;
+  od_reg[1] = -3.3749569237184612e+05;
+  od_reg[2] = 2.5814937544198355e+05;
+  od_reg[3] = -2.1414118918565838e+05;
+  od_reg[4] = 1.9985273025935155e+05;
 
   for( unsigned int i = 0; i < 5; i++ )
     {
