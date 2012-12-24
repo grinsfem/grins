@@ -90,10 +90,10 @@ int main(int argc, char* argv[])
       Parameters &params = es->parameters;
 
       Real& w_N2 = params.set<Real>( "w_N2" );
-      w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 0 );
+      w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 0 );
       
       Real& w_N = params.set<Real>( "w_N" );
-      w_N = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 1 );
+      w_N = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 1 );
 
       system.project_solution( initial_values, NULL, params );
     }
@@ -128,7 +128,7 @@ Real initial_values( const Point&, const Parameters &params,
     value = params.get<Real>("w_N");
 
   else if( unknown_name == "T" )
-    value = 1200;
+    value = 300;
 
   else
     value = 0.0;

@@ -48,6 +48,9 @@ rayleigh_LDADD = $(LIBGRINS_LIBS)
 #=======================================================================
 rlmnsexdir = $(prefix)/examples/reacting_flow
 rlmnsex_PROGRAMS = rlmns
+rlmnsex_DATA = $(top_srcdir)/examples/reacting_flow/rlmns.in \
+               $(top_srcdir)/examples/reacting_flow/elements.xml \
+               $(top_srcdir)/examples/reacting_flow/air_2sp.xml
 
 rlmns_SOURCES = $(top_srcdir)/examples/reacting_flow/rlmns.C
 rlmns_LDADD = $(LIBGRINS_LIBS)
