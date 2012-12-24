@@ -149,7 +149,7 @@ namespace GRINS
 	this->assemble_mass_time_deriv(context, qp, cache);
 	this->assemble_species_time_deriv(context, qp, cache);
 	this->assemble_momentum_time_deriv(context, qp, cache);
-	this->assemble_energy_time_deriv(context, rfcache, qp);
+	this->assemble_energy_time_deriv(context, qp, cache);
       }
 
     // Pin p = p_value at p_point
@@ -234,7 +234,8 @@ namespace GRINS
     if (this->_dim == 3)
       divU += grad_w(2);
 
-    libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
+    libMesh::Gradient grad_T = 
+      cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
     Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
 
@@ -427,9 +428,9 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv(libMesh::FEMContext& context, 
-									const ReactingFlowCache& cache, 
-									unsigned int qp)
+  void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv( libMesh::FEMContext& context, 
+									 unsigned int qp,
+									 const CachedValues& cache)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
@@ -448,13 +449,32 @@ namespace GRINS
 
     libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
-    libMesh::Number rho = cache.rho() ;
-    const libMesh::NumberVectorValue& U = cache.U();
-    libMesh::Number cp = cache.cp();
-    libMesh::Number k = cache.k();
-    const libMesh::Gradient& grad_T = cache.grad_T();
-    const std::vector<Real>& omega_dot = cache.omega_dot();
-    const std::vector<Real>& h = cache.species_enthalpy();
+    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+
+    libMesh::Number u, v, w;
+    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+    if (this->_dim == 3)
+      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
+
+    libMesh::NumberVectorValue U(u,v);
+    if (this->_dim == 3)
+      U(2) = w;
+
+    libMesh::Number cp = 
+      cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
+
+    libMesh::Number k = 
+      cache.get_cached_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY)[qp];
+
+    const libMesh::Gradient& grad_T = 
+      cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
+
+    const std::vector<Real>& omega_dot = 
+      cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
+
+    const std::vector<Real>& h = 
+      cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[qp];
 
     Real chem_term = 0.0;
     for(unsigned int s=0; s < this->_n_species; s++ )
@@ -509,6 +529,8 @@ namespace GRINS
     cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
 
     cache.add_quantity(Cache::DIFFUSION_COEFFS);
+
+    cache.add_quantity(Cache::SPECIES_ENTHALPY);
 
     cache.add_quantity(Cache::OMEGA_DOT);
     
@@ -623,6 +645,9 @@ namespace GRINS
     std::vector<std::vector<Real> > omega_dot;
     omega_dot.resize(n_qpoints);
 
+    std::vector<std::vector<Real> > h;
+    h.resize(n_qpoints);
+
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	mu[qp] = this->_gas_mixture.mu(cache,qp);
@@ -631,12 +656,16 @@ namespace GRINS
 	
 	omega_dot[qp].resize(this->_n_species);
 	this->_gas_mixture.omega_dot( cache, qp, omega_dot[qp] );
+
+	h[qp].resize(this->_n_species);
+	this->_gas_mixture.h( cache, qp, h[qp] );
       }
 
     cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
     cache.set_values(Cache::MIXTURE_SPECIFIC_HEAT_P, cp);
     cache.set_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY, k);
     cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
+    cache.set_vector_values(Cache::SPECIES_ENTHALPY, h);
 
     /* Diffusion coefficients need rho, cp, k computed first */
     std::vector<std::vector<Real> > D;

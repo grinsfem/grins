@@ -85,8 +85,8 @@ namespace GRINS
 				      const CachedValues& cache);
 
     void assemble_energy_time_deriv(libMesh::FEMContext& c, 
-				    const ReactingFlowCache& cache, 
-				    unsigned int qp);
+				    unsigned int qp,
+				    const CachedValues& cache);
 
     //! Enable pressure pinning
     bool _pin_pressure;
