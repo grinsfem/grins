@@ -55,7 +55,10 @@ namespace GRINS
   void CachedValues::clear()
   {
     _cached_values.clear();
+    _cached_gradient_values.clear();
     _cached_vector_values.clear();
+    _cached_vector_gradient_values.clear();
+
     return;
   }
 
