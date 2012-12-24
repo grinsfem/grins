@@ -47,65 +47,40 @@ namespace GRINS
     ~IdealGasMixture();
 
     // Chemistry quantities
-    inline
-    Real R( unsigned int species ) const
-    { return this->_chem_mixture.R(species); }
+    Real R( unsigned int species ) const;
 
-    inline
-    Real R( const std::vector<Real>& mass_fractions ) const
-    { return this->_chem_mixture.R(mass_fractions); }
+    Real R( const std::vector<Real>& mass_fractions ) const;
 
-    inline
-    Real M( unsigned int species ) const
-    { return this->_chem_mixture.M(species); }
+    Real M( unsigned int species ) const;
 
-    inline
-    Real M( const std::vector<Real>& mass_fractions ) const
-    { return this->_chem_mixture.M(mass_fractions); }
+    Real M( const std::vector<Real>& mass_fractions ) const;
 
-    inline
-    Real X( unsigned int species, Real M, Real mass_fraction ) const
-    { return this->_chem_mixture.X(species,M,mass_fraction); }
+    Real X( unsigned int species, Real M, Real mass_fraction ) const;
 
-    inline
     void X( Real M, const std::vector<Real>& mass_fractions, 
-	    std::vector<Real>& mole_fractions ) const
-    { return this->_chem_mixture.X(M,mass_fractions,mole_fractions); }
+	    std::vector<Real>& mole_fractions ) const;
 
 
     // Thermodynamic quantities
-    inline
-    Real cp( const ReactingFlowCache& cache )
-    { return this->_thermo.cp(cache); }
+    Real cp( const ReactingFlowCache& cache );
 
-    inline
-    Real cv( const ReactingFlowCache& cache )
-    { return this->_thermo.cv(cache); }
-    
-    inline 
-    Real h(const ReactingFlowCache& cache, unsigned int species)
-    { return this->_thermo.h(cache,species); }
+    Real cv( const ReactingFlowCache& cache );
+     
+    Real h(const ReactingFlowCache& cache, unsigned int species);
 
-    inline
-    void h(const ReactingFlowCache& cache, std::vector<Real>& h)
-    { return this->_thermo.h(cache,h); }
+    void h(const ReactingFlowCache& cache, std::vector<Real>& h);
+
 
     // Transport quantities
-    inline
-    Real mu( const ReactingFlowCache& cache )
-    { return this->_transport.mu(cache); }
+    Real mu( const ReactingFlowCache& cache );
 
-    inline
-    Real k( const ReactingFlowCache& cache )
-    { return this->_transport.k(cache); }
+    Real k( const ReactingFlowCache& cache );
 
-    inline
-    void D( const ReactingFlowCache& cache, std::vector<Real>& D )
-    { return this->_transport.D(cache,D); }
+    void D( const ReactingFlowCache& cache, std::vector<Real>& D );
+
 
     // Kinetics quantites
-    void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot )
-    { return this->_kinetics.omega_dot(cache,omega_dot); }
+    void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );
 
   protected:
     
@@ -125,6 +100,89 @@ namespace GRINS
     Kinetics _kinetics;
 
   };
+
+  // Chemistry quantities
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::R( unsigned int species ) const
+  { return this->_chem_mixture.R(species); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::R( const std::vector<Real>& mass_fractions ) const
+  { return this->_chem_mixture.R(mass_fractions); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::M( unsigned int species ) const
+  { return this->_chem_mixture.M(species); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::M( const std::vector<Real>& mass_fractions ) const
+  { return this->_chem_mixture.M(mass_fractions); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::X( unsigned int species, Real M,
+						      Real mass_fraction ) const
+  { return this->_chem_mixture.X(species,M,mass_fraction); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::X( Real M, const std::vector<Real>& mass_fractions, 
+						      std::vector<Real>& mole_fractions ) const
+  { return this->_chem_mixture.X(M,mass_fractions,mole_fractions); }
+
+
+  // Thermodynamic quantities
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::cp( const ReactingFlowCache& cache )
+  { return this->_thermo.cp(cache); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::cv( const ReactingFlowCache& cache )
+  { return this->_thermo.cv(cache); }
+    
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::h(const ReactingFlowCache& cache,
+						     unsigned int species)
+  { return this->_thermo.h(cache,species); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::h(const ReactingFlowCache& cache,
+						     std::vector<Real>& h)
+  { return this->_thermo.h(cache,h); }
+
+  // Transport quantities
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::mu( const ReactingFlowCache& cache )
+  { return this->_transport.mu(cache); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::k( const ReactingFlowCache& cache )
+  { return this->_transport.k(cache); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::D( const ReactingFlowCache& cache, 
+						      std::vector<Real>& D )
+  { return this->_transport.D(cache,D); }
+
+  // Kinetics quantites
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::omega_dot( const ReactingFlowCache& cache, 
+							      std::vector<Real>& omega_dot )
+  { return this->_kinetics.omega_dot(cache,omega_dot); }
+
+  
 }
 
 #endif //GRINS_IDEAL_GAS_MIXTURE_H
