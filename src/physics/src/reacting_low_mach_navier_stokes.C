@@ -148,7 +148,7 @@ namespace GRINS
 
 	this->assemble_mass_time_deriv(context, qp, cache);
 	this->assemble_species_time_deriv(context, rfcache, qp);
-	this->assemble_momentum_time_deriv(context, rfcache, qp);
+	this->assemble_momentum_time_deriv(context, qp, cache);
 	this->assemble_energy_time_deriv(context, rfcache, qp);
       }
 
@@ -309,8 +309,8 @@ namespace GRINS
 
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
-									  const ReactingFlowCache& cache, 
-									  unsigned int qp)
+									  unsigned int qp,
+									  const CachedValues& cache)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
@@ -336,14 +336,28 @@ namespace GRINS
     libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
     libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
     
-    libMesh::Number rho = cache.rho();
-    const libMesh::NumberVectorValue& U = cache.U();
-    libMesh::Number divU = cache.divU();
-    libMesh::Number mu = cache.mu();
-    libMesh::Number p = cache.p_hydro();
-    const libMesh::Gradient& grad_u = cache.grad_u();
-    const libMesh::Gradient& grad_v = cache.grad_v();
-    const libMesh::Gradient& grad_w = cache.grad_w();
+    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+
+    libMesh::Number u, v, w;
+    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+    if (this->_dim == 3)
+      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
+
+    libMesh::NumberVectorValue U(u,v);
+    if (this->_dim == 3)
+      U(2) = w;
+
+    libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
+    libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+
+    libMesh::Gradient grad_w;
+    if (this->_dim == 3)
+      grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
+
+    libMesh::Number divU = grad_u(0) + grad_v(1);
+    if (this->_dim == 3)
+      divU += grad_w(2);
 
     libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) ); 
     libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
@@ -354,6 +368,9 @@ namespace GRINS
 	grad_vT(2) = grad_w(1);
 	grad_wT = libMesh::NumberVectorValue( grad_u(2), grad_v(2), grad_w(2) );
       }
+
+    libMesh::Number mu = cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[qp];
+    libMesh::Number p = cache.get_cached_values(Cache::PRESSURE)[qp];
 
     // Now a loop over the pressure degrees of freedom.  This
     // computes the contributions of the continuity equation.
@@ -444,7 +461,6 @@ namespace GRINS
   template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::init_element_cache( CachedValues& cache ) const
   {
-    // T, p0, Y
     cache.add_quantity(Cache::X_VELOCITY);
     cache.add_quantity(Cache::Y_VELOCITY);
 
@@ -466,6 +482,10 @@ namespace GRINS
     cache.add_quantity(Cache::MASS_FRACTIONS_GRAD);
 
     cache.add_quantity(Cache::MOLAR_MASS);
+
+    cache.add_quantity(Cache::MIXTURE_DENSITY);
+
+    cache.add_quantity(Cache::MIXTURE_VISCOSITY);
 
     return;
   }
@@ -502,6 +522,9 @@ namespace GRINS
     std::vector<Real> M;
     M.resize(n_qpoints);
 
+    std::vector<Real> rho;
+    rho.resize(n_qpoints);
+
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	u[qp] = context.interior_value(this->_u_var, qp);
@@ -532,6 +555,8 @@ namespace GRINS
 	  }
 	
 	M[qp] = this->_gas_mixture.M( mass_fractions[qp] );
+
+	rho[qp] = this->rho( T[qp], p0[qp], mass_fractions[qp] );
       }
     
     cache.set_values(Cache::X_VELOCITY, u);
@@ -556,6 +581,20 @@ namespace GRINS
     cache.set_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD, grad_mass_fractions);
 
     cache.set_values(Cache::MOLAR_MASS, M);
+
+    cache.set_values(Cache::MIXTURE_DENSITY, rho);
+
+    /* These quantities must be computed after rho, T, mass_fractions, p0
+       are set into the cache. */
+    std::vector<Real> mu;
+    mu.resize(n_qpoints);
+
+    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+      {
+	mu[qp] = this->_gas_mixture.mu(cache,qp);
+      }
+
+    cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
 
     return;
   }
