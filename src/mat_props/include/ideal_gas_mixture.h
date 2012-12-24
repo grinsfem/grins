@@ -71,13 +71,13 @@ namespace GRINS
 
     void h(const ReactingFlowCache& cache, std::vector<Real>& h);
 
-    Real cp( const CachedValues& cache, unsigned int qp );
+    Real cp( const CachedValues& cache, unsigned int qp ) const;
 
-    Real cv( const CachedValues& cache, unsigned int qp );
+    Real cv( const CachedValues& cache, unsigned int qp ) const;
      
-    Real h(const CachedValues& cache, unsigned int qp, unsigned int species);
+    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
-    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h);
+    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
 
 
     // Transport quantities
@@ -87,19 +87,19 @@ namespace GRINS
 
     void D( const ReactingFlowCache& cache, std::vector<Real>& D );
 
-    Real mu( const CachedValues& cache, unsigned int qp );
+    Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp );
+    Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D );
+	    std::vector<Real>& D ) const;
 
 
     // Kinetics quantites
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );
 
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<Real>& omega_dot );
+		    std::vector<Real>& omega_dot ) const;
 
   protected:
     
@@ -177,6 +177,34 @@ namespace GRINS
 						     std::vector<Real>& h)
   { return this->_thermo.h(cache,h); }
 
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::cp( const CachedValues& cache, 
+						       unsigned int qp ) const
+  { return this->_thermo.cp(cache,qp); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::cv( const CachedValues& cache, 
+						       unsigned int qp ) const
+  { return this->_thermo.cv(cache,qp); }
+    
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::h(const CachedValues& cache, 
+						     unsigned int qp,
+						     unsigned int species) const
+  { return this->_thermo.h(cache,qp,species); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::h(const CachedValues& cache, 
+						     unsigned int qp,
+						     std::vector<Real>& h) const
+  { return this->_thermo.h(cache,qp,h); }
+
+
   // Transport quantities
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
@@ -194,6 +222,27 @@ namespace GRINS
 						      std::vector<Real>& D )
   { return this->_transport.D(cache,D); }
 
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::mu( const CachedValues& cache, 
+						       unsigned int qp ) const
+  { return this->_transport.mu(cache,qp); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::k( const CachedValues& cache,
+						      unsigned int qp ) const
+  { return this->_transport.k(cache,qp); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::D( const CachedValues& cache,
+						      unsigned int qp, 
+						      std::vector<Real>& D ) const
+  { return this->_transport.D(cache,qp,D); }
+
+
   // Kinetics quantites
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
@@ -205,7 +254,7 @@ namespace GRINS
   inline
   void IdealGasMixture<Thermo,Transport,Kinetics>::omega_dot( const CachedValues& cache,
 							      unsigned int qp,
-							      std::vector<Real>& omega_dot )
+							      std::vector<Real>& omega_dot ) const
   { return this->_kinetics.omega_dot(cache,qp,omega_dot); }
 
   

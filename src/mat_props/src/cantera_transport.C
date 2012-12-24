@@ -78,7 +78,7 @@ namespace GRINS
     return mu;
   }
 
-  Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp )
+  Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -142,7 +142,7 @@ namespace GRINS
     return k;
   }
 
-  Real CanteraTransport::k( const CachedValues& cache, unsigned int qp )
+  Real CanteraTransport::k( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -206,7 +206,7 @@ namespace GRINS
   }
 
   void CanteraTransport::D( const CachedValues& cache, unsigned int qp,
-			    std::vector<Real>& D )
+			    std::vector<Real>& D ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];

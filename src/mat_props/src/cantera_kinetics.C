@@ -76,7 +76,7 @@ namespace GRINS
 
   void CanteraKinetics::omega_dot( const CachedValues& cache,
 				   unsigned int qp,
-				   std::vector<Real>& omega_dot )
+				   std::vector<Real>& omega_dot ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];

@@ -58,13 +58,13 @@ namespace GRINS
 
     void h(const ReactingFlowCache& cache, std::vector<Real>& h);
 
-    Real cp( const CachedValues& cache, unsigned int qp );
+    Real cp( const CachedValues& cache, unsigned int qp ) const;
 
-    Real cv( const CachedValues& cache, unsigned int qp );
+    Real cv( const CachedValues& cache, unsigned int qp ) const;
      
-    Real h(const CachedValues& cache, unsigned int qp, unsigned int species);
+    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
-    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h);
+    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
 
   protected:
 

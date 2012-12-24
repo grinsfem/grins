@@ -79,7 +79,7 @@ namespace GRINS
     return cp;
   }
 
-  Real CanteraThermodynamics::cp( const CachedValues& cache, unsigned int qp )
+  Real CanteraThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -147,7 +147,7 @@ namespace GRINS
     return cv;
   }
 
-  Real CanteraThermodynamics::cv( const CachedValues& cache, unsigned int qp )
+  Real CanteraThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -213,8 +213,8 @@ namespace GRINS
     return h_RT[species]*_chem_mixture.R(species)*T;
   }
 
-  Real CanteraThermodynamics::h(const CachedValues& cache, unsigned int qp,
-				unsigned int species)
+  Real CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
+				 unsigned int species ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -287,7 +287,7 @@ namespace GRINS
   }
 
   void CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
-				 std::vector<Real>& h)
+				 std::vector<Real>& h) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];

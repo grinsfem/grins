@@ -58,12 +58,12 @@ namespace GRINS
     void D( const ReactingFlowCache& cache, std::vector<Real>& D )
     { std::fill( D.begin(), D.end(), _Le*_k/( cache.rho() * cache.cp() ) ); }
 
-    Real mu( const CachedValues& cache, unsigned int qp );
+    Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp );
+    Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D );
+	    std::vector<Real>& D ) const;
 
   protected:
     
@@ -80,20 +80,20 @@ namespace GRINS
   };
 
   inline
-  Real ConstantTransport::mu( const CachedValues& /*cache*/, unsigned int /*qp*/ )
+  Real ConstantTransport::mu( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
   {
     return _mu;
   }
 
   inline
-  Real ConstantTransport::k( const CachedValues& /*cache*/, unsigned int /*qp*/ )
+  Real ConstantTransport::k( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
   {
     return _k;
   }
 
   inline
   void ConstantTransport::D( const CachedValues& cache, unsigned int qp,
-			     std::vector<Real>& D )
+			     std::vector<Real>& D ) const
   { const Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
     const Real cp  = cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
     std::fill( D.begin(), D.end(), _Le*_k/( rho*cp ) );

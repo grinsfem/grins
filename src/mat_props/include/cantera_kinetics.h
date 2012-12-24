@@ -52,7 +52,7 @@ namespace GRINS
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );
 
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<Real>& omega_dot );
+		    std::vector<Real>& omega_dot ) const;
 
   protected:
 

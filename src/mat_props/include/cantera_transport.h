@@ -63,12 +63,12 @@ namespace GRINS
     void D( const ReactingFlowCache& cache,
 	    std::vector<Real>& D );
 
-    Real mu( const CachedValues& cache, unsigned int qp );
+    Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp );
+    Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D );
+	    std::vector<Real>& D ) const;
 
   protected:
 
