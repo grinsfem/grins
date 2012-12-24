@@ -35,6 +35,7 @@
 // GRINS
 #include "chemical_mixture.h"
 #include "reacting_flow_cache.h"
+#include "cached_values.h"
 #include "cantera_singleton.h"
 
 #ifdef GRINS_HAVE_CANTERA
@@ -49,6 +50,9 @@ namespace GRINS
     ~CanteraKinetics();
 
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );
+
+    void omega_dot( const CachedValues& cache, unsigned int qp,
+		    std::vector<Real>& omega_dot );
 
   protected:
 

@@ -34,6 +34,7 @@
 
 // GRINS
 #include "reacting_flow_cache.h"
+#include "cached_values.h"
 #include "chemical_mixture.h"
 
 namespace GRINS
@@ -81,6 +82,9 @@ namespace GRINS
 
     // Kinetics quantites
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );
+
+    void omega_dot( const CachedValues& cache, unsigned int qp,
+		    std::vector<Real>& omega_dot );
 
   protected:
     
@@ -181,6 +185,13 @@ namespace GRINS
   void IdealGasMixture<Thermo,Transport,Kinetics>::omega_dot( const ReactingFlowCache& cache, 
 							      std::vector<Real>& omega_dot )
   { return this->_kinetics.omega_dot(cache,omega_dot); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::omega_dot( const CachedValues& cache,
+							      unsigned int qp,
+							      std::vector<Real>& omega_dot )
+  { return this->_kinetics.omega_dot(cache,qp,omega_dot); }
 
   
 }
