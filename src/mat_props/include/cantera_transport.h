@@ -34,7 +34,6 @@
 
 // GRINS
 #include "chemical_mixture.h"
-#include "reacting_flow_cache.h"
 #include "cached_values.h"
 #include "cantera_singleton.h"
 
@@ -55,13 +54,6 @@ namespace GRINS
     
     CanteraTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CanteraTransport();
-
-    Real mu( const ReactingFlowCache& cache );
-
-    Real k( const ReactingFlowCache& cache );
-
-    void D( const ReactingFlowCache& cache,
-	    std::vector<Real>& D );
 
     Real mu( const CachedValues& cache, unsigned int qp ) const;
 

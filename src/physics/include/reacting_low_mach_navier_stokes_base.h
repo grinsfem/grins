@@ -86,9 +86,6 @@ namespace GRINS
 
   protected:
 
-    void build_reacting_flow_cache( const libMesh::FEMContext& c, 
-				    ReactingFlowCache& cache, unsigned int qp );
-
     libMesh::Number _p0;
 
     //! Physical dimension of problem

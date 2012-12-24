@@ -91,7 +91,6 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C \
                 $(utilities_srcdir)/input_utils.C \
-                $(utilities_srcdir)/reacting_flow_cache.C \
                 $(utilities_srcdir)/cached_values.C
 
 visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
@@ -195,7 +194,6 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
 utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h \
                 $(utilities_incdir)/physical_constants.h \
                 $(utilities_incdir)/input_utils.h \
-                $(utilities_incdir)/reacting_flow_cache.h \
                 $(utilities_incdir)/math_constants.h \
                 $(utilities_incdir)/cached_values.h \
                 $(utilities_incdir)/cached_quantities_enum.h

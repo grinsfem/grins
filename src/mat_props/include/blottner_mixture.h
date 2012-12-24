@@ -42,11 +42,11 @@ namespace GRINS
     BlottnerMixture( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~BlottnerMixture();
 
-    Real mu( const ReactingFlowCache& cache, unsigned int species )
-    { this->mu( cache.T(), species ) };
+    Real mu( const CachedValues& cache, unsigned int qp,
+	     unsigned int species ) const;
 
-    Real mu( Real T, unsigned int species );
-    Real mu( Real T );
+    Real mu( Real T, unsigned int species ) const;
+    Real mu( Real T ) const;
 
   protected:
 
@@ -57,6 +57,11 @@ namespace GRINS
     std::vector<BlottnerViscosity*> _species_viscosities;
 
   };
+
+  inline
+  Real BlottnerMixture::mu( const CachedValues& cache, unsigned int qp,
+			    unsigned int species ) const
+  { return this->mu( cache.get_cached_values(Cache::TEMPERATURE)[qp], species ) };
 
 } // namespace GRINS
 

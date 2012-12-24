@@ -35,7 +35,6 @@
 
 // GRINS
 #include "chemical_mixture.h"
-#include "reacting_flow_cache.h"
 
 namespace GRINS
 {

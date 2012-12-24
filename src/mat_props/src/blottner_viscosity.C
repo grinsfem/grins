@@ -52,7 +52,7 @@ namespace GRINS
     return;
   }
 
-  Real BlottnerViscosity::mu( Real T )
+  Real BlottnerViscosity::mu( Real T ) const
   {
     Real logT = std::log(T);
     

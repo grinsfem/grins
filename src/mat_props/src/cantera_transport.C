@@ -47,37 +47,6 @@ namespace GRINS
     return;
   }
 
-  Real CanteraTransport::mu( const ReactingFlowCache& cache )
-  {
-    const Real T = cache.T();
-    const Real P = cache.P();
-    const std::vector<Real>& Y = cache.mass_fractions();
-
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    Real mu = 0.0;
-
-    Threads::spin_mutex cantera_mutex;
-    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
-    /*! \todo Need to make sure this will work in a threaded environment.
-      Not sure if we will get thread lock here or not. */
-    try
-      {
-	_cantera_gas.setState_TPY(T, P, &Y[0]);
-	mu =  _cantera_transport->viscosity();
-      }
-    catch(Cantera::CanteraError)
-      {
-	Cantera::showErrors(std::cerr);
-	libmesh_error();
-      }
-
-    lock.release();
-
-    return mu;
-  }
-
   Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
@@ -111,37 +80,6 @@ namespace GRINS
     return mu;
   }
 
-  Real CanteraTransport::k( const ReactingFlowCache& cache )
-  {
-    const Real T = cache.T();
-    const Real P = cache.P();
-    const std::vector<Real>& Y = cache.mass_fractions();
-
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    Real k = 0.0;
-
-    Threads::spin_mutex cantera_mutex;
-    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
-    /*! \todo Need to make sure this will work in a threaded environment.
-      Not sure if we will get thread lock here or not. */
-    try
-      {
-	_cantera_gas.setState_TPY(T, P, &Y[0]);
-	k =  _cantera_transport->thermalConductivity();
-      }
-    catch(Cantera::CanteraError)
-      {
-	Cantera::showErrors(std::cerr);
-	libmesh_error();
-      }
-
-    lock.release();
-
-    return k;
-  }
-
   Real CanteraTransport::k( const CachedValues& cache, unsigned int qp ) const
   {
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
@@ -173,36 +111,6 @@ namespace GRINS
     }
 
     return k;
-  }
-
-  void CanteraTransport::D( const ReactingFlowCache& cache, std::vector<Real>& D )
-  {
-    const Real T = cache.T();
-    const Real P = cache.P();
-    const std::vector<Real>& Y = cache.mass_fractions();
-
-    libmesh_assert_equal_to( Y.size(), D.size() );
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    Threads::spin_mutex cantera_mutex;
-    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
-    /*! \todo Need to make sure this will work in a threaded environment.
-      Not sure if we will get thread lock here or not. */
-    try
-      {
-	_cantera_gas.setState_TPY(T, P, &Y[0]);
-	_cantera_transport->getMixDiffCoeffsMass(&D[0]);
-      }
-    catch(Cantera::CanteraError)
-      {
-	Cantera::showErrors(std::cerr);
-	libmesh_error();
-      }
-
-    lock.release();
-
-    return;
   }
 
   void CanteraTransport::D( const CachedValues& cache, unsigned int qp,

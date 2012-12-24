@@ -34,7 +34,6 @@
 
 // GRINS
 #include "chemical_mixture.h"
-#include "reacting_flow_cache.h"
 #include "cached_values.h"
 #include "cantera_singleton.h"
 
@@ -49,14 +48,6 @@ namespace GRINS
 
     CanteraThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CanteraThermodynamics();
-
-    Real cp( const ReactingFlowCache& cache );
-
-    Real cv( const ReactingFlowCache& cache );
-
-    Real h(const ReactingFlowCache& cache, unsigned int species);
-
-    void h(const ReactingFlowCache& cache, std::vector<Real>& h);
 
     Real cp( const CachedValues& cache, unsigned int qp ) const;
 

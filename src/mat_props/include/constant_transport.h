@@ -34,7 +34,6 @@
 
 // GRINS
 #include "chemical_mixture.h"
-#include "reacting_flow_cache.h"
 #include "cached_values.h"
 
 namespace GRINS
@@ -45,18 +44,6 @@ namespace GRINS
     
     ConstantTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~ConstantTransport();
-
-    inline
-    Real mu( const ReactingFlowCache& )
-    { return _mu; }
-
-    inline
-    Real k( const ReactingFlowCache& )
-    { return _k; }
-    
-    inline
-    void D( const ReactingFlowCache& cache, std::vector<Real>& D )
-    { std::fill( D.begin(), D.end(), _Le*_k/( cache.rho() * cache.cp() ) ); }
 
     Real mu( const CachedValues& cache, unsigned int qp ) const;
 

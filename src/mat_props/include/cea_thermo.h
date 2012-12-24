@@ -39,7 +39,6 @@
 // GRINS
 #include "chemical_mixture.h"
 #include "cea_curve_fit.h"
-#include "reacting_flow_cache.h"
 
 namespace GRINS
 {
@@ -50,33 +49,13 @@ namespace GRINS
     CEAThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CEAThermodynamics();
 
-    inline
-    Real cp( const ReactingFlowCache& cache, unsigned int species ) const
-    { return this->cp(cache.T(),species); }
-
-    inline
-    Real cp( const ReactingFlowCache& cache ) const
-    { return this->cp(cache.T(),cache.mass_fractions()); }
-
     Real cp( Real T, unsigned int species ) const;
 
     Real cp( Real T, const std::vector<Real>& mass_fractions ) const;
 
-    inline
-    Real cv( const ReactingFlowCache& cache, unsigned int species ) const
-    { return this->cv(cache.T(),species); }
+    Real cv( Real T, unsigned int species ) const;
 
-    inline
-    Real cv( const ReactingFlowCache& cache ) const
-    { return this->cv(cache.T(),cache.mass_fractions()); }
-
-    inline
-    Real cv( Real T, unsigned int species ) const
-    { return this->cp(T,species) - _chem_mixture.R(species); }
-
-    inline
-    Real cv( Real T, const std::vector<Real>& mass_fractions ) const
-    { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
+    Real cv( Real T, const std::vector<Real>& mass_fractions ) const;
 
   protected:
 
@@ -97,6 +76,14 @@ namespace GRINS
     CEAThermodynamics();
 
   };
+
+  inline
+  Real CEAThermodynamics::cv( Real T, unsigned int species ) const
+  { return this->cp(T,species) - _chem_mixture.R(species); }
+
+  inline
+  Real CEAThermodynamics::cv( Real T, const std::vector<Real>& mass_fractions ) const
+  { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
 
 } // namespace GRINS
 

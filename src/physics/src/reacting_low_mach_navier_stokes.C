@@ -98,54 +98,6 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	// Compute species mass fractions at quadrature points
-	std::vector<Real> Y;
-	Y.reserve(this->_n_species);
-	for( unsigned int s = 0; s < this->_n_species; s++ )
-	  {
-	    /*! \todo Need to figure out something smarter for controling species
-	              that go slightly negative. */
-	    const Real value = std::max( context.interior_value(this->_species_vars[s],qp), 0.0 );
-	    libmesh_assert_greater_equal(value,0.0);
-	    Y.push_back(value);
-	  }
-
-#ifdef DEBUG
-	Real sum = 0.0;
-	Real tol = 1.0e-5;
-	for( unsigned int s = 0; s < this->_n_species; s++ )
-	  {
-	    sum += Y[s];
-	  }
-	
-	/*
-	std::cout << std::setprecision(16) << std::scientific
-		  << "sum = " << sum << std::endl;
-	*/
-	//libmesh_assert_greater_equal(sum, 1.0-tol);
-	//libmesh_assert_less_equal(sum,1.0+tol);
-#endif	
-
-	// Build up cache at element interior quadrature point
-	/*! \todo Ought to rethink constructing this at every quadrature point. Perhaps
-	          add a "reset" method (or something similar) that just clears everything
-	          so we don't have to keep deallocating/reallocating. Probably will require
-	          adding libmesh_asserts in the themro/transport/chemistry calculations since
-	          we assume at least T, P, and Y are already present in the cache.
-	          Actually, what we want to do is have the cache built once per element
-	          (thus caching at every quadrature point), so this can be reused for multiple
-	          Physics classes. */
-	const Real T = context.interior_value(this->_T_var, qp);
-	libmesh_assert_greater(T, 0.0);
-
-
-	const Real p0 = this->get_p0_steady(context,qp);
-	libmesh_assert_greater(p0, 0.0);
-
-	ReactingFlowCache rfcache( T, p0, Y );
-
-	this->build_reacting_flow_cache(context, rfcache, qp);
-
 	this->assemble_mass_time_deriv(context, qp, cache);
 	this->assemble_species_time_deriv(context, qp, cache);
 	this->assemble_momentum_time_deriv(context, qp, cache);

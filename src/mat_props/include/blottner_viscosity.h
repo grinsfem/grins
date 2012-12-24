@@ -43,7 +43,7 @@ namespace GRINS
     BlottnerViscosity( const GetPot& input );
     ~BlottnerViscosity();
 
-    Real mu( Real T );
+    Real mu( Real T ) const;
     
   protected:
 
