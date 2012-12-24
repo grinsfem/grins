@@ -71,6 +71,14 @@ namespace GRINS
 
     void h(const ReactingFlowCache& cache, std::vector<Real>& h);
 
+    Real cp( const CachedValues& cache, unsigned int qp );
+
+    Real cv( const CachedValues& cache, unsigned int qp );
+     
+    Real h(const CachedValues& cache, unsigned int qp, unsigned int species);
+
+    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h);
+
 
     // Transport quantities
     Real mu( const ReactingFlowCache& cache );

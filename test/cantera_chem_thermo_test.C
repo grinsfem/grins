@@ -29,7 +29,6 @@
 #include <iomanip>
 
 #include "grins_config.h"
-#include "cached_values.h"
 #include "cantera_singleton.h"
 #include "cantera_thermo.h"
 #include "cantera_kinetics.h"
@@ -82,21 +81,16 @@ int main(int argc, char* argv[])
   cache.set_values(GRINS::Cache::THERMO_PRESSURE, Pqp);
   cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
 
-  std::vector<double> omega_dot_qp(5,0.0);
-
-  cantera_kinetics.omega_dot(cache,0,omega_dot_qp);
-
-  GRINS::ReactingFlowCache rfcache(T,P,Y);
-
   std::vector<double> omega_dot(5,0.0);
+  
+  cantera_kinetics.omega_dot(cache,0,omega_dot);
+  
+  const double cv = cantera_thermo.cv( cache, 0 );
+  const double cp = cantera_thermo.cp( cache, 0 );
+
   std::vector<double> h(5,0.0);
 
-  cantera_kinetics.omega_dot(rfcache,omega_dot);
-  
-  const double cv = cantera_thermo.cv( rfcache );
-  const double cp = cantera_thermo.cp( rfcache );
-
-  cantera_thermo.h(rfcache,h);
+  cantera_thermo.h(cache,0,h);
 
   cantera.setState_TPY(T,P,&Y[0]);
   const double e = cantera.intEnergy_mass();
@@ -154,20 +148,6 @@ int main(int argc, char* argv[])
 	  return_flag = 1;
 	}
     }
-
-  for( unsigned int i = 0; i < 5; i++ )
-    {
-      if( std::fabs( (omega_dot_qp[i] - od_reg[i])/od_reg[i] ) > tol )
-	{
-	  std::cerr << "Error: Mismatch in internal energy." << std::endl
-		    << std::setprecision(16) << std::scientific
-		    << "i = " << i << std::endl
-		    << "omega_dot_qp = " << omega_dot_qp[i] << std::endl
-		    << "od_reg = " << od_reg[i] << std::endl;
-	  return_flag = 1;
-	}
-    }
-
   
   std::vector<double> h_reg(5,0.0);
   h_reg[0] = 1.3708031466651920e+06;
