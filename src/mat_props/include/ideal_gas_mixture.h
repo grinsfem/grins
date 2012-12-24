@@ -87,6 +87,13 @@ namespace GRINS
 
     void D( const ReactingFlowCache& cache, std::vector<Real>& D );
 
+    Real mu( const CachedValues& cache, unsigned int qp );
+
+    Real k( const CachedValues& cache, unsigned int qp );
+
+    void D( const CachedValues& cache, unsigned int qp,
+	    std::vector<Real>& D );
+
 
     // Kinetics quantites
     void omega_dot( const ReactingFlowCache& cache, std::vector<Real>& omega_dot );

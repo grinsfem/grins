@@ -35,6 +35,7 @@
 // GRINS
 #include "chemical_mixture.h"
 #include "reacting_flow_cache.h"
+#include "cached_values.h"
 
 namespace GRINS
 {
@@ -57,6 +58,13 @@ namespace GRINS
     void D( const ReactingFlowCache& cache, std::vector<Real>& D )
     { std::fill( D.begin(), D.end(), _Le*_k/( cache.rho() * cache.cp() ) ); }
 
+    Real mu( const CachedValues& cache, unsigned int qp );
+
+    Real k( const CachedValues& cache, unsigned int qp );
+
+    void D( const CachedValues& cache, unsigned int qp,
+	    std::vector<Real>& D );
+
   protected:
     
     const ChemicalMixture& _chem_mixture;
@@ -71,6 +79,27 @@ namespace GRINS
 
   };
 
+  inline
+  Real ConstantTransport::mu( const CachedValues& /*cache*/, unsigned int /*qp*/ )
+  {
+    return _mu;
+  }
+
+  inline
+  Real ConstantTransport::k( const CachedValues& /*cache*/, unsigned int /*qp*/ )
+  {
+    return _k;
+  }
+
+  inline
+  void ConstantTransport::D( const CachedValues& cache, unsigned int qp,
+			     std::vector<Real>& D )
+  { const Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    const Real cp  = cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
+    std::fill( D.begin(), D.end(), _Le*_k/( rho*cp ) );
+    return;
+  }
+  
 } // namespace GRINS
 
 #endif //GRINS_CONSTANT_TRANSPORT_H
