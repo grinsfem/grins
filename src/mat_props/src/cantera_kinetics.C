@@ -101,6 +101,12 @@ namespace GRINS
 	  Cantera::showErrors(std::cerr);
 	  libmesh_error();
 	}
+      
+      for( unsigned int s = 0; s < omega_dot.size(); s++ )
+	{
+	  // convert [kmol/m^3-s] to [kg/m^3-s]
+	  omega_dot[s] *= this->_chem_mixture.M(s);
+	}
 
       lock.release();
     }

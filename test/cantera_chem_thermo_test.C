@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
   const double cv_reg = 8.8382964243437857e+02;
   if( std::fabs( (cv - cv_reg)/cv_reg ) > tol )
     {
-      std::cerr << "Error: Mismatch in internal energy." << std::endl
+      std::cerr << "Error: Mismatch in cv." << std::endl
 		<< std::setprecision(16) << std::scientific
 		<< "cv = " << cv << std::endl
 		<< "cv_reg = " << cv_reg << std::endl;
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
   const double cp_reg = 1.2732313697364564e+03;
   if( std::fabs( (cp - cp_reg)/cp_reg ) > tol )
     {
-      std::cerr << "Error: Mismatch in internal energy." << std::endl
+      std::cerr << "Error: Mismatch in cp." << std::endl
 		<< std::setprecision(16) << std::scientific
 		<< "cp = " << cp << std::endl
 		<< "cp_reg = " << cp_reg << std::endl;
@@ -130,17 +130,24 @@ int main(int argc, char* argv[])
     }
 
   std::vector<double> od_reg(5,0.0);
+  /* Values before rescaling omega dot by molar mass
   od_reg[0] = 3.3421893152544762e+03;
   od_reg[1] = -1.0546740386620191e+04;
   od_reg[2] = 8.6026851320309106e+03;
   od_reg[3] = -1.5287063762539863e+04;
-  od_reg[4] = 1.2490795641209472e+04;
+  od_reg[4] = 1.2490795641209472e+04; */
+
+  od_reg[0] = 9.3634775856169406e+04;
+  od_reg[1] = -3.3749569237184612e+05;
+  od_reg[2] = 2.5814937544198355e+05;
+  od_reg[3] = -2.1414118918565838e+05;
+  od_reg[4] = 1.9985273025935155e+05;
 
   for( unsigned int i = 0; i < 5; i++ )
     {
       if( std::fabs( (omega_dot[i] - od_reg[i])/od_reg[i] ) > tol )
 	{
-	  std::cerr << "Error: Mismatch in internal energy." << std::endl
+	  std::cerr << "Error: Mismatch in omega_dot." << std::endl
 		    << std::setprecision(16) << std::scientific
 		    << "i = " << i << std::endl
 		    << "omega_dot = " << omega_dot[i] << std::endl
@@ -181,6 +188,7 @@ int main(int argc, char* argv[])
 	    << "h = " << h[0] << ", " << h[1] << ", " << h[2]
 	    << ", " << h[3] << ", " << h[4] << std::endl;
   */
+
 #else //GRINS_HAVE_CANTERA
   // automake expects 77 for a skipped test
   int return_flag = 77;
