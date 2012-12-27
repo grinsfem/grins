@@ -4,7 +4,12 @@ BUILT_SOURCES   = .license.stamp
 # Programs and libraries we want to build
 #----------------------------------------
 
-bin_PROGRAMS    = grins grins_version
+bin_PROGRAMS    = grins grins_version 
+
+if CANTERA_ENABLED
+   bin_PROGRAMS += cantera_kinetic_rates
+endif
+
 lib_LTLIBRARIES = libgrins.la
 
 #--------------------------------------------------
@@ -275,6 +280,11 @@ grins_version_SOURCES = $(utilities_srcdir)/version.C
 grins_version_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
 grins_version_LDADD += $(LIBMESH_LDFLAGS)
+endif
+
+if CANTERA_ENABLED
+   cantera_kinetic_rates_SOURCES = $(top_srcdir)/src/apps/cantera_kinetic_rates.C
+   cantera_kinetic_rates_LDADD = libgrins.la
 endif
 
 #--------------------------------------
