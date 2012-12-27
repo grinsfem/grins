@@ -132,11 +132,10 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
-    // First, clear out cache
-    _element_cache.clear();
+    CachedValues cache(_element_cache);
 
     // Now compute cache for this element
-    this->compute_element_cache(c,_element_cache);
+    this->compute_element_cache(c,cache);
 
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -147,7 +146,7 @@ namespace GRINS
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
 	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
-							     _element_cache );
+							     cache );
 	  }
       }
 

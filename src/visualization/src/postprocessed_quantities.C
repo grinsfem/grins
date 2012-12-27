@@ -138,37 +138,176 @@ namespace GRINS
 		}
 		break;
 	      case(SPECIES_VISCOSITY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for species viscosity calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("mu_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, SPECIES_VISCOSITY) );
+		    }
+		  // We need T, p0, and mass fractions too
+		  _cache.add_quantity(Cache::TEMPERATURE);
+		  _cache.add_quantity(Cache::THERMO_PRESSURE);
+		  _cache.add_quantity(Cache::MASS_FRACTIONS);
+		  _cache.add_quantity(Cache::SPECIES_VISCOSITY);
+		}
+		break;
+
 	      case(MIXTURE_VISCOSITY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture viscosity calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("mu", FIRST), MIXTURE_VISCOSITY) );
+
+		  _cache.add_quantity(Cache::MIXTURE_VISCOSITY);
+		}
+		break;
+
 	      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
 		{
 		  libmesh_not_implemented();
 		}
 	      break;
+
 	      case(SPECIES_THERMAL_CONDUCTIVITY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for species thermal conductivity calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("k_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, SPECIES_THERMAL_CONDUCTIVITY) );
+		    }
+
+		  _cache.add_quantity(Cache::SPECIES_THERMAL_CONDUCTIVITY);
+		}
+		break;
+
 	      case(MIXTURE_THERMAL_CONDUCTIVITY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture thermal conductivity calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("k", FIRST), MIXTURE_THERMAL_CONDUCTIVITY) );
+
+		  _cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
+		}
+		break;
+
 	      case(PERFECT_GAS_SPECIFIC_HEAT_P):
 		{
 		  libmesh_not_implemented();
 		}
 	      break;
+
 	      case(SPECIES_SPECIFIC_HEAT_P):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for species cp calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("cp_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_P) );
+		    }
+
+		  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_P);
+		}
+		break;
+
 	      case(MIXTURE_SPECIFIC_HEAT_P):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture cp calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_P) );
+
+		  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
+		}
+		break;
+
 	      case(PERFECT_GAS_SPECIFIC_HEAT_V):
 		{
 		  libmesh_not_implemented();
 		}
-	      break;
+		break;
+
 	      case(SPECIES_SPECIFIC_HEAT_V):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for species cv calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("cv_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_V) );
+		    }
+
+		  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_V);
+		}
+		break;
+
 	      case(MIXTURE_SPECIFIC_HEAT_V):
 		{
-		  libmesh_not_implemented();
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for mixture cv calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_V) );
+
+		  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_V);
 		}
+		break;
+
 	      case(MOLE_FRACTIONS):
 		{
 		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
 		    {
 		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture gas density calculation."
+				<< " enable for mole fraction calculation."
 				<< std::endl;
 		      libmesh_error();
 		    }
@@ -183,11 +322,31 @@ namespace GRINS
 		  _cache.add_quantity(Cache::MOLE_FRACTIONS);
 		}
 		break;
+
 	      case(OMEGA_DOT):
 		{
-		  libmesh_not_implemented();
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for omega_dot calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("omega_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, OMEGA_DOT) );
+		    }
+
+		  // We need T, p0, and mass fractions too
+		  _cache.add_quantity(Cache::TEMPERATURE);
+		  _cache.add_quantity(Cache::THERMO_PRESSURE);
+		  _cache.add_quantity(Cache::MASS_FRACTIONS);
+		  _cache.add_quantity(Cache::OMEGA_DOT);
 		}
-	      break;
+		break;
 
 	      default:
 		{
@@ -264,33 +423,89 @@ namespace GRINS
 	  libmesh_not_implemented();
 	}
 	break;
+
       case(SPECIES_VISCOSITY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_VISCOSITY)[0][species];
+	}
+	break;
+
       case(MIXTURE_VISCOSITY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[0];
+	}
+	break;
+
       case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
 	{
 	  libmesh_not_implemented();
 	}
-      break;
+	break;
+
       case(SPECIES_THERMAL_CONDUCTIVITY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_THERMAL_CONDUCTIVITY)[0][species];
+	}
+	break;
+
       case(MIXTURE_THERMAL_CONDUCTIVITY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY)[0];
+	}
+	break;
+
       case(PERFECT_GAS_SPECIFIC_HEAT_P):
 	{
 	  libmesh_not_implemented();
 	}
-      break;
+	break;
+
       case(SPECIES_SPECIFIC_HEAT_P):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_SPECIFIC_HEAT_P)[0][species];
+	}
+	break;
+
       case(MIXTURE_SPECIFIC_HEAT_P):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[0];
+	}
+	break;
+
       case(PERFECT_GAS_SPECIFIC_HEAT_V):
 	{
 	  libmesh_not_implemented();
 	}
-      break;
+	break;
+
       case(SPECIES_SPECIFIC_HEAT_V):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_SPECIFIC_HEAT_V)[0][species];
+	}
+	break;
+
       case(MIXTURE_SPECIFIC_HEAT_V):
 	{
-	  libmesh_not_implemented();
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  value = this->_cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_V)[0];
 	}
-      break;
+	break;
+
       case(MOLE_FRACTIONS):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
@@ -299,11 +514,15 @@ namespace GRINS
 	  value = this->_cache.get_cached_vector_values(Cache::MOLE_FRACTIONS)[0][species];
 	}
 	break;
+
       case(OMEGA_DOT):
 	{
-	  libmesh_not_implemented();
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::OMEGA_DOT)[0][species];
 	}
-      break;
+	break;
 
       default:
 	{

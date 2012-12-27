@@ -659,6 +659,11 @@ namespace GRINS
 	cache.set_values( Cache::MIXTURE_DENSITY, rho_values );
       }
 
+    if( cache.is_active(Cache::SPECIES_VISCOSITY) )
+      {
+	libmesh_not_implemented();
+      }
+
     if( cache.is_active(Cache::MOLE_FRACTIONS) )
       {
 	std::vector<std::vector<Real> > mole_fractions;
@@ -681,6 +686,41 @@ namespace GRINS
 	  }
 
 	cache.set_vector_values(Cache::MOLE_FRACTIONS, mole_fractions );
+      }
+
+    if( cache.is_active(Cache::OMEGA_DOT) )
+      {
+	{
+	  std::vector<Real> T, p0;
+	  T.resize( points.size() );
+	  p0.resize( points.size() );
+
+	  std::vector<std::vector<Real> > Y;
+	  Y.resize( points.size() );
+
+	  for( unsigned int p = 0; p < points.size(); p++ )
+	    {
+	      T[p] = this->T(points[p],context);
+	      p0[p] = this->get_p0_steady(context,points[p]);
+
+	      Y[p].resize(this->_n_species);
+	      this->mass_fractions( points[p], context, Y[p] );
+	    }
+	  cache.set_values( Cache::TEMPERATURE, T );
+	  cache.set_values( Cache::THERMO_PRESSURE, p0 );
+	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
+	}
+
+	std::vector<std::vector<Real> > omega_dot;
+	omega_dot.resize( points.size() );
+
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    omega_dot[p].resize(this->_n_species);
+	    this->_gas_mixture.omega_dot( cache, p, omega_dot[p] );
+	  }
+
+	cache.set_vector_values(Cache::OMEGA_DOT, omega_dot );
       }
 
     return;
