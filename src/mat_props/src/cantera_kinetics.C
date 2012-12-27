@@ -54,7 +54,9 @@ namespace GRINS
 
     libmesh_assert_equal_to( Y.size(), omega_dot.size() );
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-    
+    libmesh_assert_greater(T,0.0);
+    libmesh_assert_greater(P,0.0);
+
     {
       Threads::spin_mutex cantera_mutex;
       Threads::spin_mutex::scoped_lock lock(cantera_mutex);
@@ -72,6 +74,27 @@ namespace GRINS
 	  libmesh_error();
 	}
       
+#ifdef DEBUG
+      for( unsigned int s = 0; s < omega_dot.size(); s++ )
+	{
+	  if( libmesh_isnan(omega_dot[s]) )
+	    {
+	      std::cout << "T = " << T << std::endl
+			<< "P = " << P << std::endl;
+	      for( unsigned int s = 0; s < omega_dot.size(); s++ )
+		{
+		  std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
+		}
+	      for( unsigned int s = 0; s < omega_dot.size(); s++ )
+		{
+		  std::cout << "omega_dot[" << s << "] = " << omega_dot[s] << std::endl;
+		}
+
+	      libmesh_error();	      
+	    }
+	}
+#endif
+
       for( unsigned int s = 0; s < omega_dot.size(); s++ )
 	{
 	  // convert [kmol/m^3-s] to [kg/m^3-s]
