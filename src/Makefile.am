@@ -39,6 +39,9 @@ bc_handling_incdir = $(top_srcdir)/src/bc_handling/include
 qoi_srcdir = $(top_srcdir)/src/qoi/src
 qoi_incdir = $(top_srcdir)/src/qoi/include
 
+kinetics_srcdir = $(top_srcdir)/src/kinetics/src
+kinetics_incdir = $(top_srcdir)/src/kinetics/include
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -134,6 +137,8 @@ qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_base.C \
           $(qoi_srcdir)/qoi_factory.C \
           $(qoi_srcdir)/vorticity.C
+
+kinetics_SRC = $(kinetics_srcdir)/arrhenius_rate.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -242,10 +247,12 @@ qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_names.h \
           $(qoi_incdir)/vorticity.h
 
+kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h
+
 includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
-                  $(bc_handling_INC) $(qoi_INC)
+                  $(bc_handling_INC) $(qoi_INC) $(kinetics_INC)
 
 libgrins_la_SOURCES = $(solver_SRC) \
                       $(physics_SRC) \
@@ -254,7 +261,8 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(visualization_SRC) \
                       $(matprops_SRC) \
                       $(bc_handling_SRC) \
-                      $(qoi_SRC)
+                      $(qoi_SRC) \
+                      $(kinetics_SRC)
 
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
@@ -298,6 +306,7 @@ AM_CPPFLAGS = -I$(solver_incdir) \
               -I$(matprops_incdir) \
               -I$(bc_handling_incdir) \
               -I$(qoi_incdir) \
+              -I$(kinetics_incdir) \
               -I$(top_builddir)/src/utilities/include #For grins_version.h
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
@@ -337,7 +346,7 @@ endif
         $(matprops_INC) $(matprops_SRC) \
         $(bc_handling_INC) $(bc_handling_SRC) \
         $(solver_SOURCES) $(grins_version_SOURCES) \
-        $(qoi_SRC)
+        $(qoi_SRC) $(kinetics_SRC)
 	echo 'updated source license headers' >$@
 
 EXTRA_DIST = common
