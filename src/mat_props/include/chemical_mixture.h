@@ -60,6 +60,10 @@ namespace GRINS
 
     const std::vector<Species>& species_list() const;
 
+    const std::map<Species,unsigned int>& species_list_map() const;
+
+    const std::map<std::string,unsigned int>& active_species_name_map() const;
+
     const std::vector<ChemicalSpecies*>& chemical_species() const;
 
     const std::map<std::string,Species>& species_name_map() const;
@@ -109,6 +113,8 @@ namespace GRINS
     void read_species_data( std::istream& in );
 
     std::vector<Species> _species_list;
+    std::map<Species,unsigned int> _species_list_map;
+    std::map<std::string,unsigned int> _active_species_name_map;
     std::vector<ChemicalSpecies*> _chemical_species;
     std::map<std::string,Species> _species_name_map;
     std::map<Species,std::string> _species_inv_name_map;
@@ -129,6 +135,18 @@ namespace GRINS
   const std::vector<Species>& ChemicalMixture::species_list() const
   { 
     return _species_list;
+  }
+
+  inline
+  const std::map<Species,unsigned int>& ChemicalMixture::species_list_map() const
+  {
+    return _species_list_map;
+  }
+
+  inline
+  const std::map<std::string,unsigned int>& ChemicalMixture::active_species_name_map() const
+  {
+    return _active_species_name_map;
   }
 
   inline

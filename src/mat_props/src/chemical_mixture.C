@@ -40,11 +40,11 @@ namespace GRINS
 
     // Populate species list for requested species
     _species_list.reserve( species_list.size() );
-    for( std::vector<std::string>::const_iterator it = species_list.begin();
-	 it < species_list.end();
-	 ++it )
+    for( unsigned int s = 0; s < species_list.size(); s++ )
       {
-	_species_list.push_back( _species_name_map.find( (*it) )->second );
+	_species_list.push_back( _species_name_map.find( species_list[s] )->second );
+	_species_list_map.insert( std::make_pair( _species_name_map.find( species_list[s] )->second, s ) );
+	_active_species_name_map.insert( std::make_pair( species_list[s], s ) );
       }
 	 
     // Now read in chemical properties for the requested species and stash
