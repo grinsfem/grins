@@ -41,9 +41,10 @@ namespace GRINS
 {
   //!A single reaction mechanism. 
   /*!
-   * This class encapsulates a single reaction mechanism.  The mechanism could be 
-   * an elementary reaction, or a three-body reaction.  All reactions are assumed
-   * to be reversible. This class was originally taken from \p FIN-S.
+    This class encapsulates a single reaction mechanism.  The mechanism could be 
+    an elementary reaction, or a three-body reaction.  All reactions are assumed
+    to be reversible. This class was originally taken from \p FIN-S.
+    \todo{Do we want to template this class around the rate type?}
    */
   class Reaction
   {
@@ -123,7 +124,7 @@ namespace GRINS
     
     //!
     Real equilibrium_constant( const Real P0_RT,
-			       const std::vector<Real> &h_RT_minus_s_R ) const;
+			       const std::vector<Real>& h_RT_minus_s_R ) const;
 
     //!
     void equilibrium_constant_and_derivative( const Real T,
@@ -134,7 +135,7 @@ namespace GRINS
 					      Real& dkeq_dT) const;
 
     //!
-    Real compute_rate_of_progress( const std::vector<Real> &molar_densities,
+    Real compute_rate_of_progress( const std::vector<Real>& molar_densities,
 				   const Real kfwd, 
 				   const Real kbkwd ) const;
     
@@ -151,6 +152,9 @@ namespace GRINS
 						   Real& Rbkwd,
 						   Real& dRbkwd_dT,
 						   std::vector<Real>& dRbkwd_drho) const;
+
+    //! Return const reference to the forward rate object
+    const ArrheniusRate& forward_rate() const;
 
     //! Formatted print, by default to \p libMesh::out.
     void print(std::ostream& os = libMesh::out) const;
@@ -177,7 +181,7 @@ namespace GRINS
     bool _initialized;
 
     //! The forward reaction rate modified Arrhenius form.
-    ArrheniusRate forward_rate;
+    ArrheniusRate _forward_rate;
 
   };
 
@@ -325,6 +329,12 @@ namespace GRINS
   int Reaction::gamma () const
   {
     return _gamma;
+  }
+
+  inline
+  const ArrheniusRate& Reaction::forward_rate() const
+  {
+    return _forward_rate;
   }
   
 } // namespace GRINS
