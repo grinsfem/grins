@@ -99,7 +99,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C \
                 $(utilities_srcdir)/input_utils.C \
-                $(utilities_srcdir)/cached_values.C
+                $(utilities_srcdir)/cached_values.C \
+                $(utilities_srcdir)/tinyxml2.cpp
 
 visualization_SRC = $(visualization_srcdir)/steady_visualization.C \
                     $(visualization_srcdir)/unsteady_visualization.C \
@@ -139,7 +140,9 @@ qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/vorticity.C
 
 kinetics_SRC = $(kinetics_srcdir)/arrhenius_rate.C \
-               $(kinetics_srcdir)/reaction.C
+               $(kinetics_srcdir)/reaction.C \
+               $(kinetics_srcdir)/reaction_set.C \
+               $(kinetics_srcdir)/grins_kinetics.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -207,7 +210,9 @@ utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h \
                 $(utilities_incdir)/input_utils.h \
                 $(utilities_incdir)/math_constants.h \
                 $(utilities_incdir)/cached_values.h \
-                $(utilities_incdir)/cached_quantities_enum.h
+                $(utilities_incdir)/cached_quantities_enum.h \
+                $(utilities_incdir)/tinyxml2.h \
+                $(utilities_incdir)/string_utils.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \
@@ -249,7 +254,9 @@ qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/vorticity.h
 
 kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h \
-               $(kinetics_incdir)/grins/reaction.h
+               $(kinetics_incdir)/grins/reaction.h \
+               $(kinetics_incdir)/grins/reaction_set.h \
+               $(kinetics_incdir)/grins/grins_kinetics.h
 
 includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
