@@ -55,34 +55,25 @@ namespace GRINS
     ChemicalMixture( const std::vector<std::string>& species_list );
     ~ChemicalMixture();
 
-    inline
-    const std::vector<Species>& species_list() const
-    { return _species_list; }
+    //! Returns the number of species in this mixture.
+    unsigned int n_species() const;
 
-    inline
-    const std::vector<ChemicalSpecies*>& chemical_species() const
-    { return _chemical_species; }
+    const std::vector<Species>& species_list() const;
 
-    inline
-    const std::map<std::string,Species>& species_name_map() const
-    { return _species_name_map; }
+    const std::vector<ChemicalSpecies*>& chemical_species() const;
 
-    inline
-    const std::map<Species,std::string>& species_inverse_name_map() const
-    { return _species_inv_name_map; }
+    const std::map<std::string,Species>& species_name_map() const;
+
+    const std::map<Species,std::string>& species_inverse_name_map() const;
 
     //! Gas constant for species s in [J/kg-K]
-    inline
-    Real R( const unsigned int s ) const
-    { return (_chemical_species[s])->gas_constant(); }
+    Real R( const unsigned int s ) const;
 
     //! Gas constant for mixture in [J/kg-K]
     Real R( const std::vector<Real>& mass_fractions ) const;
     
     //! Molecular weight (molar mass) for species s in [g/mol] or [kg/kmol]
-    inline
-    Real M( const unsigned int s ) const
-    { return (_chemical_species[s])->molar_mass(); }
+    Real M( const unsigned int s ) const;
 
     //! Molecular weight (molar mass) for mixture in [g/mol] or [kg/kmol]
     /*!
@@ -98,13 +89,17 @@ namespace GRINS
       compute species mole fraction using the relationship
       \f$ w_i = x_i \frac{M_i}{M} \f$ 
      */
-    inline
-    Real X( unsigned int species, Real M, Real mass_fraction ) const
-    { return mass_fraction*M/this->M(species); }
+    Real X( const unsigned int species, const Real M, const Real mass_fraction ) const;
 
     //! All species mole fractions
     void X( Real M, const std::vector<Real>& mass_fractions, 
 	    std::vector<Real>& mole_fractions ) const;
+
+    Real molar_density( const unsigned int species, const Real rho,
+			const Real mass_fraction ) const;
+
+    void molar_densities( const Real rho, const std::vector<Real>& mass_fractions,
+			  std::vector<Real>& molar_densities ) const;
 
   protected:
 
@@ -122,6 +117,79 @@ namespace GRINS
     ChemicalMixture();
 
   };
+
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  unsigned int ChemicalMixture::n_species() const
+  {
+    return _species_list.size();
+  }
+
+  inline
+  const std::vector<Species>& ChemicalMixture::species_list() const
+  { 
+    return _species_list;
+  }
+
+  inline
+  const std::vector<ChemicalSpecies*>& ChemicalMixture::chemical_species() const
+  {
+    return _chemical_species;
+  }
+
+  inline
+  const std::map<std::string,Species>& ChemicalMixture::species_name_map() const
+  {
+    return _species_name_map;
+  }
+
+  inline
+  const std::map<Species,std::string>& ChemicalMixture::species_inverse_name_map() const
+  {
+    return _species_inv_name_map;
+  }
+
+  inline
+  Real ChemicalMixture::R( const unsigned int s ) const
+  {
+    return (_chemical_species[s])->gas_constant();
+  }
+
+  inline
+  Real ChemicalMixture::M( const unsigned int s ) const
+  {
+    return (_chemical_species[s])->molar_mass();
+  }
+
+  inline
+  Real ChemicalMixture::X( const unsigned int species, const Real M, const Real mass_fraction ) const
+  {
+    return mass_fraction*M/this->M(species);
+  }
+
+  inline
+  Real ChemicalMixture::molar_density( const unsigned int species,
+				       const Real rho,
+				       const Real mass_fraction ) const
+  {
+    libmesh_assert_greater( rho, 0.0 );
+    return rho*mass_fraction/this->M(species);
+  }
+
+  inline
+  void ChemicalMixture::molar_densities( const Real rho,
+					 const std::vector<Real>& mass_fractions,
+					 std::vector<Real>& molar_densities ) const
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), this->n_species() );
+    libmesh_assert_equal_to( molar_densities.size(), this->n_species() );
+    libmesh_assert_greater( rho, 0.0 );
+    for( unsigned int s = 0; s < this->n_species(); s++ )
+      {
+	molar_densities[s] = rho*mass_fractions[s]/this->M(s);
+      }
+    return;
+  }
 
 } //namespace GRINS
 
