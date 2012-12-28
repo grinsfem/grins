@@ -472,6 +472,8 @@ namespace GRINS
 
     cache.add_quantity(Cache::MOLAR_MASS);
 
+    cache.add_quantity(Cache::MOLAR_DENSITIES);
+
     cache.add_quantity(Cache::MIXTURE_DENSITY);
 
     cache.add_quantity(Cache::MIXTURE_VISCOSITY);
@@ -483,6 +485,8 @@ namespace GRINS
     cache.add_quantity(Cache::DIFFUSION_COEFFS);
 
     cache.add_quantity(Cache::SPECIES_ENTHALPY);
+
+    cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
 
     cache.add_quantity(Cache::OMEGA_DOT);
     
@@ -594,42 +598,59 @@ namespace GRINS
     std::vector<Real> k;
     k.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > omega_dot;
-    omega_dot.resize(n_qpoints);
-
     std::vector<std::vector<Real> > h;
     h.resize(n_qpoints);
+
+    std::vector<std::vector<Real> > h_RT_minus_s_R;
+    h_RT_minus_s_R.resize(n_qpoints);
+
+    std::vector<std::vector<Real> > molar_densities;
+    molar_densities.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	mu[qp] = this->_gas_mixture.mu(cache,qp);
 	cp[qp] = this->_gas_mixture.cp(cache,qp);
 	k[qp]  = this->_gas_mixture.k(cache,qp);
-	
-	omega_dot[qp].resize(this->_n_species);
-	this->_gas_mixture.omega_dot( cache, qp, omega_dot[qp] );
 
 	h[qp].resize(this->_n_species);
 	this->_gas_mixture.h( cache, qp, h[qp] );
+
+	h_RT_minus_s_R[qp].resize(this->_n_species);
+	this->_gas_mixture.h_RT_minus_s_R( cache, qp, h_RT_minus_s_R[qp] );
+
+	molar_densities[qp].resize(this->_n_species);
+	this->_gas_mixture.chem_mixture().molar_densities( rho[qp], mass_fractions[qp], 
+							   molar_densities[qp] );
       }
 
     cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
     cache.set_values(Cache::MIXTURE_SPECIFIC_HEAT_P, cp);
     cache.set_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY, k);
-    cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
     cache.set_vector_values(Cache::SPECIES_ENTHALPY, h);
+    cache.set_vector_values(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY, 
+			    h_RT_minus_s_R);
+    cache.set_vector_values(Cache::MOLAR_DENSITIES, molar_densities);
 
-    /* Diffusion coefficients need rho, cp, k computed first */
+    /* Diffusion coefficients need rho, cp, k computed first.
+       omega_dot may need h_RT_minus_s_R, molar_densities. */
     std::vector<std::vector<Real> > D;
     D.resize(n_qpoints);
+
+    std::vector<std::vector<Real> > omega_dot;
+    omega_dot.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	D[qp].resize(this->_n_species);
 	this->_gas_mixture.D( cache, qp, D[qp] );
+
+	omega_dot[qp].resize(this->_n_species);
+	this->_gas_mixture.omega_dot( cache, qp, omega_dot[qp] );
       }
 
     cache.set_vector_values(Cache::DIFFUSION_COEFFS, D);
+    cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
 
     return;
   }
