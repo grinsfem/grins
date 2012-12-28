@@ -65,13 +65,13 @@ namespace GRINS
 		 0);
     }
     
-    for (unsigned int r=0; r<this->n_reactants(); r++)
+    for (unsigned int r=0; r< this->n_reactants(); r++)
       {
 	_species_reactant_stoichiometry[this->reactant_id(r)] =
 	  this->reactant_stoichiometric_coefficient(r);
       }
     
-    for (unsigned int p=0; p<this->n_products(); p++)
+    for (unsigned int p=0; p < this->n_products(); p++)
       {
 	_species_product_stoichiometry[this->product_id(p)] =
 	  this->product_stoichiometric_coefficient(p);
@@ -102,7 +102,7 @@ namespace GRINS
 
     Real exppower = 0.;
 
-    for (unsigned int s=0; s<this->n_species(); s++)
+    for (unsigned int s=0; s < this->n_species(); s++)
       {
 	exppower += -( static_cast<Real>(_species_delta_stoichiometry[s])*
 		       h_RT_minus_s_R[s] );
@@ -113,7 +113,8 @@ namespace GRINS
 
   void Reaction::equilibrium_constant_and_derivative( const Real T,
 						      const Real P0_RT,
-						      const std::vector<Real>& h_RT_minus_s_R,						      const std::vector<Real>& ddT_h_RT_minus_s_R,
+						      const std::vector<Real>& h_RT_minus_s_R,
+						      const std::vector<Real>& ddT_h_RT_minus_s_R,
 						      Real& keq,
 						      Real& dkeq_dT) const
   {
@@ -234,18 +235,18 @@ namespace GRINS
     Real ddT_kbkwd_times_products = dkbkwd_dT;
       
     // pre-fill the participating species partials with the rates
-    for (unsigned int r=0; r<this->n_reactants(); r++)
+    for (unsigned int r=0; r< this->n_reactants(); r++)
       {
 	dRfwd_drho[this->reactant_id(r)] = kfwd;
       }
     
-    for (unsigned int p=0; p<this->n_products(); p++)
+    for (unsigned int p=0; p < this->n_products(); p++)
       {
 	dRbkwd_drho[this->product_id(p)] = kbkwd;
       }
     
     // Rfwd & derivatives
-    for (unsigned int ro=0; ro<this->n_reactants(); ro++)
+    for (unsigned int ro=0; ro < this->n_reactants(); ro++)
       {
 	const Real val = 
 	  std::pow( molar_densities[this->reactant_id(ro)],
@@ -267,7 +268,7 @@ namespace GRINS
       }
 
     // Rbkwd & derivatives
-    for (unsigned int po=0; po<this->n_products(); po++)
+    for (unsigned int po=0; po< this->n_products(); po++)
       {
 	const Real val = 
 	  std::pow( molar_densities[this->product_id(po)],
@@ -311,7 +312,7 @@ namespace GRINS
 	{
 	  Real summed_value=0.0;
 
-	  for (unsigned int s=0; s<this->n_species(); s++)
+	  for (unsigned int s=0; s < this->n_species(); s++)
 	    {
 	      summed_value += this->efficiency(s) * molar_densities[s];
 	    }
@@ -365,7 +366,7 @@ namespace GRINS
 	  os << this->product_name(p) << ":"
 	     << this->product_stoichiometric_coefficient(p) << " ";
       }
-    os << "\n#   forward rate eqn: " << forward_rate;
+    os << "\n#   forward rate eqn: " << _forward_rate;
     
     if (_type == Kinetics::THREE_BODY)
       {
