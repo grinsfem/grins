@@ -138,7 +138,8 @@ qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_factory.C \
           $(qoi_srcdir)/vorticity.C
 
-kinetics_SRC = $(kinetics_srcdir)/arrhenius_rate.C
+kinetics_SRC = $(kinetics_srcdir)/arrhenius_rate.C \
+               $(kinetics_srcdir)/reaction.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -247,7 +248,8 @@ qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_names.h \
           $(qoi_incdir)/vorticity.h
 
-kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h
+kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h \
+               $(kinetics_incdir)/grins/reaction.h
 
 includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
