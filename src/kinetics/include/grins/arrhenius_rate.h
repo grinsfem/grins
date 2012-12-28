@@ -52,6 +52,8 @@ namespace GRINS
     void set_eta( const Real eta );
     void set_Ea( const Real Ea );
 
+    void scale_Ea( const Real scale );
+
     Real Cf() const;
     Real eta() const;
     Real Ea() const;
@@ -98,6 +100,13 @@ namespace GRINS
   void ArrheniusRate::set_Ea( const Real Ea )
   {
     _Ea = Ea;
+    return;
+  }
+
+  inline
+  void ArrheniusRate::scale_Ea( const Real scale )
+  {
+    _Ea *= scale;
     return;
   }
 
