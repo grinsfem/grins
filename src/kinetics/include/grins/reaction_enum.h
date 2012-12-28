@@ -31,7 +31,7 @@
 
 namespace GRINS
 {
-  namespace Kinetics
+  namespace ReactionType
   {
 
     enum ReactionType { ELEMENTARY = 0,

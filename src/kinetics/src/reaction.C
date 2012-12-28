@@ -34,7 +34,7 @@ namespace GRINS
   Reaction::Reaction( const unsigned int n_species,
 		      const std::string &equation ) 
     : _n_species(n_species),
-      _type(Kinetics::ELEMENTARY),
+      _type(ReactionType::ELEMENTARY),
       _equation(equation),
       _gamma(0),
       _initialized(false)
@@ -168,7 +168,7 @@ namespace GRINS
 	// for elementary reactions the forward and backward
 	// rates of progress are simply the rates times
 	// the product of the reactants, products respectively.
-      case(Kinetics::ELEMENTARY):
+      case(ReactionType::ELEMENTARY):
 	{
 	  Rfwd  = kfwd_times_reactants;
 	  Rbkwd = kbkwd_times_products;
@@ -177,7 +177,7 @@ namespace GRINS
 	
 	// for threebody reactions we need to include the
 	// contrbution from each collision partner
-      case(Kinetics::THREE_BODY):
+      case(ReactionType::THREE_BODY):
 	{
 	  for (unsigned int s=0; s<this->n_species(); s++)
 	    {	     
@@ -294,7 +294,7 @@ namespace GRINS
 	// for elementary reactions the forward and backward
 	// rates of progress are simply the rates times
 	// the product of the reactants, products respectively.
-      case(Kinetics::ELEMENTARY):
+      case(ReactionType::ELEMENTARY):
 	{
 	  Rfwd  = kfwd_times_reactants;
 	  Rbkwd = kbkwd_times_products;
@@ -308,7 +308,7 @@ namespace GRINS
 	
 	// for threebody reactions we need to include the
 	// contrbution from each collision partner
-      case(Kinetics::THREE_BODY):
+      case(ReactionType::THREE_BODY):
 	{
 	  Real summed_value=0.0;
 
@@ -368,7 +368,7 @@ namespace GRINS
       }
     os << "\n#   forward rate eqn: " << _forward_rate;
     
-    if (_type == Kinetics::THREE_BODY)
+    if (_type == ReactionType::THREE_BODY)
       {
 	os << "\n#   efficiencies: ";
 	for (unsigned int s=0; s<this->n_species(); s++)

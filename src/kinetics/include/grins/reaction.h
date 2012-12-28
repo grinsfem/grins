@@ -64,13 +64,13 @@ namespace GRINS
     /*! Type of reaction. Presently only ELEMENTARY or THREE_BODY
      *  reversible reactions are considered.
      */
-    Kinetics::ReactionType type() const;
+    ReactionType::ReactionType type() const;
 
     //! Set the type of reaction. 
     /*! Set the type of reaction. Presently only ELEMENTARY or THREE_BODY
      * reversible reactions are considered.
      */
-    void set_type( const Kinetics::ReactionType type);
+    void set_type( const ReactionType::ReactionType type);
 
     bool initialized() const;
 
@@ -156,6 +156,9 @@ namespace GRINS
     //! Return const reference to the forward rate object
     const ArrheniusRate& forward_rate() const;
 
+    //! Return writeable reference to the forward rate object
+    ArrheniusRate& forward_rate();
+
     //! Formatted print, by default to \p libMesh::out.
     void print(std::ostream& os = libMesh::out) const;
 
@@ -165,7 +168,7 @@ namespace GRINS
   private:
     
     unsigned int _n_species;
-    Kinetics::ReactionType _type;
+    ReactionType::ReactionType _type;
     std::string _equation;
     std::vector<std::string> _reactant_names;
     std::vector<std::string> _product_names;
@@ -199,13 +202,13 @@ namespace GRINS
   }
 
   inline
-  Kinetics::ReactionType Reaction::type() const
+  ReactionType::ReactionType Reaction::type() const
   {
     return _type;
   }
 
   inline
-  void Reaction::set_type( const Kinetics::ReactionType type)
+  void Reaction::set_type( const ReactionType::ReactionType type)
   {
     _type = type;
     return;
@@ -312,7 +315,7 @@ namespace GRINS
   {
     libmesh_assert_less(s, this->n_species());
     libmesh_assert_less(s, _efficiencies.size());
-    libmesh_assert_equal_to(_type, Kinetics::THREE_BODY);
+    libmesh_assert_equal_to(_type, ReactionType::THREE_BODY);
     _efficiencies[s] = efficiency;
     return;
   }
@@ -321,7 +324,7 @@ namespace GRINS
   Real Reaction::efficiency( const unsigned int s ) const
   {
     libmesh_assert_less(s, _efficiencies.size());
-    libmesh_assert_equal_to(_type, Kinetics::THREE_BODY);
+    libmesh_assert_equal_to(_type, ReactionType::THREE_BODY);
     return _efficiencies[s];
   }
 
@@ -333,6 +336,12 @@ namespace GRINS
 
   inline
   const ArrheniusRate& Reaction::forward_rate() const
+  {
+    return _forward_rate;
+  }
+
+  inline
+  ArrheniusRate& Reaction::forward_rate()
   {
     return _forward_rate;
   }
