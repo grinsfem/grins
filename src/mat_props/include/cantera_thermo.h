@@ -41,7 +41,6 @@
 
 namespace GRINS
 {
-
   class CanteraThermodynamics
   {
   public:
@@ -57,6 +56,15 @@ namespace GRINS
 
     void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
 
+    //! This is just a dummy for the GRINS interface. Returns 0.0.
+    /*! \todo Should look into actually implementing this because the functionality is probably there. */
+    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
+
+    //! This is just a dummy for the GRINS interface. Returns 0.0.
+    /*! \todo Should look into actually implementing this because the functionality is probably there. */
+    void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+			 std::vector<Real>& h_RT_minus_s_R) const;
+
   protected:
 
     const ChemicalMixture& _chem_mixture;
@@ -69,7 +77,24 @@ namespace GRINS
 
   };
 
-}
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  Real CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/,
+					      unsigned int /*qp*/, 
+					      unsigned int /*species*/ ) const
+  {
+    return 0.0;
+  }
+
+  inline
+  void CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/, unsigned int /*qp*/,
+					      std::vector<Real>& h_RT_minus_s_R ) const
+  {
+    std::fill( h_RT_minus_s_R.begin(), h_RT_minus_s_R.end(), 0.0 );
+    return;
+  }
+
+} // namespace GRINS
 
 #endif //GRINS_HAVE_CANTERA
 

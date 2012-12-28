@@ -46,6 +46,8 @@ namespace GRINS
     IdealGasMixture( const GetPot& input );
     ~IdealGasMixture();
 
+    const ChemicalMixture& chem_mixture() const;
+
     // Chemistry quantities
     Real R( unsigned int species ) const;
 
@@ -70,6 +72,10 @@ namespace GRINS
 
     void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
 
+    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
+
+    void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+			 std::vector<Real>& h_RT_minus_s_R) const;
 
     // Transport quantities
     Real mu( const CachedValues& cache, unsigned int qp ) const;
@@ -102,6 +108,15 @@ namespace GRINS
     Kinetics _kinetics;
 
   };
+
+  /* ------------------------- Inline Functions -------------------------*/
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  const ChemicalMixture& IdealGasMixture<Thermo,Transport,Kinetics>::chem_mixture() const
+  { 
+    return this->_chem_mixture;
+  }
 
   // Chemistry quantities
   template<typename Thermo, typename Transport, typename Kinetics>
@@ -163,6 +178,20 @@ namespace GRINS
 						     unsigned int qp,
 						     std::vector<Real>& h) const
   { return this->_thermo.h(cache,qp,h); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  Real IdealGasMixture<Thermo,Transport,Kinetics>::h_RT_minus_s_R(const CachedValues& cache, 
+								  unsigned int qp,
+								  unsigned int species) const
+  { return this->_thermo.h_RT_minus_s_R(cache,qp,species); }
+
+  template<typename Thermo, typename Transport, typename Kinetics>
+  inline
+  void IdealGasMixture<Thermo,Transport,Kinetics>::h_RT_minus_s_R(const CachedValues& cache, 
+								  unsigned int qp,
+								  std::vector<Real>& h_RT_minus_s_R) const
+  { return this->_thermo.h_RT_minus_s_R(cache,qp,h_RT_minus_s_R); }
 
 
   // Transport quantities
