@@ -52,7 +52,7 @@ namespace GRINS
 
   Real CanteraThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
   {
-    Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -63,7 +63,7 @@ namespace GRINS
     Real cp = 0.0;
 
     {
-      //Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+      //Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -86,7 +86,7 @@ namespace GRINS
 
   Real CanteraThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
   {
-    Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -97,7 +97,7 @@ namespace GRINS
     Real cv = 0.0;
 
     {
-      //Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+      //Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -121,7 +121,7 @@ namespace GRINS
   Real CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
 				 unsigned int species ) const
   {
-    Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -132,7 +132,7 @@ namespace GRINS
     std::vector<Real> h_RT( Y.size(), 0.0 );
 
     {
-      //Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+      //Threads::spin_mutex::scoped_lock lock(cantera_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -156,7 +156,7 @@ namespace GRINS
   void CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
 				 std::vector<Real>& h) const
   {
-    Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
@@ -166,7 +166,7 @@ namespace GRINS
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     {
-      //Threads::spin_mutex::scoped_lock lock(thermo_mutex);
+      //Threads::spin_mutex::scoped_lock lock(cantera_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */

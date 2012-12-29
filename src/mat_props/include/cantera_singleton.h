@@ -43,6 +43,11 @@
 // libMesh
 #include "getpot.h"
 
+namespace
+{
+  static Threads::spin_mutex cantera_mutex;
+}
+
 namespace GRINS
 {
 #ifdef GRINS_HAVE_CANTERA

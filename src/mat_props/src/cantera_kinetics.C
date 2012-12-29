@@ -54,7 +54,7 @@ namespace GRINS
 				   unsigned int qp,
 				   std::vector<Real>& omega_dot ) const
   {
-    Threads::spin_mutex::scoped_lock lock(kinetics_mutex);
+    Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
