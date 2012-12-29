@@ -70,7 +70,7 @@ namespace GRINS
   {
     _reaction_set.compute_mass_sources( cache.get_cached_values(Cache::TEMPERATURE)[qp],
 					cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp],
-					cache.get_cached_values(Cache::MOLAR_MASS)[qp],
+					cache.get_cached_values(Cache::MIXTURE_GAS_CONSTANT)[qp],
 					cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp],
 					cache.get_cached_vector_values(Cache::MOLAR_DENSITIES)[qp],
 					cache.get_cached_vector_values(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY)[qp],
