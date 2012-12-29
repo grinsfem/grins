@@ -51,6 +51,8 @@ namespace GRINS
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<Real>& omega_dot ) const;
 
+    const ReactionSet& reaction_set() const;
+
   protected:
 
     void read_reaction_set_data_xml( const std::string& chem_file,
@@ -76,6 +78,12 @@ namespace GRINS
 					cache.get_cached_vector_values(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY)[qp],
 					omega_dot );
     return;
+  }
+
+  inline
+  const ReactionSet& Kinetics::reaction_set() const
+  {
+    return _reaction_set;
   }
 
 } // namespace GRINS
