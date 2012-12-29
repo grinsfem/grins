@@ -17,6 +17,7 @@ check_PROGRAMS += cantera_transport_test
 check_PROGRAMS += ideal_gas_mixture_cantera
 check_PROGRAMS += reacting_low_mach_regression
 check_PROGRAMS += arrhenius_rate_test
+check_PROGRAMS += grins_kinetics_regression
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -68,6 +69,7 @@ cantera_transport_test_SOURCES = cantera_transport_test.C
 ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
 reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
 arrhenius_rate_test_SOURCES = arrhenius_rate_test.C
+grins_kinetics_regression_SOURCES = grins_kinetics_regression.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -81,7 +83,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(vorticity_qoi_SOURCES)                   \
           $(low_mach_cavity_benchmark_regression_SOURCES) \
           $(reacting_low_mach_cantera_regression_SOURCES) \
-          $(arrhenius_rate_test_SOURCES)
+          $(arrhenius_rate_test_SOURCES) \
+          $(grins_kinetics_regression_SOURCES)
 
 #Define tests to actually be run
 TESTS = gaussian_profiles                                       \
@@ -92,6 +95,7 @@ TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_test
 TESTS += ideal_gas_mixture_cantera
 TESTS += arrhenius_rate_test
+TESTS += grins_kinetics_regression
 
 TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/test_ns_couette_flow_2d_y.sh            \
