@@ -57,13 +57,25 @@ namespace GRINS
 
     Real cv( Real T, const std::vector<Real>& mass_fractions ) const;
 
+    Real h( Real T, unsigned int species ) const;
+
+    void h( Real T, std::vector<Real>& h ) const;
+
+    Real h_RT_minus_s_R( Real T, unsigned int species ) const;
+
+    void h_RT_minus_s_R( Real T, std::vector<Real>& h_RT_minus_s_R ) const;
+
+    Real cp_over_R( Real T, unsigned int species ) const;
+
+    Real h_over_RT( Real T, unsigned int species ) const;
+
+    Real s_over_R( Real T, unsigned int species ) const;
+
   protected:
 
     void read_thermodynamic_table();
 
     void read_thermodynamic_table( std::istream& in );
-
-    Real cp_over_R( Real T, unsigned int species ) const;
 
     const ChemicalMixture& _chem_mixture;
 
