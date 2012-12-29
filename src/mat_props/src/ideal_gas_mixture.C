@@ -35,6 +35,7 @@
 #include "constant_transport.h"
 #include "cantera_transport.h"
 #include "cantera_kinetics.h"
+#include "grins/grins_kinetics.h"
 
 namespace GRINS
 {
@@ -70,6 +71,7 @@ namespace GRINS
   
 
   // Instantiate
+  template class IdealGasMixture<CEAThermodynamics,ConstantTransport,Kinetics>;
 #ifdef GRINS_HAVE_CANTERA
   template class IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics>;
   template class IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics>;
