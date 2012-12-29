@@ -69,17 +69,22 @@ namespace GRINS
 	libmesh_error();
       }
     
+    unsigned int n_species = chem_mixture.n_species();
     // Sanity Check on species
-    tinyxml2::XMLElement* species = element->FirstChildElement("speciesArray");
+    /*
+    tinyxml2::XMLElement* species = element->FirstChildElement("phase");
+    species = species->FirstChildElement("speciesArray");
 
     std::vector<std::string> species_names; 
+    
+    std::cout << species->GetText() << std::endl;
     
     SplitString(std::string(species->GetText()),
 		" ",
 		species_names,
-		/* include_empties = */ false);
+		false);
 
-    unsigned int n_species = chem_mixture.n_species();
+    
     if( n_species != species_names.size() )
       {
 	std::cerr << "Error: Mismatch in n_species and the number of species specified in" << std::endl
@@ -87,6 +92,7 @@ namespace GRINS
 		  << "       Found species: " << species->GetText() << std::endl;
 	libmesh_error();
       }
+  */
 
     // Now read in reaction data
     element = element->FirstChildElement("reactionData");
