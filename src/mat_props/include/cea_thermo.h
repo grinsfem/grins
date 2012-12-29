@@ -37,6 +37,7 @@
 #include "libmesh_common.h"
 
 // GRINS
+#include "cached_values.h"
 #include "chemical_mixture.h"
 #include "cea_curve_fit.h"
 
@@ -71,6 +72,22 @@ namespace GRINS
 
     Real s_over_R( Real T, unsigned int species ) const;
 
+    /* -------------- Ideal Gas Mixture Interaface Methods --------------*/
+
+    Real cp( const CachedValues& cache, unsigned int qp ) const;
+
+    Real cv( const CachedValues& cache, unsigned int qp ) const;
+     
+    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
+
+    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
+
+    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+			 unsigned int species ) const;
+
+    void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+			 std::vector<Real>& h_RT_minus_s_R) const;
+
   protected:
 
     void read_thermodynamic_table();
@@ -88,7 +105,9 @@ namespace GRINS
     CEAThermodynamics();
 
   };
-
+  
+  /* ------------------------- Inline Functions -------------------------*/
+  
   inline
   Real CEAThermodynamics::cv( Real T, unsigned int species ) const
   { return this->cp(T,species) - _chem_mixture.R(species); }
@@ -96,6 +115,53 @@ namespace GRINS
   inline
   Real CEAThermodynamics::cv( Real T, const std::vector<Real>& mass_fractions ) const
   { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
+
+  inline
+  Real CEAThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
+  {
+    return this->cp( cache.get_cached_values(Cache::TEMPERATURE)[qp],
+		     cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
+  }
+
+  inline
+  Real CEAThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
+  {
+    return this->cv( cache.get_cached_values(Cache::TEMPERATURE)[qp],
+		     cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
+  }
+     
+  inline
+  Real CEAThermodynamics::h(const CachedValues& cache, unsigned int qp, 
+			    unsigned int species) const
+  {
+    return this->h( cache.get_cached_values(Cache::TEMPERATURE)[qp], species );
+  }
+
+  inline
+  void CEAThermodynamics::h(const CachedValues& cache, unsigned int qp,
+			    std::vector<Real>& h) const
+  {
+    this->h( cache.get_cached_values(Cache::TEMPERATURE)[qp], h );
+    return;
+  }
+
+  inline
+  Real CEAThermodynamics::h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+					  unsigned int species ) const
+  {
+    return this->h_RT_minus_s_R( cache.get_cached_values(Cache::TEMPERATURE)[qp],
+				 species );
+  }
+
+  inline
+  void CEAThermodynamics::h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+					  std::vector<Real>& h_RT_minus_s_R) const
+  {
+    this->h_RT_minus_s_R( cache.get_cached_values(Cache::TEMPERATURE)[qp],
+			  h_RT_minus_s_R );
+    return;
+  }
+  
 
 } // namespace GRINS
 
