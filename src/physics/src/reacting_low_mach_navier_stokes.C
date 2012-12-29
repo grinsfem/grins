@@ -790,6 +790,7 @@ namespace GRINS
 #ifdef GRINS_HAVE_CANTERA
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics> >;
+  template class ReactingLowMachNavierStokes< IdealGasMixture<CEAThermodynamics,ConstantTransport,CanteraKinetics> >;
 #endif
 
 } // namespace GRINS

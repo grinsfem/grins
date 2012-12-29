@@ -75,6 +75,7 @@ namespace GRINS
 #ifdef GRINS_HAVE_CANTERA
   template class IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics>;
   template class IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics>;
+  template class IdealGasMixture<CEAThermodynamics,ConstantTransport,CanteraKinetics>;
 #endif
 
 } // namespace GRINS

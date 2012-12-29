@@ -294,6 +294,21 @@ namespace GRINS
 
 #endif // GRINS_HAVE_CANTERA
 	  }
+	else if( chem_lib == "cantera" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
+	  {
+#ifdef GRINS_HAVE_CANTERA
+
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CEAThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
+
+#else
+
+	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
+		      << std::endl;
+	    libmesh_error();
+
+#endif // GRINS_HAVE_CANTERA
+	  }
 	else if( chem_lib == "grins" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
 	  {
 	    physics_list[physics_to_add] = 
