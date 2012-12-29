@@ -215,7 +215,7 @@ namespace GRINS
 	// typically Cantera files list activation energy in cal/mol, but we want it in K.
 	if( std::string(Arrhenius->FirstChildElement("E")->Attribute("units")) == "cal/mol" )
 	  {
-	    my_rxn.forward_rate().scale_Ea( 1.0/1.987 );
+	    my_rxn.forward_rate().scale_Ea( 1.0/1.9858775 );
 	  }
 	else 
 	  {
