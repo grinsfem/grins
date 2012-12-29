@@ -36,6 +36,7 @@
 #include "constant_transport.h"
 #include "cantera_transport.h"
 #include "cantera_kinetics.h"
+#include "grins/grins_kinetics.h"
 
 namespace GRINS
 {
@@ -429,16 +430,18 @@ namespace GRINS
       cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[qp];
 
     Real chem_term = 0.0;
+    
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
 	chem_term += h[s]*omega_dot[s];
       }
+    
 
     libmesh_assert( !libmesh_isnan(chem_term) );
 
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
-	FT(i) += ( ( -rho*cp*U*grad_T + chem_term )*T_phi[i][qp] // convection term + chemistry term
+	FT(i) += ( ( -rho*cp*U*grad_T - chem_term )*T_phi[i][qp] // convection term + chemistry term
 		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp];
 
 	libmesh_assert( !libmesh_isnan(FT(i)) );
@@ -471,6 +474,8 @@ namespace GRINS
     cache.add_quantity(Cache::MASS_FRACTIONS_GRAD);
 
     cache.add_quantity(Cache::MOLAR_MASS);
+
+    cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
 
     cache.add_quantity(Cache::MOLAR_DENSITIES);
 
@@ -525,6 +530,9 @@ namespace GRINS
     std::vector<Real> M;
     M.resize(n_qpoints);
 
+    std::vector<Real> R;
+    R.resize(n_qpoints);
+
     std::vector<Real> rho;
     rho.resize(n_qpoints);
 
@@ -559,6 +567,8 @@ namespace GRINS
 	
 	M[qp] = this->_gas_mixture.M( mass_fractions[qp] );
 
+	R[qp] = this->_gas_mixture.R( mass_fractions[qp] );
+
 	rho[qp] = this->rho( T[qp], p0[qp], mass_fractions[qp] );
       }
     
@@ -584,6 +594,8 @@ namespace GRINS
     cache.set_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD, grad_mass_fractions);
 
     cache.set_values(Cache::MOLAR_MASS, M);
+
+    cache.set_values(Cache::MIXTURE_GAS_CONSTANT, R);
 
     cache.set_values(Cache::MIXTURE_DENSITY, rho);
 
@@ -712,12 +724,15 @@ namespace GRINS
     if( cache.is_active(Cache::OMEGA_DOT) )
       {
 	{
-	  std::vector<Real> T, p0;
+	  std::vector<Real> T, p0, rho, R;
 	  T.resize( points.size() );
 	  p0.resize( points.size() );
+	  rho.resize( points.size() );
+	  R.resize( points.size() );
 
-	  std::vector<std::vector<Real> > Y;
+	  std::vector<std::vector<Real> > Y, molar_densities;
 	  Y.resize( points.size() );
+	  molar_densities.resize( points.size() );
 
 	  for( unsigned int p = 0; p < points.size(); p++ )
 	    {
@@ -726,10 +741,33 @@ namespace GRINS
 
 	      Y[p].resize(this->_n_species);
 	      this->mass_fractions( points[p], context, Y[p] );
+
+	      rho[p] = this->rho( T[p], p0[p], Y[p] );
+
+	      R[p] = this->_gas_mixture.R( Y[p] );
+
+	      molar_densities[p].resize( this->_n_species );
+	      this->_gas_mixture.chem_mixture().molar_densities( rho[p], 
+								 Y[p], 
+								 molar_densities[p] );
 	    }
+
 	  cache.set_values( Cache::TEMPERATURE, T );
 	  cache.set_values( Cache::THERMO_PRESSURE, p0 );
+	  cache.set_values( Cache::MIXTURE_DENSITY, rho );
+	  cache.set_values( Cache::MIXTURE_GAS_CONSTANT, R );
 	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
+	  cache.set_vector_values( Cache::MOLAR_DENSITIES, molar_densities );
+	  
+	  std::vector<std::vector<Real> > h;
+	  h.resize( points.size() );
+	  for( unsigned int p = 0; p < points.size(); p++ )
+	    {
+	      h[p].resize(this->_n_species);
+	      this->_gas_mixture.h_RT_minus_s_R( cache, p, h[p] );
+	    }
+	  cache.set_vector_values( Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY, h );
+
 	}
 
 	std::vector<std::vector<Real> > omega_dot;
@@ -748,6 +786,7 @@ namespace GRINS
   }
 
   // Instantiate
+  template class ReactingLowMachNavierStokes< IdealGasMixture<CEAThermodynamics,ConstantTransport,Kinetics> >;
 #ifdef GRINS_HAVE_CANTERA
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
   template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics> >;
