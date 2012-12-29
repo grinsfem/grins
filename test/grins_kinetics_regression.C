@@ -65,6 +65,9 @@ int main(int argc, char* argv[])
   const double R_mix = chem_mixture.R(Y);
   const double rho = P/(R_mix*T);
   
+  std::cout << "R_mix = " << R_mix << std::endl;
+  std::cout << "rho = " << rho << std::endl;
+  
   std::vector<double> molar_densities(5,0.0);
   chem_mixture.molar_densities( rho, Y, molar_densities );
 
@@ -97,6 +100,8 @@ int main(int argc, char* argv[])
   std::vector<double> omega_dot(5,0.0);
   
   kinetics.omega_dot(cache,0,omega_dot);
+
+  std::cout << kinetics.reaction_set() << std::endl;
 
   int return_flag = 0;
 

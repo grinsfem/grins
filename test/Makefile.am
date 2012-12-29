@@ -95,7 +95,7 @@ TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_test
 TESTS += ideal_gas_mixture_cantera
 TESTS += arrhenius_rate_test
-TESTS += grins_kinetics_regression
+TESTS += grins_kinetics_regression.sh
 
 TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/test_ns_couette_flow_2d_y.sh            \

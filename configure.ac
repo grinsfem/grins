@@ -301,6 +301,7 @@ AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low
 AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh, [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
+AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	[chmod +x test/grins_kinetics_regression.sh])
 
 AC_OUTPUT( Makefile \
            src/Makefile 
