@@ -30,6 +30,11 @@
 
 #ifdef GRINS_HAVE_CANTERA
 
+namespace
+{
+  Threads::spin_mutex transport_mutex;
+}
+
 namespace GRINS
 {
 
@@ -58,8 +63,7 @@ namespace GRINS
     Real mu = 0.0;
 
     {
-      Threads::spin_mutex cantera_mutex;
-      Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+      Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -74,7 +78,6 @@ namespace GRINS
 	  libmesh_error();
 	}
 
-      lock.release();
     }
 
     return mu;
@@ -91,8 +94,7 @@ namespace GRINS
     Real k = 0.0;
 
     {
-      Threads::spin_mutex cantera_mutex;
-      Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+      Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -107,7 +109,6 @@ namespace GRINS
 	  libmesh_error();
 	}
 
-      lock.release();
     }
 
     return k;
@@ -124,8 +125,7 @@ namespace GRINS
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     {
-      Threads::spin_mutex cantera_mutex;
-      Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+      Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -140,7 +140,6 @@ namespace GRINS
 	  libmesh_error();
 	}
 
-      lock.release();
     }
 
     return;

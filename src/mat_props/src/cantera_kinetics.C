@@ -30,8 +30,14 @@
 
 #ifdef GRINS_HAVE_CANTERA
 
+namespace
+{
+  Threads::spin_mutex kinetics_mutex;
+}
+
 namespace GRINS
 {
+
   CanteraKinetics::CanteraKinetics( const GetPot& input, const ChemicalMixture& chem_mixture )
     : _chem_mixture(chem_mixture),
       _cantera_gas( CanteraSingleton::cantera_instance(input) )
@@ -48,6 +54,8 @@ namespace GRINS
 				   unsigned int qp,
 				   std::vector<Real>& omega_dot ) const
   {
+    Threads::spin_mutex::scoped_lock lock(kinetics_mutex);
+
     const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -58,9 +66,7 @@ namespace GRINS
     libmesh_assert_greater(P,0.0);
 
     {
-      Threads::spin_mutex cantera_mutex;
-      Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-
+      //Threads::spin_mutex::scoped_lock lock(kinetics_mutex);
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
       try
@@ -101,7 +107,6 @@ namespace GRINS
 	  omega_dot[s] *= this->_chem_mixture.M(s);
 	}
 
-      lock.release();
     }
 
     return;
