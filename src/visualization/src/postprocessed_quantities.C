@@ -344,6 +344,10 @@ namespace GRINS
 		  _cache.add_quantity(Cache::TEMPERATURE);
 		  _cache.add_quantity(Cache::THERMO_PRESSURE);
 		  _cache.add_quantity(Cache::MASS_FRACTIONS);
+		  _cache.add_quantity(Cache::MIXTURE_DENSITY);
+		  _cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
+		  _cache.add_quantity(Cache::MOLAR_DENSITIES);
+		  _cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
 		  _cache.add_quantity(Cache::OMEGA_DOT);
 		}
 		break;
