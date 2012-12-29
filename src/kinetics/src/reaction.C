@@ -140,7 +140,7 @@ namespace GRINS
     return;
   }
 
-  Real Reaction::compute_rate_of_progress( const std::vector<Real> &molar_densities,
+  Real Reaction::compute_rate_of_progress( const std::vector<Real>& molar_densities,
 					   const Real kfwd, 
 					   const Real kbkwd ) const
   {
