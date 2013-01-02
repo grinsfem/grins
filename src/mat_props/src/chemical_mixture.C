@@ -42,6 +42,12 @@ namespace GRINS
     _species_list.reserve( species_list.size() );
     for( unsigned int s = 0; s < species_list.size(); s++ )
       {
+	if( _species_name_map.find( species_list[s] ) == _species_name_map.end() )
+	  {
+	    std::cerr << "Error in ChemicalMixture: Unknown species " << species_list[s] << std::endl;
+	    libmesh_error();
+	  }
+
 	_species_list.push_back( _species_name_map.find( species_list[s] )->second );
 	_species_list_map.insert( std::make_pair( _species_name_map.find( species_list[s] )->second, s ) );
 	_active_species_name_map.insert( std::make_pair( species_list[s], s ) );
