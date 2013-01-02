@@ -392,9 +392,10 @@ namespace GRINS
 		   + rho*this->_g(0)*u_phi[i][qp]                 // hydrostatic term
 		   )*jac; 
 
+	/*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
 	if( this->_bc_handler->is_axisymmetric() )
 	  {
-	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) );
+	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
 	  }
 
 	libmesh_assert( !libmesh_isnan(Fu(i)) );
