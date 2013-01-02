@@ -155,15 +155,18 @@ namespace GRINS
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
     
     // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
+    const std::vector<libMesh::Real>& JxW =
       context.element_fe_var[this->_u_var]->get_JxW();
     
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.element_fe_var[this->_p_var]->get_phi();
     
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
+
     libMesh::DenseSubVector<Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
-    
+
     libMesh::Number u, v, w, T;
     u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
     v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
@@ -187,6 +190,16 @@ namespace GRINS
     if (this->_dim == 3)
       divU += grad_w(2);
 
+    const libMesh::Number r = u_qpoint[qp](0);
+
+    Real jac = JxW[qp];
+
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+	divU += U(0)/r;
+	jac *= r;
+      }
+
     libMesh::Gradient grad_T = 
       cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
@@ -204,7 +217,7 @@ namespace GRINS
     
     const libMesh::Number term1 = -U*(mass_term + grad_T/T);
 
-    const libMesh::Number termf = (term1 + divU)*JxW[qp];
+    const libMesh::Number termf = (term1 + divU)*jac;
       
     for (unsigned int i=0; i != n_p_dofs; i++)
       {
@@ -236,6 +249,9 @@ namespace GRINS
     // The species shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = context.element_fe_var[s0_var]->get_dphi();
 
+    const std::vector<libMesh::Point>& s_qpoint = 
+      context.element_fe_var[this->_species_vars[0]]->get_xyz();
+
     libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
 
     libMesh::Number u, v, w;
@@ -258,6 +274,15 @@ namespace GRINS
     const std::vector<Real>& omega_dot = 
       cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
 
+    const libMesh::Number r = s_qpoint[qp](0);
+
+    Real jac = JxW[qp];
+
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+	jac *= r;
+      }
+
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
 	libMesh::DenseSubVector<Number> &Fs = 
@@ -269,7 +294,7 @@ namespace GRINS
 	for (unsigned int i=0; i != n_s_dofs; i++)
 	  {
 	    /*! \todo Need to add SCEBD term. */
-	    Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*JxW[qp];
+	    Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*jac;
 
 	    libmesh_assert( !libmesh_isnan(Fs(i)) );
 	  }
@@ -302,6 +327,9 @@ namespace GRINS
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[this->_u_var]->get_dphi();
+
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
 
     libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
     libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
@@ -343,6 +371,16 @@ namespace GRINS
     libMesh::Number mu = cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[qp];
     libMesh::Number p = cache.get_cached_values(Cache::PRESSURE)[qp];
 
+    const libMesh::Number r = u_qpoint[qp](0);
+
+    Real jac = JxW[qp];
+
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+	divU += U(0)/r;
+	jac *= r;
+      }
+
     // Now a loop over the pressure degrees of freedom.  This
     // computes the contributions of the continuity equation.
     for (unsigned int i=0; i != n_u_dofs; i++)
@@ -352,7 +390,12 @@ namespace GRINS
 		   - mu*(u_gradphi[i][qp]*grad_u + u_gradphi[i][qp]*grad_uT
 			 - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
 		   + rho*this->_g(0)*u_phi[i][qp]                 // hydrostatic term
-		   )*JxW[qp]; 
+		   )*jac; 
+
+	if( this->_bc_handler->is_axisymmetric() )
+	  {
+	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) );
+	  }
 
 	libmesh_assert( !libmesh_isnan(Fu(i)) );
 
@@ -361,8 +404,9 @@ namespace GRINS
 		   - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
 			 - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
 		   + rho*this->_g(1)*u_phi[i][qp]                 // hydrostatic term
-		   )*JxW[qp];
+		   )*jac;
 
+	
 	libmesh_assert( !libmesh_isnan(Fv(i)) );
 
 	if (this->_dim == 3)
@@ -372,7 +416,7 @@ namespace GRINS
 		       - mu*(u_gradphi[i][qp]*grad_w + u_gradphi[i][qp]*grad_wT
 			     - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
 		       + rho*this->_g(2)*u_phi[i][qp]                 // hydrostatic term
-		       )*JxW[qp];
+		       )*jac;
 
 	    libmesh_assert( !libmesh_isnan(Fw(i)) );
 	  }
@@ -399,6 +443,10 @@ namespace GRINS
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.element_fe_var[this->_T_var]->get_dphi();
+
+    // Physical location of the quadrature points
+    const std::vector<libMesh::Point>& T_qpoint =
+      context.element_fe_var[this->_T_var]->get_xyz();
 
     libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
@@ -435,14 +483,21 @@ namespace GRINS
       {
 	chem_term += h[s]*omega_dot[s];
       }
-    
 
     libmesh_assert( !libmesh_isnan(chem_term) );
 
+    Real jac = JxW[qp];
+
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+	const libMesh::Number r = T_qpoint[qp](0);
+	jac *= r;
+      }
+    
     for (unsigned int i=0; i != n_T_dofs; i++)
       {
 	FT(i) += ( ( -rho*cp*U*grad_T - chem_term )*T_phi[i][qp] // convection term + chemistry term
-		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*JxW[qp];
+		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*jac;
 
 	libmesh_assert( !libmesh_isnan(FT(i)) );
       }
