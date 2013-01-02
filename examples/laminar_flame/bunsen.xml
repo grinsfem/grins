@@ -37,7 +37,6 @@
            <b>0.0</b>
            <E units="cal/mol">47780.0</E>
         </Arrhenius>
-        <efficiencies default="1.0">N:4.2857 </efficiencies>
       </rateCoeff>
       <reactants>H2:1.0 O2:1.0</reactants>
       <products>OH:2.0</products>
