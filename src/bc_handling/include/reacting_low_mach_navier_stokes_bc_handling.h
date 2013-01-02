@@ -82,7 +82,8 @@ namespace GRINS
     enum RLMNS_BC_TYPES{ZERO_SPECIES_FLUX=20, 
 			PRESCRIBED_SPECIES, 
 			CATALYTIC_WALL,
-			GENERAL_SPECIES };
+			GENERAL_SPECIES,
+                        AXISYMMETRIC };
 
   };
 }
