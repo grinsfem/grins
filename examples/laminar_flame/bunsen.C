@@ -106,10 +106,36 @@ int main(int argc, char* argv[])
       const libMesh::System& system = es->get_system(system_name);
       
       Parameters &params = es->parameters;
-      Real T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
 
-      Real& dummy_T  = params.set<Real>("T_init");
-      dummy_T = T_init;
+      Real& T_init = params.set<Real>("T_init");
+      T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
+
+      Real& w_H2 = params.set<Real>( "w_H2" );
+      w_H2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 0 );
+
+      Real& w_O2 = params.set<Real>( "w_O2" );
+      w_O2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 1 );
+
+      Real& w_H2O = params.set<Real>( "w_H2O" );
+      w_H2O = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 2 );
+
+      Real& w_H = params.set<Real>( "w_H" );
+      w_H = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 3 );
+
+      Real& w_O = params.set<Real>( "w_O" );
+      w_O = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 4 );
+
+      Real& w_OH = params.set<Real>( "w_OH" );
+      w_OH = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 5 );
+
+      Real& w_HO2 = params.set<Real>( "w_HO2" );
+      w_HO2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 6 );
+
+      Real& w_H2O2 = params.set<Real>( "w_H2O2" );
+      w_H2O2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 7 );
+
+      Real& w_N2 = params.set<Real>( "w_N2" );
+      w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 8 );
 
       system.project_solution( initial_values, NULL, params );
     }
@@ -140,6 +166,42 @@ Real initial_values( const Point& /*p*/, const Parameters &params,
   if( unknown_name == "T" )
     {
       value = params.get<Real>("T_init");
+    }
+  else if( unknown_name == "w_H2" )
+    {
+      value = params.get<Real>("w_H2");
+    }
+  else if( unknown_name == "w_O2" )
+    {
+      value = params.get<Real>("w_O2");
+    }
+  else if( unknown_name == "w_H2O" )
+    {
+      value = params.get<Real>("w_H2O");
+    }
+  else if( unknown_name == "w_H" )
+    {
+      value = params.get<Real>("w_H");
+    }
+  else if( unknown_name == "w_O" )
+    {
+      value = params.get<Real>("w_O");
+    }
+  else if( unknown_name == "w_OH" )
+    {
+      value = params.get<Real>("w_OH");
+    }
+  else if( unknown_name == "w_HO2" )
+    {
+      value = params.get<Real>("w_HO2");
+    }
+  else if( unknown_name == "w_H2O2" )
+    {
+      value = params.get<Real>("w_H2O2");
+    }
+  else if( unknown_name == "w_N2" )
+    {
+      value = params.get<Real>("w_N2");
     }
   else
     {
