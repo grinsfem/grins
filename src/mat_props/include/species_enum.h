@@ -65,10 +65,12 @@ namespace GRINS
       F2,   	
       H,  Hp,   	
       H2, H2p,  	
-      H2O,  	
+      H2O,
+      H2O2,
       HCl,   	
       HCN,  	
-      He, Hep, // Helium and its positively charged ion  	
+      He, Hep, // Helium and its positively charged ion
+      HO2,
       N,  Np,  // Atomic Nitrogen and its positively charged ion 	 	
       N2, N2p, // Molecular Nitrogen and its positively charged ion 	       	
       CPN2,    // Calorically perfect N2 (Cv=constant)

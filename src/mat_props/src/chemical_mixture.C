@@ -180,7 +180,8 @@ namespace GRINS
        "#    Hform	-- Formation enthalpy (J/kg @ 0K)\n"
        "#    cfs	-- Nominal T-R Degrees of freedom (cv = cfs*k*T)\n"
        "#    zns	-- Charge number\n"
-       "#\n"    
+       "#\n"
+       "#[PB]: I'm unsure about the cfs for HO2 and H2O2."
        "#    Spec.     Mol. Wt.     Hform (0K),  cfs,   zns\n"
        "\n"    
        "Air	28.96000	  0.000000000000 	2.5 	 0\n"
@@ -215,10 +216,12 @@ namespace GRINS
        "H2	 2.01600	  0.000000000000 	2.5 	 0\n"
        "H2+	 2.01545	  7.3847530000e8 	2.5 	 1\n"
        "H2O	18.01600	 -1.3261710000e7 	3.0 	 0\n"
+       "H2O2    34.01475         -3.8186669018e6        3.0      0\n"
        "HCl     36.46100	 -2.5266800000e6 	2.5 	 0\n"
        "HCN	27.02700	  4.8982130000e6 	2.5 	 0\n"
        "He	 4.00300	  0.000000000000 	1.5 	 0\n"
        "He+	 4.00245	  5.9271800000e8 	1.5 	 1\n"
+       "HO2     33.00681          4.5239149133e5        3.0      0\n"
        "N	14.00800	  3.3621610000e7 	1.5 	 0\n"
        "Ne	20.17900	  0.000000000000 	1.5 	 0\n"
        "N+	14.00745	  1.3400000000e8 	1.5 	 1\n"
@@ -281,11 +284,13 @@ namespace GRINS
     _species_name_map["H+"   ] = Hp;   
     _species_name_map["H2"   ] = H2;   
     _species_name_map["H2+"  ] = H2p;  
-    _species_name_map["H2O"  ] = H2O;  
+    _species_name_map["H2O"  ] = H2O;
+    _species_name_map["H2O2" ] = H2O2;
     _species_name_map["HCl"  ] = HCl;  
     _species_name_map["HCN"  ] = HCN;  
     _species_name_map["He"   ] = He;   
-    _species_name_map["He+"  ] = Hep;  
+    _species_name_map["He+"  ] = Hep;
+    _species_name_map["HO2"  ] = HO2;
     _species_name_map["N"    ] = N;    
     _species_name_map["N+"   ] = Np;   
     _species_name_map["N2"   ] = N2;   
