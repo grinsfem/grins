@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BC_HANDLING_BASE_H
-#define BC_HANDLING_BASE_H
+#ifndef GRINS_BC_HANDLING_BASE_H
+#define GRINS_BC_HANDLING_BASE_H
 
 //libMesh
 #include "getpot.h"
@@ -127,6 +127,8 @@ namespace GRINS
       return it->second;
     }
 
+    bool is_axisymmetric() const;
+
   protected:
 
     //! Map between boundary id and Dirichlet boundary condition type
@@ -160,9 +162,20 @@ namespace GRINS
 
     enum BC_BASE{ PERIODIC = -1};
 
+    //! Flag to cache whether or not there is an axisymmetric boundary present
+    static bool _axisymmetric;
+
   private:
     BCHandlingBase();
 
   };
-}
-#endif // BC_HANDLING_BASE
+
+  inline
+  bool BCHandlingBase::is_axisymmetric() const
+  {
+    return _axisymmetric;
+  }
+
+} // namespace GRINS
+
+#endif // GRINS_BC_HANDLING_BASE

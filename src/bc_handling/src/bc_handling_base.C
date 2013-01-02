@@ -30,6 +30,7 @@
 
 namespace GRINS
 {
+  bool BCHandlingBase::_axisymmetric = false; 
 
   BCHandlingBase::BCHandlingBase(const std::string& physics_name)
     : _num_periodic_bcs(0),
