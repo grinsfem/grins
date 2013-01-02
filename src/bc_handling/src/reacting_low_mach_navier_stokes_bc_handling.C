@@ -77,11 +77,6 @@ namespace GRINS
       {
 	bc_type_out = GENERAL_SPECIES;
       }
-    else if( bc_type == "axisymmetric" )
-      {
-	bc_type_out = AXISYMMETRIC;
-	this->_axisymmetric = true;
-      }
     else
       {
 	bc_type_out = LowMachNavierStokesBCHandling::string_to_int( bc_type );
@@ -145,11 +140,6 @@ namespace GRINS
 	  libmesh_not_implemented();
 	}
 	break;
-      case(AXISYMMETRIC):
-	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
-	}
-	break;
       default:
 	{
 	  LowMachNavierStokesBCHandling::init_bc_data( bc_id, bc_id_string, bc_type, input );
@@ -204,23 +194,6 @@ namespace GRINS
       case(GENERAL_SPECIES):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
-      case(AXISYMMETRIC):
-	{
-	  std::set<BoundaryID> dbc_ids;
-	  dbc_ids.insert(bc_id);
-	
-	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(u_var);
-	
-	  ZeroFunction<Number> zero;
-	
-	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids, 
-						  dbc_vars, 
-						  &zero );
-	
-	  dof_map.add_dirichlet_boundary( no_slip_dbc );
-	}
-      break;
       default:
 	{
 	  LowMachNavierStokesBCHandling::user_init_dirichlet_bcs(system,dof_map,bc_id,bc_type);

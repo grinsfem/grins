@@ -89,6 +89,11 @@ namespace GRINS
     else if( bc_type == "general_heat_flux" )
       bc_type_out = GENERAL_HEAT_FLUX;
 
+    else if( bc_type == "axisymmetric" )
+      {
+	bc_type_out = AXISYMMETRIC;
+	this->_axisymmetric = true;
+      }
     else
       {
 	// Call base class to detect any physics-common boundary conditions
@@ -232,6 +237,11 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
+      case(AXISYMMETRIC):
+	  {
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
@@ -350,6 +360,24 @@ namespace GRINS
       case(GENERAL_ISOTHERMAL_WALL):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
+
+      case(AXISYMMETRIC):
+	{
+	  std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(u_var);
+	
+	  ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids, 
+						  dbc_vars, 
+						  &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+	}
+      break;
 
       default:
 	{

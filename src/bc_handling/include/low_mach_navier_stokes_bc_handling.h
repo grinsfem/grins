@@ -86,7 +86,8 @@ namespace GRINS
 		       GENERAL_ISOTHERMAL_WALL,
 		       ADIABATIC_WALL, 
 		       PRESCRIBED_HEAT_FLUX, 
-		       GENERAL_HEAT_FLUX};
+		       GENERAL_HEAT_FLUX,
+		       AXISYMMETRIC };
 
   };
 }
