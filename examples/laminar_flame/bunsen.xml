@@ -1,0 +1,306 @@
+<?xml version="1.0"?>
+<!-- Reaction rate parameters from: -->
+<!-- Park, Chul. "Review of Chemical-Kinetic Problems of Future NASA Missions, I : Earth Entries." -->
+<!-- AIAA Journal of Thermophysics and Heat Transfer, Vol. 7, No. 3, July-Sept 1993, pp. 385-397. -->
+
+<!-- park_jaffe_partridge_JTHT_2001 - Park, Jaffe, Partridge "Chemical-Kinetic Parameters of Hyperbolic Earth Entry," JTHT, Vol 15, No 1, pp 76-90, 2001. -->
+<!-- Olynick_Chen_Tauber_SRC_Sizing - Olynick, Chen, Tauber, "Forebody TPS Sizing with Radiation and Ablation for the Stardust Sample Return Capsule," AIAA-1997-2474  -->
+
+<ctml>
+  <validate reactions="yes" species="yes"/>
+
+  <!-- phase bunsen     -->
+  <phase dim="3" id="bunsen">
+    <elementArray datasrc="elements.xml">N O H</elementArray>
+    <speciesArray datasrc="#Bunsen">H2 O2 H2O H O OH HO2 H2O2 N2</speciesArray>
+    <reactionArray datasrc="#MillerMitchellSmookeKee_1982">
+      <skip species="undeclared"/>
+    </reactionArray>
+    <state>
+      <temperature units="K">300.0</temperature>
+      <pressure units="Pa">101325.0</pressure>
+      <moleFractions>O2:0.22, N2:0.78</moleFractions>
+    </state>
+    <thermo model="IdealGas"/>
+    <kinetics model="GasKinetics"/>
+    <transport model="MixTransport"/>
+  </phase>
+
+  <!-- park_jaffe_partridge_JTHT_2001 - Park, Jaffe, Partridge "Chemical-Kinetic Parameters of Hyperbolic Earth Entry," JTHT, Vol 15, No 1, pp 76-90, 2001. -->
+  <reactionData id="BurmanErnGiovangigli_2004">
+    <!-- reaction 0001    -->
+    <reaction reversible="yes" id="0001">
+      <equation>H2 + O2 [=] 2 OH</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.70e+13</A>
+           <b>0.0</b>
+           <E units="cal/mol">47780.0</E>
+        </Arrhenius>
+        <efficiencies default="1.0">N:4.2857 </efficiencies>
+      </rateCoeff>
+      <reactants>H2:1.0 O2:1.0</reactants>
+      <products>OH:2.0</products>
+    </reaction>
+
+    <!-- reaction 0002    -->
+    <reaction reversible="yes" id="0002">
+      <equation>OH + H2 [=] H2O + H</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.17e+9</A>
+           <b>1.3</b>
+           <E units="cal/mol">3626.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>OH:1.0 H2:1.0</reactants>
+      <products>H2O:1.0 H:1.0</products>
+    </reaction>
+
+    <!-- reaction 0003    -->
+    <reaction reversible="yes" id="0003">
+      <equation>H + O2 [=] OH + O</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>5.13e+16</A>
+           <b>-0.816</b>
+           <E units="cal/mol">16507.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H:1 O2:1</reactants>
+      <products>OH:1 O:1</products>
+    </reaction>
+
+    <!-- reaction 0004    -->
+    <reaction reversible="yes" id="0004">
+      <equation>O + H2 [=] OH + H</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.8e+10</A>
+           <b>1.0</b>
+           <E units="cal/mol">8826.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>O:1 H2:1</reactants>
+      <products>OH:1 H:1</products>
+    </reaction>
+
+    <!-- reaction 0005    -->
+    <reaction reversible="yes" type="threeBody" id="0005">
+      <equation>H + O2 + M [=] HO2 + M</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.1e+18</A>
+           <b>-1.0</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+        <efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>H:1 O2:1</reactants>
+      <products>HO2:1</products>
+    </reaction>
+    
+    <!-- reaction 0006    -->
+    <reaction reversible="yes" type="threeBody" id="0006">
+      <equation>H + O2 + M [=] HO2 + O2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>6.7e+19</A>
+           <b>-1.42</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+        <efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>H:1 O2:1</reactants>
+      <products>HO2:1 O2:1</products>
+    </reaction>
+
+    <!-- reaction 0007    -->
+    <reaction reversible="yes" id="0007">
+      <equation>H + O2 + N2 [=] HO2 + N2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>6.7e+19</A>
+           <b>-1.42</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H:1 O2:1 N2:1</reactants>
+      <products>HO2:1 N2:1</products>
+    </reaction>
+
+    <!-- reaction 0008    -->
+    <reaction reversible="yes" id="0008">
+      <equation>OH + HO2 [=] H2O + O2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>5.0e+13</A>
+           <b>0.0</b>
+           <E units="cal/mol">1000.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>OH:1 HO2:1</reactants>
+      <products>H2O:1 O2:1</products>
+    </reaction>
+        
+    <!-- reaction 0009    -->
+    <reaction reversible="yes" id="0009">
+      <equation>H + HO2 [=] 2OH</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.5e+14</A>
+           <b>0.0</b>
+           <E units="cal/mol">1900.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H:1 HO2:1</reactants>
+      <products>OH:2</products>
+    </reaction>
+
+    <!-- reaction 0010    -->
+    <reaction reversible="yes" id="0010">
+      <equation>O + HO2 [=] O2 + OH</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>4.8e+13</A>
+           <b>0.0</b>
+           <E units="cal/mol">1000.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>O:1 HO2:1</reactants>
+      <products>O2:1 OH:1</products>
+    </reaction>
+
+    <!-- reaction 0011    -->
+    <reaction reversible="yes" id="0011">
+      <equation>2 OH [=] O + H2O</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>6.0e+8</A>
+           <b>1.3</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>OH:2</reactants>
+      <products>O:1 H2O:1</products>
+    </reaction>
+
+    <!-- reaction 0012    -->
+    <reaction reversible="yes" type="threeBody" id="0012">
+      <equation>H2 + M [=] H + H + M</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.23e+12</A>
+           <b>0.5</b>
+           <E units="cal/mol">92600.0</E>
+        </Arrhenius>
+	<efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>H2:1</reactants>
+      <products>H:2</products>
+    </reaction>    
+    
+    <!-- reaction 0013    -->
+    <reaction reversible="yes" type="threeBody" id="0013">
+      <equation>O2 + M [=] O + O + M</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.85e+11</A>
+           <b>0.5</b>
+           <E units="cal/mol">95560.0</E>
+        </Arrhenius>
+	<efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>O2:1</reactants>
+      <products>O:2</products>
+    </reaction> 
+
+    <!-- reaction 0014    -->
+    <reaction reversible="yes" type="threeBody" id="0014">
+      <equation>H + OH + M [=] H2O + M</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>7.5e+23</A>
+           <b>-2.6</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+	<efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>H:1 OH:1</reactants>
+      <products>H2O:1</products>
+    </reaction>
+
+    <!-- reaction 0015    -->
+    <reaction reversible="yes" id="0015">
+      <equation>H + HO2 [=] H2 + O2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.5e+13</A>
+           <b>0.0</b>
+           <E units="cal/mol">700.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H:1 HO2:1</reactants>
+      <products>H2:1 O2:1</products>
+    </reaction>    
+
+    <!-- reaction 0016    -->
+    <reaction reversible="yes" id="0016">
+      <equation>HO2 + HO2 [=] H2O2 + O2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.0e+12</A>
+           <b>0.0</b>
+           <E units="cal/mol">0.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>HO2:2</reactants>
+      <products>H2O2:1 O2:1</products>
+    </reaction>
+    
+    <!-- reaction 0017    -->
+    <reaction reversible="yes" type="threeBody" id="0017">
+      <equation>H2O2 + M [=] OH + OH + M</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.3e+17</A>
+           <b>0.0</b>
+           <E units="cal/mol">45500.0</E>
+        </Arrhenius>
+	<efficiencies default="1.0"></efficiencies>
+      </rateCoeff>
+      <reactants>H2O2:1</reactants>
+      <products>OH:2</products>
+    </reaction>
+
+    <!-- reaction 0018    -->
+    <reaction reversible="yes" id="0018">
+      <equation>H2O2 + H [=] HO2 + H2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.6e+12</A>
+           <b>0.0</b>
+           <E units="cal/mol">3800.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H2O2:1 H:1</reactants>
+      <products>HO2:1 H2:1</products>
+    </reaction> 
+
+    <!-- reaction 0019    -->
+    <reaction reversible="yes" id="0019">
+      <equation>H2O2 + OH [=] H2O + HO2</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>1.0e+13</A>
+           <b>0.0</b>
+           <E units="cal/mol">1800.0</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H2O2:1 OH:1</reactants>
+      <products>H2O:1 HO2:1</products>
+    </reaction> 
+    
+  </reactionData>
+
+</ctml>

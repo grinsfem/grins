@@ -1,6 +1,28 @@
 BUILT_SOURCES   = .license.stamp
 
 
+AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
+              -I$(top_srcdir)/src/physics/include \
+              -I$(top_srcdir)/src/boundary_conditions/include \
+              -I$(top_srcdir)/src/utilities/include \
+              -I$(top_srcdir)/src/visualization/include \
+              -I$(top_srcdir)/src/mat_props/include \
+              -I$(top_srcdir)/src/bc_handling/include \
+              -I$(top_srcdir)/src/qoi/include \
+              -I$(top_srcdir)/src/kinetics/include
+
+AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
+               $(LIBMESH_CPPFLAGS) \
+               $(GRVY_CFLAGS)
+
+#----------------
+# Cantera support
+#----------------
+if CANTERA_ENABLED
+   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
+   AM_LDFLAGS   = $(CANTERA_LDFLAGS)
+endif
+
 #=======================================================================
 # Cavity Benchmark
 #=======================================================================
@@ -65,32 +87,29 @@ vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
 vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
 vortex_LDADD = $(LIBGRINS_LIBS)
 
+#=======================================================================
+# Laminar Flame Example
+#=======================================================================
+laminarflamedir = $(prefix)/examples/laminar_flame
+laminarflame_PROGRAMS = bunsen
+laminarflame_DATA = $(top_srcdir)/examples/laminar_flame/bunsen.in \
+                    $(top_srcdir)/examples/laminar_flame/elements.xml \
+                    $(top_srcdir)/examples/laminar_flame/bunsen.xml
+
+bunsen_SOURCES = $(top_srcdir)/examples/laminar_flame/bunsen.C \
+                 $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C
+
+bunsen_LDADD = $(LIBGRINS_LIBS)
+bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
+
+
 all_sources = $(cavity_SOURCES)          \
               $(injection_SOURCES)       \
               $(rayleigh_taylor_SOURCES) \
-              $(vortex_SOURCES)
+              $(vortex_SOURCES)          \
+              $(bunsen_SOURCES)
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
-              -I$(top_srcdir)/src/physics/include \
-              -I$(top_srcdir)/src/boundary_conditions/include \
-              -I$(top_srcdir)/src/utilities/include \
-              -I$(top_srcdir)/src/visualization/include \
-              -I$(top_srcdir)/src/mat_props/include \
-              -I$(top_srcdir)/src/bc_handling/include \
-              -I$(top_srcdir)/src/qoi/include \
-              -I$(top_srcdir)/src/kinetics/include
 
-AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
-               $(LIBMESH_CPPFLAGS) \
-               $(GRVY_CFLAGS)
-
-#----------------
-# Cantera support
-#----------------
-if CANTERA_ENABLED
-   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
-   AM_LDFLAGS   = $(CANTERA_LDFLAGS)
-endif
 
 MAINTAINERCLEANFILES = Makefile.in
 
