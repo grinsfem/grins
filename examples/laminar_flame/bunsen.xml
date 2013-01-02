@@ -27,7 +27,7 @@
   </phase>
 
   <!-- park_jaffe_partridge_JTHT_2001 - Park, Jaffe, Partridge "Chemical-Kinetic Parameters of Hyperbolic Earth Entry," JTHT, Vol 15, No 1, pp 76-90, 2001. -->
-  <reactionData id="BurmanErnGiovangigli_2004">
+  <reactionData id="MillerMitchellSmookeKee_1982">
     <!-- reaction 0001    -->
     <reaction reversible="yes" id="0001">
       <equation>H2 + O2 [=] 2 OH</equation>
