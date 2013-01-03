@@ -97,7 +97,8 @@ laminarflame_DATA = $(top_srcdir)/examples/laminar_flame/bunsen.in \
                     $(top_srcdir)/examples/laminar_flame/bunsen.xml
 
 bunsen_SOURCES = $(top_srcdir)/examples/laminar_flame/bunsen.C \
-                 $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C
+                 $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C \
+                 $(top_srcdir)/examples/laminar_flame/bunsen_source.C
 
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)

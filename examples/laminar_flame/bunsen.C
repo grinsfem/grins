@@ -32,6 +32,8 @@
 // GRINS
 #include "simulation.h"
 #include "constant_with_exp_layer.h"
+#include "bunsen_source.h"
+#include "physics_factory.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -52,6 +54,23 @@ public:
   ~BunsenBCFactory(){return;};
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+};
+
+class BunsenPhysicsFactory : public GRINS::PhysicsFactory
+{
+public:
+
+  BunsenPhysicsFactory() : GRINS::PhysicsFactory(){};
+  virtual ~BunsenPhysicsFactory(){};
+
+protected:
+  
+  virtual void add_physics( const GetPot& input,
+			    const std::string& physics_to_add,
+			    GRINS::PhysicsList& physics_list );
+
+  virtual void check_physics_consistency( const GRINS::PhysicsList& physics_list );
+
 };
 
 // Function for getting initial temperature field
@@ -89,8 +108,10 @@ int main(int argc, char* argv[])
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<BunsenBCFactory> bc_factory( new BunsenBCFactory );
-
   sim_builder.attach_bc_factory( bc_factory );
+
+  std::tr1::shared_ptr<GRINS::PhysicsFactory> physics_factory( new BunsenPhysicsFactory );
+  sim_builder.attach_physics_factory( physics_factory );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder );
@@ -158,14 +179,19 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point& /*p*/, const Parameters &params, 
+Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
   Real value = 0.0;
 
   if( unknown_name == "T" )
     {
-      value = params.get<Real>("T_init");
+      const Real r = p(0);
+      const Real z = p(1);
+      if( r <= 0.003 && z <= 0.02 && z>= 0.005 )
+	value = params.get<Real>("T_init");
+      else
+	value = 298.0;
     }
   else if( unknown_name == "w_H2" )
     {
@@ -262,4 +288,41 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::reacting_low_mach_navier_stokes,  cont3) );
 
   return mymap;
+}
+
+void BunsenPhysicsFactory::add_physics( const GetPot& input,
+					const std::string& physics_to_add,
+					GRINS::PhysicsList& physics_list )
+{
+  if( physics_to_add == "BunsenSource" )
+    {
+      physics_list[physics_to_add] = 
+	std::tr1::shared_ptr<GRINS::Physics>( new Bunsen::BunsenSource(physics_to_add,input) );
+    }
+  else
+    {
+      GRINS::PhysicsFactory::add_physics(input, physics_to_add, physics_list );
+    }
+
+  return;
+}
+
+void BunsenPhysicsFactory::check_physics_consistency( const GRINS::PhysicsList& physics_list )
+{
+  for( GRINS::PhysicsListIter physics = physics_list.begin();
+       physics != physics_list.end();
+       physics++ )
+    {
+      if( physics->first == "BunsenSource" )
+	{
+	  if( physics_list.find(GRINS::reacting_low_mach_navier_stokes) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, GRINS::reacting_low_mach_navier_stokes  );
+	    }
+	}
+    }
+  
+  GRINS::PhysicsFactory::check_physics_consistency( physics_list );
+
+  return;
 }
