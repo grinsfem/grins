@@ -58,5 +58,16 @@ namespace GRINS
     return *(_cantera.get());
   }
 
+  Cantera::IdealGasMix& CanteraSingleton::cantera_instance()
+  {
+    if( !_cantera )
+      {
+	std::cerr << "Error: Must first initialize cantera by calling cantera_instance( const GetPot& input ) " << std::endl;
+	libmesh_error();
+      }
+
+    return *(_cantera.get());
+  }
+
 #endif //GRINS_HAVE_CANTERA
 }

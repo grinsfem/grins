@@ -58,6 +58,8 @@ namespace GRINS
 
     static Cantera::IdealGasMix& cantera_instance( const GetPot& input );
 
+    static Cantera::IdealGasMix& cantera_instance();
+
   private:
 
     CanteraSingleton();
