@@ -34,6 +34,10 @@
 #include "constant_with_exp_layer.h"
 #include "bunsen_source.h"
 #include "physics_factory.h"
+#include "cantera_singleton.h"
+
+// Cantera
+#include "cantera/equilibrium.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -76,6 +80,8 @@ protected:
 // Function for getting initial temperature field
 Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& system_name, const std::string& unknown_name );
+
+static libMesh::Point p_old = libMesh::Point( -1000000000.0, -1000000000.0, -1000000000.0 );
 
 int main(int argc, char* argv[])
 {
@@ -131,6 +137,11 @@ int main(int argc, char* argv[])
       Real& T_init = params.set<Real>("T_init");
       T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
 
+      Real& p0 = params.set<Real>("p0");
+      p0 = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/p0", 1.0e5);
+
+      Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance(libMesh_inputfile);
+
       Real& w_H2 = params.set<Real>( "w_H2" );
       w_H2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 0 );
 
@@ -158,7 +169,13 @@ int main(int argc, char* argv[])
       Real& w_N2 = params.set<Real>( "w_N2" );
       w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 8 );
 
+      std::cout << "==============================================" << std::endl;
+      std::cout << "Projecting Solution." << std::endl;
+      std::cout << "==============================================" << std::endl;
       system.project_solution( initial_values, NULL, params );
+      std::cout << "==============================================" << std::endl;
+      std::cout << "Done Projecting Solution!" << std::endl;
+      std::cout << "==============================================" << std::endl;
     }
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -184,50 +201,69 @@ Real initial_values( const Point& p, const Parameters &params,
 {
   Real value = 0.0;
 
+  const Real r = p(0);
+  const Real z = p(1);
+  Real T = 0.0;
+
+  if( z > 0.02 && z <= 0.04 )
+    T = (298 - params.get<Real>("T_init"))/0.02*(z-0.02) + params.get<Real>("T_init");
+  else if( z <= 0.02 )
+    T = params.get<Real>("T_init");
+  else
+    T = 298.0;
+  //T = params.get<Real>("T_init");
+
+  Real p0 = 0.0;
+  p0 = params.get<Real>("p0");
+
+  if( unknown_name.find( "w_" ) != std::string::npos )
+    {
+      Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance();
+      cantera.setState_TP(T,p0);
+      Cantera::equilibrate( cantera, "TP" );
+    }
+
   if( unknown_name == "T" )
     {
-      const Real r = p(0);
-      const Real z = p(1);
-      if( r <= 0.003 && z <= 0.02 && z>= 0.005 )
-	value = params.get<Real>("T_init");
+      value = T;
+    }
+  else if( unknown_name == "w_H2" ||
+	   unknown_name == "w_O2" ||
+	   unknown_name == "w_H2O" || 
+	   unknown_name == "w_H" ||
+	   unknown_name == "w_O" ||
+	   unknown_name == "w_OH" ||
+	   unknown_name == "w_HO2" ||
+	   unknown_name == "w_H2O2"||
+	   unknown_name == "w_N2" )
+    {
+      if( T == 298.0 )
+	{
+	  if( unknown_name == "w_N2" )
+	    {
+	      value = 0.8;
+	    }
+	  else if( unknown_name == "w_O2" )
+	    {
+	      value = 0.2;
+	    }
+	  else if( unknown_name.find("w_") != std::string::npos )
+	    value = 0.0;     
+	}
       else
-	value = 298.0;
-    }
-  else if( unknown_name == "w_H2" )
-    {
-      value = params.get<Real>("w_H2");
-    }
-  else if( unknown_name == "w_O2" )
-    {
-      value = params.get<Real>("w_O2");
-    }
-  else if( unknown_name == "w_H2O" )
-    {
-      value = params.get<Real>("w_H2O");
-    }
-  else if( unknown_name == "w_H" )
-    {
-      value = params.get<Real>("w_H");
-    }
-  else if( unknown_name == "w_O" )
-    {
-      value = params.get<Real>("w_O");
-    }
-  else if( unknown_name == "w_OH" )
-    {
-      value = params.get<Real>("w_OH");
-    }
-  else if( unknown_name == "w_HO2" )
-    {
-      value = params.get<Real>("w_HO2");
-    }
-  else if( unknown_name == "w_H2O2" )
-    {
-      value = params.get<Real>("w_H2O2");
-    }
-  else if( unknown_name == "w_N2" )
-    {
-      value = params.get<Real>("w_N2");
+	{
+	  std::vector<Real> Y(9,0.0);
+	  Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance();
+	  cantera.getMassFractions(&Y[0]);
+	  value = Y[ cantera.speciesIndex( unknown_name ) ];
+	  /*
+	  std::cout << "T = " << T << std::endl;
+	  for( unsigned int s = 0; s < 9; s++ )
+	    {
+	      std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
+	    }
+	  */
+	}
     }
   else
     {
