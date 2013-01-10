@@ -69,9 +69,16 @@ namespace Bunsen
     std::tr1::shared_ptr<libMesh::FEMContext> _restart_context;
 
     //! Map from init system variable number to restart system variable number
-    std::map<unsigned int,unsigned int> _var_map;
+    std::map<GRINS::VariableIndex,GRINS::VariableIndex> _var_map;
 
-    libMesh::Point _prev_point;
+    const GRINS::VariableIndex _T_var;
+
+    const Real _r_min;
+    const Real _r_max;
+    const Real _z_min;
+    const Real _z_max;
+
+    const Real _T_value;
 
   private:
 

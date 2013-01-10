@@ -36,8 +36,25 @@ namespace Bunsen
 						       GRINS::MultiphysicsSystem& restart_system,
 						       const GRINS::MultiphysicsSystem& init_system )
     : _restart_system( restart_system ),
-      _prev_point(1.0e15,1.0e15,1.0e15) //Initialize to an absurd value
+      _T_var( init_system.variable_number( input( "VariableNames/temperature", "T") ) ),
+      _r_min( input("InitialConditions/r_min", 0.0) ),
+      _r_max( input("InitialConditions/r_max", 0.0) ),
+      _z_min( input("InitialConditions/z_min", 0.0) ),
+      _z_max( input("InitialConditions/z_max", 0.0) ),
+      _T_value( input("InitialConditions/T_init", 0.0) )
   {
+    /* ------ Build up variable map between systems ------ */
+    std::vector<GRINS::VariableIndex> init_vars;
+
+    // libMesh will resize the vector
+    init_system.get_all_variable_numbers(init_vars);
+
+    for( unsigned int v = 0; v != init_vars.size(); v++ )
+      {
+	std::string var_name = init_system.variable_name( init_vars[v] );
+	_var_map.insert( std::make_pair( init_vars[v], restart_system.variable_number(var_name) ) );
+      }
+
     return;
   }
 
@@ -51,8 +68,8 @@ namespace Bunsen
   void IgniteInitialGuess<NumericType>::init_context( const libMesh::FEMContext& context )
   {
     // Create the context we'll be using to compute MultiphysicsSystem quantities
-    _restart_context.reset( new libMesh::FEMContext( *_multiphysics_sys ) );
-    _restart_sys->init_context(*_restart_context);
+    _restart_context.reset( new libMesh::FEMContext( _restart_system ) );
+    _restart_system.init_context(*_restart_context);
     return;
   }
 
@@ -66,24 +83,37 @@ namespace Bunsen
     // If not, reinit the cached MultiphysicsSystem context
     if( &(context.get_elem()) != &(_restart_context->get_elem()) )
       {
-	_restart_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
+	_restart_context->pre_fe_reinit(_restart_system,&context.get_elem());
 	_restart_context->elem_fe_reinit();
       }
 
-    /* Optimization since we expect this function to be called many times with
-       the same point. _prev_point initialized to something absurd so this should 
-       always be false the first time. */
-    if( _prev_point != p )
+    const GRINS::VariableIndex restart_var = _var_map.find(component)->second;
+
+    Real value = 0.0;
+    
+    const Real r = p(0);
+    const Real z = p(1);
+    
+    if( component == _T_var )
       {
-	_prev_point = p;
-	std::vector<libMesh::Point> point_vec(1,p);
-	this->_cache.clear();
-	_multiphysics_sys->compute_element_cache( *(this->_restart_context), point_vec, this->_cache );
+	if( r >= _r_min &&
+	    r <= _r_max &&
+	    z >= _z_min && 
+	    z <= _z_max )
+	  {
+	    value = _T_value;
+	  }
+	else
+	  {
+	    value = _restart_context->point_value( restart_var, p );
+	  }
+      }
+    else
+      {
+	value = _restart_context->point_value( restart_var, p );
       }
 
-    const unsigned int restart_var = _var_map.find(component)->second;
-
-    return _restart_context->point_value( restart_var, p );
+    return value;
   }
 
   /* ------------------------- Instantiate -------------------------*/
