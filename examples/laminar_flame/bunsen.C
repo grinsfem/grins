@@ -205,23 +205,26 @@ Real initial_values( const Point& p, const Parameters &params,
   const Real z = p(1);
   Real T = 0.0;
 
+  /*
   if( z > 0.02 && z <= 0.04 )
     T = (298 - params.get<Real>("T_init"))/0.02*(z-0.02) + params.get<Real>("T_init");
-  else if( z <= 0.02 )
+  else if( 0.005 <= z && z <= 0.02 )
     T = params.get<Real>("T_init");
   else
+  */
     T = 298.0;
-  //T = params.get<Real>("T_init");
 
   Real p0 = 0.0;
   p0 = params.get<Real>("p0");
 
+  /*
   if( unknown_name.find( "w_" ) != std::string::npos )
     {
       Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance();
       cantera.setState_TP(T,p0);
       Cantera::equilibrate( cantera, "TP" );
     }
+  */
 
   if( unknown_name == "T" )
     {
@@ -237,7 +240,7 @@ Real initial_values( const Point& p, const Parameters &params,
 	   unknown_name == "w_H2O2"||
 	   unknown_name == "w_N2" )
     {
-      if( T == 298.0 )
+      //if( T == 1000.0 )
 	{
 	  if( unknown_name == "w_N2" )
 	    {
@@ -250,20 +253,22 @@ Real initial_values( const Point& p, const Parameters &params,
 	  else if( unknown_name.find("w_") != std::string::npos )
 	    value = 0.0;     
 	}
+      /*
       else
 	{
 	  std::vector<Real> Y(9,0.0);
 	  Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance();
 	  cantera.getMassFractions(&Y[0]);
 	  value = Y[ cantera.speciesIndex( unknown_name ) ];
-	  /*
+	  
 	  std::cout << "T = " << T << std::endl;
 	  for( unsigned int s = 0; s < 9; s++ )
 	    {
 	      std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
 	    }
-	  */
+	  
 	}
+      */
     }
   else
     {

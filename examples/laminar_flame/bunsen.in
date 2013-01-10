@@ -7,7 +7,7 @@ T0 = '1000.0'
 
 [Physics]
 
-enabled_physics = 'ReactingLowMachNavierStokes'
+enabled_physics = 'ReactingLowMachNavierStokes BunsenSource'
 
 [./Chemistry]
 
@@ -23,13 +23,16 @@ Lewis_number = '1.4'
 
 [../BunsenSource]
 
-value = '0.0'
+value = '0.95e8'
 r_max = '0.003'
-z_min = '0.00'
-z_max = '0.02'
+z_min = '0.005'
+z_max = '0.01'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
+
+fixed_density = 'true'
+fixed_rho_value = '1.0'
 
 species_FE_family = 'LAGRANGE'
 V_FE_family       = 'LAGRANGE'
@@ -80,7 +83,7 @@ pin_pressure = 'false'
 
 [restart-options]
 
-#restart_file = 'restart.xdr'
+restart_file = 'restart.xdr'
 
 # Mesh related options
 [mesh-options]
@@ -93,7 +96,7 @@ transient = 'false'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 28 
+max_nonlinear_iterations = 6 
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
