@@ -1,13 +1,17 @@
 # Options related to all Physics
 [InitialConditions]
 
-T0 = '1000.0'
+T_init = '2000.0'
+r_min = '0.0'
+r_max = '0.002'
+z_min = '0.005'
+z_max = '0.01'
 
 []
 
 [Physics]
 
-enabled_physics = 'ReactingLowMachNavierStokes BunsenSource'
+enabled_physics = 'ReactingLowMachNavierStokes'
 
 [./Chemistry]
 
@@ -20,13 +24,6 @@ mixture   = 'bunsen'
 viscosity = '1.0e-4'
 thermal_conductivity = '.04'
 Lewis_number = '1.4'
-
-[../BunsenSource]
-
-value = '0.95e8'
-r_max = '0.003'
-z_min = '0.005'
-z_max = '0.01'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
@@ -50,9 +47,9 @@ p0 = '1e5' #[Pa]
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
 
-chemistry_library      = 'grins'
+chemistry_library      = 'cantera'
 transport_library      = 'grins_constant'
-thermodynamics_library = 'grins_cea'
+thermodynamics_library = 'cantera'
 
 # Boundary ids:
 # 1 - inner radius inlet
@@ -84,6 +81,8 @@ pin_pressure = 'false'
 [restart-options]
 
 restart_file = 'restart.xdr'
+
+ignition = 'true'
 
 # Mesh related options
 [mesh-options]

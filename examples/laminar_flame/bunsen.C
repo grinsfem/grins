@@ -29,10 +29,13 @@
 
 #include <iostream>
 
-// GRINS
-#include "simulation.h"
+// Bunsen
 #include "constant_with_exp_layer.h"
 #include "bunsen_source.h"
+#include "ignite_initial_guess.h"
+
+// GRINS
+#include "simulation.h"
 #include "physics_factory.h"
 #include "cantera_singleton.h"
 
@@ -125,6 +128,7 @@ int main(int argc, char* argv[])
   //FIXME: We need to move this to within the Simulation object somehow...
   std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );
 
+  // If we are "cold starting", setup the flow field.
   if( restart_file == "none" )
     {
       // Asssign initial temperature value
@@ -173,6 +177,37 @@ int main(int argc, char* argv[])
       std::cout << "Projecting Solution." << std::endl;
       std::cout << "==============================================" << std::endl;
       system.project_solution( initial_values, NULL, params );
+      std::cout << "==============================================" << std::endl;
+      std::cout << "Done Projecting Solution!" << std::endl;
+      std::cout << "==============================================" << std::endl;
+    }
+
+  /* If we're restarting to try and get ignition, then we need to setup a
+     "restart" system and using the IgniteInitalGuess functor to do the projection
+     on the "real" system. */
+  if( libMesh_inputfile( "restart-options/ignition", false ) && 
+      restart_file != std::string("none") )
+    {
+      std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
+
+      GRINS::Simulation restart_sim( libMesh_inputfile,
+				     sim_builder );
+      
+      std::tr1::shared_ptr<libMesh::EquationSystems> restart_es = restart_sim.get_equation_system();
+      libMesh::System& restart_system = restart_es->get_system(system_name);
+      GRINS::MultiphysicsSystem& restart_ms_system = libmesh_cast_ref<GRINS::MultiphysicsSystem&>( restart_system );
+
+      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      const libMesh::System& system = es->get_system(system_name);
+      const GRINS::MultiphysicsSystem& ms_system = libmesh_cast_ref<const GRINS::MultiphysicsSystem&>( system );
+
+      Bunsen::IgniteInitialGuess<Real> ignite( libMesh_inputfile, restart_ms_system, 
+					       ms_system );
+
+      std::cout << "==============================================" << std::endl;
+      std::cout << "Projecting Solution." << std::endl;
+      std::cout << "==============================================" << std::endl;
+      system.project_solution( &ignite );
       std::cout << "==============================================" << std::endl;
       std::cout << "Done Projecting Solution!" << std::endl;
       std::cout << "==============================================" << std::endl;

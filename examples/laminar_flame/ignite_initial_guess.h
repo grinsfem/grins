@@ -39,8 +39,8 @@ namespace Bunsen
   {
   public:
     IgniteInitialGuess( const GetPot& input,
-			GRINS::MultiphysicsSystem& restart_system,
-			const GRINS::MultiphysicsSystem& init_system );
+		        GRINS::MultiphysicsSystem& restart_system,
+			const GRINS::MultiphysicsSystem& init_system);
 
     virtual ~IgniteInitialGuess();
 

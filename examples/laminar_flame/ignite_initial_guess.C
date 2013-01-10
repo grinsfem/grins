@@ -35,7 +35,8 @@ namespace Bunsen
   IgniteInitialGuess<NumericType>::IgniteInitialGuess( const GetPot& input,
 						       GRINS::MultiphysicsSystem& restart_system,
 						       const GRINS::MultiphysicsSystem& init_system )
-    : _restart_system( restart_system ),
+    : libMesh::FEMFunctionBase<NumericType>(),
+      _restart_system( restart_system ),
       _T_var( init_system.variable_number( input( "VariableNames/temperature", "T") ) ),
       _r_min( input("InitialConditions/r_min", 0.0) ),
       _r_max( input("InitialConditions/r_max", 0.0) ),
