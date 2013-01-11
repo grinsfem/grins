@@ -127,17 +127,20 @@ namespace GRINS
 	  { 
 	    s = input.substr( i, positions[i] ); 
 	  }
-	int offset = positions[i-1] + sizeS2;
-	if( offset < isize )
+	else
 	  {
-	    if( i == static_cast<int>(positions.size()) )
+	    int offset = positions[i-1] + sizeS2;
+	    if( offset < isize )
 	      {
-		s = input.substr(offset);
-	      }
-	    else if( i > 0 )
-	      {
-		s = input.substr( positions[i-1] + sizeS2, 
-				  positions[i] - positions[i-1] - sizeS2 );
+		if( i == static_cast<int>(positions.size()) )
+		  {
+		    s = input.substr(offset);
+		  }
+		else if( i > 0 )
+		  {
+		    s = input.substr( positions[i-1] + sizeS2, 
+				      positions[i] - positions[i-1] - sizeS2 );
+		  }
 	      }
 	  }
 	if( includeEmpties || ( s.size() > 0 ) )
