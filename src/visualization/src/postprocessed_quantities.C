@@ -543,6 +543,7 @@ namespace GRINS
   void PostProcessedQuantities<NumericType>::init_context( const libMesh::FEMContext& context )
   {
     // Make sure we prepare shape functions for our output variables.
+    /*! \todo I believe this is redundant because it's done in the project_vector call. Double check. */
     for( typename std::map<VariableIndex,unsigned int>::const_iterator it = _quantity_var_map.begin();
 	 it != _quantity_var_map.end(); it++ )
       {
