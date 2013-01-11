@@ -121,6 +121,10 @@ namespace GRINS
 
     Mixture _gas_mixture;
 
+    bool _fixed_density;
+
+    Real _fixed_rho_value;
+
   private:
 
     ReactingLowMachNavierStokesBase();
@@ -162,7 +166,13 @@ namespace GRINS
 							       libMesh::Real p0,
 							       const std::vector<Real>& mass_fractions) const
   {
-    return p0/(this->_gas_mixture.R(mass_fractions)*T);
+    Real value = 0;
+    if( this->_fixed_density )
+      value = this->_fixed_rho_value;
+    else
+      value = p0/(this->_gas_mixture.R(mass_fractions)*T);
+
+    return value;
   }
 
   template<class Mixture>
