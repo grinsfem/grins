@@ -50,6 +50,8 @@ namespace Bunsen
     // libMesh will resize the vector
     init_system.get_all_variable_numbers(init_vars);
 
+    std::cout << "init_vars.size() = " << init_vars.size() << std::endl;
+    
     for( unsigned int v = 0; v != init_vars.size(); v++ )
       {
 	std::string var_name = init_system.variable_name( init_vars[v] );
@@ -68,6 +70,26 @@ namespace Bunsen
   template<class NumericType>
   void IgniteInitialGuess<NumericType>::init_context( const libMesh::FEMContext& context )
   {
+    /*
+    for( typename std::map<GRINS::VariableIndex,GRINS::VariableIndex>::const_iterator it = _var_map.begin();
+	 it != _var_map.end(); it++ )
+      {
+	libMesh::FEBase* elem_fe = NULL;
+	context.get_element_fe( it->second, elem_fe );
+	elem_fe->get_phi();
+	elem_fe->get_dphi();
+	elem_fe->get_JxW();
+	elem_fe->get_xyz();
+
+	libMesh::FEBase* side_fe = NULL;
+	context.get_side_fe( it->second, side_fe );
+	side_fe->get_phi();
+	side_fe->get_dphi();
+	side_fe->get_JxW();
+	side_fe->get_xyz();
+      }
+    */
+
     // Create the context we'll be using to compute MultiphysicsSystem quantities
     _restart_context.reset( new libMesh::FEMContext( _restart_system ) );
     _restart_system.init_context(*_restart_context);
