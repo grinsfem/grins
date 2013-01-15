@@ -26,6 +26,16 @@ endif
 #=======================================================================
 # Cavity Benchmark
 #=======================================================================
+toyprobdir = $(prefix)/examples/toyprob
+toyprob_PROGRAMS = toy
+toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
+
+toy_SOURCES = $(top_srcdir)/examples/toyprob/toy.C
+toy_LDADD = $(LIBGRINS_LIBS)
+
+#=======================================================================
+# Cavity Benchmark
+#=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
 cavitybenchmark_PROGRAMS = cavity
 cavitybenchmark_DATA = $(top_srcdir)/examples/cavity_benchmark/cavity.in
