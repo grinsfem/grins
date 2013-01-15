@@ -56,6 +56,7 @@
 #include "constant_specific_heat.h"
 #include "constant_viscosity.h"
 #include "reacting_low_mach_navier_stokes.h"
+#include "heat_conduction.h"
 
 namespace GRINS
 {
@@ -193,6 +194,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
+      }
+    else if( physics_to_add == "HeatConduction" )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new HeatConduction(physics_to_add,input));
       }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
