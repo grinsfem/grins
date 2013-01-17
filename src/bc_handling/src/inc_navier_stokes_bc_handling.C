@@ -145,6 +145,12 @@ namespace GRINS
 
 	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
 	
+	  if( var == "DIE!" )
+	    {
+	      std::cerr << "Error: Mush specify a variable name to which apply parabolic profile through parabolic_profile_var input option." << std::endl;
+	      libmesh_error();
+	    }
+
 	  DBCContainer cont;
 	  cont.add_var_name( var );
 	  cont.add_bc_id( bc_id );
@@ -155,6 +161,12 @@ namespace GRINS
 	
 	  // Set specified components of Dirichlet data to zero
 	  std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
+
+	  if( fix_var == "DIE!" )
+	    {
+	      std::cerr << "Error: Mush specify a variable name to fix for parabolic profile through parabolic_profile_fix input option." << std::endl;
+	      libmesh_error();
+	    }
 
 	  DBCContainer cont_fix;
 	  cont_fix.add_var_name( fix_var );
