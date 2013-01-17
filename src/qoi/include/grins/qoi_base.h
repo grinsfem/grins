@@ -33,11 +33,11 @@
 #include <iomanip>
 
 // libMesh
-#include "diff_qoi.h"
-#include "getpot.h"
-#include "fem_context.h"
-#include "fem_system.h"
-#include "quadrature.h"
+#include "libmesh/diff_qoi.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 // GRINS
 #include "grins/var_typedefs.h"

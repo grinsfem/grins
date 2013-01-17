@@ -30,7 +30,7 @@
 #define GRINS_SOLVER_FACTORY_H
 
 //libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 //GRINS
 #include "grins/grins_solver.h"

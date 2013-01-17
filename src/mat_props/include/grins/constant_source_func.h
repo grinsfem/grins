@@ -30,9 +30,9 @@
 #define CONSTANT_SOURCE_FUNC_H
 
 // libMesh
-#include "getpot.h"
-#include "point.h"
-#include "vector_value.h"
+#include "libmesh/getpot.h"
+#include "libmesh/point.h"
+#include "libmesh/vector_value.h"
 
 namespace GRINS
 {
@@ -44,7 +44,7 @@ namespace GRINS
     ~ConstantSourceFunction();
 
     inline
-    Real operator()( const libMesh::Point& ) const
+    libMesh::Real operator()( const libMesh::Point& ) const
     {
       return _value;
     }
@@ -56,7 +56,7 @@ namespace GRINS
 
   protected:
 
-    Real _value;
+    libMesh::Real _value;
 
   };
 }

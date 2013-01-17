@@ -29,7 +29,7 @@
 #define GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
 
 //libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 //GRINS
 #include "grins/stab_helper.h"

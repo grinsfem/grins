@@ -30,7 +30,7 @@
 #define PBC_CONTAINER_H
 
 // libMesh
-#include "vector_value.h"
+#include "libmesh/vector_value.h"
 
 // GRINS
 #include "grins/var_typedefs.h"

@@ -29,9 +29,9 @@
 #define NEUMANN_FUNC_OBJ_H
 
 // libMesh stuff
-#include "libmesh.h"
-#include "point.h"
-#include "fem_context.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/point.h"
+#include "libmesh/fem_context.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"

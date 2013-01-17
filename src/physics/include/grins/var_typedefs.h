@@ -34,7 +34,7 @@
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "id_types.h"
+#include "libmesh/id_types.h"
 
 namespace GRINS
 {

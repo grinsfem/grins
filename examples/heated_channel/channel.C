@@ -40,7 +40,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 class ChannelBCFactory : public GRINS::BoundaryConditionsFactory
 {

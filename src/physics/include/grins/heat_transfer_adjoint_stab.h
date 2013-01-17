@@ -29,7 +29,7 @@
 #define HEAT_TRANSFER_ADJOINT_STAB_H
 
 //libMesh
-#include "time_solver.h"
+#include "libmesh/time_solver.h"
 
 //GRINS
 #include "grins/heat_transfer_stab_base.h"

@@ -32,12 +32,12 @@
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "getpot.h"
-#include "libmesh.h"
-#include "string_to_enum.h"
-#include "mesh.h"
-#include "mesh_generation.h"
-#include "mesh_refinement.h"
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/mesh.h"
+#include "libmesh/mesh_generation.h"
+#include "libmesh/mesh_refinement.h"
 
 namespace GRINS
 {

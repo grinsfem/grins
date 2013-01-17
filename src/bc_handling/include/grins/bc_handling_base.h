@@ -29,13 +29,13 @@
 #define BC_HANDLING_BASE_H
 
 //libMesh
-#include "getpot.h"
-#include "libmesh.h"
-#include "fem_system.h"
-#include "fem_context.h"
-#include "dirichlet_boundaries.h"
-#include "dof_map.h"
-#include "periodic_boundary.h"
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/periodic_boundary.h"
 
 //GRINS
 #include "grins/variable_name_defaults.h"

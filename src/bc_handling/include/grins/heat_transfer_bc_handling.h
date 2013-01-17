@@ -29,7 +29,7 @@
 #define HEAT_TRANSFER_BC_HANDLING_H
 
 //libMesh
-#include "const_function.h"
+#include "libmesh/const_function.h"
 
 //GRINS
 #include "grins/bc_handling_base.h"

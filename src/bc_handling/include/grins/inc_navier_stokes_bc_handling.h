@@ -29,7 +29,7 @@
 #define INC_NAVIER_STOKES_BC_HANDLING_H
 
 //libMesh
-#include "zero_function.h"
+#include "libmesh/zero_function.h"
 
 //GRINS
 #include "grins/bc_handling_base.h"

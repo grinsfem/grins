@@ -35,7 +35,7 @@
 #include "grins/multiphysics_sys.h"
 
 //libMesh
-#include "exact_solution.h"
+#include "libmesh/exact_solution.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY

@@ -43,7 +43,7 @@ namespace GRINS
     virtual void output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step,
-				  const Real time );
+				  const libMesh::Real time );
 
   protected:
 

@@ -32,7 +32,7 @@
 #include <string>
 
 // libMesh stuff
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"

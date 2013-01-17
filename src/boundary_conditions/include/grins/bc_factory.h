@@ -33,8 +33,8 @@
 #include <map>
 
 // libMesh stuff
-#include "getpot.h"
-#include "equation_systems.h"
+#include "libmesh/getpot.h"
+#include "libmesh/equation_systems.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"

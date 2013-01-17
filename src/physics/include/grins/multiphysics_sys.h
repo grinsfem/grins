@@ -33,17 +33,17 @@
 
 #include <string>
 
-#include "libmesh.h"
-#include "boundary_info.h"
-#include "fe_base.h"
-#include "fe_interface.h"
-#include "mesh.h"
-#include "quadrature.h"
-#include "parameters.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/boundary_info.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/fe_interface.h"
+#include "libmesh/mesh.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/parameters.h"
 
 // DiffSystem framework files
-#include "fem_system.h"
-#include "fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
 
 #ifdef GRINS_HAVE_GRVY
 // GRVY timers
@@ -56,7 +56,7 @@ namespace GRINS
 {
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
-    MultiphysicsSystem (through FEMSystem) solves the following equation:
+    MultiphysicsSystem (through libMesh::FEMSystem) solves the following equation:
 
     \f$M(u)\dot{u} = F(u)\f$
     
@@ -73,7 +73,7 @@ namespace GRINS
     *_mass_residual correspond to calculating terms for \f$M(u)\dot{u}\f$
    */
   //TODO: is it F(u) or F(u_{\theta})?
-  class MultiphysicsSystem : public FEMSystem
+  class MultiphysicsSystem : public libMesh::FEMSystem
   {    
   public:
 

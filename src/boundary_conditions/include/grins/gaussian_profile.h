@@ -32,8 +32,8 @@
 #include "grins/var_typedefs.h"
 
 // libMesh
-#include "fe_base.h"
-#include "function_base.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/function_base.h"
 
 namespace GRINS
 {

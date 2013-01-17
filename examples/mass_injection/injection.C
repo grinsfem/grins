@@ -39,7 +39,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 class InjectionBCFactory : public GRINS::BoundaryConditionsFactory
 {

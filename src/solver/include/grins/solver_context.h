@@ -32,7 +32,7 @@
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "equation_systems.h"
+#include "libmesh/equation_systems.h"
 
 // GRINS
 #include "grins/multiphysics_sys.h"

@@ -49,13 +49,13 @@ namespace GRINS
     std::string mesh_option = input("mesh-options/mesh_option", "NULL");
     std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
 
-    Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
-    Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
-    Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
+    libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
+    libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
+    libMesh::Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
 
-    Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
-    Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
-    Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
+    libMesh::Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
+    libMesh::Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
+    libMesh::Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
 
     int mesh_nx1 = input("mesh-options/mesh_nx1", -1);
     int mesh_nx2 = input("mesh-options/mesh_nx2", -1);

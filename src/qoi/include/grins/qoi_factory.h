@@ -29,7 +29,7 @@
 #define QOI_FACTORY_H
 
 //libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 //GRINS
 #include "grins/grins_physics_names.h"

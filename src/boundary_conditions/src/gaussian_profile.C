@@ -33,7 +33,7 @@ namespace GRINS
 
   GaussianProfile::GaussianProfile( const double a, const double mu, const double sigma,
 				    const double b )
-    : libMesh::FunctionBase<Number>(),
+    : libMesh::FunctionBase<libMesh::Number>(),
       _a(a),
       _mu(mu),
       _variance(sigma*sigma),

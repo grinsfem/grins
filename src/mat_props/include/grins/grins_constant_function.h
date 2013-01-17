@@ -30,8 +30,8 @@
 #define GRINS_CONSTANT_FUNCTION_H
 
 // libMesh
-#include "libmesh.h"
-#include "getpot.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
@@ -45,16 +45,16 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input ) =0;
 
     inline
-    Real operator()( Real ) const
+    libMesh::Real operator()( libMesh::Real ) const
     { return _value; }
 
     inline
-    Real deriv( Real ) const
+    libMesh::Real deriv( libMesh::Real ) const
     { return 0.0; }
 
   protected:
 
-    Real _value;
+    libMesh::Real _value;
   };
 }
 #endif //GRINS_CONSTANT_FUNCTION_H

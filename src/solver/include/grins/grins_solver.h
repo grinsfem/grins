@@ -37,17 +37,17 @@
 #include "grins/visualization.h"
 #include "grins/bc_factory.h"
 #include "grins/solver_context.h"
+#include "grins/boundary_conditions.h"
 
 // libMesh
-#include "getpot.h"
-#include "libmesh.h"
-#include "libmesh_logging.h"
-#include "mesh.h"
-#include "diff_solver.h"
-#include "equation_systems.h"
-#include "euler_solver.h"
-#include "steady_solver.h"
-#include "grins/boundary_conditions.h"
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/libmesh_logging.h"
+#include "libmesh/mesh.h"
+#include "libmesh/diff_solver.h"
+#include "libmesh/equation_systems.h"
+#include "libmesh/euler_solver.h"
+#include "libmesh/steady_solver.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers

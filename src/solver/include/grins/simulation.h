@@ -32,7 +32,7 @@
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 // GRINS
 #include "grins/simulation_builder.h"

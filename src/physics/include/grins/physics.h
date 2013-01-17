@@ -33,13 +33,13 @@
 #include <string>
 
 //libMesh
-#include "getpot.h"
-#include "libmesh.h"
-#include "fem_system.h"
-#include "fem_context.h"
-#include "dirichlet_boundaries.h"
-#include "zero_function.h"
-#include "dof_map.h"
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/zero_function.h"
+#include "libmesh/dof_map.h"
 
 //GRINS
 #include "grins/variable_name_defaults.h"

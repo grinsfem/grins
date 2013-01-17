@@ -34,8 +34,8 @@
 #include "grins/visualization.h"
 
 //libMesh
-#include "auto_ptr.h"
-#include "equation_systems.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/equation_systems.h"
 
 namespace GRINS
 {

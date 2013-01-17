@@ -29,7 +29,7 @@
 #define HEAT_TRANSFER_STAB_HELPER_H
 
 //libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 //GRINS
 #include "grins/stab_helper.h"

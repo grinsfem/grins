@@ -29,10 +29,10 @@
 #define STAB_HELPER_H
 
 // libMesh
-#include "fe_base.h"
-#include "vector_value.h"
-#include "tensor_value.h"
-#include "fem_context.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/vector_value.h"
+#include "libmesh/tensor_value.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {

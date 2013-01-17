@@ -32,8 +32,8 @@
 #include "grins/var_typedefs.h"
 
 // libMesh
-#include "fe_base.h"
-#include "function_base.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/function_base.h"
 
 namespace GRINS
 {
@@ -59,14 +59,14 @@ namespace GRINS
 
     virtual libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > clone() const;
 
-    virtual libMesh::Number operator()( const Point &p, const Real time );
+    virtual libMesh::Number operator()( const libMesh::Point &p, const libMesh::Real time );
 
-    virtual void operator()( const Point &p, 
-			     const Real time, 
-			     libMesh::DenseVector<Number> &output );
+    virtual void operator()( const libMesh::Point &p, 
+			     const libMesh::Real time, 
+			     libMesh::DenseVector<libMesh::Number> &output );
 
-    virtual libMesh::Number operator()( unsigned int i, const Point &p, 
-					const Real time );
+    virtual libMesh::Number operator()( unsigned int i, const libMesh::Point &p, 
+					const libMesh::Real time );
     
   protected:
     

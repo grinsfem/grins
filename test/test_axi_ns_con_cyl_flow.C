@@ -37,8 +37,8 @@
 #include "grins/concentric_cylinder_profile.h"
 
 //libMesh
-#include "exact_solution.h"
-#include "zero_function.h"
+#include "libmesh/exact_solution.h"
+#include "libmesh/zero_function.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
