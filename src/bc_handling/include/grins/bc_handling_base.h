@@ -40,12 +40,12 @@
 //GRINS
 #include "variable_name_defaults.h"
 #include "var_typedefs.h"
-#include "boundary_conditions.h"
+#include "grins/boundary_conditions.h"
 #include "grins_physics_names.h"
-#include "dbc_container.h"
-#include "pbc_container.h"
-#include "nbc_container.h"
-#include "bc_types.h"
+#include "grins/dbc_container.h"
+#include "grins/pbc_container.h"
+#include "grins/nbc_container.h"
+#include "grins/bc_types.h"
 
 namespace GRINS
 {

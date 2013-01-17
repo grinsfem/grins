@@ -44,7 +44,7 @@
 //GRINS
 #include "grins_config.h"
 #include "physics.h"
-#include "pressure_pinning.h"
+#include "grins/pressure_pinning.h"
 #include "grins/axisym_inc_navier_stokes_bc_handling.h"
 
 namespace GRINS

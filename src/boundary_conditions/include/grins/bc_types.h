@@ -28,7 +28,7 @@
 #ifndef BC_TYPES_H
 #define BC_TYPES_H
 
-#include "neumann_func_obj.h"
+#include "grins/neumann_func_obj.h"
 
 namespace GRINS
 {

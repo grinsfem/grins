@@ -29,7 +29,7 @@
 #define BOUNDARY_CONDITIONS_H
 
 #include "var_typedefs.h"
-#include "neumann_func_obj.h"
+#include "grins/neumann_func_obj.h"
 
 // libMesh stuff
 #include "libmesh.h"

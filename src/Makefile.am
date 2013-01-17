@@ -158,18 +158,18 @@ physics_INC  = $(physics_incdir)/multiphysics_sys.h \
                $(physics_incdir)/heat_transfer_stab_helper.h \
                $(physics_incdir)/low_mach_navier_stokes_stab_helper.h
 
-boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
-                          $(boundary_conditions_incdir)/boundary_conditions.h \
-                          $(boundary_conditions_incdir)/bc_factory.h \
-                          $(boundary_conditions_incdir)/neumann_func_obj.h \
-                          $(boundary_conditions_incdir)/parabolic_profile.h \
-                          $(boundary_conditions_incdir)/gaussian_profile.h \
-                          $(boundary_conditions_incdir)/gaussian_xy_profile.h \
-                          $(boundary_conditions_incdir)/concentric_cylinder_profile.h \
-                          $(boundary_conditions_incdir)/dbc_container.h \
-                          $(boundary_conditions_incdir)/pressure_pinning.h \
-                          $(boundary_conditions_incdir)/pbc_container.h \
-                          $(boundary_conditions_incdir)/nbc_container.h
+boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
+                          $(boundary_conditions_incdir)/grins/boundary_conditions.h \
+                          $(boundary_conditions_incdir)/grins/bc_factory.h \
+                          $(boundary_conditions_incdir)/grins/neumann_func_obj.h \
+                          $(boundary_conditions_incdir)/grins/parabolic_profile.h \
+                          $(boundary_conditions_incdir)/grins/gaussian_profile.h \
+                          $(boundary_conditions_incdir)/grins/gaussian_xy_profile.h \
+                          $(boundary_conditions_incdir)/grins/concentric_cylinder_profile.h \
+                          $(boundary_conditions_incdir)/grins/dbc_container.h \
+                          $(boundary_conditions_incdir)/grins/pressure_pinning.h \
+                          $(boundary_conditions_incdir)/grins/pbc_container.h \
+                          $(boundary_conditions_incdir)/grins/nbc_container.h
 
 utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h
 

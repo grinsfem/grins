@@ -29,7 +29,7 @@
 #define GAUSSIAN_XY_PROFILE_H
 
 // GRINS
-#include "gaussian_profile.h"
+#include "grins/gaussian_profile.h"
 
 namespace GRINS
 {

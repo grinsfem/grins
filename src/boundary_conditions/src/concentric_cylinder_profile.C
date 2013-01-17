@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "concentric_cylinder_profile.h"
+#include "grins/concentric_cylinder_profile.h"
 
 namespace GRINS
 {

@@ -29,7 +29,7 @@
 #ifndef GRINS_NBC_CONTAINER_H
 #define GRINS_NBC_CONTAINER_H
 
-#include "neumann_func_obj.h"
+#include "grins/neumann_func_obj.h"
 
 namespace GRINS
 {

@@ -31,7 +31,7 @@
 
 // GRINS
 #include "simulation.h"
-#include "parabolic_profile.h"
+#include "grins/parabolic_profile.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY

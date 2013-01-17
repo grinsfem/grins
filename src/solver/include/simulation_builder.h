@@ -34,7 +34,7 @@
 #include "mesh_builder.h"
 #include "solver_factory.h"
 #include "visualization_factory.h"
-#include "bc_factory.h"
+#include "grins/bc_factory.h"
 #include "qoi_factory.h"
 
 namespace GRINS

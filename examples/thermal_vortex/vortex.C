@@ -31,7 +31,7 @@
 
 // GRINS
 #include "simulation.h"
-#include "gaussian_xy_profile.h"
+#include "grins/gaussian_xy_profile.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY

@@ -30,7 +30,7 @@
 #define STOKES_H
 
 //GRINS
-#include "pressure_pinning.h"
+#include "grins/pressure_pinning.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
 #include "inc_navier_stokes_base.h"
 

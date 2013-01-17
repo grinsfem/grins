@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------
 
 // GRINS
-#include "gaussian_xy_profile.h"
+#include "grins/gaussian_xy_profile.h"
 
 int main() 
 {

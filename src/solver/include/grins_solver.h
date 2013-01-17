@@ -35,7 +35,7 @@
 #include "grins_config.h"
 #include "multiphysics_sys.h"
 #include "visualization.h"
-#include "bc_factory.h"
+#include "grins/bc_factory.h"
 #include "solver_context.h"
 
 // libMesh
@@ -47,7 +47,7 @@
 #include "equation_systems.h"
 #include "euler_solver.h"
 #include "steady_solver.h"
-#include "boundary_conditions.h"
+#include "grins/boundary_conditions.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers

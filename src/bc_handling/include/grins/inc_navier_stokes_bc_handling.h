@@ -33,7 +33,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "parabolic_profile.h"
+#include "grins/parabolic_profile.h"
 
 namespace GRINS
 {

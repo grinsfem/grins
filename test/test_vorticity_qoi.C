@@ -33,7 +33,7 @@
 // GRINS
 #include "simulation.h"
 #include "multiphysics_sys.h"
-#include "parabolic_profile.h"
+#include "grins/parabolic_profile.h"
 
 //libMesh
 #include "exact_solution.h"
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     {
       // TODO: Need more consistent error handling.
       std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
+      exit(1); // TODO: something more sophisticated for iarallel runs?
     }
 
   // libMesh input file should be first argument

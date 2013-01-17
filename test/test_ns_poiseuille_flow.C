@@ -34,7 +34,7 @@
 #include "mesh_builder.h"
 #include "simulation.h"
 #include "multiphysics_sys.h"
-#include "parabolic_profile.h"
+#include "grins/parabolic_profile.h"
 
 //libMesh
 #include "exact_solution.h"
