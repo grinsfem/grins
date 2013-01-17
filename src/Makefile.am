@@ -191,11 +191,11 @@ bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
                   $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h
 
-qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
-          $(qoi_incdir)/qoi_base.h \
-          $(qoi_incdir)/qoi_factory.h \
-          $(qoi_incdir)/qoi_names.h \
-          $(qoi_incdir)/vorticity.h
+qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
+          $(qoi_incdir)/grins/qoi_base.h \
+          $(qoi_incdir)/grins/qoi_factory.h \
+          $(qoi_incdir)/grins/qoi_names.h \
+          $(qoi_incdir)/grins/vorticity.h
 
 includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \

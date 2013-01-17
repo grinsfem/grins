@@ -25,49 +25,49 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef QOI_FACTORY_H
-#define QOI_FACTORY_H
 
-//libMesh
-#include "getpot.h"
+#ifndef GRINS_AVERAGE_NUSSELT_NUMBER_H
+#define GRINS_AVERAGE_NUSSELT_NUMBER_H
 
-//GRINS
-#include "grins/grins_physics_names.h"
-#include "qoi_names.h"
-#include "qoi_base.h"
-#include "average_nusselt_number.h"
-#include "vorticity.h"
-
-// shared_ptr
-#include "boost/tr1/memory.hpp"
+// GRINS
+#include "grins/qoi_base.h"
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-  class QoIFactory
+  class AverageNusseltNumber : public QoIBase
   {
   public:
 
-    QoIFactory();
-    
-    virtual ~QoIFactory();
+    AverageNusseltNumber( const GetPot& input );
 
-    virtual std::tr1::shared_ptr<QoIBase> build(const GetPot& input);
+    virtual ~AverageNusseltNumber();
+
+    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+
+    virtual void side_qoi( DiffContext& context, const QoISet& qoi_indices );
+
+    virtual void init( const GetPot& input, const libMesh::FEMSystem& system );
 
   protected:
 
-    virtual void add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<QoIBase>& qoi );
+    virtual void read_input_options( const GetPot& input );
 
-    virtual void check_qoi_physics_consistency( const GetPot& input,
-						const std::string& qoi_name );
+    //! Thermal conductivity
+    Real _k;
 
-    virtual void echo_qoi_list( const std::string& qoi_name );
+    //! Temperature variable index
+    VariableIndex _T_var;
 
-    void consistency_helper( const std::set<std::string>& requested_physics,
-			     const std::set<std::string>& required_physics, 
-			     const std::string& qoi_name );
+    //! List of boundary ids for which we want to compute this QoI
+    std::set<libMesh::boundary_id_type> _bc_ids;
 
-    void consistency_error_msg( const std::string& qoi_name, const std::set<std::string>& required_physics );
+    //! Scaling constant
+    Real _scaling;
+
+  private:
+    AverageNusseltNumber();
 
   };
 }
-#endif // QOI_FACTORY_H
+#endif //GRINS_AVERAGE_NUSSELT_NUMBER_H

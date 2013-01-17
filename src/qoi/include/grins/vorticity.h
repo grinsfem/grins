@@ -30,7 +30,7 @@
 #define GRINS_VORTICITY_H
 
 // GRINS
-#include "qoi_base.h"
+#include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
 namespace GRINS

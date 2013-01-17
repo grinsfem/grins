@@ -35,7 +35,7 @@
 #include "solver_factory.h"
 #include "visualization_factory.h"
 #include "grins/bc_factory.h"
-#include "qoi_factory.h"
+#include "grins/qoi_factory.h"
 
 namespace GRINS
 {
