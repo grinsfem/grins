@@ -25,27 +25,27 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
-#define GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#ifndef LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
+#define LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
 
 //libMesh
 #include "time_solver.h"
 
 //GRINS
-#include "low_mach_navier_stokes_stab_base.h"
+#include "grins/low_mach_navier_stokes_stab_base.h"
 
 //! GRINS namespace
 namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
   template<class Viscosity, class SpecificHeat, class ThermalConductivity>
-  class LowMachNavierStokesVMSStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
+  class LowMachNavierStokesBraackStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
 
   public:
 
-    LowMachNavierStokesVMSStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesVMSStabilization();
+    LowMachNavierStokesBraackStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~LowMachNavierStokesBraackStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
@@ -74,10 +74,10 @@ namespace GRINS
 					libMesh::FEMContext& context );
     
   private:
-    LowMachNavierStokesVMSStabilization();
+    LowMachNavierStokesBraackStabilization();
 
-  }; // End LowMachNavierStokesVMSStabilization class declarations
+  }; // End LowMachNavierStokesBraackStabilization class declarations
 
 } // End namespace GRINS
 
-#endif //GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H

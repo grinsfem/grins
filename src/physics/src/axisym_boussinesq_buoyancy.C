@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "axisym_boussinesq_buoyancy.h"
+#include "grins/axisym_boussinesq_buoyancy.h"
 
 namespace GRINS
 {

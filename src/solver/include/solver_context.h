@@ -35,7 +35,7 @@
 #include "equation_systems.h"
 
 // GRINS
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 #include "visualization.h"
 
 namespace GRINS

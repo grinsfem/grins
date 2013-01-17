@@ -34,7 +34,7 @@
 #include "fem_context.h"
 
 // GRINS stuff
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 
 namespace GRINS
 {

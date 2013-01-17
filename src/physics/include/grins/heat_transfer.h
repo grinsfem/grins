@@ -25,59 +25,67 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
-#define LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
+
+#ifndef HEAT_TRANSFER_H
+#define HEAT_TRANSFER_H
 
 //libMesh
-#include "time_solver.h"
+#include "libmesh.h"
+#include "boundary_info.h"
+#include "fe_base.h"
+#include "fe_interface.h"
+#include "mesh.h"
+#include "quadrature.h"
+#include "parameters.h"
+#include "string_to_enum.h"
+#include "fem_system.h"
+#include "fem_context.h"
 
 //GRINS
-#include "low_mach_navier_stokes_stab_base.h"
+#include "grins_config.h"
+#include "grins/heat_transfer_base.h"
+#include "grins/heat_transfer_bc_handling.h"
 
-//! GRINS namespace
 namespace GRINS
 {
-  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
-  template<class Viscosity, class SpecificHeat, class ThermalConductivity>
-  class LowMachNavierStokesBraackStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
-  {
 
+  //! Physics class for Heat Transfer
+  /*
+    This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
+   */
+  class HeatTransfer : public HeatTransferBase
+  {
   public:
 
-    LowMachNavierStokesBraackStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesBraackStabilization();
+    HeatTransfer( const std::string& physics_name, const GetPot& input );
 
+    ~HeatTransfer();
+
+    //! Read options from GetPot input file.
+    virtual void read_input_options( const GetPot& input );
+    
+    // residual and jacobian calculations
+    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+
+    // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
+    virtual void side_time_derivative( bool compute_jacobian,
+				       libMesh::FEMContext& context );
+
+    // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
 
   protected:
-
-    void assemble_continuity_time_deriv( bool compute_jacobian,
-					 libMesh::FEMContext& context );
-
-    void assemble_momentum_time_deriv( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    void assemble_energy_time_deriv( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    void assemble_continuity_mass_residual( bool compute_jacobian,
-					    libMesh::FEMContext& context );
-
-    void assemble_momentum_mass_residual( bool compute_jacobian,
-					  libMesh::FEMContext& context );
-
-    void assemble_energy_mass_residual( bool compute_jacobian,
-					libMesh::FEMContext& context );
     
+
   private:
-    LowMachNavierStokesBraackStabilization();
+    HeatTransfer();
 
-  }; // End LowMachNavierStokesBraackStabilization class declarations
+  };
 
-} // End namespace GRINS
+} //End namespace block
 
-#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif // HEAT_TRANSFER_H

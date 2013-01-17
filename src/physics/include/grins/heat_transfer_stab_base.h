@@ -29,8 +29,8 @@
 #define HEAT_TRANSFER_STAB_BASE_H
 
 //GRINS
-#include "heat_transfer_base.h"
-#include "heat_transfer_stab_helper.h"
+#include "grins/heat_transfer_base.h"
+#include "grins/heat_transfer_stab_helper.h"
 
 //! GRINS namespace
 namespace GRINS

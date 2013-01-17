@@ -28,7 +28,7 @@
 #ifndef BOUNDARY_CONDITIONS_H
 #define BOUNDARY_CONDITIONS_H
 
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 #include "grins/neumann_func_obj.h"
 
 // libMesh stuff

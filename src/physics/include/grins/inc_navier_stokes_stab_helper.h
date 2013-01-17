@@ -32,7 +32,7 @@
 #include "getpot.h"
 
 //GRINS
-#include "stab_helper.h"
+#include "grins/stab_helper.h"
 
 namespace GRINS
 {

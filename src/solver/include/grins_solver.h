@@ -33,7 +33,7 @@
 
 // GRINS
 #include "grins_config.h"
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 #include "visualization.h"
 #include "grins/bc_factory.h"
 #include "solver_context.h"

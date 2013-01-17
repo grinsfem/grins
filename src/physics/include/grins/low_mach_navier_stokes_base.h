@@ -43,7 +43,7 @@
 
 // GRINS
 #include "grins_config.h"
-#include "physics.h"
+#include "grins/physics.h"
 #include "grins/pressure_pinning.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"

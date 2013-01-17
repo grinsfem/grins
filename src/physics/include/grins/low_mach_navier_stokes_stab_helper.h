@@ -29,7 +29,7 @@
 #define LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
 
 // GRINS
-#include "inc_navier_stokes_stab_helper.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 namespace GRINS
 {

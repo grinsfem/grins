@@ -37,8 +37,8 @@
 #include "equation_systems.h"
 
 // GRINS stuff
-#include "var_typedefs.h"
-#include "grins_physics_names.h"
+#include "grins/var_typedefs.h"
+#include "grins/grins_physics_names.h"
 #include "grins/dbc_container.h"
 #include "grins/nbc_container.h"
 

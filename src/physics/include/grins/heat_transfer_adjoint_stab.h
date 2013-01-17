@@ -32,7 +32,7 @@
 #include "time_solver.h"
 
 //GRINS
-#include "heat_transfer_stab_base.h"
+#include "grins/heat_transfer_stab_base.h"
 
 //! GRINS namespace
 namespace GRINS

@@ -25,47 +25,58 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_STAB_BASE_H
-#define INC_NAVIER_STOKES_STAB_BASE_H
+#ifndef LOW_MACH_NAVIER_STOKES_STAB_BASE_H
+#define LOW_MACH_NAVIER_STOKES_STAB_BASE_H
 
 //GRINS
-#include "inc_navier_stokes_base.h"
-#include "inc_navier_stokes_stab_helper.h"
+#include "grins/low_mach_navier_stokes_base.h"
+#include "grins/low_mach_navier_stokes_stab_helper.h"
 
 //! GRINS namespace
 namespace GRINS
 {
-  class IncompressibleNavierStokesStabilizationBase : public IncompressibleNavierStokesBase
+  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
+  template<class Viscosity, class SpecificHeat, class ThermalConductivity>
+  class LowMachNavierStokesStabilizationBase : public LowMachNavierStokesBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
 
   public:
 
-    IncompressibleNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    LowMachNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~IncompressibleNavierStokesStabilizationBase();
+    virtual ~LowMachNavierStokesStabilizationBase();
 
     //! Initialize context for added physics variables
     virtual void init_context( libMesh::FEMContext& context );
 
-    libMesh::Real compute_res_continuity( libMesh::FEMContext& context,
-					  unsigned int qp ) const;
+    libMesh::Real compute_res_continuity_steady( libMesh::FEMContext& context,
+						 unsigned int qp ) const;
+    
+    libMesh::Real compute_res_continuity_transient( libMesh::FEMContext& context,
+						    unsigned int qp ) const;
     
     libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
 						       unsigned int qp ) const;
     
     libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
 							  unsigned int qp ) const;
+    
+    libMesh::Real compute_res_energy_steady( libMesh::FEMContext& context,
+					     unsigned int qp ) const;
+    
+    libMesh::Real compute_res_energy_transient( libMesh::FEMContext& context,
+						unsigned int qp ) const;
 
   protected:
 
-    IncompressibleNavierStokesStabilizationHelper _stab_helper;
+    LowMachNavierStokesStabilizationHelper _stab_helper;
     
   private:
 
-    IncompressibleNavierStokesStabilizationBase();
+    LowMachNavierStokesStabilizationBase();
 
-  }; // End IncompressibleNavierStokesStabilizationBase class declarations
+  }; // End LowMachNavierStokesStabilizationBase class declarations
 
 } // End namespace GRINS
 
-#endif //INC_NAVIER_STOKES_STAB_BASE_H
+#endif //LOW_MACH_NAVIER_STOKES_STAB_BASE_H

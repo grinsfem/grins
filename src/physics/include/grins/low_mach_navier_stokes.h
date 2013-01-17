@@ -30,7 +30,7 @@
 #define LOW_MACH_NAVIER_STOKES_H
 
 // GRINS
-#include "low_mach_navier_stokes_base.h"
+#include "grins/low_mach_navier_stokes_base.h"
 
 namespace GRINS
 {

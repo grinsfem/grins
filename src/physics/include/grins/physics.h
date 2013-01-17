@@ -42,10 +42,10 @@
 #include "dof_map.h"
 
 //GRINS
-#include "variable_name_defaults.h"
-#include "var_typedefs.h"
+#include "grins/variable_name_defaults.h"
+#include "grins/var_typedefs.h"
 #include "grins/boundary_conditions.h"
-#include "grins_physics_names.h"
+#include "grins/grins_physics_names.h"
 #include "grins/bc_handling_base.h"
 
 #ifdef GRINS_HAVE_GRVY

@@ -33,7 +33,7 @@
 #include "vector_value.h"
 
 // GRINS
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 
 namespace GRINS
 {

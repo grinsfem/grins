@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef BOUSSINESQ_BUOYANCY_H
-#define BOUSSINESQ_BUOYANCY_H
+#ifndef AXISYM_BOUSSINESQ_BUOYANCY_H
+#define AXISYM_BOUSSINESQ_BUOYANCY_H
 
 #include "grins_config.h"
 
@@ -42,13 +42,13 @@
 #include "fem_system.h"
 #include "fem_context.h"
 
-#include "heat_transfer_base.h"
+#include "grins/physics.h"
 
 namespace GRINS
 {  
-  //! Adds Boussinesq bouyancy source term
+  //! Adds Axisymmetric Boussinesq bouyancy source term
   /*!
-    This class implements the Boussinesq approximation for thermal buoyancy.
+    This class implements the Axisymmetric Boussinesq approximation for thermal buoyancy.
     Namely:
     \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
     where
@@ -56,29 +56,62 @@ namespace GRINS
     \f$ T_0 = \f$ reference temperature,
     \f$ \beta_T = \f$ coefficient of thermal expansion, and
     \f$ \mathbf{g} = \f$ the gravitional vector.
-    This source term to the governing flow equations through the
-    element_time_derivative routine. This class requires a flow physics enabled
-    and the ConvectiveHeatTransfer physics class enabled.
+    This source term is added to the governing flow equations through the
+    element_time_derivative routine. This class requires an axisymmetric flow physics enabled
+    and the AxisymmetricHeatTransfer physics class enabled.
    */
-  class BoussinesqBuoyancy : public HeatTransferBase
+  class AxisymmetricBoussinesqBuoyancy : public Physics
   {
   public:
     
-    BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
+    AxisymmetricBoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancy();
+    ~AxisymmetricBoussinesqBuoyancy();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
-    //! Source term contribution for BoussinesqBuoyancy
+    //! Initialization of AxisymmetricBoussinesqBuoyancy variables
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
-        the IncompressibleNavierStokes class.
+        the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
   protected:
+
+    //! Physical dimension of problem
+    unsigned int _dim;
+
+    //! Element type, read from input
+    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+
+    //! Temperature element order, read from input
+    libMeshEnums::Order _T_order, _V_order;
+
+    // Indices for each variable;
+    //! Index for r-velocity field
+    VariableIndex _u_r_var;
+
+    //! Index for z-velocity field
+    VariableIndex _u_z_var;
+
+    //! Index for temperature field
+    VariableIndex _T_var;
+
+    // Names of each variable in the system
+
+    //! Name of r-velocity
+    std::string _u_r_var_name;
+
+    //! Name of z-velocity
+    std::string _u_z_var_name;
+
+    //! Name of temperature
+    std::string _T_var_name;
 
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _rho_ref;
@@ -90,12 +123,13 @@ namespace GRINS
     libMesh::Number _beta_T;
 
     //! Gravitational vector
+    /* \todo This should be stashed in a singleton class and brought in from there */
     Point _g;
 
   private:
-    BoussinesqBuoyancy();
+    AxisymmetricBoussinesqBuoyancy();
 
-  }; // class BoussinesqBuoyancy
+  }; // class AxisymmetricBoussinesqBuoyancy
 
 } // namespace GRINS
-#endif //BOUSSINESQ_BUOYANCY_H
+#endif //AXISYM_BOUSSINESQ_BUOYANCY_H

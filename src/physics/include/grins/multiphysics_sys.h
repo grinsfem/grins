@@ -50,7 +50,7 @@
 #include "grvy.h"
 #endif
 
-#include "physics.h"
+#include "grins/physics.h"
 
 namespace GRINS
 {

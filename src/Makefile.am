@@ -127,36 +127,36 @@ solver_INC   = $(solver_incdir)/grins_solver.h \
                $(solver_incdir)/simulation_builder.h \
                $(solver_incdir)/solver_context.h
 
-physics_INC  = $(physics_incdir)/multiphysics_sys.h \
-               $(physics_incdir)/physics.h \
-               $(physics_incdir)/variable_name_defaults.h \
-               $(physics_incdir)/var_typedefs.h \
-               $(physics_incdir)/axisym_inc_navier_stokes.h \
-               $(physics_incdir)/stokes.h \
-               $(physics_incdir)/inc_navier_stokes_base.h \
-               $(physics_incdir)/inc_navier_stokes.h \
-               $(physics_incdir)/inc_navier_stokes_stab_base.h \
-               $(physics_incdir)/inc_navier_stokes_adjoint_stab.h \
-               $(physics_incdir)/heat_transfer_base.h \
-               $(physics_incdir)/heat_transfer.h \
-               $(physics_incdir)/heat_transfer_source.h \
-               $(physics_incdir)/heat_transfer_stab_base.h \
-               $(physics_incdir)/heat_transfer_adjoint_stab.h \
-               $(physics_incdir)/axisym_heat_transfer.h \
-               $(physics_incdir)/boussinesq_buoyancy.h \
-               $(physics_incdir)/axisym_boussinesq_buoyancy.h \
-               $(physics_incdir)/physics_factory.h \
-               $(physics_incdir)/grins_physics_names.h \
-               $(physics_incdir)/low_mach_navier_stokes_base.h \
-               $(physics_incdir)/low_mach_navier_stokes.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_base.h \
-               $(physics_incdir)/low_mach_navier_stokes_spgsm_stab.h \
-               $(physics_incdir)/low_mach_navier_stokes_vms_stab.h \
-               $(physics_incdir)/low_mach_navier_stokes_braack_stab.h \
-               $(physics_incdir)/stab_helper.h \
-               $(physics_incdir)/inc_navier_stokes_stab_helper.h \
-               $(physics_incdir)/heat_transfer_stab_helper.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h
+physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
+               $(physics_incdir)/grins/physics.h \
+               $(physics_incdir)/grins/variable_name_defaults.h \
+               $(physics_incdir)/grins/var_typedefs.h \
+               $(physics_incdir)/grins/axisym_inc_navier_stokes.h \
+               $(physics_incdir)/grins/stokes.h \
+               $(physics_incdir)/grins/inc_navier_stokes_base.h \
+               $(physics_incdir)/grins/inc_navier_stokes.h \
+               $(physics_incdir)/grins/inc_navier_stokes_stab_base.h \
+               $(physics_incdir)/grins/inc_navier_stokes_adjoint_stab.h \
+               $(physics_incdir)/grins/heat_transfer_base.h \
+               $(physics_incdir)/grins/heat_transfer.h \
+               $(physics_incdir)/grins/heat_transfer_source.h \
+               $(physics_incdir)/grins/heat_transfer_stab_base.h \
+               $(physics_incdir)/grins/heat_transfer_adjoint_stab.h \
+               $(physics_incdir)/grins/axisym_heat_transfer.h \
+               $(physics_incdir)/grins/boussinesq_buoyancy.h \
+               $(physics_incdir)/grins/axisym_boussinesq_buoyancy.h \
+               $(physics_incdir)/grins/physics_factory.h \
+               $(physics_incdir)/grins/grins_physics_names.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_base.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_stab_base.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_spgsm_stab.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_vms_stab.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_braack_stab.h \
+               $(physics_incdir)/grins/stab_helper.h \
+               $(physics_incdir)/grins/inc_navier_stokes_stab_helper.h \
+               $(physics_incdir)/grins/heat_transfer_stab_helper.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_stab_helper.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/boundary_conditions.h \

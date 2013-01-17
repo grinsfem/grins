@@ -44,7 +44,7 @@
 #include "steady_solver.h"
 
 // GRINS
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 
 namespace GRINS
 {

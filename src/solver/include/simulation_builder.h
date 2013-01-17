@@ -30,7 +30,7 @@
 #define GRINS_SIMULATION_BUILDER_H
 
 // GRINS
-#include "physics_factory.h"
+#include "grins/physics_factory.h"
 #include "mesh_builder.h"
 #include "solver_factory.h"
 #include "visualization_factory.h"

@@ -25,67 +25,38 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-
-#ifndef HEAT_TRANSFER_H
-#define HEAT_TRANSFER_H
+#ifndef INC_NAVIER_STOKES_BRAACK_STAB_H
+#define INC_NAVIER_STOKES_BRAACK_STAB_H
 
 //libMesh
-#include "libmesh.h"
-#include "boundary_info.h"
-#include "fe_base.h"
-#include "fe_interface.h"
-#include "mesh.h"
-#include "quadrature.h"
-#include "parameters.h"
-#include "string_to_enum.h"
-#include "fem_system.h"
-#include "fem_context.h"
+#include "time_solver.h"
 
 //GRINS
-#include "grins_config.h"
-#include "heat_transfer_base.h"
-#include "grins/heat_transfer_bc_handling.h"
+#include "grins/inc_navier_stokes_stab_base.h"
 
+//! GRINS namespace
 namespace GRINS
 {
-
-  //! Physics class for Heat Transfer
-  /*
-    This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
-   */
-  class HeatTransfer : public HeatTransferBase
+  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
+  class IncompressibleNavierStokesAdjointStabilization : public IncompressibleNavierStokesStabilizationBase
   {
+
   public:
 
-    HeatTransfer( const std::string& physics_name, const GetPot& input );
+    IncompressibleNavierStokesAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~IncompressibleNavierStokesAdjointStabilization();
 
-    ~HeatTransfer();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-    
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
-
-    // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
-
-  protected:
     
-
   private:
-    HeatTransfer();
+    IncompressibleNavierStokesAdjointStabilization();
 
-  };
+  }; // End IncompressibleNavierStokesAdjointStabilization class declarations
 
-} //End namespace block
+} // End namespace GRINS
 
-#endif // HEAT_TRANSFER_H
+#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H

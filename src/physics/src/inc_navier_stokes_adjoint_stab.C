@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "inc_navier_stokes_adjoint_stab.h"
+#include "grins/inc_navier_stokes_adjoint_stab.h"
 
 namespace GRINS
 {

@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "low_mach_navier_stokes_vms_stab.h"
+#include "grins/low_mach_navier_stokes_vms_stab.h"
 
 namespace GRINS
 {

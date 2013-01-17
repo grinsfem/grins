@@ -32,7 +32,7 @@
 #include "getpot.h"
 
 //GRINS
-#include "grins_physics_names.h"
+#include "grins/grins_physics_names.h"
 #include "qoi_names.h"
 #include "qoi_base.h"
 #include "average_nusselt_number.h"

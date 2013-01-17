@@ -42,7 +42,7 @@
 #include "fem_system.h"
 
 //GRINS
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 
 namespace GRINS
 {

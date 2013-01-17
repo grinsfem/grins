@@ -29,7 +29,7 @@
 #define PARABOLIC_PROFILE_H
 
 // GRINS
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 
 // libMesh
 #include "fe_base.h"

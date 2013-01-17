@@ -25,58 +25,57 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef GRINS_LOW_MACH_NAVIER_STOKES_SPGSM_STAB_H
-#define GRINS_LOW_MACH_NAVIER_STOKES_SPGSM_STAB_H
 
-//libMesh
-#include "time_solver.h"
+#ifndef STOKES_H
+#define STOKES_H
 
 //GRINS
-#include "low_mach_navier_stokes_stab_base.h"
+#include "grins/pressure_pinning.h"
+#include "grins/inc_navier_stokes_bc_handling.h"
+#include "grins/inc_navier_stokes_base.h"
 
 namespace GRINS
 {
-  //! Adds SPGSM-based stabilization to LowMachNavierStokes physics class
-  template<class Viscosity, class SpecificHeat, class ThermalConductivity>
-  class LowMachNavierStokesSPGSMStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
-  {
 
+  //! Physics class for Stokes
+  /*!
+    This physics class implements the classical Stokes equations.
+   */
+  class Stokes : public IncompressibleNavierStokesBase
+  {
   public:
 
-    LowMachNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesSPGSMStabilization();
+    Stokes(const std::string& physics_name, const GetPot& input);
 
+    ~Stokes();
+
+    // residual and jacobian calculations
+    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+
+    // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
+    // Constraint part(s)
+    virtual void element_constraint( bool compute_jacobian,
+				     libMesh::FEMContext& context );
+
+    // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
 
   protected:
 
-    void assemble_continuity_time_deriv( bool compute_jacobian,
-					 libMesh::FEMContext& context );
+    PressurePinning _p_pinning;
 
-    void assemble_momentum_time_deriv( bool compute_jacobian,
-				       libMesh::FEMContext& context );
-
-    void assemble_energy_time_deriv( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    void assemble_continuity_mass_residual( bool compute_jacobian,
-					    libMesh::FEMContext& context );
-
-    void assemble_momentum_mass_residual( bool compute_jacobian,
-					  libMesh::FEMContext& context );
-
-    void assemble_energy_mass_residual( bool compute_jacobian,
-					libMesh::FEMContext& context );
+    //! Enable pressure pinning
+    bool _pin_pressure;
     
   private:
-    LowMachNavierStokesSPGSMStabilization();
+    Stokes();
 
-  }; // End LowMachNavierStokesSPGSMStabilization class declarations
+  };
 
-} // End namespace GRINS
+} //End namespace block
 
-#endif //GRINS_LOW_MACH_NAVIER_STOKES_SPGSM_STAB_H
+#endif // STOKES_H

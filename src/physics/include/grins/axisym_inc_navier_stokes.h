@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef AXISYM_HEAT_TRANSFER_H
-#define AXISYM_HEAT_TRANSFER_H
+#ifndef AXISYM_INC_NAVIER_STOKES_H
+#define AXISYM_INC_NAVIER_STOKES_H
 
 //libMesh
 #include "libmesh.h"
@@ -43,34 +43,32 @@
 
 //GRINS
 #include "grins_config.h"
-#include "physics.h"
-#include "grins/axisym_heat_transfer_bc_handling.h"
-
-// Conductivity Models
-#include "grins/constant_conductivity.h"
+#include "grins/physics.h"
+#include "grins/pressure_pinning.h"
+#include "grins/axisym_inc_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
 
-  //! Physics class for Axisymmetric Heat Transfer
-  /*
-    This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
+  //! Physics class for Axisymmetric Incompressible Navier-Stokes
+  /*!
+    This physics class implements the classical Axisymmetric Incompressible Navier-Stokes equations.
    */
-  template<class Conductivity>
-  class AxisymmetricHeatTransfer : public Physics
+  class AxisymmetricIncompressibleNavierStokes : public Physics
   {
   public:
 
-    AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
+    AxisymmetricIncompressibleNavierStokes( const std::string& physics_name, const GetPot& input );
 
-    ~AxisymmetricHeatTransfer();
+    ~AxisymmetricIncompressibleNavierStokes();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
-    //! Initialization  AxisymmetricHeatTransfer variables
+    //! Initialization of Axisymmetric Navier-Stokes variables
     /*!
       Add velocity and pressure variables to system.
+      Note there are only two components of velocity in this case: r and z
      */
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -87,8 +85,9 @@ namespace GRINS
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
-    virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
+    // Constraint part(s)
+    virtual void element_constraint( bool compute_jacobian,
+				     libMesh::FEMContext& context );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
@@ -97,49 +96,51 @@ namespace GRINS
   protected:
 
     //! Physical dimension of problem
-    /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    // Indices for each variable;
-    //! Index for temperature field
-    VariableIndex _T_var;
-
-    //! Index for r-velocity field
+    // Index for each owned variable in the system
+    //! Index for each r velocity field
     VariableIndex _u_r_var;
 
-    //! Index for z-velocity field
-    VariableIndex _u_z_var; 
+    //! Index for each z velocity field
+    VariableIndex _u_z_var;
 
-    // Names of each variable in the system
-    //! Name for temperature variable
-    std::string _T_var_name;
+    //! Index for each pressure field
+    VariableIndex _p_var;
 
-    //! Name of r-velocity
+    // Names of each (owned) variable in the system
+    //! r velocity name
     std::string _u_r_var_name;
-
-    //! Name of z-velocity
+    
+    //! z velocity name
     std::string _u_z_var_name;
 
-    //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+    //! pressure name
+    std::string _p_var_name;
 
-    //! Temperature element order, read from input
-    libMeshEnums::Order _T_order, _V_order;
+    //! Element type, read from input
+    libMeshEnums::FEFamily _FE_family;
+
+    //! Velocity element order, read from input
+    libMeshEnums::Order _V_order;
+
+    //! Pressure element order, read from input
+    libMeshEnums::Order _P_order;
 
     //! Material parameters, read from input
-    /*! \todo Need to generalize material parameters. Right now they
-              are assumed constant */
-    /*! \todo Shouldn't this rho be the same as the one in the flow? Need
-              to figure out how to have those shared */
-    libMesh::Number _rho, _Cp;
+    /** \todo Create objects to allow for function specification */
+    libMesh::Number _rho, _mu;
 
-    Conductivity _k;
+    //! Enable pressure pinning
+    bool _pin_pressure;
+
+    PressurePinning _p_pinning;
 
   private:
-    AxisymmetricHeatTransfer();
+    AxisymmetricIncompressibleNavierStokes();
 
   };
 
 } //End namespace block
 
-#endif // AXISYM_HEAT_TRANSFER_H
+#endif // AXISYM_INC_NAVIER_STOKES_H

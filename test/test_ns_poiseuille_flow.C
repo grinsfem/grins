@@ -33,7 +33,7 @@
 // GRINS
 #include "mesh_builder.h"
 #include "simulation.h"
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 #include "grins/parabolic_profile.h"
 
 //libMesh

@@ -26,56 +26,45 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef STOKES_H
-#define STOKES_H
+#ifndef HEAT_TRANSFER_SOURCE_H
+#define HEAT_TRANSFER_SOURCE_H
 
-//GRINS
-#include "grins/pressure_pinning.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
-#include "inc_navier_stokes_base.h"
+// GRINS
+#include "grins_config.h"
+#include "grins/heat_transfer_base.h"
+#include "grins/constant_source_func.h"
 
 namespace GRINS
-{
-
-  //! Physics class for Stokes
-  /*!
-    This physics class implements the classical Stokes equations.
-   */
-  class Stokes : public IncompressibleNavierStokesBase
+{  
+  //! Adds generic, spatially dependent source term to HeatTransfer physics
+  /*! This is templated about the source function. Any suitable source fuction can be
+      used so long as its constructor takes a GetPot& and provides and operator( libMesh::Point&) and
+      grad( libMesh::Point&) methods which return Real and Gradient respectively.*/
+  template< class SourceFunction >
+  class HeatTransferSource : public HeatTransferBase
   {
   public:
+    
+    HeatTransferSource( const std::string& physics_name, const GetPot& input );
 
-    Stokes(const std::string& physics_name, const GetPot& input);
+    ~HeatTransferSource();
 
-    ~Stokes();
-
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
-
-    // Time dependent part(s)
+    //! Source term contribution for HeatTransferSource
+    /*! This is the main part of the class. This will add the source term to
+        the HeatTransfer class.
+     */
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
-    // Constraint part(s)
-    virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
-
-    // Mass matrix part(s)
-    virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
-
   protected:
 
-    PressurePinning _p_pinning;
+    //! Function that computes source term.
+    SourceFunction _source;
 
-    //! Enable pressure pinning
-    bool _pin_pressure;
-    
   private:
-    Stokes();
+    HeatTransferSource();
 
-  };
+  }; // class HeatTransferSource
 
-} //End namespace block
-
-#endif // STOKES_H
+} // namespace GRINS
+#endif //HEAT_TRANSFER_SOURCE_H

@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "heat_transfer_adjoint_stab.h"
+#include "grins/heat_transfer_adjoint_stab.h"
 
 namespace GRINS
 {

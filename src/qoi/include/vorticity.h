@@ -31,7 +31,7 @@
 
 // GRINS
 #include "qoi_base.h"
-#include "variable_name_defaults.h"
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {

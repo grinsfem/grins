@@ -25,38 +25,59 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_BRAACK_STAB_H
-#define INC_NAVIER_STOKES_BRAACK_STAB_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
 
 //libMesh
 #include "time_solver.h"
 
 //GRINS
-#include "inc_navier_stokes_stab_base.h"
+#include "grins/low_mach_navier_stokes_stab_base.h"
 
 //! GRINS namespace
 namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
-  class IncompressibleNavierStokesAdjointStabilization : public IncompressibleNavierStokesStabilizationBase
+  template<class Viscosity, class SpecificHeat, class ThermalConductivity>
+  class LowMachNavierStokesVMSStabilization : public LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
 
   public:
 
-    IncompressibleNavierStokesAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~IncompressibleNavierStokesAdjointStabilization();
+    LowMachNavierStokesVMSStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~LowMachNavierStokesVMSStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
 					  libMesh::FEMContext& context );
 
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
+
+  protected:
+
+    void assemble_continuity_time_deriv( bool compute_jacobian,
+					 libMesh::FEMContext& context );
+
+    void assemble_momentum_time_deriv( bool compute_jacobian,
+				       libMesh::FEMContext& context );
+
+    void assemble_energy_time_deriv( bool compute_jacobian,
+				     libMesh::FEMContext& context );
+
+    void assemble_continuity_mass_residual( bool compute_jacobian,
+					    libMesh::FEMContext& context );
+
+    void assemble_momentum_mass_residual( bool compute_jacobian,
+					  libMesh::FEMContext& context );
+
+    void assemble_energy_mass_residual( bool compute_jacobian,
+					libMesh::FEMContext& context );
     
   private:
-    IncompressibleNavierStokesAdjointStabilization();
+    LowMachNavierStokesVMSStabilization();
 
-  }; // End IncompressibleNavierStokesAdjointStabilization class declarations
+  }; // End LowMachNavierStokesVMSStabilization class declarations
 
 } // End namespace GRINS
 
-#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif //GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H

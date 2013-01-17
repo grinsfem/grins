@@ -40,7 +40,7 @@
 #include "quadrature.h"
 
 // GRINS
-#include "var_typedefs.h"
+#include "grins/var_typedefs.h"
 
 namespace GRINS
 {
