@@ -14,9 +14,9 @@
 #include "getpot.h"
 
 // GRINS
-#include "visualization.h"
-#include "steady_visualization.h"
-#include "unsteady_visualization.h"
+#include "grins/visualization.h"
+#include "grins/steady_visualization.h"
+#include "grins/unsteady_visualization.h"
 
 namespace GRINS
 {

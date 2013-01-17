@@ -5,7 +5,7 @@
 #include "auto_ptr.h"
 
 // GRINS
-#include "visualization.h"
+#include "grins/visualization.h"
 
 namespace GRINS
 {

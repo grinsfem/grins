@@ -173,10 +173,10 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
 
 utilities_INC = $(utilities_incdir)/grins/grins_version.h
 
-visualization_INC = $(visualization_incdir)/steady_visualization.h \
-                    $(visualization_incdir)/unsteady_visualization.h \
-                    $(visualization_incdir)/visualization.h \
-                    $(visualization_incdir)/visualization_factory.h
+visualization_INC = $(visualization_incdir)/grins/steady_visualization.h \
+                    $(visualization_incdir)/grins/unsteady_visualization.h \
+                    $(visualization_incdir)/grins/visualization.h \
+                    $(visualization_incdir)/grins/visualization_factory.h
 
 matprops_INC = $(matprops_incdir)/grins/grins_constant_function.h \
                $(matprops_incdir)/grins/constant_conductivity.h   \

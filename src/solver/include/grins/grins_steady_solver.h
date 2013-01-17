@@ -31,7 +31,7 @@
 
 //GRINS
 #include "grins/grins_solver.h"
-#include "visualization.h"
+#include "grins/visualization.h"
 
 //libMesh
 #include "auto_ptr.h"

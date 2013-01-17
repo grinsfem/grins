@@ -29,7 +29,7 @@
 #ifndef GRINS_STEADY_VISUALIZATION_H
 #define GRINS_STEADY_VISUALIZATION_H
 
-#include "visualization.h"
+#include "grins/visualization.h"
 
 namespace GRINS
 {

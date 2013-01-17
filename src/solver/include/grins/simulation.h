@@ -36,7 +36,7 @@
 
 // GRINS
 #include "grins/simulation_builder.h"
-#include "visualization.h"
+#include "grins/visualization.h"
 #include "grins/boundary_conditions.h"
 
 // GRVY
