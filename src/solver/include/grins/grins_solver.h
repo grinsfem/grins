@@ -36,7 +36,7 @@
 #include "grins/multiphysics_sys.h"
 #include "visualization.h"
 #include "grins/bc_factory.h"
-#include "solver_context.h"
+#include "grins/solver_context.h"
 
 // libMesh
 #include "getpot.h"

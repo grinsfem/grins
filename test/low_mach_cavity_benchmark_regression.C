@@ -30,7 +30,7 @@
 #include <iostream>
 
 // GRINS
-#include "simulation.h"
+#include "grins/simulation.h"
 
 // Function for getting initial temperature field
 Real initial_values( const Point& p, const Parameters &params, 

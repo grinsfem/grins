@@ -26,34 +26,32 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_SOLVER_FACTORY_H
-#define GRINS_SOLVER_FACTORY_H
-
-//libMesh
-#include "getpot.h"
+#ifndef GRINS_STEADY_SOLVER_H
+#define GRINS_STEADY_SOLVER_H
 
 //GRINS
-#include "grins_solver.h"
-#include "grins_steady_solver.h"
-#include "grins_unsteady_solver.h"
+#include "grins/grins_solver.h"
+#include "visualization.h"
+
+//libMesh
+#include "auto_ptr.h"
+#include "equation_systems.h"
 
 namespace GRINS
 {
-  //! This object handles constructing the solver to be used.
-  /*! To allow the user to easily extend the (limited) available solvers,
-      the solver construction is handled in this object. */
-  class SolverFactory
+  class SteadySolver : public Solver
   {
   public:
 
-    SolverFactory();
-    virtual ~SolverFactory();
+    SteadySolver( const GetPot& input );
+    virtual ~SteadySolver();
 
-    //! Builds GRINS::Solver object.
-    /*! Users should override this method to construct 
-        their own solvers. */
-    virtual std::tr1::shared_ptr<GRINS::Solver> build(const GetPot& input);
+    virtual void solve( SolverContext& context );
+
+  protected:
+
+    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
   };
 } // namespace GRINS
-#endif //GRINS_SOLVER_FACTORY_H
+#endif // GRINS_STEADY_SOLVER_H

@@ -28,7 +28,7 @@
 
 #include <iostream>
 
-#include "grins_solver.h"
+#include "grins/grins_solver.h"
 
 namespace GRINS
 {

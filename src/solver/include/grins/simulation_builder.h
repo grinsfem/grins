@@ -31,8 +31,8 @@
 
 // GRINS
 #include "grins/physics_factory.h"
-#include "mesh_builder.h"
-#include "solver_factory.h"
+#include "grins/mesh_builder.h"
+#include "grins/solver_factory.h"
 #include "visualization_factory.h"
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"

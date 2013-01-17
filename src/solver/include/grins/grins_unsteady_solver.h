@@ -30,7 +30,7 @@
 #define GRINS_UNSTEADY_SOLVER_H
 
 //GRINS
-#include "grins_solver.h"
+#include "grins/grins_solver.h"
 
 namespace GRINS
 {

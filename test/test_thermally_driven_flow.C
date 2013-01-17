@@ -31,8 +31,8 @@
 #include <iostream>
 
 // GRINS
-#include "mesh_builder.h"
-#include "simulation.h"
+#include "grins/mesh_builder.h"
+#include "grins/simulation.h"
 #include "grins/multiphysics_sys.h"
 
 //libMesh

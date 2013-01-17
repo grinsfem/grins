@@ -30,7 +30,7 @@
 #include <iostream>
 
 // GRINS
-#include "simulation.h"
+#include "grins/simulation.h"
 #include "grins/parabolic_profile.h"
 
 // GRVY
