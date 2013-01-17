@@ -171,7 +171,7 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/pbc_container.h \
                           $(boundary_conditions_incdir)/grins/nbc_container.h
 
-utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h
+utilities_INC = $(utilities_incdir)/grins/grins_version.h
 
 visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/unsteady_visualization.h \

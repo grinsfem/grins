@@ -212,7 +212,7 @@ AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 
 AC_OUTPUT( Makefile \
-           src/Makefile src/utilities/include/grins_version.h \
+           src/Makefile src/utilities/include/grins/grins_version.h \
            test/Makefile \
            doxygen/Makefile \
            doxygen/txt_common/about.page \
