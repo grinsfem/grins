@@ -184,12 +184,12 @@ matprops_INC = $(matprops_incdir)/grins_constant_function.h \
                $(matprops_incdir)/constant_specific_heat.h  \
                $(matprops_incdir)/constant_source_func.h
 
-bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
-                  $(bc_handling_incdir)/heat_transfer_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h \
-                  $(bc_handling_incdir)/inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h
+bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
+                  $(bc_handling_incdir)/grins/heat_transfer_bc_handling.h \
+                  $(bc_handling_incdir)/grins/axisym_heat_transfer_bc_handling.h \
+                  $(bc_handling_incdir)/grins/inc_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
           $(qoi_incdir)/qoi_base.h \

@@ -44,7 +44,7 @@
 //GRINS
 #include "grins_config.h"
 #include "heat_transfer_base.h"
-#include "heat_transfer_bc_handling.h"
+#include "grins/heat_transfer_bc_handling.h"
 
 namespace GRINS
 {

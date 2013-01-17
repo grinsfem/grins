@@ -25,25 +25,25 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
+#ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
 //libMesh
-#include "const_function.h"
+#include "zero_function.h"
 
 //GRINS
-#include "bc_handling_base.h"
+#include "grins/bc_handling_base.h"
 
 namespace GRINS
 {
   //! Base class for reading and handling boundary conditions for physics classes
-  class HeatTransferBCHandling : public BCHandlingBase
+  class LowMachNavierStokesBCHandling : public BCHandlingBase
   {
   public:
     
-    HeatTransferBCHandling( const std::string& physics_name, const GetPot& input );
+    LowMachNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
     
-    virtual ~HeatTransferBCHandling();
+    virtual ~LowMachNavierStokesBCHandling();
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
@@ -52,30 +52,37 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
-				  libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, 
-				  GRINS::BCType bc_type ) const;
+    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
+				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
-					 GRINS::VariableIndex var,
-					 bool request_jacobian,
-					 GRINS::BoundaryID bc_id,
-					 GRINS::BCType bc_type ) const;
-    
+    void set_temp_bc_type( GRINS::BoundaryID bc_id, int bc_type );
+    void set_temp_bc_value( GRINS::BoundaryID bc_id, Real value );
+    Real get_temp_bc_value( GRINS::BoundaryID bc_id ) const;
+
+    virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
+
   protected:
 
-    std::string _T_var_name;
+    std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
 
   private:
 
-    HeatTransferBCHandling();
+    LowMachNavierStokesBCHandling();
 
-    enum HT_BC_TYPES{ISOTHERMAL_WALL=0,
-		     ADIABATIC_WALL,
-		     PRESCRIBED_HEAT_FLUX,
-		     GENERAL_HEAT_FLUX};
+    enum LMNS_BC_TYPES{NO_SLIP=0, 
+		       PRESCRIBED_VELOCITY, 
+		       GENERAL_VELOCITY,
+		       ISOTHERMAL_WALL,
+		       ADIABATIC_WALL, 
+		       PRESCRIBED_HEAT_FLUX,
+		       GENERAL_HEAT_FLUX};
+
+    // We need a second container to stash dirichlet values for the energy equation
+    std::map< GRINS::BoundaryID, Real > _T_values;
+
+    // We also need another map container
+    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
 
   };
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+#endif // LOW_MACH_NAVIER_STOKES_BC_HANDLING_H

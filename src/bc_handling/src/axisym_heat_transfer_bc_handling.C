@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "axisym_heat_transfer_bc_handling.h"
+#include "grins/axisym_heat_transfer_bc_handling.h"
 
 namespace GRINS
 {

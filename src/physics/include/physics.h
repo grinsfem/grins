@@ -46,7 +46,7 @@
 #include "var_typedefs.h"
 #include "boundary_conditions.h"
 #include "grins_physics_names.h"
-#include "bc_handling_base.h"
+#include "grins/bc_handling_base.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers

@@ -48,7 +48,7 @@
 #include "constant_viscosity.h"
 #include "constant_specific_heat.h"
 #include "constant_conductivity.h"
-#include "low_mach_navier_stokes_bc_handling.h"
+#include "grins/low_mach_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {

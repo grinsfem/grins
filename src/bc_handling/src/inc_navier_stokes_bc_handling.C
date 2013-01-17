@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "inc_navier_stokes_bc_handling.h"
+#include "grins/inc_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {

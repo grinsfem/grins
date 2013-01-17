@@ -25,25 +25,26 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef AXISYM_INC_NAVIER_STOKES_BC_HANDLING_H
-#define AXISYM_INC_NAVIER_STOKES_BC_HANDLING_H
+#ifndef INC_NAVIER_STOKES_BC_HANDLING_H
+#define INC_NAVIER_STOKES_BC_HANDLING_H
 
 //libMesh
 #include "zero_function.h"
 
 //GRINS
-#include "bc_handling_base.h"
+#include "grins/bc_handling_base.h"
+#include "parabolic_profile.h"
 
 namespace GRINS
 {
   //! Base class for reading and handling boundary conditions for physics classes
-  class AxisymmetricIncompressibleNavierStokesBCHandling : public BCHandlingBase
+  class IncompressibleNavierStokesBCHandling : public BCHandlingBase
   {
   public:
     
-    AxisymmetricIncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
+    IncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
     
-    virtual ~AxisymmetricIncompressibleNavierStokesBCHandling();
+    virtual ~IncompressibleNavierStokesBCHandling();
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
@@ -58,14 +59,17 @@ namespace GRINS
     
   protected:
 
-    std::string _u_r_var_name, _u_z_var_name;
+    std::string _u_var_name, _v_var_name, _w_var_name;
 
   private:
 
-    AxisymmetricIncompressibleNavierStokesBCHandling();
+    IncompressibleNavierStokesBCHandling();
 
-    enum INS_BC_TYPES{NO_SLIP=0, PRESCRIBED_VELOCITY, GENERAL_VELOCITY, AXISYMMETRIC};
+    enum INS_BC_TYPES{NO_SLIP=1, 
+		      PRESCRIBED_VELOCITY, 
+		      PARABOLIC_PROFILE,
+		      GENERAL_VELOCITY};
 
   };
 }
-#endif // AXISYM_INC_NAVIER_STOKES_BC_HANDLING_H
+#endif // INC_NAVIER_STOKES_BC_HANDLING_H

@@ -44,7 +44,7 @@
 //GRINS
 #include "grins_config.h"
 #include "physics.h"
-#include "axisym_heat_transfer_bc_handling.h"
+#include "grins/axisym_heat_transfer_bc_handling.h"
 
 // Conductivity Models
 #include "constant_conductivity.h"
