@@ -178,11 +178,11 @@ visualization_INC = $(visualization_incdir)/steady_visualization.h \
                     $(visualization_incdir)/visualization.h \
                     $(visualization_incdir)/visualization_factory.h
 
-matprops_INC = $(matprops_incdir)/grins_constant_function.h \
-               $(matprops_incdir)/constant_conductivity.h   \
-               $(matprops_incdir)/constant_viscosity.h      \
-               $(matprops_incdir)/constant_specific_heat.h  \
-               $(matprops_incdir)/constant_source_func.h
+matprops_INC = $(matprops_incdir)/grins/grins_constant_function.h \
+               $(matprops_incdir)/grins/constant_conductivity.h   \
+               $(matprops_incdir)/grins/constant_viscosity.h      \
+               $(matprops_incdir)/grins/constant_specific_heat.h  \
+               $(matprops_incdir)/grins/constant_source_func.h
 
 bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
                   $(bc_handling_incdir)/grins/heat_transfer_bc_handling.h \

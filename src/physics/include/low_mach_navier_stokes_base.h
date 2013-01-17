@@ -45,9 +45,9 @@
 #include "grins_config.h"
 #include "physics.h"
 #include "grins/pressure_pinning.h"
-#include "constant_viscosity.h"
-#include "constant_specific_heat.h"
-#include "constant_conductivity.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_conductivity.h"
 #include "grins/low_mach_navier_stokes_bc_handling.h"
 
 namespace GRINS

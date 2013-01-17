@@ -52,9 +52,9 @@
 #include "low_mach_navier_stokes_spgsm_stab.h"
 #include "low_mach_navier_stokes_vms_stab.h"
 #include "grins_physics_names.h"
-#include "constant_conductivity.h"
-#include "constant_specific_heat.h"
-#include "constant_viscosity.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_viscosity.h"
 
 namespace GRINS
 {

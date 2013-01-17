@@ -26,23 +26,23 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_SPECIFIC_HEAT_H
-#define CONSTANT_SPECIFIC_HEAT_H
+#ifndef CONSTANT_VISCOSITY_H
+#define CONSTANT_VISCOSITY_H
 
 // GRINS
-#include "grins_constant_function.h"
+#include "grins/grins_constant_function.h"
 
 namespace GRINS
 {
-  class ConstantSpecificHeat : public GRINS::ConstantFunction
+  class ConstantViscosity : public GRINS::ConstantFunction
   {
   public:
 
-    ConstantSpecificHeat();
-    ~ConstantSpecificHeat();
+    ConstantViscosity();
+    ~ConstantViscosity();
 
     void read_input_options( const GetPot& input );
 
   };
 }
-#endif //CONSTANT_SPECIFIC_HEAT_H
+#endif //CONSTANT_VISCOSITY_H

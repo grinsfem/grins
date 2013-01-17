@@ -47,7 +47,7 @@
 #include "grins/axisym_heat_transfer_bc_handling.h"
 
 // Conductivity Models
-#include "constant_conductivity.h"
+#include "grins/constant_conductivity.h"
 
 namespace GRINS
 {

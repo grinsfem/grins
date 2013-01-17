@@ -32,7 +32,7 @@
 // GRINS
 #include "grins_config.h"
 #include "heat_transfer_base.h"
-#include "constant_source_func.h"
+#include "grins/constant_source_func.h"
 
 namespace GRINS
 {  
