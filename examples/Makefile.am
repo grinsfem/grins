@@ -125,6 +125,8 @@ all_sources = $(cavity_SOURCES)          \
 
 MAINTAINERCLEANFILES = Makefile.in
 
+MOSTLYCLEANFILES = *.gcno
+
 #---------------------------------
 # Embedded license header support
 #---------------------------------
