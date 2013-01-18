@@ -65,8 +65,8 @@ namespace GRINS
 			     const libMesh::Real time, 
 			     libMesh::DenseVector<libMesh::Number> &output );
 
-    virtual libMesh::Number operator()( unsigned int i, const libMesh::Point &p, 
-					const libMesh::Real time );
+    virtual libMesh::Number component( unsigned int i, const libMesh::Point &p, 
+				       const libMesh::Real time );
     
   protected:
     
