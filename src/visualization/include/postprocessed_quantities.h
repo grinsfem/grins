@@ -97,6 +97,7 @@ namespace GRINS
 		       SPECIES_SPECIFIC_HEAT_V,
 		       MIXTURE_SPECIFIC_HEAT_V,
 		       MOLE_FRACTIONS,
+		       SPECIES_ENTHALPY,
 		       OMEGA_DOT };
 
     std::vector<unsigned int> _quantities;

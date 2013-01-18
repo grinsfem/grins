@@ -777,6 +777,31 @@ namespace GRINS
 	cache.set_vector_values(Cache::MOLE_FRACTIONS, mole_fractions );
       }
 
+    if( cache.is_active(Cache::SPECIES_ENTHALPY) )
+      {
+	{
+	  std::vector<Real> T;
+	  T.resize( points.size() );
+
+	  for( unsigned int p = 0; p < points.size(); p++ )
+	    {
+	      T[p] = this->T(points[p],context);
+	    }
+
+	  cache.set_values( Cache::TEMPERATURE, T );
+	}
+
+	std::vector<std::vector<Real> > h;
+	h.resize( points.size() );
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    h[p].resize(this->_n_species);
+	    this->_gas_mixture.h(cache, p, h[p]);
+	  }
+
+	cache.set_vector_values( Cache::SPECIES_ENTHALPY, h );
+      }
+
     if( cache.is_active(Cache::OMEGA_DOT) )
       {
 	{

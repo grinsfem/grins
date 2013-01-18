@@ -322,6 +322,29 @@ namespace GRINS
 		  _cache.add_quantity(Cache::MOLE_FRACTIONS);
 		}
 		break;
+		
+	      case(SPECIES_ENTHALPY):
+		{
+		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
+		    {
+		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+				<< " enable for omega_dot calculation."
+				<< std::endl;
+		      libmesh_error();
+		    }
+
+		  for( unsigned int s = 0; s < _species_names.size(); s++ )
+		    {
+		      VariableIndex var = output_system.add_variable("h_"+_species_names[s], FIRST);
+		      _species_var_map.insert( std::make_pair(var, s) );
+		      _quantity_var_map.insert( std::make_pair(var, SPECIES_ENTHALPY) );
+		    }
+
+		  // We need T too
+		  _cache.add_quantity(Cache::TEMPERATURE);
+		  _cache.add_quantity(Cache::SPECIES_ENTHALPY);
+		}
+		break;
 
 	      case(OMEGA_DOT):
 		{
@@ -519,6 +542,15 @@ namespace GRINS
 	}
 	break;
 
+      case(SPECIES_ENTHALPY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int species = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[0][species];
+	}
+	break;
+
       case(OMEGA_DOT):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
@@ -592,6 +624,8 @@ namespace GRINS
 
     _quantity_name_map["mole_fractions"] = MOLE_FRACTIONS;
 
+    _quantity_name_map["h_s"]            = SPECIES_ENTHALPY;
+    
     _quantity_name_map["omega_dot"]      = OMEGA_DOT;
 
     return;
