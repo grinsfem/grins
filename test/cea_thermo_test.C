@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------
 
 // libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 // GRINS
 #include "cea_thermo.h"

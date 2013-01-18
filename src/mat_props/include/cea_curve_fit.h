@@ -38,7 +38,7 @@ namespace GRINS
   {
   public:
     
-    CEACurveFit( const std::vector<Real>& coeffs );
+    CEACurveFit( const std::vector<libMesh::Real>& coeffs );
     ~CEACurveFit();
 
     //! The number of intervals for this CEA curve fit
@@ -52,7 +52,7 @@ namespace GRINS
       lies in.  The CEA thermodynamic intervals are 
       [200-1,000], [1,000-6,000], [6,000-20,000] K
      */
-    unsigned int interval (const Real T) const;
+    unsigned int interval (const libMesh::Real T) const;
 
     
     //! @returns a pointer to the coefficients in the interval specified.
@@ -61,7 +61,7 @@ namespace GRINS
       _n_coeffs coefficients for each range fit.
     */
     inline
-    const Real* coefficients(const unsigned int interval) const
+    const libMesh::Real* coefficients(const unsigned int interval) const
     {
       libmesh_assert_less( interval, this->n_intervals() );
       libmesh_assert_less_equal( _n_coeffs*(interval+1), _coefficients.size() );
@@ -80,7 +80,7 @@ namespace GRINS
       a0-a9 for the first interval, a0-a9 for the second interval,
       and so on.
      */
-    const std::vector<Real> _coefficients;
+    const std::vector<libMesh::Real> _coefficients;
   };
 
 } // namespace GRINS

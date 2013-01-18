@@ -49,7 +49,7 @@ namespace GRINS
     
     //! Compute source terms
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<Real>& omega_dot ) const;
+		    std::vector<libMesh::Real>& omega_dot ) const;
 
     const ReactionSet& reaction_set() const;
 
@@ -68,7 +68,7 @@ namespace GRINS
 
   inline
   void Kinetics::omega_dot( const CachedValues& cache, unsigned int qp,
-			    std::vector<Real>& omega_dot ) const
+			    std::vector<libMesh::Real>& omega_dot ) const
   {
     _reaction_set.compute_mass_sources( cache.get_cached_values(Cache::TEMPERATURE)[qp],
 					cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp],

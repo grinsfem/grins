@@ -46,8 +46,8 @@ namespace GRINS
     MixtureTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~MixtureTransport();
 
-    Real mu( Real T, unsigned int species );
-    Real mu( Real T );
+    libMesh::Real mu( libMesh::Real T, unsigned int species );
+    libMesh::Real mu( libMesh::Real T );
 
   protected:
     

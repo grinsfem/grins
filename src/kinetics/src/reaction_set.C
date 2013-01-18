@@ -43,13 +43,13 @@ namespace GRINS
 
   
 
-  void ReactionSet::compute_mass_sources( const Real T,
-					  const Real rho,
-					  const Real R_mix,
-					  const std::vector<Real>& mass_fractions,
-					  const std::vector<Real>& molar_densities,
-					  const std::vector<Real>& h_RT_minus_s_R,
-					  std::vector<Real>& mass_sources ) const
+  void ReactionSet::compute_mass_sources( const libMesh::Real T,
+					  const libMesh::Real rho,
+					  const libMesh::Real R_mix,
+					  const std::vector<libMesh::Real>& mass_fractions,
+					  const std::vector<libMesh::Real>& molar_densities,
+					  const std::vector<libMesh::Real>& h_RT_minus_s_R,
+					  std::vector<libMesh::Real>& mass_sources ) const
   {
     libmesh_assert_greater(T, 0.0);
     libmesh_assert_greater(rho, 0.0);
@@ -61,7 +61,7 @@ namespace GRINS
     std::fill( mass_sources.begin(), mass_sources.end(), 0.0 );
 
     // compute the requisite reaction rates
-    std::vector<Real> net_reaction_rates( this->n_reactions(), 0.0 );
+    std::vector<libMesh::Real> net_reaction_rates( this->n_reactions(), 0.0 );
     this->compute_reaction_rates( T, rho, R_mix, mass_fractions, molar_densities,
 				  h_RT_minus_s_R, net_reaction_rates );
 
@@ -69,7 +69,7 @@ namespace GRINS
     for (unsigned int rxn = 0; rxn < this->n_reactions(); rxn++)
       {
 	const Reaction& reaction = this->reaction(rxn);
-	const Real rate = net_reaction_rates[rxn];
+	const libMesh::Real rate = net_reaction_rates[rxn];
 	
 	// reactant contributions
 	for (unsigned int r = 0; r  <reaction.n_reactants(); r++)
@@ -77,7 +77,7 @@ namespace GRINS
 	    const unsigned int r_id = reaction.reactant_id(r);
 	    const unsigned int r_stoich = reaction.reactant_stoichiometric_coefficient(r);
 	    
-	    mass_sources[r_id] -= (static_cast<Real>(r_stoich)*rate);
+	    mass_sources[r_id] -= (static_cast<libMesh::Real>(r_stoich)*rate);
 	  }
 	
 	// product contributions
@@ -86,7 +86,7 @@ namespace GRINS
 	    const unsigned int p_id = reaction.product_id(p);
 	    const unsigned int p_stoich = reaction.product_stoichiometric_coefficient(p);
 	    
-	    mass_sources[p_id] += (static_cast<Real>(p_stoich)*rate);
+	    mass_sources[p_id] += (static_cast<libMesh::Real>(p_stoich)*rate);
 	  }
       }
 
@@ -99,13 +99,13 @@ namespace GRINS
     return;
   }
   
-  void ReactionSet::compute_reaction_rates ( const Real T,
-					     const Real rho,
-					     const Real R_mix,
-					     const std::vector<Real>& mass_fractions,
-					     const std::vector<Real>& molar_densities,
-					     const std::vector<Real>& h_RT_minus_s_R,
-					     std::vector<Real>& net_reaction_rates ) const
+  void ReactionSet::compute_reaction_rates ( const libMesh::Real T,
+					     const libMesh::Real rho,
+					     const libMesh::Real R_mix,
+					     const std::vector<libMesh::Real>& mass_fractions,
+					     const std::vector<libMesh::Real>& molar_densities,
+					     const std::vector<libMesh::Real>& h_RT_minus_s_R,
+					     std::vector<libMesh::Real>& net_reaction_rates ) const
   {
     libmesh_assert_equal_to( net_reaction_rates.size(), this->n_reactions() );
     libmesh_assert_greater(T, 0.0);
@@ -116,20 +116,20 @@ namespace GRINS
     libmesh_assert_equal_to( h_RT_minus_s_R.size(), this->n_species() );
 
     // useful constants
-    const Real P0    = 1.e5; // standard pressure
-    const Real RT    = R_mix*T;
-    const Real P0_RT = P0 / RT; // used to transform equilibrium constant from pressure units
+    const libMesh::Real P0    = 1.e5; // standard pressure
+    const libMesh::Real RT    = R_mix*T;
+    const libMesh::Real P0_RT = P0 / RT; // used to transform equilibrium constant from pressure units
 
     // compute reaction forward rates & other reaction-sized arrays
     for (unsigned int rxn=0; rxn<this->n_reactions(); rxn++)
       {
 	const Reaction& reaction = this->reaction(rxn);
 
-	Real kfwd = (reaction.forward_rate())(T);
+	libMesh::Real kfwd = (reaction.forward_rate())(T);
 
-	Real keq = reaction.equilibrium_constant( P0_RT, h_RT_minus_s_R );
+	libMesh::Real keq = reaction.equilibrium_constant( P0_RT, h_RT_minus_s_R );
 
-	const Real kbkwd = kfwd/keq;
+	const libMesh::Real kbkwd = kfwd/keq;
 
 	net_reaction_rates[rxn] = reaction.compute_rate_of_progress( molar_densities, kfwd, kbkwd );
       }

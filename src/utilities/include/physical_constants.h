@@ -36,12 +36,12 @@ namespace GRINS
     /*!
      * Universal Gas Constant, R, expressed in J/(kmol-K)
      */
-    const Real R_universal = 8314.472;
+    const libMesh::Real R_universal = 8314.472;
 
     /*!
      * Avogadro's number, particles per mole.
      */
-    const Real Avogadro = 6.02214179e23;
+    const libMesh::Real Avogadro = 6.02214179e23;
 
   } // namespace Constants
 } // namespace GRINS

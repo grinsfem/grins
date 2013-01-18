@@ -28,7 +28,7 @@
 #ifndef GRINS_HEAT_CONDUCTION_H
 #define GRINS_HEAT_CONDUCTION_H
 
-#include "physics.h"
+#include "grins/physics.h"
 
 namespace GRINS
 {

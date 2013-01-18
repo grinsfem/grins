@@ -30,8 +30,8 @@
 
 namespace GRINS
 {
-  ChemicalSpecies::ChemicalSpecies( const std::string &name, const Real mol_wght, const Real h_form,
-				    const Real n_tr_dofs, const int charge )
+  ChemicalSpecies::ChemicalSpecies( const std::string &name, const libMesh::Real mol_wght, const libMesh::Real h_form,
+				    const libMesh::Real n_tr_dofs, const int charge )
     : _name      (name),
       _mol_wght  (mol_wght),
       _R         (Constants::R_universal/mol_wght),

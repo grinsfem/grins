@@ -59,7 +59,7 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual Real normal_value( const libMesh::FEMContext& context, const unsigned int qp );
+    virtual libMesh::Real normal_value( const libMesh::FEMContext& context, const unsigned int qp );
     
     //! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
     /*! This will leverage the FEMContext to get variable values and derivatives through the
@@ -72,7 +72,7 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual Real normal_derivative( const libMesh::FEMContext& context, const unsigned qp );
+    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const unsigned qp );
 
     //! If needed, returns the derivative with respect to other variables in the system.
     /*! By default, does nothing. User should reimplement is this is needed.
@@ -88,8 +88,8 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual Real normal_derivative( const libMesh::FEMContext& context, const unsigned int qp, 
-				    const GRINS::VariableIndex jac_var );
+    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const unsigned int qp, 
+					     const GRINS::VariableIndex jac_var );
 
     std::vector<GRINS::VariableIndex> get_other_jac_vars();
 

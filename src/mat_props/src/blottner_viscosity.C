@@ -31,7 +31,7 @@
 namespace GRINS
 {
   
-  BlottnerViscosity::BlottnerViscosity( Real a, Real b, Real c )
+  BlottnerViscosity::BlottnerViscosity( libMesh::Real a, libMesh::Real b, libMesh::Real c )
     : _a(a),
       _b(b),
       _c(c)
@@ -52,9 +52,9 @@ namespace GRINS
     return;
   }
 
-  Real BlottnerViscosity::mu( Real T ) const
+  libMesh::Real BlottnerViscosity::mu( libMesh::Real T ) const
   {
-    Real logT = std::log(T);
+    libMesh::Real logT = std::log(T);
     
     return 0.1*std::exp( (_a*logT + _b)*logT + _c );
   }

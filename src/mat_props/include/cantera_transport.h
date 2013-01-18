@@ -55,12 +55,12 @@ namespace GRINS
     CanteraTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CanteraTransport();
 
-    Real mu( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D ) const;
+	    std::vector<libMesh::Real>& D ) const;
 
   protected:
 

@@ -30,7 +30,7 @@
 
 namespace GRINS
 {
-  CEACurveFit::CEACurveFit( const std::vector<Real>& coeffs )
+  CEACurveFit::CEACurveFit( const std::vector<libMesh::Real>& coeffs )
     : _n_coeffs(10),
       _coefficients(coeffs)
   {
@@ -42,7 +42,7 @@ namespace GRINS
     return;
   }
 
-  unsigned int CEACurveFit::interval (const Real T) const
+  unsigned int CEACurveFit::interval (const libMesh::Real T) const
   {
     unsigned int interval = -1;
 

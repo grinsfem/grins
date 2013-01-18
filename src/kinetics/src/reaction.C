@@ -92,31 +92,31 @@ namespace GRINS
     _initialized = true;
   }
 
-  Real Reaction::equilibrium_constant( const Real P0_RT,
-				       const std::vector<Real>& h_RT_minus_s_R ) const
+  libMesh::Real Reaction::equilibrium_constant( const libMesh::Real P0_RT,
+				       const std::vector<libMesh::Real>& h_RT_minus_s_R ) const
   {
     libmesh_assert( this->initialized() );
     libmesh_assert_greater( P0_RT, 0.0 );
     libmesh_assert_equal_to( h_RT_minus_s_R.size(), this->n_species() );
     libmesh_assert_equal_to( _species_delta_stoichiometry.size(), this->n_species() );
 
-    Real exppower = 0.;
+    libMesh::Real exppower = 0.;
 
     for (unsigned int s=0; s < this->n_species(); s++)
       {
-	exppower += -( static_cast<Real>(_species_delta_stoichiometry[s])*
+	exppower += -( static_cast<libMesh::Real>(_species_delta_stoichiometry[s])*
 		       h_RT_minus_s_R[s] );
       }
 
     return std::pow( P0_RT, this->gamma() )*std::exp(exppower);
   }
 
-  void Reaction::equilibrium_constant_and_derivative( const Real T,
-						      const Real P0_RT,
-						      const std::vector<Real>& h_RT_minus_s_R,
-						      const std::vector<Real>& ddT_h_RT_minus_s_R,
-						      Real& keq,
-						      Real& dkeq_dT) const
+  void Reaction::equilibrium_constant_and_derivative( const libMesh::Real T,
+						      const libMesh::Real P0_RT,
+						      const std::vector<libMesh::Real>& h_RT_minus_s_R,
+						      const std::vector<libMesh::Real>& ddT_h_RT_minus_s_R,
+						      libMesh::Real& keq,
+						      libMesh::Real& dkeq_dT) const
   {
     libmesh_assert(this->initialized());
     libmesh_assert_greater( P0_RT, 0.0 );
@@ -128,28 +128,28 @@ namespace GRINS
     // get the equilibrium constant
     keq = this->equilibrium_constant( P0_RT, h_RT_minus_s_R );
 
-    Real ddT_exppower = 0.;
+    libMesh::Real ddT_exppower = 0.;
 
     for (unsigned int s=0; s<this->n_species(); s++)
-      ddT_exppower += -( static_cast<Real>(_species_delta_stoichiometry[s])*
+      ddT_exppower += -( static_cast<libMesh::Real>(_species_delta_stoichiometry[s])*
 			 ddT_h_RT_minus_s_R[s] );
 
     // compute its derivative
-    dkeq_dT = keq*(-static_cast<Real>(this->gamma())/T + ddT_exppower);
+    dkeq_dT = keq*(-static_cast<libMesh::Real>(this->gamma())/T + ddT_exppower);
 
     return;
   }
 
-  Real Reaction::compute_rate_of_progress( const std::vector<Real>& molar_densities,
-					   const Real kfwd, 
-					   const Real kbkwd ) const
+  libMesh::Real Reaction::compute_rate_of_progress( const std::vector<libMesh::Real>& molar_densities,
+					   const libMesh::Real kfwd, 
+					   const libMesh::Real kbkwd ) const
   {
     libmesh_assert_equal_to( molar_densities.size(), this->n_species() );
 
-    Real Rfwd = 0.0;
-    Real Rbkwd = 0.0;
-    Real kfwd_times_reactants = kfwd;
-    Real kbkwd_times_products = kbkwd;
+    libMesh::Real Rfwd = 0.0;
+    libMesh::Real Rbkwd = 0.0;
+    libMesh::Real kfwd_times_reactants = kfwd;
+    libMesh::Real kbkwd_times_products = kbkwd;
 
     for (unsigned int r=0; r<this->n_reactants(); r++)
       {
@@ -204,17 +204,17 @@ namespace GRINS
     return (Rfwd - Rbkwd);
   }
 
-  void Reaction::compute_rate_of_progress_and_derivatives( const std::vector<Real> &molar_densities,
-							   const std::vector<Real> &molar_mass,
-							   const Real kfwd, 
-							   const Real dkfwd_dT,
-							   const Real kbkwd,
-							   const Real dkbkwd_dT,
-							   Real& Rfwd,
-							   Real& dRfwd_dT,
-							   std::vector<Real>& dRfwd_drho, 
-							   Real& Rbkwd,
-							   Real& dRbkwd_dT, std::vector<Real> &dRbkwd_drho) const
+  void Reaction::compute_rate_of_progress_and_derivatives( const std::vector<libMesh::Real> &molar_densities,
+							   const std::vector<libMesh::Real> &molar_mass,
+							   const libMesh::Real kfwd, 
+							   const libMesh::Real dkfwd_dT,
+							   const libMesh::Real kbkwd,
+							   const libMesh::Real dkbkwd_dT,
+							   libMesh::Real& Rfwd,
+							   libMesh::Real& dRfwd_dT,
+							   std::vector<libMesh::Real>& dRfwd_drho, 
+							   libMesh::Real& Rbkwd,
+							   libMesh::Real& dRbkwd_dT, std::vector<libMesh::Real> &dRbkwd_drho) const
   {
     libmesh_assert_equal_to (molar_densities.size(), this->n_species());
     libmesh_assert_equal_to (molar_mass.size(),      this->n_species());
@@ -229,10 +229,10 @@ namespace GRINS
     std::fill( dRfwd_drho.begin(),  dRfwd_drho.end(),  0.);    
     std::fill( dRbkwd_drho.begin(), dRbkwd_drho.end(), 0.);
     
-    Real kfwd_times_reactants = kfwd;
-    Real kbkwd_times_products = kbkwd;
-    Real ddT_kfwd_times_reactants = dkfwd_dT;
-    Real ddT_kbkwd_times_products = dkbkwd_dT;
+    libMesh::Real kfwd_times_reactants = kfwd;
+    libMesh::Real kbkwd_times_products = kbkwd;
+    libMesh::Real ddT_kfwd_times_reactants = dkfwd_dT;
+    libMesh::Real ddT_kbkwd_times_products = dkbkwd_dT;
       
     // pre-fill the participating species partials with the rates
     for (unsigned int r=0; r< this->n_reactants(); r++)
@@ -248,12 +248,12 @@ namespace GRINS
     // Rfwd & derivatives
     for (unsigned int ro=0; ro < this->n_reactants(); ro++)
       {
-	const Real val = 
+	const libMesh::Real val = 
 	  std::pow( molar_densities[this->reactant_id(ro)],
 		    static_cast<int>(this->reactant_stoichiometric_coefficient(ro)) );
 	  
-	const Real dval = 
-	  ( static_cast<Real>(this->reactant_stoichiometric_coefficient(ro))*
+	const libMesh::Real dval = 
+	  ( static_cast<libMesh::Real>(this->reactant_stoichiometric_coefficient(ro))*
 	    std::pow( molar_densities[this->reactant_id(ro)],
 		      static_cast<int>(this->reactant_stoichiometric_coefficient(ro))-1 ) 
 	    / molar_mass[this->reactant_id(ro)] );
@@ -270,12 +270,12 @@ namespace GRINS
     // Rbkwd & derivatives
     for (unsigned int po=0; po< this->n_products(); po++)
       {
-	const Real val = 
+	const libMesh::Real val = 
 	  std::pow( molar_densities[this->product_id(po)],
 		    static_cast<int>(this->product_stoichiometric_coefficient(po)) );
 	  
-	const Real dval = 
-	  ( static_cast<Real>(this->product_stoichiometric_coefficient(po))*
+	const libMesh::Real dval = 
+	  ( static_cast<libMesh::Real>(this->product_stoichiometric_coefficient(po))*
 	    std::pow( molar_densities[this->product_id(po)],
 		      static_cast<int>(this->product_stoichiometric_coefficient(po))-1 )
 	    / molar_mass[this->product_id(po)] );
@@ -310,7 +310,7 @@ namespace GRINS
 	// contrbution from each collision partner
       case(ReactionType::THREE_BODY):
 	{
-	  Real summed_value=0.0;
+	  libMesh::Real summed_value=0.0;
 
 	  for (unsigned int s=0; s < this->n_species(); s++)
 	    {

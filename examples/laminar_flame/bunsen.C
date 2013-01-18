@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -35,8 +35,8 @@
 #include "ignite_initial_guess.h"
 
 // GRINS
-#include "simulation.h"
-#include "physics_factory.h"
+#include "grins/simulation.h"
+#include "grins/physics_factory.h"
 #include "cantera_singleton.h"
 
 // Cantera
@@ -50,7 +50,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 class BunsenBCFactory : public GRINS::BoundaryConditionsFactory
 {
@@ -83,7 +83,7 @@ protected:
 };
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
+libMesh::Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& system_name, const std::string& unknown_name );
 
 static libMesh::Point p_old = libMesh::Point( -1000000000.0, -1000000000.0, -1000000000.0 );
@@ -140,41 +140,41 @@ int main(int argc, char* argv[])
       
       Parameters &params = es->parameters;
 
-      Real& T_init = params.set<Real>("T_init");
+      libMesh::Real& T_init = params.set<libMesh::Real>("T_init");
       T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
 
-      Real& p0 = params.set<Real>("p0");
+      libMesh::Real& p0 = params.set<libMesh::Real>("p0");
       p0 = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/p0", 1.0e5);
 
 #ifdef GRINS_HAVE_CANTERA
       Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance(libMesh_inputfile);
 #endif
 
-      Real& w_H2 = params.set<Real>( "w_H2" );
+      libMesh::Real& w_H2 = params.set<libMesh::Real>( "w_H2" );
       w_H2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 0 );
 
-      Real& w_O2 = params.set<Real>( "w_O2" );
+      libMesh::Real& w_O2 = params.set<libMesh::Real>( "w_O2" );
       w_O2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 1 );
 
-      Real& w_H2O = params.set<Real>( "w_H2O" );
+      libMesh::Real& w_H2O = params.set<libMesh::Real>( "w_H2O" );
       w_H2O = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 2 );
 
-      Real& w_H = params.set<Real>( "w_H" );
+      libMesh::Real& w_H = params.set<libMesh::Real>( "w_H" );
       w_H = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 3 );
 
-      Real& w_O = params.set<Real>( "w_O" );
+      libMesh::Real& w_O = params.set<libMesh::Real>( "w_O" );
       w_O = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 4 );
 
-      Real& w_OH = params.set<Real>( "w_OH" );
+      libMesh::Real& w_OH = params.set<libMesh::Real>( "w_OH" );
       w_OH = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 5 );
 
-      Real& w_HO2 = params.set<Real>( "w_HO2" );
+      libMesh::Real& w_HO2 = params.set<libMesh::Real>( "w_HO2" );
       w_HO2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 6 );
 
-      Real& w_H2O2 = params.set<Real>( "w_H2O2" );
+      libMesh::Real& w_H2O2 = params.set<libMesh::Real>( "w_H2O2" );
       w_H2O2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 7 );
 
-      Real& w_N2 = params.set<Real>( "w_N2" );
+      libMesh::Real& w_N2 = params.set<libMesh::Real>( "w_N2" );
       w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_1", 0.0, 8 );
 
       std::cout << "==============================================" << std::endl;
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
       libMesh::System& system = es->get_system(system_name);
       GRINS::MultiphysicsSystem& ms_system = libmesh_cast_ref<GRINS::MultiphysicsSystem&>( system );
 
-      Bunsen::IgniteInitialGuess<Real> ignite( libMesh_inputfile, ms_system, 
+      Bunsen::IgniteInitialGuess<libMesh::Real> ignite( libMesh_inputfile, ms_system, 
 					       ms_system );
 
       es->reinit();
@@ -240,26 +240,26 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point& p, const Parameters &params, 
+libMesh::Real initial_values( const Point& p, const Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
-  Real value = 0.0;
+  libMesh::Real value = 0.0;
 
-  const Real r = p(0);
-  const Real z = p(1);
-  Real T = 0.0;
+  const libMesh::Real r = p(0);
+  const libMesh::Real z = p(1);
+  libMesh::Real T = 0.0;
 
   /*
   if( z > 0.02 && z <= 0.04 )
-    T = (298 - params.get<Real>("T_init"))/0.02*(z-0.02) + params.get<Real>("T_init");
+    T = (298 - params.get<libMesh::Real>("T_init"))/0.02*(z-0.02) + params.get<libMesh::Real>("T_init");
   else if( 0.005 <= z && z <= 0.02 )
-    T = params.get<Real>("T_init");
+    T = params.get<libMesh::Real>("T_init");
   else
   */
     T = 298.0;
 
-  Real p0 = 0.0;
-  p0 = params.get<Real>("p0");
+  libMesh::Real p0 = 0.0;
+  p0 = params.get<libMesh::Real>("p0");
 
   /*
   if( unknown_name.find( "w_" ) != std::string::npos )
@@ -300,7 +300,7 @@ Real initial_values( const Point& p, const Parameters &params,
       /*
       else
 	{
-	  std::vector<Real> Y(9,0.0);
+	  std::vector<libMesh::Real> Y(9,0.0);
 	  Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance();
 	  cantera.getMassFractions(&Y[0]);
 	  value = Y[ cantera.speciesIndex( unknown_name ) ];
@@ -324,16 +324,16 @@ Real initial_values( const Point& p, const Parameters &params,
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_dirichlet( )
 {
-  const Real delta = 0.0005;
-  const Real u0 = 0.12;
+  const libMesh::Real delta = 0.0005;
+  const libMesh::Real u0 = 0.12;
 
   GRINS::DBCContainer cont;
   {
     cont.add_var_name( "v" );
     cont.add_bc_id( 1 );
     
-    const Real factor = 1.0;
-    const Real r0 = 0.002;
+    const libMesh::Real factor = 1.0;
+    const libMesh::Real r0 = 0.002;
 
     std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     
@@ -356,8 +356,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     cont3.add_var_name( "v" );
     cont3.add_bc_id( 3 );
     
-    const Real factor = -1.0;
-    const Real r0 = 0.0025;
+    const libMesh::Real factor = -1.0;
+    const libMesh::Real r0 = 0.0025;
 
     std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     

@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -100,7 +100,7 @@ namespace Bunsen
   NumericType IgniteInitialGuess<NumericType>::component( const libMesh::FEMContext& context, 
 							  unsigned int component,
 							  const libMesh::Point& p,
-							  Real /*time*/ )
+							  libMesh::Real /*time*/ )
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
@@ -112,10 +112,10 @@ namespace Bunsen
 
     const GRINS::VariableIndex restart_var = _var_map.find(component)->second;
 
-    Real value = 0.0;
+    libMesh::Real value = 0.0;
     
-    const Real r = p(0);
-    const Real z = p(1);
+    const libMesh::Real r = p(0);
+    const libMesh::Real z = p(1);
     
     if( component == _T_var )
       {
@@ -140,5 +140,5 @@ namespace Bunsen
   }
 
   /* ------------------------- Instantiate -------------------------*/
-  template class IgniteInitialGuess<Real>;
+  template class IgniteInitialGuess<libMesh::Real>;
 } // namespace Bunsen

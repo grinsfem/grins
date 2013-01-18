@@ -46,7 +46,7 @@
 #include "grins/heat_transfer_adjoint_stab.h"
 #include "grins/axisym_heat_transfer.h"
 #include "grins/boussinesq_buoyancy.h"
-#include "axisym_boussinesq_buoyancy.h"
+#include "grins/axisym_boussinesq_buoyancy.h"
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"

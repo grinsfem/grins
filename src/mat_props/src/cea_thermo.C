@@ -60,9 +60,9 @@ namespace GRINS
     return;
   }
 
-  Real CEAThermodynamics::cp( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::cp( libMesh::Real T, unsigned int species ) const
   {
-    Real cp = 0.0;
+    libMesh::Real cp = 0.0;
 
     if( T < 200.1 )
       {
@@ -76,11 +76,11 @@ namespace GRINS
     return cp;
   }
 
-  Real CEAThermodynamics::cp( Real T, const std::vector<Real>& mass_fractions ) const
+  libMesh::Real CEAThermodynamics::cp( libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _species_curve_fits.size() );
 
-    Real cp = 0.0;
+    libMesh::Real cp = 0.0;
 
     for( unsigned int s = 0; s < _species_curve_fits.size(); s++ )
       {
@@ -90,12 +90,12 @@ namespace GRINS
     return cp;
   }
 
-  Real CEAThermodynamics::h( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::h( libMesh::Real T, unsigned int species ) const
   {
     return this->_chem_mixture.R(species)*T*this->h_over_RT(T,species);
   }
 
-  void CEAThermodynamics::h( Real T, std::vector<Real>& h ) const
+  void CEAThermodynamics::h( libMesh::Real T, std::vector<libMesh::Real>& h ) const
   {
     libmesh_assert_equal_to( h.size(), _species_curve_fits.size() );
 
@@ -107,7 +107,7 @@ namespace GRINS
     return;
   }
 
-  Real CEAThermodynamics::cp_over_R( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::cp_over_R( libMesh::Real T, unsigned int species ) const
   {
     libmesh_assert_less( species, _species_curve_fits.size() );
     libmesh_assert_less( _species_curve_fits[species]->interval(T),
@@ -115,17 +115,17 @@ namespace GRINS
 
     const unsigned int interval = this->_species_curve_fits[species]->interval(T);
     
-    const Real *a = this->_species_curve_fits[species]->coefficients(interval);
+    const libMesh::Real *a = this->_species_curve_fits[species]->coefficients(interval);
     
-    const Real T2 = T*T;
-    const Real T3 = T2*T;
-    const Real T4 = T2*T2;
+    const libMesh::Real T2 = T*T;
+    const libMesh::Real T3 = T2*T;
+    const libMesh::Real T4 = T2*T2;
 
     /* cp/R =  a0*T^-2   + a1*T^-1     + a2     + a3*T   + a4*T^2   + a5*T^3  + a6*T^4 */
     return a[0]/T2 + a[1]/T + a[2] + a[3]*T + a[4]*T2 + a[5]*T3 + a[6]*T4;
   }
 
-  Real CEAThermodynamics::h_over_RT( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::h_over_RT( libMesh::Real T, unsigned int species ) const
   {
     libmesh_assert_less( species, _species_curve_fits.size() );
     libmesh_assert_less( _species_curve_fits[species]->interval(T),
@@ -133,18 +133,18 @@ namespace GRINS
 
     const unsigned int interval = this->_species_curve_fits[species]->interval(T);
     
-    const Real *a = this->_species_curve_fits[species]->coefficients(interval);
+    const libMesh::Real *a = this->_species_curve_fits[species]->coefficients(interval);
     
-    const Real lnT = std::log(T);
-    const Real T2  = T*T;
-    const Real T3  = T2*T;
-    const Real T4  = T2*T2;
+    const libMesh::Real lnT = std::log(T);
+    const libMesh::Real T2  = T*T;
+    const libMesh::Real T3  = T2*T;
+    const libMesh::Real T4  = T2*T2;
 
     /* h/RT = -a0*T^-2   + a1*T^-1*lnT + a2     + a3*T/2 + a4*T^2/3 + a5*T^3/4 + a6*T^4/5 + a8/T */
     return -a[0]/T2 + a[1]*lnT/T + a[2] + a[3]*T/2.0 + a[4]*T2/3.0 + a[5]*T3/4.0 + a[6]*T4/5.0 + a[8]/T;
   }
 
-  Real CEAThermodynamics::s_over_R( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::s_over_R( libMesh::Real T, unsigned int species ) const
   {
     libmesh_assert_less( species, _species_curve_fits.size() );
     libmesh_assert_less( _species_curve_fits[species]->interval(T),
@@ -152,18 +152,18 @@ namespace GRINS
 
     const unsigned int interval = this->_species_curve_fits[species]->interval(T);
     
-    const Real *a = this->_species_curve_fits[species]->coefficients(interval);
+    const libMesh::Real *a = this->_species_curve_fits[species]->coefficients(interval);
     
-    const Real lnT = std::log(T);
-    const Real T2  = T*T;
-    const Real T3  = T2*T;
-    const Real T4  = T2*T2;
+    const libMesh::Real lnT = std::log(T);
+    const libMesh::Real T2  = T*T;
+    const libMesh::Real T3  = T2*T;
+    const libMesh::Real T4  = T2*T2;
 
     /* s/R = -a0*T^-2/2 - a1*T^-1     + a2*lnT + a3*T   + a4*T^2/2 + a5*T^3/3 + a6*T^4/4 + a9 */
     return -a[0]/T2/2.0 - a[1]/T + a[2]*lnT + a[3]*T + a[4]*T2/2.0 + a[5]*T3/3.0 + a[6]*T4/4.0 + a[9];
   }
 
-  Real CEAThermodynamics::h_RT_minus_s_R( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::h_RT_minus_s_R( libMesh::Real T, unsigned int species ) const
   {
     libmesh_assert_less( species, _species_curve_fits.size() );
     libmesh_assert_less( _species_curve_fits[species]->interval(T),
@@ -171,19 +171,19 @@ namespace GRINS
 
     const unsigned int interval = this->_species_curve_fits[species]->interval(T);
     
-    const Real *a = this->_species_curve_fits[species]->coefficients(interval);
+    const libMesh::Real *a = this->_species_curve_fits[species]->coefficients(interval);
     
-    const Real lnT = std::log(T);
-    const Real T2  = T*T;
-    const Real T3  = T2*T;
-    const Real T4  = T2*T2;
+    const libMesh::Real lnT = std::log(T);
+    const libMesh::Real T2  = T*T;
+    const libMesh::Real T3  = T2*T;
+    const libMesh::Real T4  = T2*T2;
 
     /* h/RT = -a[0]/T2    + a[1]*lnT/T + a[2]     + a[3]*T/2. + a[4]*T2/3. + a[5]*T3/4. + a[6]*T4/5. + a[8]/T,
        s/R  = -a[0]/T2/2. - a[1]/T     + a[2]*lnT + a[3]*T    + a[4]*T2/2. + a[5]*T3/3. + a[6]*T4/4. + a[9]   */
     return -a[0]/T2/2.0 + (a[1] + a[8])/T + a[1]*lnT/T - a[2]*lnT + (a[2] - a[9]) - a[3]*T/2.0 - a[4]*T2/6.0 - a[5]*T3/12.0 - a[6]*T4/20.0;
   }
 
-  void CEAThermodynamics::h_RT_minus_s_R( Real T, std::vector<Real>& h_RT_minus_s_R ) const
+  void CEAThermodynamics::h_RT_minus_s_R( libMesh::Real T, std::vector<libMesh::Real>& h_RT_minus_s_R ) const
   {
     libmesh_assert_equal_to( h_RT_minus_s_R.size(), _species_curve_fits.size() );
 
@@ -201,8 +201,8 @@ namespace GRINS
 
     std::string name;
     unsigned int n_int;
-    std::vector<Real> coeffs;
-    Real h_form, val;
+    std::vector<libMesh::Real> coeffs;
+    libMesh::Real h_form, val;
 
     _species_curve_fits.resize( _chem_mixture.species_list().size(), NULL );
 

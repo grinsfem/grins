@@ -72,7 +72,7 @@ int main()
   const double mu = cantera_trans.mu(cache,0);
   const double k = cantera_trans.k(cache,0);
   
-  std::vector<Real> D(5,0.0);
+  std::vector<libMesh::Real> D(5,0.0);
 
   cantera_trans.D(cache, 0, D);
 
@@ -82,7 +82,7 @@ int main()
 
   const double mu_reg = 4.2134235819759682e-05;
   const double k_reg = 5.7138665373733508e-02;
-  std::vector<Real> D_reg(5,0.0);
+  std::vector<libMesh::Real> D_reg(5,0.0);
   D_reg[0] = 1.7611544183904180e-04;
   D_reg[1] = 1.7169898621123060e-04;
   D_reg[2] = 1.7379080956310527e-04;

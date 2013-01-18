@@ -39,17 +39,17 @@ namespace GRINS
   {
   public:
 
-    BlottnerViscosity( Real a, Real b, Real c );
+    BlottnerViscosity( libMesh::Real a, libMesh::Real b, libMesh::Real c );
     BlottnerViscosity( const GetPot& input );
     ~BlottnerViscosity();
 
-    Real mu( Real T ) const;
+    libMesh::Real mu( libMesh::Real T ) const;
     
   protected:
 
-    const Real _a;
-    const Real _b;
-    const Real _c;
+    const libMesh::Real _a;
+    const libMesh::Real _b;
+    const libMesh::Real _c;
     
   private:
     

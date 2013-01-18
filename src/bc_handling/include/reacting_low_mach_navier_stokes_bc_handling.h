@@ -29,7 +29,7 @@
 #define GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
 // GRINS
-#include "low_mach_navier_stokes_bc_handling.h"
+#include "grins/low_mach_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {

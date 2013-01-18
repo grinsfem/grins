@@ -30,7 +30,7 @@
 #include <iostream>
 
 // GRINS
-#include "simulation.h"
+#include "grins/simulation.h"
 
 // GRVY
 #ifdef HAVE_GRVY
@@ -38,7 +38,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 // Function for getting initial temperature field
 Real initial_values( const Point& p, const Parameters &params, 

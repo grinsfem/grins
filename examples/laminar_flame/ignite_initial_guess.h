@@ -29,7 +29,7 @@
 #define BUNSEN_IGNITE_INITIAL_GUESS_H
 
 // GRINS
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 
 namespace Bunsen
 {
@@ -51,17 +51,17 @@ namespace Bunsen
 
     virtual NumericType operator()( const libMesh::FEMContext& context, 
 				    const libMesh::Point& p,
-				    const Real time = 0. );
+				    const libMesh::Real time = 0. );
 
     virtual void operator()( const libMesh::FEMContext& context, 
 			     const libMesh::Point& p,
-			     const Real time,
+			     const libMesh::Real time,
 			     libMesh::DenseVector<NumericType>& output );
 
     virtual NumericType component( const libMesh::FEMContext& context, 
 				   unsigned int i,
 				   const libMesh::Point& p,
-				   Real time=0. );
+				   libMesh::Real time=0. );
 
   protected:
 
@@ -73,12 +73,12 @@ namespace Bunsen
 
     const GRINS::VariableIndex _T_var;
 
-    const Real _r_min;
-    const Real _r_max;
-    const Real _z_min;
-    const Real _z_max;
+    const libMesh::Real _r_min;
+    const libMesh::Real _r_max;
+    const libMesh::Real _z_min;
+    const libMesh::Real _z_max;
 
-    const Real _T_value;
+    const libMesh::Real _T_value;
 
   private:
 
@@ -99,7 +99,7 @@ namespace Bunsen
   inline
   void IgniteInitialGuess<NumericType>::operator()( const libMesh::FEMContext& context,
 						    const libMesh::Point& p,
-						    const Real time,
+						    const libMesh::Real time,
 						    libMesh::DenseVector<NumericType>& output )
   {
     for( unsigned int i = 0; i != output.size(); i++ )
@@ -113,7 +113,7 @@ namespace Bunsen
   inline
   NumericType IgniteInitialGuess<NumericType>::operator()( const libMesh::FEMContext&, 
 							   const libMesh::Point&,
-							   const Real )
+							   const libMesh::Real )
   {
     libmesh_error();
     return 0.0; //dummy

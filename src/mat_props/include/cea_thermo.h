@@ -50,43 +50,43 @@ namespace GRINS
     CEAThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CEAThermodynamics();
 
-    Real cp( Real T, unsigned int species ) const;
+    libMesh::Real cp( libMesh::Real T, unsigned int species ) const;
 
-    Real cp( Real T, const std::vector<Real>& mass_fractions ) const;
+    libMesh::Real cp( libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions ) const;
 
-    Real cv( Real T, unsigned int species ) const;
+    libMesh::Real cv( libMesh::Real T, unsigned int species ) const;
 
-    Real cv( Real T, const std::vector<Real>& mass_fractions ) const;
+    libMesh::Real cv( libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions ) const;
 
-    Real h( Real T, unsigned int species ) const;
+    libMesh::Real h( libMesh::Real T, unsigned int species ) const;
 
-    void h( Real T, std::vector<Real>& h ) const;
+    void h( libMesh::Real T, std::vector<libMesh::Real>& h ) const;
 
-    Real h_RT_minus_s_R( Real T, unsigned int species ) const;
+    libMesh::Real h_RT_minus_s_R( libMesh::Real T, unsigned int species ) const;
 
-    void h_RT_minus_s_R( Real T, std::vector<Real>& h_RT_minus_s_R ) const;
+    void h_RT_minus_s_R( libMesh::Real T, std::vector<libMesh::Real>& h_RT_minus_s_R ) const;
 
-    Real cp_over_R( Real T, unsigned int species ) const;
+    libMesh::Real cp_over_R( libMesh::Real T, unsigned int species ) const;
 
-    Real h_over_RT( Real T, unsigned int species ) const;
+    libMesh::Real h_over_RT( libMesh::Real T, unsigned int species ) const;
 
-    Real s_over_R( Real T, unsigned int species ) const;
+    libMesh::Real s_over_R( libMesh::Real T, unsigned int species ) const;
 
     /* -------------- Ideal Gas Mixture Interaface Methods --------------*/
 
-    Real cp( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
-    Real cv( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
      
-    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
+    libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
-    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
+    void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
 
-    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+    libMesh::Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
 			 unsigned int species ) const;
 
     void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
-			 std::vector<Real>& h_RT_minus_s_R) const;
+			 std::vector<libMesh::Real>& h_RT_minus_s_R) const;
 
   protected:
 
@@ -98,7 +98,7 @@ namespace GRINS
 
     std::vector<CEACurveFit*> _species_curve_fits;
 
-    std::vector<Real> _cp_at_200p1;
+    std::vector<libMesh::Real> _cp_at_200p1;
 
   private:
     
@@ -109,29 +109,29 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
   
   inline
-  Real CEAThermodynamics::cv( Real T, unsigned int species ) const
+  libMesh::Real CEAThermodynamics::cv( libMesh::Real T, unsigned int species ) const
   { return this->cp(T,species) - _chem_mixture.R(species); }
 
   inline
-  Real CEAThermodynamics::cv( Real T, const std::vector<Real>& mass_fractions ) const
+  libMesh::Real CEAThermodynamics::cv( libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions ) const
   { return this->cp(T,mass_fractions) - _chem_mixture.R(mass_fractions); }
 
   inline
-  Real CEAThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CEAThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
   {
     return this->cp( cache.get_cached_values(Cache::TEMPERATURE)[qp],
 		     cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
   }
 
   inline
-  Real CEAThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CEAThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
   {
     return this->cv( cache.get_cached_values(Cache::TEMPERATURE)[qp],
 		     cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
   }
      
   inline
-  Real CEAThermodynamics::h(const CachedValues& cache, unsigned int qp, 
+  libMesh::Real CEAThermodynamics::h(const CachedValues& cache, unsigned int qp, 
 			    unsigned int species) const
   {
     return this->h( cache.get_cached_values(Cache::TEMPERATURE)[qp], species );
@@ -139,14 +139,14 @@ namespace GRINS
 
   inline
   void CEAThermodynamics::h(const CachedValues& cache, unsigned int qp,
-			    std::vector<Real>& h) const
+			    std::vector<libMesh::Real>& h) const
   {
     this->h( cache.get_cached_values(Cache::TEMPERATURE)[qp], h );
     return;
   }
 
   inline
-  Real CEAThermodynamics::h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
+  libMesh::Real CEAThermodynamics::h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
 					  unsigned int species ) const
   {
     return this->h_RT_minus_s_R( cache.get_cached_values(Cache::TEMPERATURE)[qp],
@@ -155,7 +155,7 @@ namespace GRINS
 
   inline
   void CEAThermodynamics::h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
-					  std::vector<Real>& h_RT_minus_s_R) const
+					  std::vector<libMesh::Real>& h_RT_minus_s_R) const
   {
     this->h_RT_minus_s_R( cache.get_cached_values(Cache::TEMPERATURE)[qp],
 			  h_RT_minus_s_R );

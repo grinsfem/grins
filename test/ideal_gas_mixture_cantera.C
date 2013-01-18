@@ -73,7 +73,7 @@ int main()
   const double mu = gas.mu( cache, 0 );
   const double k = gas.k( cache, 0 );
   
-  std::vector<Real> D(5,0.0);
+  std::vector<libMesh::Real> D(5,0.0);
 
   gas.D( cache, 0, D );
 
@@ -133,7 +133,7 @@ int main()
 
   const double mu_reg = 5.4816457619629627e-05;
   const double k_reg = 9.2830809315384427e-02;
-  std::vector<Real> D_reg(5,0.0);
+  std::vector<libMesh::Real> D_reg(5,0.0);
   D_reg[0] = 3.4493708884909694e-04;
   D_reg[1] = 3.3630005706895442e-04;
   D_reg[2] = 3.4039101336823794e-04;

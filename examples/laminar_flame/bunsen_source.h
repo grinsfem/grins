@@ -29,7 +29,7 @@
 #define GRINS_BUNSEN_SOURCE_H
 
 // GRINS
-#include "physics.h"
+#include "grins/physics.h"
 
 namespace Bunsen
 {
@@ -50,11 +50,11 @@ namespace Bunsen
 
   protected:
 
-    const Real _value;
+    const libMesh::Real _value;
 
-    const Real _r_max;
-    const Real _z_min;
-    const Real _z_max;
+    const libMesh::Real _r_max;
+    const libMesh::Real _z_min;
+    const libMesh::Real _z_max;
 
     GRINS::VariableIndex _T_var;
     std::string _T_var_name;

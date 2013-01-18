@@ -49,22 +49,22 @@ namespace GRINS
     CanteraThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~CanteraThermodynamics();
 
-    Real cp( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
-    Real cv( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
      
-    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
+    libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
-    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
+    void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
 
     //! This is just a dummy for the GRINS interface. Returns 0.0.
     /*! \todo Should look into actually implementing this because the functionality is probably there. */
-    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
+    libMesh::Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
 
     //! This is just a dummy for the GRINS interface. Returns 0.0.
     /*! \todo Should look into actually implementing this because the functionality is probably there. */
     void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
-			 std::vector<Real>& h_RT_minus_s_R) const;
+			 std::vector<libMesh::Real>& h_RT_minus_s_R) const;
 
   protected:
 
@@ -80,7 +80,7 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  Real CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/,
+  libMesh::Real CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/,
 					      unsigned int /*qp*/, 
 					      unsigned int /*species*/ ) const
   {
@@ -89,7 +89,7 @@ namespace GRINS
 
   inline
   void CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/, unsigned int /*qp*/,
-					      std::vector<Real>& h_RT_minus_s_R ) const
+					      std::vector<libMesh::Real>& h_RT_minus_s_R ) const
   {
     std::fill( h_RT_minus_s_R.begin(), h_RT_minus_s_R.end(), 0.0 );
     return;

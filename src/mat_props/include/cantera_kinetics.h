@@ -50,7 +50,7 @@ namespace GRINS
     ~CanteraKinetics();
 
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<Real>& omega_dot ) const;
+		    std::vector<libMesh::Real>& omega_dot ) const;
 
   protected:
 

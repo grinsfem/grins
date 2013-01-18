@@ -28,7 +28,7 @@
 
 #include "heat_conduction.h"
 
-#include "heat_transfer_bc_handling.h"
+#include "grins/heat_transfer_bc_handling.h"
 
 namespace GRINS
 {

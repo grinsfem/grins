@@ -45,7 +45,7 @@
 
 namespace
 {
-  static Threads::spin_mutex cantera_mutex;
+  static libMesh::Threads::spin_mutex cantera_mutex;
 }
 
 namespace GRINS

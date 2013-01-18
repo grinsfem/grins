@@ -42,11 +42,11 @@ namespace GRINS
     BlottnerMixture( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~BlottnerMixture();
 
-    Real mu( const CachedValues& cache, unsigned int qp,
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp,
 	     unsigned int species ) const;
 
-    Real mu( Real T, unsigned int species ) const;
-    Real mu( Real T ) const;
+    libMesh::Real mu( libMesh::Real T, unsigned int species ) const;
+    libMesh::Real mu( libMesh::Real T ) const;
 
   protected:
 
@@ -59,7 +59,7 @@ namespace GRINS
   };
 
   inline
-  Real BlottnerMixture::mu( const CachedValues& cache, unsigned int qp,
+  libMesh::Real BlottnerMixture::mu( const CachedValues& cache, unsigned int qp,
 			    unsigned int species ) const
   { return this->mu( cache.get_cached_values(Cache::TEMPERATURE)[qp], species ) };
 

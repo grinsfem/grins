@@ -69,11 +69,11 @@ namespace GRINS
     return;
   }
 
-  Real ChemicalMixture::R( const std::vector<Real>& mass_fractions ) const
+  libMesh::Real ChemicalMixture::R( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
     
-    Real R = 0.0;
+    libMesh::Real R = 0.0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
       {
 	R += mass_fractions[s]*this->R(s);
@@ -82,11 +82,11 @@ namespace GRINS
     return R;
   }
 
-  Real ChemicalMixture::M( const std::vector<Real>& mass_fractions ) const
+  libMesh::Real ChemicalMixture::M( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
 
-    Real M = 0.0;
+    libMesh::Real M = 0.0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
       {
 	M += mass_fractions[s]/(this->M(s));
@@ -95,8 +95,8 @@ namespace GRINS
     return 1.0/M;
   }
 
-  void ChemicalMixture:: X( Real M, const std::vector<Real>& mass_fractions, 
-			    std::vector<Real>& mole_fractions ) const
+  void ChemicalMixture:: X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+			    std::vector<libMesh::Real>& mole_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
 
@@ -115,7 +115,7 @@ namespace GRINS
     GRINS::skip_comment_lines(in, '#');
 
     std::string name;
-    Real mol_wght, h_form, n_tr_dofs;
+    libMesh::Real mol_wght, h_form, n_tr_dofs;
     int charge;
 
     _chemical_species.resize( _species_list.size() );

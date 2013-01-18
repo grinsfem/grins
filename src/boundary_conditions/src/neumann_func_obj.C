@@ -41,7 +41,7 @@ namespace GRINS
     return;
   }
 
-  Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const unsigned int )
+  libMesh::Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const unsigned int )
   {
     // By default, does nothing.
     return 0.0;
@@ -56,13 +56,13 @@ namespace GRINS
   }
   
 
-  Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned )
+  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned )
   {
     // By default, does nothing.
     return 0.0;
   }
 
-  Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned int, 
+  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned int, 
 						 const GRINS::VariableIndex )
   {
     // By default, does nothing.

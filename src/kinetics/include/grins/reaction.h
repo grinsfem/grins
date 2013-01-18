@@ -111,10 +111,10 @@ namespace GRINS
     //!
     void set_efficiency( const std::string &,
 			 const unsigned int s,
-			 const Real efficiency);
+			 const libMesh::Real efficiency);
 
     //!
-    Real efficiency( const unsigned int s) const;
+    libMesh::Real efficiency( const unsigned int s) const;
 
     //! Computes derived quantities.
     void initialize();    
@@ -123,35 +123,35 @@ namespace GRINS
     int gamma() const;
     
     //!
-    Real equilibrium_constant( const Real P0_RT,
-			       const std::vector<Real>& h_RT_minus_s_R ) const;
+    libMesh::Real equilibrium_constant( const libMesh::Real P0_RT,
+			       const std::vector<libMesh::Real>& h_RT_minus_s_R ) const;
 
     //!
-    void equilibrium_constant_and_derivative( const Real T,
-					      const Real P0_RT,
-					      const std::vector<Real>& h_RT_minus_s_R,
-					      const std::vector<Real>& ddT_h_RT_minus_s_R,
-					      Real& keq,
-					      Real& dkeq_dT) const;
+    void equilibrium_constant_and_derivative( const libMesh::Real T,
+					      const libMesh::Real P0_RT,
+					      const std::vector<libMesh::Real>& h_RT_minus_s_R,
+					      const std::vector<libMesh::Real>& ddT_h_RT_minus_s_R,
+					      libMesh::Real& keq,
+					      libMesh::Real& dkeq_dT) const;
 
     //!
-    Real compute_rate_of_progress( const std::vector<Real>& molar_densities,
-				   const Real kfwd, 
-				   const Real kbkwd ) const;
+    libMesh::Real compute_rate_of_progress( const std::vector<libMesh::Real>& molar_densities,
+				   const libMesh::Real kfwd, 
+				   const libMesh::Real kbkwd ) const;
     
     //!
-    void compute_rate_of_progress_and_derivatives( const std::vector<Real>& molar_densities,
-						   const std::vector<Real>& molar_mass,
-						   const Real kfwd,  
-						   const Real dkfwd_dT, 
-						   const Real kbkwd,
-						   const Real dkbkwd_dT,
-						   Real& Rfwd,
-						   Real& dRfwd_dT,
-						   std::vector<Real>& dRfwd_drho, 
-						   Real& Rbkwd,
-						   Real& dRbkwd_dT,
-						   std::vector<Real>& dRbkwd_drho) const;
+    void compute_rate_of_progress_and_derivatives( const std::vector<libMesh::Real>& molar_densities,
+						   const std::vector<libMesh::Real>& molar_mass,
+						   const libMesh::Real kfwd,  
+						   const libMesh::Real dkfwd_dT, 
+						   const libMesh::Real kbkwd,
+						   const libMesh::Real dkbkwd_dT,
+						   libMesh::Real& Rfwd,
+						   libMesh::Real& dRfwd_dT,
+						   std::vector<libMesh::Real>& dRfwd_drho, 
+						   libMesh::Real& Rbkwd,
+						   libMesh::Real& dRbkwd_dT,
+						   std::vector<libMesh::Real>& dRbkwd_drho) const;
 
     //! Return const reference to the forward rate object
     const ArrheniusRate& forward_rate() const;
@@ -176,7 +176,7 @@ namespace GRINS
     std::vector<unsigned int> _product_ids;
     std::vector<unsigned int> _reactant_stoichiometry;
     std::vector<unsigned int> _product_stoichiometry;
-    std::vector<Real>         _efficiencies;
+    std::vector<libMesh::Real>         _efficiencies;
     std::vector<unsigned int> _species_reactant_stoichiometry;
     std::vector<unsigned int> _species_product_stoichiometry;
     std::vector<int>          _species_delta_stoichiometry;
@@ -311,7 +311,7 @@ namespace GRINS
   inline
   void Reaction::set_efficiency (const std::string &,
 				 const unsigned int s,
-				 const Real efficiency)
+				 const libMesh::Real efficiency)
   {
     libmesh_assert_less(s, this->n_species());
     libmesh_assert_less(s, _efficiencies.size());
@@ -321,7 +321,7 @@ namespace GRINS
   }
 
   inline
-  Real Reaction::efficiency( const unsigned int s ) const
+  libMesh::Real Reaction::efficiency( const unsigned int s ) const
   {
     libmesh_assert_less(s, _efficiencies.size());
     libmesh_assert_equal_to(_type, ReactionType::THREE_BODY);

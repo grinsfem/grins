@@ -53,9 +53,9 @@ namespace GRINS
     
     //! Constrctor
     ChemicalSpecies( const std::string &name, 
-		     const Real        mol_wght,
-		     const Real        h_form,
-		     const Real        n_tr_dofs,
+		     const libMesh::Real        mol_wght,
+		     const libMesh::Real        h_form,
+		     const libMesh::Real        n_tr_dofs,
 		     const int         charge );
 
     //! Destructor
@@ -85,7 +85,7 @@ namespace GRINS
       
     //!Returns the molar mass in (g/mol) or (kg/kmol).
     inline
-    Real molar_mass() const
+    libMesh::Real molar_mass() const
     { return _mol_wght; }
 
     //! Returns the species ideal gas constant in [J/kg-K]
@@ -95,17 +95,17 @@ namespace GRINS
      * \f$ M \f$ is the species molar mass.
      */
     inline
-    Real gas_constant() const 
+    libMesh::Real gas_constant() const 
     { return _R; }
 
     //! Returns formation enthalpy in units of [J/kg]
     inline
-    Real formation_enthalpy() const 
+    libMesh::Real formation_enthalpy() const 
     { return _h_form; }
     
     //! Returns number of translational degrees of freedom
     inline
-    Real n_tr_dofs() const 
+    libMesh::Real n_tr_dofs() const 
     { return _n_tr_dofs; }
     
     //! Returns electrical charge number
@@ -128,7 +128,7 @@ namespace GRINS
 
     //!Characteristic vibrational temperature [K].
     inline
-    const std::vector<Real> & theta_v() const
+    const std::vector<libMesh::Real> & theta_v() const
     { return _theta_v; }
 
     //! Degeneracies for each vibrational mode.
@@ -138,7 +138,7 @@ namespace GRINS
 
     //! Characteristic electronic excitation temperatures [K].
     inline
-    const std::vector<Real> & theta_e() const 
+    const std::vector<libMesh::Real> & theta_e() const 
     { return _theta_e; }
 
     //! Degeneracies for each electronic modes.
@@ -168,28 +168,28 @@ namespace GRINS
     const std::string _name;
 
     //! Molecular weight (or molar mass) in units of [g/mol] or [kg/kmol]
-    const Real _mol_wght;
+    const libMesh::Real _mol_wght;
 
     //! Gas constant in units of [J/kg-K]
-    const Real _R;
+    const libMesh::Real _R;
 
     //! Formation enthalpy in units of [J/kg]
-    const Real _h_form;
+    const libMesh::Real _h_form;
 
     //! Number of translational degrees of freedom
-    const Real _n_tr_dofs;
+    const libMesh::Real _n_tr_dofs;
 
     //! Electrical charge number
     const int _charge;
 
     //! Characteristic vibrational temperature in units of [K]
-    std::vector<Real> _theta_v;
+    std::vector<libMesh::Real> _theta_v;
 
     //! Degeneracies for each vibrational mode
     std::vector<unsigned int> _ndg_v;
 
     //! Characteristic electronic temperature in units of [K]
-    std::vector<Real> _theta_e;
+    std::vector<libMesh::Real> _theta_e;
 
     //! Degeneracies for each electronic mode
     std::vector<unsigned int> _ndg_e;

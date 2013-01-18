@@ -49,46 +49,46 @@ namespace GRINS
     const ChemicalMixture& chem_mixture() const;
 
     // Chemistry quantities
-    Real R( unsigned int species ) const;
+    libMesh::Real R( unsigned int species ) const;
 
-    Real R( const std::vector<Real>& mass_fractions ) const;
+    libMesh::Real R( const std::vector<libMesh::Real>& mass_fractions ) const;
 
-    Real M( unsigned int species ) const;
+    libMesh::Real M( unsigned int species ) const;
 
-    Real M( const std::vector<Real>& mass_fractions ) const;
+    libMesh::Real M( const std::vector<libMesh::Real>& mass_fractions ) const;
 
-    Real X( unsigned int species, Real M, Real mass_fraction ) const;
+    libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( Real M, const std::vector<Real>& mass_fractions, 
-	    std::vector<Real>& mole_fractions ) const;
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+	    std::vector<libMesh::Real>& mole_fractions ) const;
 
 
     // Thermodynamic quantities
-    Real cp( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
-    Real cv( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
      
-    Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
+    libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
-    void h(const CachedValues& cache, unsigned int qp, std::vector<Real>& h) const;
+    void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
 
-    Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
+    libMesh::Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
 
     void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
-			 std::vector<Real>& h_RT_minus_s_R) const;
+			 std::vector<libMesh::Real>& h_RT_minus_s_R) const;
 
     // Transport quantities
-    Real mu( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D ) const;
+	    std::vector<libMesh::Real>& D ) const;
 
 
     // Kinetics quantites
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<Real>& omega_dot ) const;
+		    std::vector<libMesh::Real>& omega_dot ) const;
 
   protected:
     
@@ -121,53 +121,53 @@ namespace GRINS
   // Chemistry quantities
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::R( unsigned int species ) const
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::R( unsigned int species ) const
   { return this->_chem_mixture.R(species); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::R( const std::vector<Real>& mass_fractions ) const
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::R( const std::vector<libMesh::Real>& mass_fractions ) const
   { return this->_chem_mixture.R(mass_fractions); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::M( unsigned int species ) const
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::M( unsigned int species ) const
   { return this->_chem_mixture.M(species); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::M( const std::vector<Real>& mass_fractions ) const
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::M( const std::vector<libMesh::Real>& mass_fractions ) const
   { return this->_chem_mixture.M(mass_fractions); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::X( unsigned int species, Real M,
-						      Real mass_fraction ) const
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::X( unsigned int species, libMesh::Real M,
+						      libMesh::Real mass_fraction ) const
   { return this->_chem_mixture.X(species,M,mass_fraction); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  void IdealGasMixture<Thermo,Transport,Kinetics>::X( Real M, const std::vector<Real>& mass_fractions, 
-						      std::vector<Real>& mole_fractions ) const
+  void IdealGasMixture<Thermo,Transport,Kinetics>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+						      std::vector<libMesh::Real>& mole_fractions ) const
   { return this->_chem_mixture.X(M,mass_fractions,mole_fractions); }
 
 
   // Thermodynamic quantities
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::cp( const CachedValues& cache, 
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::cp( const CachedValues& cache, 
 						       unsigned int qp ) const
   { return this->_thermo.cp(cache,qp); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::cv( const CachedValues& cache, 
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::cv( const CachedValues& cache, 
 						       unsigned int qp ) const
   { return this->_thermo.cv(cache,qp); }
     
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::h(const CachedValues& cache, 
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::h(const CachedValues& cache, 
 						     unsigned int qp,
 						     unsigned int species) const
   { return this->_thermo.h(cache,qp,species); }
@@ -176,12 +176,12 @@ namespace GRINS
   inline
   void IdealGasMixture<Thermo,Transport,Kinetics>::h(const CachedValues& cache, 
 						     unsigned int qp,
-						     std::vector<Real>& h) const
+						     std::vector<libMesh::Real>& h) const
   { return this->_thermo.h(cache,qp,h); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::h_RT_minus_s_R(const CachedValues& cache, 
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::h_RT_minus_s_R(const CachedValues& cache, 
 								  unsigned int qp,
 								  unsigned int species) const
   { return this->_thermo.h_RT_minus_s_R(cache,qp,species); }
@@ -190,20 +190,20 @@ namespace GRINS
   inline
   void IdealGasMixture<Thermo,Transport,Kinetics>::h_RT_minus_s_R(const CachedValues& cache, 
 								  unsigned int qp,
-								  std::vector<Real>& h_RT_minus_s_R) const
+								  std::vector<libMesh::Real>& h_RT_minus_s_R) const
   { return this->_thermo.h_RT_minus_s_R(cache,qp,h_RT_minus_s_R); }
 
 
   // Transport quantities
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::mu( const CachedValues& cache, 
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::mu( const CachedValues& cache, 
 						       unsigned int qp ) const
   { return this->_transport.mu(cache,qp); }
 
   template<typename Thermo, typename Transport, typename Kinetics>
   inline
-  Real IdealGasMixture<Thermo,Transport,Kinetics>::k( const CachedValues& cache,
+  libMesh::Real IdealGasMixture<Thermo,Transport,Kinetics>::k( const CachedValues& cache,
 						      unsigned int qp ) const
   { return this->_transport.k(cache,qp); }
 
@@ -211,7 +211,7 @@ namespace GRINS
   inline
   void IdealGasMixture<Thermo,Transport,Kinetics>::D( const CachedValues& cache,
 						      unsigned int qp, 
-						      std::vector<Real>& D ) const
+						      std::vector<libMesh::Real>& D ) const
   { return this->_transport.D(cache,qp,D); }
 
 
@@ -220,7 +220,7 @@ namespace GRINS
   inline
   void IdealGasMixture<Thermo,Transport,Kinetics>::omega_dot( const CachedValues& cache,
 							      unsigned int qp,
-							      std::vector<Real>& omega_dot ) const
+							      std::vector<libMesh::Real>& omega_dot ) const
   { return this->_kinetics.omega_dot(cache,qp,omega_dot); }
 
   

@@ -30,7 +30,7 @@
 
 namespace GRINS
 {
-  ArrheniusRate::ArrheniusRate(const Real Cf, const Real eta, const Real Ea)
+  ArrheniusRate::ArrheniusRate(const libMesh::Real Cf, const libMesh::Real eta, const libMesh::Real Ea)
     : _Cf(Cf),
       _eta(eta),
       _Ea(Ea)

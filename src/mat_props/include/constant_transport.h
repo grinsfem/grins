@@ -45,20 +45,20 @@ namespace GRINS
     ConstantTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
     ~ConstantTransport();
 
-    Real mu( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    Real k( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<Real>& D ) const;
+	    std::vector<libMesh::Real>& D ) const;
 
   protected:
     
     const ChemicalMixture& _chem_mixture;
 
-    const Real _mu;
-    const Real _k;
-    const Real _Le; 
+    const libMesh::Real _mu;
+    const libMesh::Real _k;
+    const libMesh::Real _Le; 
 
   private:
     
@@ -67,22 +67,22 @@ namespace GRINS
   };
 
   inline
-  Real ConstantTransport::mu( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
+  libMesh::Real ConstantTransport::mu( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
   {
     return _mu;
   }
 
   inline
-  Real ConstantTransport::k( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
+  libMesh::Real ConstantTransport::k( const CachedValues& /*cache*/, unsigned int /*qp*/ ) const
   {
     return _k;
   }
 
   inline
   void ConstantTransport::D( const CachedValues& cache, unsigned int qp,
-			     std::vector<Real>& D ) const
-  { const Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-    const Real cp  = cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
+			     std::vector<libMesh::Real>& D ) const
+  { const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    const libMesh::Real cp  = cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
     std::fill( D.begin(), D.end(), _Le*_k/( rho*cp ) );
     return;
   }

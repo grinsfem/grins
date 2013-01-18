@@ -32,7 +32,7 @@
 
 namespace
 {
-  Threads::spin_mutex transport_mutex;
+  libMesh::Threads::spin_mutex transport_mutex;
 }
 
 namespace GRINS
@@ -52,18 +52,18 @@ namespace GRINS
     return;
   }
 
-  Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
   {
-    const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
-    Real mu = 0.0;
+    libMesh::Real mu = 0.0;
 
     {
-      Threads::spin_mutex::scoped_lock lock(transport_mutex);
+      libMesh::Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -83,18 +83,18 @@ namespace GRINS
     return mu;
   }
 
-  Real CanteraTransport::k( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraTransport::k( const CachedValues& cache, unsigned int qp ) const
   {
-    const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
-    Real k = 0.0;
+    libMesh::Real k = 0.0;
 
     {
-      Threads::spin_mutex::scoped_lock lock(transport_mutex);
+      libMesh::Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -115,17 +115,17 @@ namespace GRINS
   }
 
   void CanteraTransport::D( const CachedValues& cache, unsigned int qp,
-			    std::vector<Real>& D ) const
+			    std::vector<libMesh::Real>& D ) const
   {
-    const Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     libmesh_assert_equal_to( Y.size(), D.size() );
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     {
-      Threads::spin_mutex::scoped_lock lock(transport_mutex);
+      libMesh::Threads::spin_mutex::scoped_lock lock(transport_mutex);
     
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */

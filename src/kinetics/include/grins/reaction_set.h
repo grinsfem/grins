@@ -66,22 +66,22 @@ namespace GRINS
      const Reaction& reaction(const unsigned int r) const;
 
      //! Compute species production/destruction rates per unit volume in \f$ \left(kg/sec/m^3\right)\f$
-     void compute_mass_sources ( const Real T,
-				 const Real rho,
-				 const Real R_mix,
-				 const std::vector<Real>& mass_fractions,
-				 const std::vector<Real>& molar_densities,
-				 const std::vector<Real>& h_RT_minus_s_R,
-				 std::vector<Real>& mass_sources ) const;
+     void compute_mass_sources ( const libMesh::Real T,
+				 const libMesh::Real rho,
+				 const libMesh::Real R_mix,
+				 const std::vector<libMesh::Real>& mass_fractions,
+				 const std::vector<libMesh::Real>& molar_densities,
+				 const std::vector<libMesh::Real>& h_RT_minus_s_R,
+				 std::vector<libMesh::Real>& mass_sources ) const;
 
      //! Compute the rates of progress for each reaction
-     void compute_reaction_rates( const Real T,
-				  const Real rho,
-				  const Real R_mix,
-				  const std::vector<Real>& mass_fractions,
-				  const std::vector<Real>& molar_densities,
-				  const std::vector<Real>& h_RT_minus_s_R,
-				  std::vector<Real>& net_reaction_rates ) const;
+     void compute_reaction_rates( const libMesh::Real T,
+				  const libMesh::Real rho,
+				  const libMesh::Real R_mix,
+				  const std::vector<libMesh::Real>& mass_fractions,
+				  const std::vector<libMesh::Real>& molar_densities,
+				  const std::vector<libMesh::Real>& h_RT_minus_s_R,
+				  std::vector<libMesh::Real>& net_reaction_rates ) const;
 
      //! Formatted print, by default to \p libMesh::out.
      void print( std::ostream& os = libMesh::out ) const;
