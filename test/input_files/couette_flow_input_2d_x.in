@@ -31,13 +31,13 @@ vis_output_file_prefix = couette
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = false 
-print_mesh_info = false
-print_log_info = false
-solver_verbose = false
-solver_quiet = true
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
 
-echo_physics = 'false'
+echo_physics = 'true'
 
 # Options related to all Physics
 [Physics]

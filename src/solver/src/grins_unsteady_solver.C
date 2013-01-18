@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_unsteady_solver.h"
+#include "grins/grins_unsteady_solver.h"
 
 namespace GRINS
 {
@@ -58,13 +58,11 @@ namespace GRINS
     return;
   }
 
-  void UnsteadySolver::solve( MultiphysicsSystem* system,
-			      std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-			      std::tr1::shared_ptr<Visualization> vis,
-			      bool output_vis,
-			      bool output_residual )
+  void UnsteadySolver::solve( SolverContext& context )
   {
-    system->deltat = this->_deltat;
+    libmesh_assert( context.system );
+
+    context.system->deltat = this->_deltat;
   
     Real time;
 
@@ -77,16 +75,17 @@ namespace GRINS
 		  << "==========================================================" << std::endl;
 
 	// GRVY timers contained in here (if enabled)
-	system->solve();
+	context.system->solve();
 
-	time = system->time;
+	time = context.system->time;
 
-	if( output_vis ) vis->output( equation_system, t_step, time );
+	if( context.output_vis ) context.vis->output( context.equation_system, t_step, time );
 
-	if( output_residual ) vis->output_residual( equation_system, system, t_step, time );
+	if( context.output_residual ) context.vis->output_residual( context.equation_system, 
+								    context.system, t_step, time );
 
 	// Advance to the next timestep
-	system->time_solver->advance_timestep();
+	context.system->time_solver->advance_timestep();
       }
 
     return;

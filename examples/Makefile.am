@@ -72,6 +72,8 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
 
 MAINTAINERCLEANFILES = Makefile.in
 
+MOSTLYCLEANFILES = *.gcno
+
 #---------------------------------
 # Embedded license header support
 #---------------------------------

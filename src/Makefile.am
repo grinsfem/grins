@@ -44,7 +44,8 @@ solver_SRC   = $(solver_srcdir)/grins_solver.C \
                $(solver_srcdir)/solver_factory.C \
                $(solver_srcdir)/grins_steady_solver.C \
                $(solver_srcdir)/grins_unsteady_solver.C \
-               $(solver_srcdir)/simulation_builder.C
+               $(solver_srcdir)/simulation_builder.C \
+               $(solver_srcdir)/solver_context.C
 
 physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/physics.C \
@@ -122,89 +123,91 @@ sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
 #----------------------------
 #INCLUDES we want distributed
 #----------------------------
-solver_INC   = $(solver_incdir)/grins_solver.h \
-               $(solver_incdir)/mesh_builder.h \
-               $(solver_incdir)/simulation.h \
-               $(solver_incdir)/solver_factory.h \
-               $(solver_incdir)/grins_steady_solver.h \
-               $(solver_incdir)/grins_unsteady_solver.h \
-               $(solver_incdir)/simulation_builder.h
+solver_INC   = $(solver_incdir)/grins/grins_solver.h \
+               $(solver_incdir)/grins/mesh_builder.h \
+               $(solver_incdir)/grins/simulation.h \
+               $(solver_incdir)/grins/solver_factory.h \
+               $(solver_incdir)/grins/grins_steady_solver.h \
+               $(solver_incdir)/grins/grins_unsteady_solver.h \
+               $(solver_incdir)/grins/simulation_builder.h \
+               $(solver_incdir)/grins/solver_context.h
 
-physics_INC  = $(physics_incdir)/multiphysics_sys.h \
-               $(physics_incdir)/physics.h \
-               $(physics_incdir)/variable_name_defaults.h \
-               $(physics_incdir)/var_typedefs.h \
-               $(physics_incdir)/axisym_inc_navier_stokes.h \
-               $(physics_incdir)/stokes.h \
-               $(physics_incdir)/inc_navier_stokes_base.h \
-               $(physics_incdir)/inc_navier_stokes.h \
-               $(physics_incdir)/inc_navier_stokes_stab_base.h \
-               $(physics_incdir)/inc_navier_stokes_adjoint_stab.h \
-               $(physics_incdir)/heat_transfer_base.h \
-               $(physics_incdir)/heat_transfer.h \
-               $(physics_incdir)/heat_transfer_source.h \
-               $(physics_incdir)/heat_transfer_stab_base.h \
-               $(physics_incdir)/heat_transfer_adjoint_stab.h \
-               $(physics_incdir)/axisym_heat_transfer.h \
-               $(physics_incdir)/boussinesq_buoyancy.h \
-               $(physics_incdir)/axisym_boussinesq_buoyancy.h \
-               $(physics_incdir)/physics_factory.h \
-               $(physics_incdir)/grins_physics_names.h \
-               $(physics_incdir)/low_mach_navier_stokes_base.h \
-               $(physics_incdir)/low_mach_navier_stokes.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_base.h \
-               $(physics_incdir)/low_mach_navier_stokes_spgsm_stab.h \
-               $(physics_incdir)/low_mach_navier_stokes_vms_stab.h \
-               $(physics_incdir)/low_mach_navier_stokes_braack_stab.h \
-               $(physics_incdir)/stab_helper.h \
-               $(physics_incdir)/inc_navier_stokes_stab_helper.h \
-               $(physics_incdir)/heat_transfer_stab_helper.h \
-               $(physics_incdir)/low_mach_navier_stokes_stab_helper.h \
+physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
+               $(physics_incdir)/grins/physics.h \
+               $(physics_incdir)/grins/variable_name_defaults.h \
+               $(physics_incdir)/grins/var_typedefs.h \
+               $(physics_incdir)/grins/axisym_inc_navier_stokes.h \
+               $(physics_incdir)/grins/stokes.h \
+               $(physics_incdir)/grins/inc_navier_stokes_base.h \
+               $(physics_incdir)/grins/inc_navier_stokes.h \
+               $(physics_incdir)/grins/inc_navier_stokes_stab_base.h \
+               $(physics_incdir)/grins/inc_navier_stokes_adjoint_stab.h \
+               $(physics_incdir)/grins/heat_transfer_base.h \
+               $(physics_incdir)/grins/heat_transfer.h \
+               $(physics_incdir)/grins/heat_transfer_source.h \
+               $(physics_incdir)/grins/heat_transfer_stab_base.h \
+               $(physics_incdir)/grins/heat_transfer_adjoint_stab.h \
+               $(physics_incdir)/grins/axisym_heat_transfer.h \
+               $(physics_incdir)/grins/boussinesq_buoyancy.h \
+               $(physics_incdir)/grins/axisym_boussinesq_buoyancy.h \
+               $(physics_incdir)/grins/physics_factory.h \
+               $(physics_incdir)/grins/grins_physics_names.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_base.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_stab_base.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_spgsm_stab.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_vms_stab.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_braack_stab.h \
+               $(physics_incdir)/grins/stab_helper.h \
+               $(physics_incdir)/grins/inc_navier_stokes_stab_helper.h \
+               $(physics_incdir)/grins/heat_transfer_stab_helper.h \
+               $(physics_incdir)/grins/low_mach_navier_stokes_stab_helper.h \
                $(physics_incdir)/axisym_electrostatics.h \
                $(physics_incdir)/axisym_magnetostatics.h \
                $(physics_incdir)/axisym_lorentz_force.h
 
-boundary_conditions_INC = $(boundary_conditions_incdir)/bc_types.h \
-                          $(boundary_conditions_incdir)/boundary_conditions.h \
-                          $(boundary_conditions_incdir)/bc_factory.h \
-                          $(boundary_conditions_incdir)/neumann_func_obj.h \
-                          $(boundary_conditions_incdir)/parabolic_profile.h \
-                          $(boundary_conditions_incdir)/gaussian_profile.h \
-                          $(boundary_conditions_incdir)/gaussian_xy_profile.h \
-                          $(boundary_conditions_incdir)/concentric_cylinder_profile.h \
-                          $(boundary_conditions_incdir)/dbc_container.h \
-                          $(boundary_conditions_incdir)/pressure_pinning.h \
-                          $(boundary_conditions_incdir)/pbc_container.h \
-                          $(boundary_conditions_incdir)/nbc_container.h
+boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
+                          $(boundary_conditions_incdir)/grins/boundary_conditions.h \
+                          $(boundary_conditions_incdir)/grins/bc_factory.h \
+                          $(boundary_conditions_incdir)/grins/neumann_func_obj.h \
+                          $(boundary_conditions_incdir)/grins/parabolic_profile.h \
+                          $(boundary_conditions_incdir)/grins/gaussian_profile.h \
+                          $(boundary_conditions_incdir)/grins/gaussian_xy_profile.h \
+                          $(boundary_conditions_incdir)/grins/concentric_cylinder_profile.h \
+                          $(boundary_conditions_incdir)/grins/dbc_container.h \
+                          $(boundary_conditions_incdir)/grins/pressure_pinning.h \
+                          $(boundary_conditions_incdir)/grins/pbc_container.h \
+                          $(boundary_conditions_incdir)/grins/nbc_container.h
 
-utilities_INC = $(top_builddir)/src/utilities/include/grins_version.h
+utilities_INC = $(utilities_incdir)/grins/grins_version.h
 
-visualization_INC = $(visualization_incdir)/steady_visualization.h \
-                    $(visualization_incdir)/unsteady_visualization.h \
-                    $(visualization_incdir)/visualization.h \
-                    $(visualization_incdir)/visualization_factory.h
+visualization_INC = $(visualization_incdir)/grins/steady_visualization.h \
+                    $(visualization_incdir)/grins/unsteady_visualization.h \
+                    $(visualization_incdir)/grins/visualization.h \
+                    $(visualization_incdir)/grins/visualization_factory.h
 
-matprops_INC = $(matprops_incdir)/grins_constant_function.h \
-               $(matprops_incdir)/constant_conductivity.h   \
-               $(matprops_incdir)/constant_viscosity.h      \
-               $(matprops_incdir)/constant_specific_heat.h  \
-               $(matprops_incdir)/constant_source_func.h
+matprops_INC = $(matprops_incdir)/grins/grins_constant_function.h \
+               $(matprops_incdir)/grins/constant_conductivity.h   \
+               $(matprops_incdir)/grins/constant_viscosity.h      \
+               $(matprops_incdir)/grins/constant_specific_heat.h  \
+               $(matprops_incdir)/grins/constant_source_func.h
 
-bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
-                  $(bc_handling_incdir)/heat_transfer_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_heat_transfer_bc_handling.h \
-                  $(bc_handling_incdir)/inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_inc_navier_stokes_bc_handling.h \
-                  $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h \
+bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
+                  $(bc_handling_incdir)/grins/heat_transfer_bc_handling.h \
+                  $(bc_handling_incdir)/grins/axisym_heat_transfer_bc_handling.h \
+                  $(bc_handling_incdir)/grins/inc_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h \
+                  $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h  \
                   $(bc_handling_incdir)/axisym_electrostatics_bc_handling.h \
                   $(bc_handling_incdir)/axisym_magnetostatics_bc_handling.h
 
-qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
-          $(qoi_incdir)/qoi_base.h \
-          $(qoi_incdir)/qoi_factory.h \
-          $(qoi_incdir)/qoi_names.h \
-          $(qoi_incdir)/vorticity.h
+qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
+          $(qoi_incdir)/grins/qoi_base.h \
+          $(qoi_incdir)/grins/qoi_factory.h \
+          $(qoi_incdir)/grins/qoi_names.h \
+          $(qoi_incdir)/grins/vorticity.h
 
+includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
                   $(bc_handling_INC) $(qoi_INC)
@@ -219,7 +222,7 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(qoi_SRC)
 
 if LIBMESH_LIBTOOL
-   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
+   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
 else
    libgrins_la_LIBADD = $(LIBMESH_LDFLAGS)
 endif

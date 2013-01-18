@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -29,20 +29,21 @@
 #ifndef AXISYM_LORENTZ_FORCE_H
 #define AXISYM_LORENTZ_FORCE_H
 
+// libMesh
+#include "libmesh/libmesh.h"
+#include "libmesh/boundary_info.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/fe_interface.h"
+#include "libmesh/mesh.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/parameters.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
+
+// GRINS
 #include "grins_config.h"
-
-#include "libmesh.h"
-#include "boundary_info.h"
-#include "fe_base.h"
-#include "fe_interface.h"
-#include "mesh.h"
-#include "quadrature.h"
-#include "parameters.h"
-#include "string_to_enum.h"
-#include "fem_system.h"
-#include "fem_context.h"
-
-#include "physics.h"
+#include "grins/physics.h"
 
 namespace GRINS
 {  
@@ -74,38 +75,12 @@ namespace GRINS
     //! Initialization of AxisymmetricLorentzForce variables
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    // Context initialization
-    /*! Doesn't do anything for AxisymmetricLorentzForce since there
-      are no new variables registered */
-    virtual void init_context( libMesh::DiffContext &context );
-
     //! Source term contribution for AxisymmetricLorentzForce
     /*! This is the main part of the class. This will add the source term to
         the AxisymmetricIncompNavierStokes class.
      */
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
-
-    //! No boundary terms for AxisymmetricLorentzForce.
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
-
-    //! No constraint terms for AxisymmetricLorentzForce.
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
-
-    //! No boundary terms for AxisymmetricLorentzForce.
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
-
-    //! No mass terms for AxisymmetricLorentzForce.
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system ); 
+    virtual void element_time_derivative( bool request_jacobian,
+					  libMesh::FEMContext& context );
 
   protected:
 

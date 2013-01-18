@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "heat_transfer_base.h"
+#include "grins/heat_transfer_base.h"
 
 namespace GRINS
 {
@@ -98,25 +98,20 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_context( libMesh::DiffContext &context )
+  void HeatTransferBase::init_context( libMesh::FEMContext& context )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
-
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    c.element_fe_var[_T_var]->get_JxW();
-    c.element_fe_var[_T_var]->get_phi();
-    c.element_fe_var[_T_var]->get_dphi();
-    c.element_fe_var[_T_var]->get_xyz();
+    context.element_fe_var[_T_var]->get_JxW();
+    context.element_fe_var[_T_var]->get_phi();
+    context.element_fe_var[_T_var]->get_dphi();
+    context.element_fe_var[_T_var]->get_xyz();
 
-    c.side_fe_var[_T_var]->get_JxW();
-    c.side_fe_var[_T_var]->get_phi();
-    c.side_fe_var[_T_var]->get_dphi();
-    c.side_fe_var[_T_var]->get_xyz();
-
-    //TODO: _u_var is registered so can we assume things related to _u_var
-    //      are available in FEMContext
+    context.side_fe_var[_T_var]->get_JxW();
+    context.side_fe_var[_T_var]->get_phi();
+    context.side_fe_var[_T_var]->get_dphi();
+    context.side_fe_var[_T_var]->get_xyz();
 
     return;
   }

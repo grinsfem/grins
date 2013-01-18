@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -30,20 +30,20 @@
 #define AXISYM_MAGNETOSTATICS_H
 
 //libMesh
-#include "libmesh.h"
-#include "boundary_info.h"
-#include "fe_base.h"
-#include "fe_interface.h"
-#include "mesh.h"
-#include "quadrature.h"
-#include "parameters.h"
-#include "string_to_enum.h"
-#include "fem_system.h"
-#include "fem_context.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/boundary_info.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/fe_interface.h"
+#include "libmesh/mesh.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/parameters.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
 
 //GRINS
 #include "grins_config.h"
-#include "physics.h"
+#include "grins/physics.h"
 #include "axisym_magnetostatics_bc_handling.h"
 
 namespace GRINS
@@ -72,33 +72,24 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::DiffContext &context );
+    virtual void init_context( libMesh::FEMContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
-    virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context,
-					  libMesh::FEMSystem* system );
+    virtual void element_time_derivative( bool request_jacobian,
+					  libMesh::FEMContext& context );
 
-    virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context,
-				       libMesh::FEMSystem* system );
+    virtual void side_time_derivative( bool request_jacobian,
+				       libMesh::FEMContext& context );
 
-    // Constraint part(s)
-    virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context,
-				     libMesh::FEMSystem* system );
-
-    virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context,
-				  libMesh::FEMSystem* system );
+    virtual void side_constraint( bool request_jacobian,
+				  libMesh::FEMContext& context );
 
     // Mass matrix part(s)
-    virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context,
-				libMesh::FEMSystem* system );
+    virtual void mass_residual( bool request_jacobian,
+				libMesh::FEMContext& context );
 
   protected:
 

@@ -11,7 +11,7 @@ AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define color-tests])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define color-tests parallel-tests])
 AM_SILENT_RULES(yes)  # use silent rules where available - automake 1.11
 
 LT_INIT
@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.8.0,yes)
+AX_PATH_LIBMESH_NEW(0.9.0,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--enable-libmesh-flags],[enable use of libmesh cxxflags for CXXFLAGS]),
@@ -192,33 +192,41 @@ DX_XML_FEATURE(OFF)
 DX_PDF_FEATURE(ON)
 DX_PS_FEATURE(OFF)
 
-DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen )
+DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
 
+AC_CONFIG_FILES(doxygen/txt_common/about.page)
 
-dnl-------------------
-dnl Generate makefiles
-dnl-------------------
-AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	[chmod +x test/test_axi_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,      [chmod +x test/test_ns_couette_flow_2d_x.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,      [chmod +x test/test_ns_couette_flow_2d_y.sh])
-AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,        [chmod +x test/test_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,    [chmod +x test/test_stokes_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,  [chmod +x test/test_thermally_driven_2d_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,  [chmod +x test/test_thermally_driven_3d_flow.sh])
-AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh, [chmod +x test/test_axi_thermally_driven_flow.sh])
-AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_ns_con_cyl_flow.sh])
-AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
+dnl-----------------------------------------------
+dnl Generate files for unit and regression testing
+dnl-----------------------------------------------
+AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	      [chmod +x test/test_axi_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,            [chmod +x test/test_ns_couette_flow_2d_x.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,            [chmod +x test/test_ns_couette_flow_2d_y.sh])
+AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,              [chmod +x test/test_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,          [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,        [chmod +x test/test_thermally_driven_2d_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,        [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,       [chmod +x test/test_axi_thermally_driven_flow.sh])
+AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,             [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                   [chmod +x test/test_vorticity_qoi.sh])
 AC_CONFIG_FILES(test/test_magnetostatics.sh,            [chmod +x test/test_magnetostatics.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
+AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
+AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/backward_facing_step_regression.sh])
+AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 
-AC_OUTPUT( Makefile \
-           src/Makefile src/utilities/include/grins_version.h \
-           test/Makefile \
-           doxygen/Makefile \
-           doxygen/txt_common/about.page \
-           examples/Makefile )
+dnl-----------------------------------------------
+dnl Generate header files
+dnl-----------------------------------------------
+AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)
+            
+dnl-----------------------------------------------
+dnl Generate Makefiles
+dnl-----------------------------------------------
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile examples/Makefile])
 
-
+# Must still call AC_OUTPUT() after generating all the files
+AC_OUTPUT()
 
 dnl------------------------------
 dnl Final summary

@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "inc_navier_stokes_bc_handling.h"
+#include "grins/inc_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
@@ -145,6 +145,12 @@ namespace GRINS
 
 	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
 	
+	  if( var == "DIE!" )
+	    {
+	      std::cerr << "Error: Mush specify a variable name to which apply parabolic profile through parabolic_profile_var input option." << std::endl;
+	      libmesh_error();
+	    }
+
 	  DBCContainer cont;
 	  cont.add_var_name( var );
 	  cont.add_bc_id( bc_id );
@@ -155,6 +161,12 @@ namespace GRINS
 	
 	  // Set specified components of Dirichlet data to zero
 	  std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
+
+	  if( fix_var == "DIE!" )
+	    {
+	      std::cerr << "Error: Mush specify a variable name to fix for parabolic profile through parabolic_profile_fix input option." << std::endl;
+	      libmesh_error();
+	    }
 
 	  DBCContainer cont_fix;
 	  cont_fix.add_var_name( fix_var );

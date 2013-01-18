@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "simulation.h"
+#include "grins/simulation.h"
 
 namespace GRINS
 {
@@ -73,6 +73,9 @@ namespace GRINS
       
 	/*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
 	  but we also need to be able to get system variable numbers... */
+	/* Note that we are effectively transfering ownership of the qoi pointer because
+	   it will be cloned in _multiphysics_system and all the calculations are done there. */
+	
 	_multiphysics_system->attach_qoi( &(*(this->_qoi)) );
       }
 
@@ -90,12 +93,18 @@ namespace GRINS
   {
     this->print_sim_info();
 
-    _solver->solve(  _multiphysics_system, _equation_system, _vis, _output_vis, _output_residual );
+    SolverContext context;
+    context.system = _multiphysics_system;
+    context.equation_system = _equation_system;
+    context.vis = _vis;
+    context.output_vis = _output_vis;
+    context.output_residual = _output_residual;
+
+    _solver->solve( context );
 
     if( this->_print_qoi )
       {
 	_multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-	//const libMesh::DifferentiableQoI* diff_qoi = this->_multiphysics_system->get_qoi();
 	const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
 	my_qoi->output_qoi( std::cout );
       }
@@ -121,7 +130,8 @@ namespace GRINS
 
   Number Simulation::get_qoi( unsigned int qoi_index ) const
   {
-    return _qoi->get_qoi( qoi_index );
+    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+    return qoi->get_qoi(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )
@@ -171,7 +181,7 @@ namespace GRINS
 
     if( neumann_bcs.size() > 0 )
       {
-	for( std::map< std::string, NBCContainer >::iterator bc = neumann_bcs.begin();
+	for( std::multimap< std::string, NBCContainer >::iterator bc = neumann_bcs.begin();
 	     bc != neumann_bcs.end();
 	     bc++ )
 	  {

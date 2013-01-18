@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 
 namespace GRINS
 {
@@ -86,6 +86,12 @@ namespace GRINS
 	(physics_iter->second)->set_time_evolving_vars( this );
       }
 
+    // Set whether the problem we're solving is steady or not
+    // Since the variable is static, just call one Physics class
+    {
+      (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
+    }
+
     // Initialize builtin BC's for each physics
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -102,12 +108,14 @@ namespace GRINS
 
   void MultiphysicsSystem::init_context( libMesh::DiffContext &context )
   {
+    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	(physics_iter->second)->init_context( context );
+	(physics_iter->second)->init_context( c );
       }
 
     return;
@@ -129,7 +137,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_time_derivative( compute_jacobian, context, this );
+	    (physics_iter->second)->element_time_derivative( compute_jacobian, c );
 	  }
       }
 
@@ -154,7 +162,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_time_derivative( compute_jacobian, context, this );
+	    (physics_iter->second)->side_time_derivative( compute_jacobian, c );
 	  }
       }
 
@@ -179,7 +187,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_constraint( compute_jacobian, context, this );
+	    (physics_iter->second)->element_constraint( compute_jacobian, c );
 	  }
       }
 
@@ -204,7 +212,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_constraint( compute_jacobian, context, this );
+	    (physics_iter->second)->side_constraint( compute_jacobian, c );
 	  }
       }
 
@@ -229,7 +237,7 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->mass_residual( compute_jacobian, context, this );
+	    (physics_iter->second)->mass_residual( compute_jacobian, c );
 	  }
       }
 
