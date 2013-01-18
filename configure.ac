@@ -199,18 +199,20 @@ AC_CONFIG_FILES(doxygen/txt_common/about.page)
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
 dnl-----------------------------------------------
-AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	[chmod +x test/test_axi_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,      [chmod +x test/test_ns_couette_flow_2d_x.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,      [chmod +x test/test_ns_couette_flow_2d_y.sh])
-AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,        [chmod +x test/test_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,    [chmod +x test/test_stokes_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,  [chmod +x test/test_thermally_driven_2d_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,  [chmod +x test/test_thermally_driven_3d_flow.sh])
-AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh, [chmod +x test/test_axi_thermally_driven_flow.sh])
-AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,       [chmod +x test/test_axi_ns_con_cyl_flow.sh])
-AC_CONFIG_FILES(test/test_vorticity_qoi.sh,             [chmod +x test/test_vorticity_qoi.sh])
+AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	      [chmod +x test/test_axi_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,            [chmod +x test/test_ns_couette_flow_2d_x.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,            [chmod +x test/test_ns_couette_flow_2d_y.sh])
+AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,              [chmod +x test/test_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,          [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,        [chmod +x test/test_thermally_driven_2d_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,        [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,       [chmod +x test/test_axi_thermally_driven_flow.sh])
+AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,             [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                   [chmod +x test/test_vorticity_qoi.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
+AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/backward_facing_step_regression.sh])
+AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 
 dnl-----------------------------------------------
 dnl Generate header files

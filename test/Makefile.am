@@ -10,6 +10,7 @@ check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
+check_PROGRAMS += backward_facing_step_regression
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -46,6 +47,7 @@ test_thermally_driven_flow_SOURCES = $(top_srcdir)/test/test_thermally_driven_fl
 gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
+backward_facing_step_regression_SOURCES = $(top_srcdir)/test/backward_facing_step_regression.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -57,7 +59,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(test_thermally_driven_flow_SOURCES)      \
           $(gaussian_profiles_SOURCES)               \
           $(vorticity_qoi_SOURCES)                   \
-          $(low_mach_cavity_benchmark_regression_SOURCES)
+          $(low_mach_cavity_benchmark_regression_SOURCES) \
+          $(backward_facing_step_regression_SOURCES)
 
 #Define tests to actually be run
 TESTS = gaussian_profiles                  \
@@ -71,7 +74,8 @@ TESTS = gaussian_profiles                  \
         $(top_builddir)/test/test_axi_thermally_driven_flow.sh       \
         $(top_builddir)/test/test_thermally_driven_3d_flow.sh        \
         $(top_builddir)/test/test_vorticity_qoi.sh                   \
-        $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh
+        $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
+        $(top_builddir)/test/backward_facing_step_regression.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
@@ -82,7 +86,8 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_thermally_driven_2d_flow.sh   \
                  test_axi_thermally_driven_flow.sh  \
                  test_thermally_driven_3d_flow.sh   \
-                 low_mach_cavity_benchmark_regression.sh
+                 low_mach_cavity_benchmark_regression.sh \
+                 backward_facing_step_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data
