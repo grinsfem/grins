@@ -82,7 +82,7 @@ lcov-report:
 	$(top_srcdir)/src/common/lcov/lcov -q -r $(lcov_dir)/lcov.info `cat $(lcov_dir)/remove` > $(lcov_dir)/lcov.cleaned.info
 	@rm $(lcov_dir)/remove
 	@mv $(lcov_dir)/lcov.cleaned.info $(lcov_dir)/lcov.info
-	$(top_srcdir)/src/common/lcov/genhtml -t "thermocouple" -o $(lcov_dir) $(lcov_dir)/lcov.info
+	$(top_srcdir)/src/common/lcov/genhtml -t "GRINS" -o $(lcov_dir) $(lcov_dir)/lcov.info
 
 lcov-reset:
 	@rm -rf $(lcov_dir)
