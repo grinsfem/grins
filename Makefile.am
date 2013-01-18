@@ -61,7 +61,8 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
                        test/Makefile.in                         \
                        doxygen/Makefile.in
 
-MOSTLYCLEANFILES     = $(DX_CLEANFILES)
+MOSTLYCLEANFILES     = $(DX_CLEANFILES) \
+                       docs/html/lcov
 
 # -------------------------------------------
 # Optional support for code coverage analysis
