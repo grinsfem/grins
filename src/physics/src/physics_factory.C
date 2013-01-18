@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "physics_factory.h"
+#include "grins/physics_factory.h"
 
 // GRINS
 #include "cea_thermo.h"
@@ -36,25 +36,25 @@
 #include "cantera_transport.h"
 #include "cantera_kinetics.h"
 #include "grins/grins_kinetics.h"
-#include "physics.h"
-#include "stokes.h"
-#include "inc_navier_stokes.h"
-#include "inc_navier_stokes_adjoint_stab.h"
-#include "axisym_inc_navier_stokes.h"
-#include "heat_transfer.h"
-#include "heat_transfer_source.h"
-#include "heat_transfer_adjoint_stab.h"
-#include "axisym_heat_transfer.h"
-#include "boussinesq_buoyancy.h"
+#include "grins/physics.h"
+#include "grins/stokes.h"
+#include "grins/inc_navier_stokes.h"
+#include "grins/inc_navier_stokes_adjoint_stab.h"
+#include "grins/axisym_inc_navier_stokes.h"
+#include "grins/heat_transfer.h"
+#include "grins/heat_transfer_source.h"
+#include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/axisym_heat_transfer.h"
+#include "grins/boussinesq_buoyancy.h"
 #include "axisym_boussinesq_buoyancy.h"
-#include "low_mach_navier_stokes.h"
-#include "low_mach_navier_stokes_braack_stab.h"
-#include "low_mach_navier_stokes_spgsm_stab.h"
-#include "low_mach_navier_stokes_vms_stab.h"
-#include "grins_physics_names.h"
-#include "constant_conductivity.h"
-#include "constant_specific_heat.h"
-#include "constant_viscosity.h"
+#include "grins/low_mach_navier_stokes.h"
+#include "grins/low_mach_navier_stokes_braack_stab.h"
+#include "grins/low_mach_navier_stokes_spgsm_stab.h"
+#include "grins/low_mach_navier_stokes_vms_stab.h"
+#include "grins/grins_physics_names.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_viscosity.h"
 #include "reacting_low_mach_navier_stokes.h"
 #include "heat_conduction.h"
 

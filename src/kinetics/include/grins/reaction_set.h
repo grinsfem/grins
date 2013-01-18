@@ -30,11 +30,11 @@
 #define GRINS_REACTION_SET_H
 
 // libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 // GRINS
 #include "chemical_mixture.h"
-#include "reaction.h"
+#include "grins/reaction.h"
 
 namespace GRINS
 {

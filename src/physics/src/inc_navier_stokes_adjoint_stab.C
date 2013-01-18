@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "inc_navier_stokes_adjoint_stab.h"
+#include "grins/inc_navier_stokes_adjoint_stab.h"
 
 namespace GRINS
 {
@@ -106,16 +106,16 @@ namespace GRINS
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
-		       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+		       + tau_M*RM_s(0)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 		       + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
 	    Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
-		       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+		       + tau_M*RM_s(1)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 		       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 
 	    if(this->_dim == 3)
 	      Fw(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
-			 + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+			 + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 			 + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
 	  }
 

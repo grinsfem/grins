@@ -31,8 +31,8 @@
 #include <iostream>
 
 // GRINS
-#include "simulation_builder.h"
-#include "simulation.h"
+#include "grins/simulation_builder.h"
+#include "grins/simulation.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -40,7 +40,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 int main(int argc, char* argv[])
 {

@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "unsteady_visualization.h"
+#include "grins/unsteady_visualization.h"
 
 namespace GRINS
 {

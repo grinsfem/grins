@@ -30,8 +30,8 @@
 #define GRINS_MIXTURE_TRANSPORT_H
 
 // libMesh
-#include "getpot.h"
-#include "libmesh_common.h"
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh_common.h"
 
 // GRINS
 #include "chemical_mixture.h"

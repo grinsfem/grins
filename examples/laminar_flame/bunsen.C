@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
   std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );
 
   // If we are "cold starting", setup the flow field.
-  if( !libMesh_inputfile( "restart-options/ignition", false ) && restart_file == "none" )
+  if( restart_file == "none" )
     {
       // Asssign initial temperature value
       std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
@@ -325,7 +325,7 @@ Real initial_values( const Point& p, const Parameters &params,
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_dirichlet( )
 {
   const Real delta = 0.0005;
-  const Real u0 = 1.2;
+  const Real u0 = 0.12;
 
   GRINS::DBCContainer cont;
   {

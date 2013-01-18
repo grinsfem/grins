@@ -30,7 +30,7 @@
 #define GRINS_KINETICS_H
 
 // libMesh
-#include "getpot.h"
+#include "libmesh/getpot.h"
 
 // GRINS
 #include "cached_values.h"

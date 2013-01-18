@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "mesh_builder.h"
+#include "grins/mesh_builder.h"
 
 #include <iostream>
 
@@ -49,13 +49,13 @@ namespace GRINS
     std::string mesh_option = input("mesh-options/mesh_option", "NULL");
     std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
 
-    Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
-    Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
-    Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
+    libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
+    libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
+    libMesh::Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
 
-    Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
-    Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
-    Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
+    libMesh::Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
+    libMesh::Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
+    libMesh::Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
 
     int mesh_nx1 = input("mesh-options/mesh_nx1", -1);
     int mesh_nx2 = input("mesh-options/mesh_nx2", -1);

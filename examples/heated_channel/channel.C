@@ -30,8 +30,8 @@
 #include <iostream>
 
 // GRINS
-#include "mesh_builder.h"
-#include "simulation.h"
+#include "grins/mesh_builder.h"
+#include "grins/simulation.h"
 #include "parabolic_profile.h"
 
 // GRVY
@@ -40,7 +40,7 @@
 #endif
 
 // libMesh
-#include "parallel.h"
+#include "libmesh/parallel.h"
 
 class ChannelBCFactory : public GRINS::BoundaryConditionsFactory
 {

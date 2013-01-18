@@ -52,9 +52,9 @@ domain_x2_max = 1.0
 domain_x3_min = 0.0
 domain_x3_max = 1.0
 
-mesh_nx1 = 10 
-mesh_nx2 = 20
-mesh_nx3 = 20
+mesh_nx1 = 60 
+mesh_nx2 = 60
+mesh_nx3 = 60
 
 # Options for tiem solvers
 [unsteady-solver]

@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -30,12 +30,12 @@
 #define GRINS_POSTPROCESSED_QUANTITIES_H
 
 //libMesh
-#include "getpot.h"
-#include "fem_function_base.h"
-#include "equation_systems.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_function_base.h"
+#include "libmesh/equation_systems.h"
 
 //GRINS
-#include "multiphysics_sys.h"
+#include "grins/multiphysics_sys.h"
 
 namespace GRINS
 {

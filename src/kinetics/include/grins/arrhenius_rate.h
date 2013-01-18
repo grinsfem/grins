@@ -30,7 +30,7 @@
 #define GRINS_ARRHENIUS_RATE_H
 
 // libMesh
-#include "libmesh_common.h"
+#include "libmesh/libmesh_common.h"
 
 namespace GRINS
 {

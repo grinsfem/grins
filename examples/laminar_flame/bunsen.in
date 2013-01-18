@@ -1,11 +1,11 @@
 # Options related to all Physics
 [InitialConditions]
 
-T_init = '2000.0'
-r_min = '0.0'
-r_max = '0.002'
-z_min = '0.005'
-z_max = '0.01'
+T_init = '775.0'
+r_min = '0.002'
+r_max = '0.003'
+z_min = '0.002'
+z_max = '0.003'
 
 []
 
@@ -15,15 +15,15 @@ enabled_physics = 'ReactingLowMachNavierStokes'
 
 [./Chemistry]
 
-species   = 'H2 O2 H2O H O OH HO2 H2O2 N2'
-chem_file = 'bunsen.xml'
+species   = 'H2 O2 H2O H O OH HO2 N2'
+chem_file = 'bunsen_reduced.xml'
 mixture   = 'bunsen'
 
 [../Transport]
 
 viscosity = '1.0e-4'
 thermal_conductivity = '.04'
-Lewis_number = '1.4'
+Lewis_number = '1.0'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
@@ -61,17 +61,18 @@ vel_bc_ids = '1 2 3 4'
 vel_bc_types = 'general_velocity no_slip general_velocity axisymmetric'
 
 temp_bc_ids = '1 2 3 4'
-temp_bc_types = 'isothermal isothermal isothermal axisymmetric'
+temp_bc_types = 'isothermal isothermal isothermal isothermal'
 
 T_wall_1 = '298'
 T_wall_2 = '298'
 T_wall_3 = '298'
+T_wall_4 = '910'
 
 species_bc_ids = '1 3 4'
 species_bc_types = 'prescribed_species prescribed_species axisymmetric'
 
-bound_species_1 = '0.005 0.095 0.0 0.0 0.0 0.0 0.0 0.0 0.9'
-bound_species_3 = '0.0  0.2   0.0 0.0 0.0 0.0 0.0 0.0 0.8'
+bound_species_1 = '0.3 0.2 0.0 0.0 0.0 0.0 0.0 0.5'
+bound_species_3 = '0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.8'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
@@ -80,9 +81,9 @@ pin_pressure = 'false'
 
 [restart-options]
 
-#restart_file = 'restart.xdr'
+restart_file = 'restart.xdr'
 
-ignition = 'true'
+#ignition = 'true'
 
 # Mesh related options
 [mesh-options]
@@ -95,7 +96,7 @@ transient = 'false'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 6 
+max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -114,7 +115,7 @@ output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 
-output_vars = 'rho_mix mole_fractions omega_dot'
+output_vars = 'rho_mix h_s mole_fractions omega_dot'
 
 # Options for print info to the screen
 [screen-options]
