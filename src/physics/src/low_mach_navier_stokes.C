@@ -113,7 +113,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool compute_jacobian,
-							    libMesh::FEMContext& context )
+							    libMesh::FEMContext& context,
+							    CachedValues& /*cache*/ )
   {
     if( this->_enable_thermo_press_calc )
       {
@@ -133,7 +134,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-						     libMesh::FEMContext& context )
+						     libMesh::FEMContext& context,
+						     CachedValues& /*cache*/ )
   {
     this->assemble_continuity_mass_residual( compute_jacobian, context );
 

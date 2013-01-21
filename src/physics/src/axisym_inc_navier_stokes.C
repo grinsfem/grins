@@ -272,7 +272,8 @@ namespace GRINS
   }
 
   void AxisymmetricIncompressibleNavierStokes::element_constraint( bool compute_jacobian,
-								   libMesh::FEMContext& context )
+								   libMesh::FEMContext& context,
+								   CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricIncompressibleNavierStokes::element_constraint");
@@ -366,7 +367,8 @@ namespace GRINS
   }
 
   void AxisymmetricIncompressibleNavierStokes::mass_residual( bool compute_jacobian,
-							      libMesh::FEMContext& context )
+							      libMesh::FEMContext& context,
+							      CachedValues& /*cache*/ )
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable

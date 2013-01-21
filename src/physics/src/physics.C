@@ -166,25 +166,29 @@ namespace GRINS
   }
 
   void Physics::side_time_derivative( bool /*compute_jacobian*/,
-				      libMesh::FEMContext& /*context*/ )
+				      libMesh::FEMContext& /*context*/,
+				      CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::element_constraint( bool /*compute_jacobian*/,
-				    libMesh::FEMContext& /*context*/ )
+				    libMesh::FEMContext& /*context*/,
+				    CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::side_constraint( bool /*compute_jacobian*/,
-				 libMesh::FEMContext& /*context*/ )
+				 libMesh::FEMContext& /*context*/,
+				 CachedValues& /*cache*/ )
   {
     return;
   }   
 
   void Physics::mass_residual( bool /*compute_jacobian*/,
-			       libMesh::FEMContext& /*context*/ )
+			       libMesh::FEMContext& /*context*/,
+			       CachedValues& /*cache*/ )
   {
     return;
   }

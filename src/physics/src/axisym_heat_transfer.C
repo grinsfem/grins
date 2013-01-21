@@ -249,7 +249,8 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
-								     libMesh::FEMContext& context )
+								     libMesh::FEMContext& context,
+								     CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_time_derivative");
@@ -274,7 +275,8 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool compute_jacobian,
-							      libMesh::FEMContext& context )
+							      libMesh::FEMContext& context,
+							      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricHeatTransfer::mass_residual");

@@ -132,19 +132,23 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
+				       libMesh::FEMContext& context,
+				       CachedValues& cache );
 
     //! Constraint part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context );
+				     libMesh::FEMContext& context,
+				     CachedValues& cache );
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context );
+				  libMesh::FEMContext& context,
+				  CachedValues& cache );
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
+				libMesh::FEMContext& context,
+				CachedValues& cache );
 
     void init_bcs( libMesh::FEMSystem* system );
 

@@ -171,7 +171,8 @@ namespace GRINS
   }
 
   void HeatConduction::mass_residual( bool compute_jacobian,
-				      libMesh::FEMContext& context )
+				      libMesh::FEMContext& context,
+				      CachedValues& /*cache*/ )
   {
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
