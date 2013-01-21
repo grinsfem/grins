@@ -155,6 +155,18 @@ namespace GRINS
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
 							CachedValues& cache ) const;
 
+    virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context,
+						     CachedValues& cache ) const;
+
+    virtual void compute_element_constraint_cache( const libMesh::FEMContext& context,
+						   CachedValues& cache ) const;
+
+    virtual void compute_side_constraint_cache( const libMesh::FEMContext& context,
+						CachedValues& cache ) const;
+
+    virtual void compute_mass_residual_cache( const libMesh::FEMContext& context,
+					      CachedValues& cache ) const;
+
     virtual void compute_element_cache( const libMesh::FEMContext& context, 
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache ) const;
