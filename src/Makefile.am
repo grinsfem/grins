@@ -247,7 +247,7 @@ bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h                
                   $(bc_handling_incdir)/grins/inc_navier_stokes_bc_handling.h         \
                   $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h  \
                   $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h    \
-                  $(bc_handling_incdir)/reacting_low_mach_navier_stokes_bc_handling.h
+                  $(bc_handling_incdir)/grins/reacting_low_mach_navier_stokes_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
           $(qoi_incdir)/grins/qoi_base.h \
