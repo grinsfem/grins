@@ -747,29 +747,6 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::init_element_cache( CachedValues& cache ) const
-  {
-    cache.add_quantity(Cache::X_VELOCITY);
-    cache.add_quantity(Cache::Y_VELOCITY);
-
-    cache.add_quantity(Cache::X_VELOCITY_GRAD);
-    cache.add_quantity(Cache::Y_VELOCITY_GRAD);
-
-    if(this->_dim > 2)
-      {
-	cache.add_quantity(Cache::Z_VELOCITY);
-	cache.add_quantity(Cache::Z_VELOCITY_GRAD);
-      }
-    cache.add_quantity(Cache::TEMPERATURE);
-    cache.add_quantity(Cache::TEMPERATURE_GRAD);
-
-    cache.add_quantity(Cache::PRESSURE);
-    cache.add_quantity(Cache::THERMO_PRESSURE);
-    
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
 							     CachedValues& cache ) const
   {

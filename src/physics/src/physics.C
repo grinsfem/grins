@@ -121,11 +121,6 @@ namespace GRINS
     return;
   }
 
-  void Physics::init_element_cache( CachedValues& ) const
-  {
-    return;
-  }
-
   void Physics::compute_element_cache( const libMesh::FEMContext&,
 				       CachedValues& ) const
   {

@@ -98,9 +98,6 @@ namespace GRINS
       {
 	// Initialize builtin BC's for each physics
 	(physics_iter->second)->init_bcs( this );
-
-	// Initialize cache for each physics
-	(physics_iter->second)->init_element_cache(_element_cache);
       }
 
     // Next, call parent init_data function to intialize everything.
@@ -132,7 +129,7 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
-    CachedValues cache(_element_cache);
+    CachedValues cache;
 
     // Now compute cache for this element
     this->compute_element_cache(c,cache);
@@ -274,17 +271,6 @@ namespace GRINS
       has_physics = true;
 
     return has_physics;
-  }
-
-  void MultiphysicsSystem::init_element_cache( CachedValues& cache ) const
-  {
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->init_element_cache( cache );
-      }
-    return;
   }
 
   void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,

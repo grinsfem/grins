@@ -507,54 +507,6 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::init_element_cache( CachedValues& cache ) const
-  {
-    cache.add_quantity(Cache::X_VELOCITY);
-    cache.add_quantity(Cache::Y_VELOCITY);
-
-    cache.add_quantity(Cache::X_VELOCITY_GRAD);
-    cache.add_quantity(Cache::Y_VELOCITY_GRAD);
-
-    if(this->_dim > 2)
-      {
-	cache.add_quantity(Cache::Z_VELOCITY);
-	cache.add_quantity(Cache::Z_VELOCITY_GRAD);
-      }
-    cache.add_quantity(Cache::TEMPERATURE);
-    cache.add_quantity(Cache::TEMPERATURE_GRAD);
-
-    cache.add_quantity(Cache::PRESSURE);
-    cache.add_quantity(Cache::THERMO_PRESSURE);
-
-    cache.add_quantity(Cache::MASS_FRACTIONS);
-    cache.add_quantity(Cache::MASS_FRACTIONS_GRAD);
-
-    cache.add_quantity(Cache::MOLAR_MASS);
-
-    cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
-
-    cache.add_quantity(Cache::MOLAR_DENSITIES);
-
-    cache.add_quantity(Cache::MIXTURE_DENSITY);
-
-    cache.add_quantity(Cache::MIXTURE_VISCOSITY);
-
-    cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
-
-    cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
-
-    cache.add_quantity(Cache::DIFFUSION_COEFFS);
-
-    cache.add_quantity(Cache::SPECIES_ENTHALPY);
-
-    cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
-
-    cache.add_quantity(Cache::OMEGA_DOT);
-    
-    return;
-  }
-
-  template<class Mixture>
   void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
 								    CachedValues& cache ) const
   {

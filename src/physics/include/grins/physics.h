@@ -152,8 +152,6 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
-    virtual void init_element_cache( CachedValues& cache ) const;
-
     virtual void compute_element_cache( const libMesh::FEMContext& context,
 					CachedValues& cache ) const;
 
