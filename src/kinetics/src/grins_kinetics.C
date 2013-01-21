@@ -30,8 +30,8 @@
 #include "grins/grins_kinetics.h"
 
 // GRINS
-#include "tinyxml2.h" 
-#include "string_utils.h"
+#include "grins/tinyxml2.h" 
+#include "grins/string_utils.h"
 
 namespace GRINS
 {

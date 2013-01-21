@@ -36,7 +36,7 @@
 #include "libmesh/libmesh.h"
 
 // GRINS
-#include "physical_constants.h"
+#include "grins/physical_constants.h"
 
 namespace GRINS
 {

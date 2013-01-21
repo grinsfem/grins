@@ -36,7 +36,7 @@
 #include <algorithm>
 
 // GRINS
-#include "input_utils.h"
+#include "grins/input_utils.h"
 #include "grins/species_enum.h"
 #include "grins/chemical_species.h"
 

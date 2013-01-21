@@ -39,7 +39,7 @@
 #include "libmesh/exact_error_estimator.h" //libMesh::Gradient
 
 // GRINS
-#include "cached_quantities_enum.h"
+#include "grins/cached_quantities_enum.h"
 
 namespace GRINS
 {

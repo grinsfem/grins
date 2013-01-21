@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "reacting_low_mach_navier_stokes.h"
+#include "grins/reacting_low_mach_navier_stokes.h"
 
 namespace GRINS
 {

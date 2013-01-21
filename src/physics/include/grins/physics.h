@@ -47,7 +47,7 @@
 #include "grins/boundary_conditions.h"
 #include "grins/grins_physics_names.h"
 #include "grins/bc_handling_base.h"
-#include "cached_values.h"
+#include "grins/cached_values.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers

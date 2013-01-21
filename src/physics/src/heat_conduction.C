@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "heat_conduction.h"
+#include "grins/heat_conduction.h"
 
 #include "grins/heat_transfer_bc_handling.h"
 

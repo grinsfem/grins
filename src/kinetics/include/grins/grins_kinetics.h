@@ -33,7 +33,7 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "cached_values.h"
+#include "grins/cached_values.h"
 #include "grins/chemical_mixture.h"
 #include "grins/reaction_set.h"
 

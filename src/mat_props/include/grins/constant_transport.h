@@ -34,7 +34,7 @@
 
 // GRINS
 #include "grins/chemical_mixture.h"
-#include "cached_values.h"
+#include "grins/cached_values.h"
 
 namespace GRINS
 {

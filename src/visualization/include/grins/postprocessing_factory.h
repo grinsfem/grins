@@ -35,7 +35,7 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "postprocessed_quantities.h"
+#include "grins/postprocessed_quantities.h"
 
 namespace GRINS
 {

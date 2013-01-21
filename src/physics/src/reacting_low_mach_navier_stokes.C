@@ -27,10 +27,10 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "reacting_low_mach_navier_stokes.h"
+#include "grins/reacting_low_mach_navier_stokes.h"
 
 // GRINS
-#include "cached_quantities_enum.h"
+#include "grins/cached_quantities_enum.h"
 #include "grins/cea_thermo.h"
 #include "grins/cantera_thermo.h"
 #include "grins/constant_transport.h"

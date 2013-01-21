@@ -55,8 +55,8 @@
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
-#include "reacting_low_mach_navier_stokes.h"
-#include "heat_conduction.h"
+#include "grins/reacting_low_mach_navier_stokes.h"
+#include "grins/heat_conduction.h"
 
 namespace GRINS
 {

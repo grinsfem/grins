@@ -190,9 +190,9 @@ physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
                $(physics_incdir)/grins/inc_navier_stokes_stab_helper.h \
                $(physics_incdir)/grins/heat_transfer_stab_helper.h \
                $(physics_incdir)/grins/low_mach_navier_stokes_stab_helper.h \
-               $(physics_incdir)/reacting_low_mach_navier_stokes_base.h \
-               $(physics_incdir)/reacting_low_mach_navier_stokes.h \
-               $(physics_incdir)/heat_conduction.h
+               $(physics_incdir)/grins/reacting_low_mach_navier_stokes_base.h \
+               $(physics_incdir)/grins/reacting_low_mach_navier_stokes.h \
+               $(physics_incdir)/grins/heat_conduction.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/boundary_conditions.h \
@@ -208,20 +208,20 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/nbc_container.h
 
 utilities_INC = $(utilities_incdir)/grins/grins_version.h \
-                $(utilities_incdir)/physical_constants.h \
-                $(utilities_incdir)/input_utils.h \
-                $(utilities_incdir)/math_constants.h \
-                $(utilities_incdir)/cached_values.h \
-                $(utilities_incdir)/cached_quantities_enum.h \
-                $(utilities_incdir)/tinyxml2.h \
-                $(utilities_incdir)/string_utils.h
+                $(utilities_incdir)/grins/physical_constants.h \
+                $(utilities_incdir)/grins/input_utils.h \
+                $(utilities_incdir)/grins/math_constants.h \
+                $(utilities_incdir)/grins/cached_values.h \
+                $(utilities_incdir)/grins/cached_quantities_enum.h \
+                $(utilities_incdir)/grins/tinyxml2.h \
+                $(utilities_incdir)/grins/string_utils.h
 
 visualization_INC = $(visualization_incdir)/grins/steady_visualization.h \
                     $(visualization_incdir)/grins/unsteady_visualization.h \
                     $(visualization_incdir)/grins/visualization.h \
                     $(visualization_incdir)/grins/visualization_factory.h \
-                    $(visualization_incdir)/postprocessed_quantities.h \
-                    $(visualization_incdir)/postprocessing_factory.h
+                    $(visualization_incdir)/grins/postprocessed_quantities.h \
+                    $(visualization_incdir)/grins/postprocessing_factory.h
 
 matprops_INC = $(matprops_incdir)/grins/grins_constant_function.h \
                $(matprops_incdir)/grins/constant_conductivity.h   \

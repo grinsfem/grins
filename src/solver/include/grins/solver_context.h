@@ -37,7 +37,7 @@
 // GRINS
 #include "grins/multiphysics_sys.h"
 #include "grins/visualization.h"
-#include "postprocessed_quantities.h"
+#include "grins/postprocessed_quantities.h"
 
 namespace GRINS
 {

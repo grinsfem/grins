@@ -36,7 +36,7 @@
 #include "grins/visualization_factory.h"
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
-#include "postprocessing_factory.h"
+#include "grins/postprocessing_factory.h"
 
 namespace GRINS
 {
