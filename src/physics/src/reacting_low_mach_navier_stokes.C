@@ -507,8 +507,8 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
-								    CachedValues& cache ) const
+  void ReactingLowMachNavierStokes<Mixture>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
+										    CachedValues& cache ) const
   {
     const unsigned int n_qpoints = context.element_qrule->n_points();
 

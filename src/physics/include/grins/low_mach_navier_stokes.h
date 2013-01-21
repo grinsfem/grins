@@ -66,8 +66,8 @@ namespace GRINS
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context,
-					CachedValues& cache ) const;
+    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
+							CachedValues& cache ) const;
 
     virtual void compute_element_cache( const libMesh::FEMContext& context,
 					const std::vector<libMesh::Point>& points,

@@ -132,7 +132,7 @@ namespace GRINS
     CachedValues cache;
 
     // Now compute cache for this element
-    this->compute_element_cache(c,cache);
+    this->compute_element_time_derivative_cache(c,cache);
 
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -273,14 +273,14 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
-						  CachedValues& cache ) const
+  void MultiphysicsSystem::compute_element_time_derivative_cache( const libMesh::FEMContext& context,
+								  CachedValues& cache ) const
   {    
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	(physics_iter->second)->compute_element_cache( context, cache );
+	(physics_iter->second)->compute_element_time_derivative_cache( context, cache );
       }
     return;
   }
