@@ -33,7 +33,7 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "chemical_mixture.h"
+#include "grins/chemical_mixture.h"
 #include "cached_values.h"
 
 namespace GRINS

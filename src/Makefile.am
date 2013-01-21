@@ -228,18 +228,18 @@ matprops_INC = $(matprops_incdir)/grins/grins_constant_function.h \
                $(matprops_incdir)/grins/constant_viscosity.h      \
                $(matprops_incdir)/grins/constant_specific_heat.h  \
                $(matprops_incdir)/grins/constant_source_func.h    \
-               $(matprops_incdir)/species_enum.h                  \
-               $(matprops_incdir)/chemical_species.h              \
-               $(matprops_incdir)/chemical_mixture.h              \
-               $(matprops_incdir)/cea_curve_fit.h                 \
-               $(matprops_incdir)/cea_thermo.h                    \
-               $(matprops_incdir)/blottner_viscosity.h            \
-               $(matprops_incdir)/cantera_singleton.h             \
-               $(matprops_incdir)/cantera_thermo.h                \
-               $(matprops_incdir)/cantera_transport.h             \
-               $(matprops_incdir)/cantera_kinetics.h              \
-               $(matprops_incdir)/ideal_gas_mixture.h             \
-               $(matprops_incdir)/constant_transport.h
+               $(matprops_incdir)/grins/species_enum.h            \
+               $(matprops_incdir)/grins/chemical_species.h        \
+               $(matprops_incdir)/grins/chemical_mixture.h        \
+               $(matprops_incdir)/grins/cea_curve_fit.h           \
+               $(matprops_incdir)/grins/cea_thermo.h              \
+               $(matprops_incdir)/grins/blottner_viscosity.h      \
+               $(matprops_incdir)/grins/cantera_singleton.h       \
+               $(matprops_incdir)/grins/cantera_thermo.h          \
+               $(matprops_incdir)/grins/cantera_transport.h       \
+               $(matprops_incdir)/grins/cantera_kinetics.h        \
+               $(matprops_incdir)/grins/ideal_gas_mixture.h       \
+               $(matprops_incdir)/grins/constant_transport.h
 
 bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h                      \
                   $(bc_handling_incdir)/grins/heat_transfer_bc_handling.h             \

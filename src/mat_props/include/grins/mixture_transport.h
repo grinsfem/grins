@@ -26,43 +26,41 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_BLOTTNER_MIXTURE_H
-#define GRINS_BLOTTNER_MIXTURE_H
+#ifndef GRINS_MIXTURE_TRANSPORT_H
+#define GRINS_MIXTURE_TRANSPORT_H
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/libmesh_common.h"
 
 // GRINS
-#include "blottner_viscosity.h"
+#include "grins/chemical_mixture.h"
 
 namespace GRINS
 {
-
-  class BlottnerMixture
+  template<typename Viscosity, typename Conductivity, typename Diffusivity>
+  class MixtureTransport
   {
   public:
 
-    BlottnerMixture( const GetPot& input, const ChemicalMixture& chem_mixture );
-    ~BlottnerMixture();
+    MixtureTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
+    ~MixtureTransport();
 
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp,
-	     unsigned int species ) const;
-
-    libMesh::Real mu( libMesh::Real T, unsigned int species ) const;
-    libMesh::Real mu( libMesh::Real T ) const;
+    libMesh::Real mu( libMesh::Real T, unsigned int species );
+    libMesh::Real mu( libMesh::Real T );
 
   protected:
-
-    void read_blottner_table();
-
+    
     const ChemicalMixture& _chem_mixture;
 
-    std::vector<BlottnerViscosity*> _species_viscosities;
+    Viscosity _viscosity;
+
+    Conductivity _thermal_conductivity;
+
+    Diffusivity _diffusivity;
 
   };
 
-  inline
-  libMesh::Real BlottnerMixture::mu( const CachedValues& cache, unsigned int qp,
-			    unsigned int species ) const
-  { return this->mu( cache.get_cached_values(Cache::TEMPERATURE)[qp], species ) };
-
 } // namespace GRINS
 
-#endif // GRINS_BLOTTNER_MIXTURE_H
+#endif //GRINS_MIXTURE_TRANSPORT_H

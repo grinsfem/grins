@@ -45,7 +45,7 @@
 #include "grins_config.h"
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
-#include "ideal_gas_mixture.h"
+#include "grins/ideal_gas_mixture.h"
 
 namespace GRINS
 {

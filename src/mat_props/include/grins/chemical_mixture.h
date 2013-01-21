@@ -37,8 +37,8 @@
 
 // GRINS
 #include "input_utils.h"
-#include "species_enum.h"
-#include "chemical_species.h"
+#include "grins/species_enum.h"
+#include "grins/chemical_species.h"
 
 namespace GRINS
 {

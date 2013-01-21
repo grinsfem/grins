@@ -30,11 +30,11 @@
 #include "grins/physics_factory.h"
 
 // GRINS
-#include "cea_thermo.h"
-#include "cantera_thermo.h"
-#include "constant_transport.h"
-#include "cantera_transport.h"
-#include "cantera_kinetics.h"
+#include "grins/cea_thermo.h"
+#include "grins/cantera_thermo.h"
+#include "grins/constant_transport.h"
+#include "grins/cantera_transport.h"
+#include "grins/cantera_kinetics.h"
 #include "grins/grins_kinetics.h"
 #include "grins/physics.h"
 #include "grins/stokes.h"

@@ -30,7 +30,7 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "cea_thermo.h"
+#include "grins/cea_thermo.h"
 
 double cp( double T, double a0, double a1, double a2, 
 	   double a3, double a4, double a5, double a6 );

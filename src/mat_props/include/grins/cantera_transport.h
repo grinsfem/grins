@@ -26,31 +26,41 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_CANTERA_KINETICS_H
-#define GRINS_CANTERA_KINETICS_H
+#ifndef GRINS_CANTERA_TRANSPORT_H
+#define GRINS_CANTERA_TRANSPORT_H
 
 // libMesh
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "chemical_mixture.h"
+#include "grins/chemical_mixture.h"
 #include "cached_values.h"
-#include "cantera_singleton.h"
+#include "grins/cantera_singleton.h"
+
+// Cantera
+#ifdef GRINS_HAVE_CANTERA
+// Needs to be included *after* cantera_singleton.h (i.e. cantera/IdealGasMix.h)
+#include "cantera/transport.h"
+#endif
 
 #ifdef GRINS_HAVE_CANTERA
 
 namespace GRINS
 {
 
-  class CanteraKinetics
+  class CanteraTransport
   {
   public:
+    
+    CanteraTransport( const GetPot& input, const ChemicalMixture& chem_mixture );
+    ~CanteraTransport();
 
-    CanteraKinetics( const GetPot& input, const ChemicalMixture& chem_mixture );
-    ~CanteraKinetics();
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
 
-    void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<libMesh::Real>& omega_dot ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
+
+    void D( const CachedValues& cache, unsigned int qp,
+	    std::vector<libMesh::Real>& D ) const;
 
   protected:
 
@@ -58,9 +68,11 @@ namespace GRINS
 
     Cantera::IdealGasMix& _cantera_gas;
 
+    Cantera::Transport* _cantera_transport;
+
   private:
 
-    CanteraKinetics();
+    CanteraTransport();
 
   };
 
@@ -68,4 +80,4 @@ namespace GRINS
 
 #endif // GRINS_HAVE_CANTERA
 
-#endif //GRINS_CANTERA_KINETICS_H
+#endif // GRINS_CANTERA_TRANSPORT_H

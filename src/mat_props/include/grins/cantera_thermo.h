@@ -33,9 +33,9 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "chemical_mixture.h"
+#include "grins/chemical_mixture.h"
 #include "cached_values.h"
-#include "cantera_singleton.h"
+#include "grins/cantera_singleton.h"
 
 #ifdef GRINS_HAVE_CANTERA
 

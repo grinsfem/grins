@@ -30,7 +30,7 @@
 #include <iomanip>
 
 // GRINS
-#include "chemical_mixture.h"
+#include "grins/chemical_mixture.h"
 
 int test_species( const unsigned int species,
 		  const std::vector<GRINS::ChemicalSpecies*>& chemical_species,

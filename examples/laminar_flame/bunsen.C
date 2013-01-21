@@ -37,7 +37,7 @@
 // GRINS
 #include "grins/simulation.h"
 #include "grins/physics_factory.h"
-#include "cantera_singleton.h"
+#include "grins/cantera_singleton.h"
 
 // Cantera
 #ifdef GRINS_HAVE_CANTERA

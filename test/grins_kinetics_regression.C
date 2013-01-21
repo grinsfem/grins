@@ -30,8 +30,8 @@
 #include <iomanip>
 
 // GRINS
-#include "chemical_mixture.h"
-#include "cea_thermo.h"
+#include "grins/chemical_mixture.h"
+#include "grins/cea_thermo.h"
 #include "grins/grins_kinetics.h"
 
 int main(int argc, char* argv[])

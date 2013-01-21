@@ -38,8 +38,8 @@
 
 // GRINS
 #include "cached_values.h"
-#include "chemical_mixture.h"
-#include "cea_curve_fit.h"
+#include "grins/chemical_mixture.h"
+#include "grins/cea_curve_fit.h"
 
 namespace GRINS
 {

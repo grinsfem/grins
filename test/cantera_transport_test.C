@@ -31,7 +31,7 @@
 
 //GRINS
 #include "grins_config.h"
-#include "cantera_transport.h"
+#include "grins/cantera_transport.h"
 
 int main()
 {

@@ -29,9 +29,9 @@
 #include <iomanip>
 
 #include "grins_config.h"
-#include "cantera_singleton.h"
-#include "cantera_thermo.h"
-#include "cantera_kinetics.h"
+#include "grins/cantera_singleton.h"
+#include "grins/cantera_thermo.h"
+#include "grins/cantera_kinetics.h"
 
 int main(int argc, char* argv[])
 {

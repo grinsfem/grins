@@ -30,7 +30,7 @@
 #define GRINS_CEA_CURVE_FIT_H
 
 // GRINS
-#include "chemical_mixture.h"
+#include "grins/chemical_mixture.h"
 
 namespace GRINS
 {

@@ -31,10 +31,10 @@
 
 // GRINS
 #include "grins_config.h"
-#include "ideal_gas_mixture.h"
-#include "cantera_thermo.h"
-#include "cantera_transport.h"
-#include "cantera_kinetics.h"
+#include "grins/ideal_gas_mixture.h"
+#include "grins/cantera_thermo.h"
+#include "grins/cantera_transport.h"
+#include "grins/cantera_kinetics.h"
 
 int main()
 {
