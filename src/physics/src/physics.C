@@ -96,6 +96,7 @@ namespace GRINS
     // Only need to init BC's if the physics actually created a handler
     if( _bc_handler )
       {
+	_bc_handler->init_bc_data( *system );
 	_bc_handler->init_dirichlet_bcs( system );
 	_bc_handler->init_dirichlet_bc_func_objs( system );
 	_bc_handler->init_periodic_bcs( system );

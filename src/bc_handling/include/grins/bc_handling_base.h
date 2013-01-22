@@ -46,6 +46,7 @@
 #include "grins/pbc_container.h"
 #include "grins/nbc_container.h"
 #include "grins/bc_types.h"
+#include "grins/cached_values.h"
 
 namespace GRINS
 {
@@ -65,16 +66,22 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
+    //! Override this method to initialize any system-dependent data.
+    /*! Override this method to, for example, cache a System variable
+        number. This is called before any of the other init methods in this class.
+        By default, does nothing. */
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
+
     virtual void apply_neumann_bcs( libMesh::FEMContext& context,
-			    GRINS::VariableIndex var,
-			    bool request_jacobian,
-			    GRINS::BoundaryID bc_id ) const;
+				    const GRINS::CachedValues& cache,
+				    const bool request_jacobian,
+				    const GRINS::BoundaryID bc_id ) const;
 
     virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
-					 GRINS::VariableIndex var,
-					 bool request_jacobian,
-					 GRINS::BoundaryID bc_id,
-					 GRINS::BCType bc_type ) const;
+					 const GRINS::CachedValues& cache,
+					 const bool request_jacobian,
+					 const GRINS::BoundaryID bc_id,
+					 const GRINS::BCType bc_type ) const;
 
     virtual void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
 
@@ -156,7 +163,7 @@ namespace GRINS
     GRINS::BoundaryConditions _bound_conds;
 
     std::vector< GRINS::PBCContainer > _periodic_bcs;
-    int _num_periodic_bcs;
+    unsigned int _num_periodic_bcs;
 
     std::string _physics_name;
 

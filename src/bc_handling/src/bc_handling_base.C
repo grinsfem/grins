@@ -86,6 +86,11 @@ namespace GRINS
     return;
   }
 
+  void BCHandlingBase::init_bc_data( const libMesh::FEMSystem& /*system*/ )
+  {
+    return;
+  }
+
   void BCHandlingBase::init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const
   {
     libMesh::DofMap& dof_map = system->get_dof_map();
@@ -170,9 +175,9 @@ namespace GRINS
   }
 
   void BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
-					  VariableIndex var,
-					  bool request_jacobian,
-					  BoundaryID bc_id ) const
+					  const GRINS::CachedValues& cache,
+					  const bool request_jacobian,
+					  const BoundaryID bc_id ) const
   {
     std::map< BoundaryID, BCType>::const_iterator 
       bc_map_it = _neumann_bc_map.find( bc_id );
@@ -181,7 +186,7 @@ namespace GRINS
        set a boundary condition on that boundary. */
     if( bc_map_it != _neumann_bc_map.end() )
       {
-	this->user_apply_neumann_bcs( context, var, request_jacobian,
+	this->user_apply_neumann_bcs( context, cache, request_jacobian,
 				      bc_id, bc_map_it->second );
       }
     return;
@@ -335,18 +340,20 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-						BoundaryID bc_id, BCType bc_type ) const
+  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
+						libMesh::DofMap& /*dof_map*/,
+						BoundaryID /*bc_id*/,
+						BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;
   }
 
-  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& context,
-					       VariableIndex var,
-					       bool request_jacobian,
-					       BoundaryID bc_id,
-					       BCType bc_type ) const
+  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& /*context*/,
+					       const GRINS::CachedValues& /*cache*/,
+					       const bool /*request_jacobian*/,
+					       const GRINS::BoundaryID /*bc_id*/,
+					       const GRINS::BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;
