@@ -80,26 +80,6 @@ namespace GRINS
 
     virtual void build_name_map();
 
-    /* Perfect gas ==> LowMachNavierStokes
-       Species/Mixture ==> ReactingLowMachNavierStokes */
-    enum QuantityList{ PERFECT_GAS_DENSITY = 0,
-		       MIXTURE_DENSITY,
-		       PERFECT_GAS_VISCOSITY,
-		       SPECIES_VISCOSITY,
-		       MIXTURE_VISCOSITY,
-		       PERFECT_GAS_THERMAL_CONDUCTIVITY,
-		       SPECIES_THERMAL_CONDUCTIVITY,
-		       MIXTURE_THERMAL_CONDUCTIVITY,
-		       PERFECT_GAS_SPECIFIC_HEAT_P,
-		       SPECIES_SPECIFIC_HEAT_P,
-		       MIXTURE_SPECIFIC_HEAT_P,
-		       PERFECT_GAS_SPECIFIC_HEAT_V,
-		       SPECIES_SPECIFIC_HEAT_V,
-		       MIXTURE_SPECIFIC_HEAT_V,
-		       MOLE_FRACTIONS,
-		       SPECIES_ENTHALPY,
-		       OMEGA_DOT };
-
     std::vector<unsigned int> _quantities;
     std::map<std::string, unsigned int> _quantity_name_map;
     std::map<VariableIndex,unsigned int> _quantity_var_map;
@@ -120,6 +100,26 @@ namespace GRINS
   private:
 
     PostProcessedQuantities();
+
+    /* Perfect gas ==> LowMachNavierStokes
+     * Species/Mixture ==> ReactingLowMachNavierStokes */
+    enum QuantityList{ PERFECT_GAS_DENSITY = 0,
+                       MIXTURE_DENSITY,
+                       PERFECT_GAS_VISCOSITY,
+                       SPECIES_VISCOSITY,
+                       MIXTURE_VISCOSITY,
+                       PERFECT_GAS_THERMAL_CONDUCTIVITY,
+                       SPECIES_THERMAL_CONDUCTIVITY,
+                       MIXTURE_THERMAL_CONDUCTIVITY,
+                       PERFECT_GAS_SPECIFIC_HEAT_P,
+                       SPECIES_SPECIFIC_HEAT_P,
+                       MIXTURE_SPECIFIC_HEAT_P,
+                       PERFECT_GAS_SPECIFIC_HEAT_V,
+                       SPECIES_SPECIFIC_HEAT_V,
+                       MIXTURE_SPECIFIC_HEAT_V,
+                       MOLE_FRACTIONS,
+                       SPECIES_ENTHALPY,
+                       OMEGA_DOT };
 
   };
 
