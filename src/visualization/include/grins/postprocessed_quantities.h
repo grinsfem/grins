@@ -80,6 +80,8 @@ namespace GRINS
 
     virtual void build_name_map();
 
+    virtual NumericType compute_quantities( const unsigned int component ) const;
+
     std::vector<unsigned int> _quantities;
     std::map<std::string, unsigned int> _quantity_name_map;
     std::map<VariableIndex,unsigned int> _quantity_var_map;

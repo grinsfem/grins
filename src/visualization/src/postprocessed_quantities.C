@@ -426,6 +426,13 @@ namespace GRINS
 	_multiphysics_sys->compute_element_cache( *(this->_multiphysics_context), point_vec, this->_cache );
       }
 
+    return this->compute_quantities( component );
+  }
+
+  template<class NumericType>
+  NumericType PostProcessedQuantities<NumericType>::compute_quantities( const unsigned int component ) const
+  {
+
     NumericType value = 0.0;
 
     switch( _quantity_var_map.find(component)->second )
