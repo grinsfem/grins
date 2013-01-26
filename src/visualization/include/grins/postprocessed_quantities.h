@@ -40,7 +40,7 @@
 namespace GRINS
 {
   template<class NumericType>
-  class PostProcessedQuantities : libMesh::FEMFunctionBase<NumericType>
+  class PostProcessedQuantities : public libMesh::FEMFunctionBase<NumericType>
   {
   public:
 
