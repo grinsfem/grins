@@ -80,6 +80,10 @@ namespace GRINS
 
     virtual void build_name_map();
 
+    virtual void init_quantities( const MultiphysicsSystem& multiphysics_system,
+				  libMesh::System& output_system,
+				  const unsigned int component );
+
     virtual NumericType compute_quantities( const unsigned int component ) const;
 
     std::vector<unsigned int> _quantities;

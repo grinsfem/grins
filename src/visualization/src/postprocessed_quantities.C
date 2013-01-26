@@ -100,291 +100,301 @@ namespace GRINS
 	for( typename std::vector<unsigned int>::const_iterator it = _quantities.begin();
 	     it != _quantities.end(); it++ )
 	  {
-	    switch( *it )
-	      {
-	      case(PERFECT_GAS_DENSITY):
-		{
-		  if( !system.has_physics(low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< low_mach_navier_stokes 
-				<< " enable for perfect gas density calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+	    this->init_quantities(system,output_system,*it);
+	  }
 
-		  _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
-		}
-		break;
+      }
+    
+    return;
+  }
+
+  template<class NumericType>
+  void PostProcessedQuantities<NumericType>::init_quantities( const MultiphysicsSystem& multiphysics_system,
+							      libMesh::System& output_system,
+							      const unsigned int component )
+  {
+    switch( component )
+      {
+      case(PERFECT_GAS_DENSITY):
+	{
+	  if( !multiphysics_system.has_physics(low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< low_mach_navier_stokes 
+			<< " enable for perfect gas density calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+
+	  _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
+	}
+	break;
 	    
-	      case(MIXTURE_DENSITY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture gas density calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
+      case(MIXTURE_DENSITY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mixture gas density calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
 
-		  _cache.add_quantity(Cache::MIXTURE_DENSITY);
-		}
-		break;
+	  _cache.add_quantity(Cache::MIXTURE_DENSITY);
+	}
+	break;
 	    
-	      case(PERFECT_GAS_VISCOSITY):
-		{
-		  libmesh_not_implemented();
-		}
-		break;
-	      case(SPECIES_VISCOSITY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for species viscosity calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(PERFECT_GAS_VISCOSITY):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
+      case(SPECIES_VISCOSITY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for species viscosity calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("mu_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, SPECIES_VISCOSITY) );
-		    }
-		  // We need T, p0, and mass fractions too
-		  _cache.add_quantity(Cache::TEMPERATURE);
-		  _cache.add_quantity(Cache::THERMO_PRESSURE);
-		  _cache.add_quantity(Cache::MASS_FRACTIONS);
-		  _cache.add_quantity(Cache::SPECIES_VISCOSITY);
-		}
-		break;
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("mu_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, SPECIES_VISCOSITY) );
+	    }
+	  // We need T, p0, and mass fractions too
+	  _cache.add_quantity(Cache::TEMPERATURE);
+	  _cache.add_quantity(Cache::THERMO_PRESSURE);
+	  _cache.add_quantity(Cache::MASS_FRACTIONS);
+	  _cache.add_quantity(Cache::SPECIES_VISCOSITY);
+	}
+	break;
 
-	      case(MIXTURE_VISCOSITY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture viscosity calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("mu", FIRST), MIXTURE_VISCOSITY) );
+      case(MIXTURE_VISCOSITY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mixture viscosity calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("mu", FIRST), MIXTURE_VISCOSITY) );
 
-		  _cache.add_quantity(Cache::MIXTURE_VISCOSITY);
-		}
-		break;
+	  _cache.add_quantity(Cache::MIXTURE_VISCOSITY);
+	}
+	break;
 
-	      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
-		{
-		  libmesh_not_implemented();
-		}
-	      break;
+      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
 
-	      case(SPECIES_THERMAL_CONDUCTIVITY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for species thermal conductivity calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(SPECIES_THERMAL_CONDUCTIVITY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for species thermal conductivity calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("k_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, SPECIES_THERMAL_CONDUCTIVITY) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("k_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, SPECIES_THERMAL_CONDUCTIVITY) );
+	    }
 
-		  _cache.add_quantity(Cache::SPECIES_THERMAL_CONDUCTIVITY);
-		}
-		break;
+	  _cache.add_quantity(Cache::SPECIES_THERMAL_CONDUCTIVITY);
+	}
+	break;
 
-	      case(MIXTURE_THERMAL_CONDUCTIVITY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture thermal conductivity calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("k", FIRST), MIXTURE_THERMAL_CONDUCTIVITY) );
+      case(MIXTURE_THERMAL_CONDUCTIVITY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mixture thermal conductivity calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("k", FIRST), MIXTURE_THERMAL_CONDUCTIVITY) );
 
-		  _cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
-		}
-		break;
+	  _cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
+	}
+	break;
 
-	      case(PERFECT_GAS_SPECIFIC_HEAT_P):
-		{
-		  libmesh_not_implemented();
-		}
-	      break;
+      case(PERFECT_GAS_SPECIFIC_HEAT_P):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
 
-	      case(SPECIES_SPECIFIC_HEAT_P):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for species cp calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(SPECIES_SPECIFIC_HEAT_P):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for species cp calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("cp_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_P) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("cp_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_P) );
+	    }
 
-		  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_P);
-		}
-		break;
+	  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_P);
+	}
+	break;
 
-	      case(MIXTURE_SPECIFIC_HEAT_P):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture cp calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_P) );
+      case(MIXTURE_SPECIFIC_HEAT_P):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mixture cp calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_P) );
 
-		  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
-		}
-		break;
+	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
+	}
+	break;
 
-	      case(PERFECT_GAS_SPECIFIC_HEAT_V):
-		{
-		  libmesh_not_implemented();
-		}
-		break;
+      case(PERFECT_GAS_SPECIFIC_HEAT_V):
+	{
+	  libmesh_not_implemented();
+	}
+	break;
 
-	      case(SPECIES_SPECIFIC_HEAT_V):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for species cv calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(SPECIES_SPECIFIC_HEAT_V):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for species cv calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("cv_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_V) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("cv_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_V) );
+	    }
 
-		  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_V);
-		}
-		break;
+	  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_V);
+	}
+	break;
 
-	      case(MIXTURE_SPECIFIC_HEAT_V):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mixture cv calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
-		  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_V) );
+      case(MIXTURE_SPECIFIC_HEAT_V):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mixture cv calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_V) );
 
-		  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_V);
-		}
-		break;
+	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_V);
+	}
+	break;
 
-	      case(MOLE_FRACTIONS):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for mole fraction calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(MOLE_FRACTIONS):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for mole fraction calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("X_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, MOLE_FRACTIONS) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("X_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, MOLE_FRACTIONS) );
+	    }
 
-		  _cache.add_quantity(Cache::MOLE_FRACTIONS);
-		}
-		break;
+	  _cache.add_quantity(Cache::MOLE_FRACTIONS);
+	}
+	break;
 		
-	      case(SPECIES_ENTHALPY):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for omega_dot calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(SPECIES_ENTHALPY):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for omega_dot calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("h_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, SPECIES_ENTHALPY) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("h_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, SPECIES_ENTHALPY) );
+	    }
 
-		  // We need T too
-		  _cache.add_quantity(Cache::TEMPERATURE);
-		  _cache.add_quantity(Cache::SPECIES_ENTHALPY);
-		}
-		break;
+	  // We need T too
+	  _cache.add_quantity(Cache::TEMPERATURE);
+	  _cache.add_quantity(Cache::SPECIES_ENTHALPY);
+	}
+	break;
 
-	      case(OMEGA_DOT):
-		{
-		  if( !system.has_physics(reacting_low_mach_navier_stokes) )
-		    {
-		      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-				<< " enable for omega_dot calculation."
-				<< std::endl;
-		      libmesh_error();
-		    }
+      case(OMEGA_DOT):
+	{
+	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
+	    {
+	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
+			<< " enable for omega_dot calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
 
-		  for( unsigned int s = 0; s < _species_names.size(); s++ )
-		    {
-		      VariableIndex var = output_system.add_variable("omega_"+_species_names[s], FIRST);
-		      _species_var_map.insert( std::make_pair(var, s) );
-		      _quantity_var_map.insert( std::make_pair(var, OMEGA_DOT) );
-		    }
+	  for( unsigned int s = 0; s < _species_names.size(); s++ )
+	    {
+	      VariableIndex var = output_system.add_variable("omega_"+_species_names[s], FIRST);
+	      _species_var_map.insert( std::make_pair(var, s) );
+	      _quantity_var_map.insert( std::make_pair(var, OMEGA_DOT) );
+	    }
 
-		  // We need T, p0, and mass fractions too
-		  _cache.add_quantity(Cache::TEMPERATURE);
-		  _cache.add_quantity(Cache::THERMO_PRESSURE);
-		  _cache.add_quantity(Cache::MASS_FRACTIONS);
-		  _cache.add_quantity(Cache::MIXTURE_DENSITY);
-		  _cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
-		  _cache.add_quantity(Cache::MOLAR_DENSITIES);
-		  _cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
-		  _cache.add_quantity(Cache::OMEGA_DOT);
-		}
-		break;
+	  // We need T, p0, and mass fractions too
+	  _cache.add_quantity(Cache::TEMPERATURE);
+	  _cache.add_quantity(Cache::THERMO_PRESSURE);
+	  _cache.add_quantity(Cache::MASS_FRACTIONS);
+	  _cache.add_quantity(Cache::MIXTURE_DENSITY);
+	  _cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
+	  _cache.add_quantity(Cache::MOLAR_DENSITIES);
+	  _cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
+	  _cache.add_quantity(Cache::OMEGA_DOT);
+	}
+	break;
 
-	      default:
-		{
-		  std::cerr << "Error: Invalid quantity " << *it << std::endl;
-		  libmesh_error();
-		}
-	      } // end switch
+      default:
+	{
+	  std::cerr << "Error: Invalid quantity " << component << std::endl;
+	  libmesh_error();
+	}
+      } // end switch
 
-	  } // end quantity loop
-
-      } // end if 
     return;
   }
 
