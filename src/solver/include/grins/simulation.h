@@ -53,7 +53,7 @@ namespace GRINS
     Simulation( const GetPot& input,
 		SimulationBuilder& sim_builder );
 
-    ~Simulation();
+    virtual ~Simulation();
 	
     void run();
 
@@ -67,7 +67,7 @@ namespace GRINS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 
-  private:
+  protected:
     
     void check_for_restart( const GetPot& input );
 
@@ -103,6 +103,10 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+
+  private:
+
+    Simulation();
 
   };
 }
