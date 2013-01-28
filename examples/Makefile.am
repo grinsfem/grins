@@ -1,6 +1,14 @@
 BUILT_SOURCES   = .license.stamp
 
 #=======================================================================
+# Backward facing step
+#=======================================================================
+backwardfacingstepdir = $(prefix)/examples/backward_facing_step
+backwardfacingstep_SCRIPTS = $(top_srcdir)/examples/backward_facing_step/run.sh
+backwardfacingstep_DATA  = $(top_srcdir)/examples/backward_facing_step/backward_facing_step.in
+backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
+
+#=======================================================================
 # Cavity Benchmark
 #=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
@@ -22,13 +30,16 @@ cavity_LDADD = $(LIBGRINS_LIBS)
 #=======================================================================
 liddrivencavitydir = $(prefix)/examples/lid_driven_cavity
 liddrivencavity_DATA = $(top_srcdir)/examples/lid_driven_cavity/lid_driven_cavity.in
+liddrivencavity_SCRIPTS = $(top_srcdir)/examples/lid_driven_cavity/run.sh
 
 #=======================================================================
 # Mass Injection Example
 #=======================================================================
 massinjectiondir = $(prefix)/examples/mass_injection
 massinjection_PROGRAMS = injection
-massinjection_DATA = $(top_srcdir)/examples/mass_injection/injection.in
+massinjection_DATA  = $(top_srcdir)/examples/mass_injection/injection.in
+massinjection_DATA += $(top_srcdir)/examples/mass_injection/injection_grid.e
+massinjection_SCRIPTS = $(top_srcdir)/examples/mass_injection/run.sh
 
 injection_SOURCES = $(top_srcdir)/examples/mass_injection/injection.C
 injection_LDADD = $(LIBGRINS_LIBS)

@@ -23,14 +23,14 @@ P_order = 'FIRST'
 bc_ids = '2 3 1 0'
 bc_types = 'prescribed_vel no_slip no_slip no_slip'
 
-bound_vel_2 = '400.0 0.0 0.0'
+bound_vel_2 = '1.0 0.0 0.0'
 
 pin_pressure = true
 pin_location = '0.0 0.00'
 pin_value = '0.0'
 
-rho = '10.0'
-mu = '1.0'
+rho = '1.0'
+mu = '1.0e-3'
 
 []
 
@@ -59,15 +59,15 @@ domain_x1_max = 1.0
 domain_x2_min = -1.0
 domain_x2_max = 0.0
 
-mesh_nx1 = 50 
-mesh_nx2 = 50
+mesh_nx1 = '15' 
+mesh_nx2 = '15'
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = true 
+transient = 'true' 
 theta = 1.0
-n_timesteps = 10
-deltat = 0.001
+n_timesteps = '50'
+deltat = '0.05'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -88,9 +88,9 @@ output_vis = true
 
 vis_output_file_prefix = 'lid_driven_cavity' 
 
-output_residual = true
+output_residual = 'false' 
 
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]

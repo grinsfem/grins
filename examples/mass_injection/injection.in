@@ -36,7 +36,7 @@ specific_heat_model = 'constant'
 # all others = 2
 
 vel_bc_ids = '1 2 3 4 5 6'
-vel_bc_types = 'inflow no_slip no_slip no_slip no_slip no_slip'
+vel_bc_types = 'general_velocity no_slip no_slip no_slip no_slip no_slip'
 
 temp_bc_ids = '1 2 3 4 5 6'
 temp_bc_types = 'isothermal adiabatic adiabatic adiabatic adiabatic adiabatic'
@@ -91,7 +91,7 @@ cp = '1004.5' #[J/kg-K]
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'new_grid.e'
+mesh_filename = 'injection_grid.e'
 element_type = QUAD9
 
 uniformly_refine =  0 
@@ -119,13 +119,13 @@ require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]
-output_vis = true
+output_vis = 'true'
 
 vis_output_file_prefix = 'injection' 
 
-output_residual = true
+output_residual = 'false'
 
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
