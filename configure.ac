@@ -215,6 +215,11 @@ AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/bac
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 
 dnl-----------------------------------------------
+dnl Generate files for examples
+dnl-----------------------------------------------
+AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	      [chmod +x examples/cavity_benchmark/run.sh])
+
+dnl-----------------------------------------------
 dnl Generate header files
 dnl-----------------------------------------------
 AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)

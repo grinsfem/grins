@@ -5,7 +5,8 @@ BUILT_SOURCES   = .license.stamp
 #=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
 cavitybenchmark_PROGRAMS = cavity
-cavitybenchmark_DATA = $(top_srcdir)/examples/cavity_benchmark/cavity.in
+cavitybenchmark_DATA  = $(top_srcdir)/examples/cavity_benchmark/cavity.in
+cavitybenchmark_SCRIPTS = $(top_srcdir)/examples/cavity_benchmark/run.sh
 
 cavity_SOURCES = $(top_srcdir)/examples/cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
