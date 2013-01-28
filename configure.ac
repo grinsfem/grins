@@ -221,6 +221,7 @@ AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	      [chmod +x examples/cavit
 AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	      [chmod +x examples/backward_facing_step/run.sh])
 AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	      [chmod +x examples/lid_driven_cavity/run.sh])
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	              [chmod +x examples/mass_injection/run.sh])
+AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	      [chmod +x examples/rayleigh_taylor/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files

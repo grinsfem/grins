@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/examples/rayleigh_taylor/rayleigh ./rayleigh.in $GRINS_SOLVER_OPTIONS

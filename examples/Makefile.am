@@ -50,6 +50,7 @@ injection_LDADD = $(LIBGRINS_LIBS)
 rayleighdir = $(prefix)/examples/rayleigh_taylor
 rayleigh_PROGRAMS = rayleigh
 rayleigh_DATA = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.in
+rayleigh_SCRIPTS = $(top_srcdir)/examples/rayleigh_taylor/run.sh
 
 rayleigh_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.C
 rayleigh_LDADD = $(LIBGRINS_LIBS)
@@ -57,12 +58,12 @@ rayleigh_LDADD = $(LIBGRINS_LIBS)
 #=======================================================================
 # Vortex Example
 #=======================================================================
-vortexexdir = $(prefix)/examples/thermal_vortex
-vortexex_PROGRAMS = vortex
-vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+#vortexexdir = $(prefix)/examples/thermal_vortex
+#vortexex_PROGRAMS = vortex
+#vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
 
-vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
-vortex_LDADD = $(LIBGRINS_LIBS)
+#vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
+#vortex_LDADD = $(LIBGRINS_LIBS)
 
 all_sources = $(cavity_SOURCES)          \
               $(injection_SOURCES)       \
