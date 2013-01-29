@@ -103,6 +103,12 @@ namespace GRINS
     return bc_type_out;
   }
 
+  void LowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    
+    return;
+  }
+
   void LowMachNavierStokesBCHandling::init_bc_data( const BoundaryID bc_id, 
 						    const std::string& bc_id_string, 
 						    const int bc_type, 

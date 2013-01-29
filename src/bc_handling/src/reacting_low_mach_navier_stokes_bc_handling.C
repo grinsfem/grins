@@ -34,7 +34,9 @@ namespace GRINS
 										const GetPot& input)
     : LowMachNavierStokesBCHandling(physics_name,input),
       _n_species( input.vector_variable_size("Physics/Chemistry/species") ),
-      _species_var_names(_n_species)
+      _species_var_names(_n_species),
+      _species_vars(_n_species),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
 
     for( unsigned int s = 0; s < _n_species; s++ )
@@ -83,6 +85,17 @@ namespace GRINS
       }
 
     return bc_type_out;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    
+    _T_var = system.variable_number( _T_var_name );
+
+    for( unsigned int s = 0; s < this->_n_species; s++ )
+      {
+	_species_vars[s] = variable_number( _species_var_names[s] );
+      }
   }
 
   void ReactingLowMachNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID bc_id, 
@@ -154,14 +167,6 @@ namespace GRINS
 								       GRINS::BoundaryID bc_id,
 								       GRINS::BCType bc_type ) const
   {
-    VariableIndex u_var = system->variable_number( _u_var_name );
-
-    std::vector<VariableIndex> species_vars(_n_species,-1);
-    for( unsigned int s = 0; s < _n_species; s++ )
-      {
-	species_vars[s] = system->variable_number( _species_var_names[s] );
-      }
-
     switch( bc_type )
       {
       case(ZERO_SPECIES_FLUX):
@@ -174,7 +179,7 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _n_species; s++ )
 	    {
-	      std::vector<GRINS::VariableIndex> dbc_vars(1,species_vars[s]);
+	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars[s]);
 
 	      ConstFunction<Number> species_func( this->get_species_bc_value(bc_id,s) );
 
@@ -239,19 +244,26 @@ namespace GRINS
   }
 
   void ReactingLowMachNavierStokesBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								      GRINS::VariableIndex var,
-								      bool request_jacobian,
-								      GRINS::BoundaryID bc_id,
-								      GRINS::BCType bc_type ) const
+								      const GRINS::CachedValues& cache,
+								      const bool request_jacobian,
+								      const BoundaryID bc_id,
+								      const BCType bc_type ) const
   {
     switch( bc_type )
       {
       case( GENERAL_SPECIES ):
 	{
-	  _bound_conds.apply_neumann_normal( context, request_jacobian, var, -1.0, 
-					     this->get_neumann_bound_func( bc_id, var ) );
+	  for( std::vector<VariableIndex>::const_iterator var = _species_vars.begin();
+	       var != _species_vars.end();
+	       ++var )
+	    {
+	      _bound_conds.apply_neumann_normal( context, request_jacobian, *var,
+						 -1.0, 
+						 this->get_neumann_bound_func( bc_id, var ) );
+	    }
 	}
 	break;
+
       default:
       {
 	std::cerr << "Error: Invalid Neumann BC type for " << _physics_name

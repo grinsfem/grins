@@ -33,10 +33,9 @@ namespace GRINS
 
   HeatTransferBCHandling::HeatTransferBCHandling(const std::string& physics_name,
 						 const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
-    _T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
 
