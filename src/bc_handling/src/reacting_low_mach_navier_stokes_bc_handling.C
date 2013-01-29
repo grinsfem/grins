@@ -261,12 +261,13 @@ namespace GRINS
 	break;
 
       default:
-      {
-	std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
-		  << std::endl;
-	libmesh_error();
+	{
+	  std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
+		    << std::endl;
+	  libmesh_error();
+	}
       }
-      }
+
     return;
   }
 
