@@ -69,7 +69,7 @@ namespace GRINS
     void apply_neumann_normal( libMesh::DiffContext &context,
 			       const GRINS::VariableIndex var,
 			       const libMesh::Real sign,
-			       Real value ) const;
+			       const Real value ) const;
     
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */

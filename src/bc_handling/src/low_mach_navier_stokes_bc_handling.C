@@ -33,13 +33,12 @@ namespace GRINS
 
   LowMachNavierStokesBCHandling::LowMachNavierStokesBCHandling(const std::string& physics_name,
 							       const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
+      _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
+      _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
-    _u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    _v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    _w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
-    _T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/vel_bc_types";
 
@@ -105,7 +104,8 @@ namespace GRINS
 
   void LowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    
+    _T_var = system.variable_number( _T_var_name );
+
     return;
   }
 

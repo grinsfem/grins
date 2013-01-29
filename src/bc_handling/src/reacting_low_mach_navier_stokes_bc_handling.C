@@ -35,8 +35,7 @@ namespace GRINS
     : LowMachNavierStokesBCHandling(physics_name,input),
       _n_species( input.vector_variable_size("Physics/Chemistry/species") ),
       _species_var_names(_n_species),
-      _species_vars(_n_species),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
+      _species_vars(_n_species)
   {
 
     for( unsigned int s = 0; s < _n_species; s++ )
@@ -89,12 +88,9 @@ namespace GRINS
 
   void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    
-    _T_var = system.variable_number( _T_var_name );
-
     for( unsigned int s = 0; s < this->_n_species; s++ )
       {
-	_species_vars[s] = variable_number( _species_var_names[s] );
+	_species_vars[s] = system.variable_number( _species_var_names[s] );
       }
   }
 
@@ -259,7 +255,7 @@ namespace GRINS
 	    {
 	      _bound_conds.apply_neumann_normal( context, request_jacobian, *var,
 						 -1.0, 
-						 this->get_neumann_bound_func( bc_id, var ) );
+						 this->get_neumann_bound_func( bc_id, *var ) );
 	    }
 	}
 	break;

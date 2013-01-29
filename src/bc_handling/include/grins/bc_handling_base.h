@@ -100,15 +100,15 @@ namespace GRINS
     }
 
     inline 
-    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
-									  GRINS::VariableIndex var_id ) const
+    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( const GRINS::BoundaryID bc_id,
+									  const GRINS::VariableIndex var_id ) const
     {
       return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
     }
 
     inline 
-    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
-									  GRINS::VariableIndex var_id )
+    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( const GRINS::BoundaryID bc_id,
+									  const GRINS::VariableIndex var_id )
     {
       return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
     }
