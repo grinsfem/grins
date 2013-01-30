@@ -36,6 +36,8 @@ namespace GRINS
 
     const libMesh::Real pi = 3.141592653589793;
 
+    const libMesh::Real two_pi = 2.0*pi;
+
   } // namespace Constants
 } // namespace GRINS
 
