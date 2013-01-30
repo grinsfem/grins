@@ -47,8 +47,12 @@ namespace GRINS
       _chem_mixture(chem_mixture),
       _species_index(species_index),
       _T_var(T_var),
-      _gamma(gamma)
+      _gamma(gamma),
+      _C( std::sqrt( (_chem_mixture.R(_species_index))/(GRINS::Constants::two_pi*_chem_mixture.M(_species_index)) ) )
   {
+    _jac_vars.resize(1);
+    _jac_vars[0] = _T_var;
+
     return;
   }
 
@@ -69,26 +73,42 @@ namespace GRINS
 
     const libMesh::Real rho_s = rho*w_s;
 
-    const libMesh::Real R_s = _chem_mixture.R(_species_index);
-
-    const libMesh::Real M_s = _chem_mixture.M(_species_index);
-
-    return this->omega_dot( rho_s, R_s, T, M_s );
+    return this->omega_dot( rho_s, T );
   }
 
-  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& context,
+  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& /*context*/,
 						  const CachedValues& cache,
 						  const unsigned int qp )
   {
-    return this->domega_dot_dws( );
+    const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    
+    const libMesh::Real w_s = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp][_species_index];
+    
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+    const libMesh::Real rho_s = rho*w_s;
+
+    const libMesh::Real R = _chem_mixture.R( cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
+    
+    return this->domega_dot_dws( rho_s, w_s, T, R );
   }
 
-  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& context,
+  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& /*context*/,
 						  const CachedValues& cache,
 						  const unsigned int qp, 
 						  const GRINS::VariableIndex jac_var )
   {
-    return this->domega_dot_dT( );
+    libmesh_assert_equal_to( jac_var, _T_var );
+
+    const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    
+    const libMesh::Real w_s = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp][_species_index];
+    
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+    const libMesh::Real rho_s = rho*w_s;
+
+    return this->domega_dot_dT( rho_s, T );
   }
 
 } // namespace GRINS

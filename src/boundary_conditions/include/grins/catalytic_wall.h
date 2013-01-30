@@ -52,6 +52,7 @@ namespace GRINS
 		   const unsigned int species_index,
 		   const VariableIndex T_var,
 		   const libMesh::Real gamma );
+
     ~CatalyticWall();
 
     virtual libMesh::Real normal_value( const libMesh::FEMContext& context,
@@ -65,12 +66,13 @@ namespace GRINS
 					     const unsigned int qp, 
 					     const GRINS::VariableIndex jac_var );
 
-    libMesh::Real omega_dot( libMesh::Real rho_s, libMesh::Real R_s,
-			     libMesh::Real T, libMesh::Real M_s ) const;
+    //! \f$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi M_s} } \f$
+    libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
-    libMesh::Real domega_dot_dws( ) const;
+    libMesh::Real domega_dot_dws(  const libMesh::Real rho_s, const libMesh::Real w_s,
+				   const libMesh::Real T, const libMesh::Real R ) const;
 
-    libMesh::Real domega_dot_dT( ) const;
+    libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
   protected:
 
@@ -82,6 +84,9 @@ namespace GRINS
 
     libMesh::Real _gamma;
 
+    //! \f$ \sqrt{ \frac{R_s}{2\pi M_s} } \f$
+    const libMesh::Real _C;
+
   private:
 
     CatalyticWall();
@@ -91,24 +96,22 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
 
   inline
-  libMesh::Real CatalyticWall::omega_dot( libMesh::Real rho_s, libMesh::Real R_s,
-					  libMesh::Real T, libMesh::Real M_s ) const
+  libMesh::Real CatalyticWall::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return rho_s*_gamma*std::sqrt( (R_s*T)/(GRINS::Constants::two_pi*M_s) );
+    return rho_s*_gamma*_C*std::sqrt(T);
   }
 
   inline
-  libMesh::Real CatalyticWall::domega_dot_dws( ) const
+  libMesh::Real CatalyticWall::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
+					       const libMesh::Real T, const libMesh::Real R ) const
   {
-    libmesh_not_implemented();
-    return 0.0;
+    return (1.0/w_s - rho_s/R)*(this->omega_dot( rho_s, T ));
   }
 
   inline
-  libMesh::Real CatalyticWall::domega_dot_dT( ) const
+  libMesh::Real CatalyticWall::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    libmesh_not_implemented();
-    return 0.0;
+    return -0.5/T*(this->omega_dot( rho_s, T ));
   }
 
 } // namespace GRINS
