@@ -19,6 +19,7 @@ check_PROGRAMS += ideal_gas_mixture_cantera
 check_PROGRAMS += reacting_low_mach_regression
 check_PROGRAMS += arrhenius_rate_test
 check_PROGRAMS += grins_kinetics_regression
+check_PROGRAMS += catalytic_wall_unit
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -72,6 +73,7 @@ ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
 reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
 arrhenius_rate_test_SOURCES = arrhenius_rate_test.C
 grins_kinetics_regression_SOURCES = grins_kinetics_regression.C
+catalytic_wall_unit_SOURCES = catalytic_wall_unit.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -93,6 +95,8 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
 TESTS = gaussian_profiles                                       \
         chem_mixture                                            \
         cea_thermo_test
+
+TESTS += catalytic_wall_unit
 
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_test
