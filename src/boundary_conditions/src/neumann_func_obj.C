@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/neumann_func_obj.h"
+
+// GRINS
+#include "grins/cached_values.h"
 
 namespace GRINS
 {
@@ -41,13 +45,15 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const unsigned int )
+  libMesh::Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const CachedValues&,
+						     const unsigned int )
   {
     // By default, does nothing.
     return 0.0;
   }
 
-  libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext&, 
+  libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext&,
+						    const CachedValues&,
 						    const unsigned int,
 						    const GRINS::VariableIndex )
   {
@@ -56,14 +62,18 @@ namespace GRINS
   }
   
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned )
+  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+							  const CachedValues&,
+							  const unsigned )
   {
     // By default, does nothing.
     return 0.0;
   }
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&, const unsigned int, 
-						 const GRINS::VariableIndex )
+  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+							  const CachedValues&,
+							  const unsigned int, 
+							  const GRINS::VariableIndex )
   {
     // By default, does nothing.
     return 0.0;
