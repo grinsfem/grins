@@ -109,10 +109,10 @@ namespace GRINS
     return;
   }
 
-  void LowMachNavierStokesBCHandling::init_bc_data( const BoundaryID bc_id, 
-						    const std::string& bc_id_string, 
-						    const int bc_type, 
-						    const GetPot& input )
+  void LowMachNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
+						     const std::string& bc_id_string, 
+						     const int bc_type, 
+						     const GetPot& input )
   {
     switch(bc_type)
       {
@@ -251,7 +251,7 @@ namespace GRINS
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_data( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
 	}
       } // End switch(bc_type)
   

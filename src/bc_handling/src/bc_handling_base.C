@@ -80,7 +80,7 @@ namespace GRINS
 	ss << bc_id;
 	std::string bc_id_string = ss.str();
 
-	this->init_bc_data( bc_id, bc_id_string, bc_type, input );
+	this->init_bc_types( bc_id, bc_id_string, bc_type, input );
       }
 
     return;
@@ -238,10 +238,10 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void BCHandlingBase::init_bc_data( const BoundaryID bc_id, 
-				     const std::string& bc_id_string, 
-				     const int bc_type, 
-				     const GetPot& input )
+  void BCHandlingBase::init_bc_types( const BoundaryID bc_id, 
+				      const std::string& bc_id_string, 
+				      const int bc_type, 
+				      const GetPot& input )
   {
     switch(bc_type)
       {

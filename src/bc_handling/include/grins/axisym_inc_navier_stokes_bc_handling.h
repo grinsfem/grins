@@ -49,10 +49,10 @@ namespace GRINS
 
     virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
 
     void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
 				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;

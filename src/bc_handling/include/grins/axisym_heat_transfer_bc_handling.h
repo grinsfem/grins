@@ -46,10 +46,10 @@ namespace GRINS
 
     virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
 
     virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
 					 const GRINS::CachedValues& cache,

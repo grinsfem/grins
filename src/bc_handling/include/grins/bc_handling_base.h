@@ -118,10 +118,10 @@ namespace GRINS
     // User will need to implement these functions for BC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
 					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;

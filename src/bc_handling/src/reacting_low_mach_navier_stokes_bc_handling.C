@@ -88,6 +88,9 @@ namespace GRINS
 
   void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
+    // Call base class
+    LowMachNavierStokesBCHandling::init_bc_data(system);
+
     for( unsigned int s = 0; s < this->_n_species; s++ )
       {
 	_species_vars[s] = system.variable_number( _species_var_names[s] );
@@ -96,10 +99,10 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID bc_id, 
-							    const std::string& bc_id_string, 
-							    const int bc_type, 
-							    const GetPot& input )
+  void ReactingLowMachNavierStokesBCHandling::init_bc_types( const GRINS::BoundaryID bc_id, 
+							     const std::string& bc_id_string, 
+							     const int bc_type, 
+							     const GetPot& input )
   {
     switch(bc_type)
       {
@@ -151,13 +154,13 @@ namespace GRINS
 
       case(CATALYTIC_WALL):
 	{
-	  libmesh_not_implemented();
+	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
 
       default:
 	{
-	  LowMachNavierStokesBCHandling::init_bc_data( bc_id, bc_id_string, bc_type, input );
+	  LowMachNavierStokesBCHandling::init_bc_types( bc_id, bc_id_string, bc_type, input );
 	}
 	break;
 
@@ -195,11 +198,7 @@ namespace GRINS
 	    }
 	}
 	break;
-      case(CATALYTIC_WALL):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
+      
       case(GENERAL_SPECIES):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
@@ -256,6 +255,7 @@ namespace GRINS
     switch( bc_type )
       {
       case( GENERAL_SPECIES ):
+      case( CATALYTIC_WALL ):
 	{
 	  for( std::vector<VariableIndex>::const_iterator var = _species_vars.begin();
 	       var != _species_vars.end();
