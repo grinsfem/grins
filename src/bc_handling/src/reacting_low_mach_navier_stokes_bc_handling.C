@@ -92,6 +92,8 @@ namespace GRINS
       {
 	_species_vars[s] = system.variable_number( _species_var_names[s] );
       }
+
+    return;
   }
 
   void ReactingLowMachNavierStokesBCHandling::init_bc_data( const GRINS::BoundaryID bc_id, 
@@ -106,6 +108,7 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
+
       case(PRESCRIBED_SPECIES):
 	{
 	  this->set_species_bc_type( bc_id, bc_type );
@@ -139,20 +142,25 @@ namespace GRINS
 	  this->set_species_bc_values( bc_id, species_mass_fracs );
 	}
 	break;
+
       case(GENERAL_SPECIES):
 	{
-	  this->set_neumann_bc_type( bc_id, bc_type );
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
 	break;
+
       case(CATALYTIC_WALL):
 	{
 	  libmesh_not_implemented();
 	}
 	break;
+
       default:
 	{
 	  LowMachNavierStokesBCHandling::init_bc_data( bc_id, bc_id_string, bc_type, input );
 	}
+	break;
+
       } //switch(bc_type)
 
     return;
@@ -253,7 +261,7 @@ namespace GRINS
 	       var != _species_vars.end();
 	       ++var )
 	    {
-	      _bound_conds.apply_neumann_normal( context, request_jacobian, *var,
+	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, *var,
 						 -1.0, 
 						 this->get_neumann_bound_func( bc_id, *var ) );
 	    }

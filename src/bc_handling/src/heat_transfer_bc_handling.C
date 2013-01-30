@@ -188,7 +188,7 @@ namespace GRINS
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann( context, request_jacobian, _T_var, -1.0, 
+	  _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
 				      this->get_neumann_bound_func( bc_id, _T_var ) );
 	}
 	break;

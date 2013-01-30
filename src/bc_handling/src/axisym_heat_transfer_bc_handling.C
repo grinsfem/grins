@@ -148,7 +148,7 @@ namespace GRINS
   }
 
   void AxisymmetricHeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								   const GRINS::CachedValues& /*cache*/,
+								   const GRINS::CachedValues& cache,
 								   const bool request_jacobian,
 								   const BoundaryID bc_id,
 								   const BCType bc_type ) const
@@ -173,7 +173,7 @@ namespace GRINS
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, request_jacobian, _T_var, -1.0, 
+	  _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
 						   this->get_neumann_bound_func( bc_id, _T_var ) );
 	}
 	break;

@@ -48,6 +48,8 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
+    
     virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
 			       const std::string& bc_id_string, 
 			       const int bc_type, 
@@ -60,6 +62,8 @@ namespace GRINS
   protected:
 
     std::string _u_var_name, _v_var_name, _w_var_name;
+
+    VariableIndex _u_var, _v_var, _w_var;
 
   private:
 
