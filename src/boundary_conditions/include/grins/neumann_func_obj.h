@@ -34,11 +34,17 @@
 // libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/point.h"
-#include "libmesh/fem_context.h"
+
+// libMesh forward declarations
+namespace libMesh
+{
+  class FEMContext;
+}
 
 namespace GRINS
 {
-  // Forward declarations
+
+  // GRINS forward declarations
   class CachedValues;
 
   //! Abstract base class for general, non-constant Neumann boundary conditions
@@ -54,7 +60,7 @@ namespace GRINS
     /*! This will leverage the FEMContext to get variable values and derivatives through the
       side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
     virtual libMesh::Point value( const libMesh::FEMContext& context,
-				  const CachedValues& cache, const unsigned int qp ) = 0;
+				  const CachedValues& cache, const unsigned int qp );
 
     //! Returns the value of the implemented Neumann boundary condition
     /*! This will leverage the FEMContext to get variable values and derivatives through the
@@ -69,7 +75,7 @@ namespace GRINS
     /*! This will leverage the FEMContext to get variable values and derivatives through the
       side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
     virtual libMesh::Point derivative( const libMesh::FEMContext& context, const CachedValues& cache,
-				       const unsigned int qp ) = 0;
+				       const unsigned int qp );
 
     //! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
     /*! This will leverage the FEMContext to get variable values and derivatives through the

@@ -32,6 +32,9 @@
 // GRINS
 #include "grins/cached_values.h"
 
+// libMesh
+#include "libmesh/fem_context.h"
+
 namespace GRINS
 {
 
@@ -45,41 +48,64 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_value( const libMesh::FEMContext&, const CachedValues&,
-						     const unsigned int )
+  libMesh::Point NeumannFuncObj::value( const libMesh::FEMContext&,
+				       const CachedValues&,
+				       const unsigned int )
   {
     // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return libMesh::Point();
+  }
+
+  libMesh::Real NeumannFuncObj::normal_value( const libMesh::FEMContext&,
+					      const CachedValues&,
+					      const unsigned int )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
     return 0.0;
   }
 
-  libMesh::Point GRINS::NeumannFuncObj::derivative( const libMesh::FEMContext&,
-						    const CachedValues&,
-						    const unsigned int,
-						    const GRINS::VariableIndex )
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+					     const CachedValues&,
+					     const unsigned int )
   {
     // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return libMesh::Point(0.0,0.0,0.0);
+  }
+
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+					     const CachedValues&,
+					     const unsigned int,
+					     const VariableIndex )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
     return libMesh::Point(0.0,0.0,0.0);
   }
   
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
-							  const CachedValues&,
-							  const unsigned )
+  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+						   const CachedValues&,
+						   const unsigned )
   {
     // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
     return 0.0;
   }
 
-  libMesh::Real GRINS::NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
-							  const CachedValues&,
-							  const unsigned int, 
-							  const GRINS::VariableIndex )
+  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+						   const CachedValues&,
+						   const unsigned int, 
+						   const VariableIndex )
   {
     // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
     return 0.0;
   }
 
-  std::vector<GRINS::VariableIndex> GRINS::NeumannFuncObj:: get_other_jac_vars()
+  std::vector<VariableIndex> NeumannFuncObj:: get_other_jac_vars()
   {
     return _jac_vars;
   }
