@@ -47,7 +47,7 @@ namespace GRINS
   // GRINS forward declarations
   class CachedValues;
 
-  //! Abstract base class for general, non-constant Neumann boundary conditions
+  //! Base class for general, non-constant Neumann boundary conditions
   class NeumannFuncObj
   {
   public:
