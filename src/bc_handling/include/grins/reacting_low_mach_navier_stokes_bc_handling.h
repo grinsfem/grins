@@ -79,6 +79,8 @@ namespace GRINS
     std::vector<std::string> _species_var_names;
     std::vector<GRINS::VariableIndex> _species_vars;
 
+    std::map<BoundaryID, std::vector<std::string> > _catalytic_reactions;
+
   private:
 
     ReactingLowMachNavierStokesBCHandling();

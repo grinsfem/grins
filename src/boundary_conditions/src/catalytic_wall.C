@@ -1,0 +1,94 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010-2012 The PECOS Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2 GNU General
+// Public License as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301 USA
+//
+//-----------------------------------------------------------------------el-
+//
+// $Id$
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+// This class
+#include "grins/catalytic_wall.h"
+
+// GRINS
+#include "grins/cached_values.h"
+#include "grins/chemical_mixture.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+
+namespace GRINS
+{
+
+  CatalyticWall::CatalyticWall( const ChemicalMixture& chem_mixture,
+				const unsigned int species_index,
+				const VariableIndex T_var,
+				const libMesh::Real gamma )
+    : NeumannFuncObj(),
+      _chem_mixture(chem_mixture),
+      _species_index(species_index),
+      _T_var(T_var),
+      _gamma(gamma)
+  {
+    return;
+  }
+
+  CatalyticWall::~CatalyticWall()
+  {
+    return;
+  }
+
+  libMesh::Real CatalyticWall::normal_value( const libMesh::FEMContext& /*context*/,
+					     const CachedValues& cache,
+					     const unsigned int qp )
+  {
+    const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    
+    const libMesh::Real w_s = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp][_species_index];
+    
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+    const libMesh::Real rho_s = rho*w_s;
+
+    const libMesh::Real R_s = _chem_mixture.R(_species_index);
+
+    const libMesh::Real M_s = _chem_mixture.M(_species_index);
+
+    return this->omega_dot( rho_s, R_s, T, M_s );
+  }
+
+  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& context,
+						  const CachedValues& cache,
+						  const unsigned int qp )
+  {
+    return this->domega_dot_dws( );
+  }
+
+  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& context,
+						  const CachedValues& cache,
+						  const unsigned int qp, 
+						  const GRINS::VariableIndex jac_var )
+  {
+    return this->domega_dot_dT( );
+  }
+
+} // namespace GRINS

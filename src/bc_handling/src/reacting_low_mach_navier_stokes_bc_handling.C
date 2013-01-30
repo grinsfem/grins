@@ -96,6 +96,22 @@ namespace GRINS
 	_species_vars[s] = system.variable_number( _species_var_names[s] );
       }
 
+    // See if we have a catalytic wall
+    for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _species_bc_map.begin();
+	 bc_map != _species_bc_map.end(); ++bc_map )
+      {
+	if( bc_map->second == CATALYTIC_WALL )
+	  {
+	    libmesh_not_implemented();
+	    // Add CatalyticWall for each reactant and product
+	    // First, split each reaction into reactants and products
+	    // Grab gamma value from input
+	    /* Query to see if there's already a NBCContainer
+	       - If so, add our variable/function pairs to it
+	       - If not, instaniate NBCContainer object, populate it, then add it to _neumann_bound_funcs */ 
+	  }
+      }
+
     return;
   }
 
@@ -155,6 +171,10 @@ namespace GRINS
       case(CATALYTIC_WALL):
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
+
+	  // Parse catalytic reactions on this wall
+
+	  
 	}
 	break;
 

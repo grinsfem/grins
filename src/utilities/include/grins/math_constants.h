@@ -29,6 +29,8 @@
 #ifndef GRINS_MATH_CONSTANTS_H
 #define GRINS_MATH_CONSTANTS_H
 
+#include "libmesh/libmesh.h"
+
 namespace GRINS
 {
   namespace Constants

@@ -96,7 +96,8 @@ boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/dbc_container.C \
                           $(boundary_conditions_srcdir)/pressure_pinning.C \
                           $(boundary_conditions_srcdir)/pbc_container.C \
-                          $(boundary_conditions_srcdir)/nbc_container.C
+                          $(boundary_conditions_srcdir)/nbc_container.C \
+                          $(boundary_conditions_srcdir)/catalytic_wall.C
 
 utilities_SRC = $(utilities_srcdir)/grins_version.C \
                 $(utilities_srcdir)/input_utils.C \
@@ -205,7 +206,8 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/dbc_container.h \
                           $(boundary_conditions_incdir)/grins/pressure_pinning.h \
                           $(boundary_conditions_incdir)/grins/pbc_container.h \
-                          $(boundary_conditions_incdir)/grins/nbc_container.h
+                          $(boundary_conditions_incdir)/grins/nbc_container.h \
+                          $(boundary_conditions_incdir)/grins/catalytic_wall.h
 
 utilities_INC = $(utilities_incdir)/grins/grins_version.h \
                 $(utilities_incdir)/grins/physical_constants.h \
