@@ -32,7 +32,7 @@ namespace GRINS
 {
 
   ConcentricCylinderProfile::ConcentricCylinderProfile( )
-    : FunctionBase<libMesh::Number>(),
+    : libMesh::FunctionBase<libMesh::Number>(),
       _u0(2.0),
       _r0(1.0),
       _r1(2.0)
@@ -43,7 +43,7 @@ namespace GRINS
   ConcentricCylinderProfile::ConcentricCylinderProfile( const double u0, 
 							const double r0, 
 							const double r1 )
-    : FunctionBase<libMesh::Number>(),
+    : libMesh::FunctionBase<libMesh::Number>(),
       _u0(u0),
       _r0(r0),
       _r1(r1)

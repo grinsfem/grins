@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/bin/grins ./backward_facing_step.in $GRINS_SOLVER_OPTIONS

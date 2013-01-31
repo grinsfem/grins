@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/examples/mass_injection/injection ./injection.in $GRINS_SOLVER_OPTIONS
