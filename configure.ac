@@ -307,6 +307,15 @@ AC_CONFIG_FILES(test/input_files/air_2sp.xml)
 AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	      [chmod +x test/grins_kinetics_regression.sh])
 
 dnl-----------------------------------------------
+dnl Generate run scripts for examples
+dnl-----------------------------------------------
+AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	      [chmod +x examples/cavity_benchmark/run.sh])
+AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	      [chmod +x examples/backward_facing_step/run.sh])
+AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	      [chmod +x examples/lid_driven_cavity/run.sh])
+AC_CONFIG_FILES(examples/mass_injection/run.sh,	              [chmod +x examples/mass_injection/run.sh])
+AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	      [chmod +x examples/rayleigh_taylor/run.sh])
+
+dnl-----------------------------------------------
 dnl Generate header files
 dnl-----------------------------------------------
 AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)

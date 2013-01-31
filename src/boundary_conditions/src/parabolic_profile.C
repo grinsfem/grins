@@ -32,7 +32,7 @@ namespace GRINS
 {
 
   ParabolicProfile::ParabolicProfile( )
-    : FunctionBase<libMesh::Number>(),
+    : libMesh::FunctionBase<libMesh::Number>(),
       _a(0.0), _b(0.0), _c(-4.0), _d(0.0), _e(4.0), _f(0.0)
   {
     _initialized=true;
@@ -41,7 +41,7 @@ namespace GRINS
 
   ParabolicProfile::ParabolicProfile( const double a, const double b, const double c,
 				      const double d, const double e, const double f )
-    : FunctionBase<libMesh::Number>(),
+    : libMesh::FunctionBase<libMesh::Number>(),
       _a(a), _b(b), _c(c), _d(d), _e(e), _f(f)
   {
     _initialized=true;

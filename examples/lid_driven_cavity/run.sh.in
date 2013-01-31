@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/bin/grins ./lid_driven_cavity.in $GRINS_SOLVER_OPTIONS

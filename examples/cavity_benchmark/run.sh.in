@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/examples/cavity_benchmark/cavity ./cavity.in $GRINS_SOLVER_OPTIONS
