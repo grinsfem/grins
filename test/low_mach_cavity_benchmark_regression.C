@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   // and not even close to the real QoI for this problem.
   const Real exact_qoi = 4.8158910675853654e+00;
 
-  const Real tol = 4.0e-13;
+  const Real tol = 5.0e-12;
 
   int return_flag = 0;
 
