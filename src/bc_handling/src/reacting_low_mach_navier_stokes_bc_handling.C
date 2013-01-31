@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/reacting_low_mach_navier_stokes.h"
+
+// GRINS
+#include "grins/string_utils.h"
 
 namespace GRINS
 {
@@ -100,17 +104,65 @@ namespace GRINS
     for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _species_bc_map.begin();
 	 bc_map != _species_bc_map.end(); ++bc_map )
       {
-	if( bc_map->second == CATALYTIC_WALL )
+	const BoundaryID bc_id = bc_map->first;
+	const BCType bc_type = bc_map->second;
+
+	// Add CatalyticWall for each reactant and product
+	if( bc_type == CATALYTIC_WALL )
 	  {
-	    libmesh_not_implemented();
-	    // Add CatalyticWall for each reactant and product
-	    // First, split each reaction into reactants and products
-	    // Grab gamma value from input
-	    /* Query to see if there's already a NBCContainer
-	       - If so, add our variable/function pairs to it
-	       - If not, instaniate NBCContainer object, populate it, then add it to _neumann_bound_funcs */ 
-	  }
-      }
+	    libmesh_assert( _catalytic_reactions.find(bc_id) != _catalytic_reactions.end() );
+	    const std::vector<std::string>& reactions = _catalytic_reactions.find(bc_id)->second;
+
+	    const unsigned int n_reactions = reactions.size();
+	    for( unsigned int r = 0; r < n_reactions; r++ )
+	      {
+		// First, split each reaction into reactants and products
+		std::vector<std::string> partners;       
+		SplitString(reactions[r], "->", partners);
+
+		const std::string& reactant = partners[0];
+		const std::string& product = partners[1];
+
+		// We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
+		if( partners.size() == 2 )
+		  {
+		    libmesh_assert( _catalycities.find(bc_id) != _catalycities.end() );
+		    const libMesh::Real gamma = (_catalycities.find(bc_id)->second)[r];
+		    
+		    libmesh_not_implemented();
+		    //std::tr1::shared_ptr<NeumannFuncObj> func_reactant( new CatalyticWall(chem_mixture,r_index,T_var,gamma) );
+		    //std::tr1::shared_ptr<NeumannFuncObj> func_product( new CatalyticWall(chem_mixture,r_index,T_var,-gamma) );
+
+		    // Query to see if there's already a NBCContainer
+		    /* If not, instaniate NBCContainer object, populate it,
+		       then add it to _neumann_bound_funcs */
+		    if( _neumann_bound_funcs.find(bc_id) == _neumann_bound_funcs.end() )
+		      {
+			NBCContainer container;
+			container.set_bc_id( bc_id );
+			//container.add_var_func_pair( system.variable_number(reactant), func_reactant );
+			//container.add_var_func_pair( system.variable_number(product), func_product );
+
+			_neumann_bound_funcs.insert( std::make_pair( bc_id, container ) );
+		      }
+		    // If so, add our variable/function pairs to it
+		    else
+		      {
+			NBCContainer& container = _neumann_bound_funcs.find(bc_id)->second;
+			
+		      }
+		  }
+		else
+		  {
+		    std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+			      << "in a catalytic reaction." << std::endl
+			      << "Found " << partners.size() << " species." << std::endl;
+		    libmesh_error();
+		  }
+
+	      } // end loop over reaction pairs
+	  } // end check on CATALYTIC_WALL
+      } // end loop over bc_ids
 
     return;
   }
@@ -174,7 +226,20 @@ namespace GRINS
 
 	  // Parse catalytic reactions on this wall
 
+	  // Parse catalycities
+	  // Grab gamma value from input
+	  std::ostringstream ss;
+	  ss << bc_id;
+	  libmesh_not_implemented();
+	  std::string var_name; // = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+ss.str();
 	  
+	  if( !input.have_variable( var_name ) )
+	    {
+	      std::cerr << "Error: Could not find catalyticity "
+			<< var_name << std::endl;
+	      libmesh_error();
+	    }
+
 	}
 	break;
 

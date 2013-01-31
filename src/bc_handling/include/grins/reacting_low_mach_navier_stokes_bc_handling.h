@@ -81,6 +81,8 @@ namespace GRINS
 
     std::map<BoundaryID, std::vector<std::string> > _catalytic_reactions;
 
+    std::map<BoundaryID, std::vector<libMesh::Real> > _catalycities;
+
   private:
 
     ReactingLowMachNavierStokesBCHandling();
