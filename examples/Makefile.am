@@ -56,6 +56,15 @@ rayleigh_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.C
 rayleigh_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
+# Coupled Stokes-Navier-Stokes Example
+#=======================================================================
+stokesnsdir = $(prefix)/examples/coupled_stokes_navierstokes
+stokesns_DATA  = $(top_srcdir)/examples/coupled_stokes_navierstokes/stokes_ns.in
+stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/ns.in
+stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/mesh.e
+stokesns_SCRIPTS = $(top_srcdir)/examples/coupled_stokes_navierstokes/run.sh
+
+#=======================================================================
 # Vortex Example
 #=======================================================================
 #vortexexdir = $(prefix)/examples/thermal_vortex
