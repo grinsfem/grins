@@ -10,7 +10,7 @@ check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
-check_PROGRAMS += backward_facing_step_regression
+check_PROGRAMS += grins_flow_regression
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -47,7 +47,7 @@ test_thermally_driven_flow_SOURCES = $(top_srcdir)/test/test_thermally_driven_fl
 gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
-backward_facing_step_regression_SOURCES = $(top_srcdir)/test/backward_facing_step_regression.C
+grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
