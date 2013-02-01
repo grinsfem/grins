@@ -78,7 +78,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_magnetostatics.C \
                $(physics_srcdir)/axisym_lorentz_force.C \
                $(physics_srcdir)/electrostatics.C \
-               $(physics_srcdir)/magnetostatics.C
+               $(physics_srcdir)/magnetostatics.C \
+               $(physics_srcdir)/lorentz_force.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
@@ -168,7 +169,8 @@ physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
                $(physics_incdir)/grins/axisym_magnetostatics.h \
                $(physics_incdir)/grins/axisym_lorentz_force.h \
                $(physics_incdir)/grins/electrostatics.h \
-               $(physics_incdir)/grins/magnetostatics.h
+               $(physics_incdir)/grins/magnetostatics.h \
+               $(physics_incdir)/grins/lorentz_force.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/boundary_conditions.h \
