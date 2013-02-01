@@ -35,11 +35,13 @@
 namespace GRINS
 {
   ReactingLowMachNavierStokesBCHandling::ReactingLowMachNavierStokesBCHandling( const std::string& physics_name,
-										const GetPot& input)
+										const GetPot& input,
+										const ChemicalMixture& chem_mixture )
     : LowMachNavierStokesBCHandling(physics_name,input),
       _n_species( input.vector_variable_size("Physics/Chemistry/species") ),
       _species_var_names(_n_species),
-      _species_vars(_n_species)
+      _species_vars(_n_species),
+      _chem_mixture(chem_mixture)
   {
 
     for( unsigned int s = 0; s < _n_species; s++ )
@@ -88,83 +90,6 @@ namespace GRINS
       }
 
     return bc_type_out;
-  }
-
-  void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
-  {
-    // Call base class
-    LowMachNavierStokesBCHandling::init_bc_data(system);
-
-    for( unsigned int s = 0; s < this->_n_species; s++ )
-      {
-	_species_vars[s] = system.variable_number( _species_var_names[s] );
-      }
-
-    // See if we have a catalytic wall
-    for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _species_bc_map.begin();
-	 bc_map != _species_bc_map.end(); ++bc_map )
-      {
-	const BoundaryID bc_id = bc_map->first;
-	const BCType bc_type = bc_map->second;
-
-	// Add CatalyticWall for each reactant and product
-	if( bc_type == CATALYTIC_WALL )
-	  {
-	    libmesh_assert( _catalytic_reactions.find(bc_id) != _catalytic_reactions.end() );
-	    const std::vector<std::string>& reactions = _catalytic_reactions.find(bc_id)->second;
-
-	    const unsigned int n_reactions = reactions.size();
-	    for( unsigned int r = 0; r < n_reactions; r++ )
-	      {
-		// First, split each reaction into reactants and products
-		std::vector<std::string> partners;       
-		SplitString(reactions[r], "->", partners);
-
-		const std::string& reactant = partners[0];
-		const std::string& product = partners[1];
-
-		// We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
-		if( partners.size() == 2 )
-		  {
-		    libmesh_assert( _catalycities.find(bc_id) != _catalycities.end() );
-		    const libMesh::Real gamma = (_catalycities.find(bc_id)->second)[r];
-		    
-		    libmesh_not_implemented();
-		    //std::tr1::shared_ptr<NeumannFuncObj> func_reactant( new CatalyticWall(chem_mixture,r_index,T_var,gamma) );
-		    //std::tr1::shared_ptr<NeumannFuncObj> func_product( new CatalyticWall(chem_mixture,r_index,T_var,-gamma) );
-
-		    // Query to see if there's already a NBCContainer
-		    /* If not, instaniate NBCContainer object, populate it,
-		       then add it to _neumann_bound_funcs */
-		    if( _neumann_bound_funcs.find(bc_id) == _neumann_bound_funcs.end() )
-		      {
-			NBCContainer container;
-			container.set_bc_id( bc_id );
-			//container.add_var_func_pair( system.variable_number(reactant), func_reactant );
-			//container.add_var_func_pair( system.variable_number(product), func_product );
-
-			_neumann_bound_funcs.insert( std::make_pair( bc_id, container ) );
-		      }
-		    // If so, add our variable/function pairs to it
-		    else
-		      {
-			NBCContainer& container = _neumann_bound_funcs.find(bc_id)->second;
-			
-		      }
-		  }
-		else
-		  {
-		    std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
-			      << "in a catalytic reaction." << std::endl
-			      << "Found " << partners.size() << " species." << std::endl;
-		    libmesh_error();
-		  }
-
-	      } // end loop over reaction pairs
-	  } // end check on CATALYTIC_WALL
-      } // end loop over bc_ids
-
-    return;
   }
 
   void ReactingLowMachNavierStokesBCHandling::init_bc_types( const GRINS::BoundaryID bc_id, 
@@ -225,21 +150,118 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 
 	  // Parse catalytic reactions on this wall
-
-	  // Parse catalycities
-	  // Grab gamma value from input
-	  std::ostringstream ss;
-	  ss << bc_id;
-	  libmesh_not_implemented();
-	  std::string var_name; // = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+ss.str();
-	  
-	  if( !input.have_variable( var_name ) )
+	  std::string reactions_string = "Physics/"+_physics_name+"/wall_catalytic_reactions_"+bc_id_string;
+	  if( !input.have_variable(reactions_string) )
 	    {
-	      std::cerr << "Error: Could not find catalyticity "
-			<< var_name << std::endl;
+	      std::cerr << "Error: Could not find list of catalytic reactions for boundary id " << bc_id 
+			<< std::endl;
 	      libmesh_error();
 	    }
 
+	  const unsigned int n_reactions = input.vector_variable_size(reactions_string);
+
+	  std::vector<Species> reactants;
+	  std::vector<Species> products;
+
+	  // Here, we are assuming 1 reactant and 1 product per reaction
+	  reactants.reserve( n_reactions );
+	  products.reserve( n_reactions );
+
+	  for( unsigned int r = 0; r < n_reactions; r++ )
+	    {
+	      std::string reaction = input(reactions_string, "DIE!", r);
+
+	      // First, split each reaction into reactants and products
+		std::vector<std::string> partners;       
+		SplitString(reaction, "->", partners);
+
+		const std::string& reactant = partners[0];
+		const std::string& product = partners[1];
+
+		// We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
+		if( partners.size() == 2 )
+		  {
+		    // Parse the reactant and product species and cache
+		    const Species& r_species = _chem_mixture.species_name_map().find( reactant )->second;
+		    const Species& p_species = _chem_mixture.species_name_map().find( product )->second;
+
+		    std::vector<Species>::const_iterator r_it =
+		      std::find( (_reactant_list.find(bc_id)->second).begin(),
+				 (_reactant_list.find(bc_id)->second).end(),
+				 r_species );
+
+		    if(  r_it != (_reactant_list.find(bc_id)->second).end() )
+		      {
+			std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
+				  << std::endl;
+			libmesh_error();
+		      }
+
+		    std::vector<Species>::const_iterator p_it =
+		      std::find( (_product_list.find(bc_id)->second).begin(),
+				 (_product_list.find(bc_id)->second).end(),
+				 p_species );
+
+		    if( p_it != (_product_list.find(bc_id)->second).end() )
+		      {
+			std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
+				  << std::endl;
+			libmesh_error();
+		      }
+		    
+		    reactants.push_back( r_species );
+		    products.push_back( p_species );
+
+		    // Parse the corresponding catalyticities and cache
+		    std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
+		    std::string gamma_p_string = "Physics/"+_physics_name+"/gamma_"+product+"_"+bc_id_string;
+
+		    if( !input.have_variable(gamma_r_string) )
+		      {
+			std::cout << "Error: Could not find catalyticity for species " << reactant 
+				  << ", for boundary " << bc_id << std::endl;
+			libmesh_error();
+		      }
+
+		    if( !input.have_variable(gamma_p_string) )
+		      {
+			std::cout << "Error: Could not find catalyticity for species " << product 
+				  << ", for boundary " << bc_id << std::endl;
+			libmesh_error();
+		      }
+
+		    {
+		      libMesh::Real gamma_r = input(gamma_r_string, 0.0);
+		      std::pair<Species,libMesh::Real> r_pair( r_species, gamma_r );
+		      
+		      std::map<Species,libMesh::Real> dummy;
+		      dummy.insert( std::make_pair( r_species, gamma_r ) );
+			
+			_catalycities.insert( std::make_pair( bc_id, dummy ) );
+		    }
+
+		    {
+		      libMesh::Real gamma_p = input(gamma_p_string, 0.0);
+		      std::pair<Species,libMesh::Real> p_pair( p_species, gamma_p );
+		      
+		      std::map<Species,libMesh::Real> dummy;
+		      dummy.insert( std::make_pair( p_species, gamma_p ) );
+			
+		      _catalycities.insert( std::make_pair( bc_id, dummy ) );
+		    }
+		  }
+		else
+		  {
+		    std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+			      << "in a catalytic reaction." << std::endl
+			      << "Found " << partners.size() << " species." << std::endl;
+		    libmesh_error();
+		  }
+
+	    } // end loop over catalytic reactions
+
+	  _reactant_list.insert( std::make_pair( bc_id, reactants ) );
+	  _product_list.insert( std::make_pair( bc_id, products ) );
 	}
 	break;
 
@@ -250,6 +272,33 @@ namespace GRINS
 	break;
 
       } //switch(bc_type)
+
+    return;
+  }
+
+  void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    // Call base class
+    LowMachNavierStokesBCHandling::init_bc_data(system);
+
+    for( unsigned int s = 0; s < this->_n_species; s++ )
+      {
+	_species_vars[s] = system.variable_number( _species_var_names[s] );
+      }
+
+    // See if we have a catalytic wall
+    for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _species_bc_map.begin();
+	 bc_map != _species_bc_map.end(); ++bc_map )
+      {
+	const BoundaryID bc_id = bc_map->first;
+	const BCType bc_type = bc_map->second;
+
+	// Add CatalyticWall for each reactant and product
+	if( bc_type == CATALYTIC_WALL )
+	  {
+	    libmesh_not_implemented();
+	  } // end check on CATALYTIC_WALL
+      } // end loop over bc_ids
 
     return;
   }
