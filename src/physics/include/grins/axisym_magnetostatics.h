@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef AXISYM_ELECTROSTATICS_H
-#define AXISYM_ELECTROSTATICS_H
+#ifndef AXISYM_MAGNETOSTATICS_H
+#define AXISYM_MAGNETOSTATICS_H
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -44,22 +44,20 @@
 //GRINS
 #include "grins_config.h"
 #include "grins/physics.h"
-#include "axisym_electrostatics_bc_handling.h"
+#include "grins/axisym_magnetostatics_bc_handling.h"
 
 namespace GRINS
 {
-
-  //! Physics class for Axisymmetric Electrostatics
+  //! Physics class for Axisymmetric Magnetostatics
   /*
-    This physics class implements electrostatics using the potential form of the
+    This physics class implements magentostatics using the potential form of the
     equations.
-  */
-  class AxisymmetricElectrostatics : public Physics
+   */
+  class AxisymmetricMagnetostatics : public Physics
   {
   public:
-
-    AxisymmetricElectrostatics( const std::string& physics_name, const GetPot& input );
-    ~AxisymmetricElectrostatics();
+    AxisymmetricMagnetostatics( const std::string& physics_name, const GetPot& input );
+    ~AxisymmetricMagnetostatics();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -86,28 +84,45 @@ namespace GRINS
     virtual void side_time_derivative( bool request_jacobian,
 				       libMesh::FEMContext& context );
 
+    virtual void side_constraint( bool request_jacobian,
+				  libMesh::FEMContext& context );
+
+    // Mass matrix part(s)
+    virtual void mass_residual( bool request_jacobian,
+				libMesh::FEMContext& context );
+
   protected:
 
     //! Physical dimension of problem
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
+    // Indices for each variable;
+    //! Index for magnetic potential
+    VariableIndex _A_var;
+
     //! Index for electric potential
     VariableIndex _V_var;
+
+    // Names of each variable in the system
+    //! Name for temperature variable
+    std::string _A_var_name;
 
     //! Name of r-velocity
     std::string _V_var_name;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _V_FE_family;
+    libMeshEnums::FEFamily _A_FE_family, _V_FE_family;
 
     //! Temperature element order, read from input
-    libMeshEnums::Order _V_order;
+    libMeshEnums::Order _A_order, _V_order;
+
+    Real _sigma, _mu;
 
   private:
-    AxisymmetricElectrostatics();
+    AxisymmetricMagnetostatics();
 
-  }; // class AxisymmetricElectrostatics
-} //namespace GRINS
+  }; // class AxisymmetricMagnetostatics
 
-#endif //AXISYM_ELECTROSTATICS_H
+} // namespace GRINS
+#endif //AXISYM_MAGNETOSTATICS_H

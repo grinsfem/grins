@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "axisym_magnetostatics_bc_handling.h"
+#include "grins/axisym_magnetostatics_bc_handling.h"
 
 namespace GRINS
 {

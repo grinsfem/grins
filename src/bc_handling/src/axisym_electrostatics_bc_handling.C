@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "axisym_electrostatics_bc_handling.h"
+#include "grins/axisym_electrostatics_bc_handling.h"
 
 namespace GRINS
 {

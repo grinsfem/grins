@@ -162,9 +162,9 @@ physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
                $(physics_incdir)/grins/inc_navier_stokes_stab_helper.h \
                $(physics_incdir)/grins/heat_transfer_stab_helper.h \
                $(physics_incdir)/grins/low_mach_navier_stokes_stab_helper.h \
-               $(physics_incdir)/axisym_electrostatics.h \
-               $(physics_incdir)/axisym_magnetostatics.h \
-               $(physics_incdir)/axisym_lorentz_force.h
+               $(physics_incdir)/grins/axisym_electrostatics.h \
+               $(physics_incdir)/grins/axisym_magnetostatics.h \
+               $(physics_incdir)/grins/axisym_lorentz_force.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/boundary_conditions.h \
@@ -198,8 +198,8 @@ bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
                   $(bc_handling_incdir)/grins/inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h  \
-                  $(bc_handling_incdir)/axisym_electrostatics_bc_handling.h \
-                  $(bc_handling_incdir)/axisym_magnetostatics_bc_handling.h
+                  $(bc_handling_incdir)/grins/axisym_electrostatics_bc_handling.h \
+                  $(bc_handling_incdir)/grins/axisym_magnetostatics_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
           $(qoi_incdir)/grins/qoi_base.h \

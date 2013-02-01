@@ -55,9 +55,9 @@
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
-#include "axisym_electrostatics.h"
-#include "axisym_magnetostatics.h"
-#include "axisym_lorentz_force.h"
+#include "grins/axisym_electrostatics.h"
+#include "grins/axisym_magnetostatics.h"
+#include "grins/axisym_lorentz_force.h"
 
 namespace GRINS
 {
