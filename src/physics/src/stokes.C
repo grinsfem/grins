@@ -71,22 +71,14 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.element_fe_var[_u_var]->get_JxW();
 
-    // The velocity shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.element_fe_var[_u_var]->get_phi();
-
     // The velocity shape function gradients (in global coords.)
     // at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& vel_gblgradphivec =
+    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[_u_var]->get_dphi();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.element_fe_var[_p_var]->get_phi();
-
-    // Physical location of the quadrature points
-    const std::vector<libMesh::Point>& u_qpoint =
-      context.element_fe_var[_u_var]->get_xyz();
 
     // The subvectors and submatrices we need to fill:
     //
@@ -98,15 +90,7 @@ namespace GRINS
       _w_var = _u_var; // for convenience
 
     libMesh::DenseSubMatrix<Number> &Kuu = *context.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
-    libMesh::DenseSubMatrix<Number> &Kuv = *context.elem_subjacobians[_u_var][_v_var]; // R_{u},{v}
-    libMesh::DenseSubMatrix<Number> &Kuw = *context.elem_subjacobians[_u_var][_w_var]; // R_{u},{w}
-
-    libMesh::DenseSubMatrix<Number> &Kvu = *context.elem_subjacobians[_v_var][_u_var]; // R_{v},{u}
     libMesh::DenseSubMatrix<Number> &Kvv = *context.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
-    libMesh::DenseSubMatrix<Number> &Kvw = *context.elem_subjacobians[_v_var][_w_var]; // R_{v},{w}
-
-    libMesh::DenseSubMatrix<Number> &Kwu = *context.elem_subjacobians[_w_var][_u_var]; // R_{w},{u}
-    libMesh::DenseSubMatrix<Number> &Kwv = *context.elem_subjacobians[_w_var][_v_var]; // R_{w},{v}
     libMesh::DenseSubMatrix<Number> &Kww = *context.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
 
     libMesh::DenseSubMatrix<Number> &Kup = *context.elem_subjacobians[_u_var][_p_var]; // R_{u},{p}
@@ -135,25 +119,15 @@ namespace GRINS
 	if (_dim == 3)
 	  w = context.interior_value(_w_var, qp);
 
-	libMesh::Gradient graduvec, gradvvec, gradwvec;
-	graduvec = context.interior_gradient(_u_var, qp);
-	gradvvec = context.interior_gradient(_v_var, qp);
+	libMesh::Gradient grad_u, grad_v, grad_w;
+	grad_u = context.interior_gradient(_u_var, qp);
+	grad_v = context.interior_gradient(_v_var, qp);
 	if (_dim == 3)
-	  gradwvec = context.interior_gradient(_w_var, qp);
+	  grad_w = context.interior_gradient(_w_var, qp);
 
 	libMesh::NumberVectorValue Uvec (u,v);
 	if (_dim == 3)
 	  Uvec(2) = w;
-
-	const libMesh::Number  graduvec_x = graduvec(0);
-	const libMesh::Number  graduvec_y = graduvec(1);
-	const libMesh::Number  graduvec_z = (_dim == 3)?graduvec(2):0;
-	const libMesh::Number  gradvvec_x = gradvvec(0);
-	const libMesh::Number  gradvvec_y = gradvvec(1);
-	const libMesh::Number  gradvvec_z = (_dim == 3)?gradvvec(2):0;
-	const libMesh::Number  gradwvec_x = (_dim == 3)?gradwvec(0):0;
-	const libMesh::Number  gradwvec_y = (_dim == 3)?gradwvec(1):0;
-	const libMesh::Number  gradwvec_z = (_dim == 3)?gradwvec(2):0;
 
 	// First, an i-loop over the velocity degrees of freedom.
 	// We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -161,17 +135,17 @@ namespace GRINS
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) += JxW[qp] *
-	      ( p*vel_gblgradphivec[i][qp](0)              // pressure term
-		-_mu*(vel_gblgradphivec[i][qp]*graduvec) ); // diffusion term
+	      ( p*u_gradphi[i][qp](0)              // pressure term
+		-_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
 	    Fv(i) += JxW[qp] *
-	      ( p*vel_gblgradphivec[i][qp](1)              // pressure term
-		-_mu*(vel_gblgradphivec[i][qp]*gradvvec) ); // diffusion term
+	      ( p*u_gradphi[i][qp](1)              // pressure term
+		-_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
 	    if (_dim == 3)
 	      {
 		Fw(i) += JxW[qp] *
-		  ( p*vel_gblgradphivec[i][qp](2)              // pressure term
-		    -_mu*(vel_gblgradphivec[i][qp]*gradwvec) ); // diffusion term
+		  ( p*u_gradphi[i][qp](2)              // pressure term
+		    -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
 	      }
 
 	    if (compute_jacobian)
@@ -184,25 +158,25 @@ namespace GRINS
 		    //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
 
 		    Kuu(i,j) += JxW[qp] *
-		      (-_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
+		      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
 		    Kvv(i,j) += JxW[qp] *
-		      (-_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
+		      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
 		    if (_dim == 3)
 		      {
 			Kww(i,j) += JxW[qp] *
-			  (-_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
+			  (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 		      }
 		  } // end of the inner dof (j) loop
 
 		// Matrix contributions for the up, vp and wp couplings
 		for (unsigned int j=0; j != n_p_dofs; j++)
 		  {
-		    Kup(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](0)*p_phi[j][qp];
-		    Kvp(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](1)*p_phi[j][qp];
+		    Kup(i,j) += JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
+		    Kvp(i,j) += JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
 		    if (_dim == 3)
-		      Kwp(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](2)*p_phi[j][qp];
+		      Kwp(i,j) += JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.elem_solution_derivative)
@@ -238,7 +212,7 @@ namespace GRINS
 
     // The velocity shape function gradients (in global coords.)
     // at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& vel_gblgradphivec =
+    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[_u_var]->get_dphi();
 
     // The pressure shape functions at interior quadrature points.
@@ -263,30 +237,30 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	// Compute the velocity gradient at the old Newton iterate.
-	libMesh::Gradient graduvec, gradvvec, gradwvec;
-	graduvec = context.interior_gradient(_u_var, qp);
-	gradvvec = context.interior_gradient(_v_var, qp);
+	libMesh::Gradient grad_u, grad_v, grad_w;
+	grad_u = context.interior_gradient(_u_var, qp);
+	grad_v = context.interior_gradient(_v_var, qp);
 	if (_dim == 3)
-	  gradwvec = context.interior_gradient(_w_var, qp);
+	  grad_w = context.interior_gradient(_w_var, qp);
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
 	    Fp(i) += JxW[qp] * p_phi[i][qp] *
-	      (graduvec(0) + gradvvec(1));
+	      (grad_u(0) + grad_v(1));
 	    if (_dim == 3)
 	      Fp(i) += JxW[qp] * p_phi[i][qp] *
-		(gradwvec(2));
+		(grad_w(2));
 
 	    if (compute_jacobian)
 	      {
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
-		    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*vel_gblgradphivec[j][qp](0);
-		    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*vel_gblgradphivec[j][qp](1);
+		    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
+		    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
 		    if (_dim == 3)
-		      Kpw(i,j) += JxW[qp]*p_phi[i][qp]*vel_gblgradphivec[j][qp](2);
+		      Kpw(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.elem_solution_derivative)

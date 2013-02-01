@@ -150,7 +150,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool /*compute_jacobian*/, 
 								libMesh::FEMContext& context,
 								CachedValues& cache )
   {
@@ -208,7 +208,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/, 
 								    libMesh::FEMContext& context,
 								    CachedValues& cache )
   {
@@ -369,7 +369,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
 								  libMesh::FEMContext& context,
 								  CachedValues& cache )
   {
@@ -427,7 +427,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_continuity_mass_residual( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_continuity_mass_residual( bool /*compute_jacobian*/,
 									 libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
@@ -468,7 +468,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/, 
 								       libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
@@ -505,7 +505,7 @@ namespace GRINS
 
 	Real w_dot = 0.0;
 	if( this->_dim == 3 )
-	  Real w_dot = context.interior_value(this->_w_var, qp);
+	  w_dot = context.interior_value(this->_w_var, qp);
 
 	Real T = context.fixed_interior_value(this->_T_var, qp);
       
@@ -547,7 +547,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_mass_residual( bool /*compute_jacobian*/,
 								     libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
@@ -592,7 +592,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_elem_time_deriv( bool /*compute_jacobian*/,
 									     libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
@@ -622,10 +622,10 @@ namespace GRINS
 	if(this->_dim==3)
 	  divU += grad_w(2);
 
-	libMesh::Number cp = this->_cp(T);
-	libMesh::Number cv = cp + this->_R;
-	libMesh::Number gamma = cp/cv;
-	libMesh::Number gamma_ratio = gamma/(gamma-1.0);
+	//libMesh::Number cp = this->_cp(T);
+	//libMesh::Number cv = cp + this->_R;
+	//libMesh::Number gamma = cp/cv;
+	//libMesh::Number gamma_ratio = gamma/(gamma-1.0);
 
 	libMesh::Number p0 = context.interior_value( this->_p0_var, qp );
 
@@ -640,31 +640,32 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_side_time_deriv( bool /*compute_jacobian*/,
 									     libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[this->_T_var]->get_JxW();
+    //const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[this->_T_var]->get_JxW();
 
-    const std::vector<Point> &normals = context.side_fe_var[this->_T_var]->get_normals();
+    //const std::vector<Point> &normals = context.side_fe_var[this->_T_var]->get_normals();
 
-    libMesh::DenseSubVector<Number> &F_p0 = *context.elem_subresiduals[this->_p0_var]; // residual
+    //libMesh::DenseSubVector<Number> &F_p0 = *context.elem_subresiduals[this->_p0_var]; // residual
 
     // Physical location of the quadrature points
-    const std::vector<libMesh::Point>& qpoint =
-      context.side_fe_var[this->_T_var]->get_xyz();
+    //const std::vector<libMesh::Point>& qpoint = context.side_fe_var[this->_T_var]->get_xyz();
 
     unsigned int n_qpoints = context.side_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
+	/*
 	libMesh::Number T = context.side_value( this->_T_var, qp );
 	libMesh::Gradient U = ( context.side_value( this->_u_var, qp ),
 				context.side_value( this->_v_var, qp ) );
 	libMesh::Gradient grad_T = context.side_gradient( this->_T_var, qp );
 
+	
 	libMesh::Number p0 = context.side_value( this->_p0_var, qp );
 
 	libMesh::Number k = this->_k(T);
@@ -673,6 +674,7 @@ namespace GRINS
 	libMesh::Number cv = cp + this->_R;
 	libMesh::Number gamma = cp/cv;
 	libMesh::Number gamma_ratio = gamma/(gamma-1.0);
+	*/
 
 	//std::cout << "U = " << U << std::endl;
 
@@ -688,7 +690,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_thermo_press_mass_residual( bool /*compute_jacobian*/,
 									   libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.

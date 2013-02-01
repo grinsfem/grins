@@ -43,7 +43,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferAdjointStabilization::element_time_derivative( bool compute_jacobian,
+  void HeatTransferAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
 								  libMesh::FEMContext& context,
 								  CachedValues& /*cache*/ )
   {
@@ -99,7 +99,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferAdjointStabilization::mass_residual( bool compute_jacobian,
+  void HeatTransferAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
 							libMesh::FEMContext& context,
 							CachedValues& /*cache*/ )
   {

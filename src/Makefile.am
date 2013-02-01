@@ -209,7 +209,7 @@ boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/nbc_container.h \
                           $(boundary_conditions_incdir)/grins/catalytic_wall.h
 
-utilities_INC = $(utilities_incdir)/grins/grins_version.h \
+utilities_INC = $(top_builddir)/src/utilities/include/grins/grins_version.h \
                 $(utilities_incdir)/grins/physical_constants.h \
                 $(utilities_incdir)/grins/input_utils.h \
                 $(utilities_incdir)/grins/math_constants.h \

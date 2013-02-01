@@ -1,0 +1,90 @@
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file'
+mesh_filename = 'mesh.e'
+
+uniformly_refine = '2'
+
+# Options for time solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10 
+max_linear_iterations = 2500
+
+initial_linear_tolerance = '1.0e-12'
+
+verify_analytic_jacobians = '1.e-6'
+
+# Visualization options
+[vis-options]
+output_vis_time_series = 'false'
+output_vis = 'true' 
+vis_output_file_prefix = 'stokes_ns'
+output_format = 'ExodusII'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# [restart-options]
+# 
+# restart_file = 'stokes_tsection.xdr'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes Stokes'
+
+# Options for Stokes physics
+[./Stokes]
+enabled_subdomains = '2'
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = '1.0'
+mu = '1.0e-3'
+
+bc_ids = '4 6 7 8'
+bc_types = 'no_slip no_slip parabolic_profile no_slip'
+
+parabolic_profile_coeffs_7 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_var_7 = 'u'
+parabolic_profile_fix_7 = 'v'
+
+# Options for Navier Stokes physics
+[../IncompressibleNavierStokes]
+enabled_subdomains = '1'
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = '1.0'
+mu = '1.0e-3'
+
+bc_ids = '1 2 3'
+bc_types = 'no_slip no_slip no_slip'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]

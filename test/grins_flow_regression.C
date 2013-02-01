@@ -38,10 +38,10 @@
 int main(int argc, char* argv[])
 {
   // Check command line count.
-  if( argc < 2 )
+  if( argc < 4 )
     {
       // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
+      std::cerr << "Error: Must specify libMesh input file, regression file, and regression tolerance." << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 
   // This is the tolerance of the iterative linear solver so
   // it's unreasonable to expect anything better than this.
-  double tol = 7.0e-10;
+  double tol = atof(argv[3]);
   
   if( u_l2error > tol || u_h1error > tol ||
       v_l2error > tol || v_h1error > tol ||

@@ -177,17 +177,12 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::bui
 }
 
 Number exact_solution( const Point& p,
-		       const Parameters& params,   // parameters, not needed
-		       const std::string& sys_name,  // sys_name, not needed
+		       const Parameters& /*params*/,   // parameters, not needed
+		       const std::string& /*sys_name*/,  // sys_name, not needed
 		       const std::string& var )  // unk_name, not needed);
 {
   const double x = p(0);
   const double y = p(1);
-  const double z = p(2);
-  
-  const double h = 1.0;
-  const double mu = 1.0;
-  const double dpdx = -1.0;
 
   Number f;
   // Hardcoded to velocity in input file.
@@ -198,13 +193,11 @@ Number exact_solution( const Point& p,
 }
 
 Gradient exact_derivative( const Point& p,
-			   const Parameters& params,   // parameters, not needed
-			   const std::string& sys_name,  // sys_name, not needed
+			   const Parameters& /*params*/,   // parameters, not needed
+			   const std::string& /*sys_name*/,  // sys_name, not needed
 			   const std::string& var)  // unk_name, not needed);
 {
-  const double x = p(0);
   const double y = p(1);
-  const double z = p(2);
 
   Gradient g;
 

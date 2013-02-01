@@ -78,7 +78,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Number ParabolicProfile::component( unsigned int i,
+  libMesh::Number ParabolicProfile::component( unsigned int /*i*/,
 					       const libMesh::Point &p, 
 					       const libMesh::Real time )
   {

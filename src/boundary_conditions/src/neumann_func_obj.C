@@ -49,8 +49,8 @@ namespace GRINS
   }
 
   libMesh::Point NeumannFuncObj::value( const libMesh::FEMContext&,
-				       const CachedValues&,
-				       const unsigned int )
+					const CachedValues&,
+					const unsigned int )
   {
     // By default, does nothing.
     /* \todo Should we libmesh_error() instead?*/

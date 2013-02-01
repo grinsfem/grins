@@ -45,7 +45,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool compute_jacobian,
+  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
 										libMesh::FEMContext& context,
 										CachedValues& /*cache*/ )
   {
@@ -127,7 +127,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool compute_jacobian,
+  void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
 								      libMesh::FEMContext& context,
 								      CachedValues& /*cache*/ )
   {
@@ -173,7 +173,6 @@ namespace GRINS
 	  U(2) = context.fixed_interior_value( this->_w_var, qp );
       
 	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
-	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
 	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 

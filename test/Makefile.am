@@ -10,7 +10,7 @@ check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
-check_PROGRAMS += backward_facing_step_regression
+check_PROGRAMS += grins_flow_regression
 check_PROGRAMS += chem_mixture
 check_PROGRAMS += cea_thermo_test
 check_PROGRAMS += cantera_chem_thermo_test
@@ -64,7 +64,7 @@ test_thermally_driven_flow_SOURCES = $(top_srcdir)/test/test_thermally_driven_fl
 gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
-backward_facing_step_regression_SOURCES = $(top_srcdir)/test/backward_facing_step_regression.C
+grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
 chem_mixture_SOURCES = chem_mixture.C
 cea_thermo_test_SOURCES = cea_thermo_test.C
 cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
@@ -92,12 +92,10 @@ testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
           $(grins_kinetics_regression_SOURCES)
 
 #Define tests to actually be run
-TESTS = gaussian_profiles                                       \
-        chem_mixture                                            \
-        cea_thermo_test
-
+TESTS  = gaussian_profiles
+TESTS += chem_mixture
+TESTS += cea_thermo_test
 TESTS += catalytic_wall_unit
-
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_test
 TESTS += ideal_gas_mixture_cantera
@@ -116,6 +114,7 @@ TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/test_vorticity_qoi.sh                   \
          $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
          $(top_builddir)/test/backward_facing_step_regression.sh      \
+         $(top_builddir)/test/coupled_stokes_ns.sh                    \
          $(top_builddir)/test/reacting_low_mach_cantera_regression.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
@@ -130,6 +129,7 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_vorticity_qoi.sh              \
                  low_mach_cavity_benchmark_regression.sh \
                  backward_facing_step_regression.sh \
+                 coupled_stokes_ns.sh \
                  cantera_chem_thermo_test.sh \
                  reacting_low_mach_cantera_regression.sh
 

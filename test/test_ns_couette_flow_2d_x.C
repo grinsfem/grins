@@ -128,13 +128,11 @@ int main(int argc, char* argv[])
 }
 
 Number exact_solution( const Point& p,
-		       const Parameters& params,   // parameters, not needed
+		       const Parameters& /*params*/,   // parameters, not needed
 		       const std::string&,  // sys_name, not needed
 		       const std::string&)  // unk_name, not needed);
 {
-  const double x = p(0);
   const double y = p(1);
-  const double z = p(2);
   
   // Hardcoded to velocity in input file.
   Number f = 10.0*y;
@@ -142,15 +140,11 @@ Number exact_solution( const Point& p,
   return f;
 }
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters& params,   // parameters, not needed
+Gradient exact_derivative( const Point& /*p*/,
+			   const Parameters& /*params*/,   // parameters, not needed
 			   const std::string&,  // sys_name, not needed
 			   const std::string&)  // unk_name, not needed);
 {
-  const double x = p(0);
-  const double y = p(1);
-  const double z = p(2);
-
   Gradient g;
 
   // Hardcoded to velocity in input file.

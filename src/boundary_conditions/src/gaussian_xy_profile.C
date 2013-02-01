@@ -68,7 +68,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Number GRINS::GaussianXYProfile::component( unsigned int i,
+  libMesh::Number GRINS::GaussianXYProfile::component( unsigned int /*i*/,
 						       const libMesh::Point &p, 
 						       const libMesh::Real time )
   {

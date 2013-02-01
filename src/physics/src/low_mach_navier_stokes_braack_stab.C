@@ -84,7 +84,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool /*compute_jacobian*/,
 											 libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -141,7 +141,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/,
 										       libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -155,10 +155,6 @@ namespace GRINS
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.element_fe_var[this->_u_var]->get_JxW();
-
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.element_fe_var[this->_u_var]->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
@@ -244,7 +240,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
 										     libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -253,10 +249,6 @@ namespace GRINS
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.element_fe_var[this->_T_var]->get_JxW();
-
-    // The temperature shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[this->_T_var]->get_phi();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
@@ -286,7 +278,6 @@ namespace GRINS
 	libMesh::Real T = context.interior_value( this->_T_var, qp );
 	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
-	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
 	libMesh::Real cp = this->_cp(T);
 
@@ -297,11 +288,9 @@ namespace GRINS
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
 	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, qp, g, G, rho, U, k, cp, this->_is_steady );
 
 	libMesh::Real RE_s = this->compute_res_energy_steady( context, qp );
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
@@ -316,7 +305,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool /*compute_jacobian*/,
 											    libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -373,7 +362,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/,
 											  libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -387,10 +376,6 @@ namespace GRINS
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.element_fe_var[this->_u_var]->get_JxW();
-
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.element_fe_var[this->_u_var]->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
@@ -475,7 +460,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool compute_jacobian,
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool /*compute_jacobian*/,
 											libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
@@ -484,10 +469,6 @@ namespace GRINS
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.element_fe_var[this->_T_var]->get_JxW();
-
-    // The temperature shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[this->_T_var]->get_phi();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
@@ -517,7 +498,6 @@ namespace GRINS
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
 	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
-	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
 	libMesh::Real cp = this->_cp(T);
 
