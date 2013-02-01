@@ -47,7 +47,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransfer::read_input_options( const GetPot& input )
+  void HeatTransfer::read_input_options( const GetPot& /*input*/ )
   {
     return;
   }
@@ -115,8 +115,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number T, u, v, w;
-	T = context.interior_value(_T_var, qp);
+	libMesh::Number u, v, w;
 	u = context.interior_value(_u_var, qp);
 	v = context.interior_value(_v_var, qp);
 	if (_dim == 3)

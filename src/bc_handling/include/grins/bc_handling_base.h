@@ -154,7 +154,7 @@ namespace GRINS
     GRINS::BoundaryConditions _bound_conds;
 
     std::vector< GRINS::PBCContainer > _periodic_bcs;
-    int _num_periodic_bcs;
+    unsigned int _num_periodic_bcs;
 
     std::string _physics_name;
 

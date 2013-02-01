@@ -53,7 +53,7 @@ namespace GRINS
     return;
   }
 
-  void Solver::initialize( const GetPot& input, 
+  void Solver::initialize( const GetPot& /*input*/, 
 			   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			   MultiphysicsSystem* system )
   {
