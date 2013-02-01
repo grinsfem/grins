@@ -75,7 +75,8 @@ TESTS = gaussian_profiles                  \
         $(top_builddir)/test/test_thermally_driven_3d_flow.sh        \
         $(top_builddir)/test/test_vorticity_qoi.sh                   \
         $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
-        $(top_builddir)/test/backward_facing_step_regression.sh
+        $(top_builddir)/test/backward_facing_step_regression.sh      \
+        $(top_builddir)/test/coupled_stokes_ns.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
@@ -87,7 +88,8 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_axi_thermally_driven_flow.sh  \
                  test_thermally_driven_3d_flow.sh   \
                  low_mach_cavity_benchmark_regression.sh \
-                 backward_facing_step_regression.sh
+                 backward_facing_step_regression.sh \
+                 coupled_stokes_ns.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data

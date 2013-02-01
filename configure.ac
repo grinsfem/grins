@@ -213,6 +213,8 @@ AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
+AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                    [chmod +x test/coupled_stokes_ns.sh])
+AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
