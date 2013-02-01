@@ -76,7 +76,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C \
                $(physics_srcdir)/axisym_electrostatics.C \
                $(physics_srcdir)/axisym_magnetostatics.C \
-               $(physics_srcdir)/axisym_lorentz_force.C
+               $(physics_srcdir)/axisym_lorentz_force.C \
+               $(physics_srcdir)/electrostatics.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
@@ -164,7 +165,8 @@ physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
                $(physics_incdir)/grins/low_mach_navier_stokes_stab_helper.h \
                $(physics_incdir)/grins/axisym_electrostatics.h \
                $(physics_incdir)/grins/axisym_magnetostatics.h \
-               $(physics_incdir)/grins/axisym_lorentz_force.h
+               $(physics_incdir)/grins/axisym_lorentz_force.h \
+               $(physics_incdir)/grins/electrostatics.h
 
 boundary_conditions_INC = $(boundary_conditions_incdir)/grins/bc_types.h \
                           $(boundary_conditions_incdir)/grins/boundary_conditions.h \
