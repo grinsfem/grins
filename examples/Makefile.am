@@ -4,7 +4,7 @@ BUILT_SOURCES   = .license.stamp
 # Backward facing step
 #=======================================================================
 backwardfacingstepdir = $(prefix)/examples/backward_facing_step
-backwardfacingstep_SCRIPTS = $(top_srcdir)/examples/backward_facing_step/run.sh
+backwardfacingstep_SCRIPTS = $(top_builddir)/examples/backward_facing_step/run.sh
 backwardfacingstep_DATA  = $(top_srcdir)/examples/backward_facing_step/backward_facing_step.in
 backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 
@@ -14,7 +14,7 @@ backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
 cavitybenchmark_PROGRAMS = cavity
 cavitybenchmark_DATA  = $(top_srcdir)/examples/cavity_benchmark/cavity.in
-cavitybenchmark_SCRIPTS = $(top_srcdir)/examples/cavity_benchmark/run.sh
+cavitybenchmark_SCRIPTS = $(top_builddir)/examples/cavity_benchmark/run.sh
 
 cavity_SOURCES = $(top_srcdir)/examples/cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
@@ -30,7 +30,7 @@ cavity_LDADD = $(LIBGRINS_LIBS)
 #=======================================================================
 liddrivencavitydir = $(prefix)/examples/lid_driven_cavity
 liddrivencavity_DATA = $(top_srcdir)/examples/lid_driven_cavity/lid_driven_cavity.in
-liddrivencavity_SCRIPTS = $(top_srcdir)/examples/lid_driven_cavity/run.sh
+liddrivencavity_SCRIPTS = $(top_builddir)/examples/lid_driven_cavity/run.sh
 
 #=======================================================================
 # Mass Injection Example
@@ -39,7 +39,7 @@ massinjectiondir = $(prefix)/examples/mass_injection
 massinjection_PROGRAMS = injection
 massinjection_DATA  = $(top_srcdir)/examples/mass_injection/injection.in
 massinjection_DATA += $(top_srcdir)/examples/mass_injection/injection_grid.e
-massinjection_SCRIPTS = $(top_srcdir)/examples/mass_injection/run.sh
+massinjection_SCRIPTS = $(top_builddir)/examples/mass_injection/run.sh
 
 injection_SOURCES = $(top_srcdir)/examples/mass_injection/injection.C
 injection_LDADD = $(LIBGRINS_LIBS)
@@ -50,10 +50,19 @@ injection_LDADD = $(LIBGRINS_LIBS)
 rayleighdir = $(prefix)/examples/rayleigh_taylor
 rayleigh_PROGRAMS = rayleigh
 rayleigh_DATA = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.in
-rayleigh_SCRIPTS = $(top_srcdir)/examples/rayleigh_taylor/run.sh
+rayleigh_SCRIPTS = $(top_builddir)/examples/rayleigh_taylor/run.sh
 
 rayleigh_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.C
 rayleigh_LDADD = $(LIBGRINS_LIBS)
+
+#=======================================================================
+# Coupled Stokes-Navier-Stokes Example
+#=======================================================================
+stokesnsdir = $(prefix)/examples/coupled_stokes_navierstokes
+stokesns_DATA  = $(top_srcdir)/examples/coupled_stokes_navierstokes/stokes_ns.in
+stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/ns.in
+stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/mesh.e
+stokesns_SCRIPTS = $(top_builddir)/examples/coupled_stokes_navierstokes/run.sh
 
 #=======================================================================
 # Vortex Example

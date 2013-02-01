@@ -46,7 +46,7 @@ namespace GRINS
   }
 
   template< class SourceFunction >
-  void HeatTransferSource<SourceFunction>::element_time_derivative( bool compute_jacobian,
+  void HeatTransferSource<SourceFunction>::element_time_derivative( bool /*compute_jacobian*/,
 								    libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

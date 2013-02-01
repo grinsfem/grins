@@ -68,6 +68,10 @@ namespace GRINS
 
     virtual libMesh::Point derivative( const libMesh::FEMContext&, const unsigned int )
     { return libMesh::Point(0.0,0.0,0.0); }
+
+    virtual libMesh::Point derivative( const libMesh::FEMContext&, const unsigned int,
+				       const GRINS::VariableIndex )
+    { return libMesh::Point(0.0,0.0,0.0); }
   };
 } // namespace GRINS
 

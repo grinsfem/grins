@@ -192,8 +192,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
 }
 
 Number exact_solution( const Point& p,
-		       const Parameters& params,   // parameters, not needed
-		       const std::string& sys_name,  // sys_name, not needed
+		       const Parameters& /*params*/,   // parameters, not needed
+		       const std::string& /*sys_name*/,  // sys_name, not needed
 		       const std::string& var )  // unk_name, not needed);
 {
   const double r = p(0);
@@ -210,8 +210,8 @@ Number exact_solution( const Point& p,
 }
 
 Gradient exact_derivative( const Point& p,
-			   const Parameters& params,   // parameters, not needed
-			   const std::string& sys_name,  // sys_name, not needed
+			   const Parameters& /*params*/,   // parameters, not needed
+			   const std::string& /*sys_name*/,  // sys_name, not needed
 			   const std::string& var)  // unk_name, not needed);
 {
   const double r = p(0);

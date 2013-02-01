@@ -129,13 +129,11 @@ int main(int argc, char* argv[])
 }
 
 Number exact_solution( const Point& p,
-		       const Parameters& params,   // parameters, not needed
+		       const Parameters& /*params*/,   // parameters, not needed
 		       const std::string& sys,  // sys_name, not needed
 		       const std::string& var )  // unk_name, not needed);
 {
   const double x = p(0);
-  const double y = p(1);
-  const double z = p(2);
   
   if( sys != "GRINS" || var != "v" )
     std::cout << "sys = " << sys << ", var = " << var << std::endl;
@@ -146,15 +144,11 @@ Number exact_solution( const Point& p,
   return f;
 }
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters& params,   // parameters, not needed
+Gradient exact_derivative( const Point& /*p*/,
+			   const Parameters& /*params*/,   // parameters, not needed
 			   const std::string& sys,  // sys_name, not needed
 			   const std::string& var )  // unk_name, not needed);
 {
-  const double x = p(0);
-  const double y = p(1);
-  const double z = p(2);
-
   Gradient g;
 
   if( sys != "GRINS" || var != "v" )

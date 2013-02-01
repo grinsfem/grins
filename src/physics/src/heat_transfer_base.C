@@ -90,8 +90,6 @@ namespace GRINS
 
   void HeatTransferBase::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    const unsigned int dim = system->get_mesh().mesh_dimension();
-
     // Tell the system to march temperature forward in time
     system->time_evolving(_T_var);
 

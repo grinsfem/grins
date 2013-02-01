@@ -80,7 +80,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Number ConcentricCylinderProfile::component( unsigned int i,
+  libMesh::Number ConcentricCylinderProfile::component( unsigned int /*i*/,
 							const libMesh::Point &p, 
 							const libMesh::Real time )
   {

@@ -41,9 +41,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext& context, 
-					     const unsigned int qp,
-					     const VariableIndex jac_var )
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext& /*context*/,
+					     const unsigned int /*qp*/,
+					     const VariableIndex /*jac_var*/ )
   {
     // By default, does nothing.
     return libMesh::Point(0.0,0.0,0.0);

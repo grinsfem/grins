@@ -334,18 +334,18 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-						BoundaryID bc_id, BCType bc_type ) const
+  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/, libMesh::DofMap& /*dof_map*/,
+						BoundaryID /*bc_id*/, BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;
   }
 
-  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& context,
-					       VariableIndex var,
-					       bool request_jacobian,
-					       BoundaryID bc_id,
-					       BCType bc_type ) const
+  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& /*context*/,
+					       VariableIndex /*var*/,
+					       bool /*request_jacobian*/,
+					       BoundaryID /*bc_id*/,
+					       BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;

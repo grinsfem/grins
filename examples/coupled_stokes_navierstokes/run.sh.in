@@ -1,0 +1,3 @@
+#!/bin/bash
+
+@prefix@/bin/grins ./stokes_ns.in $GRINS_SOLVER_OPTIONS
