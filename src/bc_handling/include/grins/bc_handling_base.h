@@ -86,25 +86,14 @@ namespace GRINS
     void set_neumann_bc_value( GRINS::BoundaryID bc_id, const libMesh::Point& q_in );
     Real get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component = 0 ) const;
 
-    inline
-    const libMesh::Point get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
-    {
-      return (_q_values.find(bc_id))->second;
-    }
+    const libMesh::Point& get_neumann_bc_value( GRINS::BoundaryID bc_id ) const;
+
+    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
+									  GRINS::VariableIndex var_id ) const;
 
     inline 
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
-									  GRINS::VariableIndex var_id ) const
-    {
-      return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
-    }
-
-    inline 
-    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
-									  GRINS::VariableIndex var_id )
-    {
-      return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
-    }
+									  GRINS::VariableIndex var_id );
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
@@ -120,12 +109,7 @@ namespace GRINS
 					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
     
 
-    GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const
-    {
-      std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator it = 
-	_dirichlet_bc_map.find(bc_id);
-      return it->second;
-    }
+    GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;
 
   protected:
 
@@ -164,5 +148,37 @@ namespace GRINS
     BCHandlingBase();
 
   };
+
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  const libMesh::Point& BCHandlingBase::get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
+  {
+    return (_q_values.find(bc_id))->second;
+  }
+
+  inline
+  std::tr1::shared_ptr< GRINS::NeumannFuncObj >
+  BCHandlingBase::get_neumann_bound_func( GRINS::BoundaryID bc_id,
+					  GRINS::VariableIndex var_id ) const
+  {
+    return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
+  }
+
+  inline
+  std::tr1::shared_ptr< GRINS::NeumannFuncObj >
+  BCHandlingBase::get_neumann_bound_func( GRINS::BoundaryID bc_id,
+					  GRINS::VariableIndex var_id )
+  {
+    return ((_neumann_bound_funcs.find(bc_id))->second).get_func(var_id);
+  }
+  
+  inline
+  GRINS::BCType BCHandlingBase::get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const
+  {
+    std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator it = 
+      _dirichlet_bc_map.find(bc_id);
+    return it->second;
+  }
+
 }
 #endif // BC_HANDLING_BASE
