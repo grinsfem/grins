@@ -36,6 +36,7 @@
 #include "libmesh/zero_function.h"
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -145,12 +146,12 @@ namespace GRINS
 	      libmesh_error();
 	    }
 
-	  Real a = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 0 );
-	  Real b = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 1 );
-	  Real c = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 2 );
-	  Real d = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 3 );
-	  Real e = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 4 );
-	  Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
+	  libMesh::Real a = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 0 );
+	  libMesh::Real b = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 1 );
+	  libMesh::Real c = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 2 );
+	  libMesh::Real d = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 3 );
+	  libMesh::Real e = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 4 );
+	  libMesh::Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
 
 	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
 	
@@ -164,7 +165,7 @@ namespace GRINS
 	  cont.add_var_name( var );
 	  cont.add_bc_id( bc_id );
 
-	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func( new ParabolicProfile(a,b,c,d,e,f) );
+	  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func( new ParabolicProfile(a,b,c,d,e,f) );
 	  cont.set_func( func );
 	  this->attach_dirichlet_bound_func( cont );
 	
@@ -181,7 +182,7 @@ namespace GRINS
 	  cont_fix.add_var_name( fix_var );
 	  cont_fix.add_bc_id( bc_id );
 
-	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func_fix( new ZeroFunction<Number>() );
+	  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
 	  cont_fix.set_func( func_fix );
 	  this->attach_dirichlet_bound_func( cont_fix );
 	}
@@ -229,7 +230,7 @@ namespace GRINS
 	  if(dim == 3)
 	    dbc_vars.push_back(w_var);
 	
-	  ZeroFunction<Number> zero;
+	  ZeroFunction<libMesh::Number> zero;
 	
 	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
 						 dbc_vars, 
@@ -250,7 +251,7 @@ namespace GRINS
 	  // only affect performance at startup.
 	  {
 	    dbc_vars.push_back(u_var);
-	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
+	    ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 					       dbc_vars, 
@@ -262,7 +263,7 @@ namespace GRINS
 	
 	  {
 	    dbc_vars.push_back(v_var);
-	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
+	    ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 					       dbc_vars, 
@@ -274,7 +275,7 @@ namespace GRINS
 	  if( dim == 3 )
 	    {
 	      dbc_vars.push_back(w_var);
-	      ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,2) );
+	      ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,2) );
 	    
 	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 						 dbc_vars, 

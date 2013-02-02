@@ -33,6 +33,7 @@
 #include "libmesh/const_function.h"
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {

@@ -26,7 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/bc_factory.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/equation_systems.h"
 
 namespace GRINS
 {

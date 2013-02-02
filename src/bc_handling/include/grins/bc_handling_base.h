@@ -85,9 +85,9 @@ namespace GRINS
 
     void set_dirichlet_bc_type( GRINS::BoundaryID bc_id, int bc_type );
     void set_neumann_bc_type( GRINS::BoundaryID bc_id, int bc_type );
-    void set_dirichlet_bc_value( GRINS::BoundaryID bc_id, Real value, int component = 0 );
+    void set_dirichlet_bc_value( GRINS::BoundaryID bc_id, libMesh::Real value, int component = 0 );
     void set_neumann_bc_value( GRINS::BoundaryID bc_id, const libMesh::Point& q_in );
-    Real get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component = 0 ) const;
+    libMesh::Real get_dirichlet_bc_value( GRINS::BoundaryID bc_id, int component = 0 ) const;
 
     const libMesh::Point& get_neumann_bc_value( GRINS::BoundaryID bc_id ) const;
 
