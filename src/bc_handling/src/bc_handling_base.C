@@ -35,6 +35,7 @@
 #include "libmesh/dof_map.h"
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/periodic_boundary.h"
+#include "libmesh/dof_map.h"
 
 namespace GRINS
 {

@@ -47,7 +47,7 @@ namespace libMesh
 {
   class FEMContext;
   class FEMSystem;
-  class DoFMap;
+  class DofMap;
 }
 
 namespace GRINS
