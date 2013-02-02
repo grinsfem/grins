@@ -26,7 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/inc_navier_stokes_bc_handling.h"
+
+// GRINS
+#include "grins/parabolic_profile.h"
+
+// libMesh
+#include "libmesh/zero_function.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
 
 namespace GRINS
 {

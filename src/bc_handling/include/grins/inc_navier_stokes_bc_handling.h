@@ -28,12 +28,8 @@
 #ifndef INC_NAVIER_STOKES_BC_HANDLING_H
 #define INC_NAVIER_STOKES_BC_HANDLING_H
 
-//libMesh
-#include "libmesh/zero_function.h"
-
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/parabolic_profile.h"
 
 namespace GRINS
 {
@@ -42,7 +38,8 @@ namespace GRINS
   {
   public:
     
-    IncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
+    IncompressibleNavierStokesBCHandling( const std::string& physics_name,
+					  const GetPot& input );
     
     virtual ~IncompressibleNavierStokesBCHandling();
 
@@ -53,8 +50,10 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
+    void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+				  libMesh::DofMap& dof_map,
+				  GRINS::BoundaryID bc_id,
+				  GRINS::BCType bc_type ) const;
 
     
   protected:

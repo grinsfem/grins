@@ -26,7 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/axisym_heat_transfer_bc_handling.h"
+
+// libMesh
+#include "libmesh/const_function.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
 
 namespace GRINS
 {

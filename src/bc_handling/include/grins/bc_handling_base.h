@@ -29,23 +29,26 @@
 #define BC_HANDLING_BASE_H
 
 //libMesh
-#include "libmesh/getpot.h"
 #include "libmesh/libmesh.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
-#include "libmesh/dirichlet_boundaries.h"
-#include "libmesh/dof_map.h"
-#include "libmesh/periodic_boundary.h"
+#include "libmesh/getpot.h"
+#include "libmesh/point.h"
 
 //GRINS
 #include "grins/variable_name_defaults.h"
 #include "grins/var_typedefs.h"
-#include "grins/boundary_conditions.h"
-#include "grins/grins_physics_names.h"
+#include "grins/bc_types.h"
 #include "grins/dbc_container.h"
 #include "grins/pbc_container.h"
 #include "grins/nbc_container.h"
-#include "grins/bc_types.h"
+#include "grins/boundary_conditions.h"
+
+// libMesh forward declarations
+namespace libMesh
+{
+  class FEMContext;
+  class FEMSystem;
+  class DoFMap;
+}
 
 namespace GRINS
 {
@@ -105,8 +108,10 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+					  libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id,
+					  GRINS::BCType bc_type ) const;
     
 
     GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;

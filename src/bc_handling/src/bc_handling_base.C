@@ -26,7 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/bc_handling_base.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/periodic_boundary.h"
 
 namespace GRINS
 {

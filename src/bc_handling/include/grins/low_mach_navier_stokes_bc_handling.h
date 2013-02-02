@@ -28,9 +28,6 @@
 #ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 #define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
-//libMesh
-#include "libmesh/zero_function.h"
-
 //GRINS
 #include "grins/bc_handling_base.h"
 
