@@ -26,7 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/physics.h"
+
+// GRINS
+#include "grins/bc_handling_base.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {

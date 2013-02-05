@@ -25,36 +25,44 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef PHYSICS_SYS_H
-#define PHYSICS_SYS_H
+#ifndef GRINS_PHYSICS_H
+#define GRINS_PHYSICS_H
 
-#include "grins_config.h"
-
+// C++
 #include <string>
-
-//libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/libmesh.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
-#include "libmesh/dirichlet_boundaries.h"
-#include "libmesh/zero_function.h"
-#include "libmesh/dof_map.h"
+#include <set>
 
 //GRINS
+#include "grins_config.h"
 #include "grins/variable_name_defaults.h"
 #include "grins/var_typedefs.h"
-#include "grins/boundary_conditions.h"
 #include "grins/grins_physics_names.h"
-#include "grins/bc_handling_base.h"
 
+//libMesh
+#include "libmesh/libmesh.h"
+
+// GRVY
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif
 
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+  class FEMContext;
+  class Elem;
+}
+
 //! GRINS namespace
 namespace GRINS
 {
+  // GRINS forward declarations
+  class BCHandlingBase;
+  class NBCContainer;
+  class DBCContainer;
+
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
     This abstract base class defines the API for use within the MultiphysicsSystem. Each physics
@@ -182,4 +190,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //PHYSICS_SYS_H
+#endif //GRINS_PHYSICS_H

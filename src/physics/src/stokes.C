@@ -26,7 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/stokes.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -88,17 +93,17 @@ namespace GRINS
     if (_dim != 3)
       _w_var = _u_var; // for convenience
 
-    libMesh::DenseSubMatrix<Number> &Kuu = *context.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
-    libMesh::DenseSubMatrix<Number> &Kvv = *context.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
-    libMesh::DenseSubMatrix<Number> &Kww = *context.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = *context.elem_subjacobians[_u_var][_u_var]; // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = *context.elem_subjacobians[_v_var][_v_var]; // R_{v},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kww = *context.elem_subjacobians[_w_var][_w_var]; // R_{w},{w}
 
-    libMesh::DenseSubMatrix<Number> &Kup = *context.elem_subjacobians[_u_var][_p_var]; // R_{u},{p}
-    libMesh::DenseSubMatrix<Number> &Kvp = *context.elem_subjacobians[_v_var][_p_var]; // R_{v},{p}
-    libMesh::DenseSubMatrix<Number> &Kwp = *context.elem_subjacobians[_w_var][_p_var]; // R_{w},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kup = *context.elem_subjacobians[_u_var][_p_var]; // R_{u},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = *context.elem_subjacobians[_v_var][_p_var]; // R_{v},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwp = *context.elem_subjacobians[_w_var][_p_var]; // R_{w},{p}
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -224,11 +229,11 @@ namespace GRINS
     if (_dim != 3)
       _w_var = _u_var; // for convenience
 
-    libMesh::DenseSubMatrix<Number> &Kpu = *context.elem_subjacobians[_p_var][_u_var]; // R_{p},{u}
-    libMesh::DenseSubMatrix<Number> &Kpv = *context.elem_subjacobians[_p_var][_v_var]; // R_{p},{v}
-    libMesh::DenseSubMatrix<Number> &Kpw = *context.elem_subjacobians[_p_var][_w_var]; // R_{p},{w}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = *context.elem_subjacobians[_p_var][_u_var]; // R_{p},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = *context.elem_subjacobians[_p_var][_v_var]; // R_{p},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpw = *context.elem_subjacobians[_p_var][_w_var]; // R_{p},{w}
 
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[_p_var]; // R_{p}
 
     // Add the constraint given by the continuity equation.
     unsigned int n_qpoints = context.element_qrule->n_points();
@@ -286,12 +291,12 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[_u_var]->get_JxW();
 
     // The shape functions at interior quadrature points.
     // We assume the same for each flow variable
-    const std::vector<std::vector<Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi = 
       context.element_fe_var[_u_var]->get_phi();
 
     // The number of local degrees of freedom in each variable
@@ -302,13 +307,13 @@ namespace GRINS
       _w_var = _u_var;
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_u = *context.elem_subresiduals[_u_var];
-    DenseSubVector<Real> &F_v = *context.elem_subresiduals[_v_var];
-    DenseSubVector<Real> &F_w = *context.elem_subresiduals[_w_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_u = *context.elem_subresiduals[_u_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_v = *context.elem_subresiduals[_v_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_w = *context.elem_subresiduals[_w_var];
 
-    DenseSubMatrix<Real> &M_uu = *context.elem_subjacobians[_u_var][_u_var];
-    DenseSubMatrix<Real> &M_vv = *context.elem_subjacobians[_v_var][_v_var];
-    DenseSubMatrix<Real> &M_ww = *context.elem_subjacobians[_w_var][_w_var];
+    libMesh::DenseSubMatrix<libMesh::Real> &M_uu = *context.elem_subjacobians[_u_var][_u_var];
+    libMesh::DenseSubMatrix<libMesh::Real> &M_vv = *context.elem_subjacobians[_v_var][_v_var];
+    libMesh::DenseSubMatrix<libMesh::Real> &M_ww = *context.elem_subjacobians[_w_var][_w_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -319,10 +324,10 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real u_dot = context.interior_value(_u_var, qp);
-	Real v_dot = context.interior_value(_v_var, qp);
+	libMesh::Real u_dot = context.interior_value(_u_var, qp);
+	libMesh::Real v_dot = context.interior_value(_v_var, qp);
 
-	Real w_dot = 0.0;
+	libMesh::Real w_dot = 0.0;
 
 	if( _dim == 3 )
 	  w_dot = context.interior_value(_w_var, qp);
@@ -341,7 +346,7 @@ namespace GRINS
 		  {
 		    // Assuming rho is constant w.r.t. u, v, w
 		    // and T (if Boussinesq added).
-		    Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
+		    libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
 
 		    M_uu(i,j) += value;
 		    M_vv(i,j) += value;

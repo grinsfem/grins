@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_transfer_adjoint_stab.h"
+
+// libMesh
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -63,7 +67,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
       context.element_fe_var[this->_T_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -118,7 +122,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
       context.element_fe_var[this->_T_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 

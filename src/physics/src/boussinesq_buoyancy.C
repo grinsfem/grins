@@ -26,7 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/boussinesq_buoyancy.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -87,14 +92,14 @@ namespace GRINS
       context.element_fe_var[_T_var]->get_phi();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
-    libMesh::DenseSubMatrix<Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
-    libMesh::DenseSubMatrix<Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its

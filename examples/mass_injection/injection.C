@@ -33,13 +33,14 @@
 #include "grins/simulation.h"
 #include "grins/parabolic_profile.h"
 
+// libMesh
+#include "libmesh/zero_function.h"
+#include "libmesh/parallel.h"
+
 // GRVY
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
-
-// libMesh
-#include "libmesh/parallel.h"
 
 class InjectionBCFactory : public GRINS::BoundaryConditionsFactory
 {
@@ -186,7 +187,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > InjectionBCFactory::bui
   cont2.add_var_name( "u" );
   cont2.add_bc_id( 1 );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
+  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new libMesh::ZeroFunction<Number> );
 
   cont2.set_func( vel_func2 );
 

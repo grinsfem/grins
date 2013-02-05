@@ -26,7 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_transfer_source.h"
+
+// GRINS
+#include "grins/constant_source_func.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -68,7 +76,7 @@ namespace GRINS
     const std::vector<libMesh::Point>& x_qp = context.element_fe_var[_T_var]->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -80,7 +88,7 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	Real q = _source( x_qp[qp] );
+	libMesh::Real q = _source( x_qp[qp] );
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {

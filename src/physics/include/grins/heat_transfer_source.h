@@ -26,13 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef HEAT_TRANSFER_SOURCE_H
-#define HEAT_TRANSFER_SOURCE_H
+#ifndef GRINS_HEAT_TRANSFER_SOURCE_H
+#define GRINS_HEAT_TRANSFER_SOURCE_H
 
 // GRINS
-#include "grins_config.h"
 #include "grins/heat_transfer_base.h"
-#include "grins/constant_source_func.h"
 
 namespace GRINS
 {  
@@ -67,4 +65,4 @@ namespace GRINS
   }; // class HeatTransferSource
 
 } // namespace GRINS
-#endif //HEAT_TRANSFER_SOURCE_H
+#endif // GRINS_HEAT_TRANSFER_SOURCE_H

@@ -26,7 +26,30 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/physics_factory.h"
+
+// GRINS
+#include "grins/physics.h"
+#include "grins/stokes.h"
+#include "grins/inc_navier_stokes.h"
+#include "grins/inc_navier_stokes_adjoint_stab.h"
+#include "grins/axisym_inc_navier_stokes.h"
+#include "grins/heat_transfer.h"
+#include "grins/heat_transfer_source.h"
+#include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/axisym_heat_transfer.h"
+#include "grins/boussinesq_buoyancy.h"
+#include "grins/axisym_boussinesq_buoyancy.h"
+#include "grins/low_mach_navier_stokes.h"
+#include "grins/low_mach_navier_stokes_braack_stab.h"
+#include "grins/low_mach_navier_stokes_spgsm_stab.h"
+#include "grins/low_mach_navier_stokes_vms_stab.h"
+#include "grins/grins_physics_names.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_source_func.h"
 
 namespace GRINS
 {

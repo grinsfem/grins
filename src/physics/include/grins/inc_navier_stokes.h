@@ -26,13 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef INC_NAVIER_STOKES_H
-#define INC_NAVIER_STOKES_H
+#ifndef GRINS_INC_NAVIER_STOKES_H
+#define GRINS_INC_NAVIER_STOKES_H
 
 //GRINS
 #include "grins/inc_navier_stokes_base.h"
 #include "grins/pressure_pinning.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
 
 namespace GRINS
 {
@@ -78,4 +77,4 @@ namespace GRINS
 
 } //End namespace block
 
-#endif // INC_NAVIER_STOKES_H
+#endif // GRINS_INC_NAVIER_STOKES_H

@@ -26,9 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// C++
 #include <iostream>
 
+// This class
 #include "grins/grins_solver.h"
+
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
