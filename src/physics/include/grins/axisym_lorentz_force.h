@@ -26,40 +26,21 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef AXISYM_LORENTZ_FORCE_H
-#define AXISYM_LORENTZ_FORCE_H
-
-// libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
+#ifndef GRINS_AXISYM_LORENTZ_FORCE_H
+#define GRINS_AXISYM_LORENTZ_FORCE_H
 
 // GRINS
-#include "grins_config.h"
 #include "grins/physics.h"
+
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {  
-  //! Adds Axisymmetric Boussinesq bouyancy source term
+  //! Adds Axisymmetric Lorentz force source term
   /*!
-    This class implements the Axisymmetric Boussinesq approximation for thermal buoyancy.
-    Namely:
-    \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
-    where
-    \f$ \rho_0 = \f$ reference density, 
-    \f$ T_0 = \f$ reference temperature,
-    \f$ \beta_T = \f$ coefficient of thermal expansion, and
-    \f$ \mathbf{g} = \f$ the gravitional vector.
-    This source term is added to the governing flow equations through the
-    element_time_derivative routine. This class requires an axisymmetric flow physics enabled
-    and the AxisymmetricHeatTransfer physics class enabled.
+    This class implements the Axisymmetric Lorentz force 
    */
   class AxisymmetricLorentzForce : public Physics
   {
@@ -126,7 +107,7 @@ namespace GRINS
   private:
     AxisymmetricLorentzForce();
 
-  }; // class AxisymmetricLorentzForce
+  };
 
-} // namespace GRINS
-#endif //AXISYM_LORENTZ_FORCE_H
+} // end namespace GRINS
+#endif // GRINS_AXISYM_LORENTZ_FORCE_H

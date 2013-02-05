@@ -30,13 +30,15 @@
 #define GRINS_MAGNETOSTATICS_H
 
 // GRINS
-#include "physics.h"
+#include "grins/physics.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/libmesh.h"
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
 // libMesh forward declarations
+class GetPot;
+
 namespace libMesh
 {
   class FEMSystem;
@@ -111,7 +113,7 @@ namespace GRINS
     //! Temperature element order, read from input
     libMeshEnums::Order _A_order, _V_order;
 
-    Real _sigma, _mu;
+    libMesh::Real _sigma, _mu;
 
   private:
     Magnetostatics();

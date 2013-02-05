@@ -27,22 +27,16 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "grins/axisym_magnetostatics_bc_handling.h"
+#include "grins/magnetostatics_bc_handling.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/point.h"
-#include "libmesh/const_function.h"
-#include "libmesh/dirichlet_boundaries.h"
-#include "libmesh/dof_map.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
 
-  AxisymmetricMagnetostaticsBCHandling::AxisymmetricMagnetostaticsBCHandling( const std::string& physics_name,
-									      const GetPot& input)
+  MagnetostaticsBCHandling::MagnetostaticsBCHandling( const std::string& physics_name,
+						      const GetPot& input)
     : BCHandlingBase(physics_name)
   {
     _A_var_name = input("Physics/VariableNames/MagneticPotential", GRINS::A_var_name_default );
@@ -55,12 +49,12 @@ namespace GRINS
     return;
   }
 
-  AxisymmetricMagnetostaticsBCHandling::~AxisymmetricMagnetostaticsBCHandling()
+  MagnetostaticsBCHandling::~MagnetostaticsBCHandling()
   {
     return;
   }
 
-  int AxisymmetricMagnetostaticsBCHandling::string_to_int( const std::string& bc_type ) const
+  int MagnetostaticsBCHandling::string_to_int( const std::string& bc_type ) const
   {
     AM_BC_TYPES bc_type_out;
     
@@ -82,10 +76,10 @@ namespace GRINS
     return bc_type_out;
   }
   
-  void AxisymmetricMagnetostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
-							   const std::string& bc_id_string, 
-							   const int bc_type, 
-							   const GetPot& input )
+  void MagnetostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
+					       const std::string& bc_id_string, 
+					       const int bc_type, 
+					       const GetPot& input )
   {
     switch(bc_type)
       {
@@ -111,11 +105,11 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricMagnetostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								     VariableIndex var,
-								     bool request_jacobian,
-								     BoundaryID bc_id,
-								     BCType bc_type ) const
+  void MagnetostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+							 VariableIndex var,
+							 bool request_jacobian,
+							 BoundaryID bc_id,
+							 BCType bc_type ) const
   {
     switch( bc_type )
       {
@@ -124,10 +118,10 @@ namespace GRINS
     return;
   }
   
-  void AxisymmetricMagnetostaticsBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
-								      libMesh::DofMap& dof_map,
-								      BoundaryID bc_id,
-								      BCType bc_type ) const
+  void MagnetostaticsBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+							  libMesh::DofMap& dof_map,
+							  BoundaryID bc_id,
+							  BCType bc_type ) const
   {
     VariableIndex A_var = system->variable_number( _A_var_name );
     

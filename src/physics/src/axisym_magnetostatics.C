@@ -26,8 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/axisym_magnetostatics.h"
+
+// GRINS
 #include "grins/axisym_magnetostatics_bc_handling.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {

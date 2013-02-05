@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef GRINS_AXISYM_MAGNETOSTATICS_BC_HANDLING_H
-#define GRINS_AXISYM_MAGNETOSTATICS_BC_HANDLING_H
+#ifndef GRINS_MAGNETOSTATICS_BC_HANDLING_H
+#define GRINS_MAGNETOSTATICS_BC_HANDLING_H
 
 // GRINS
 #include "grins/bc_handling_base.h"
@@ -34,13 +34,13 @@
 namespace GRINS
 {
   //!
-  class AxisymmetricMagnetostaticsBCHandling : public BCHandlingBase
+  class MagnetostaticsBCHandling : public BCHandlingBase
   {
   public:
     
-    AxisymmetricMagnetostaticsBCHandling( const std::string& physics_name, const GetPot& input );
+    MagnetostaticsBCHandling( const std::string& physics_name, const GetPot& input );
     
-    ~AxisymmetricMagnetostaticsBCHandling();
+    ~MagnetostaticsBCHandling();
 
     int string_to_int( const std::string& bc_type_in ) const;
 
@@ -65,12 +65,11 @@ namespace GRINS
 
   private:
 
-    AxisymmetricMagnetostaticsBCHandling();
+    MagnetostaticsBCHandling();
 
     std::string _A_var_name;
 
   };
 
 } // end namespace GRINS
-
-#endif // GRINS_AXISYM_MAGNETOSTATICS_BC_HANDLING_H
+#endif // GRINS_MAGNETOSTATICS_BC_HANDLING_H

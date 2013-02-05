@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "grins/axisym_electrostatics_bc_handling.h"
+#include "grins/electrostatics_bc_handling.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -41,8 +41,8 @@
 namespace GRINS
 {
 
-  AxisymmetricElectrostaticsBCHandling::AxisymmetricElectrostaticsBCHandling( const std::string& physics_name,
-									      const GetPot& input)
+  ElectrostaticsBCHandling::ElectrostaticsBCHandling( const std::string& physics_name,
+						      const GetPot& input)
     : BCHandlingBase(physics_name)
   {
     _V_var_name = input("Physics/VariableNames/ElectricPotential", GRINS::V_var_name_default );
@@ -55,12 +55,12 @@ namespace GRINS
     return;
   }
 
-  AxisymmetricElectrostaticsBCHandling::~AxisymmetricElectrostaticsBCHandling()
+  ElectrostaticsBCHandling::~ElectrostaticsBCHandling()
   {
     return;
   }
 
-  int AxisymmetricElectrostaticsBCHandling::string_to_int( const std::string& bc_type ) const
+  int ElectrostaticsBCHandling::string_to_int( const std::string& bc_type ) const
   {
     AE_BC_TYPES bc_type_out;
     
@@ -78,9 +78,6 @@ namespace GRINS
 
     else if( bc_type == "general_voltage" )
       bc_type_out = GENERAL_VOLTAGE;
-    
-    else if( bc_type == "axisymmetric" )
-      bc_type_out = AXISYMMETRIC;
 
     else
       {
@@ -94,10 +91,10 @@ namespace GRINS
     return bc_type_out;
   }
   
-  void AxisymmetricElectrostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
-							   const std::string& bc_id_string, 
-							   const int bc_type, 
-							   const GetPot& input )
+  void ElectrostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
+					       const std::string& bc_id_string, 
+					       const int bc_type, 
+					       const GetPot& input )
   {
     switch(bc_type)
       {
@@ -160,17 +157,14 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricElectrostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								     VariableIndex var,
-								     bool request_jacobian,
-								     BoundaryID bc_id,
-								     BCType bc_type ) const
+  void ElectrostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+							 VariableIndex var,
+							 bool request_jacobian,
+							 BoundaryID bc_id,
+							 BCType bc_type ) const
   {
     switch( bc_type )
       {
-      case(AXISYMMETRIC):
-	// Don't need to do anything for dV/dr = 0
-	break;
 
       case(INSULATING_WALL):
 	// Do nothing BC
@@ -178,15 +172,15 @@ namespace GRINS
 	
       case(PRESCRIBED_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, var, -1.0,
-						   this->get_neumann_bc_value(bc_id) );
+	  _bound_conds.apply_neumann( context, var, -1.0,
+				      this->get_neumann_bc_value(bc_id) );
 	}
 	break;
 	
       case(GENERAL_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, request_jacobian, var, -1.0, 
-						   this->get_neumann_bound_func( bc_id, var ) );
+	  _bound_conds.apply_neumann( context, request_jacobian, var, -1.0, 
+				      this->get_neumann_bound_func( bc_id, var ) );
 	}
 	break;
 	
@@ -200,10 +194,10 @@ namespace GRINS
     return;
   }
   
-  void AxisymmetricElectrostaticsBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
-								      libMesh::DofMap& dof_map,
-								      BoundaryID bc_id,
-								      BCType bc_type ) const
+  void ElectrostaticsBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+							  libMesh::DofMap& dof_map,
+							  BoundaryID bc_id,
+							  BCType bc_type ) const
   {
     VariableIndex V_var = system->variable_number( _V_var_name );
     

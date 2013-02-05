@@ -29,9 +29,15 @@
 // This class
 #include "grins/electrostatics.h"
 
+// GRINS
+#include "grins/electrostatics_bc_handling.h"
+
 // libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {

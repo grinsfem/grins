@@ -21,15 +21,12 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id: axisym_heat_transfer_bc_handling.h 30081 2012-05-17 15:17:45Z pbauman $
+// $Id$
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef AXISYM_ELECTROSTATICS_BC_HANDLING_H
-#define AXISYM_ELECTROSTATICS_BC_HANDLING_H
-
-// libMesh
-#include "libmesh/const_function.h"
+#ifndef GRINS_AXISYM_ELECTROSTATICS_BC_HANDLING_H
+#define GRINS_AXISYM_ELECTROSTATICS_BC_HANDLING_H
 
 // GRINS
 #include "grins/bc_handling_base.h"
@@ -76,8 +73,8 @@ namespace GRINS
 		     PRESCRIBED_VOLTAGE,
 		     GENERAL_VOLTAGE};
 
-  }; //AxisymmetricElectrostaticsBCHandling
+  };
 
-}
+} // end namespace GRINS
 
-#endif //AXISYM_ELECTROSTATICS_BC_HANDLING_H
+#endif // GRINS_AXISYM_ELECTROSTATICS_BC_HANDLING_H

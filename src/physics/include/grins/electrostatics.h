@@ -30,11 +30,11 @@
 #define GRINS_ELECTROSTATICS_H
 
 // GRINS
-#include "physics.h"
+#include "grins/physics.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/libmesh.h"
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
 // libMesh forward declarations
 namespace libMesh
@@ -99,6 +99,7 @@ namespace GRINS
     libMeshEnums::Order _V_order;
 
   private:
+
     Electrostatics();
 
   };

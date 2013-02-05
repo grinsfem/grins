@@ -26,25 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef AXISYM_MAGNETOSTATICS_H
-#define AXISYM_MAGNETOSTATICS_H
+#ifndef GRINS_AXISYM_MAGNETOSTATICS_H
+#define GRINS_AXISYM_MAGNETOSTATICS_H
+
+// GRINS
+#include "grins/physics.h"
 
 //libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
-
-//GRINS
-#include "grins_config.h"
-#include "grins/physics.h"
-#include "grins/axisym_magnetostatics_bc_handling.h"
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
@@ -117,12 +107,13 @@ namespace GRINS
     //! Temperature element order, read from input
     libMeshEnums::Order _A_order, _V_order;
 
-    Real _sigma, _mu;
+    libMesh::Real _sigma, _mu;
 
   private:
+
     AxisymmetricMagnetostatics();
 
-  }; // class AxisymmetricMagnetostatics
+  };
 
-} // namespace GRINS
-#endif //AXISYM_MAGNETOSTATICS_H
+} // end namespace GRINS
+#endif // GRINS_AXISYM_MAGNETOSTATICS_H

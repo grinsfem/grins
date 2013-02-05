@@ -113,7 +113,8 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/axisym_inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_electrostatics_bc_handling.C \
-                  $(bc_handling_srcdir)/axisym_magnetostatics_bc_handling.C
+                  $(bc_handling_srcdir)/axisym_magnetostatics_bc_handling.C \
+                  $(bc_handling_srcdir)/electrostatics_bc_handling.C
 
 qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/qoi_base.C \
@@ -205,7 +206,8 @@ bc_handling_INC = $(bc_handling_incdir)/grins/bc_handling_base.h \
                   $(bc_handling_incdir)/grins/axisym_inc_navier_stokes_bc_handling.h \
                   $(bc_handling_incdir)/grins/low_mach_navier_stokes_bc_handling.h  \
                   $(bc_handling_incdir)/grins/axisym_electrostatics_bc_handling.h \
-                  $(bc_handling_incdir)/grins/axisym_magnetostatics_bc_handling.h
+                  $(bc_handling_incdir)/grins/axisym_magnetostatics_bc_handling.h \
+                  $(bc_handling_incdir)/grins/electrostatics_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
           $(qoi_incdir)/grins/qoi_base.h \
