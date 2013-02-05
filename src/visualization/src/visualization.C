@@ -26,7 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/visualization.h"
+
+// GRINS
+#include "grins/multiphysics_sys.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/gmv_io.h"
+#include "libmesh/tecplot_io.h"
+#include "libmesh/exodusII_io.h"
+#include "libmesh/vtk_io.h"
 
 namespace GRINS
 {

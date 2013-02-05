@@ -29,25 +29,22 @@
 #ifndef GRINS_VISUALIZATION_H
 #define GRINS_VISUALIZATION_H
 
+// C++
 #include <string>
 #include <vector>
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "libmesh/numeric_vector.h"
 #include "libmesh/equation_systems.h"
-#include "libmesh/getpot.h"
-#include "libmesh/gmv_io.h"
-#include "libmesh/tecplot_io.h"
-#include "libmesh/exodusII_io.h"
-#include "libmesh/vtk_io.h"
-#include "libmesh/steady_solver.h"
 
-// GRINS
-#include "grins/multiphysics_sys.h"
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
+
   class Visualization
   {
   public:

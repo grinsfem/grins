@@ -26,7 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/visualization_factory.h"
+
+// GRINS
+#include "grins/steady_visualization.h"
+#include "grins/unsteady_visualization.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {

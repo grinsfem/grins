@@ -38,6 +38,9 @@
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
 #include "grins/boundary_conditions.h"
+#include "grins/grins_physics_names.h"
+#include "grins/nbc_container.h"
+#include "grins/dbc_container.h"
 
 // libMesh
 #include "libmesh/getpot.h"
