@@ -32,8 +32,13 @@
 // This class
 #include "grins/grins_solver.h"
 
+// GRINS
+#include "grins/multiphysics_sys.h"
+
 // libMesh
+#include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
+#include "libmesh/diff_solver.h"
 
 namespace GRINS
 {

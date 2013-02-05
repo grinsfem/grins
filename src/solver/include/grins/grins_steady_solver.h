@@ -31,11 +31,6 @@
 
 //GRINS
 #include "grins/grins_solver.h"
-#include "grins/visualization.h"
-
-//libMesh
-#include "libmesh/auto_ptr.h"
-#include "libmesh/equation_systems.h"
 
 namespace GRINS
 {

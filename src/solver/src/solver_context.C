@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/solver_context.h"
+
+// GRINS
+#include "grins/multiphysics_sys.h"
 
 namespace GRINS
 {

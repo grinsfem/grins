@@ -32,6 +32,7 @@
 
 // GRINS
 #include "grins/simulation.h"
+#include "grins/simulation_builder.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY

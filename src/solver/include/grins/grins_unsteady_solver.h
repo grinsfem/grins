@@ -52,5 +52,6 @@ namespace GRINS
     double _deltat;
 
   };
-} // namespace GRINS
+
+} // end namespace GRINS
 #endif // GRINS_UNSTEADY_SOLVER_H

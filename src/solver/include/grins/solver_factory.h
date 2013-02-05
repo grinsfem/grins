@@ -29,13 +29,11 @@
 #ifndef GRINS_SOLVER_FACTORY_H
 #define GRINS_SOLVER_FACTORY_H
 
-//libMesh
-#include "libmesh/getpot.h"
-
 //GRINS
 #include "grins/grins_solver.h"
-#include "grins/grins_steady_solver.h"
-#include "grins/grins_unsteady_solver.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {

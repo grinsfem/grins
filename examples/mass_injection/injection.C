@@ -32,6 +32,7 @@
 // GRINS
 #include "grins/simulation.h"
 #include "grins/parabolic_profile.h"
+#include "grins/simulation_builder.h"
 
 // libMesh
 #include "libmesh/zero_function.h"
