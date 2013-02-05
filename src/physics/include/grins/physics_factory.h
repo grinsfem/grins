@@ -29,13 +29,14 @@
 #ifndef GRINS_PHYSICS_FACTORY_H
 #define GRINS_PHYSICS_FACTORY_H
 
+// C++
 #include <string>
-
-// libMesh stuff
-#include "libmesh/getpot.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {

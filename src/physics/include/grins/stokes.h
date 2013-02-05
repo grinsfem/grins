@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef STOKES_H
-#define STOKES_H
+#ifndef GRINS_STOKES_H
+#define GRINS_STOKES_H
 
 //GRINS
 #include "grins/pressure_pinning.h"
@@ -72,10 +72,11 @@ namespace GRINS
     bool _pin_pressure;
     
   private:
+
     Stokes();
 
   };
 
-} //End namespace block
+} // end namespace block
 
-#endif // STOKES_H
+#endif // GRINS_STOKES_H

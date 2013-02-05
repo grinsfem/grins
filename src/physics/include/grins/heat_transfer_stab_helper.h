@@ -25,14 +25,17 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_STAB_HELPER_H
-#define HEAT_TRANSFER_STAB_HELPER_H
-
-//libMesh
-#include "libmesh/getpot.h"
+#ifndef GRINS_HEAT_TRANSFER_STAB_HELPER_H
+#define GRINS_HEAT_TRANSFER_STAB_HELPER_H
 
 //GRINS
 #include "grins/stab_helper.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
@@ -77,4 +80,4 @@ namespace GRINS
   }
   
 }
-#endif // HEAT_TRANSFER_STAB_HELPER_H
+#endif // GRINS_HEAT_TRANSFER_STAB_HELPER_H

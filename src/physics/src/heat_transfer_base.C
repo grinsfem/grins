@@ -29,6 +29,9 @@
 // This class
 #include "grins/heat_transfer_base.h"
 
+// GRINS
+#include "grins_config.h"
+
 // libMesh
 #include "libmesh/utility.h"
 #include "libmesh/string_to_enum.h"

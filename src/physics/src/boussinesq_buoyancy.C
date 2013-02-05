@@ -30,6 +30,7 @@
 #include "grins/boussinesq_buoyancy.h"
 
 // libMesh
+#include "libmesh/getpot.h"
 #include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 

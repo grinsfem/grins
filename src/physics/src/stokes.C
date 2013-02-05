@@ -29,6 +29,9 @@
 // This class
 #include "grins/stokes.h"
 
+// GRINS
+#include "grins_config.h"
+
 // libMesh
 #include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"

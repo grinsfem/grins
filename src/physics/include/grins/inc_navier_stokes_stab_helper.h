@@ -28,11 +28,14 @@
 #ifndef GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
 #define GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
 
-//libMesh
-#include "libmesh/getpot.h"
-
-//GRINS
+// GRINS
 #include "grins/stab_helper.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
+
+// libMesh foward declarations
+class GetPot;
 
 namespace GRINS
 {

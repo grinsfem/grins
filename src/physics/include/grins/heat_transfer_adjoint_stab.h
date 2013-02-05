@@ -48,9 +48,6 @@ namespace GRINS
 
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context );
-
-  protected:
-
     
   private:
     HeatTransferAdjointStabilization();

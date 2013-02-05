@@ -29,12 +29,12 @@
 #ifndef GRINS_INC_NAVIER_STOKES_BASE_H
 #define GRINS_INC_NAVIER_STOKES_BASE_H
 
+//GRINS
+#include "grins/physics.h"
+
 //libMesh
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
-
-//GRINS
-#include "grins/physics.h"
 
 namespace GRINS
 {

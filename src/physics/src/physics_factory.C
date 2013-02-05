@@ -51,6 +51,9 @@
 #include "grins/constant_viscosity.h"
 #include "grins/constant_source_func.h"
 
+// libMesh
+#include "libmesh/getpot.h"
+
 namespace GRINS
 {
 

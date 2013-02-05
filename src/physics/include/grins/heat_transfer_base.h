@@ -29,14 +29,12 @@
 #ifndef GRINS_HEAT_TRANSFER_BASE_H
 #define GRINS_HEAT_TRANSFER_BASE_H
 
+//GRINS
+#include "grins/physics.h"
+
 //libMesh
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
-
-//GRINS
-#include "grins_config.h"
-#include "grins/physics.h"
-#include "grins/heat_transfer_bc_handling.h"
 
 namespace GRINS
 {

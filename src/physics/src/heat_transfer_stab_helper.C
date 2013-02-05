@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_transfer_stab_helper.h"
+
+//libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
