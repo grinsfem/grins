@@ -209,13 +209,13 @@ AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,        [chmod +x test/tes
 AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,       [chmod +x test/test_axi_thermally_driven_flow.sh])
 AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,             [chmod +x test/test_axi_ns_con_cyl_flow.sh])
 AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                   [chmod +x test/test_vorticity_qoi.sh])
-AC_CONFIG_FILES(test/test_magnetostatics.sh,            [chmod +x test/test_magnetostatics.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                    [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
+AC_CONFIG_FILES(test/magnetostatics_regression.sh,            [chmod +x test/magnetostatics_regression.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

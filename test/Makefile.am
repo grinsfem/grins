@@ -78,7 +78,7 @@ TESTS = gaussian_profiles                                            \
         $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
         $(top_builddir)/test/backward_facing_step_regression.sh      \
         $(top_builddir)/test/coupled_stokes_ns.sh                    \
-        $(top_builddir)/test/test_magnetostatics.sh
+        $(top_builddir)/test/magnetostatics_regression.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
@@ -93,7 +93,7 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  low_mach_cavity_benchmark_regression.sh \
                  backward_facing_step_regression.sh \
                  coupled_stokes_ns.sh \
-                 test_magnetostatics.sh
+                 magnetostatics_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data
