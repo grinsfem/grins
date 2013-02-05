@@ -116,11 +116,11 @@ namespace GRINS
     // Get Jacobians
     libMesh::DenseSubMatrix<libMesh::Number> &KuV = *context.elem_subjacobians[_u_var][_V_var]; // R_{u},{V}
     libMesh::DenseSubMatrix<libMesh::Number> &KvV = *context.elem_subjacobians[_v_var][_V_var]; // R_{v},{V}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwV = *context.elem_subjacobians[_w_var][_V_var]; // R_{v},{V}
+    libMesh::DenseSubMatrix<libMesh::Number> &KwV = *context.elem_subjacobians[_w_var][_V_var]; // R_{w},{V}
 
     libMesh::DenseSubMatrix<libMesh::Number> &KuA = *context.elem_subjacobians[_u_var][_A_var]; // R_{u},{A}
     libMesh::DenseSubMatrix<libMesh::Number> &KvA = *context.elem_subjacobians[_v_var][_A_var]; // R_{v},{A}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwA = *context.elem_subjacobians[_w_var][_A_var]; // R_{v},{A}
+    libMesh::DenseSubMatrix<libMesh::Number> &KwA = *context.elem_subjacobians[_w_var][_A_var]; // R_{w},{A}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
