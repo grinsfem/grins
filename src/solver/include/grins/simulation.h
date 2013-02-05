@@ -29,23 +29,37 @@
 #ifndef GRINS_SIMULATION_H
 #define GRINS_SIMULATION_H
 
+// C++
 #include "boost/tr1/memory.hpp"
+
+// GRINS
+#include "grins_config.h"
+#include "grins/grins_solver.h"
+#include "grins/qoi_base.h"
+#include "grins/visualization.h"
+#include "grins/boundary_conditions.h"
+#include "grins/grins_physics_names.h"
+#include "grins/nbc_container.h"
+#include "grins/dbc_container.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-
-// GRINS
-#include "grins/simulation_builder.h"
-#include "grins/visualization.h"
-#include "grins/boundary_conditions.h"
+#include "libmesh/mesh.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
 
+// libMesh forward declarations
+class GetPot;
+
 namespace GRINS
 {
+  // Forward declarations
+  class SimulationBuilder;
+  class MultiphysicsSystem;
+
   class Simulation
   {
   public:

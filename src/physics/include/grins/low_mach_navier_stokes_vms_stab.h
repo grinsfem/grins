@@ -28,9 +28,6 @@
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
 
-//libMesh
-#include "libmesh/time_solver.h"
-
 //GRINS
 #include "grins/low_mach_navier_stokes_stab_base.h"
 
@@ -74,10 +71,11 @@ namespace GRINS
 					libMesh::FEMContext& context );
     
   private:
+
     LowMachNavierStokesVMSStabilization();
 
-  }; // End LowMachNavierStokesVMSStabilization class declarations
+  };
 
-} // End namespace GRINS
+} // end namespace GRINS
 
-#endif //GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H

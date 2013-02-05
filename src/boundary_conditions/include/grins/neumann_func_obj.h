@@ -28,50 +28,56 @@
 #ifndef NEUMANN_FUNC_OBJ_H 
 #define NEUMANN_FUNC_OBJ_H
 
-// libMesh stuff
-#include "libmesh/libmesh.h"
-#include "libmesh/point.h"
-#include "libmesh/fem_context.h"
-
 // GRINS stuff
 #include "grins/var_typedefs.h"
+
+// libMesh stuff
+#include "libmesh/point.h"
+
+namespace libMesh
+{
+  class FEMContext;
+}
 
 namespace GRINS
 {
 
-  //! Abstract base class for general, non-constant Neumann boundary conditions
-  class NeumannFuncObj
-  {
-  public:
+//! Abstract base class for general, non-constant Neumann boundary conditions
+class NeumannFuncObj
+{
+public:
     
-    NeumannFuncObj();
+NeumannFuncObj();
     
-    virtual ~NeumannFuncObj();
+virtual ~NeumannFuncObj();
     
-    //! Returns the value of the implemented Neumann boundary condition
-    /*! This will leverage the FEMContext to get variable values and derivatives through the
-      side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point value( const libMesh::FEMContext& context, const unsigned int qp ) = 0;
+//! Returns the value of the implemented Neumann boundary condition
+/*! This will leverage the FEMContext to get variable values and derivatives through the
+  side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
+virtual libMesh::Point value( const libMesh::FEMContext& context,
+				const unsigned int qp ) = 0;
     
-    //! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
-    /*! This will leverage the FEMContext to get variable values and derivatives through the
-      side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point derivative( const libMesh::FEMContext& context, const unsigned qp ) = 0;
+//! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
+/*! This will leverage the FEMContext to get variable values and derivatives through the
+  side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
+virtual libMesh::Point derivative( const libMesh::FEMContext& context,
+				     const unsigned qp ) = 0;
 
-    //! If needed, returns the derivative with respect to other variables in the system.
-    /*! By default, does nothing. User should reimplement is this is needed.
-      This will leverage the FEMContext to get variable values and derivatives through the
-      side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point derivative( const libMesh::FEMContext& context, const unsigned int qp, 
-				       const GRINS::VariableIndex jac_var ); 
+//! If needed, returns the derivative with respect to other variables in the system.
+/*! By default, does nothing. User should reimplement is this is needed.
+  This will leverage the FEMContext to get variable values and derivatives through the
+  side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
+virtual libMesh::Point derivative( const libMesh::FEMContext& context,
+				     const unsigned int qp, 
+				     const GRINS::VariableIndex jac_var ); 
 
-    std::vector<GRINS::VariableIndex> get_other_jac_vars();
+std::vector<GRINS::VariableIndex> get_other_jac_vars();
 
-  protected:
+protected:
 
-    std::vector<GRINS::VariableIndex> _jac_vars;
+std::vector<GRINS::VariableIndex> _jac_vars;
 
-  }; // class NeumannFuncObj
+}; // class NeumannFuncObj
   
 } // namespace GRINS
 

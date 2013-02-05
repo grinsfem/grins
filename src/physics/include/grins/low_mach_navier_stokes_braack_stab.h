@@ -25,11 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
-#define LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
-
-//libMesh
-#include "libmesh/time_solver.h"
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
 
 //GRINS
 #include "grins/low_mach_navier_stokes_stab_base.h"
@@ -76,8 +73,8 @@ namespace GRINS
   private:
     LowMachNavierStokesBraackStabilization();
 
-  }; // End LowMachNavierStokesBraackStabilization class declarations
+  };
 
-} // End namespace GRINS
+} // end namespace GRINS
 
-#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_VMS_STAB_H

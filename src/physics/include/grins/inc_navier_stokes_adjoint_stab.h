@@ -25,16 +25,12 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_BRAACK_STAB_H
-#define INC_NAVIER_STOKES_BRAACK_STAB_H
-
-//libMesh
-#include "libmesh/time_solver.h"
+#ifndef GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
+#define GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
 
 //GRINS
 #include "grins/inc_navier_stokes_stab_base.h"
 
-//! GRINS namespace
 namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
@@ -53,10 +49,11 @@ namespace GRINS
 				libMesh::FEMContext& context );
     
   private:
+
     IncompressibleNavierStokesAdjointStabilization();
 
-  }; // End IncompressibleNavierStokesAdjointStabilization class declarations
+  };
 
-} // End namespace GRINS
+} // end namespace GRINS
 
-#endif //LOW_MACH_NAVIER_STOKES_VMS_STAB_H
+#endif // GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H

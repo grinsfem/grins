@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/inc_navier_stokes_stab_helper.h"
+
+//libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {

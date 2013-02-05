@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/inc_navier_stokes_stab_base.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {

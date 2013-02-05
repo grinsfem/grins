@@ -26,7 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/boundary_conditions.h"
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+#include "libmesh/point.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/elem.h"
+#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -43,10 +52,10 @@ namespace GRINS
 
   void BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					  const VariableIndex var,
-					  const Real sign,
-					  const Point& value ) const
+					  const libMesh::Real sign,
+					  const libMesh::Point& value ) const
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = c.dof_indices_var[var].size();
@@ -58,9 +67,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
       c.side_fe_var[var]->get_phi();
 
-    const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = c.side_fe_var[var]->get_normals();
 
-    libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
 
     unsigned int n_qpoints = c.side_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -76,10 +85,10 @@ namespace GRINS
 
   void BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext &context,
 						       const VariableIndex var,
-						       const Real sign,
-						       const Point& value ) const
+						       const libMesh::Real sign,
+						       const libMesh::Point& value ) const
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = c.dof_indices_var[var].size();
@@ -95,9 +104,9 @@ namespace GRINS
     const std::vector<libMesh::Point>& var_qpoint =
       c.side_fe_var[var]->get_xyz();
 
-    const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = c.side_fe_var[var]->get_normals();
 
-    libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
 
     unsigned int n_qpoints = c.side_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -116,10 +125,10 @@ namespace GRINS
   void BoundaryConditions::apply_neumann( libMesh::DiffContext &context,
 					  const bool request_jacobian,
 					  const VariableIndex var,
-					  const Real sign,
+					  const libMesh::Real sign,
 					  const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = c.dof_indices_var[var].size();
@@ -131,10 +140,10 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
       c.side_fe_var[var]->get_phi();
 
-    const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = c.side_fe_var[var]->get_normals();
 
-    libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
 
     unsigned int n_qpoints = c.side_qrule->n_points();
 
@@ -193,10 +202,10 @@ namespace GRINS
   void BoundaryConditions::apply_neumann_axisymmetric( libMesh::DiffContext &context,
 						       const bool request_jacobian,
 						       const VariableIndex var,
-						       const Real sign,
+						       const libMesh::Real sign,
 						       std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = c.dof_indices_var[var].size();
@@ -212,10 +221,10 @@ namespace GRINS
     const std::vector<libMesh::Point>& var_qpoint =
       c.side_fe_var[var]->get_xyz();
 
-    const std::vector<Point> &normals = c.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = c.side_fe_var[var]->get_normals();
 
-    libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
 
     unsigned int n_qpoints = c.side_qrule->n_points();
 
@@ -283,12 +292,12 @@ namespace GRINS
 				      const double penalty )
   {
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     if (c.elem->contains_point(pin_location))
       {
-	libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
-	libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+	libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
+	libMesh::DenseSubMatrix<libMesh::Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
 
 	// The number of local degrees of freedom in p variable.
 	const unsigned int n_var_dofs = c.dof_indices_var[var].size();

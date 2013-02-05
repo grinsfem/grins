@@ -26,7 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/low_mach_navier_stokes_bc_handling.h"
+
+// libMesh
+#include "libmesh/zero_function.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {

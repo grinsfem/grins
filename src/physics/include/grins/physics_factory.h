@@ -26,38 +26,20 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef PHYSICS_FACTORY_H
-#define PHYSICS_FACTORY_H
+#ifndef GRINS_PHYSICS_FACTORY_H
+#define GRINS_PHYSICS_FACTORY_H
 
+// C++
 #include <string>
-
-// libMesh stuff
-#include "libmesh/getpot.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"
-#include "grins/physics.h"
-#include "grins/stokes.h"
-#include "grins/inc_navier_stokes.h"
-#include "grins/inc_navier_stokes_adjoint_stab.h"
-#include "grins/axisym_inc_navier_stokes.h"
-#include "grins/heat_transfer.h"
-#include "grins/heat_transfer_source.h"
-#include "grins/heat_transfer_adjoint_stab.h"
-#include "grins/axisym_heat_transfer.h"
-#include "grins/boussinesq_buoyancy.h"
-#include "grins/axisym_boussinesq_buoyancy.h"
-#include "grins/low_mach_navier_stokes.h"
-#include "grins/low_mach_navier_stokes_braack_stab.h"
-#include "grins/low_mach_navier_stokes_spgsm_stab.h"
-#include "grins/low_mach_navier_stokes_vms_stab.h"
-#include "grins/grins_physics_names.h"
-#include "grins/constant_conductivity.h"
-#include "grins/constant_specific_heat.h"
-#include "grins/constant_viscosity.h"
 #include "grins/axisym_electrostatics.h"
 #include "grins/axisym_magnetostatics.h"
 #include "grins/axisym_lorentz_force.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
@@ -102,11 +84,13 @@ namespace GRINS
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required ) const;
 
-    void visc_cond_specheat_error( const std::string& physics, const std::string& conductivity,
-				   const std::string& viscosity, const std::string& specific_heat ) const;
+    void visc_cond_specheat_error( const std::string& physics,
+				   const std::string& conductivity,
+				   const std::string& viscosity,
+				   const std::string& specific_heat ) const;
 
   }; // class PhysicsFactory
 
 } // namespace GRINS
 
-#endif //PHYSICS_FACTORY_H
+#endif // GRINS_PHYSICS_FACTORY_H

@@ -26,7 +26,13 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/simulation.h"
+
+// GRINS
+#include "grins/simulation_builder.h"
+#include "grins/multiphysics_sys.h"
+#include "grins/solver_context.h"
 
 namespace GRINS
 {

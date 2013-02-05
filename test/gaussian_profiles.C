@@ -29,6 +29,9 @@
 // GRINS
 #include "grins/gaussian_xy_profile.h"
 
+// libMesh
+#include "libmesh/point.h"
+
 int main() 
 {
   const double a = 5.0;

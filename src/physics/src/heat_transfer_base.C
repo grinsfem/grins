@@ -26,7 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_transfer_base.h"
+
+// GRINS
+#include "grins_config.h"
+
+// libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {

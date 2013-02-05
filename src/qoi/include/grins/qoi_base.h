@@ -29,18 +29,23 @@
 #ifndef QOI_BASE_H
 #define QOI_BASE_H
 
-// system
+// C++
 #include <iomanip>
 
 // libMesh
 #include "libmesh/diff_qoi.h"
-#include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
 
 // GRINS
 #include "grins/var_typedefs.h"
+
+// libMesh forward declarations
+class GetPot;
+
+namespace libMesh
+{
+  class FEMSystem;
+  class QoISet;
+}
 
 namespace GRINS
 {
@@ -61,14 +66,15 @@ namespace GRINS
      * Method to allow QoI to resize libMesh::System storage of QoI computations.
      * \todo Right now, we're only dealing with 1 QoI at a time. Need to generalize.
      */
-    virtual void init_qoi( std::vector<Number>& sys_qoi );
+    virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi );
 
     /*!
      * We call the base class then grab the sys_qoi and cache it locally to output later.
      * If the QoI is not expressable as a sum over elements, then this will need to be
      * overridden with the correct libMesh::Parallel operations.
      */
-    virtual void parallel_op( std::vector<Number>& sys_qoi, std::vector<Number>& local_qoi,
+    virtual void parallel_op( std::vector<libMesh::Number>& sys_qoi,
+			      std::vector<libMesh::Number>& local_qoi,
 			      const QoISet& qoi_indices );
 
     /*!
@@ -82,11 +88,11 @@ namespace GRINS
      * so qoi_index should be zero.
      * \todo Maybe take a libMesh::QoISet instead?
      */
-    Number get_qoi( unsigned int qoi_index ) const;
+    libMesh::Number get_qoi( unsigned int qoi_index ) const;
 
   protected:
 
-    std::vector<Number> _qoi_cache;
+    std::vector<libMesh::Number> _qoi_cache;
   };
 }
 #endif //QOI_BASE_H

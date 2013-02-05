@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/neumann_func_obj.h"
+
+// libMesh
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {

@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/grins_constant_function.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {

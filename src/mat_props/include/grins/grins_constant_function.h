@@ -31,7 +31,9 @@
 
 // libMesh
 #include "libmesh/libmesh.h"
-#include "libmesh/getpot.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {

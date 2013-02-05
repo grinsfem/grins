@@ -26,9 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// C++
+#include <iostream>
+
+// This class
 #include "grins/mesh_builder.h"
 
-#include <iostream>
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/mesh_generation.h"
+#include "libmesh/mesh_refinement.h"
+
 
 namespace GRINS
 {

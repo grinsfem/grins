@@ -29,32 +29,33 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
+// C++
 #include "boost/tr1/memory.hpp"
 
 // GRINS
-#include "grins_config.h"
-#include "grins/multiphysics_sys.h"
-#include "grins/visualization.h"
-#include "grins/bc_factory.h"
-#include "grins/solver_context.h"
-#include "grins/boundary_conditions.h"
+#include "grins/nbc_container.h"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/libmesh.h"
-#include "libmesh/libmesh_logging.h"
-#include "libmesh/mesh.h"
-#include "libmesh/diff_solver.h"
 #include "libmesh/equation_systems.h"
-#include "libmesh/euler_solver.h"
-#include "libmesh/steady_solver.h"
 
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h" // GRVY timers
 #endif
 
+// libMesh forward declarations
+class GetPot;
+
+namespace libMesh
+{
+  class DiffSolver;
+}
+
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
+  class SolverContext;
+
   class Solver
   {
   public:

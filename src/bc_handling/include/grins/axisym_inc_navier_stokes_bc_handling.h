@@ -28,9 +28,6 @@
 #ifndef AXISYM_INC_NAVIER_STOKES_BC_HANDLING_H
 #define AXISYM_INC_NAVIER_STOKES_BC_HANDLING_H
 
-//libMesh
-#include "libmesh/zero_function.h"
-
 //GRINS
 #include "grins/bc_handling_base.h"
 
@@ -41,7 +38,8 @@ namespace GRINS
   {
   public:
     
-    AxisymmetricIncompressibleNavierStokesBCHandling( const std::string& physics_name, const GetPot& input );
+    AxisymmetricIncompressibleNavierStokesBCHandling( const std::string& physics_name,
+						      const GetPot& input );
     
     virtual ~AxisymmetricIncompressibleNavierStokesBCHandling();
 
@@ -52,8 +50,10 @@ namespace GRINS
 			       const int bc_type, 
 			       const GetPot& input );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
+    void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+				  libMesh::DofMap& dof_map,
+				  GRINS::BoundaryID bc_id,
+				  GRINS::BCType bc_type ) const;
 
     
   protected:

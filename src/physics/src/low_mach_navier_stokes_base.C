@@ -26,7 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/low_mach_navier_stokes_base.h"
+
+// GRINS
+#include "grins/constant_viscosity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_conductivity.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {

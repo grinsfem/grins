@@ -26,7 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/pressure_pinning.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/elem.h"
+#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -66,12 +73,12 @@ namespace GRINS
 				   const double penalty )
   {
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     if (c.elem->contains_point(_pin_location))
       {
-	libMesh::DenseSubVector<Number> &F_var = *c.elem_subresiduals[var]; // residual
-	libMesh::DenseSubMatrix<Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+	libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
+	libMesh::DenseSubMatrix<libMesh::Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
 
 	// The number of local degrees of freedom in p variable.
 	const unsigned int n_var_dofs = c.dof_indices_var[var].size();

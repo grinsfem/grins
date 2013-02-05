@@ -26,7 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/low_mach_navier_stokes.h"
+
+// GRINS
+#include "grins_config.h"
+#include "grins/low_mach_navier_stokes_bc_handling.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_conductivity.h"
+
+// libMesh
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -161,7 +172,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.element_fe_var[this->_p_var]->get_phi();
 
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -226,9 +237,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[this->_u_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -378,7 +389,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.element_fe_var[this->_T_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -420,18 +431,18 @@ namespace GRINS
 									 libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[this->_u_var]->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<Real> >& p_phi = 
+    const std::vector<std::vector<libMesh::Real> >& p_phi = 
       context.element_fe_var[this->_p_var]->get_phi();
   
     // The number of local degrees of freedom in each variable
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_p = *context.elem_subresiduals[this->_p_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p = *context.elem_subresiduals[this->_p_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -442,9 +453,9 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real T_dot = context.interior_value(this->_T_var, qp);
+	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 
-	Real T = context.fixed_interior_value(this->_T_var, qp);
+	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
 	for (unsigned int i = 0; i != n_p_dofs; ++i)
 	  {
@@ -461,7 +472,7 @@ namespace GRINS
 								       libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[this->_u_var]->get_JxW();
 
     // The shape functions at interior quadrature points.
@@ -476,9 +487,9 @@ namespace GRINS
       this->_w_var = this->_u_var;
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_u = *context.elem_subresiduals[this->_u_var];
-    DenseSubVector<Real> &F_v = *context.elem_subresiduals[this->_v_var];
-    DenseSubVector<Real> &F_w = *context.elem_subresiduals[this->_w_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_u = *context.elem_subresiduals[this->_u_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_v = *context.elem_subresiduals[this->_v_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_w = *context.elem_subresiduals[this->_w_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -489,14 +500,14 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real u_dot = context.interior_value(this->_u_var, qp);
-	Real v_dot = context.interior_value(this->_v_var, qp);
+	libMesh::Real u_dot = context.interior_value(this->_u_var, qp);
+	libMesh::Real v_dot = context.interior_value(this->_v_var, qp);
 
-	Real w_dot = 0.0;
+	libMesh::Real w_dot = 0.0;
 	if( this->_dim == 3 )
 	  w_dot = context.interior_value(this->_w_var, qp);
 
-	Real T = context.fixed_interior_value(this->_T_var, qp);
+	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
       
 	libMesh::Number rho = this->compute_rho(T, this->get_p0_transient(context, qp));
       
@@ -515,7 +526,7 @@ namespace GRINS
 	      {
 	      // Assuming rho is constant w.r.t. u, v, w
 	      // and T (if Boussinesq added).
-	      Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
+	      libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
 		  
 	      M_uu(i,j) += value;
 	      M_vv(i,j) += value;
@@ -540,7 +551,7 @@ namespace GRINS
 								     libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[this->_T_var]->get_JxW();
 
     // The shape functions at interior quadrature points.
@@ -551,7 +562,7 @@ namespace GRINS
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_T = *context.elem_subresiduals[this->_u_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_u_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -562,11 +573,11 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real T_dot = context.interior_value(this->_T_var, qp);
+	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 
-	Real T = context.fixed_interior_value(this->_T_var, qp);
+	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
-	Real cp = this->_cp(T);
+	libMesh::Real cp = this->_cp(T);
       
 	libMesh::Number rho = this->compute_rho(T, this->get_p0_transient(context, qp));
       
@@ -585,14 +596,14 @@ namespace GRINS
 									     libMesh::FEMContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[this->_T_var]->get_JxW();
 
     // The number of local degrees of freedom in each variable
     const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -636,11 +647,11 @@ namespace GRINS
     const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
 
     // Element Jacobian * quadrature weight for side integration.
-    //const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[this->_T_var]->get_JxW();
+    //const std::vector<libMesh::libMesh::Real> &JxW_side = context.side_fe_var[this->_T_var]->get_JxW();
 
     //const std::vector<Point> &normals = context.side_fe_var[this->_T_var]->get_normals();
 
-    //libMesh::DenseSubVector<Number> &F_p0 = *context.elem_subresiduals[this->_p0_var]; // residual
+    //libMesh::DenseSubVector<libMesh::Number> &F_p0 = *context.elem_subresiduals[this->_p0_var]; // residual
 
     // Physical location of the quadrature points
     //const std::vector<libMesh::Point>& qpoint = context.side_fe_var[this->_T_var]->get_xyz();
@@ -688,7 +699,7 @@ namespace GRINS
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
 
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.element_fe_var[this->_T_var]->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
@@ -700,9 +711,9 @@ namespace GRINS
       context.element_fe_var[this->_p_var]->get_phi();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
-    DenseSubVector<Real> &F_T = *context.elem_subresiduals[this->_T_var];
-    DenseSubVector<Real> &F_p = *context.elem_subresiduals[this->_p_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_T_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p = *context.elem_subresiduals[this->_p_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 

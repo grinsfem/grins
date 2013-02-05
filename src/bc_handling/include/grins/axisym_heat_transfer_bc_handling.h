@@ -29,7 +29,7 @@
 #define AXISYM_HEAT_TRANSFER_BC_HANDLING_H
 
 //GRINS
-#include "heat_transfer_bc_handling.h"
+#include "bc_handling_base.h"
 
 namespace GRINS
 {

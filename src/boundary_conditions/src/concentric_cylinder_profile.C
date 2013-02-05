@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/concentric_cylinder_profile.h"
+
+// libMesh
+#include "libmesh/point.h"
 
 namespace GRINS
 {
@@ -61,7 +65,7 @@ namespace GRINS
     return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
   }
 
-  libMesh::Number ConcentricCylinderProfile::operator()( const libMesh::Point &p, 
+  libMesh::Number ConcentricCylinderProfile::operator()( const libMesh::Point& p, 
 							 const libMesh::Real )
   {
     const double r = p(0);
@@ -69,7 +73,7 @@ namespace GRINS
     return this->eval( _u0, _r0, _r1, r );
   }
 
-  void ConcentricCylinderProfile::operator()( const libMesh::Point &p, 
+  void ConcentricCylinderProfile::operator()( const libMesh::Point& p, 
 					      const libMesh::Real time, 
 					      libMesh::DenseVector<libMesh::Number> &output )
   {
@@ -81,7 +85,7 @@ namespace GRINS
   }
 
   libMesh::Number ConcentricCylinderProfile::component( unsigned int /*i*/,
-							const libMesh::Point &p, 
+							const libMesh::Point& p, 
 							const libMesh::Real time )
   {
     return (*this)(p, time);
