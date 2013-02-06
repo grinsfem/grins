@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PROG="@top_builddir@/src/grins"
+
+INPUT="@top_srcdir@/test/input_files/hartmann_flow_exact.in"
+
+#PETSC_OPTIONS="-pc_type ilu"
+PETSC_OPTIONS="ksp_type preonly -pc_type lu -pc_factor_mat_solver_package superlu"
+
+$PROG $INPUT $PETSC_OPTIONS 
