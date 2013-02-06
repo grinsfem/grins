@@ -11,6 +11,7 @@ check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
+check_PROGRAMS += hartmann_flow_exact
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/physics/include \
@@ -48,7 +49,7 @@ gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
-
+hartmann_flow_exact_SOURCES = $(top_srcdir)/test/hartmann_flow_exact.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
@@ -78,7 +79,8 @@ TESTS = gaussian_profiles                                            \
         $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh \
         $(top_builddir)/test/backward_facing_step_regression.sh      \
         $(top_builddir)/test/coupled_stokes_ns.sh                    \
-        $(top_builddir)/test/magnetostatics_regression.sh
+        $(top_builddir)/test/magnetostatics_regression.sh            \
+        $(top_builddir)/test/hartmann_flow_exact.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \

@@ -84,6 +84,12 @@ namespace GRINS
 			const libMesh::Real sign,
 			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
+    //! Applies Neumann boundary conditions for the constant case, but where the value is crossed with the vector-valued test function
+    void apply_neumann_cross( libMesh::FEMContext& context,
+			      const GRINS::VariableIndex var,
+			      const libMesh::Real sign,
+			      const libMesh::Point& value ) const;
+
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
     void pin_value( libMesh::DiffContext &context, const bool request_jacobian,

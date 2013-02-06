@@ -34,9 +34,6 @@
 
 // GRINS stuff
 #include "grins/var_typedefs.h"
-#include "grins/axisym_electrostatics.h"
-#include "grins/axisym_magnetostatics.h"
-#include "grins/axisym_lorentz_force.h"
 
 // libMesh forward declarations
 class GetPot;

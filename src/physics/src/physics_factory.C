@@ -50,6 +50,12 @@
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_source_func.h"
+#include "grins/axisym_electrostatics.h"
+#include "grins/axisym_magnetostatics.h"
+#include "grins/axisym_lorentz_force.h"
+#include "grins/electrostatics.h"
+#include "grins/magnetostatics.h"
+#include "grins/lorentz_force.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -274,6 +280,24 @@ namespace GRINS
 	PhysicsPtr(new GRINS::AxisymmetricLorentzForce(physics_to_add,input));
     }
 
+  else if( physics_to_add == electrostatics )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::Electrostatics(physics_to_add,input));
+    }
+
+  else if( physics_to_add == magnetostatics )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::Magnetostatics(physics_to_add,input));
+    }
+
+  else if( physics_to_add == lorentz_force )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::LorentzForce(physics_to_add,input));
+    }
+
   else
     {
       std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
@@ -414,6 +438,35 @@ namespace GRINS
 	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
 	    {
 	      this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
+	    }
+	}
+      
+      /* For Magnetostatics, we'd better have Electrostatics */
+      if( physics->first == magnetostatics )
+	{
+	  if( physics_list.find(electrostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, electrostatics );
+	    }
+	}
+
+      /* For LorentzForce, we'd better have Electrostatics,
+         Magnetostatic, and IncompressibleNavierStokes */
+      if( physics->first == lorentz_force )
+	{
+	  if( physics_list.find(electrostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, electrostatics );
+	    }
+
+	  if( physics_list.find(magnetostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, magnetostatics );
+	    }
+
+	  if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, incompressible_navier_stokes );
 	    }
 	}
     }

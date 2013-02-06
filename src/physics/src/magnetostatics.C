@@ -43,8 +43,8 @@ namespace GRINS
 {
   Magnetostatics::Magnetostatics( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _A_var_name( ),
-      _V_var_name( ),
+      _A_var_name( input("Physics/VariableNames/MagneticPotential", A_var_name_default ) ),
+      _V_var_name( input("Physics/VariableNames/ElectricPotential", V_var_name_default ) ),
       _A_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+magnetostatics+"/FE_family", "NEDELEC_ONE") ) ),
       _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+electrostatics+"/FE_family", "LAGRANGE") ) ),
       _A_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+magnetostatics+"/A_order", "FIRST") ) ),
@@ -53,7 +53,7 @@ namespace GRINS
       _mu( input("Physics/"+magnetostatics+"/mu", 1.0 ) )
   {
     // This is deleted in the base class
-    //_bc_handler = new GRINS::MagnetostaticsBCHandling( physics_name, input );
+    _bc_handler = new GRINS::MagnetostaticsBCHandling( physics_name, input );
 
     return;
   }

@@ -47,7 +47,7 @@ namespace GRINS
       _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+electrostatics+"/FE_family", "LAGRANGE") ) ),
       _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+electrostatics+"/V_order", "SECOND") ) )
   {
-    //_bc_handler = new GRINS::ElectrostaticsBCHandling( physics_name, input );
+    _bc_handler = new GRINS::ElectrostaticsBCHandling( physics_name, input );
 
     return;
   }

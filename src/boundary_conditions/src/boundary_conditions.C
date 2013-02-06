@@ -284,6 +284,44 @@ namespace GRINS
     return;
   }
 
+  void BoundaryConditions::apply_neumann_cross( libMesh::FEMContext& context,
+						const GRINS::VariableIndex var,
+						const libMesh::Real sign,
+						const libMesh::Point& value ) const
+  {
+    libMesh::FEGenericBase<libMesh::RealGradient>* fe;
+    context.get_side_fe<libMesh::RealGradient>( var, fe );
+
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+
+    // Element Jacobian * quadrature weight for side integration.
+    const std::vector<libMesh::Real>JxW_side = fe->get_JxW();
+
+    // The var shape functions at side quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& var_phi_side = fe->get_phi();
+
+    const std::vector<libMesh::Point>& normals = fe->get_normals();
+
+    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+
+    unsigned int n_qpoints = context.side_qrule->n_points();
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+	for (unsigned int i=0; i != n_var_dofs; i++)
+	  {
+	    std::cout << "value = " << value << std::endl
+		      << "phi = " << var_phi_side[i][qp] << std::endl;
+	    std::cout << "value cross phi = " << value.cross(var_phi_side[i][qp]) << std::endl
+		      << "normals = " << normals[qp] << std::endl;
+	    F_var(i) += sign*JxW_side[qp]*((value.cross(var_phi_side[i][qp]))*normals[qp]);
+	    std::cout << "F cross = " << F_var(i) << std::endl;
+	  }
+      }
+
+    return;
+  }
+
   void BoundaryConditions::pin_value( libMesh::DiffContext &context, 
 				      const bool request_jacobian,
 				      const VariableIndex var, 

@@ -60,12 +60,12 @@ namespace GRINS
 				  GRINS::BoundaryID bc_id, 
 				  GRINS::BCType bc_type ) const;
 
-    enum AM_BC_TYPES{AXISYMMETRIC=0,
-		     UNBOUNDED};
-
   private:
 
     MagnetostaticsBCHandling();
+
+    enum M_BC_TYPES{UNBOUNDED = 0,
+		    PRESCRIBED_MAGNETIC_FLUX};
 
     std::string _A_var_name;
 

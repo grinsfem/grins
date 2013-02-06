@@ -216,6 +216,7 @@ AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                    [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
 AC_CONFIG_FILES(test/magnetostatics_regression.sh,            [chmod +x test/magnetostatics_regression.sh])
+AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                  [chmod +x test/hartmann_flow_exact.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

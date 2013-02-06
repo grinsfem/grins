@@ -31,6 +31,12 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/point.h"
+#include "libmesh/const_function.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -56,13 +62,13 @@ namespace GRINS
 
   int MagnetostaticsBCHandling::string_to_int( const std::string& bc_type ) const
   {
-    AM_BC_TYPES bc_type_out;
+    M_BC_TYPES bc_type_out;
     
-    if( bc_type == "axisymmetric" )
-      bc_type_out = AXISYMMETRIC;
-    
-    else if( bc_type == "unbounded" )
+    if( bc_type == "unbounded" )
       bc_type_out = UNBOUNDED;
+
+    else if( bc_type == "prescribed_magnetic_flux" )
+      bc_type_out = PRESCRIBED_MAGNETIC_FLUX;
 
     else
       {
@@ -83,15 +89,27 @@ namespace GRINS
   {
     switch(bc_type)
       {
-      case(AXISYMMETRIC):
-	{
-	
-	}
-	break;
       case(UNBOUNDED):
 	// Do nothing BC
 	break;
   
+      case(PRESCRIBED_MAGNETIC_FLUX):
+	{
+	  this->set_neumann_bc_type( bc_id, bc_type );
+
+	  libMesh::Point B_in;
+	
+	  int num_B_components = input.vector_variable_size("Physics/"+_physics_name+"/B_wall_"+bc_id_string);
+	
+	  for( int i = 0; i < num_B_components; i++ )
+	    {
+	      B_in(i) = input("Physics/"+_physics_name+"/B_wall_"+bc_id_string, 0.0, i );
+	    }
+
+	  this->set_neumann_bc_value( bc_id, B_in );
+	}
+	break;
+
       default:
 	{
 	  std::cerr << "==========================================================" 
@@ -113,7 +131,21 @@ namespace GRINS
   {
     switch( bc_type )
       {
-      
+      case(PRESCRIBED_MAGNETIC_FLUX):
+	{
+	  _bound_conds.apply_neumann_cross( context, var, 1.0,
+					    this->get_neumann_bc_value(bc_id) );
+	}
+	break;
+
+      default:
+	{
+	  std::cerr << "==========================================================" 
+		    << "Error: Invalid BC type for " << _physics_name << std::endl
+		    << "       Detected BC type was " << bc_type << std::endl
+		    << "==========================================================" << std::endl;
+	  libmesh_error();
+	}
       }
     return;
   }
@@ -127,7 +159,7 @@ namespace GRINS
     
     switch( bc_type )
       {
-
+	
       default:
 	{
 	  std::cerr << "Error: Invalid Dirichlet BC type for " << _physics_name
