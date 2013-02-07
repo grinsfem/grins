@@ -294,19 +294,22 @@ namespace GRINS
 	    Gradient A;
 	    context.side_value<RealGradient>( _A_var, qp, A );
 	
-	    if( _bc_handler->get_dirichlet_bc_type(*it) == AxisymmetricMagnetostaticsBCHandling::AXISYMMETRIC )
+	    if( _bc_handler->is_dirichlet_bc(*it) )
 	      {
-		for (unsigned int i=0; i != n_A_dofs; i++)
+		if( _bc_handler->get_dirichlet_bc_type(*it) == AxisymmetricMagnetostaticsBCHandling::AXISYMMETRIC )
 		  {
-		    F(i) += penalty*(A*phi[i][qp])*JxW[qp];
-		
-		    if (request_jacobian)
+		    for (unsigned int i=0; i != n_A_dofs; i++)
 		      {
-			for (unsigned int j=0; j != n_A_dofs; j++)
-			  K(i,j) += penalty*(phi[j][qp]*phi[i][qp])*JxW[qp];
+			F(i) += penalty*(A*phi[i][qp])*r*JxW[qp];
+			
+			if (request_jacobian)
+			  {
+			    for (unsigned int j=0; j != n_A_dofs; j++)
+			      K(i,j) += penalty*(phi[j][qp]*phi[i][qp])*r*JxW[qp];
+			  }
 		      }
+		    
 		  }
-
 	      }
 	    else
 	      {

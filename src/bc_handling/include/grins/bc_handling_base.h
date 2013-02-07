@@ -116,6 +116,8 @@ namespace GRINS
 
     GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;
 
+    bool is_dirichlet_bc( const GRINS::BoundaryID bc_id ) const;
+
   protected:
 
     //! Map between boundary id and Dirichlet boundary condition type
@@ -180,9 +182,16 @@ namespace GRINS
   inline
   GRINS::BCType BCHandlingBase::get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const
   {
-    std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator it = 
-      _dirichlet_bc_map.find(bc_id);
-    return it->second;
+    return _dirichlet_bc_map.find(bc_id)->second;
+  }
+
+  inline
+  bool BCHandlingBase::is_dirichlet_bc( const GRINS::BoundaryID bc_id ) const
+  {
+    bool value = false;
+    if( _dirichlet_bc_map.find(bc_id) != _dirichlet_bc_map.end() )
+      value = true;
+    return value;
   }
 
 }
