@@ -104,6 +104,8 @@ namespace GRINS
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _sigma;
 
+    libMesh::Real _factor;
+
   private:
     AxisymmetricLorentzForce();
 

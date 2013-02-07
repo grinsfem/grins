@@ -44,7 +44,8 @@ namespace GRINS
 
   AxisymmetricLorentzForce::AxisymmetricLorentzForce( const std::string& physics_name,
 						      const GetPot& input )
-    : Physics(physics_name,input)
+    : Physics(physics_name,input),
+      _factor( input("Physics/"+physics_name+"/factor", 1.0 ) )
   {
     this->read_input_options(input);
     return;
@@ -167,21 +168,21 @@ namespace GRINS
 	// for both at the same time.
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fr(i) += _sigma*grad_V(1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
-	    Fz(i) += -_sigma*grad_V(0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fr(i) += _factor*_sigma*grad_V(1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fz(i) += -_factor*_sigma*grad_V(0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
 
 	    if (request_jacobian)
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
-		    KrV(i,j) += _sigma*V_gradphi[j][qp](1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzV(i,j) += -_sigma*V_gradphi[j][qp](0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrV(i,j) += _factor*_sigma*V_gradphi[j][qp](1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzV(i,j) += -_factor*_sigma*V_gradphi[j][qp](0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 	      
 		for (unsigned int j=0; j != n_A_dofs; j++)
 		  {
-		    KrA(i,j) += _sigma*grad_V(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzA(i,j) += -_sigma*grad_V(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrA(i,j) += _factor*_sigma*grad_V(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzA(i,j) += -_factor*_sigma*grad_V(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 
 	      } // End request_jacobian check
