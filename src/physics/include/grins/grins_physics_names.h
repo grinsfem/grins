@@ -53,6 +53,7 @@ namespace GRINS
   const PhysicsName axisymmetric_electrostatics = "AxisymmetricElectrostatics";
   const PhysicsName axisymmetric_magnetostatics = "AxisymmetricMagnetostatics";
   const PhysicsName axisymmetric_lorentz_force  = "AxisymmetricLorentzForce";
+  const PhysicsName axisymmetric_joule_heating  = "AxisymmetricJouleHeating";
   const PhysicsName electrostatics = "Electrostatics";
   const PhysicsName magnetostatics = "Magnetostatics";
   const PhysicsName lorentz_force = "LorentzForce";
