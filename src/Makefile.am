@@ -77,6 +77,7 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_electrostatics.C \
                $(physics_srcdir)/axisym_magnetostatics.C \
                $(physics_srcdir)/axisym_lorentz_force.C \
+               $(physics_srcdir)/axisym_joule_heating.C \
                $(physics_srcdir)/electrostatics.C \
                $(physics_srcdir)/magnetostatics.C \
                $(physics_srcdir)/lorentz_force.C
@@ -170,6 +171,7 @@ physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
                $(physics_incdir)/grins/axisym_electrostatics.h \
                $(physics_incdir)/grins/axisym_magnetostatics.h \
                $(physics_incdir)/grins/axisym_lorentz_force.h \
+               $(physics_incdir)/grins/axisym_joule_heating.h \
                $(physics_incdir)/grins/electrostatics.h \
                $(physics_incdir)/grins/magnetostatics.h \
                $(physics_incdir)/grins/lorentz_force.h
