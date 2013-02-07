@@ -33,7 +33,11 @@
 #include "grins/constant_source_func.h"
 
 // libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
 #include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
@@ -41,8 +45,11 @@ namespace GRINS
 
   template< class SourceFunction >
   HeatTransferSource<SourceFunction>::HeatTransferSource( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase(physics_name,input),
-      _source(input)
+    : Physics(physics_name,input),
+      _source(input),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
+      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") ) ),
+      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") ) )
   {
     return;
   }
@@ -50,6 +57,14 @@ namespace GRINS
   template< class SourceFunction >
   HeatTransferSource<SourceFunction>::~HeatTransferSource()
   {
+    return;
+  }
+  
+  template< class SourceFunction >
+  void HeatTransferSource<SourceFunction>::init_variables( libMesh::FEMSystem* system )
+  {
+     _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+
     return;
   }
 
