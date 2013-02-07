@@ -30,7 +30,20 @@
 #define GRINS_HEAT_TRANSFER_SOURCE_H
 
 // GRINS
-#include "grins/heat_transfer_base.h"
+#include "grins/physics.h"
+
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
+
+// libMesh forward declarations
+class GetPot;
+
+namespace libMesh
+{
+  class FEMContext;
+  class FEMSystem;
+}
 
 namespace GRINS
 {  
@@ -39,13 +52,15 @@ namespace GRINS
       used so long as its constructor takes a GetPot& and provides and operator( libMesh::Point&) and
       grad( libMesh::Point&) methods which return Real and Gradient respectively.*/
   template< class SourceFunction >
-  class HeatTransferSource : public HeatTransferBase
+  class HeatTransferSource : public Physics
   {
   public:
     
     HeatTransferSource( const std::string& physics_name, const GetPot& input );
 
     ~HeatTransferSource();
+
+    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Source term contribution for HeatTransferSource
     /*! This is the main part of the class. This will add the source term to
@@ -58,6 +73,14 @@ namespace GRINS
 
     //! Function that computes source term.
     SourceFunction _source;
+
+    std::string _T_var_name;
+
+    libMeshEnums::FEFamily _T_FE_family;
+
+    libMeshEnums::Order _T_order;
+
+    VariableIndex _T_var; /* Index for temperature field */
 
   private:
     HeatTransferSource();
