@@ -53,6 +53,7 @@
 #include "grins/axisym_electrostatics.h"
 #include "grins/axisym_magnetostatics.h"
 #include "grins/axisym_lorentz_force.h"
+#include "grins/axisym_joule_heating.h"
 #include "grins/electrostatics.h"
 #include "grins/magnetostatics.h"
 #include "grins/lorentz_force.h"
@@ -280,6 +281,12 @@ namespace GRINS
 	PhysicsPtr(new GRINS::AxisymmetricLorentzForce(physics_to_add,input));
     }
 
+  else if( physics_to_add == axisymmetric_joule_heating )
+    {
+      physics_list[physics_to_add] = 
+	PhysicsPtr(new GRINS::AxisymmetricJouleHeating(physics_to_add,input));
+    }
+
   else if( physics_to_add == electrostatics )
     {
       physics_list[physics_to_add] = 
@@ -438,6 +445,21 @@ namespace GRINS
 	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
 	    {
 	      this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
+	    }
+	}
+
+      /* For AxisymmetricJouleHeating, we'd better have AxisymmetricElectrostatics,
+         AxisymmetricHeatTransfer */
+      if( physics->first == axisymmetric_joule_heating )
+	{
+	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	    }
+
+	  if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
+	    {
+	      this->physics_consistency_error( physics->first, axisymmetric_heat_transfer );
 	    }
 	}
       
