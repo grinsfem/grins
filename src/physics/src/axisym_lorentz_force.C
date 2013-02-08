@@ -158,31 +158,33 @@ namespace GRINS
 	const libMesh::Number r = qpoint[qp](0);
 
 	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Gradient grad_V, curl_A;
+	libMesh::Gradient grad_V, B;
 
 	context.interior_gradient(_V_var, qp, grad_V);
-	context.interior_curl(_A_var, qp, curl_A);
+	context.interior_curl(_A_var, qp, B);
+
+	libMesh::Gradient J = -_sigma*grad_V;
 
 	// First, an i-loop over the velocity degrees of freedom.
 	// We know that n_u_dofs == n_v_dofs so we can compute contributions
 	// for both at the same time.
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fr(i) += _factor*_sigma*grad_V(1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
-	    Fz(i) += -_factor*_sigma*grad_V(0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fr(i) += _factor*J(1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fz(i) += -_factor*J(0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 
 	    if (request_jacobian)
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
-		    KrV(i,j) += _factor*_sigma*V_gradphi[j][qp](1)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzV(i,j) += -_factor*_sigma*V_gradphi[j][qp](0)*curl_A(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrV(i,j) += -_factor*_sigma*V_gradphi[j][qp](1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzV(i,j) += _factor*_sigma*V_gradphi[j][qp](0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 	      
 		for (unsigned int j=0; j != n_A_dofs; j++)
 		  {
-		    KrA(i,j) += _factor*_sigma*grad_V(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzA(i,j) += -_factor*_sigma*grad_V(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrA(i,j) += _factor*J(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzA(i,j) += -_factor*J(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 
 	      } // End request_jacobian check
