@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/grins_kinetics_regression"
+
+INPUT="@top_srcdir@/test/input_files/cantera_chem_thermo.in"
+
+$PROG $INPUT $PETSC_OPTIONS 

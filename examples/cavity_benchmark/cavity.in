@@ -86,7 +86,7 @@ tau_factor = '0.05'
 
 [restart-options]
 
-#restart_file = 'cavity.xdr'
+#restart_file = 'restart.xdr'
 
 []
 
@@ -150,6 +150,8 @@ vis_output_file_prefix = 'cavity'
 output_residual = true
 
 output_format = 'ExodusII xdr'
+
+output_vars = 'rho'
 
 # Options for print info to the screen
 [screen-options]

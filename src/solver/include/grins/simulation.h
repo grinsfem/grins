@@ -37,10 +37,10 @@
 #include "grins/grins_solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
-#include "grins/boundary_conditions.h"
 #include "grins/grins_physics_names.h"
 #include "grins/nbc_container.h"
 #include "grins/dbc_container.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -67,7 +67,7 @@ namespace GRINS
     Simulation( const GetPot& input,
 		SimulationBuilder& sim_builder );
 
-    ~Simulation();
+    virtual ~Simulation();
 	
     void run();
 
@@ -81,7 +81,7 @@ namespace GRINS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
 
-  private:
+  protected:
     
     void check_for_restart( const GetPot& input );
 
@@ -106,6 +106,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<QoIBase> _qoi;
 
+    std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
+
     // Screen display options
     bool _print_mesh_info;
     bool _print_log_info;
@@ -115,6 +117,10 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+
+  private:
+
+    Simulation();
 
   };
 }

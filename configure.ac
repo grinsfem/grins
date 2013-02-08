@@ -1,4 +1,4 @@
-dnl                                               -*- Autoconf -*-
+ dnl                                               -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
@@ -71,7 +71,7 @@ AC_ARG_ENABLE([libmesh-flags],
 
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
-   CXXFLAGS=`$LIBMESH_CONFIG --cxxflags`
+   CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
    CXXFLAGS="-O0 -g -Wall -fno-unsafe-math-optimizations"
@@ -143,6 +143,93 @@ if test "x${grvy_timers}" = xyes; then
 fi
 
 
+dnl-----------------------
+dnl Check for Cantera 2.0+
+dnl-----------------------
+AC_ARG_VAR([CANTERA_DIR],[Location of Cantera installation])
+AC_ARG_ENABLE(cantera,
+  [  --enable-cantera        Compile with Cantera chemistry support],
+       enable_cantera=$enableval,
+       enable_cantera=yes)
+
+HAVE_CANTERA=0
+
+if test "$enable_cantera" != no; then
+  # User-specific include path
+  AC_ARG_WITH(cantera,
+               AC_HELP_STRING([--with-cantera=PATH],[Specify the path for Cantera]),
+               with_cantera=$withval,
+               with_cantera=$CANTERA_DIR)
+
+
+   ac_cantera_save_CPPFLAGS="$CPPFLAGS"
+   ac_cantera_save_LDFLAGS="$LDFLAGS"
+
+   CANTERA_PREFIX=$with_cantera
+
+   CPPFLAGS="-I$CANTERA_PREFIX/include"
+   # v2.0.x with scons
+   LDFLAGS="-L$CANTERA_PREFIX/lib -lcantera_shared"
+   
+   if (test -f $CANTERA_PREFIX/lib/libcvode_shared*); then
+      LDFLAGS="$LDFLAGS -lcvode_shared"
+   fi
+   if (test -f $CANTERA_PREFIX/lib/libctmath_shared*); then
+      LDFLAGS="$LDFLAGS -lctmath_shared"
+   fi
+   if (test -f $CANTERA_PREFIX/lib/libctf2c_shared*); then
+      LDFLAGS="$LDFLAGS -lctf2c_shared"
+   fi
+   if (test -f $CANTERA_PREFIX/lib/libexecstream_shared*); then
+      LDFLAGS="$LDFLAGS -lexecstream_shared"
+   fi
+
+   CANTERA_CPPFLAGS="${CPPFLAGS}"
+   CANTERA_LDFLAGS="${LDFLAGS}"
+
+   dnl We don't want these in the final link line since we'll already have BLAS
+   dnl from PETSC etc., but these are needed for the test to pass.
+   if (test -f $CANTERA_PREFIX/lib/libctblas_shared*); then
+      LDFLAGS="$LDFLAGS -lctblas_shared"
+   fi
+   if (test -f $CANTERA_PREFIX/lib/libctlapack_shared*); then
+      LDFLAGS="$LDFLAGS -lctlapack_shared"
+   fi
+
+   #--------------------------------------------------------------
+   # Check for Cantera library linking
+   #--------------------------------------------------------------
+   AC_MSG_CHECKING([for Cantera linkage])
+
+   AC_LANG_PUSH([C++])
+   AC_LINK_IFELSE( [AC_LANG_PROGRAM([#include "cantera/IdealGasMix.h"],
+                                    [Cantera::IdealGasMix()])],
+                                    [AC_MSG_RESULT(yes)
+                                     found_cantera_library=yes],
+                                    [AC_MSG_RESULT(no) 
+                                     found_cantera_library=no] )
+   AC_LANG_POP([C++])
+
+   CPPFLAGS="$ac_cantera_save_CPPFLAGS"
+   LDFLAGS="$ac_cantera_save_LDFLAGS"
+
+   if test "x${found_cantera_library}" = "xyes" ; then
+      HAVE_CANTERA=1
+      AC_DEFINE(HAVE_CANTERA, 1, [Flag indicating support for Cantera chemistry])
+      AC_SUBST(CANTERA_CPPFLAGS)
+      AC_SUBST(CANTERA_LDFLAGS)
+      AC_SUBST(CANTERA_PREFIX)
+   else
+      AC_MSG_NOTICE([Disabling optional Cantera chemistry support])
+      CANTERA_CPPFLAGS=""
+      CANTERA_LDFLAGS=""
+   fi
+fi
+
+AC_SUBST(HAVE_CANTERA)
+AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
+
+ 
 dnl-------------------
 dnl Check for TRILINOS
 dnl-------------------
@@ -215,6 +302,11 @@ AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/bac
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                    [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
+AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	      [chmod +x test/cantera_chem_thermo_test.sh])
+AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh, [chmod +x test/reacting_low_mach_cantera_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
+AC_CONFIG_FILES(test/input_files/air_2sp.xml)
+AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	      [chmod +x test/grins_kinetics_regression.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

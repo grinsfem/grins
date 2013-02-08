@@ -56,7 +56,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-										  libMesh::FEMContext& context )
+										  libMesh::FEMContext& context,
+										  CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::element_time_derivative");
@@ -74,7 +75,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-									libMesh::FEMContext& context )
+									libMesh::FEMContext& context,
+									CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::mass_residual");
@@ -117,7 +119,7 @@ namespace GRINS
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
 	libMesh::Real T = context.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
@@ -179,7 +181,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = context.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 
@@ -283,7 +285,7 @@ namespace GRINS
 	  U(2) = w;
       
 	libMesh::Real T = context.interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_steady( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
 	libMesh::Real k = this->_k(T);
 	libMesh::Real cp = this->_cp(T);
@@ -338,7 +340,7 @@ namespace GRINS
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 	libMesh::Real k = this->_k(T);
@@ -399,7 +401,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
 	libMesh::Real mu = this->_mu(T);
 
@@ -503,7 +505,7 @@ namespace GRINS
 	  U(2) = w;
 
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
-	libMesh::Real rho = this->compute_rho( T, this->get_p0_transient( context, qp ) );
+	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
 	libMesh::Real k = this->_k(T);
 	libMesh::Real cp = this->_cp(T);

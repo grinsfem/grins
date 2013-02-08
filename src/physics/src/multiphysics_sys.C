@@ -96,11 +96,11 @@ namespace GRINS
       (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
     }
 
-    // Initialize builtin BC's for each physics
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
+	// Initialize builtin BC's for each physics
 	(physics_iter->second)->init_bcs( this );
       }
 
@@ -133,6 +133,16 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_element_time_derivative_cache( c, cache );
+      }
+
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -141,7 +151,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_time_derivative( compute_jacobian, c );
+	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
+							     cache );
 	  }
       }
 
@@ -158,6 +169,16 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_side_time_derivative_cache( c, cache );
+      }
+
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -166,7 +187,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_time_derivative( compute_jacobian, c );
+	    (physics_iter->second)->side_time_derivative( compute_jacobian, c,
+							  cache );
 	  }
       }
 
@@ -183,6 +205,16 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_element_constraint_cache( c, cache );
+      }
+
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -191,7 +223,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->element_constraint( compute_jacobian, c );
+	    (physics_iter->second)->element_constraint( compute_jacobian, c,
+							cache);
 	  }
       }
 
@@ -208,6 +241,16 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_side_constraint_cache( c, cache );
+      }
+
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -216,7 +259,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->side_constraint( compute_jacobian, c );
+	    (physics_iter->second)->side_constraint( compute_jacobian, c,
+						     cache);
 	  }
       }
 
@@ -233,6 +277,16 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_mass_residual_cache( c, cache );
+      }
+
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -241,7 +295,8 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
 	  {
-	    (physics_iter->second)->mass_residual( compute_jacobian, c );
+	    (physics_iter->second)->mass_residual( compute_jacobian, c,
+						   cache);
 	  }
       }
 
@@ -261,6 +316,28 @@ namespace GRINS
     return _physics_list[physics_name];
   }
 
+  bool MultiphysicsSystem::has_physics( const std::string physics_name ) const
+  {
+    bool has_physics = false;
+
+    if( _physics_list.find(physics_name) != _physics_list.end() )
+      has_physics = true;
+
+    return has_physics;
+  }
+
+  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
+						  const std::vector<libMesh::Point>& points,
+						  CachedValues& cache ) const
+  {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	(physics_iter->second)->compute_element_cache( context, points, cache );
+      }
+    return;
+  }
 
 #ifdef GRINS_USE_GRVY_TIMERS
   void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )

@@ -94,7 +94,6 @@ namespace GRINS
     return _is_steady;
   }
 
-
   void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
   {
     return;
@@ -105,6 +104,7 @@ namespace GRINS
     // Only need to init BC's if the physics actually created a handler
     if( _bc_handler )
       {
+	_bc_handler->init_bc_data( *system );
 	_bc_handler->init_dirichlet_bcs( system );
 	_bc_handler->init_dirichlet_bc_func_objs( system );
 	_bc_handler->init_periodic_bcs( system );
@@ -130,36 +130,78 @@ namespace GRINS
     return;
   }
 
+  void Physics::compute_element_time_derivative_cache( const libMesh::FEMContext&,
+						       CachedValues& ) const
+  {
+    return;
+  }
+
+  void Physics::compute_side_time_derivative_cache( const libMesh::FEMContext& /*context*/,
+						    CachedValues& /*cache*/ ) const
+   {
+     return;
+   }
+
+  void Physics::compute_element_constraint_cache( const libMesh::FEMContext& /*context*/,
+						  CachedValues& /*cache*/ ) const
+  {
+    return;
+  }
+
+  void Physics::compute_side_constraint_cache( const libMesh::FEMContext& /*context*/,
+					       CachedValues& /*cache*/ ) const
+  {
+    return;
+  }
+
+  void Physics::compute_mass_residual_cache( const libMesh::FEMContext& /*context*/,
+					     CachedValues& /*cache*/ ) const
+  {
+    return;
+  }
+
+  void Physics::compute_element_cache( const libMesh::FEMContext&,
+				       const std::vector<libMesh::Point>&,
+				       CachedValues& ) const
+  {
+    return;
+  }
+
   void Physics::element_time_derivative( bool /*compute_jacobian*/,
-					 libMesh::FEMContext& /*context*/ )
+					 libMesh::FEMContext& /*context*/,
+					 CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::side_time_derivative( bool /*compute_jacobian*/,
-				      libMesh::FEMContext& /*context*/ )
+				      libMesh::FEMContext& /*context*/,
+				      CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::element_constraint( bool /*compute_jacobian*/,
-				    libMesh::FEMContext& /*context*/ )
+				    libMesh::FEMContext& /*context*/,
+				    CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::side_constraint( bool /*compute_jacobian*/,
-				 libMesh::FEMContext& /*context*/ )
+				 libMesh::FEMContext& /*context*/,
+				 CachedValues& /*cache*/ )
   {
     return;
   }   
 
   void Physics::mass_residual( bool /*compute_jacobian*/,
-			       libMesh::FEMContext& /*context*/ )
+			       libMesh::FEMContext& /*context*/,
+			       CachedValues& /*cache*/ )
   {
     return;
   }
-  
+
 #ifdef GRINS_USE_GRVY_TIMERS
   void Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {

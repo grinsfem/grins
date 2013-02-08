@@ -40,13 +40,12 @@ namespace GRINS
 
   LowMachNavierStokesBCHandling::LowMachNavierStokesBCHandling(const std::string& physics_name,
 							       const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
+      _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
+      _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
-    _u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    _v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    _w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
-    _T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/vel_bc_types";
 
@@ -72,6 +71,9 @@ namespace GRINS
     if( bc_type == "no_slip" )
       bc_type_out = NO_SLIP;
 
+    else if( bc_type == "parabolic_profile" )
+      bc_type_out = PARABOLIC_PROFILE;
+
     else if( bc_type == "prescribed_vel" )
       bc_type_out = PRESCRIBED_VELOCITY;
 
@@ -80,6 +82,9 @@ namespace GRINS
 
     else if( bc_type == "isothermal" )
       bc_type_out = ISOTHERMAL_WALL;
+
+    else if( bc_type == "general_isothermal" )
+      bc_type_out = GENERAL_ISOTHERMAL_WALL;
   
     else if( bc_type == "adiabatic" )
       bc_type_out = ADIABATIC_WALL;
@@ -90,6 +95,11 @@ namespace GRINS
     else if( bc_type == "general_heat_flux" )
       bc_type_out = GENERAL_HEAT_FLUX;
 
+    else if( bc_type == "axisymmetric" )
+      {
+	bc_type_out = AXISYMMETRIC;
+	this->_axisymmetric = true;
+      }
     else
       {
 	// Call base class to detect any physics-common boundary conditions
@@ -99,10 +109,17 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void LowMachNavierStokesBCHandling::init_bc_data( const BoundaryID bc_id, 
-						    const std::string& bc_id_string, 
-						    const int bc_type, 
-						    const GetPot& input )
+  void LowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _T_var = system.variable_number( _T_var_name );
+
+    return;
+  }
+
+  void LowMachNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
+						     const std::string& bc_id_string, 
+						     const int bc_type, 
+						     const GetPot& input )
   {
     switch(bc_type)
       {
@@ -142,6 +159,52 @@ namespace GRINS
 					2 );
 	}
 	break;
+      case(PARABOLIC_PROFILE):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	
+	  // Make sure all 6 components are there
+	  if( input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string) != 6 )
+	    {
+	      std::cerr << "Error: Must specify 6 components when inputting"
+			<< std::endl
+			<< "       coefficients for a parabolic profile. Found " 
+			<< input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_"+bc_id_string)
+			<< " components."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  Real a = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 0 );
+	  Real b = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 1 );
+	  Real c = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 2 );
+	  Real d = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 3 );
+	  Real e = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 4 );
+	  Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
+
+	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
+	
+	  GRINS::DBCContainer cont;
+	  cont.add_var_name( var );
+	  cont.add_bc_id( bc_id );
+
+	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func( new GRINS::ParabolicProfile(a,b,c,d,e,f) );
+	  cont.set_func( func );
+	  this->attach_dirichlet_bound_func( cont );
+	
+	  // Set specified components of Dirichlet data to zero
+	  std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
+
+	  GRINS::DBCContainer cont_fix;
+	  cont_fix.add_var_name( fix_var );
+	  cont_fix.add_bc_id( bc_id );
+
+	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func_fix( new ZeroFunction<Number>() );
+	  cont_fix.set_func( func_fix );
+	  this->attach_dirichlet_bound_func( cont_fix );
+	}
+	break;
+
       case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
@@ -155,6 +218,12 @@ namespace GRINS
 	}
 	break;
       
+      case(GENERAL_ISOTHERMAL_WALL):
+	{
+	  this->set_temp_bc_type( bc_id, bc_type );
+	}
+	break;
+
       case(ADIABATIC_WALL):
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
@@ -181,10 +250,15 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
+      case(AXISYMMETRIC):
+	  {
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_data( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
 	}
       } // End switch(bc_type)
   
@@ -268,14 +342,19 @@ namespace GRINS
 	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 						 dbc_vars, 
 						 &vel_func );
-	    
+
 	      dof_map.add_dirichlet_boundary( vel_dbc );
 	    }  
 	}
 	break;
+      case(PARABOLIC_PROFILE):
+	// This case is handled init_dirichlet_bc_func_objs
+	break;
+
       case(GENERAL_VELOCITY):
 	// This case is handled in the BoundaryConditionFactory classes.
 	break;
+
       case(ISOTHERMAL_WALL):
 	{
 	  std::set<BoundaryID> dbc_ids;
@@ -291,6 +370,28 @@ namespace GRINS
 	  dof_map.add_dirichlet_boundary( t_dbc );
 	}
 	break;
+      case(GENERAL_ISOTHERMAL_WALL):
+	// This case is handled in the BoundaryConditionFactory classes.
+	break;
+
+      case(AXISYMMETRIC):
+	{
+	  std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(u_var);
+	
+	  ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids, 
+						  dbc_vars, 
+						  &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+	}
+      break;
+
       default:
 	{
 	  std::cerr << "Invalid BCType " << bc_type << std::endl;

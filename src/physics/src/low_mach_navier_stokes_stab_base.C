@@ -120,7 +120,7 @@ namespace GRINS
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
-    libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(context,qp) );
+    libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
 
     libMesh::RealGradient U( context.fixed_interior_value(this->_u_var, qp), 
 			     context.fixed_interior_value(this->_v_var, qp) );
@@ -208,7 +208,7 @@ namespace GRINS
 													unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-    libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(context,qp) );
+    libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
 
     libMesh::RealGradient u_dot( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );
 
@@ -226,7 +226,7 @@ namespace GRINS
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
 
-    libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(context,qp) );
+    libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
     libMesh::Real rho_cp = rho*this->_cp(T);
 
     libMesh::RealGradient rhocpU( rho_cp*context.fixed_interior_value(this->_u_var, qp), 
@@ -243,7 +243,7 @@ namespace GRINS
 											      unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-    libMesh::Real rho = this->compute_rho(T, this->get_p0_transient(context,qp) );
+    libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
     libMesh::Real rho_cp = rho*this->_cp(T);
     libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 

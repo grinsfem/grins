@@ -36,6 +36,7 @@
 
 // GRINS
 #include "grins/visualization.h"
+#include "grins/postprocessed_quantities.h"
 
 namespace GRINS
 {
@@ -59,6 +60,8 @@ namespace GRINS
     std::tr1::shared_ptr<GRINS::Visualization> vis;
     bool output_vis;
     bool output_residual;
+
+    std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
 
   };
 

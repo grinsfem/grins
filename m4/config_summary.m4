@@ -44,6 +44,11 @@ echo Boost......................... : $BOOST_ROOT
 # masa optional check:
 echo
 echo Optional Features:
+if test "$HAVE_CANTERA" = "0"; then
+  echo '   'Link with Cantera............. : no
+else
+  echo '   'Link with Cantera............. : $CANTERA_PREFIX
+fi
 if test "$HAVE_GRVY" = "0"; then
   echo '   'Link with GRVY................ : no
 else

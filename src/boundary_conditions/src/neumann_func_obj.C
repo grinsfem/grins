@@ -29,6 +29,9 @@
 // This class
 #include "grins/neumann_func_obj.h"
 
+// GRINS
+#include "grins/cached_values.h"
+
 // libMesh
 #include "libmesh/fem_context.h"
 
@@ -45,12 +48,61 @@ namespace GRINS
     return;
   }
 
-  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext& /*context*/,
-					     const unsigned int /*qp*/,
-					     const VariableIndex /*jac_var*/ )
+  libMesh::Point NeumannFuncObj::value( const libMesh::FEMContext&,
+					const CachedValues&,
+					const unsigned int )
   {
     // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return libMesh::Point();
+  }
+
+  libMesh::Real NeumannFuncObj::normal_value( const libMesh::FEMContext&,
+					      const CachedValues&,
+					      const unsigned int )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return 0.0;
+  }
+
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+					     const CachedValues&,
+					     const unsigned int )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
     return libMesh::Point(0.0,0.0,0.0);
+  }
+
+  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+					     const CachedValues&,
+					     const unsigned int,
+					     const VariableIndex )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return libMesh::Point(0.0,0.0,0.0);
+  }
+  
+
+  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+						   const CachedValues&,
+						   const unsigned )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return 0.0;
+  }
+
+  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+						   const CachedValues&,
+						   const unsigned int, 
+						   const VariableIndex )
+  {
+    // By default, does nothing.
+    /* \todo Should we libmesh_error() instead?*/
+    return 0.0;
   }
 
   std::vector<VariableIndex> NeumannFuncObj:: get_other_jac_vars()
@@ -59,3 +111,4 @@ namespace GRINS
   }
 
 } // namespace GRINS
+

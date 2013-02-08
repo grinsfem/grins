@@ -45,10 +45,12 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
+
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
 
     void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
 				  libMesh::DofMap& dof_map,
@@ -59,6 +61,8 @@ namespace GRINS
   protected:
 
     std::string _u_r_var_name, _u_z_var_name;
+
+    VariableIndex _u_r_var, _u_z_var;
 
   private:
 

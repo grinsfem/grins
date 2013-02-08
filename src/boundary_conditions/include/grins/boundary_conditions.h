@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BOUNDARY_CONDITIONS_H
-#define BOUNDARY_CONDITIONS_H
+#ifndef GRINS_BOUNDARY_CONDITIONS_H
+#define GRINS_BOUNDARY_CONDITIONS_H
 
 // GRINS
 #include "grins/var_typedefs.h"
@@ -44,6 +44,9 @@ namespace libMesh
 
 namespace GRINS
 {
+  // Forward Declarations
+  class CachedValues;
+
   //! Class to hold typical boundary condition methods
   /*!
     This class holds functions to apply generic versions of
@@ -57,39 +60,63 @@ namespace GRINS
     ~BoundaryConditions();
 
     //! Applies Neumann boundary conditions for the constant case.
-    void apply_neumann( libMesh::DiffContext &context,
+    void apply_neumann( libMesh::FEMContext& context,
 			const GRINS::VariableIndex var,
 			const libMesh::Real sign,
 			const libMesh::Point& value ) const;
 
-    //! Applies Neumann boundary conditions using a user-supplied function.
-    /*! This function must also be aware of the Jacobian with respect to other variables. */
-    void apply_neumann_axisymmetric( libMesh::DiffContext &context,
-				     const bool request_jacobian,
-				     const GRINS::VariableIndex var,
-				     const libMesh::Real sign,
-				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
-
     //! Applies Neumann boundary conditions for the constant case.
-    void apply_neumann_axisymmetric( libMesh::DiffContext &context,
+    void apply_neumann_axisymmetric( libMesh::FEMContext& context,
 				     const GRINS::VariableIndex var,
 				     const libMesh::Real sign,
 				     const libMesh::Point& value ) const;
 
+    //! Applies Neumann boundary conditions for the constant case.
+    /*! This method is for the case where Neumann boundary condition is
+        not in terms of a flux vector, but rather only the normal component.*/
+    void apply_neumann_normal( libMesh::FEMContext& context,
+			       const GRINS::VariableIndex var,
+			       const libMesh::Real sign,
+			       const libMesh::Real value ) const;
+
+
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
-    void apply_neumann( libMesh::DiffContext &context,
+    void apply_neumann( libMesh::FEMContext& context,
+			const CachedValues& cache,
 			const bool request_jacobian,
 			const GRINS::VariableIndex var,
 			const libMesh::Real sign,
 			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
+    //! Applies Neumann boundary conditions using a user-supplied function.
+    /*! This function must also be aware of the Jacobian with respect to other variables. */
+    void apply_neumann_axisymmetric( libMesh::FEMContext& context,
+				     const CachedValues& cache,
+				     const bool request_jacobian,
+				     const GRINS::VariableIndex var,
+				     const libMesh::Real sign,
+				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+
+    //! Applies Neumann boundary conditions using a user-supplied function.
+    /*!  This method is for the case where Neumann boundary condition is
+         not in terms of a flux vector, but rather only the normal component.
+         This function must also be aware of the Jacobian with respect to other variables. */
+    void apply_neumann_normal( libMesh::FEMContext& context,
+			       const CachedValues& cache,
+			       const bool request_jacobian,
+			       const GRINS::VariableIndex var,
+			       const libMesh::Real sign,
+			       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
-    void pin_value( libMesh::DiffContext &context, const bool request_jacobian,
+    void pin_value( libMesh::FEMContext& context, const CachedValues& cache,
+		    const bool request_jacobian,
 		    const GRINS::VariableIndex var, const double value,
 		    const libMesh::Point& pin_location, const double penalty = 1.0 );
 
   };
-}
-#endif //BOUNDARY_CONDITIONS_H
+
+} // end namespace GRINS
+#endif // GRINS_BOUNDARY_CONDITIONS_H

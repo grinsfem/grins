@@ -67,7 +67,8 @@ namespace GRINS
         the HeatTransfer class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context );
+					  libMesh::FEMContext& context,
+					  CachedValues& cache );
 
   protected:
 

@@ -39,6 +39,7 @@
 
 namespace GRINS
 {
+  bool BCHandlingBase::_axisymmetric = false; 
 
   BCHandlingBase::BCHandlingBase(const std::string& physics_name)
     : _num_periodic_bcs(0),
@@ -88,9 +89,14 @@ namespace GRINS
 	ss << bc_id;
 	std::string bc_id_string = ss.str();
 
-	this->init_bc_data( bc_id, bc_id_string, bc_type, input );
+	this->init_bc_types( bc_id, bc_id_string, bc_type, input );
       }
 
+    return;
+  }
+
+  void BCHandlingBase::init_bc_data( const libMesh::FEMSystem& /*system*/ )
+  {
     return;
   }
 
@@ -178,9 +184,9 @@ namespace GRINS
   }
 
   void BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
-					  VariableIndex var,
-					  bool request_jacobian,
-					  BoundaryID bc_id ) const
+					  const GRINS::CachedValues& cache,
+					  const bool request_jacobian,
+					  const BoundaryID bc_id ) const
   {
     std::map< BoundaryID, BCType>::const_iterator 
       bc_map_it = _neumann_bc_map.find( bc_id );
@@ -189,7 +195,7 @@ namespace GRINS
        set a boundary condition on that boundary. */
     if( bc_map_it != _neumann_bc_map.end() )
       {
-	this->user_apply_neumann_bcs( context, var, request_jacobian,
+	this->user_apply_neumann_bcs( context, cache, request_jacobian,
 				      bc_id, bc_map_it->second );
       }
     return;
@@ -241,10 +247,10 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void BCHandlingBase::init_bc_data( const BoundaryID bc_id, 
-				     const std::string& bc_id_string, 
-				     const int bc_type, 
-				     const GetPot& input )
+  void BCHandlingBase::init_bc_types( const BoundaryID bc_id, 
+				      const std::string& bc_id_string, 
+				      const int bc_type, 
+				      const GetPot& input )
   {
     switch(bc_type)
       {
@@ -343,18 +349,20 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/, libMesh::DofMap& /*dof_map*/,
-						BoundaryID /*bc_id*/, BCType /*bc_type*/ ) const
+  void BCHandlingBase::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
+						libMesh::DofMap& /*dof_map*/,
+						BoundaryID /*bc_id*/,
+						BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;
   }
 
   void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& /*context*/,
-					       VariableIndex /*var*/,
-					       bool /*request_jacobian*/,
-					       BoundaryID /*bc_id*/,
-					       BCType /*bc_type*/ ) const
+					       const GRINS::CachedValues& /*cache*/,
+					       const bool /*request_jacobian*/,
+					       const GRINS::BoundaryID /*bc_id*/,
+					       const GRINS::BCType /*bc_type*/ ) const
   {
     // Not all Physics need this so we have a do nothing default.
     return;

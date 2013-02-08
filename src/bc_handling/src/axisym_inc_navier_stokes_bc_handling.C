@@ -85,11 +85,19 @@ namespace GRINS
 
     return bc_type_out;
   }
+  
+  void AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _u_r_var = system.variable_number( _u_r_var_name );
+    _u_z_var = system.variable_number( _u_z_var_name );
 
-  void AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_data( const BoundaryID bc_id, 
-								       const std::string& bc_id_string, 
-								       const int bc_type, 
-								       const GetPot& input )
+    return;
+  }
+
+  void AxisymmetricIncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
+									const std::string& bc_id_string, 
+									const int bc_type, 
+									const GetPot& input )
   {
     switch(bc_type)
       {
@@ -146,14 +154,11 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricIncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+  void AxisymmetricIncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
 										  libMesh::DofMap& dof_map,
 										  BoundaryID bc_id,
 										  BCType bc_type ) const
   {
-    VariableIndex u_r_var = system->variable_number( _u_r_var_name );
-    VariableIndex u_z_var = system->variable_number( _u_z_var_name );
-
     switch( bc_type )
       {
       case(NO_SLIP):
@@ -162,8 +167,8 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(u_r_var);
-	  dbc_vars.push_back(u_z_var);
+	  dbc_vars.push_back(_u_r_var);
+	  dbc_vars.push_back(_u_z_var);
 	
 	  ZeroFunction<Number> zero;
 	
@@ -185,7 +190,7 @@ namespace GRINS
 	  // everything gets cached on the libMesh side so it should
 	  // only affect performance at startup.
 	  {
-	    dbc_vars.push_back(u_r_var);
+	    dbc_vars.push_back(_u_r_var);
 	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
@@ -197,7 +202,7 @@ namespace GRINS
 	  }
 	
 	  {
-	    dbc_vars.push_back(u_z_var);
+	    dbc_vars.push_back(_u_z_var);
 	    ConstFunction<Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
@@ -215,7 +220,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(u_r_var);
+	  dbc_vars.push_back(_u_r_var);
 	
 	  ZeroFunction<Number> zero;
 	

@@ -39,7 +39,8 @@ namespace GRINS
       equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
       vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
       output_vis( false ),
-      output_residual( false )
+      output_residual( false ),
+      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )
   {
     return;
   }
