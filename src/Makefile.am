@@ -80,7 +80,8 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/axisym_joule_heating.C \
                $(physics_srcdir)/electrostatics.C \
                $(physics_srcdir)/magnetostatics.C \
-               $(physics_srcdir)/lorentz_force.C
+               $(physics_srcdir)/lorentz_force.C \
+               $(physics_srcdir)/heat_transfer_instantiation.C
 
 boundary_conditions_SRC = $(boundary_conditions_srcdir)/boundary_conditions.C \
                           $(boundary_conditions_srcdir)/bc_factory.C \
@@ -124,7 +125,9 @@ qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
           $(qoi_srcdir)/vorticity.C
 
 sfilesdir = $(prefix)/src
-sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
+sfiles_DATA  = $(physics_srcdir)/axisym_heat_transfer.C
+sfiles_DATA += $(physics_srcdir)/heat_transfer.C
+sfiles_DATA += $(physics_srcdir)/heat_transfer_base.C
 
 #----------------------------
 #INCLUDES we want distributed

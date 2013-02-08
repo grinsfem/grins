@@ -29,26 +29,31 @@
 // This class
 #include "grins/heat_transfer_adjoint_stab.h"
 
+// GRINS
+#include "grins/constant_conductivity.h"
+
 // libMesh
 #include "libmesh/quadrature.h"
 
 namespace GRINS
 {
-
-  HeatTransferAdjointStabilization::HeatTransferAdjointStabilization( const std::string& physics_name, 
-								      const GetPot& input )
-    : HeatTransferStabilizationBase(physics_name,input)
+  template<class Conductivity>
+  HeatTransferAdjointStabilization<Conductivity>::HeatTransferAdjointStabilization( const std::string& physics_name, 
+										    const GetPot& input )
+    : HeatTransferStabilizationBase<Conductivity>(physics_name,input)
   {
     return;
   }
 
-  HeatTransferAdjointStabilization::~HeatTransferAdjointStabilization()
+  template<class Conductivity>
+  HeatTransferAdjointStabilization<Conductivity>::~HeatTransferAdjointStabilization()
   {
     return;
   }
 
-  void HeatTransferAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
-								  libMesh::FEMContext& context )
+  template<class Conductivity>
+  void HeatTransferAdjointStabilization<Conductivity>::element_time_derivative( bool /*compute_jacobian*/,
+										libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_time_derivative");
@@ -83,14 +88,17 @@ namespace GRINS
 	if( this->_dim == 3 )
 	  U(2) = context.interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
+	libMesh::Real T = context.interior_value(this->_T_var, qp );
+	libMesh::Real k = this->_k(T);
+
+	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, k,  U, this->_is_steady );
 
 	libMesh::Real RE_s = this->compute_res_steady( context, qp );
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) += tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
-				  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+	    FT(i) += tau_E*RE_s*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
+				  + k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
 				  )*JxW[qp];
 	  }
 
@@ -102,8 +110,9 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
-							libMesh::FEMContext& context )
+  template<class Conductivity>
+  void HeatTransferAdjointStabilization<Conductivity>::mass_residual( bool /*compute_jacobian*/,
+								      libMesh::FEMContext& context )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::mass_residual");
@@ -135,17 +144,21 @@ namespace GRINS
 
 	libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
 				 context.fixed_interior_value( this->_v_var, qp ) );
+
+	libMesh::Real T = context.interior_value(this->_T_var, qp );
+	libMesh::Real k = this->_k(T);
+
 	if( this->_dim == 3 )
 	  U(2) = context.fixed_interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
+	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, k,  U, false );
 
 	libMesh::Real RE_t = this->compute_res_transient( context, qp );
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) -= tau_E*RE_t*( _rho*_Cp*U*T_gradphi[i][qp]
-				  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+	    FT(i) -= tau_E*RE_t*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
+				  + k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
 				  )*JxW[qp];
 	  }
 
@@ -156,5 +169,8 @@ namespace GRINS
 #endif
     return;
   }
+
+  // Instantiate
+  template class HeatTransferAdjointStabilization<GRINS::ConstantConductivity>;
 
 } // namespace GRINS

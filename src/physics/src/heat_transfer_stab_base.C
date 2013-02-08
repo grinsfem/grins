@@ -29,28 +29,31 @@
 // This class
 #include "grins/heat_transfer_stab_base.h"
 
+// GRINS
+#include "grins/constant_conductivity.h"
+
 namespace GRINS
 {
-
-  HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
-								const GetPot& input )
-    : HeatTransferBase(physics_name,input),
+  template<class Conductivity>
+  HeatTransferStabilizationBase<Conductivity>::HeatTransferStabilizationBase( const std::string& physics_name, 
+									      const GetPot& input )
+    : HeatTransferBase<Conductivity>(physics_name,input),
       _stab_helper( input )
   {
-    this->read_input_options(input);
-
     return;
   }
 
-  HeatTransferStabilizationBase::~HeatTransferStabilizationBase()
+  template<class Conductivity>
+  HeatTransferStabilizationBase<Conductivity>::~HeatTransferStabilizationBase()
   {
     return;
   }
 
-  void HeatTransferStabilizationBase::init_context( libMesh::FEMContext& context )
+  template<class Conductivity>
+  void HeatTransferStabilizationBase<Conductivity>::init_context( libMesh::FEMContext& context )
   {
     // First call base class
-    HeatTransferBase::init_context(context);
+    HeatTransferBase<Conductivity>::init_context(context);
 
     // We also need second derivatives, so initialize those.
     context.element_fe_var[this->_T_var]->get_d2phi();
@@ -58,26 +61,34 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real HeatTransferStabilizationBase::compute_res_steady( libMesh::FEMContext& context,
-								   unsigned int qp ) const
+  template<class Conductivity>
+  libMesh::Real HeatTransferStabilizationBase<Conductivity>::compute_res_steady( libMesh::FEMContext& context,
+										 unsigned int qp ) const
   {
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
 
-    libMesh::RealGradient rhocpU( _rho*_Cp*context.fixed_interior_value(this->_u_var, qp), 
-				  _rho*_Cp*context.fixed_interior_value(this->_v_var, qp) );
-    if(this->_dim == 3)
-      rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_w_var, qp);
+    libMesh::Real T = context.interior_value(this->_T_var, qp );
+    libMesh::Real k = this->_k(T);
 
-    return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+    libMesh::RealGradient rhocpU( this->_rho*this->_Cp*context.fixed_interior_value(this->_u_var, qp), 
+				  this->_rho*this->_Cp*context.fixed_interior_value(this->_v_var, qp) );
+    if(this->_dim == 3)
+      rhocpU(2) = this->_rho*this->_Cp*context.fixed_interior_value(this->_w_var, qp);
+
+    return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
 
-  libMesh::Real HeatTransferStabilizationBase::compute_res_transient( libMesh::FEMContext& context,
-								      unsigned int qp ) const
+  template<class Conductivity>
+  libMesh::Real HeatTransferStabilizationBase<Conductivity>::compute_res_transient( libMesh::FEMContext& context,
+										    unsigned int qp ) const
   {
     libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 
-    return _rho*_Cp*T_dot;
+    return this->_rho*this->_Cp*T_dot;
   }
+
+  // Instantiate
+  template class HeatTransferStabilizationBase<GRINS::ConstantConductivity>;
 
 } // namespace GRINS

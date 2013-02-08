@@ -21,41 +21,21 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id$
+// $Id: heat_transfer.C 36679 2013-02-05 18:51:10Z pbauman $
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
-#define GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
 
-//GRINS
-#include "grins/heat_transfer_stab_base.h"
+// GRINS
+#include "grins/constant_conductivity.h"
 
-//! GRINS namespace
+// Required source
+#include "heat_transfer_base.C"
+#include "heat_transfer.C"
+
+ // Instantiate
 namespace GRINS
 {
-  //! Adds
-  template<class Conductivity>
-  class HeatTransferAdjointStabilization : public HeatTransferStabilizationBase<Conductivity>
-  {
-
-  public:
-
-    HeatTransferAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~HeatTransferAdjointStabilization();
-
-    virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context );
-
-    virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
-    
-  private:
-
-    HeatTransferAdjointStabilization();
-
-  }; // End HeatTransferAdjointStabilization class declarations
-
-} // End namespace GRINS
-
-#endif // GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
+  template class HeatTransfer<GRINS::ConstantConductivity>;
+  template class HeatTransferBase<GRINS::ConstantConductivity>;
+}

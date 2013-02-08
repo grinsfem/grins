@@ -30,7 +30,7 @@
 #include "grins/heat_transfer_base.h"
 
 // GRINS
-#include "grins_config.h"
+#include "grins/constant_conductivity.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -41,8 +41,8 @@
 
 namespace GRINS
 {
-
-  HeatTransferBase::HeatTransferBase( const std::string& physics_name, const GetPot& input )
+  template<class Conductivity>
+  HeatTransferBase<Conductivity>::HeatTransferBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input)
   {
     this->read_input_options(input);
@@ -50,12 +50,14 @@ namespace GRINS
     return;
   }
 
-  HeatTransferBase::~HeatTransferBase()
+  template<class Conductivity>
+  HeatTransferBase<Conductivity>::~HeatTransferBase()
   {
     return;
   }
 
-  void HeatTransferBase::read_input_options( const GetPot& input )
+  template<class Conductivity>
+  void HeatTransferBase<Conductivity>::read_input_options( const GetPot& input )
   {
     this->_T_FE_family =
       libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") );
@@ -65,7 +67,7 @@ namespace GRINS
 
     this->_rho = input("Physics/"+heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
     this->_Cp  = input("Physics/"+heat_transfer+"/Cp", 1.0);
-    this->_k  = input("Physics/"+heat_transfer+"/k", 1.0);
+    this->_k.read_input_options(input);
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
@@ -83,7 +85,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_variables( libMesh::FEMSystem* system )
+  template<class Conductivity>
+  void HeatTransferBase<Conductivity>::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -99,7 +102,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class Conductivity>
+  void HeatTransferBase<Conductivity>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_T_var);
@@ -107,7 +111,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_context( libMesh::FEMContext& context )
+  template<class Conductivity>
+  void HeatTransferBase<Conductivity>::init_context( libMesh::FEMContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

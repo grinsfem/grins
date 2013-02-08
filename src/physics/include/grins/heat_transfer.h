@@ -30,6 +30,7 @@
 #define GRINS_HEAT_TRANSFER_H
 
 //GRINS
+#include "grins_config.h"
 #include "grins/heat_transfer_base.h"
 
 namespace GRINS
@@ -39,7 +40,8 @@ namespace GRINS
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
-  class HeatTransfer : public HeatTransferBase
+  template<class Conductivity>
+  class HeatTransfer : public HeatTransferBase<Conductivity>
   {
   public:
 
