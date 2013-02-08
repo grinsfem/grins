@@ -88,7 +88,4 @@ namespace GRINS
     return this->_rho*this->_Cp*T_dot;
   }
 
-  // Instantiate
-  template class HeatTransferStabilizationBase<GRINS::ConstantConductivity>;
-
 } // namespace GRINS

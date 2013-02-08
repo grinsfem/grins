@@ -128,6 +128,8 @@ sfilesdir = $(prefix)/src
 sfiles_DATA  = $(physics_srcdir)/axisym_heat_transfer.C
 sfiles_DATA += $(physics_srcdir)/heat_transfer.C
 sfiles_DATA += $(physics_srcdir)/heat_transfer_base.C
+sfiles_DATA += $(physics_srcdir)/heat_transfer_stab_base.C
+sfiles_DATA += $(physics_srcdir)/heat_transfer_adjoint_stab.C
 
 #----------------------------
 #INCLUDES we want distributed

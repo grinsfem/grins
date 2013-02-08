@@ -32,10 +32,14 @@
 // Required source
 #include "heat_transfer_base.C"
 #include "heat_transfer.C"
+#include "heat_transfer_stab_base.C"
+#include "heat_transfer_adjoint_stab.C"
 
  // Instantiate
 namespace GRINS
 {
   template class HeatTransfer<GRINS::ConstantConductivity>;
   template class HeatTransferBase<GRINS::ConstantConductivity>;
+  template class HeatTransferStabilizationBase<GRINS::ConstantConductivity>;
+  template class HeatTransferAdjointStabilization<GRINS::ConstantConductivity>;
 }

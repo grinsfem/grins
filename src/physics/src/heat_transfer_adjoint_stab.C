@@ -170,7 +170,4 @@ namespace GRINS
     return;
   }
 
-  // Instantiate
-  template class HeatTransferAdjointStabilization<GRINS::ConstantConductivity>;
-
 } // namespace GRINS
