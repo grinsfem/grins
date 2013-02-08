@@ -87,6 +87,8 @@ namespace GRINS
 
     if (_dim == 3)
       _w_var = system->add_variable( _w_var_name, this->_V_order, _FE_family);
+    else
+      _w_var = _u_var;
 
     _p_var = system->add_variable( _p_var_name, this->_P_order, _FE_family);
 
