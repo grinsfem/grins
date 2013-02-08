@@ -1,3 +1,10 @@
+Version 0.4.0 (In progress)
+
+  * Added infrastructure for caching values at quadrature points and
+    a list of libMesh::Points.
+  * Added more modularized postprocessing support.
+  * Simulation is now subclassable.
+
 Version 0.3.0
 https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.3.0
 
