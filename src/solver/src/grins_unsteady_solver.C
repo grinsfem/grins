@@ -88,7 +88,11 @@ namespace GRINS
 
 	time = context.system->time;
 
-	if( context.output_vis ) context.vis->output( context.equation_system, t_step, time );
+	if( context.output_vis )
+	  {
+	    context.postprocessing->update_quantities( *(context.equation_system) );
+	    context.vis->output( context.equation_system, t_step, time );
+	  }
 
 	if( context.output_residual ) context.vis->output_residual( context.equation_system, 
 								    context.system, t_step, time );

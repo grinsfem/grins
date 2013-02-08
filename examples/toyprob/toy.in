@@ -1,0 +1,110 @@
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'HeatConduction'
+
+# Options for Incompressible Navier-Stokes physics
+[./HeatConduction]
+
+T_FE_family = 'LAGRANGE'
+
+T_order = 'FIRST'
+
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+bc_ids = '0 1 2 3 5 6'
+bc_types = 'isothermal_wall isothermal_wall isothermal_wall isothermal_wall isothermal_wall isothermal_wall'
+
+T_wall_0 = '1.0'
+T_wall_1 = '0.0' 
+T_wall_2 = '0.0'
+T_wall_3 = '0.0'
+T_wall_4 = '0.0'
+T_wall_5 = '0.0'
+
+rho = '1.0'
+cp = '1.0'
+k = '1.0'
+
+[]
+
+
+[restart-options]
+
+#restart_file = 'restart.xdr'
+
+[]
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'create_3D_mesh'
+element_type = 'HEX8'
+
+domain_x1_min = 0.0
+domain_x1_max = 1.0
+domain_x2_min = 0.0
+domain_x2_max = 1.0
+domain_x3_min = 0.0
+domain_x3_max = 1.0
+
+mesh_nx1 = 60 
+mesh_nx2 = 60
+mesh_nx3 = 60
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = 'true' 
+theta = 1.0
+n_timesteps = 5
+deltat = 1.0 
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 1 
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 1.0e-6
+
+initial_linear_tolerance = 1.0e-13
+
+use_numerical_jacobians_only = 'false'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'false'
+
+vis_output_file_prefix = 'toy' 
+
+output_residual = 'false'
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'Toy'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+
+print_qoi = 'false'
+echo_qoi = 'false'
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+
+[]

@@ -57,14 +57,24 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context );
+					  libMesh::FEMContext& context,
+					  CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context );
+				       libMesh::FEMContext& context,
+				       CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
+				libMesh::FEMContext& context,
+				CachedValues& cache );
+
+    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
+							CachedValues& cache ) const;
+
+    virtual void compute_element_cache( const libMesh::FEMContext& context,
+					const std::vector<libMesh::Point>& points,
+					CachedValues& cache ) const;
 
   protected:
 
@@ -75,15 +85,18 @@ namespace GRINS
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian, 
-				   libMesh::FEMContext& context );
+				   libMesh::FEMContext& context,
+				   CachedValues& cache );
 
     //! Helper function
     void assemble_momentum_time_deriv( bool compute_jacobian, 
-				       libMesh::FEMContext& context );
+				       libMesh::FEMContext& context,
+				       CachedValues& cache );
 
     //! Helper function
     void assemble_energy_time_deriv( bool compute_jacobian, 
-				     libMesh::FEMContext& context );
+				     libMesh::FEMContext& context,
+				     CachedValues& cache );
 
     //! Helper function
     void assemble_continuity_mass_residual( bool compute_jacobian, 

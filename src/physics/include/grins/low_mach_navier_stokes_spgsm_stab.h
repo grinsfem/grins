@@ -44,10 +44,12 @@ namespace GRINS
     virtual ~LowMachNavierStokesSPGSMStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context );
+					  libMesh::FEMContext& context,
+					  CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context );
+				libMesh::FEMContext& context,
+				CachedValues& cache );
 
   protected:
 

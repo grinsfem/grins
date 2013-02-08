@@ -4,14 +4,13 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen examples
-EXTRA_DIST       = CHANGES LICENSE COPYING examples docs contrib
+EXTRA_DIST       = CHANGES LICENSE COPYING docs contrib
 
 contribm4dir = $(prefix)/contrib/m4
 contribm4_DATA = $(top_srcdir)/contrib/m4/*
 
-examplesdir      = $(prefix)/examples
-#examples_DATA    = $(top_srcdir)/examples/cavity_benchmark \
-#                  $(top_srcdir)/examples/rayleigh_taylor
+#doxygendir = $(prefix)/doxygen
+#doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 
 includedir = $(prefix)/include/grins
 include_HEADERS = $(top_builddir)/grins_config.h

@@ -25,11 +25,12 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
-#define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/parabolic_profile.h"
 
 namespace GRINS
 {
@@ -44,13 +45,15 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
+
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
 
     void set_temp_bc_type( GRINS::BoundaryID bc_id, int bc_type );
     void set_temp_bc_value( GRINS::BoundaryID bc_id, libMesh::Real value );
@@ -61,18 +64,8 @@ namespace GRINS
   protected:
 
     std::string _u_var_name, _v_var_name, _w_var_name, _T_var_name;
-
-  private:
-
-    LowMachNavierStokesBCHandling();
-
-    enum LMNS_BC_TYPES{NO_SLIP=0, 
-		       PRESCRIBED_VELOCITY, 
-		       GENERAL_VELOCITY,
-		       ISOTHERMAL_WALL,
-		       ADIABATIC_WALL, 
-		       PRESCRIBED_HEAT_FLUX,
-		       GENERAL_HEAT_FLUX};
+    
+    GRINS::VariableIndex _T_var;
 
     // We need a second container to stash dirichlet values for the energy equation
     std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
@@ -80,6 +73,22 @@ namespace GRINS
     // We also need another map container
     std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
 
+  private:
+
+    LowMachNavierStokesBCHandling();
+
+    enum LMNS_BC_TYPES{NO_SLIP=0, 
+		       PRESCRIBED_VELOCITY, 
+		       GENERAL_VELOCITY, 
+		       PARABOLIC_PROFILE, 
+		       ISOTHERMAL_WALL,
+		       GENERAL_ISOTHERMAL_WALL,
+		       ADIABATIC_WALL, 
+		       PRESCRIBED_HEAT_FLUX, 
+		       GENERAL_HEAT_FLUX,
+		       AXISYMMETRIC};
+
   };
-}
-#endif // LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+
+} // end namespace GRINS
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H

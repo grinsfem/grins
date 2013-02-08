@@ -40,10 +40,9 @@ namespace GRINS
 
   HeatTransferBCHandling::HeatTransferBCHandling(const std::string& physics_name,
 						 const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
-    _T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
 
@@ -82,10 +81,15 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void HeatTransferBCHandling::init_bc_data( const BoundaryID bc_id, 
-					     const std::string& bc_id_string, 
-					     const int bc_type, 
-					     const GetPot& input )
+  void HeatTransferBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _T_var = system.variable_number( _T_var_name );
+  }
+  
+  void HeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 
+					      const std::string& bc_id_string, 
+					      const int bc_type, 
+					      const GetPot& input )
   {
     switch(bc_type)
       {
@@ -127,7 +131,7 @@ namespace GRINS
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_data( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
 	}
       
       }// End switch(bc_type)
@@ -135,13 +139,11 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+  void HeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
 							libMesh::DofMap& dof_map,
 							BoundaryID bc_id,
 							BCType bc_type ) const
   {
-    VariableIndex T_var = system->variable_number( _T_var_name );
-
     switch( bc_type )
       {
       case(ISOTHERMAL_WALL):
@@ -150,7 +152,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(T_var);
+	  dbc_vars.push_back(_T_var);
 	
 	  ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
 	
@@ -171,10 +173,10 @@ namespace GRINS
   }
 
   void HeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-						       VariableIndex var,
-						       bool request_jacobian,
-						       BoundaryID bc_id,
-						       BCType bc_type ) const
+						       const GRINS::CachedValues& cache,
+						       const bool request_jacobian,
+						       const BoundaryID bc_id,
+						       const BCType bc_type ) const
   {
     switch( bc_type )
       {
@@ -186,15 +188,15 @@ namespace GRINS
 	// Prescribed constant heat flux
       case(PRESCRIBED_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann( context, var, -1.0,
+	  _bound_conds.apply_neumann( context, _T_var, -1.0,
 				      this->get_neumann_bc_value(bc_id) );
 	}
 	break;
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann( context, request_jacobian, var, -1.0, 
-				      this->get_neumann_bound_func( bc_id, var ) );
+	  _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
+				      this->get_neumann_bound_func( bc_id, _T_var ) );
 	}
 	break;
       default:

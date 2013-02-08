@@ -50,6 +50,7 @@ namespace GRINS
   const PhysicsName low_mach_navier_stokes_braack_stab = "LowMachNavierStokesBraackStabilization";
   const PhysicsName low_mach_navier_stokes_spgsm_stab = "LowMachNavierStokesSPGSMStabilization";
   const PhysicsName low_mach_navier_stokes_vms_stab = "LowMachNavierStokesVMSStabilization";
+  const PhysicsName reacting_low_mach_navier_stokes = "ReactingLowMachNavierStokes";
   const PhysicsName axisymmetric_electrostatics = "AxisymmetricElectrostatics";
   const PhysicsName axisymmetric_magnetostatics = "AxisymmetricMagnetostatics";
   const PhysicsName axisymmetric_lorentz_force  = "AxisymmetricLorentzForce";

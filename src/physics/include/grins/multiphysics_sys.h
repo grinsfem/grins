@@ -124,9 +124,16 @@ namespace GRINS
     
     //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context ); 
+				libMesh::DiffContext& context );
+
+    //! Query to check if a particular physics has been enabled
+    bool has_physics( const std::string physics_name ) const;
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
+
+    void compute_element_cache( const libMesh::FEMContext& context,
+				const std::vector<libMesh::Point>& points,
+				CachedValues& cache ) const;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

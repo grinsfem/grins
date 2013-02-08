@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef BC_HANDLING_BASE_H
-#define BC_HANDLING_BASE_H
+#ifndef GRINS_BC_HANDLING_BASE_H
+#define GRINS_BC_HANDLING_BASE_H
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -41,6 +41,7 @@
 #include "grins/pbc_container.h"
 #include "grins/nbc_container.h"
 #include "grins/boundary_conditions.h"
+#include "grins/cached_values.h"
 
 // libMesh forward declarations
 namespace libMesh
@@ -68,16 +69,22 @@ namespace GRINS
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
 			       const std::string& bc_str );
 
+    //! Override this method to initialize any system-dependent data.
+    /*! Override this method to, for example, cache a System variable
+        number. This is called before any of the other init methods in this class.
+        By default, does nothing. */
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
+
     virtual void apply_neumann_bcs( libMesh::FEMContext& context,
-			    GRINS::VariableIndex var,
-			    bool request_jacobian,
-			    GRINS::BoundaryID bc_id ) const;
+				    const GRINS::CachedValues& cache,
+				    const bool request_jacobian,
+				    const GRINS::BoundaryID bc_id ) const;
 
     virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
-					 GRINS::VariableIndex var,
-					 bool request_jacobian,
-					 GRINS::BoundaryID bc_id,
-					 GRINS::BCType bc_type ) const;
+					 const GRINS::CachedValues& cache,
+					 const bool request_jacobian,
+					 const GRINS::BoundaryID bc_id,
+					 const GRINS::BCType bc_type ) const;
 
     virtual void init_dirichlet_bc_func_objs( libMesh::FEMSystem* system ) const;
 
@@ -94,7 +101,6 @@ namespace GRINS
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id ) const;
 
-    inline 
     std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id );
 
@@ -103,10 +109,10 @@ namespace GRINS
     // User will need to implement these functions for BC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
 					  libMesh::DofMap& dof_map,
@@ -117,6 +123,8 @@ namespace GRINS
     GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;
 
     bool is_dirichlet_bc( const GRINS::BoundaryID bc_id ) const;
+
+    bool is_axisymmetric() const;
 
   protected:
 
@@ -151,12 +159,21 @@ namespace GRINS
 
     enum BC_BASE{ PERIODIC = -1};
 
+    //! Flag to cache whether or not there is an axisymmetric boundary present
+    static bool _axisymmetric;
+
   private:
     BCHandlingBase();
 
   };
 
   /* ------------------------- Inline Functions -------------------------*/
+  inline
+  bool BCHandlingBase::is_axisymmetric() const
+  {
+    return _axisymmetric;
+  }
+
   inline
   const libMesh::Point& BCHandlingBase::get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
   {
@@ -195,4 +212,4 @@ namespace GRINS
   }
 
 }
-#endif // BC_HANDLING_BASE
+#endif // GRINS_BC_HANDLING_BASE

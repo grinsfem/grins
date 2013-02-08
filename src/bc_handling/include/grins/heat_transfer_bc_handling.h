@@ -44,25 +44,29 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const GRINS::BoundaryID bc_id, 
-			       const std::string& bc_id_string, 
-			       const int bc_type, 
-			       const GetPot& input );
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
-				  libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, 
-				  GRINS::BCType bc_type ) const;
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
+
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
+					  libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id, 
+					  GRINS::BCType bc_type ) const;
 
     virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
-					 GRINS::VariableIndex var,
-					 bool request_jacobian,
-					 GRINS::BoundaryID bc_id,
-					 GRINS::BCType bc_type ) const;
+					 const GRINS::CachedValues& cache,
+					 const bool request_jacobian,
+					 const GRINS::BoundaryID bc_id,
+					 const GRINS::BCType bc_type ) const;
     
   protected:
 
     std::string _T_var_name;
+
+    VariableIndex _T_var;
 
   private:
 

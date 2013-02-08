@@ -46,12 +46,13 @@ namespace GRINS
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
        _vis( sim_builder.build_vis(input) ),
        _qoi( sim_builder.build_qoi(input) ),
+       _postprocessing( sim_builder.build_postprocessing(input) ),
        _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
        _print_log_info( input("screen-options/print_log_info", false ) ),
-    _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
-    _print_qoi( input("screen-options/print_qoi", false ) ),
-    _output_vis( input("vis-options/output_vis", false ) ),
-    _output_residual( input( "vis-options/output_residual", false ) )
+       _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+       _print_qoi( input("screen-options/print_qoi", false ) ),
+       _output_vis( input("vis-options/output_vis", false ) ),
+       _output_residual( input( "vis-options/output_residual", false ) )
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
@@ -65,6 +66,10 @@ namespace GRINS
 
     // This *must* be done before equation_system->init
     this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
+
+    /* Postprocessing needs to be initialized before the solver since that's 
+       where equation_system gets init'ed */
+    _postprocessing->initialize( *_multiphysics_system, *_equation_system );
 
     _solver->initialize( input, _equation_system, _multiphysics_system );
 
@@ -105,6 +110,7 @@ namespace GRINS
     context.vis = _vis;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
+    context.postprocessing = _postprocessing;
 
     _solver->solve( context );
 

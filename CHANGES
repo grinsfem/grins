@@ -1,4 +1,50 @@
-Version 0.3.0 (In progress)
+Version 0.4.0 (In progress)
+
+  * Added infrastructure for caching values at quadrature points and
+    a list of libMesh::Points.
+  * Added more modularized postprocessing support.
+  * Simulation is now subclassable.
+
+Version 0.3.0
+https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.3.0
+
+  * Object construction refactored to use Factory patterns.
+  * SimulationBuilder added to make Simulation more extensible.
+  * Add general_heat_flux boundary condition for HeatTransfer physics.
+  * Added versioning mechanism, including installed grins_version executable.
+  * Added input option for forcing numerical Jacobians for all physics.
+  * Using libMesh::DirichletBoundary objects to enforce Dirichlet boundary conditions.
+  * Added NBCContainer object in similar spirit to DBCContainer for constructing boundary
+    condition objects.
+  * "inflow" boundary condition type was renamed to "general_velocity"
+  * Low Mach formulation of Navier-Stokes added (variable-density formulation).
+  * PeriodicBoundary capability added.
+  * Uniform refinement capability, both from fresh start and restart, added.
+  * Added "adjoint" type stabilization for IncompressibleNavierStokes and HeatTransfer.
+  * Added GaussianProfile boundary condition.
+  * Added HeatTransferSource physics.
+  * Make enable-silent-flags the default for the build system.
+  * Bootstrap now uses autoreconf.
+  * Stokes physics class added.
+  * Subdomain id capability added so different Physics can be used in different subdomains.
+  * ParabolicProfile boundary condition added.
+  * prefix_config.m4 used to prefix some build dependent variables.
+  * Include path for libMesh headers updated to newer version.
+  * GRINS headers installed to include/grins.
+  * QoI capability added through QoIBase and associated classes.
+  * AverageNusseltNumber QoI Added.
+  * Vorticity QoI added.
+  * GRINS::Solver now lives in GRINS::Simulation instead of MultiphysicsSystem.
+  * Headers cleaned up for preferring forward declaration where possible.
+  * config.h -> grins_config.h
+  * libMesh 0.9.0 now the minimum required version.
+  * parallel-tests option of Automake now the default.
+  * Fixed misnaming of component() in FEFunction-Base derived classes.
+  * Code coverage functionality added.
+  * HeatTransfer reorganized into class hierarchy for better reuse.
+  * GRINS now does not require the --enable-legacy-using-namespace option for libMesh.
+  * Updated autoconf macros for compatibility.
+  * Several bug fixes.
 
 Version 0.2.0
 https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.2.0

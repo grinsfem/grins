@@ -30,6 +30,12 @@
 #include "grins/physics_factory.h"
 
 // GRINS
+#include "grins/cea_thermo.h"
+#include "grins/cantera_thermo.h"
+#include "grins/constant_transport.h"
+#include "grins/cantera_transport.h"
+#include "grins/cantera_kinetics.h"
+#include "grins/grins_kinetics.h"
 #include "grins/physics.h"
 #include "grins/stokes.h"
 #include "grins/inc_navier_stokes.h"
@@ -49,6 +55,8 @@
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
+#include "grins/reacting_low_mach_navier_stokes.h"
+#include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
 #include "grins/axisym_electrostatics.h"
 #include "grins/axisym_magnetostatics.h"
@@ -216,6 +224,11 @@ namespace GRINS
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
       }
+    else if( physics_to_add == "HeatConduction" )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new HeatConduction(physics_to_add,input));
+      }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
 	std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
@@ -280,54 +293,119 @@ namespace GRINS
 	    this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
 	  }
       }
+    else if( physics_to_add == reacting_low_mach_navier_stokes )
+      {
+	std::string chem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/chemistry_library", "cantera" );
+	std::string thermo_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermodynamics_library", "cantera" );
+	std::string transport_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/transport_library", "cantera" );
+	if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
+	  {
+#ifdef GRINS_HAVE_CANTERA
 
-  else if( physics_to_add == axisymmetric_electrostatics )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::AxisymmetricElectrostatics(physics_to_add,input));
-    }
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,CanteraTransport,CanteraKinetics > >(physics_to_add,input));
 
-  else if( physics_to_add == axisymmetric_magnetostatics )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::AxisymmetricMagnetostatics(physics_to_add,input));
-    }
+#else
 
-  else if( physics_to_add == axisymmetric_lorentz_force )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::AxisymmetricLorentzForce(physics_to_add,input));
-    }
+	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
+		      << std::endl;
+	    libmesh_error();
 
-  else if( physics_to_add == axisymmetric_joule_heating )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::AxisymmetricJouleHeating(physics_to_add,input));
-    }
+#endif // GRINS_HAVE_CANTERA
+	  }
+	else if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "grins_constant" )
+	  {
+#ifdef GRINS_HAVE_CANTERA
 
-  else if( physics_to_add == electrostatics )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::Electrostatics(physics_to_add,input));
-    }
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
 
-  else if( physics_to_add == magnetostatics )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::Magnetostatics(physics_to_add,input));
-    }
+#else
 
-  else if( physics_to_add == lorentz_force )
-    {
-      physics_list[physics_to_add] = 
-	PhysicsPtr(new GRINS::LorentzForce(physics_to_add,input));
-    }
+	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
+		      << std::endl;
+	    libmesh_error();
 
-  else
-    {
-      std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
-      libmesh_error();
-    }
+#endif // GRINS_HAVE_CANTERA
+	  }
+	else if( chem_lib == "cantera" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
+	  {
+#ifdef GRINS_HAVE_CANTERA
+
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CEAThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
+
+#else
+
+	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
+		      << std::endl;
+	    libmesh_error();
+
+#endif // GRINS_HAVE_CANTERA
+	  }
+	else if( chem_lib == "grins" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< GRINS::CEAThermodynamics,GRINS::ConstantTransport,GRINS::Kinetics > >(physics_to_add,input));
+	  }
+	else
+	  {
+	    std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl
+		      << "       for ReactingLowMachNavierStokes physics." << std::endl
+		      << "       chemistry library      = " << chem_lib << std::endl
+		      << "       thermodynamics library = " << thermo_lib << std::endl
+		      << "       transport library = " << transport_lib << std::endl;
+	    libmesh_error();
+	  }
+      }
+    
+    else if( physics_to_add == axisymmetric_electrostatics )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::AxisymmetricElectrostatics(physics_to_add,input));
+      }
+
+    else if( physics_to_add == axisymmetric_magnetostatics )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::AxisymmetricMagnetostatics(physics_to_add,input));
+      }
+
+    else if( physics_to_add == axisymmetric_lorentz_force )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::AxisymmetricLorentzForce(physics_to_add,input));
+      }
+
+    else if( physics_to_add == axisymmetric_joule_heating )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::AxisymmetricJouleHeating(physics_to_add,input));
+      }
+
+    else if( physics_to_add == electrostatics )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::Electrostatics(physics_to_add,input));
+      }
+
+    else if( physics_to_add == magnetostatics )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::Magnetostatics(physics_to_add,input));
+      }
+
+    else if( physics_to_add == lorentz_force )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new GRINS::LorentzForce(physics_to_add,input));
+      }
+
+    else
+      {
+	std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
+	libmesh_error();
+      }
 
     return;
   }
@@ -399,7 +477,8 @@ namespace GRINS
 	      }
 	  }
 
-	/* For LowMachNavierStokes, there should be nothing else loaded. */
+	/* For LowMachNavierStokes, there should be nothing else loaded, except
+	   for stabilization. */
 	if( physics->first == low_mach_navier_stokes )
 	  {
 	    if( physics_list.size() > 2 )
@@ -408,7 +487,7 @@ namespace GRINS
 			  << "Error: For physics " << low_mach_navier_stokes << std::endl
 			  << "only one stabilization physics is allowed. Detected the" << std::endl
 			  << "following:" << std::endl;
-		for( PhysicsListIter iter = physics_list.begin();
+		for( GRINS::PhysicsListIter iter = physics_list.begin();
 		     iter != physics_list.end();
 		     iter++ )
 		  {
@@ -428,88 +507,109 @@ namespace GRINS
 	      }
 	  }
 
-      /* For HeatTransferAdjointStabilization, we'd better have HeatTransfer */
-      if( physics->first == heat_transfer_adjoint_stab )
-	{
-	  if( physics_list.find(heat_transfer) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, heat_transfer  );
-	    }
-	}
+	/* For HeatTransferAdjointStabilization, we'd better have HeatTransfer */
+	if( physics->first == heat_transfer_adjoint_stab )
+	  {
+	    if( physics_list.find(heat_transfer) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, heat_transfer  );
+	      }
+	  }
 
-      /* For AxisymmetricMagnetostatics, we'd better have AxisymmetricElectrostatics */
-      if( physics->first == axisymmetric_magnetostatics )
-	{
-	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
-	    }
-	}
+	/* For ReactingLowMachNavierStokes, there should be nothing else loaded, except
+	   for stabilization. */
+	if( physics->first == reacting_low_mach_navier_stokes )
+	  {
+	    if( physics_list.size() > 2 )
+	      {
+		std::cerr << "=======================================================" << std::endl
+			  << "Error: For physics " << reacting_low_mach_navier_stokes << std::endl
+			  << "only one stabilization physics is allowed. Detected the" << std::endl
+			  << "following:" << std::endl;
+		for( GRINS::PhysicsListIter iter = physics_list.begin();
+		     iter != physics_list.end();
+		     iter++ )
+		  {
+		    std::cerr << physics->first << std::endl;
+		  }
+		std::cerr << "=======================================================" << std::endl;
+		libmesh_error();
+	      }
+	  }
 
-      /* For AxisymmetricLorentzForce, we'd better have AxisymmetricElectrostatics,
-         AxisymmetricMagnetostatic, and AxisymmetricIncompressibleNavierStokes */
-      if( physics->first == axisymmetric_lorentz_force )
-	{
-	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
-	    }
+	/* For AxisymmetricMagnetostatics, we'd better have AxisymmetricElectrostatics */
+	if( physics->first == axisymmetric_magnetostatics )
+	  {
+	    if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	      }
+	  }
 
-	  if( physics_list.find(axisymmetric_magnetostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_magnetostatics );
-	    }
+	/* For AxisymmetricLorentzForce, we'd better have AxisymmetricElectrostatics,
+	   AxisymmetricMagnetostatic, and AxisymmetricIncompressibleNavierStokes */
+	if( physics->first == axisymmetric_lorentz_force )
+	  {
+	    if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	      }
 
-	  if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
-	    }
-	}
+	    if( physics_list.find(axisymmetric_magnetostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_magnetostatics );
+	      }
 
-      /* For AxisymmetricJouleHeating, we'd better have AxisymmetricElectrostatics,
-         AxisymmetricHeatTransfer */
-      if( physics->first == axisymmetric_joule_heating )
-	{
-	  if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
-	    }
+	    if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
+	      }
+	  }
 
-	  if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, axisymmetric_heat_transfer );
-	    }
-	}
+	/* For AxisymmetricJouleHeating, we'd better have AxisymmetricElectrostatics,
+	   AxisymmetricHeatTransfer */
+	if( physics->first == axisymmetric_joule_heating )
+	  {
+	    if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_electrostatics );
+	      }
+
+	    if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, axisymmetric_heat_transfer );
+	      }
+	  }
       
-      /* For Magnetostatics, we'd better have Electrostatics */
-      if( physics->first == magnetostatics )
-	{
-	  if( physics_list.find(electrostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, electrostatics );
-	    }
-	}
+	/* For Magnetostatics, we'd better have Electrostatics */
+	if( physics->first == magnetostatics )
+	  {
+	    if( physics_list.find(electrostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, electrostatics );
+	      }
+	  }
 
-      /* For LorentzForce, we'd better have Electrostatics,
-         Magnetostatic, and IncompressibleNavierStokes */
-      if( physics->first == lorentz_force )
-	{
-	  if( physics_list.find(electrostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, electrostatics );
-	    }
+	/* For LorentzForce, we'd better have Electrostatics,
+	   Magnetostatic, and IncompressibleNavierStokes */
+	if( physics->first == lorentz_force )
+	  {
+	    if( physics_list.find(electrostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, electrostatics );
+	      }
 
-	  if( physics_list.find(magnetostatics) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, magnetostatics );
-	    }
+	    if( physics_list.find(magnetostatics) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, magnetostatics );
+	      }
 
-	  if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
-	    {
-	      this->physics_consistency_error( physics->first, incompressible_navier_stokes );
-	    }
-	}
-    }
+	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, incompressible_navier_stokes );
+	      }
+	  }
+      }
 
     return;
   }

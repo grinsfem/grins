@@ -90,10 +90,15 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void AxisymmetricHeatTransferBCHandling::init_bc_data( const BoundaryID bc_id, 
-							 const std::string& bc_id_string, 
-							 const int bc_type, 
-							 const GetPot& input )
+  void AxisymmetricHeatTransferBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _T_var = system.variable_number( _T_var_name );
+  }
+
+  void AxisymmetricHeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 
+							  const std::string& bc_id_string, 
+							  const int bc_type, 
+							  const GetPot& input )
   {
     switch(bc_type)
       {
@@ -151,10 +156,10 @@ namespace GRINS
   }
 
   void AxisymmetricHeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								   VariableIndex var,
-								   bool request_jacobian,
-								   BoundaryID bc_id,
-								   BCType bc_type ) const
+								   const GRINS::CachedValues& cache,
+								   const bool request_jacobian,
+								   const BoundaryID bc_id,
+								   const BCType bc_type ) const
   {
     switch( bc_type )
       {
@@ -169,15 +174,15 @@ namespace GRINS
 	// Prescribed constant heat flux
       case(PRESCRIBED_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, var, -1.0,
+	  _bound_conds.apply_neumann_axisymmetric( context, _T_var, -1.0,
 						   this->get_neumann_bc_value(bc_id) );
 	}
 	break;
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, request_jacobian, var, -1.0, 
-						   this->get_neumann_bound_func( bc_id, var ) );
+	  _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
+						   this->get_neumann_bound_func( bc_id, _T_var ) );
 	}
 	break;
       default:
@@ -190,13 +195,11 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricHeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+  void AxisymmetricHeatTransferBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
 								    libMesh::DofMap& dof_map,
 								    BoundaryID bc_id,
 								    BCType bc_type ) const
   {
-    VariableIndex T_var = system->variable_number( _T_var_name );
-
     switch( bc_type )
       {
       case(ISOTHERMAL_WALL):
@@ -205,7 +208,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(T_var);
+	  dbc_vars.push_back(_T_var);
 	
 	  ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
 	

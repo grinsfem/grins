@@ -52,8 +52,9 @@ namespace GRINS
   }
 
   template<class Conductivity>
-  void HeatTransferAdjointStabilization<Conductivity>::element_time_derivative( bool /*compute_jacobian*/,
-										libMesh::FEMContext& context )
+  void HeatTransferAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
+								  libMesh::FEMContext& context,
+								  CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_time_derivative");
@@ -111,8 +112,9 @@ namespace GRINS
   }
 
   template<class Conductivity>
-  void HeatTransferAdjointStabilization<Conductivity>::mass_residual( bool /*compute_jacobian*/,
-								      libMesh::FEMContext& context )
+  void HeatTransferAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
+							libMesh::FEMContext& context,
+							CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::mass_residual");
