@@ -26,15 +26,42 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
+#include "grins_config.h"
 #include "grins/boussinesq_buoyancy.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
 
   BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase(physics_name,input)
+    : Physics(physics_name,input),
+      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") ) ),
+      _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") ) ),
+      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") ) ),
+      _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") ) ),
+      _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
+      _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
+      _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
+      _rho_ref( input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0) ),
+      _T_ref( input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0) ),
+      _beta_T( input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0) )
   {
-    this->read_input_options(input);
+    unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
+
+    _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 1 );
+  
+    if( g_dim == 3)
+      _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
+
     return;
   }
 
@@ -43,19 +70,18 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancy::read_input_options( const GetPot& input )
+  void BoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
   {
-    _rho_ref = input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0);
-    _T_ref = input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0);;
-    _beta_T = input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0);;
+    // Get libMesh to assign an index for each variable
+    this->_dim = system->get_mesh().mesh_dimension();
 
-    unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
-
-    _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 1 );
-  
-    if( g_dim == 3)
-      _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
+    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+ 
+    // If these are already added, then we just get the index. 
+    _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
+    _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
+    if (_dim == 3)
+      _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
 
     return;
   }
@@ -88,14 +114,14 @@ namespace GRINS
       context.element_fe_var[_T_var]->get_phi();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
-    libMesh::DenseSubMatrix<Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
-    libMesh::DenseSubMatrix<Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its

@@ -26,25 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef HEAT_TRANSFER_BASE_H
-#define HEAT_TRANSFER_BASE_H
-
-//libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
+#ifndef GRINS_HEAT_TRANSFER_BASE_H
+#define GRINS_HEAT_TRANSFER_BASE_H
 
 //GRINS
-#include "grins_config.h"
 #include "grins/physics.h"
-#include "grins/heat_transfer_bc_handling.h"
+
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
@@ -112,4 +102,4 @@ namespace GRINS
 
 } //End namespace block
 
-#endif // HEAT_TRANSFER_BASE_H
+#endif // GRINS_HEAT_TRANSFER_BASE_H

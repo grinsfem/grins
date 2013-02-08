@@ -26,23 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef BOUSSINESQ_BUOYANCY_H
-#define BOUSSINESQ_BUOYANCY_H
+#ifndef GRINS_BOUSSINESQ_BUOYANCY_H
+#define GRINS_BOUSSINESQ_BUOYANCY_H
 
-#include "grins_config.h"
+// GRINS
+#include "grins/physics.h"
 
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
-
-#include "grins/heat_transfer_base.h"
+// libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
+#include "libmesh/point.h"
 
 namespace GRINS
 {  
@@ -60,7 +53,7 @@ namespace GRINS
     element_time_derivative routine. This class requires a flow physics enabled
     and the ConvectiveHeatTransfer physics class enabled.
    */
-  class BoussinesqBuoyancy : public HeatTransferBase
+  class BoussinesqBuoyancy : public Physics
   {
   public:
     
@@ -68,8 +61,8 @@ namespace GRINS
 
     ~BoussinesqBuoyancy();
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    //! Initialization of BoussinesqBuoyancy variables
+    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
@@ -81,6 +74,24 @@ namespace GRINS
 
   protected:
 
+    //! Element type, read from input
+    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+
+    //! Temperature element order, read from input
+    libMeshEnums::Order _T_order, _V_order;
+
+    //! Name of x-velocity
+    std::string _u_var_name;
+
+    //! Name of y-velocity
+    std::string _v_var_name;
+
+    //! Name of z-velocity
+    std::string _w_var_name;
+
+    //! Name of temperature
+    std::string _T_var_name;
+
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _rho_ref;
 
@@ -91,12 +102,29 @@ namespace GRINS
     libMesh::Number _beta_T;
 
     //! Gravitational vector
-    Point _g;
+    libMesh::Point _g;
+
+     //! Physical dimension of problem
+    unsigned int _dim;
+
+    // Indices for each variable;
+    //! Index for x-velocity field
+    VariableIndex _u_var;
+
+    //! Index for y-velocity field
+    VariableIndex _v_var;
+
+    //! Index for z-velocity field
+    VariableIndex _w_var;
+
+    //! Index for temperature field
+    VariableIndex _T_var;
 
   private:
+
     BoussinesqBuoyancy();
 
-  }; // class BoussinesqBuoyancy
+  };
 
-} // namespace GRINS
-#endif //BOUSSINESQ_BUOYANCY_H
+} // end namespace GRINS
+#endif // GRINS_BOUSSINESQ_BUOYANCY_H

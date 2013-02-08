@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/inc_navier_stokes_adjoint_stab.h"
+
+//libMesh
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -71,10 +75,10 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
       context.element_fe_var[this->_u_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -153,10 +157,10 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
       context.element_fe_var[this->_u_var]->get_d2phi();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 

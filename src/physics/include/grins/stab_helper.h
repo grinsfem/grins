@@ -25,14 +25,19 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef STAB_HELPER_H
-#define STAB_HELPER_H
+#ifndef GRINS_STAB_HELPER_H
+#define GRINS_STAB_HELPER_H
 
 // libMesh
-#include "libmesh/fe_base.h"
 #include "libmesh/vector_value.h"
 #include "libmesh/tensor_value.h"
-#include "libmesh/fem_context.h"
+#include "libmesh/fe_base.h"
+
+// libMesh forward declarations
+namespace libMesh
+{
+  class FEMContext;
+}
 
 namespace GRINS
 {
@@ -52,7 +57,7 @@ namespace GRINS
 				   libMesh::FEMContext& c,
 				   unsigned int qp ) const;
 
-  }; // class StabilizationHelper
+  };
 
 } // namespace GRINS
-#endif // STAB_HELPER_H
+#endif // GRINS_STAB_HELPER_H

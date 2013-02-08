@@ -35,12 +35,14 @@
 #include "libmesh/equation_systems.h"
 
 // GRINS
-#include "grins/multiphysics_sys.h"
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
+
   //! Simple class to hold objects passed to Solver::solve
   /*! Allows some flexibility for adding objects needed to pass to the Solver::solve
       method so that the solver can still be agnostic to creation etc. of those objects,
@@ -62,6 +64,6 @@ namespace GRINS
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
 
   };
-}
 
+} // end namespace GRINS
 #endif // GRINS_SOLVER_CONTEXT_H

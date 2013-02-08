@@ -26,18 +26,17 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef MESH_BUILDER_H
-#define MESH_BUILDER_H
+#ifndef GRINS_MESH_BUILDER_H
+#define GRINS_MESH_BUILDER_H
 
+// C++
 #include "boost/tr1/memory.hpp"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/libmesh.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/mesh.h"
-#include "libmesh/mesh_generation.h"
-#include "libmesh/mesh_refinement.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
@@ -59,6 +58,6 @@ namespace GRINS
 
   };
 
-} //End namespace block
+} // end namespace block
 
-#endif //MESH_BUILDER_H
+#endif // GRINS_MESH_BUILDER_H

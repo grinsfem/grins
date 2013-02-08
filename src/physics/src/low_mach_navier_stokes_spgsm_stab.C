@@ -26,7 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
+
+// GRINS
+#include "grins/constant_viscosity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_conductivity.h"
+
+// libMesh
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -99,7 +108,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.element_fe_var[this->_p_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -157,9 +166,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[this->_u_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -227,7 +236,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.element_fe_var[this->_T_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -287,7 +296,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.element_fe_var[this->_p_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -342,9 +351,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[this->_u_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -413,7 +422,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.element_fe_var[this->_T_var]->get_dphi();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 

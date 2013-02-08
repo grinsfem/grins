@@ -32,7 +32,6 @@
 #include "grins/var_typedefs.h"
 
 // libMesh
-#include "libmesh/libmesh.h"
 #include "libmesh/point.h"
 
 // libMesh forward declarations
@@ -43,7 +42,6 @@ namespace libMesh
 
 namespace GRINS
 {
-
   // GRINS forward declarations
   class CachedValues;
 
@@ -113,6 +111,5 @@ namespace GRINS
 
   }; // class NeumannFuncObj
   
-} // namespace GRINS
-
+} // end namespace GRINS
 #endif // GRINS_NEUMANN_FUNC_OBJ_H

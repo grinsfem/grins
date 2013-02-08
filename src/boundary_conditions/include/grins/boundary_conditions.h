@@ -28,20 +28,19 @@
 #ifndef GRINS_BOUNDARY_CONDITIONS_H
 #define GRINS_BOUNDARY_CONDITIONS_H
 
+// GRINS
 #include "grins/var_typedefs.h"
 #include "grins/neumann_func_obj.h"
 
-// libMesh stuff
+// libMesh
 #include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
-#include "libmesh/fem_system.h"
+
+// libMesh forward declarations
+namespace libMesh
+{
+  class Point;
+  class DiffContext;
+}
 
 namespace GRINS
 {
@@ -69,8 +68,8 @@ namespace GRINS
     //! Applies Neumann boundary conditions for the constant case.
     void apply_neumann_axisymmetric( libMesh::FEMContext& context,
 				     const GRINS::VariableIndex var,
-				     const Real sign,
-				     const Point& value ) const;
+				     const libMesh::Real sign,
+				     const libMesh::Point& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is
@@ -87,7 +86,7 @@ namespace GRINS
 			const CachedValues& cache,
 			const bool request_jacobian,
 			const GRINS::VariableIndex var,
-			const Real sign,
+			const libMesh::Real sign,
 			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
@@ -119,5 +118,5 @@ namespace GRINS
 
   };
 
-} // namespace GRINS
+} // end namespace GRINS
 #endif // GRINS_BOUNDARY_CONDITIONS_H

@@ -26,7 +26,11 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/constant_specific_heat.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {

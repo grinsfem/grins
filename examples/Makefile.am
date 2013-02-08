@@ -1,4 +1,5 @@
 BUILT_SOURCES   = .license.stamp
+EXTRA_DIST =
 
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
@@ -31,6 +32,8 @@ backwardfacingstep_SCRIPTS = $(top_builddir)/examples/backward_facing_step/run.s
 backwardfacingstep_DATA  = $(top_srcdir)/examples/backward_facing_step/backward_facing_step.in
 backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 
+EXTRA_DIST += $(backwardfacingstep_DATA)
+
 #=======================================================================
 # Cavity Benchmark
 #=======================================================================
@@ -49,6 +52,9 @@ cavitybenchmark_PROGRAMS = cavity
 cavitybenchmark_DATA  = $(top_srcdir)/examples/cavity_benchmark/cavity.in
 cavitybenchmark_SCRIPTS = $(top_builddir)/examples/cavity_benchmark/run.sh
 
+EXTRA_DIST += $(cavitybenchmark_DATA)
+
+
 cavity_SOURCES = $(top_srcdir)/examples/cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
 
@@ -65,6 +71,8 @@ liddrivencavitydir = $(prefix)/examples/lid_driven_cavity
 liddrivencavity_DATA = $(top_srcdir)/examples/lid_driven_cavity/lid_driven_cavity.in
 liddrivencavity_SCRIPTS = $(top_builddir)/examples/lid_driven_cavity/run.sh
 
+EXTRA_DIST += $(liddrivencavity_DATA)
+
 #=======================================================================
 # Mass Injection Example
 #=======================================================================
@@ -73,6 +81,8 @@ massinjection_PROGRAMS = injection
 massinjection_DATA  = $(top_srcdir)/examples/mass_injection/injection.in
 massinjection_DATA += $(top_srcdir)/examples/mass_injection/injection_grid.e
 massinjection_SCRIPTS = $(top_builddir)/examples/mass_injection/run.sh
+
+EXTRA_DIST += $(massinjection_DATA)
 
 injection_SOURCES = $(top_srcdir)/examples/mass_injection/injection.C
 injection_LDADD = $(LIBGRINS_LIBS)
@@ -85,6 +95,8 @@ rayleigh_PROGRAMS = rayleigh
 rayleigh_DATA = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.in
 rayleigh_SCRIPTS = $(top_builddir)/examples/rayleigh_taylor/run.sh
 
+EXTRA_DIST += $(rayleigh_DATA)
+
 rayleigh_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.C
 rayleigh_LDADD = $(LIBGRINS_LIBS)
 
@@ -96,6 +108,8 @@ stokesns_DATA  = $(top_srcdir)/examples/coupled_stokes_navierstokes/stokes_ns.in
 stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/ns.in
 stokesns_DATA += $(top_srcdir)/examples/coupled_stokes_navierstokes/mesh.e
 stokesns_SCRIPTS = $(top_builddir)/examples/coupled_stokes_navierstokes/run.sh
+
+EXTRA_DIST += $(stokesns_DATA)
 
 #=======================================================================
 # Reacting Low Mach Navier Stokes Example

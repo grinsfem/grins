@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_STAB_BASE_H
-#define LOW_MACH_NAVIER_STOKES_STAB_BASE_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_STAB_BASE_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_STAB_BASE_H
 
 //GRINS
 #include "grins/low_mach_navier_stokes_base.h"
@@ -75,8 +75,8 @@ namespace GRINS
 
     LowMachNavierStokesStabilizationBase();
 
-  }; // End LowMachNavierStokesStabilizationBase class declarations
+  };
 
-} // End namespace GRINS
+} // end namespace GRINS
 
-#endif //LOW_MACH_NAVIER_STOKES_STAB_BASE_H
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_STAB_BASE_H

@@ -25,13 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
-#define LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
-
-#include "boost/tr1/memory.hpp"
-
-//libMesh
-#include "libmesh/zero_function.h"
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
@@ -61,8 +56,8 @@ namespace GRINS
 					  GRINS::BoundaryID bc_id, GRINS::BCType bc_type ) const;
 
     void set_temp_bc_type( GRINS::BoundaryID bc_id, int bc_type );
-    void set_temp_bc_value( GRINS::BoundaryID bc_id, Real value );
-    Real get_temp_bc_value( GRINS::BoundaryID bc_id ) const;
+    void set_temp_bc_value( GRINS::BoundaryID bc_id, libMesh::Real value );
+    libMesh::Real get_temp_bc_value( GRINS::BoundaryID bc_id ) const;
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
@@ -93,6 +88,13 @@ namespace GRINS
 		       GENERAL_HEAT_FLUX,
 		       AXISYMMETRIC};
 
+    // We need a second container to stash dirichlet values for the energy equation
+    std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
+
+    // We also need another map container
+    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
+
   };
-}
-#endif // LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
+
+} // end namespace GRINS
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H

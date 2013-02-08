@@ -134,7 +134,7 @@ shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  reacting_low_mach_cantera_regression.sh
 
 # Want these put with the distro so we can run make check
-EXTRA_DIST = $(shellfiles_src) input_files test_data
+EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno

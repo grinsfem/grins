@@ -25,11 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_ADJOINT_STAB_H
-#define HEAT_TRANSFER_ADJOINT_STAB_H
-
-//libMesh
-#include "libmesh/time_solver.h"
+#ifndef GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
+#define GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
 
 //GRINS
 #include "grins/heat_transfer_stab_base.h"
@@ -53,9 +50,6 @@ namespace GRINS
     virtual void mass_residual( bool compute_jacobian,
 				libMesh::FEMContext& context,
 				CachedValues& cache );
-
-  protected:
-
     
   private:
     HeatTransferAdjointStabilization();
@@ -64,4 +58,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //HEAT_TRANSFER_ADJOINT_STAB_H
+#endif // GRINS_HEAT_TRANSFER_ADJOINT_STAB_H

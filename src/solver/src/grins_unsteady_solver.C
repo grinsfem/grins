@@ -26,7 +26,16 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/grins_unsteady_solver.h"
+
+// GRINS
+#include "grins/solver_context.h"
+#include "grins/multiphysics_sys.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/euler_solver.h"
 
 namespace GRINS
 {

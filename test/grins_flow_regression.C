@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins/simulation.h"
+#include "grins/simulation_builder.h" 
 
 //libMesh
 #include "libmesh/exact_solution.h"

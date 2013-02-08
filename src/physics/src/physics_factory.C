@@ -57,6 +57,10 @@
 #include "grins/constant_viscosity.h"
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
+#include "grins/constant_source_func.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {

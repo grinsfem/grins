@@ -26,21 +26,23 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef BC_FACTORY_H
-#define BC_FACTORY_H
+#ifndef GRINS_BC_FACTORY_H
+#define GRINS_BC_FACTORY_H
 
 #include <string>
 #include <map>
 
-// libMesh stuff
-#include "libmesh/getpot.h"
-#include "libmesh/equation_systems.h"
-
-// GRINS stuff
+// GRINS
 #include "grins/var_typedefs.h"
 #include "grins/grins_physics_names.h"
 #include "grins/dbc_container.h"
 #include "grins/nbc_container.h"
+
+// libMesh forward declarations
+namespace libMesh
+{
+  class EquationSystems;
+}
 
 namespace GRINS
 {
@@ -71,4 +73,4 @@ namespace GRINS
 
 } // namespace GRINS
 
-#endif //BC_FACTORY_H
+#endif // GRINS_BC_FACTORY_H

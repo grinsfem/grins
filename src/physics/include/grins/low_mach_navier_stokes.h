@@ -26,11 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef LOW_MACH_NAVIER_STOKES_H
-#define LOW_MACH_NAVIER_STOKES_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_H
 
 // GRINS
 #include "grins/low_mach_navier_stokes_base.h"
+#include "grins/pressure_pinning.h"
 
 namespace GRINS
 {
@@ -119,10 +120,11 @@ namespace GRINS
 					      libMesh::FEMContext& c );
 
   private:
+
     LowMachNavierStokes();
 
   };
 
 } //End namespace block
 
-#endif // LOW_MACH_NAVIER_STOKES_H
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_H

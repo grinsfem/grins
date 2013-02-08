@@ -26,15 +26,30 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_transfer_source.h"
+
+// GRINS
+#include "grins/constant_source_func.h"
+
+// libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
 
   template< class SourceFunction >
   HeatTransferSource<SourceFunction>::HeatTransferSource( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase(physics_name,input),
-      _source(input)
+    : Physics(physics_name,input),
+      _source(input),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
+      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") ) ),
+      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") ) )
   {
     return;
   }
@@ -42,6 +57,14 @@ namespace GRINS
   template< class SourceFunction >
   HeatTransferSource<SourceFunction>::~HeatTransferSource()
   {
+    return;
+  }
+  
+  template< class SourceFunction >
+  void HeatTransferSource<SourceFunction>::init_variables( libMesh::FEMSystem* system )
+  {
+     _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+
     return;
   }
 
@@ -69,7 +92,7 @@ namespace GRINS
     const std::vector<libMesh::Point>& x_qp = context.element_fe_var[_T_var]->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -81,7 +104,7 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	Real q = _source( x_qp[qp] );
+	libMesh::Real q = _source( x_qp[qp] );
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {

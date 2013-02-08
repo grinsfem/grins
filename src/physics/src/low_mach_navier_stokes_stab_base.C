@@ -26,7 +26,13 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/low_mach_navier_stokes_stab_base.h"
+
+// GRINS
+#include "grins/constant_viscosity.h"
+#include "grins/constant_specific_heat.h"
+#include "grins/constant_conductivity.h"
 
 namespace GRINS
 {

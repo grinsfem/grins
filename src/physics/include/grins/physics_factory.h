@@ -26,16 +26,17 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef PHYSICS_FACTORY_H
-#define PHYSICS_FACTORY_H
+#ifndef GRINS_PHYSICS_FACTORY_H
+#define GRINS_PHYSICS_FACTORY_H
 
+// C++
 #include <string>
-
-// libMesh stuff
-#include "libmesh/getpot.h"
 
 // GRINS stuff
 #include "grins/var_typedefs.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
@@ -80,11 +81,13 @@ namespace GRINS
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required ) const;
 
-    void visc_cond_specheat_error( const std::string& physics, const std::string& conductivity,
-				   const std::string& viscosity, const std::string& specific_heat ) const;
+    void visc_cond_specheat_error( const std::string& physics,
+				   const std::string& conductivity,
+				   const std::string& viscosity,
+				   const std::string& specific_heat ) const;
 
   }; // class PhysicsFactory
 
 } // namespace GRINS
 
-#endif //PHYSICS_FACTORY_H
+#endif // GRINS_PHYSICS_FACTORY_H

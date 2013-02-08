@@ -26,7 +26,20 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/axisym_heat_transfer.h"
+
+// GRINS
+#include "grins/axisym_heat_transfer_bc_handling.h"
+#include "grins/constant_conductivity.h"
+
+// libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {

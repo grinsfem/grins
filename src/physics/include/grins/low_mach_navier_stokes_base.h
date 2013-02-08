@@ -26,29 +26,17 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef LOW_MACH_NAVIER_STOKES_BASE_H
-#define LOW_MACH_NAVIER_STOKES_BASE_H
-
-// libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_BASE_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_BASE_H
 
 // GRINS
-#include "grins_config.h"
 #include "grins/physics.h"
-#include "grins/pressure_pinning.h"
-#include "grins/constant_viscosity.h"
-#include "grins/constant_specific_heat.h"
-#include "grins/constant_conductivity.h"
-#include "grins/low_mach_navier_stokes_bc_handling.h"
+
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
+#include "libmesh/point.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -130,6 +118,7 @@ namespace GRINS
     bool _enable_thermo_press_calc;
 
   private:
+
     LowMachNavierStokesBase();
 
   };
@@ -200,5 +189,4 @@ namespace GRINS
 
 } // namespace GRINS
 
-
-#endif // LOW_MACH_NAVIER_STOKES_BASE_H
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_BASE_H

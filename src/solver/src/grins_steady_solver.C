@@ -26,7 +26,18 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/grins_steady_solver.h"
+
+// GRINS
+#include "grins/multiphysics_sys.h"
+#include "grins/solver_context.h"
+
+// libMesh
+#include "libmesh/auto_ptr.h"
+#include "libmesh/getpot.h"
+#include "libmesh/steady_solver.h"
+
 
 namespace GRINS
 {
