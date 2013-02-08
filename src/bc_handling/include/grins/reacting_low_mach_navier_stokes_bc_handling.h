@@ -66,13 +66,13 @@ namespace GRINS
 					 const GRINS::BCType bc_type ) const;
 
     void set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type );
-    void set_species_bc_values( GRINS::BoundaryID bc_id, const std::vector<Real>& species_values );
-    Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;
+    void set_species_bc_values( GRINS::BoundaryID bc_id, const std::vector<libMesh::Real>& species_values );
+    libMesh::Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;
 
   protected:
 
      // We need a another container to stash dirichlet values for the speccies
-    std::map< GRINS::BoundaryID, std::vector<Real> > _species_bc_values;
+    std::map< GRINS::BoundaryID, std::vector<libMesh::Real> > _species_bc_values;
 
     // We also need another map container
     std::map< GRINS::BoundaryID, GRINS::BCType> _species_bc_map;

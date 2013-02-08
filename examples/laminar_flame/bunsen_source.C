@@ -32,6 +32,12 @@
 // GRINS
 #include "grins_config.h"
 
+// libMesh
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
+
 namespace Bunsen
 {
   BunsenSource::BunsenSource( const GRINS::PhysicsName& physics_name, const GetPot& input )

@@ -68,7 +68,7 @@ namespace GRINS
     GRINS::VariableIndex _T_var;
 
     // We need a second container to stash dirichlet values for the energy equation
-    std::map< GRINS::BoundaryID, Real > _T_values;
+    std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
 
     // We also need another map container
     std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
@@ -87,12 +87,6 @@ namespace GRINS
 		       PRESCRIBED_HEAT_FLUX, 
 		       GENERAL_HEAT_FLUX,
 		       AXISYMMETRIC};
-
-    // We need a second container to stash dirichlet values for the energy equation
-    std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
-
-    // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
 
   };
 

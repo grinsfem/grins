@@ -26,9 +26,17 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/heat_conduction.h"
 
+// GRINS
 #include "grins/heat_transfer_bc_handling.h"
+
+// libMesh
+#include "libmesh/string_to_enum.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -71,8 +79,6 @@ namespace GRINS
 
   void HeatConduction::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    const unsigned int dim = system->get_mesh().mesh_dimension();
-
     // Tell the system to march temperature forward in time
     system->time_evolving(_T_var);
 

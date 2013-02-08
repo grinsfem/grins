@@ -27,10 +27,16 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "grins/reacting_low_mach_navier_stokes.h"
+#include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
 
 // GRINS
 #include "grins/string_utils.h"
+
+// libMesh
+#include "libmesh/fem_system.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/const_function.h"
+#include "libmesh/dirichlet_boundaries.h"
 
 namespace GRINS
 {
@@ -120,7 +126,7 @@ namespace GRINS
 	      libmesh_error();
 	    }
 	  
-	  std::vector<Real> species_mass_fracs(n_species_comps);
+	  std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
 
 	  for( unsigned int s = 0; s < n_species_comps; s++ )
 	    {
@@ -172,91 +178,91 @@ namespace GRINS
 	      std::string reaction = input(reactions_string, "DIE!", r);
 
 	      // First, split each reaction into reactants and products
-		std::vector<std::string> partners;       
-		SplitString(reaction, "->", partners);
+	      std::vector<std::string> partners;       
+	      SplitString(reaction, "->", partners);
 
-		const std::string& reactant = partners[0];
-		const std::string& product = partners[1];
+	      const std::string& reactant = partners[0];
+	      const std::string& product = partners[1];
 
-		// We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
-		if( partners.size() == 2 )
-		  {
-		    // Parse the reactant and product species and cache
-		    const Species& r_species = _chem_mixture.species_name_map().find( reactant )->second;
-		    const Species& p_species = _chem_mixture.species_name_map().find( product )->second;
+	      // We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
+	      if( partners.size() == 2 )
+		{
+		  // Parse the reactant and product species and cache
+		  const Species& r_species = _chem_mixture.species_name_map().find( reactant )->second;
+		  const Species& p_species = _chem_mixture.species_name_map().find( product )->second;
 
-		    std::vector<Species>::const_iterator r_it =
-		      std::find( (_reactant_list.find(bc_id)->second).begin(),
-				 (_reactant_list.find(bc_id)->second).end(),
-				 r_species );
+		  std::vector<Species>::const_iterator r_it =
+		    std::find( (_reactant_list.find(bc_id)->second).begin(),
+			       (_reactant_list.find(bc_id)->second).end(),
+			       r_species );
 
-		    if(  r_it != (_reactant_list.find(bc_id)->second).end() )
-		      {
-			std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
-				  << std::endl;
-			libmesh_error();
-		      }
+		  if(  r_it != (_reactant_list.find(bc_id)->second).end() )
+		    {
+		      std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
+				<< std::endl;
+		      libmesh_error();
+		    }
 
-		    std::vector<Species>::const_iterator p_it =
-		      std::find( (_product_list.find(bc_id)->second).begin(),
-				 (_product_list.find(bc_id)->second).end(),
-				 p_species );
+		  std::vector<Species>::const_iterator p_it =
+		    std::find( (_product_list.find(bc_id)->second).begin(),
+			       (_product_list.find(bc_id)->second).end(),
+			       p_species );
 
-		    if( p_it != (_product_list.find(bc_id)->second).end() )
-		      {
-			std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
-				  << std::endl;
-			libmesh_error();
-		      }
+		  if( p_it != (_product_list.find(bc_id)->second).end() )
+		    {
+		      std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
+				<< std::endl;
+		      libmesh_error();
+		    }
 		    
-		    reactants.push_back( r_species );
-		    products.push_back( p_species );
+		  reactants.push_back( r_species );
+		  products.push_back( p_species );
 
-		    // Parse the corresponding catalyticities and cache
-		    std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
-		    std::string gamma_p_string = "Physics/"+_physics_name+"/gamma_"+product+"_"+bc_id_string;
+		  // Parse the corresponding catalyticities and cache
+		  std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
+		  std::string gamma_p_string = "Physics/"+_physics_name+"/gamma_"+product+"_"+bc_id_string;
 
-		    if( !input.have_variable(gamma_r_string) )
-		      {
-			std::cout << "Error: Could not find catalyticity for species " << reactant 
-				  << ", for boundary " << bc_id << std::endl;
-			libmesh_error();
-		      }
-
-		    if( !input.have_variable(gamma_p_string) )
-		      {
-			std::cout << "Error: Could not find catalyticity for species " << product 
-				  << ", for boundary " << bc_id << std::endl;
-			libmesh_error();
-		      }
-
+		  if( !input.have_variable(gamma_r_string) )
 		    {
-		      libMesh::Real gamma_r = input(gamma_r_string, 0.0);
-		      std::pair<Species,libMesh::Real> r_pair( r_species, gamma_r );
-		      
-		      std::map<Species,libMesh::Real> dummy;
-		      dummy.insert( std::make_pair( r_species, gamma_r ) );
-			
-			_catalycities.insert( std::make_pair( bc_id, dummy ) );
+		      std::cout << "Error: Could not find catalyticity for species " << reactant 
+				<< ", for boundary " << bc_id << std::endl;
+		      libmesh_error();
 		    }
 
+		  if( !input.have_variable(gamma_p_string) )
 		    {
-		      libMesh::Real gamma_p = input(gamma_p_string, 0.0);
-		      std::pair<Species,libMesh::Real> p_pair( p_species, gamma_p );
-		      
-		      std::map<Species,libMesh::Real> dummy;
-		      dummy.insert( std::make_pair( p_species, gamma_p ) );
-			
-		      _catalycities.insert( std::make_pair( bc_id, dummy ) );
+		      std::cout << "Error: Could not find catalyticity for species " << product 
+				<< ", for boundary " << bc_id << std::endl;
+		      libmesh_error();
 		    }
-		  }
-		else
+
 		  {
-		    std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
-			      << "in a catalytic reaction." << std::endl
-			      << "Found " << partners.size() << " species." << std::endl;
-		    libmesh_error();
+		    libMesh::Real gamma_r = input(gamma_r_string, 0.0);
+		    std::pair<Species,libMesh::Real> r_pair( r_species, gamma_r );
+		      
+		    std::map<Species,libMesh::Real> dummy;
+		    dummy.insert( std::make_pair( r_species, gamma_r ) );
+			
+		    _catalycities.insert( std::make_pair( bc_id, dummy ) );
 		  }
+
+		  {
+		    libMesh::Real gamma_p = input(gamma_p_string, 0.0);
+		    std::pair<Species,libMesh::Real> p_pair( p_species, gamma_p );
+		      
+		    std::map<Species,libMesh::Real> dummy;
+		    dummy.insert( std::make_pair( p_species, gamma_p ) );
+			
+		    _catalycities.insert( std::make_pair( bc_id, dummy ) );
+		  }
+		}
+	      else
+		{
+		  std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+			    << "in a catalytic reaction." << std::endl
+			    << "Found " << partners.size() << " species." << std::endl;
+		  libmesh_error();
+		}
 
 	    } // end loop over catalytic reactions
 
@@ -322,7 +328,7 @@ namespace GRINS
 	    {
 	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars[s]);
 
-	      ConstFunction<Number> species_func( this->get_species_bc_value(bc_id,s) );
+	      ConstFunction<libMesh::Number> species_func( this->get_species_bc_value(bc_id,s) );
 
 	      libMesh::DirichletBoundary species_dbc( dbc_ids, 
 						      dbc_vars, 
@@ -352,14 +358,14 @@ namespace GRINS
   }
 
   void ReactingLowMachNavierStokesBCHandling::set_species_bc_values( GRINS::BoundaryID bc_id, 
-								     const std::vector<Real>& species_values )
+								     const std::vector<libMesh::Real>& species_values )
   {
     _species_bc_values[bc_id] = species_values;
     return;
   }
 
-  Real ReactingLowMachNavierStokesBCHandling::get_species_bc_value( GRINS::BoundaryID bc_id, 
-								    unsigned int species ) const
+  libMesh::Real ReactingLowMachNavierStokesBCHandling::get_species_bc_value( GRINS::BoundaryID bc_id, 
+									     unsigned int species ) const
   {
     return (_species_bc_values.find(bc_id)->second)[species];
   }
@@ -400,7 +406,7 @@ namespace GRINS
 						 this->get_neumann_bound_func( bc_id, *var ) );
 	    }
 	}
-	break;
+      break;
 
       default:
 	{

@@ -37,6 +37,12 @@
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
 #include "grins/grins_kinetics.h"
+#include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
+
+// libMesh
+#include "libmesh/quadrature.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -168,7 +174,7 @@ namespace GRINS
     const std::vector<libMesh::Point>& u_qpoint = 
       context.element_fe_var[this->_u_var]->get_xyz();
 
-    libMesh::DenseSubVector<Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     libMesh::Number u, v, w, T;
     u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
@@ -195,7 +201,7 @@ namespace GRINS
 
     const libMesh::Number r = u_qpoint[qp](0);
 
-    Real jac = JxW[qp];
+    libMesh::Real jac = JxW[qp];
 
     if( this->_bc_handler->is_axisymmetric() )
       {
@@ -206,7 +212,7 @@ namespace GRINS
     libMesh::Gradient grad_T = 
       cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
-    Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
+    libMesh::Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
 
     std::vector<libMesh::Gradient> grad_ws = cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
     libmesh_assert_equal_to( grad_ws.size(), this->_n_species );
@@ -271,15 +277,15 @@ namespace GRINS
       cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
     libmesh_assert_equal_to( grad_w.size(), this->_n_species );
 
-    const std::vector<Real>& D = 
+    const std::vector<libMesh::Real>& D = 
       cache.get_cached_vector_values(Cache::DIFFUSION_COEFFS)[qp];
 
-    const std::vector<Real>& omega_dot = 
+    const std::vector<libMesh::Real>& omega_dot = 
       cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
 
     const libMesh::Number r = s_qpoint[qp](0);
 
-    Real jac = JxW[qp];
+    libMesh::Real jac = JxW[qp];
 
     if( this->_bc_handler->is_axisymmetric() )
       {
@@ -288,10 +294,10 @@ namespace GRINS
 
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
-	libMesh::DenseSubVector<Number> &Fs = 
+	libMesh::DenseSubVector<libMesh::Number> &Fs = 
 	  *context.elem_subresiduals[this->_species_vars[s]]; // R_{s}
 
-	const Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
+	const libMesh::Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
 	const libMesh::Gradient term2 = -rho*D[s]*grad_w[s];
 
 	for (unsigned int i=0; i != n_s_dofs; i++)
@@ -334,9 +340,9 @@ namespace GRINS
     const std::vector<libMesh::Point>& u_qpoint = 
       context.element_fe_var[this->_u_var]->get_xyz();
 
-    libMesh::DenseSubVector<Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
     
     libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
 
@@ -376,7 +382,7 @@ namespace GRINS
 
     const libMesh::Number r = u_qpoint[qp](0);
 
-    Real jac = JxW[qp];
+    libMesh::Real jac = JxW[qp];
 
     if( this->_bc_handler->is_axisymmetric() )
       {
@@ -452,7 +458,7 @@ namespace GRINS
     const std::vector<libMesh::Point>& T_qpoint =
       context.element_fe_var[this->_T_var]->get_xyz();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
 
     libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
 
@@ -475,13 +481,13 @@ namespace GRINS
     const libMesh::Gradient& grad_T = 
       cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
-    const std::vector<Real>& omega_dot = 
+    const std::vector<libMesh::Real>& omega_dot = 
       cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
 
-    const std::vector<Real>& h = 
+    const std::vector<libMesh::Real>& h = 
       cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[qp];
 
-    Real chem_term = 0.0;
+    libMesh::Real chem_term = 0.0;
     
     for(unsigned int s=0; s < this->_n_species; s++ )
       {
@@ -490,7 +496,7 @@ namespace GRINS
 
     libmesh_assert( !libmesh_isnan(chem_term) );
 
-    Real jac = JxW[qp];
+    libMesh::Real jac = JxW[qp];
 
     if( this->_bc_handler->is_axisymmetric() )
       {
@@ -515,7 +521,7 @@ namespace GRINS
   {
     const unsigned int n_qpoints = context.element_qrule->n_points();
 
-    std::vector<Real> u, v, w, T, p, p0;
+    std::vector<libMesh::Real> u, v, w, T, p, p0;
     u.resize(n_qpoints);
     v.resize(n_qpoints);
     if( this->_dim > 2 )
@@ -533,18 +539,18 @@ namespace GRINS
     
     grad_T.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > mass_fractions;
+    std::vector<std::vector<libMesh::Real> > mass_fractions;
     std::vector<std::vector<libMesh::Gradient> > grad_mass_fractions;
     mass_fractions.resize(n_qpoints);
     grad_mass_fractions.resize(n_qpoints);
 
-    std::vector<Real> M;
+    std::vector<libMesh::Real> M;
     M.resize(n_qpoints);
 
-    std::vector<Real> R;
+    std::vector<libMesh::Real> R;
     R.resize(n_qpoints);
 
-    std::vector<Real> rho;
+    std::vector<libMesh::Real> rho;
     rho.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
@@ -612,22 +618,22 @@ namespace GRINS
 
     /* These quantities must be computed after rho, T, mass_fractions, p0
        are set into the cache. */
-    std::vector<Real> mu;
+    std::vector<libMesh::Real> mu;
     mu.resize(n_qpoints);
 
-    std::vector<Real> cp;
+    std::vector<libMesh::Real> cp;
     cp.resize(n_qpoints);
 
-    std::vector<Real> k;
+    std::vector<libMesh::Real> k;
     k.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > h;
+    std::vector<std::vector<libMesh::Real> > h;
     h.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > h_RT_minus_s_R;
+    std::vector<std::vector<libMesh::Real> > h_RT_minus_s_R;
     h_RT_minus_s_R.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > molar_densities;
+    std::vector<std::vector<libMesh::Real> > molar_densities;
     molar_densities.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
@@ -657,10 +663,10 @@ namespace GRINS
 
     /* Diffusion coefficients need rho, cp, k computed first.
        omega_dot may need h_RT_minus_s_R, molar_densities. */
-    std::vector<std::vector<Real> > D;
+    std::vector<std::vector<libMesh::Real> > D;
     D.resize(n_qpoints);
 
-    std::vector<std::vector<Real> > omega_dot;
+    std::vector<std::vector<libMesh::Real> > omega_dot;
     omega_dot.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
@@ -685,16 +691,16 @@ namespace GRINS
   {
     if( cache.is_active(Cache::MIXTURE_DENSITY) )
       {
-	std::vector<Real> rho_values;
+	std::vector<libMesh::Real> rho_values;
 	rho_values.reserve( points.size() );
 
-	std::vector<Real> mass_fracs( this->_n_species );
+	std::vector<libMesh::Real> mass_fracs( this->_n_species );
 	
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
 	  {
-	    Real T = this->T(*point,context);
-	    Real p0 = this->get_p0_steady(context,*point);
+	    libMesh::Real T = this->T(*point,context);
+	    libMesh::Real p0 = this->get_p0_steady(context,*point);
 	    this->mass_fractions( *point, context, mass_fracs );
 
 	    rho_values.push_back(this->rho( T, p0, mass_fracs) );
@@ -710,7 +716,7 @@ namespace GRINS
 
     if( cache.is_active(Cache::MOLE_FRACTIONS) )
       {
-	std::vector<std::vector<Real> > mole_fractions;
+	std::vector<std::vector<libMesh::Real> > mole_fractions;
 	mole_fractions.resize( points.size() );
 
 	for( unsigned int i = 0; i < points.size(); i++ )
@@ -718,13 +724,13 @@ namespace GRINS
 	    mole_fractions[i].resize( this->_n_species );
 	  }
 
-	std::vector<Real> mass_fracs( this->_n_species );
+	std::vector<libMesh::Real> mass_fracs( this->_n_species );
 
 	for( unsigned int p = 0; p < points.size(); p++ )
 	  {
 	    this->mass_fractions( points[p], context, mass_fracs );
 
-	    Real M = this->_gas_mixture.M(mass_fracs);
+	    libMesh::Real M = this->_gas_mixture.M(mass_fracs);
 
 	    this->_gas_mixture.X(M,mass_fracs,mole_fractions[p]);
 	  }
@@ -735,7 +741,7 @@ namespace GRINS
     if( cache.is_active(Cache::SPECIES_ENTHALPY) )
       {
 	{
-	  std::vector<Real> T;
+	  std::vector<libMesh::Real> T;
 	  T.resize( points.size() );
 
 	  for( unsigned int p = 0; p < points.size(); p++ )
@@ -746,7 +752,7 @@ namespace GRINS
 	  cache.set_values( Cache::TEMPERATURE, T );
 	}
 
-	std::vector<std::vector<Real> > h;
+	std::vector<std::vector<libMesh::Real> > h;
 	h.resize( points.size() );
 	for( unsigned int p = 0; p < points.size(); p++ )
 	  {
@@ -760,13 +766,13 @@ namespace GRINS
     if( cache.is_active(Cache::OMEGA_DOT) )
       {
 	{
-	  std::vector<Real> T, p0, rho, R;
+	  std::vector<libMesh::Real> T, p0, rho, R;
 	  T.resize( points.size() );
 	  p0.resize( points.size() );
 	  rho.resize( points.size() );
 	  R.resize( points.size() );
 
-	  std::vector<std::vector<Real> > Y, molar_densities;
+	  std::vector<std::vector<libMesh::Real> > Y, molar_densities;
 	  Y.resize( points.size() );
 	  molar_densities.resize( points.size() );
 
@@ -795,7 +801,7 @@ namespace GRINS
 	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
 	  cache.set_vector_values( Cache::MOLAR_DENSITIES, molar_densities );
 	  
-	  std::vector<std::vector<Real> > h;
+	  std::vector<std::vector<libMesh::Real> > h;
 	  h.resize( points.size() );
 	  for( unsigned int p = 0; p < points.size(); p++ )
 	    {
@@ -806,7 +812,7 @@ namespace GRINS
 
 	}
 
-	std::vector<std::vector<Real> > omega_dot;
+	std::vector<std::vector<libMesh::Real> > omega_dot;
 	omega_dot.resize( points.size() );
 
 	for( unsigned int p = 0; p < points.size(); p++ )

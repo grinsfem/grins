@@ -29,18 +29,6 @@
 #ifndef GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BASE_H
 #define GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BASE_H
 
-// libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fe_base.h"
-#include "libmesh/fe_interface.h"
-#include "libmesh/mesh.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/parameters.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
-
 // GRINS
 #include "grins_config.h"
 #include "grins/physics.h"
@@ -70,13 +58,13 @@ namespace GRINS
 
     unsigned int n_species() const;
 
-    Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
+    libMesh::Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
 
     void mass_fractions( const libMesh::Point& p, const libMesh::FEMContext& c,
-			 std::vector<Real>& mass_fracs ) const;
+			 std::vector<libMesh::Real>& mass_fracs ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0,
-		       const std::vector<Real>& mass_fractions) const;
+		       const std::vector<libMesh::Real>& mass_fractions) const;
 
     libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
  
@@ -123,7 +111,7 @@ namespace GRINS
 
     bool _fixed_density;
 
-    Real _fixed_rho_value;
+    libMesh::Real _fixed_rho_value;
 
   private:
 
@@ -138,8 +126,8 @@ namespace GRINS
 
   template<class Mixture>
   inline
-  Real ReactingLowMachNavierStokesBase<Mixture>::T( const libMesh::Point& p, 
-						    const libMesh::FEMContext& c ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::T( const libMesh::Point& p, 
+							     const libMesh::FEMContext& c ) const
   { return c.point_value(_T_var,p); }
 
   
@@ -147,7 +135,7 @@ namespace GRINS
   inline
   void ReactingLowMachNavierStokesBase<Mixture>::mass_fractions( const libMesh::Point& p, 
 								 const libMesh::FEMContext& c,
-								 std::vector<Real>& mass_fracs ) const
+								 std::vector<libMesh::Real>& mass_fracs ) const
   {
     libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
 
@@ -164,9 +152,9 @@ namespace GRINS
   inline
   libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::rho( libMesh::Real T, 
 							       libMesh::Real p0,
-							       const std::vector<Real>& mass_fractions) const
+							       const std::vector<libMesh::Real>& mass_fractions) const
   {
-    Real value = 0;
+    libMesh::Real value = 0;
     if( this->_fixed_density )
       value = this->_fixed_rho_value;
     else

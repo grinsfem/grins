@@ -26,7 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "ignite_initial_guess.h"
+
+// GRINS
+#include "grins/multiphysics_sys.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace Bunsen
 {

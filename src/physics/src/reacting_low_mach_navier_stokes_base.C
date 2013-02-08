@@ -38,6 +38,12 @@
 #include "grins/cantera_kinetics.h"
 #include "grins/grins_kinetics.h"
 
+// libMesh
+#include "libmesh/string_to_enum.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/fem_context.h"
+
 namespace GRINS
 {
   template<class Mixture>

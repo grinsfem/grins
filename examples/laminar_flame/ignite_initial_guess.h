@@ -29,7 +29,26 @@
 #define BUNSEN_IGNITE_INITIAL_GUESS_H
 
 // GRINS
-#include "grins/multiphysics_sys.h"
+#include "grins/var_typedefs.h"
+
+// libMesh
+#include "libmesh/auto_ptr.h"
+#include "libmesh/fem_function_base.h"
+#include "libmesh/fem_context.h"
+
+// GRINS forward declarations
+namespace GRINS
+{
+  class MultiphysicsSystem;
+}
+
+// libmesh forward declarations
+class GetPot;
+
+namespace libMesh
+{
+  class Point;
+}
 
 namespace Bunsen
 {
@@ -47,7 +66,7 @@ namespace Bunsen
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context);
 
-    virtual AutoPtr<libMesh::FEMFunctionBase<NumericType> > clone() const;
+    virtual libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> > clone() const;
 
     virtual NumericType operator()( const libMesh::FEMContext& context, 
 				    const libMesh::Point& p,
@@ -90,9 +109,9 @@ namespace Bunsen
 
   template<class NumericType>
   inline
-  AutoPtr<libMesh::FEMFunctionBase<NumericType> > IgniteInitialGuess<NumericType>::clone() const
+  libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> > IgniteInitialGuess<NumericType>::clone() const
   {
-    return AutoPtr<libMesh::FEMFunctionBase<NumericType> >( new IgniteInitialGuess(*this) );
+    return libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> >( new IgniteInitialGuess(*this) );
   }
 
   template<class NumericType>

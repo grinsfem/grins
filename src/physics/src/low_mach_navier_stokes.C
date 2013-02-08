@@ -767,7 +767,7 @@ namespace GRINS
   {
     const unsigned int n_qpoints = context.element_qrule->n_points();
 
-    std::vector<Real> u, v, w, T, p, p0;
+    std::vector<libMesh::Real> u, v, w, T, p, p0;
     u.resize(n_qpoints);
     v.resize(n_qpoints);
     if( this->_dim > 2 )
@@ -833,14 +833,14 @@ namespace GRINS
   {
     if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
       {
-	std::vector<Real> rho_values;
+	std::vector<libMesh::Real> rho_values;
 	rho_values.reserve( points.size() );
 	
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
 	  {
-	    Real T = this->T(*point,context);
-	    Real p0 = this->get_p0_steady(context,*point);
+	    libMesh::Real T = this->T(*point,context);
+	    libMesh::Real p0 = this->get_p0_steady(context,*point);
 
 	    rho_values.push_back(this->rho( T, p0 ) );
 	  }

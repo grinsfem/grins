@@ -36,8 +36,16 @@
 
 // GRINS
 #include "grins/simulation.h"
+#include "grins/simulation_builder.h"
 #include "grins/physics_factory.h"
 #include "grins/cantera_singleton.h"
+#include "grins/bc_factory.h"
+#include "grins/physics_factory.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/zero_function.h"
+#include "libmesh/parallel.h"
 
 // Cantera
 #ifdef GRINS_HAVE_CANTERA
@@ -48,9 +56,6 @@
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
-
-// libMesh
-#include "libmesh/parallel.h"
 
 class BunsenBCFactory : public GRINS::BoundaryConditionsFactory
 {

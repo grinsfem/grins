@@ -77,7 +77,7 @@ namespace GRINS
     void apply_neumann_normal( libMesh::FEMContext& context,
 			       const GRINS::VariableIndex var,
 			       const libMesh::Real sign,
-			       const Real value ) const;
+			       const libMesh::Real value ) const;
 
 
     //! Applies Neumann boundary conditions using a user-supplied function.
@@ -95,7 +95,7 @@ namespace GRINS
 				     const CachedValues& cache,
 				     const bool request_jacobian,
 				     const GRINS::VariableIndex var,
-				     const Real sign,
+				     const libMesh::Real sign,
 				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
@@ -106,7 +106,7 @@ namespace GRINS
 			       const CachedValues& cache,
 			       const bool request_jacobian,
 			       const GRINS::VariableIndex var,
-			       const Real sign,
+			       const libMesh::Real sign,
 			       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     /*! The idea here is to pin a variable to a particular value if there is

@@ -63,7 +63,7 @@ namespace GRINS
 
   protected:
 
-    Real forcing( const libMesh::Point& p );
+    libMesh::Real forcing( const libMesh::Point& p );
 
     unsigned int _dim;
 

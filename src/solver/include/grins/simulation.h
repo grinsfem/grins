@@ -37,10 +37,10 @@
 #include "grins/grins_solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
-#include "grins/boundary_conditions.h"
 #include "grins/grins_physics_names.h"
 #include "grins/nbc_container.h"
 #include "grins/dbc_container.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/getpot.h"
