@@ -40,26 +40,28 @@ namespace GRINS
     
     MagnetostaticsBCHandling( const std::string& physics_name, const GetPot& input );
     
-    ~MagnetostaticsBCHandling();
+    virtual ~MagnetostaticsBCHandling();
 
-    int string_to_int( const std::string& bc_type_in ) const;
+    virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    void init_bc_data( const GRINS::BoundaryID bc_id, 
-		       const std::string& bc_id_string, 
-		       const int bc_type, 
-		       const GetPot& input );
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    void user_apply_neumann_bcs( libMesh::FEMContext& context,
-				 GRINS::VariableIndex var,
-				 bool request_jacobian,
-				 GRINS::BoundaryID bc_id,
-				 GRINS::BCType bc_type ) const;
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const GetPot& input );
+
+    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+					 const GRINS::CachedValues& cache,
+					 bool request_jacobian,
+					 GRINS::BoundaryID bc_id,
+					 GRINS::BCType bc_type ) const;
     
-    void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
-				  libMesh::DofMap& dof_map,
-				  GRINS::BoundaryID bc_id, 
-				  GRINS::BCType bc_type ) const;
-
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
+					  libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id, 
+					  GRINS::BCType bc_type ) const;
+    
   private:
 
     MagnetostaticsBCHandling();
@@ -68,6 +70,8 @@ namespace GRINS
 		    PRESCRIBED_MAGNETIC_FLUX};
 
     std::string _A_var_name;
+
+    VariableIndex _A_var;
 
   };
 

@@ -25,8 +25,8 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#ifndef LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
-#define LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
+#ifndef GRINS_LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
+#define GRINS_LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
 
 // GRINS
 #include "grins/inc_navier_stokes_stab_helper.h"
@@ -39,7 +39,7 @@ namespace GRINS
 
     LowMachNavierStokesStabilizationHelper( const GetPot& input );
 
-    ~LowMachNavierStokesStabilizationHelper();
+    virtual ~LowMachNavierStokesStabilizationHelper();
 
     libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
 				      unsigned int qp,
@@ -76,5 +76,5 @@ namespace GRINS
     return this->compute_tau( c, qp, k*k, g, G, rho*cp, U, is_steady );
   }
   
-}
-#endif // LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
+} // end namespace GRINS
+#endif // GRINS_LOW_MACH_NAVIER_STOKES_STAB_HELPER_H

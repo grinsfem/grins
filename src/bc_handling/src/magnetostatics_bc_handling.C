@@ -60,6 +60,13 @@ namespace GRINS
     return;
   }
 
+  void MagnetostaticsBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _A_var = system.variable_number(_A_var_name);
+
+    return;
+  }
+
   int MagnetostaticsBCHandling::string_to_int( const std::string& bc_type ) const
   {
     M_BC_TYPES bc_type_out;
@@ -82,10 +89,10 @@ namespace GRINS
     return bc_type_out;
   }
   
-  void MagnetostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
-					       const std::string& bc_id_string, 
-					       const int bc_type, 
-					       const GetPot& input )
+  void MagnetostaticsBCHandling::init_bc_types( const BoundaryID bc_id, 
+						const std::string& bc_id_string, 
+						const int bc_type, 
+						const GetPot& input )
   {
     switch(bc_type)
       {
@@ -124,7 +131,7 @@ namespace GRINS
   }
 
   void MagnetostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-							 VariableIndex var,
+							 const GRINS::CachedValues& cache,
 							 bool request_jacobian,
 							 BoundaryID bc_id,
 							 BCType bc_type ) const
@@ -133,7 +140,7 @@ namespace GRINS
       {
       case(PRESCRIBED_MAGNETIC_FLUX):
 	{
-	  _bound_conds.apply_neumann_cross( context, var, 1.0,
+	  _bound_conds.apply_neumann_cross( context, _A_var, 1.0,
 					    this->get_neumann_bc_value(bc_id) );
 	}
 	break;

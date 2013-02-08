@@ -31,7 +31,6 @@
 
 namespace GRINS
 {
-
   LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper(const GetPot& input)
     : IncompressibleNavierStokesStabilizationHelper(input)
   {
@@ -43,4 +42,4 @@ namespace GRINS
     return;
   }
 
-} // namespace GRINS
+} // end namespace GRINS

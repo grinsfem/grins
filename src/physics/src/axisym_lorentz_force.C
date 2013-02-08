@@ -96,8 +96,9 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricLorentzForce::element_time_derivative( bool request_jacobian,
-							  libMesh::FEMContext& context )
+  void AxisymmetricLorentzForce::element_time_derivative( bool compute_jacobian,
+							  libMesh::FEMContext& context,
+							  CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricLorentzForce::element_time_derivative");
@@ -173,7 +174,7 @@ namespace GRINS
 	    Fr(i) += _factor*J(1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 	    Fz(i) += -_factor*J(0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 
-	    if (request_jacobian)
+	    if (compute_jacobian)
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {

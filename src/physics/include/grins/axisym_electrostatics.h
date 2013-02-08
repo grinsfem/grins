@@ -70,11 +70,13 @@ namespace GRINS
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
-    virtual void element_time_derivative( bool request_jacobian,
-					  libMesh::FEMContext& context );
+    virtual void element_time_derivative( bool compute_jacobian,
+					  libMesh::FEMContext& context,
+					  CachedValues& cache );
 
-    virtual void side_time_derivative( bool request_jacobian,
-				       libMesh::FEMContext& context );
+    virtual void side_time_derivative( bool compute_jacobian,
+				       libMesh::FEMContext& context,
+				       CachedValues& cache );
 
   protected:
 

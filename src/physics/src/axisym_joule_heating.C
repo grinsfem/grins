@@ -74,7 +74,8 @@ namespace GRINS
   }
 
   void AxisymmetricJouleHeating::element_time_derivative( bool compute_jacobian,
-							  libMesh::FEMContext& context )
+							  libMesh::FEMContext& context,
+							  CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricJouleHeating::element_time_derivative");

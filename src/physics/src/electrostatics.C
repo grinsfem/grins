@@ -93,7 +93,8 @@ namespace GRINS
   }
 
   void Electrostatics::element_time_derivative( bool compute_jacobian,
-						libMesh::FEMContext& context )
+						libMesh::FEMContext& context,
+						CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("Electrostatics::element_time_derivative");
@@ -157,7 +158,8 @@ namespace GRINS
 
 
   void Electrostatics::side_time_derivative( bool compute_jacobian,
-					     libMesh::FEMContext& context )
+					     libMesh::FEMContext& context,
+					     CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("Electrostatics::side_time_derivative");
@@ -170,7 +172,7 @@ namespace GRINS
       {
         libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 	
-	_bc_handler->apply_neumann_bcs( context, _V_var, compute_jacobian, *it );
+	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
 
 #ifdef USE_GRVY_TIMERS

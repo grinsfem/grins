@@ -82,7 +82,6 @@ physics_SRC  = $(physics_srcdir)/multiphysics_sys.C \
                $(physics_srcdir)/inc_navier_stokes_stab_helper.C \
                $(physics_srcdir)/heat_transfer_stab_helper.C \
                $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C \
-               $(physics_srcdir)/low_mach_navier_stokes_stab_helper.C \
                $(physics_srcdir)/reacting_low_mach_navier_stokes_base.C \
                $(physics_srcdir)/reacting_low_mach_navier_stokes.C \
                $(physics_srcdir)/heat_conduction.C \
@@ -143,7 +142,7 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_inc_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C \
-                  $(bc_handling_srcdir)/reacting_low_mach_navier_stokes_bc_handling.C
+                  $(bc_handling_srcdir)/reacting_low_mach_navier_stokes_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_electrostatics_bc_handling.C \
                   $(bc_handling_srcdir)/axisym_magnetostatics_bc_handling.C \
                   $(bc_handling_srcdir)/electrostatics_bc_handling.C \

@@ -106,8 +106,9 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricElectrostatics::element_time_derivative( bool request_jacobian,
-							    libMesh::FEMContext& context )
+  void AxisymmetricElectrostatics::element_time_derivative( bool compute_jacobian,
+							    libMesh::FEMContext& context,
+							    CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricElectrostatics::element_time_derivative");
@@ -157,7 +158,7 @@ namespace GRINS
 	  {
 	    F_V(i) += grad_V*V_gradphi[i][qp]*r*JxW[qp];
 	    
-	    if( request_jacobian )
+	    if( compute_jacobian )
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
@@ -172,8 +173,9 @@ namespace GRINS
   }
 
 
-  void AxisymmetricElectrostatics::side_time_derivative( bool request_jacobian,
-							 libMesh::FEMContext& context )
+  void AxisymmetricElectrostatics::side_time_derivative( bool compute_jacobian,
+							 libMesh::FEMContext& context,
+							 CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricElectrostatics::side_time_derivative");
@@ -186,7 +188,7 @@ namespace GRINS
       {
         libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 	
-	_bc_handler->apply_neumann_bcs( context, _V_var, request_jacobian, *it );
+	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
 
 #ifdef USE_GRVY_TIMERS

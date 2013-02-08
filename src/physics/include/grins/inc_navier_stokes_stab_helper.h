@@ -45,7 +45,7 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationHelper( const GetPot& input );
 
-    ~IncompressibleNavierStokesStabilizationHelper();
+    virtual ~IncompressibleNavierStokesStabilizationHelper();
 
     libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
 					  libMesh::RealGradient& g  ) const;

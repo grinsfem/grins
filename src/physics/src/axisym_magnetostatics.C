@@ -136,8 +136,9 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricMagnetostatics::element_time_derivative( bool request_jacobian,
-							    libMesh::FEMContext& context )
+  void AxisymmetricMagnetostatics::element_time_derivative( bool compute_jacobian,
+							    libMesh::FEMContext& context,
+							    CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricMagnetostatics::element_time_derivative");
@@ -203,7 +204,7 @@ namespace GRINS
 	  {
 	    F_A(i) += (curl_A*A_curl_phi[i][qp]/_mu + _sigma*grad_V*A_phi[i][qp])*r*JxW[qp];
 
-	    if( request_jacobian )
+	    if( compute_jacobian )
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
@@ -222,8 +223,9 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricMagnetostatics::side_time_derivative( bool request_jacobian,
-							 libMesh::FEMContext& context )
+  void AxisymmetricMagnetostatics::side_time_derivative( bool compute_jacobian,
+							 libMesh::FEMContext& context,
+							 CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricMagnetostatics::side_time_derivative");
@@ -236,7 +238,7 @@ namespace GRINS
       {
         libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
     
-	_bc_handler->apply_neumann_bcs( context, _A_var, request_jacobian, *it );
+	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
 
 #ifdef USE_GRVY_TIMERS
@@ -246,8 +248,9 @@ namespace GRINS
     return;
   }
   
-  void AxisymmetricMagnetostatics::side_constraint( bool request_jacobian,
-						    libMesh::FEMContext& context )
+  void AxisymmetricMagnetostatics::side_constraint( bool compute_jacobian,
+						    libMesh::FEMContext& context,
+						    CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     //this->_timer->BeginTimer("AxisymmetricMagnetostatics::side_constraint");
@@ -302,7 +305,7 @@ namespace GRINS
 		      {
 			F(i) += penalty*(A*phi[i][qp])*r*JxW[qp];
 			
-			if (request_jacobian)
+			if (compute_jacobian)
 			  {
 			    for (unsigned int j=0; j != n_A_dofs; j++)
 			      K(i,j) += penalty*(phi[j][qp]*phi[i][qp])*r*JxW[qp];
@@ -321,7 +324,7 @@ namespace GRINS
 		  {
 		    F(i) += penalty*NcA*(phi[i][qp].cross(N))*r*JxW[qp];
 		
-		    if (request_jacobian)
+		    if (compute_jacobian)
 		      {
 			for (unsigned int j=0; j != n_A_dofs; j++)
 			  K(i,j) += penalty*(phi[j][qp].cross(N))*(phi[i][qp].cross(N))*r*JxW[qp];
@@ -340,8 +343,9 @@ namespace GRINS
   }
   
 
-  void AxisymmetricMagnetostatics::mass_residual( bool request_jacobian,
-						  libMesh::FEMContext& context )
+  void AxisymmetricMagnetostatics::mass_residual( bool compute_jacobian,
+						  libMesh::FEMContext& context,
+						  CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricMagnetostatics::mass_residual");

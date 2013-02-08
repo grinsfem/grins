@@ -44,8 +44,10 @@ namespace GRINS
   class StabilizationHelper
   {
   public:
+
     StabilizationHelper();
-    ~StabilizationHelper();
+
+    virtual ~StabilizationHelper();
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient compute_g( libMesh::FEBase* fe,

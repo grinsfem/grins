@@ -43,10 +43,9 @@ namespace GRINS
 
   AxisymmetricElectrostaticsBCHandling::AxisymmetricElectrostaticsBCHandling( const std::string& physics_name,
 									      const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _V_var_name( input("Physics/VariableNames/ElectricPotential", GRINS::V_var_name_default ) )
   {
-    _V_var_name = input("Physics/VariableNames/ElectricPotential", GRINS::V_var_name_default );
-    
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
     
@@ -57,6 +56,13 @@ namespace GRINS
 
   AxisymmetricElectrostaticsBCHandling::~AxisymmetricElectrostaticsBCHandling()
   {
+    return;
+  }
+
+  void AxisymmetricElectrostaticsBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  {
+    _V_var = system.variable_number(_V_var_name);
+
     return;
   }
 
@@ -94,10 +100,10 @@ namespace GRINS
     return bc_type_out;
   }
   
-  void AxisymmetricElectrostaticsBCHandling::init_bc_data( const BoundaryID bc_id, 
-							   const std::string& bc_id_string, 
-							   const int bc_type, 
-							   const GetPot& input )
+  void AxisymmetricElectrostaticsBCHandling::init_bc_types( const BoundaryID bc_id, 
+							    const std::string& bc_id_string, 
+							    const int bc_type, 
+							    const GetPot& input )
   {
     switch(bc_type)
       {
@@ -161,7 +167,7 @@ namespace GRINS
   }
 
   void AxisymmetricElectrostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
-								     VariableIndex var,
+								     const GRINS::CachedValues& cache,
 								     bool request_jacobian,
 								     BoundaryID bc_id,
 								     BCType bc_type ) const
@@ -178,15 +184,15 @@ namespace GRINS
 	
       case(PRESCRIBED_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, var, 1.0,
+	  _bound_conds.apply_neumann_axisymmetric( context, _V_var, 1.0,
 						   this->get_neumann_bc_value(bc_id) );
 	}
 	break;
 	
       case(GENERAL_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, request_jacobian, var, 1.0, 
-						   this->get_neumann_bound_func( bc_id, var ) );
+	  _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _V_var, 1.0, 
+						   this->get_neumann_bound_func( bc_id, _V_var ) );
 	}
 	break;
 	
@@ -205,8 +211,6 @@ namespace GRINS
 								      BoundaryID bc_id,
 								      BCType bc_type ) const
   {
-    VariableIndex V_var = system->variable_number( _V_var_name );
-    
     switch( bc_type )
       {
 
@@ -216,7 +220,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(V_var);
+	  dbc_vars.push_back(_V_var);
 
 	  ConstFunction<Number> voltage_func( this->get_dirichlet_bc_value(bc_id) );
 	  

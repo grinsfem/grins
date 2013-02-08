@@ -192,9 +192,9 @@ namespace GRINS
   }
 
   template<class Conductivity>
-  void HeatTransfer::side_time_derivative( bool compute_jacobian,
-					   libMesh::FEMContext& context,
-					   CachedValues& cache )
+  void HeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
+							 libMesh::FEMContext& context,
+							 CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransfer::side_time_derivative");
@@ -207,7 +207,7 @@ namespace GRINS
       {
 	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 
-	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
 
 #ifdef GRINS_USE_GRVY_TIMERS

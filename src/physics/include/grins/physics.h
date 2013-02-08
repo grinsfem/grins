@@ -216,6 +216,7 @@ namespace GRINS
   }; // End Physics class declarations
 
   /* ------------------------- Inline Functions -------------------------*/
+  inline
   GRINS::BCHandlingBase* Physics::get_bc_handler()
   { 
     libmesh_assert(_bc_handler);

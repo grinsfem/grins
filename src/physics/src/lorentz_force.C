@@ -78,7 +78,9 @@ namespace GRINS
     return;
   }
 
-  void LorentzForce::element_time_derivative( bool request_jacobian, libMesh::FEMContext& context )
+  void LorentzForce::element_time_derivative( bool compute_jacobian,
+					      libMesh::FEMContext& context,
+					      CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("LorentzForce::element_time_derivative");
@@ -156,7 +158,7 @@ namespace GRINS
 		Fw(i) += lorentz_force(2)*u_phi[i][qp]*JxW[qp];
 	      }
 
-	    if (request_jacobian)
+	    if (compute_jacobian)
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {

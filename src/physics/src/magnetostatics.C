@@ -120,7 +120,9 @@ namespace GRINS
     return;
   }
 
-  void Magnetostatics::element_time_derivative( bool request_jacobian, libMesh::FEMContext& context )
+  void Magnetostatics::element_time_derivative( bool compute_jacobian,
+						libMesh::FEMContext& context,
+						CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("Magnetostatics::element_time_derivative");
@@ -176,7 +178,7 @@ namespace GRINS
 	  {
 	    F_A(i) += (curl_A*A_curl_phi[i][qp]/_mu + _sigma*grad_V*A_phi[i][qp])*JxW[qp];
 
-	    if( request_jacobian )
+	    if( compute_jacobian )
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
@@ -195,7 +197,9 @@ namespace GRINS
     return;
   }
 
-  void Magnetostatics::side_time_derivative( bool request_jacobian, libMesh::FEMContext& context )
+  void Magnetostatics::side_time_derivative( bool compute_jacobian,
+					     libMesh::FEMContext& context,
+					     CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("Magnetostatics::side_time_derivative");
@@ -208,7 +212,7 @@ namespace GRINS
       {
         libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
     
-	_bc_handler->apply_neumann_bcs( context, _A_var, request_jacobian, *it );
+	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
 
 #ifdef USE_GRVY_TIMERS
@@ -218,7 +222,9 @@ namespace GRINS
     return;
   }
   
-  void Magnetostatics::side_constraint( bool request_jacobian, libMesh::FEMContext& context )
+  void Magnetostatics::side_constraint( bool compute_jacobian,
+					libMesh::FEMContext& context,
+					CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     //this->_timer->BeginTimer("Magnetostatics::side_constraint");
@@ -303,7 +309,9 @@ namespace GRINS
   }
   
 
-  void Magnetostatics::mass_residual( bool request_jacobian, libMesh::FEMContext& context )
+  void Magnetostatics::mass_residual( bool compute_jacobian,
+				      libMesh::FEMContext& context,
+				      CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("Magnetostatics::mass_residual");
