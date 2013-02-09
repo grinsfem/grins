@@ -200,4 +200,37 @@ namespace GRINS
     return;
   }
 
+  void AxisymmetricLorentzForce::compute_element_cache( const libMesh::FEMContext& context, 
+							const std::vector<libMesh::Point>& points,
+							CachedValues& cache ) const
+  {
+    // Lorentz Force
+    if( cache.is_active(Cache::LORENTZ_FORCE_X) )
+      {
+	std::vector<libMesh::Real> Lr, Lz;
+	Lr.reserve( points.size() );
+	Lz.reserve( points.size() );
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient J, B;
+	    context.point_curl(_A_var,* point, B);
+	    context.point_gradient(_V_var, *point, J);
+
+	    // J = \sigma*E = -\sigma \nabla V
+	    J *= -_sigma;
+
+	    // We're explicitly assuming axisymmetric here
+	    Lr.push_back(J(1)*B(2));
+	    Lz.push_back(J(0)*B(2));
+	  }
+
+	cache.set_values( Cache::LORENTZ_FORCE_X, Lr );
+	cache.set_values( Cache::LORENTZ_FORCE_Y, Lz );
+      }
+
+    return;
+  }
+
 } // namespace GRINS

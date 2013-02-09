@@ -392,13 +392,16 @@ namespace GRINS
 
       case(ELECTRIC_FIELD):
 	{
-	  if( !multiphysics_system.has_physics(electrostatics) )
+	  if( !multiphysics_system.has_physics(electrostatics) && 
+	      !multiphysics_system.has_physics(axisymmetric_electrostatics) )
 	    {
-	      std::cerr << "Error: Must have "<< electrostatics 
-			<< " enable for electric field calculation."
+	      std::cerr << "Error: Must have "<< electrostatics << " or " 
+			<< axisymmetric_electrostatics
+			<< " enable for electric_field calculation."
 			<< std::endl;
 	      libmesh_error();
 	    }
+
 	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Ex", FIRST), ELECTRIC_FIELD_X) );
 	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Ey", FIRST), ELECTRIC_FIELD_Y) );
 	  if( dim > 2 )
@@ -413,9 +416,11 @@ namespace GRINS
 
       case(CURRENT_DENSITY):
 	{
-	  if( !multiphysics_system.has_physics(electrostatics) )
+	  if( !multiphysics_system.has_physics(electrostatics) && 
+	      !multiphysics_system.has_physics(axisymmetric_electrostatics) )
 	    {
-	      std::cerr << "Error: Must have "<< electrostatics 
+	      std::cerr << "Error: Must have "<< electrostatics << " or " 
+			<< axisymmetric_electrostatics
 			<< " enable for current density calculation."
 			<< std::endl;
 	      libmesh_error();
@@ -435,10 +440,12 @@ namespace GRINS
 
       case(MAGNETIC_FIELD):
 	{
-	  if( !multiphysics_system.has_physics(magnetostatics) )
+	  if( !multiphysics_system.has_physics(magnetostatics) &&
+	      !multiphysics_system.has_physics(axisymmetric_magnetostatics) )
 	    {
-	      std::cerr << "Error: Must have "<< magnetostatics 
-			<< " enable for magnetic field calculation."
+	      std::cerr << "Error: Must have "<< magnetostatics << " or " 
+			<< axisymmetric_magnetostatics
+			<< " enabled for magnetic field calculation."
 			<< std::endl;
 	      libmesh_error();
 	    }
@@ -458,10 +465,12 @@ namespace GRINS
 
       case(MAGNETIC_FLUX):
 	{
-	  if( !multiphysics_system.has_physics(magnetostatics) )
+	  if( !multiphysics_system.has_physics(magnetostatics) &&
+	      !multiphysics_system.has_physics(axisymmetric_magnetostatics) )
 	    {
-	      std::cerr << "Error: Must have "<< magnetostatics 
-			<< " enable for magnetic flux calculation."
+	      std::cerr << "Error: Must have "<< magnetostatics << " or " 
+			<< axisymmetric_magnetostatics
+			<< " enabled for magnetic flux calculation."
 			<< std::endl;
 	      libmesh_error();
 	    }
@@ -480,9 +489,11 @@ namespace GRINS
 
       case(LORENTZ_FORCE):
 	{
-	  if( !multiphysics_system.has_physics(magnetostatics) )
+	  if( !multiphysics_system.has_physics(lorentz_force) &&
+	      !multiphysics_system.has_physics(axisymmetric_lorentz_force) )
 	    {
-	      std::cerr << "Error: Must have "<< magnetostatics 
+	      std::cerr << "Error: Must have "<< lorentz_force << " or "
+			<< axisymmetric_lorentz_force
 			<< " enable for Lorentz force calculation."
 			<< std::endl;
 	      libmesh_error();
@@ -887,30 +898,38 @@ namespace GRINS
   template<class NumericType>
   void PostProcessedQuantities<NumericType>::build_name_map()
   {
-    _quantity_name_map["rho"]            = PERFECT_GAS_DENSITY;
-    _quantity_name_map["rho_mix"]        = MIXTURE_DENSITY;
+    _quantity_name_map["rho"]             = PERFECT_GAS_DENSITY;
+    _quantity_name_map["rho_mix"]         = MIXTURE_DENSITY;
 
-    _quantity_name_map["mu"]             = PERFECT_GAS_VISCOSITY;
-    _quantity_name_map["mu_s"]           = SPECIES_VISCOSITY;
-    _quantity_name_map["mu_mix"]         = MIXTURE_VISCOSITY;
+    _quantity_name_map["mu"]              = PERFECT_GAS_VISCOSITY;
+    _quantity_name_map["mu_s"]            = SPECIES_VISCOSITY;
+    _quantity_name_map["mu_mix"]          = MIXTURE_VISCOSITY;
 
-    _quantity_name_map["k"]              = PERFECT_GAS_THERMAL_CONDUCTIVITY;
-    _quantity_name_map["k_s"]            = SPECIES_THERMAL_CONDUCTIVITY;
-    _quantity_name_map["k_mix"]          = MIXTURE_THERMAL_CONDUCTIVITY;
+    _quantity_name_map["k"]               = PERFECT_GAS_THERMAL_CONDUCTIVITY;
+    _quantity_name_map["k_s"]             = SPECIES_THERMAL_CONDUCTIVITY;
+    _quantity_name_map["k_mix"]           = MIXTURE_THERMAL_CONDUCTIVITY;
 
-    _quantity_name_map["cp"]             = PERFECT_GAS_SPECIFIC_HEAT_P;
-    _quantity_name_map["cp_s"]           = SPECIES_SPECIFIC_HEAT_P;
-    _quantity_name_map["cp_mix"]         = MIXTURE_SPECIFIC_HEAT_P;
+    _quantity_name_map["cp"]              = PERFECT_GAS_SPECIFIC_HEAT_P;
+    _quantity_name_map["cp_s"]            = SPECIES_SPECIFIC_HEAT_P;
+    _quantity_name_map["cp_mix"]          = MIXTURE_SPECIFIC_HEAT_P;
 
-    _quantity_name_map["cv"]             = PERFECT_GAS_SPECIFIC_HEAT_V;
-    _quantity_name_map["cv_s"]           = SPECIES_SPECIFIC_HEAT_V;
-    _quantity_name_map["cv_mix"]         = MIXTURE_SPECIFIC_HEAT_V;
+    _quantity_name_map["cv"]              = PERFECT_GAS_SPECIFIC_HEAT_V;
+    _quantity_name_map["cv_s"]            = SPECIES_SPECIFIC_HEAT_V;
+    _quantity_name_map["cv_mix"]          = MIXTURE_SPECIFIC_HEAT_V;
 
-    _quantity_name_map["mole_fractions"] = MOLE_FRACTIONS;
+    _quantity_name_map["mole_fractions"]  = MOLE_FRACTIONS;
 
-    _quantity_name_map["h_s"]            = SPECIES_ENTHALPY;
+    _quantity_name_map["h_s"]             = SPECIES_ENTHALPY;
     
-    _quantity_name_map["omega_dot"]      = OMEGA_DOT;
+    _quantity_name_map["omega_dot"]       = OMEGA_DOT;
+
+    _quantity_name_map["electric_field"]  = ELECTRIC_FIELD;
+    _quantity_name_map["current_density"] = CURRENT_DENSITY;
+
+    _quantity_name_map["magnetic_field"]  = MAGNETIC_FIELD;
+    _quantity_name_map["magnetic_flux"]   = MAGNETIC_FLUX;
+
+    _quantity_name_map["lorentz_force"]   = LORENTZ_FORCE;
 
     return;
   }

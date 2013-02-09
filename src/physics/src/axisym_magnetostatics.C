@@ -436,9 +436,10 @@ namespace GRINS
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
 	  {
-	    libMesh::Gradient H = context.point_curl(_A_var,*point)/_mu;
-	    Hr.push_back(H(0));
-	    Hz.push_back(H(1));
+	    libMesh::Gradient H;
+	    context.point_curl(_A_var,*point, H);
+	    Hr.push_back(H(0)/_mu);
+	    Hz.push_back(H(1)/_mu);
 	  }
 
 	cache.set_values( Cache::MAGNETIC_FIELD_X, Hr );
@@ -471,7 +472,8 @@ namespace GRINS
 	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 		 point != points.end(); point++ )
 	      {
-		libMesh::Gradient B = context.point_curl(_A_var,*point);
+		libMesh::Gradient B;
+		context.point_curl(_A_var, *point, B);
 		Br.push_back(B(0));
 		Bz.push_back(B(1));
 	      }

@@ -381,4 +381,87 @@ namespace GRINS
     return;
   }
 
+  void Magnetostatics::compute_element_cache( const libMesh::FEMContext& context, 
+					      const std::vector<libMesh::Point>& points,
+					      CachedValues& cache ) const
+  {
+    // Magnetic Field
+    if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
+      {
+	std::vector<libMesh::Real> Hx, Hy, Hz;
+	Hx.reserve( points.size() );
+	Hy.reserve( points.size() );
+	if( _dim > 2 )
+	  Hz.reserve( points.size() );
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient H;
+	    context.point_curl(_A_var,*point, H);
+	    Hx.push_back(H(0)/_mu);
+	    Hy.push_back(H(1)/_mu);
+	    if( _dim > 2 )
+	      Hz.push_back(H(1)/_mu);
+	  }
+
+	cache.set_values( Cache::MAGNETIC_FIELD_X, Hx );
+	cache.set_values( Cache::MAGNETIC_FIELD_Y, Hy );
+	if( _dim > 2 )
+	  cache.set_values( Cache::MAGNETIC_FIELD_Z, Hz );
+	  
+      }
+
+    // Magnetic Flux
+    if( cache.is_active(Cache::MAGNETIC_FLUX_X) )
+      {
+	std::vector<libMesh::Real> Bx, By, Bz;
+	Bx.reserve( points.size() );
+	By.reserve( points.size() );
+	if( _dim > 2 )
+	  Bz.reserve( points.size() );
+
+	if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
+	  {
+	    const std::vector<libMesh::Number>& Hx = 
+	      cache.get_cached_values( Cache::MAGNETIC_FIELD_X );
+
+	    const std::vector<libMesh::Number>& Hy = 
+	      cache.get_cached_values( Cache::MAGNETIC_FIELD_Y );
+	    
+	    const std::vector<libMesh::Number>* Hz;
+	    if( _dim > 2 )
+	      Hz = &cache.get_cached_values( Cache::MAGNETIC_FIELD_Z );
+
+	    for( unsigned int p = 0; p < points.size(); p++ )
+	      {
+		Bx.push_back(_mu*Hx[p]);
+		By.push_back(_mu*Hy[p]);
+		if( _dim > 2 )
+		  Bz.push_back(_mu*(*Hz)[p]);
+	      }
+	  }
+	else
+	  {
+	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+		 point != points.end(); point++ )
+	      {
+		libMesh::Gradient B;
+		context.point_curl(_A_var, *point, B);
+		Bx.push_back(B(0));
+		By.push_back(B(1));
+		if( _dim > 2 )
+		  Bz.push_back(B(2));
+	      }
+	  }
+
+	cache.set_values( Cache::MAGNETIC_FLUX_X, Bx );
+	cache.set_values( Cache::MAGNETIC_FLUX_Y, By );
+	if( _dim > 2 )
+	  cache.set_values( Cache::MAGNETIC_FLUX_Z, Bz );
+      }
+
+    return;
+  }
+
 } // namespace GRINS

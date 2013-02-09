@@ -201,4 +201,42 @@ namespace GRINS
     return;
   }
 
+  void LorentzForce::compute_element_cache( const libMesh::FEMContext& context, 
+					    const std::vector<libMesh::Point>& points,
+					    CachedValues& cache ) const
+  {
+    // Lorentz Force
+    if( cache.is_active(Cache::LORENTZ_FORCE_X) )
+      {
+	std::vector<libMesh::Real> Lx, Ly, Lz;
+	Lx.reserve( points.size() );
+	Ly.reserve( points.size() );
+	if( _dim > 2 )
+	  Lz.reserve( points.size() );
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient J, B;
+	    context.point_curl(_A_var,* point, B);
+	    context.point_gradient(_V_var, *point, J);
+	    // J = \sigma*E = -\sigma \nabla V
+	    J *= -_sigma;
+	    libMesh::Gradient L = J.cross(B);
+
+	    Lx.push_back(L(0));
+	    Ly.push_back(L(1));
+	    if( _dim > 2 )
+	      Lz.push_back(L(2));
+	  }
+
+	cache.set_values( Cache::LORENTZ_FORCE_X, Lx );
+	cache.set_values( Cache::LORENTZ_FORCE_Y, Ly );
+	if( _dim > 2 )
+	  cache.set_values( Cache::LORENTZ_FORCE_Z, Lz );
+      }
+
+    return;
+  }
+
 } // namespace GRINS
