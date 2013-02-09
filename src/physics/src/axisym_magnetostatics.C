@@ -429,42 +429,36 @@ namespace GRINS
     // Magnetic Field
     if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
       {
-	std::vector<libMesh::Real> Hr, Hz;
-	Hr.reserve( points.size() );
-	Hz.reserve( points.size() );
+	std::vector<libMesh::Real> H;
+	H.reserve( points.size() );
 
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
 	  {
-	    libMesh::Gradient H;
-	    context.point_curl(_A_var,*point, H);
-	    Hr.push_back(H(0)/_mu);
-	    Hz.push_back(H(1)/_mu);
+	    libMesh::Gradient Hlocal;
+	    context.point_curl(_A_var,*point, Hlocal);
+	    // In 2-D, the magnetic field is only the out-of-plane component
+	    // Theta component needs a minus sign
+	    H.push_back(-Hlocal(2)/_mu);
 	  }
 
-	cache.set_values( Cache::MAGNETIC_FIELD_X, Hr );
-	cache.set_values( Cache::MAGNETIC_FIELD_Y, Hz );
+	cache.set_values( Cache::MAGNETIC_FIELD_X, H );
       }
 
     // Magnetic Flux
     if( cache.is_active(Cache::MAGNETIC_FLUX_X) )
       {
-	std::vector<libMesh::Real> Br, Bz;
-	Br.reserve( points.size() );
-	Bz.reserve( points.size() );
+	std::vector<libMesh::Real> B;
+	B.reserve( points.size() );
 
 	if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
 	  {
-	    const std::vector<libMesh::Number>& Hr = 
+	    const std::vector<libMesh::Number>& H = 
 	      cache.get_cached_values( Cache::MAGNETIC_FIELD_X );
-
-	    const std::vector<libMesh::Number>& Hz = 
-	      cache.get_cached_values( Cache::MAGNETIC_FIELD_Y );
 	    
 	    for( unsigned int p = 0; p < points.size(); p++ )
 	      {
-		Br.push_back(_mu*Hr[p]);
-		Bz.push_back(_mu*Hz[p]);
+		B.push_back(_mu*H[p]);
 	      }
 	  }
 	else
@@ -472,15 +466,15 @@ namespace GRINS
 	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 		 point != points.end(); point++ )
 	      {
-		libMesh::Gradient B;
-		context.point_curl(_A_var, *point, B);
-		Br.push_back(B(0));
-		Bz.push_back(B(1));
+		libMesh::Gradient Blocal;
+		context.point_curl(_A_var, *point, Blocal);
+		// In 2-D, the magnetic flux is only the out-of-plane component
+		// Theta component needs a minus sign
+		B.push_back(-Blocal(2));
 	      }
 	  }
 
-	cache.set_values( Cache::MAGNETIC_FLUX_X, Br );
-	cache.set_values( Cache::MAGNETIC_FLUX_Y, Bz );
+	cache.set_values( Cache::MAGNETIC_FLUX_X, B );
       }
 
     return;

@@ -450,15 +450,24 @@ namespace GRINS
 	      libmesh_error();
 	    }
 
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hx", FIRST), MAGNETIC_FIELD_X) );
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hy", FIRST), MAGNETIC_FIELD_Y) );
+	  /* In 2-D, the magnetic field is just the out-of-plane component,
+	     so we stash it in the x-component */
+	  if( dim == 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("H", FIRST), MAGNETIC_FIELD_X) );
+	  
 	  if( dim > 2 )
-	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hz", FIRST), MAGNETIC_FIELD_Z) );
+	    {
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hx", FIRST), MAGNETIC_FIELD_X) );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hy", FIRST), MAGNETIC_FIELD_Y) );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hz", FIRST), MAGNETIC_FIELD_Z) );
+	    }
 
 	  _cache.add_quantity(Cache::MAGNETIC_FIELD_X);
-	  _cache.add_quantity(Cache::MAGNETIC_FIELD_Y);
 	  if( dim > 2 )
-	    _cache.add_quantity(Cache::MAGNETIC_FIELD_Z);
+	    {
+	      _cache.add_quantity(Cache::MAGNETIC_FIELD_Y);
+	      _cache.add_quantity(Cache::MAGNETIC_FIELD_Z);
+	    }
 
 	}
 	break;
@@ -475,16 +484,25 @@ namespace GRINS
 	      libmesh_error();
 	    }
 
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bx", FIRST), MAGNETIC_FLUX_X) );
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("By", FIRST), MAGNETIC_FLUX_Y) );
+	  /* In 2-D, the magnetic flux is just the out-of-plane component,
+	     so we stash it in the x-component */
+	  if( dim == 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("B", FIRST), MAGNETIC_FLUX_X) );
 	  if( dim > 2 )
-	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bz", FIRST), MAGNETIC_FLUX_Z) );
+	    {
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bx", FIRST), MAGNETIC_FLUX_X) );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("By", FIRST), MAGNETIC_FLUX_Y) );
+	      _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bz", FIRST), MAGNETIC_FLUX_Z) );
+	    }
 
 	  _cache.add_quantity(Cache::MAGNETIC_FLUX_X);
-	  _cache.add_quantity(Cache::MAGNETIC_FLUX_Y);
 	  if( dim > 2 )
-	    _cache.add_quantity(Cache::MAGNETIC_FLUX_Z);
+	    {
+	      _cache.add_quantity(Cache::MAGNETIC_FLUX_Y);
+	      _cache.add_quantity(Cache::MAGNETIC_FLUX_Z);
+	    }
 	}
+
 	break;
 
       case(LORENTZ_FORCE):

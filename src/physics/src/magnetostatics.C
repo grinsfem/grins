@@ -390,25 +390,38 @@ namespace GRINS
       {
 	std::vector<libMesh::Real> Hx, Hy, Hz;
 	Hx.reserve( points.size() );
-	Hy.reserve( points.size() );
+	
 	if( _dim > 2 )
-	  Hz.reserve( points.size() );
+	  {
+	    Hy.reserve( points.size() );
+	    Hz.reserve( points.size() );
+	  }
 
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
 	  {
 	    libMesh::Gradient H;
 	    context.point_curl(_A_var,*point, H);
-	    Hx.push_back(H(0)/_mu);
-	    Hy.push_back(H(1)/_mu);
+
+	    // In 2-D, the magnetic field is only the out-of-plane component
+	    if( _dim == 2 )
+	      Hx.push_back(H(2)/_mu);
+
 	    if( _dim > 2 )
-	      Hz.push_back(H(1)/_mu);
+	      {
+		Hx.push_back(H(0)/_mu);
+		Hy.push_back(H(1)/_mu);
+		Hz.push_back(H(2)/_mu);
+	      }
 	  }
 
 	cache.set_values( Cache::MAGNETIC_FIELD_X, Hx );
-	cache.set_values( Cache::MAGNETIC_FIELD_Y, Hy );
+	
 	if( _dim > 2 )
-	  cache.set_values( Cache::MAGNETIC_FIELD_Z, Hz );
+	  {
+	    cache.set_values( Cache::MAGNETIC_FIELD_Y, Hy );
+	    cache.set_values( Cache::MAGNETIC_FIELD_Z, Hz );
+	  }
 	  
       }
 
@@ -417,28 +430,36 @@ namespace GRINS
       {
 	std::vector<libMesh::Real> Bx, By, Bz;
 	Bx.reserve( points.size() );
-	By.reserve( points.size() );
+	
 	if( _dim > 2 )
-	  Bz.reserve( points.size() );
+	  {
+	    By.reserve( points.size() );
+	    Bz.reserve( points.size() );
+	  }
 
 	if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
 	  {
 	    const std::vector<libMesh::Number>& Hx = 
 	      cache.get_cached_values( Cache::MAGNETIC_FIELD_X );
 
-	    const std::vector<libMesh::Number>& Hy = 
-	      cache.get_cached_values( Cache::MAGNETIC_FIELD_Y );
-	    
+	    const std::vector<libMesh::Number>* Hy;
 	    const std::vector<libMesh::Number>* Hz;
 	    if( _dim > 2 )
-	      Hz = &cache.get_cached_values( Cache::MAGNETIC_FIELD_Z );
+	      {
+		Hy = &cache.get_cached_values( Cache::MAGNETIC_FIELD_Y );
+		Hz = &cache.get_cached_values( Cache::MAGNETIC_FIELD_Z );
+	      }
 
 	    for( unsigned int p = 0; p < points.size(); p++ )
 	      {
+		// In 2-D, the magnetic field is only the out-of-plane component
 		Bx.push_back(_mu*Hx[p]);
-		By.push_back(_mu*Hy[p]);
+		
 		if( _dim > 2 )
-		  Bz.push_back(_mu*(*Hz)[p]);
+		  {
+		    By.push_back(_mu*(*Hy)[p]);
+		    Bz.push_back(_mu*(*Hz)[p]);
+		  }
 	      }
 	  }
 	else
@@ -448,17 +469,27 @@ namespace GRINS
 	      {
 		libMesh::Gradient B;
 		context.point_curl(_A_var, *point, B);
-		Bx.push_back(B(0));
-		By.push_back(B(1));
+		
+		// In 2-D, the magnetic field is only the out-of-plane component
+		if( _dim == 2 )
+		  Bx.push_back(B(2));
+		
 		if( _dim > 2 )
-		  Bz.push_back(B(2));
+		  {
+		    Bx.push_back(B(0));
+		    By.push_back(B(1));
+		    Bz.push_back(B(2));
+		  }
 	      }
 	  }
 
 	cache.set_values( Cache::MAGNETIC_FLUX_X, Bx );
-	cache.set_values( Cache::MAGNETIC_FLUX_Y, By );
+	
 	if( _dim > 2 )
-	  cache.set_values( Cache::MAGNETIC_FLUX_Z, Bz );
+	  {
+	    cache.set_values( Cache::MAGNETIC_FLUX_Y, By );
+	    cache.set_values( Cache::MAGNETIC_FLUX_Z, Bz );
+	  }
       }
 
     return;

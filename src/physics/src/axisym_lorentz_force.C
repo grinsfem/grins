@@ -163,6 +163,8 @@ namespace GRINS
 
 	context.interior_gradient(_V_var, qp, grad_V);
 	context.interior_curl(_A_var, qp, B);
+	// Theta component needs a minus sign
+	B *= -1.0;
 
 	libMesh::Gradient J = -_sigma*grad_V;
 
@@ -171,21 +173,21 @@ namespace GRINS
 	// for both at the same time.
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fr(i) += _factor*J(1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
-	    Fz(i) += -_factor*J(0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fr(i) += -_factor*J(1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+	    Fz(i) += _factor*J(0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 
 	    if (compute_jacobian)
 	      {
 		for (unsigned int j=0; j != n_V_dofs; j++)
 		  {
-		    KrV(i,j) += -_factor*_sigma*V_gradphi[j][qp](1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzV(i,j) += _factor*_sigma*V_gradphi[j][qp](0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrV(i,j) += _factor*_sigma*V_gradphi[j][qp](1)*B(2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzV(i,j) += -_factor*_sigma*V_gradphi[j][qp](0)*B(2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 	      
 		for (unsigned int j=0; j != n_A_dofs; j++)
 		  {
-		    KrA(i,j) += _factor*J(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
-		    KzA(i,j) += -_factor*J(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KrA(i,j) += -_factor*J(1)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
+		    KzA(i,j) += _factor*J(0)*A_curl_phi[j][qp](2)*vel_phi[i][qp]*r*JxW[qp];
 		  } // End j dof loop
 
 	      } // End request_jacobian check
@@ -216,13 +218,15 @@ namespace GRINS
 	  {
 	    libMesh::Gradient J, B;
 	    context.point_curl(_A_var,* point, B);
-	    context.point_gradient(_V_var, *point, J);
+	    // Theta component needs a minus sign
+	    B *= -1;
 
+	    context.point_gradient(_V_var, *point, J);
 	    // J = \sigma*E = -\sigma \nabla V
 	    J *= -_sigma;
 
 	    // We're explicitly assuming axisymmetric here
-	    Lr.push_back(J(1)*B(2));
+	    Lr.push_back(-J(1)*B(2));
 	    Lz.push_back(J(0)*B(2));
 	  }
 
