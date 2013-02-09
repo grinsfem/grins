@@ -710,7 +710,6 @@ namespace GRINS
       case(ELECTRIC_FIELD_X):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_X)[0];
 	}
 	break;
@@ -718,7 +717,6 @@ namespace GRINS
       case(ELECTRIC_FIELD_Y):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_Y)[0];
 	}
 	break;
@@ -726,7 +724,6 @@ namespace GRINS
       case(ELECTRIC_FIELD_Z):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_Z)[0];
 	}
 	break;
@@ -741,7 +738,6 @@ namespace GRINS
       case(CURRENT_DENSITY_X):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_X)[0];
 	}
 	break;
@@ -749,7 +745,6 @@ namespace GRINS
       case(CURRENT_DENSITY_Y):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_Y)[0];
 	}
 	break;
@@ -757,7 +752,6 @@ namespace GRINS
       case(CURRENT_DENSITY_Z):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_Z)[0];
 	}
 	break;
@@ -772,7 +766,6 @@ namespace GRINS
       case(MAGNETIC_FIELD_X):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_X)[0];
 	}
 	break;
@@ -780,7 +773,6 @@ namespace GRINS
       case(MAGNETIC_FIELD_Y):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_Y)[0];
 	}
 	break;
@@ -788,7 +780,6 @@ namespace GRINS
       case(MAGNETIC_FIELD_Z):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_Z)[0];
 	}
 	break;
@@ -803,7 +794,6 @@ namespace GRINS
       case(MAGNETIC_FLUX_X):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_X)[0];
 	}
 	break;
@@ -811,7 +801,6 @@ namespace GRINS
       case(MAGNETIC_FLUX_Y):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_Y)[0];
 	}
 	break;
@@ -819,7 +808,6 @@ namespace GRINS
       case(MAGNETIC_FLUX_Z):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_Z)[0];
 	}
 	break;
@@ -834,7 +822,6 @@ namespace GRINS
       case(LORENTZ_FORCE_X):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_X)[0];
 	}
 	break;
@@ -842,7 +829,6 @@ namespace GRINS
       case(LORENTZ_FORCE_Y):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_Y)[0];
 	}
 	break;
@@ -850,7 +836,6 @@ namespace GRINS
       case(LORENTZ_FORCE_Z):
 	{
 	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_Z)[0];
 	}
 	break;
