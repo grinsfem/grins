@@ -125,7 +125,27 @@ namespace GRINS
                        MIXTURE_SPECIFIC_HEAT_V,
                        MOLE_FRACTIONS,
                        SPECIES_ENTHALPY,
-                       OMEGA_DOT };
+                       OMEGA_DOT,
+		       ELECTRIC_FIELD,
+		       ELECTRIC_FIELD_X,
+		       ELECTRIC_FIELD_Y,
+		       ELECTRIC_FIELD_Z,
+		       CURRENT_DENSITY,
+		       CURRENT_DENSITY_X,
+		       CURRENT_DENSITY_Y,
+		       CURRENT_DENSITY_Z,
+                       MAGNETIC_FIELD,
+		       MAGNETIC_FIELD_X,
+		       MAGNETIC_FIELD_Y,
+		       MAGNETIC_FIELD_Z,
+		       MAGNETIC_FLUX,
+		       MAGNETIC_FLUX_X,
+		       MAGNETIC_FLUX_Y,
+		       MAGNETIC_FLUX_Z,
+                       LORENTZ_FORCE,
+                       LORENTZ_FORCE_X,
+		       LORENTZ_FORCE_Y,
+		       LORENTZ_FORCE_Z };
 
   };
 

@@ -422,5 +422,66 @@ namespace GRINS
     return;
   }
 
+  void AxisymmetricMagnetostatics::compute_element_cache( const libMesh::FEMContext& context, 
+							  const std::vector<libMesh::Point>& points,
+							  CachedValues& cache ) const
+  {
+    // Magnetic Field
+    if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
+      {
+	std::vector<libMesh::Real> Hr, Hz;
+	Hr.reserve( points.size() );
+	Hz.reserve( points.size() );
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient H = context.point_curl(_A_var,*point)/_mu;
+	    Hr.push_back(H(0));
+	    Hz.push_back(H(1));
+	  }
+
+	cache.set_values( Cache::MAGNETIC_FIELD_X, Hr );
+	cache.set_values( Cache::MAGNETIC_FIELD_Y, Hz );
+      }
+
+    // Magnetic Flux
+    if( cache.is_active(Cache::MAGNETIC_FLUX_X) )
+      {
+	std::vector<libMesh::Real> Br, Bz;
+	Br.reserve( points.size() );
+	Bz.reserve( points.size() );
+
+	if( cache.is_active(Cache::MAGNETIC_FIELD_X) )
+	  {
+	    const std::vector<libMesh::Number>& Hr = 
+	      cache.get_cached_values( Cache::MAGNETIC_FIELD_X );
+
+	    const std::vector<libMesh::Number>& Hz = 
+	      cache.get_cached_values( Cache::MAGNETIC_FIELD_Y );
+	    
+	    for( unsigned int p = 0; p < points.size(); p++ )
+	      {
+		Br.push_back(_mu*Hr[p]);
+		Bz.push_back(_mu*Hz[p]);
+	      }
+	  }
+	else
+	  {
+	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+		 point != points.end(); point++ )
+	      {
+		libMesh::Gradient B = context.point_curl(_A_var,*point);
+		Br.push_back(B(0));
+		Bz.push_back(B(1));
+	      }
+	  }
+
+	cache.set_values( Cache::MAGNETIC_FLUX_X, Br );
+	cache.set_values( Cache::MAGNETIC_FLUX_Y, Bz );
+      }
+
+    return;
+  }
 
 } // namespace GRINS

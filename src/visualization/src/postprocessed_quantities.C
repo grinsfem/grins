@@ -113,6 +113,8 @@ namespace GRINS
 							      libMesh::System& output_system,
 							      const unsigned int component )
   {
+    unsigned int dim = multiphysics_system.get_mesh().mesh_dimension();
+
     switch( component )
       {
       case(PERFECT_GAS_DENSITY):
@@ -388,6 +390,116 @@ namespace GRINS
 	}
 	break;
 
+      case(ELECTRIC_FIELD):
+	{
+	  if( !multiphysics_system.has_physics(electrostatics) )
+	    {
+	      std::cerr << "Error: Must have "<< electrostatics 
+			<< " enable for electric field calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Ex", FIRST), ELECTRIC_FIELD_X) );
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Ey", FIRST), ELECTRIC_FIELD_Y) );
+	  if( dim > 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Ez", FIRST), ELECTRIC_FIELD_Z) );
+
+	  _cache.add_quantity(Cache::ELECTRIC_FIELD_X);
+	  _cache.add_quantity(Cache::ELECTRIC_FIELD_Y);
+	  if( dim > 2 )
+	    _cache.add_quantity(Cache::ELECTRIC_FIELD_Z);
+	}
+	break;
+
+      case(CURRENT_DENSITY):
+	{
+	  if( !multiphysics_system.has_physics(electrostatics) )
+	    {
+	      std::cerr << "Error: Must have "<< electrostatics 
+			<< " enable for current density calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Jx", FIRST), CURRENT_DENSITY_X) );
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Jy", FIRST), CURRENT_DENSITY_Y) );
+	  if( dim > 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Jz", FIRST), CURRENT_DENSITY_Z) );
+
+	  _cache.add_quantity(Cache::CURRENT_DENSITY_X);
+	  _cache.add_quantity(Cache::CURRENT_DENSITY_Y);
+	  if( dim > 2 )
+	    _cache.add_quantity(Cache::CURRENT_DENSITY_Z);
+	}
+	break;
+
+      case(MAGNETIC_FIELD):
+	{
+	  if( !multiphysics_system.has_physics(magnetostatics) )
+	    {
+	      std::cerr << "Error: Must have "<< magnetostatics 
+			<< " enable for magnetic field calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hx", FIRST), MAGNETIC_FIELD_X) );
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hy", FIRST), MAGNETIC_FIELD_Y) );
+	  if( dim > 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Hz", FIRST), MAGNETIC_FIELD_Z) );
+
+	  _cache.add_quantity(Cache::MAGNETIC_FIELD_X);
+	  _cache.add_quantity(Cache::MAGNETIC_FIELD_Y);
+	  if( dim > 2 )
+	    _cache.add_quantity(Cache::MAGNETIC_FIELD_Z);
+
+	}
+	break;
+
+      case(MAGNETIC_FLUX):
+	{
+	  if( !multiphysics_system.has_physics(magnetostatics) )
+	    {
+	      std::cerr << "Error: Must have "<< magnetostatics 
+			<< " enable for magnetic flux calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bx", FIRST), MAGNETIC_FLUX_X) );
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("By", FIRST), MAGNETIC_FLUX_Y) );
+	  if( dim > 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Bz", FIRST), MAGNETIC_FLUX_Z) );
+
+	  _cache.add_quantity(Cache::MAGNETIC_FLUX_X);
+	  _cache.add_quantity(Cache::MAGNETIC_FLUX_Y);
+	  if( dim > 2 )
+	    _cache.add_quantity(Cache::MAGNETIC_FLUX_Z);
+	}
+	break;
+
+      case(LORENTZ_FORCE):
+	{
+	  if( !multiphysics_system.has_physics(magnetostatics) )
+	    {
+	      std::cerr << "Error: Must have "<< magnetostatics 
+			<< " enable for Lorentz force calculation."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Lorentzx", FIRST), LORENTZ_FORCE_X) );
+	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("Lorentzy", FIRST), LORENTZ_FORCE_Y) );
+	  if( dim > 2 )
+	    _quantity_var_map.insert( std::make_pair(output_system.add_variable("Lorentz", FIRST), LORENTZ_FORCE_Z) );
+
+	  _cache.add_quantity(Cache::LORENTZ_FORCE_X);
+	  _cache.add_quantity(Cache::LORENTZ_FORCE_Y);
+	  if( dim > 2 )
+	    _cache.add_quantity(Cache::LORENTZ_FORCE_Z);
+	}
+	break;
+
       default:
 	{
 	  std::cerr << "Error: Invalid quantity " << component << std::endl;
@@ -574,6 +686,161 @@ namespace GRINS
 	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
 	  unsigned int species = _species_var_map.find(component)->second;
 	  value = this->_cache.get_cached_vector_values(Cache::OMEGA_DOT)[0][species];
+	}
+	break;
+
+      case(ELECTRIC_FIELD):
+	{
+	  // This shouldn't happen since we only need to compute the components
+	  libmesh_error();
+	}
+	break;
+
+      case(ELECTRIC_FIELD_X):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_X)[0];
+	}
+	break;
+
+      case(ELECTRIC_FIELD_Y):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_Y)[0];
+	}
+	break;
+
+      case(ELECTRIC_FIELD_Z):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::ELECTRIC_FIELD_Z)[0];
+	}
+	break;
+
+      case(CURRENT_DENSITY):
+	{
+	  // This shouldn't happen since we only need to compute the components
+	  libmesh_error();
+	}
+	break;
+
+      case(CURRENT_DENSITY_X):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_X)[0];
+	}
+	break;
+
+      case(CURRENT_DENSITY_Y):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_Y)[0];
+	}
+	break;
+
+      case(CURRENT_DENSITY_Z):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::CURRENT_DENSITY_Z)[0];
+	}
+	break;
+
+      case(MAGNETIC_FIELD):
+	{
+	  // This shouldn't happen since we only need to compute the components
+	  libmesh_error();
+	}
+	break;
+
+      case(MAGNETIC_FIELD_X):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_X)[0];
+	}
+	break;
+
+      case(MAGNETIC_FIELD_Y):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_Y)[0];
+	}
+	break;
+
+      case(MAGNETIC_FIELD_Z):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FIELD_Z)[0];
+	}
+	break;
+
+      case(MAGNETIC_FLUX):
+	{
+	  // This shouldn't happen since we only need to compute the components
+	  libmesh_error();
+	}
+	break;
+
+      case(MAGNETIC_FLUX_X):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_X)[0];
+	}
+	break;
+
+      case(MAGNETIC_FLUX_Y):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_Y)[0];
+	}
+	break;
+
+      case(MAGNETIC_FLUX_Z):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::MAGNETIC_FLUX_Z)[0];
+	}
+	break;
+
+      case(LORENTZ_FORCE):
+	{
+	  // This shouldn't happen since we only need to compute the components
+	  libmesh_error();
+	}
+	break;
+
+      case(LORENTZ_FORCE_X):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_X)[0];
+	}
+	break;
+
+      case(LORENTZ_FORCE_Y):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_Y)[0];
+	}
+	break;
+
+      case(LORENTZ_FORCE_Z):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  value = this->_cache.get_cached_values(Cache::LORENTZ_FORCE_Z)[0];
 	}
 	break;
 

@@ -43,7 +43,8 @@
 namespace GRINS
 {
   AxisymmetricElectrostatics::AxisymmetricElectrostatics(const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name,input)
+    : Physics(physics_name,input),
+      _sigma( input("Physics/AxisymmetricElectrostatics/sigma", 1.0 ) )
   {
     this->read_input_options(input);
   
@@ -198,4 +199,66 @@ namespace GRINS
     return;
   }
 
+  void AxisymmetricElectrostatics::compute_element_cache( const libMesh::FEMContext& context, 
+							  const std::vector<libMesh::Point>& points,
+							  CachedValues& cache ) const
+  {
+    // Electric Field
+    if( cache.is_active(Cache::ELECTRIC_FIELD_X) )
+      {
+	std::vector<libMesh::Real> Er, Ez;
+	Er.reserve( points.size() );
+	Ez.reserve( points.size() );
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient E = -context.point_gradient(_V_var,*point);
+	    Er.push_back(E(0));
+	    Ez.push_back(E(1));
+	  }
+
+	cache.set_values( Cache::ELECTRIC_FIELD_X, Er );
+	cache.set_values( Cache::ELECTRIC_FIELD_Y, Ez );
+      }
+
+    // Current Density
+    if( cache.is_active(Cache::CURRENT_DENSITY_X) )
+      {
+	std::vector<libMesh::Real> Jr, Jz;
+	Jr.reserve( points.size() );
+	Jz.reserve( points.size() );
+
+	if( cache.is_active(Cache::ELECTRIC_FIELD_X) )
+	  {
+	    const std::vector<libMesh::Number>& Er = 
+	      cache.get_cached_values( Cache::ELECTRIC_FIELD_X );
+
+	    const std::vector<libMesh::Number>& Ez = 
+	      cache.get_cached_values( Cache::ELECTRIC_FIELD_Y );
+	    
+	    for( unsigned int p = 0; p < points.size(); p++ )
+	      {
+		Jr.push_back(_sigma*Er[p]);
+		Jz.push_back(_sigma*Ez[p]);
+	      }
+	  }
+	else
+	  {
+	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+		 point != points.end(); point++ )
+	      {
+		libMesh::Gradient J = -_sigma*context.point_gradient(_V_var,*point);
+		Jr.push_back(J(0));
+		Jz.push_back(J(1));
+	      }
+	  }
+
+	cache.set_values( Cache::CURRENT_DENSITY_X, Jr );
+	cache.set_values( Cache::CURRENT_DENSITY_Y, Jz );
+      }
+
+    return;
+  }
+  
 } //namespace GRINS

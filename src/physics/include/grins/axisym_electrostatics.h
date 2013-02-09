@@ -78,6 +78,10 @@ namespace GRINS
 				       libMesh::FEMContext& context,
 				       CachedValues& cache );
 
+    virtual void compute_element_cache( const libMesh::FEMContext& context, 
+					const std::vector<libMesh::Point>& points,
+					CachedValues& cache ) const;
+
   protected:
 
     //! Physical dimension of problem
@@ -95,6 +99,8 @@ namespace GRINS
 
     //! Temperature element order, read from input
     libMeshEnums::Order _V_order;
+
+    libMesh::Real _sigma;
 
   private:
     AxisymmetricElectrostatics();

@@ -45,7 +45,8 @@ namespace GRINS
     : Physics(physics_name,input),
       _V_var_name( input("Physics/VariableNames/ElectricPotential", GRINS::V_var_name_default ) ),
       _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+electrostatics+"/FE_family", "LAGRANGE") ) ),
-      _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+electrostatics+"/V_order", "SECOND") ) )
+      _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+electrostatics+"/V_order", "SECOND") ) ),
+      _sigma( input("Physics/Electrostatics/sigma", 1.0 ) )
   {
     _bc_handler = new GRINS::ElectrostaticsBCHandling( physics_name, input );
 
@@ -181,5 +182,86 @@ namespace GRINS
     
     return;
   }
+
+  void Electrostatics::compute_element_cache( const libMesh::FEMContext& context, 
+					      const std::vector<libMesh::Point>& points,
+					      CachedValues& cache ) const
+  {
+    // Electric Field
+    if( cache.is_active(Cache::ELECTRIC_FIELD_X) )
+      {
+	std::vector<libMesh::Real> Ex, Ey, Ez;
+	Ex.reserve( points.size() );
+	Ey.reserve( points.size() );
+	if( _dim > 2 )
+	  Ez.reserve( points.size() );
+	
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+	  {
+	    libMesh::Gradient E = -context.point_gradient(_V_var,*point);
+	    Ex.push_back(E(0));
+	    Ey.push_back(E(1));
+	    if( _dim > 2 )
+	      Ez.push_back(E(2));
+	  }
+
+	cache.set_values( Cache::ELECTRIC_FIELD_X, Ex );
+	cache.set_values( Cache::ELECTRIC_FIELD_Y, Ey );
+	if( _dim > 2 )
+	  cache.set_values( Cache::ELECTRIC_FIELD_Z, Ez );
+      }
+
+    // Current Density
+    if( cache.is_active(Cache::CURRENT_DENSITY_X) )
+      {
+	std::vector<libMesh::Real> Jx, Jy, Jz;
+	Jx.reserve( points.size() );
+	Jy.reserve( points.size() );
+	if( _dim > 2 )
+	  Jz.reserve( points.size() );
+
+	if( cache.is_active(Cache::ELECTRIC_FIELD_X) )
+	  {
+	    const std::vector<libMesh::Number>& Ex = 
+	      cache.get_cached_values( Cache::ELECTRIC_FIELD_X );
+
+	    const std::vector<libMesh::Number>& Ey = 
+	      cache.get_cached_values( Cache::ELECTRIC_FIELD_Y );
+	    
+	    const std::vector<libMesh::Number>* Ez;
+	    if( _dim > 2 )
+	      Ez = &cache.get_cached_values( Cache::ELECTRIC_FIELD_Z );
+
+	    for( unsigned int p = 0; p < points.size(); p++ )
+	      {
+		Jx.push_back(_sigma*Ex[p]);
+		Jy.push_back(_sigma*Ey[p]);
+		if( _dim > 2 )
+		  Jz.push_back(_sigma*(*Ez)[p]);
+	      }
+	  }
+	else
+	  {
+	    for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+		 point != points.end(); point++ )
+	      {
+		libMesh::Gradient J = -_sigma*context.point_gradient(_V_var,*point);
+		Jx.push_back(J(0));
+		Jy.push_back(J(1));
+		if( _dim > 2 )
+		  Jz.push_back(J(2));
+	      }
+	  }
+
+	cache.set_values( Cache::CURRENT_DENSITY_X, Jx );
+	cache.set_values( Cache::CURRENT_DENSITY_Y, Jy );
+	if( _dim > 2 )
+	  cache.set_values( Cache::CURRENT_DENSITY_Z, Jz );
+      }
+
+    return;
+  }  
 
 } // namespace GRINS
