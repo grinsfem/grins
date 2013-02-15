@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
+#include "grins/catalytic_wall.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -302,7 +303,61 @@ namespace GRINS
 	// Add CatalyticWall for each reactant and product
 	if( bc_type == CATALYTIC_WALL )
 	  {
-	    libmesh_not_implemented();
+	    // Reactants first
+	    {
+	      const std::vector<Species>& reactants = _reactant_list.find(bc_id)->second;
+	      for( std::vector<Species>::const_iterator r = reactants.begin();
+		   r != reactants.end(); ++r )
+		{
+		  NBCContainer cont;
+
+		  cont.set_bc_id( bc_id );
+
+		  unsigned int species_idx = _chem_mixture.species_list_map().find(*r)->second;
+		  
+		  libMesh::Real gamma = (_catalycities.find(bc_id)->second).find(*r)->second; 
+
+		  // -gamma since the reactant is being consumed
+		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall( _chem_mixture,
+										species_idx,
+										_T_var,
+										-gamma ) );
+
+		  VariableIndex var = _species_vars[species_idx];
+
+		  cont.add_var_func_pair( var, func );
+		
+		  this->attach_neumann_bound_func( cont );
+	      }
+	    }
+
+	    // Products
+	    {
+	      const std::vector<Species>& products = _product_list.find(bc_id)->second;
+	      for( std::vector<Species>::const_iterator p = products.begin();
+		   p != products.end(); ++p )
+		{
+		  NBCContainer cont;
+
+		  cont.set_bc_id( bc_id );
+
+		  unsigned int species_idx = _chem_mixture.species_list_map().find(*p)->second;
+
+		  libMesh::Real gamma = (_catalycities.find(bc_id)->second).find(*p)->second;
+
+		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall( _chem_mixture,
+										species_idx,
+										_T_var,
+										gamma ) );
+
+		  VariableIndex var = _species_vars[species_idx];
+
+		  cont.add_var_func_pair( var, func );
+		
+		  this->attach_neumann_bound_func( cont );
+		}
+	    }
+
 	  } // end check on CATALYTIC_WALL
       } // end loop over bc_ids
 
