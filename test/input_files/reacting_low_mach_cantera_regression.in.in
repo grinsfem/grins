@@ -6,7 +6,7 @@ enabled_physics = 'ReactingLowMachNavierStokes'
 [./Chemistry]
 
 species   = 'N2 N'
-chem_file = '@abs_top_srcdir@/test/input_files/air_2sp.xml'
+chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 mixture   = 'air2sp'
 
 [../Transport]

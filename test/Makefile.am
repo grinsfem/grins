@@ -65,15 +65,15 @@ gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
-chem_mixture_SOURCES = chem_mixture.C
-cea_thermo_test_SOURCES = cea_thermo_test.C
-cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
-cantera_transport_test_SOURCES = cantera_transport_test.C
-ideal_gas_mixture_cantera_SOURCES = ideal_gas_mixture_cantera.C
-reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
-arrhenius_rate_test_SOURCES = arrhenius_rate_test.C
-grins_kinetics_regression_SOURCES = grins_kinetics_regression.C
-catalytic_wall_unit_SOURCES = catalytic_wall_unit.C
+chem_mixture_SOURCES = $(top_srcdir)/test/chem_mixture.C
+cea_thermo_test_SOURCES = $(top_srcdir)/test/cea_thermo_test.C
+cantera_chem_thermo_test_SOURCES = $(top_srcdir)/test/cantera_chem_thermo_test.C
+cantera_transport_test_SOURCES = $(top_srcdir)/test/cantera_transport_test.C
+ideal_gas_mixture_cantera_SOURCES = $(top_srcdir)/test/ideal_gas_mixture_cantera.C
+reacting_low_mach_regression_SOURCES = $(top_srcdir)/test/reacting_low_mach_regression.C
+arrhenius_rate_test_SOURCES = $(top_srcdir)/test/arrhenius_rate_test.C
+grins_kinetics_regression_SOURCES = $(top_srcdir)/test/grins_kinetics_regression.C
+catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 
 # List of source files for license stamping
 testsrc = $(test_ns_couette_flow_2d_x_SOURCES)       \
