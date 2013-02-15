@@ -66,6 +66,7 @@ namespace GRINS
 
   std::tr1::shared_ptr<NeumannFuncObj> NBCContainer::get_func( VariableIndex var ) const
   {
+    libmesh_assert( _funcs.find(var) != _funcs.end() );
     return _funcs.find(var)->second;
   }
 

@@ -192,30 +192,35 @@ namespace GRINS
 		  const Species& r_species = _chem_mixture.species_name_map().find( reactant )->second;
 		  const Species& p_species = _chem_mixture.species_name_map().find( product )->second;
 
-		  std::vector<Species>::const_iterator r_it =
-		    std::find( (_reactant_list.find(bc_id)->second).begin(),
-			       (_reactant_list.find(bc_id)->second).end(),
-			       r_species );
-
-		  if(  r_it != (_reactant_list.find(bc_id)->second).end() )
+		  // Make sure there's something in there already. Fix for GLIBCXX_DEBUG error.
+		  if( _reactant_list.find(bc_id) != _reactant_list.end() )
 		    {
-		      std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
-				<< std::endl;
-		      libmesh_error();
-		    }
+		      std::vector<Species>::const_iterator r_it =
+			std::find( (_reactant_list.find(bc_id)->second).begin(),
+				   (_reactant_list.find(bc_id)->second).end(),
+				   r_species );
 
-		  std::vector<Species>::const_iterator p_it =
-		    std::find( (_product_list.find(bc_id)->second).begin(),
-			       (_product_list.find(bc_id)->second).end(),
-			       p_species );
+		      if(  r_it != (_reactant_list.find(bc_id)->second).end() )
+			{
+			  std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
+				    << std::endl;
+			  libmesh_error();
+			}
 
-		  if( p_it != (_product_list.find(bc_id)->second).end() )
-		    {
-		      std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
-				<< std::endl;
-		      libmesh_error();
-		    }
+		      std::vector<Species>::const_iterator p_it =
+			std::find( (_product_list.find(bc_id)->second).begin(),
+				   (_product_list.find(bc_id)->second).end(),
+				   p_species );
+
+		      if( p_it != (_product_list.find(bc_id)->second).end() )
+			{
+			  std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
+				    << std::endl;
+			  libmesh_error();
+			}
 		    
+		    }
+
 		  reactants.push_back( r_species );
 		  products.push_back( p_species );
 
@@ -239,22 +244,23 @@ namespace GRINS
 
 		  {
 		    libMesh::Real gamma_r = input(gamma_r_string, 0.0);
-		    std::pair<Species,libMesh::Real> r_pair( r_species, gamma_r );
-		      
-		    std::map<Species,libMesh::Real> dummy;
-		    dummy.insert( std::make_pair( r_species, gamma_r ) );
-			
-		    _catalycities.insert( std::make_pair( bc_id, dummy ) );
+
+		    if( _catalycities.find(bc_id) == _catalycities.end() )
+		      {
+			std::map<Species,libMesh::Real> dummy;
+			dummy.insert( std::make_pair( r_species, gamma_r ) );
+			_catalycities.insert( std::make_pair( bc_id, dummy ) );
+		      }
+		    else
+		      {
+			(_catalycities.find(bc_id)->second).insert( std::make_pair( r_species, gamma_r ) );
+		      }
 		  }
 
 		  {
 		    libMesh::Real gamma_p = input(gamma_p_string, 0.0);
-		    std::pair<Species,libMesh::Real> p_pair( p_species, gamma_p );
-		      
-		    std::map<Species,libMesh::Real> dummy;
-		    dummy.insert( std::make_pair( p_species, gamma_p ) );
 			
-		    _catalycities.insert( std::make_pair( bc_id, dummy ) );
+		    (_catalycities.find(bc_id)->second).insert( std::make_pair( p_species, gamma_p ) );
 		  }
 		}
 	      else
@@ -294,8 +300,8 @@ namespace GRINS
       }
 
     // See if we have a catalytic wall
-    for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _species_bc_map.begin();
-	 bc_map != _species_bc_map.end(); ++bc_map )
+    for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _neumann_bc_map.begin();
+	 bc_map != _neumann_bc_map.end(); ++bc_map )
       {
 	const BoundaryID bc_id = bc_map->first;
 	const BCType bc_type = bc_map->second;
@@ -450,7 +456,6 @@ namespace GRINS
     switch( bc_type )
       {
       case( GENERAL_SPECIES ):
-      case( CATALYTIC_WALL ):
 	{
 	  for( std::vector<VariableIndex>::const_iterator var = _species_vars.begin();
 	       var != _species_vars.end();
@@ -460,6 +465,58 @@ namespace GRINS
 						 -1.0, 
 						 this->get_neumann_bound_func( bc_id, *var ) );
 	    }
+	}
+	break;
+
+      case( CATALYTIC_WALL ):
+	{
+	  libmesh_assert( _reactant_list.find(bc_id) != _reactant_list.end() );
+	  libmesh_assert( _product_list.find(bc_id)  != _product_list.end() );
+
+	  const std::vector<Species>& reactants = _reactant_list.find(bc_id)->second;
+	  const std::vector<Species>& products = _product_list.find(bc_id)->second;
+
+	  for( std::vector<Species>::const_iterator reactant = reactants.begin();
+	       reactant != reactants.end();
+	       ++reactant )
+	    {
+	      /*! \todo We should just cache the map between species and variable number explicitly */
+	      std::vector<std::string>::const_iterator it = std::search_n( _species_var_names.begin(),
+									   _species_var_names.end(),
+									   1,
+									   "w_"+_chem_mixture.species_inverse_name_map().find(*reactant)->second );
+
+	      std::cout << _chem_mixture.species_inverse_name_map().find(*reactant)->second << std::endl;
+	      std::cout << *it << std::endl;
+
+	      unsigned int species_idx = static_cast<unsigned int>(it - _species_var_names.begin());
+
+	      const VariableIndex var = _species_vars[species_idx];
+
+	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, var,
+						 -1.0, 
+						 this->get_neumann_bound_func( bc_id, var ) );
+	    }
+
+	  for( std::vector<Species>::const_iterator product = products.begin();
+	       product != products.end();
+	       ++product )
+	    {
+	      /*! \todo We should just cache the map between species and variable number explicitly */
+	      std::vector<std::string>::const_iterator it = std::search_n( _species_var_names.begin(),
+									   _species_var_names.end(),
+									   1,
+									   "w_"+_chem_mixture.species_inverse_name_map().find(*product)->second );
+
+	      unsigned int species_idx = static_cast<unsigned int>(it - _species_var_names.begin());
+
+	      const VariableIndex var = _species_vars[species_idx];
+
+	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, var,
+						 -1.0, 
+						 this->get_neumann_bound_func( bc_id, var ) );
+	    }
+
 	}
       break;
 

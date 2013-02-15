@@ -122,22 +122,21 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool /*compute_jacobian*/,
-								   libMesh::FEMContext& /*context*/,
-								   CachedValues& /*cache*/ )
+  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool compute_jacobian,
+								   libMesh::FEMContext& context,
+								   CachedValues& cache )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
 
-    /*
-    const GRINS::BoundaryID boundary_id =
-      system->get_mesh().boundary_info->boundary_id(context.elem, context.side);
+    std::vector<BoundaryID> ids = context.side_boundary_ids();
 
-    libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
+	 it != ids.end(); it++ )
+      {
+	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 
-    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[3], compute_jacobian, boundary_id );
-
-    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[1], compute_jacobian, boundary_id );
-    */
+	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+      }
 
     return;
   }
