@@ -118,6 +118,7 @@ TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh            \
          $(top_builddir)/test/reacting_low_mach_cantera_regression.sh
 
 TESTS += $(top_builddir)/test/reacting_low_mach_grins_kinetics_regression.sh
+TESTS += $(top_builddir)/test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh
 
 shellfiles_src = test_ns_couette_flow_2d_x.sh       \
                  test_ns_couette_flow_2d_y.sh       \
