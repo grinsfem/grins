@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef QOI_BASE_H
-#define QOI_BASE_H
+#ifndef GRINS_QOI_BASE_H
+#define GRINS_QOI_BASE_H
 
 // C++
 #include <iomanip>
@@ -95,4 +95,4 @@ namespace GRINS
     std::vector<libMesh::Number> _qoi_cache;
   };
 }
-#endif //QOI_BASE_H
+#endif // GRINS_QOI_BASE_H
