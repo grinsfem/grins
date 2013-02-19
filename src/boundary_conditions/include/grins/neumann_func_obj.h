@@ -34,6 +34,9 @@
 // libMesh
 #include "libmesh/point.h"
 
+// C++
+#include <vector>
+
 // libMesh forward declarations
 namespace libMesh
 {
@@ -103,11 +106,11 @@ namespace GRINS
 					     const unsigned int qp, 
 					     const GRINS::VariableIndex jac_var );
 
-    std::vector<GRINS::VariableIndex> get_other_jac_vars();
+    const std::vector<VariableIndex>& get_other_jac_vars();
 
   protected:
 
-    std::vector<GRINS::VariableIndex> _jac_vars;
+    std::vector<VariableIndex> _jac_vars;
 
   }; // class NeumannFuncObj
   
