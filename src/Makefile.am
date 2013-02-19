@@ -262,7 +262,8 @@ qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
 kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h \
                $(kinetics_incdir)/grins/reaction.h \
                $(kinetics_incdir)/grins/reaction_set.h \
-               $(kinetics_incdir)/grins/grins_kinetics.h
+               $(kinetics_incdir)/grins/grins_kinetics.h \
+               $(kinetics_incdir)/grins/reaction_enum.h
 
 includedir = $(prefix)/include/grins
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
