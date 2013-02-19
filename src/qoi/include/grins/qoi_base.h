@@ -43,12 +43,14 @@ class GetPot;
 
 namespace libMesh
 {
-  class FEMSystem;
   class QoISet;
 }
 
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
+
   class QoIBase : public libMesh::DifferentiableQoI
   {
   public:
@@ -60,7 +62,7 @@ namespace GRINS
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.
      */
-    virtual void init( const GetPot& /*input*/, const libMesh::FEMSystem& /*system*/ ){};
+    virtual void init( const GetPot& /*input*/, const MultiphysicsSystem& /*system*/ ){};
 
     /*!
      * Method to allow QoI to resize libMesh::System storage of QoI computations.
@@ -75,7 +77,7 @@ namespace GRINS
      */
     virtual void parallel_op( std::vector<libMesh::Number>& sys_qoi,
 			      std::vector<libMesh::Number>& local_qoi,
-			      const QoISet& qoi_indices );
+			      const libMesh::QoISet& qoi_indices );
 
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.

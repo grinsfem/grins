@@ -38,7 +38,7 @@
 namespace GRINS
 {
   QoIBase::QoIBase()
-    : DifferentiableQoI()
+    : libMesh::DifferentiableQoI()
   {
     return;
   }
