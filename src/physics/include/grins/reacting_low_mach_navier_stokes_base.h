@@ -74,6 +74,8 @@ namespace GRINS
 
     libMesh::Real get_p0_transient( const libMesh::FEMContext& c, unsigned int qp ) const;
 
+    const Mixture& gas_mixture() const;
+
   protected:
 
     libMesh::Number _p0;
@@ -231,6 +233,13 @@ namespace GRINS
 	p0 = _p0;
       }
     return p0;
+  }
+
+  template<class Mixture>
+  inline
+  const Mixture& ReactingLowMachNavierStokesBase<Mixture>::gas_mixture() const
+  {
+    return _gas_mixture;
   }
 
 } // namespace GRINS
