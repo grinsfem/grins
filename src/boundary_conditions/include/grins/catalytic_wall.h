@@ -75,6 +75,8 @@ namespace GRINS
 
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
+    void set_gamma( const libMesh::Real gamma );
+
   protected:
 
     const ChemicalMixture& _chem_mixture;
@@ -110,6 +112,13 @@ namespace GRINS
   libMesh::Real CatalyticWall::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
     return this->_helper.domega_dot_dT(rho_s,T);
+  }
+
+  inline
+  void CatalyticWall::set_gamma( const libMesh::Real gamma )
+  {
+    this->_helper.set_gamma(gamma);
+    return;
   }
 
 } // namespace GRINS

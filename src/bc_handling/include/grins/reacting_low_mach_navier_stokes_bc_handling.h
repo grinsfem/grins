@@ -83,7 +83,7 @@ namespace GRINS
 
     std::map<BoundaryID,std::vector<Species> > _reactant_list;
     std::map<BoundaryID,std::vector<Species> > _product_list;
-    std::map<BoundaryID,std::map<Species,libMesh::Real> >_catalycities;
+    std::map<BoundaryID,std::map<Species,libMesh::Real> > _catalycities;
 
     const ChemicalMixture& _chem_mixture;
 

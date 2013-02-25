@@ -183,6 +183,8 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache ) const;
 
+    BCHandlingBase* get_bc_handler(); 
+
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
@@ -212,6 +214,14 @@ namespace GRINS
     Physics();
 
   }; // End Physics class declarations
+
+  /* ------------------------- Inline Functions -------------------------*/
+
+  inline
+  BCHandlingBase* Physics::get_bc_handler()
+  {
+    return _bc_handler;
+  }
 
 } // End namespace GRINS
 
