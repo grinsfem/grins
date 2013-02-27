@@ -345,6 +345,9 @@ if MASA_ENABLED
   AM_LDFLAGS  = $(MASA_LIBS)
 endif
 
+#--------------
+# Code coverage
+#--------------
 if CODE_COVERAGE_ENABLED
   CLEANFILES = *.gcda *.gcno
 endif
