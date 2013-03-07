@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,14 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "error_estimation_factory.h"
+// This class
+#include "grins/error_estimation_factory.h"
+
+// libMesh
+#include "libmesh/adjoint_residual_error_estimator.h"
+#include "libmesh/getpot.h"
+#include "libmesh/patch_recovery_error_estimator.h"
+#include "libmesh/qoi_set.h"
 
 namespace GRINS
 {
@@ -41,9 +48,8 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<ErrorEstimator> ErrorEstimatorFactory::build(
-    const GetPot& input,
-    std::tr1::shared_ptr<GRINS::QoIBase> qoi_base )
+  std::tr1::shared_ptr<ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input,
+								     std::tr1::shared_ptr<GRINS::QoIBase> qoi_base )
   {
     // check if qoi_base is an empty pointer (user set no QoI), in that case return empty pointer.
     if( qoi_base == std::tr1::shared_ptr<QoIBase>() )
@@ -56,7 +62,7 @@ namespace GRINS
     
     error_estimator.reset( adjoint_residual_estimator );
     
-    adjoint_residual_estimator->adjoint_already_solved = true;
+    //adjoint_residual_estimator->adjoint_already_solved = true;
     
     std::string estimator_type = input( "Adaptivity/estimator_type", "patch" );
     if( estimator_type == "patch" )

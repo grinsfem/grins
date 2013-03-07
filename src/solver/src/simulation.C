@@ -111,6 +111,7 @@ namespace GRINS
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
     context.postprocessing = _postprocessing;
+    context.error_estimator = _error_estimator;
 
     _solver->solve( context );
 

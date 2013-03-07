@@ -37,13 +37,7 @@
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
-#include "physics_factory.h"
-#include "mesh_builder.h"
-#include "solver_factory.h"
-#include "visualization_factory.h"
-#include "bc_factory.h"
-#include "qoi_factory.h"
-#include "error_estimation_factory.h"
+#include "grins/error_estimation_factory.h"
 
 namespace GRINS
 {
@@ -69,6 +63,12 @@ namespace GRINS
     std::tr1::shared_ptr<QoIBase> build_qoi( const GetPot& input );
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > build_postprocessing( const GetPot& input );
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
+									 std::tr1::shared_ptr<QoIBase> qoi );
+
+    std::tr1::shared_ptr<libMesh::AdjointRefinementEstimator> build_adjoint_refinement_estimator( const GetPot& input,
+												  std::tr1::shared_ptr<QoIBase> qoi );
 
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 

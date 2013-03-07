@@ -137,13 +137,15 @@ sfiles_DATA = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 includedir = $(prefix)/include/grins
 include_HEADERS =
 
-# src/bc_handling headers
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/inc_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
+solver_INC   = $(solver_incdir)/grins/grins_solver.h \
+               $(solver_incdir)/grins/mesh_builder.h \
+               $(solver_incdir)/grins/simulation.h \
+               $(solver_incdir)/grins/solver_factory.h \
+               $(solver_incdir)/grins/grins_steady_solver.h \
+               $(solver_incdir)/grins/grins_unsteady_solver.h \
+               $(solver_incdir)/grins/grins_mesh_adaptive_solver.h \
+               $(solver_incdir)/grins/simulation_builder.h \
+               $(solver_incdir)/grins/solver_context.h
 
 # src/boundary_conditions headers
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_types.h

@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -29,22 +29,34 @@
 #ifndef GRINS_MESH_ADAPTIVE_SOLVER_H
 #define GRINS_MESH_ADAPTIVE_SOLVER_H
 
-//GRINS
-#include "grins_solver.h"
-#include "qoi_base.h"
-#include "visualization.h"
+// C++
+#include <string>
+
+// GRINS
+#include "grins/grins_solver.h"
 
 //libMesh
-#include "auto_ptr.h"
-#include "equation_systems.h"
-#include "error_vector.h"
-#include "mesh_refinement.h"
+#include "libmesh/libmesh.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/mesh_refinement.h"
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class MeshBase;
+}
 
 namespace GRINS
 {
+  // Forward declartions
+  class SolverContext;
+  class MultiphysicsSystem;
+
   class MeshAdaptiveSolver : public Solver
   {
   public:
+
     MeshAdaptiveSolver( const GetPot& input );
 
     virtual ~MeshAdaptiveSolver();
@@ -62,24 +74,24 @@ namespace GRINS
       std::tr1::shared_ptr<libMesh::ErrorEstimator>() );
 
   protected:
+
     unsigned int _max_r_steps;
     bool _coarsen_by_parents;
-    Real _absolute_global_tolerance;
+    libMesh::Real _absolute_global_tolerance;
     unsigned int _nelem_target;
-    Real _refine_fraction;
-    Real _coarsen_fraction;
-    Real _coarsen_threshold;
+    libMesh::Real _refine_fraction;
+    libMesh::Real _coarsen_fraction;
+    libMesh::Real _coarsen_threshold;
     bool _output_adjoint_sol;
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
-    libMesh::AutoPtr<MeshRefinement> _mesh_refinement;
+    libMesh::AutoPtr<libMesh::MeshRefinement> _mesh_refinement;
 
-    virtual void init_time_solver( GRINS::MultiphysicsSystem* system );
+    virtual void init_time_solver( MultiphysicsSystem* system );
 
-    void read_input_options( const GetPot& input );
-
-    void build_mesh_refinement( MeshBase &mesh );
+    void build_mesh_refinement( libMesh::MeshBase& mesh );
   };
-} // namespace GRINS
+
+} // end namespace GRINS
 #endif // GRINS_STEADY_SOLVER_H
