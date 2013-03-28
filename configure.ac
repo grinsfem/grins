@@ -74,8 +74,11 @@ if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
    CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
-   CXXFLAGS="-O0 -g -Wall -fno-unsafe-math-optimizations"
+   CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
 fi
+
+dnl -Wall warnings, -Wall the time.
+AX_CXXFLAGS_WARN_ALL
 
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
