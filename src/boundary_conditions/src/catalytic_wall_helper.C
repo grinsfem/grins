@@ -27,64 +27,24 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "grins/qoi_base.h"
+#include "grins/catalytic_wall_helper.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
+// GRINS
+#include "grins/math_constants.h"
 
 namespace GRINS
 {
-  QoIBase::QoIBase()
-    : libMesh::DifferentiableQoI()
+  CatalyticWallHelper::CatalyticWallHelper( const libMesh::Real R_s, const libMesh::Real M_s,
+					    const libMesh::Real gamma_s )
+    : _gamma_s(gamma_s),
+      _C( std::sqrt( R_s/(GRINS::Constants::two_pi*M_s) ) )
   {
     return;
   }
 
-  QoIBase::~QoIBase()
+  CatalyticWallHelper::~CatalyticWallHelper()
   {
     return;
   }
 
-  void QoIBase::init_qoi( std::vector<Number>& sys_qoi )
-  {
-    sys_qoi.resize(1, 0.0);
-    return;
-  }
-
-  void QoIBase::parallel_op( std::vector<Number>& sys_qoi, std::vector<Number>& local_qoi,
-			     const QoISet& qoi_indices )
-  {
-    libMesh::DifferentiableQoI::parallel_op( sys_qoi, local_qoi, qoi_indices );
-    _qoi_cache = sys_qoi;
-    return;
-  }
-
-  void QoIBase::output_qoi( std::ostream& out ) const
-  {
-    if( !_qoi_cache.empty() )
-      {
-	out << "========================================================================" << std::endl;
-
-	for(  unsigned int i = 0; i < _qoi_cache.size(); i++ )
-	  {
-	    out << "QoI #" << i << " = " 
-		<< std::setprecision(16) 
-		<< std::scientific
-		<< _qoi_cache[i] << std::endl;
-	  }
-
-	out << "========================================================================" << std::endl;
-      }
-
-    return;
-  }
-
-  Number QoIBase::get_qoi( unsigned int qoi_index ) const
-  {
-    return _qoi_cache[qoi_index];
-  }
-  
-} // namespace GRINS
+} // end namespace GRINS

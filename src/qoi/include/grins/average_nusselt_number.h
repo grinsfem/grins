@@ -45,16 +45,16 @@ namespace GRINS
 
     virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
 
-    virtual void side_qoi( DiffContext& context, const QoISet& qoi_indices );
+    virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
 
-    virtual void init( const GetPot& input, const libMesh::FEMSystem& system );
+    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
   protected:
 
     virtual void read_input_options( const GetPot& input );
 
     //! Thermal conductivity
-    Real _k;
+    libMesh::Real _k;
 
     //! Temperature variable index
     VariableIndex _T_var;
@@ -63,9 +63,10 @@ namespace GRINS
     std::set<libMesh::boundary_id_type> _bc_ids;
 
     //! Scaling constant
-    Real _scaling;
+    libMesh::Real _scaling;
 
   private:
+
     AverageNusseltNumber();
 
   };

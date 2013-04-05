@@ -29,6 +29,9 @@
 // This class
 #include "grins/vorticity.h"
 
+// GRINS
+#include "grins/multiphysics_sys.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_context.h"
@@ -56,7 +59,7 @@ namespace GRINS
     return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new Vorticity( *this ) );
   }
 
-  void Vorticity::init( const GetPot& input, const libMesh::FEMSystem& system )
+  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
   {
     // Grab velocity variable indices
     std::string u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default);
@@ -87,25 +90,25 @@ namespace GRINS
     return;
   }
 
-  void Vorticity::element_qoi( DiffContext& context, const QoISet& )
+  void Vorticity::element_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     if( _subdomain_ids.find( (c.elem)->subdomain_id() ) != _subdomain_ids.end() )
       {
-	FEBase* element_fe;
-	c.get_element_fe<Real>(this->_u_var, element_fe);
-	const std::vector<Real> &JxW = element_fe->get_JxW();
+	libMesh::FEBase* element_fe;
+	c.get_element_fe<libMesh::Real>(this->_u_var, element_fe);
+	const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
 
 	unsigned int n_qpoints = (c.get_element_qrule())->n_points();
 
 	/*! \todo Need to generalize this to the multiple QoI case */
-	Number& qoi = c.elem_qoi[0];
+	libMesh::Number& qoi = c.elem_qoi[0];
 
 	for( unsigned int qp = 0; qp != n_qpoints; qp++ )
 	  {
-	    Gradient grad_u = 0.;
-	    Gradient grad_v = 0.;
+	    libMesh::Gradient grad_u = 0.;
+	    libMesh::Gradient grad_v = 0.;
 	    c.interior_gradient( this->_u_var, qp, grad_u );
 	    c.interior_gradient( this->_v_var, qp, grad_v );
 	    qoi += (grad_v(0) - grad_u(1)) * JxW[qp];
@@ -115,18 +118,18 @@ namespace GRINS
     return;
   }
 
-  void Vorticity::element_qoi_derivative( DiffContext &context, const QoISet & )
+  void Vorticity::element_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet & )
   {
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
 
     if( _subdomain_ids.find( (c.elem)->subdomain_id() ) != _subdomain_ids.end() )
       {
 	// Element
-	FEBase* element_fe;
-	c.get_element_fe<Real>(this->_u_var, element_fe);
+	libMesh::FEBase* element_fe;
+	c.get_element_fe<libMesh::Real>(this->_u_var, element_fe);
 
 	// Jacobian times integration weights
-	const std::vector<Real> &JxW = element_fe->get_JxW();
+	const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
 
 	// Grad of basis functions
 	const std::vector<std::vector<libMesh::RealGradient> >& du_phi =
@@ -141,8 +144,8 @@ namespace GRINS
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C
 	/*! \todo Need to generalize this to the multiple QoI case */
-	DenseSubVector<Number> &Qu = *c.elem_qoi_subderivatives[0][0];
-	DenseSubVector<Number> &Qv = *c.elem_qoi_subderivatives[0][1];
+	libMesh::DenseSubVector<Number> &Qu = *c.elem_qoi_subderivatives[0][0];
+	libMesh::DenseSubVector<Number> &Qv = *c.elem_qoi_subderivatives[0][1];
 
 	// Integration loop
 	for( unsigned int qp = 0; qp != n_qpoints; qp++ )

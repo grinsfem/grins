@@ -59,18 +59,18 @@ namespace GRINS
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
         here. For example, variable indices. */
-    virtual void init( const GetPot& input, const libMesh::FEMSystem& system );
+    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
         computed over area of input subdomain id. Vorticity computed as 
         \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
-    virtual void element_qoi( DiffContext& context, const QoISet& qoi_indices );
+    virtual void element_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
 
     //! Compute the qoi derivative with respect to the solution.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
         computed over area of input subdomain id. */
-    virtual void element_qoi_derivative( DiffContext &context, const QoISet &qois );
+    virtual void element_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet &qois );
 
   protected:
 

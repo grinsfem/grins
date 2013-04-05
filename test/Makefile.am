@@ -117,9 +117,10 @@ TESTS += $(top_builddir)/test/low_mach_cavity_benchmark_regression.sh
 TESTS += $(top_builddir)/test/backward_facing_step_regression.sh
 TESTS += $(top_builddir)/test/coupled_stokes_ns.sh
 TESTS += $(top_builddir)/test/reacting_low_mach_cantera_regression.sh
+TESTS += $(top_builddir)/test/reacting_low_mach_grins_kinetics_regression.sh
+TESTS += $(top_builddir)/test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh
 TESTS += $(top_builddir)/test/magnetostatics_regression.sh
 TESTS += $(top_builddir)/test/hartmann_flow_exact.sh
-
 
 shellfiles_src  = test_ns_couette_flow_2d_x.sh
 shellfiles_src += test_ns_couette_flow_2d_y.sh

@@ -31,6 +31,7 @@
 // GRINS
 #include "grins/math_constants.h"
 #include "grins/neumann_func_obj.h"
+#include "grins/catalytic_wall_helper.h"
 
 // libMesh forward declarations
 namespace libMesh
@@ -74,6 +75,8 @@ namespace GRINS
 
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
+    void set_gamma( const libMesh::Real gamma );
+
   protected:
 
     const ChemicalMixture& _chem_mixture;
@@ -82,10 +85,7 @@ namespace GRINS
 
     VariableIndex _T_var;
 
-    libMesh::Real _gamma;
-
-    //! \f$ \sqrt{ \frac{R_s}{2\pi M_s} } \f$
-    const libMesh::Real _C;
+    CatalyticWallHelper _helper;
 
   private:
 
@@ -98,20 +98,27 @@ namespace GRINS
   inline
   libMesh::Real CatalyticWall::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return rho_s*_gamma*_C*std::sqrt(T);
+    return this->_helper.omega_dot(rho_s,T);
   }
 
   inline
   libMesh::Real CatalyticWall::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
 					       const libMesh::Real T, const libMesh::Real R ) const
   {
-    return (1.0/w_s - rho_s/R)*(this->omega_dot( rho_s, T ));
+    return this->_helper.domega_dot_dws(rho_s, w_s, T, R);
   }
 
   inline
   libMesh::Real CatalyticWall::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return -0.5/T*(this->omega_dot( rho_s, T ));
+    return this->_helper.domega_dot_dT(rho_s,T);
+  }
+
+  inline
+  void CatalyticWall::set_gamma( const libMesh::Real gamma )
+  {
+    this->_helper.set_gamma(gamma);
+    return;
   }
 
 } // namespace GRINS

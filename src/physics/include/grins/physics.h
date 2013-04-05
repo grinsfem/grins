@@ -164,8 +164,6 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
-    GRINS::BCHandlingBase* get_bc_handler();
-
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
 							CachedValues& cache ) const;
 
@@ -185,6 +183,8 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache ) const;
 
+    BCHandlingBase* get_bc_handler(); 
+
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
@@ -196,7 +196,7 @@ namespace GRINS
       in GRINS namespace */
     const PhysicsName& _physics_name;
 
-    GRINS::BCHandlingBase* _bc_handler;
+    BCHandlingBase* _bc_handler;
 
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;
@@ -217,7 +217,7 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  GRINS::BCHandlingBase* Physics::get_bc_handler()
+  BCHandlingBase* Physics::get_bc_handler()
   { 
     libmesh_assert(_bc_handler);
     return _bc_handler;

@@ -122,22 +122,21 @@ namespace GRINS
   }
 
   template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool /*compute_jacobian*/,
-								   libMesh::FEMContext& /*context*/,
-								   CachedValues& /*cache*/ )
+  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool compute_jacobian,
+								   libMesh::FEMContext& context,
+								   CachedValues& cache )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
 
-    /*
-    const GRINS::BoundaryID boundary_id =
-      system->get_mesh().boundary_info->boundary_id(context.elem, context.side);
+    std::vector<BoundaryID> ids = context.side_boundary_ids();
 
-    libmesh_assert (boundary_id != libMesh::BoundaryInfo::invalid_id);
+    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
+	 it != ids.end(); it++ )
+      {
+	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 
-    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[3], compute_jacobian, boundary_id );
-
-    this->_bc_handler->apply_neumann_bcs( context, this->_species_vars[1], compute_jacobian, boundary_id );
-    */
+	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+      }
 
     return;
   }
@@ -680,6 +679,45 @@ namespace GRINS
 
     cache.set_vector_values(Cache::DIFFUSION_COEFFS, D);
     cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
+
+    return;
+  }
+
+  template<class Mixture>
+  void ReactingLowMachNavierStokes<Mixture>::compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
+										 CachedValues& cache ) const
+  {
+    const unsigned int n_qpoints = context.side_qrule->n_points();
+
+    // Need for Catalytic Wall
+    /*! \todo Add mechanism for checking if this side is a catalytic wall so we don't 
+              compute these quantities unnecessarily. */
+    std::vector<libMesh::Real> T, rho;
+    T.resize(n_qpoints);
+    rho.resize(n_qpoints);
+
+    std::vector<std::vector<libMesh::Real> > mass_fractions;
+    mass_fractions.resize(n_qpoints);
+
+    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+      {
+	T[qp] = context.side_value(this->_T_var, qp);
+
+	mass_fractions[qp].resize(this->_n_species);
+	for( unsigned int s = 0; s < this->_n_species; s++ )
+	  {
+	    /*! \todo Need to figure out something smarter for controling species
+	              that go slightly negative. */
+	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars[s],qp), 0.0 );
+	  }
+	const libMesh::Real p0 = this->get_p0_steady_side(context, qp);
+
+	rho[qp] = this->rho( T[qp], p0, mass_fractions[qp] );
+      }
+
+    cache.set_values(Cache::TEMPERATURE, T);
+    cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fractions);
+    cache.set_values(Cache::MIXTURE_DENSITY, rho);
 
     return;
   }

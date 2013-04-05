@@ -2,6 +2,6 @@
 
 PROG="@top_builddir@/test/cantera_chem_thermo_test"
 
-INPUT="@top_srcdir@/test/input_files/cantera_chem_thermo.in"
+INPUT="@top_builddir@/test/input_files/cantera_chem_thermo.in"
 
 $PROG $INPUT $PETSC_OPTIONS 

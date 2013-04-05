@@ -74,8 +74,11 @@ if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
    CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
-   CXXFLAGS="-O0 -g -Wall -fno-unsafe-math-optimizations"
+   CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
 fi
+
+dnl -Wall warnings, -Wall the time.
+AX_CXXFLAGS_WARN_ALL
 
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
@@ -286,27 +289,32 @@ AC_CONFIG_FILES(doxygen/txt_common/about.page)
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
 dnl-----------------------------------------------
-AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	      [chmod +x test/test_axi_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,            [chmod +x test/test_ns_couette_flow_2d_x.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,            [chmod +x test/test_ns_couette_flow_2d_y.sh])
-AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,              [chmod +x test/test_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,          [chmod +x test/test_stokes_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,        [chmod +x test/test_thermally_driven_2d_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,        [chmod +x test/test_thermally_driven_3d_flow.sh])
-AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,       [chmod +x test/test_axi_thermally_driven_flow.sh])
-AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,             [chmod +x test/test_axi_ns_con_cyl_flow.sh])
-AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                   [chmod +x test/test_vorticity_qoi.sh])
+AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	                  [chmod +x test/test_axi_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,                        [chmod +x test/test_ns_couette_flow_2d_x.sh])
+AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,                        [chmod +x test/test_ns_couette_flow_2d_y.sh])
+AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod +x test/test_ns_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
+AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,                   [chmod +x test/test_axi_thermally_driven_flow.sh])
+AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,                         [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                               [chmod +x test/test_vorticity_qoi.sh])
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
-AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh, [chmod +x test/low_mach_cavity_benchmark_regression.sh])
-AC_CONFIG_FILES(test/backward_facing_step_regression.sh,      [chmod +x test/backward_facing_step_regression.sh])
+AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh,             [chmod +x test/low_mach_cavity_benchmark_regression.sh])
+AC_CONFIG_FILES(test/backward_facing_step_regression.sh,                  [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
-AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                    [chmod +x test/coupled_stokes_ns.sh])
+AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                                [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
-AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	      [chmod +x test/cantera_chem_thermo_test.sh])
-AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh, [chmod +x test/reacting_low_mach_cantera_regression.sh])
+AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	                  [chmod +x test/cantera_chem_thermo_test.sh])
+AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
+AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh,             [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
-AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	      [chmod +x test/grins_kinetics_regression.sh])
+AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	                  [chmod +x test/grins_kinetics_regression.sh])
+AC_CONFIG_FILES(test/reacting_low_mach_grins_kinetics_regression.sh,      [chmod +x test/reacting_low_mach_grins_kinetics_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_grins_kinetics_regression.in)
+AC_CONFIG_FILES(test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh, [chmod +x test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics_regression.in)
 AC_CONFIG_FILES(test/magnetostatics_regression.sh,            [chmod +x test/magnetostatics_regression.sh])
 AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                  [chmod +x test/hartmann_flow_exact.sh])
 

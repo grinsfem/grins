@@ -131,6 +131,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
+    std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
+
     void compute_element_cache( const libMesh::FEMContext& context,
 				const std::vector<libMesh::Point>& points,
 				CachedValues& cache ) const;
@@ -154,6 +156,14 @@ namespace GRINS
 #endif
 
   };
+
+  inline
+  std::tr1::shared_ptr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
+  {
+    libmesh_assert(_physics_list.find( physics_name ) != _physics_list.end());
+
+    return _physics_list.find(physics_name)->second;
+  }
 
 } //End namespace block
 

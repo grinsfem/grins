@@ -105,7 +105,7 @@ namespace GRINS
     return 0.0;
   }
 
-  std::vector<VariableIndex> NeumannFuncObj:: get_other_jac_vars()
+  const std::vector<VariableIndex>& NeumannFuncObj::get_other_jac_vars()
   {
     return _jac_vars;
   }
