@@ -75,7 +75,8 @@ namespace GRINS
      * If the QoI is not expressable as a sum over elements, then this will need to be
      * overridden with the correct libMesh::Parallel operations.
      */
-    virtual void parallel_op( std::vector<libMesh::Number>& sys_qoi,
+    virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
+                              std::vector<libMesh::Number>& sys_qoi,
 			      std::vector<libMesh::Number>& local_qoi,
 			      const libMesh::QoISet& qoi_indices );
 

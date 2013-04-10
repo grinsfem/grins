@@ -54,10 +54,12 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::parallel_op( std::vector<Number>& sys_qoi, std::vector<Number>& local_qoi,
+  void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
+                             std::vector<Number>& sys_qoi,
+                             std::vector<Number>& local_qoi,
 			     const QoISet& qoi_indices )
   {
-    libMesh::DifferentiableQoI::parallel_op( sys_qoi, local_qoi, qoi_indices );
+    libMesh::DifferentiableQoI::parallel_op( communicator, sys_qoi, local_qoi, qoi_indices );
     _qoi_cache = sys_qoi;
     return;
   }
