@@ -774,7 +774,36 @@ namespace GRINS
 
     if( cache.is_active(Cache::MIXTURE_SPECIFIC_HEAT_P) )
       {
-	libmesh_not_implemented();
+	std::vector<libMesh::Real> cp_values;
+	cp_values.reserve( points.size() );
+
+        std::vector<libMesh::Real> T;
+        T.resize( points.size() );
+
+	std::vector<std::vector<libMesh::Real> >  mass_fracs;
+	mass_fracs.resize( points.size() );
+
+        for( unsigned int i = 0; i < points.size(); i++ )
+	  {
+            mass_fracs[i].resize( this->_n_species );
+	  }
+
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    T[p] = this->T(points[p],context);
+
+            this->mass_fractions( points[p], context, mass_fracs[p] );
+          }
+        
+        cache.set_values( Cache::TEMPERATURE, T );
+        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
+
+        for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    cp_values.push_back( this->_gas_mixture.cp( cache, p ) );
+	  }
+
+	cache.set_values( Cache::MIXTURE_SPECIFIC_HEAT_P, cp_values );
       }
 
     if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_V) )
