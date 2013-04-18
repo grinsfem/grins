@@ -44,8 +44,14 @@ namespace GRINS
 {
   AxisymmetricElectrostatics::AxisymmetricElectrostatics(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _sigma( input("Physics/AxisymmetricElectrostatics/sigma", 1.0 ) )
+      _sigma( input("Physics/AxisymmetricElectrostatics/sigma", 0.0 ) )
   {
+    if( _sigma == 0.0 )
+      {
+        std::cerr << "Error: Found sigma = 0 in AxisymmetricElectrostatics!" << std::endl;
+        libmesh_error();
+      }
+
     this->read_input_options(input);
   
     _bc_handler = new GRINS::AxisymmetricElectrostaticsBCHandling( physics_name, input );
@@ -236,7 +242,7 @@ namespace GRINS
 
 	    const std::vector<libMesh::Number>& Ez = 
 	      cache.get_cached_values( Cache::ELECTRIC_FIELD_Y );
-	    
+
 	    for( unsigned int p = 0; p < points.size(); p++ )
 	      {
 		Jr.push_back(_sigma*Er[p]);
