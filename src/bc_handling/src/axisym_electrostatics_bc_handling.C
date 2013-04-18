@@ -184,14 +184,14 @@ namespace GRINS
 	
       case(PRESCRIBED_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, _V_var, 1.0,
+	  _bound_conds.apply_neumann_axisymmetric( context, _V_var, -1.0,
 						   this->get_neumann_bc_value(bc_id) );
 	}
 	break;
 	
       case(GENERAL_CURRENT):
 	{
-	  _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _V_var, 1.0, 
+	  _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _V_var, -1.0, 
 						   this->get_neumann_bound_func( bc_id, _V_var ) );
 	}
 	break;
