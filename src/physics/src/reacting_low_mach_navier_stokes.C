@@ -752,6 +752,41 @@ namespace GRINS
 	libmesh_not_implemented();
       }
 
+    if( cache.is_active(Cache::MIXTURE_VISCOSITY) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::SPECIES_THERMAL_CONDUCTIVITY) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::MIXTURE_THERMAL_CONDUCTIVITY) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_P) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::MIXTURE_SPECIFIC_HEAT_P) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_V) )
+      {
+	libmesh_not_implemented();
+      }
+
+    if( cache.is_active(Cache::MIXTURE_SPECIFIC_HEAT_V) )
+      {
+	libmesh_not_implemented();
+      }
+
     if( cache.is_active(Cache::MOLE_FRACTIONS) )
       {
 	std::vector<std::vector<libMesh::Real> > mole_fractions;
