@@ -65,9 +65,11 @@ dnl----------------
 AX_PATH_LIBMESH_NEW(0.9.0,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
-               AC_HELP_STRING([--enable-libmesh-flags],[enable use of libmesh cxxflags for CXXFLAGS]),
+               AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
+               USE_LIBMESH_CXX_FLAGS=0
+               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,0,[Define if libmesh cxxflags enabled]),
                USE_LIBMESH_CXX_FLAGS=1
-               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled]),[])
+               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled]))
 
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
