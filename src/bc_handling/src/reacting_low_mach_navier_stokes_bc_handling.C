@@ -83,6 +83,10 @@ namespace GRINS
       {
 	bc_type_out = PRESCRIBED_SPECIES;
       }
+    else if( bc_type == "prescribed_mole_fracs" )
+      {
+	bc_type_out = PRESCRIBED_MOLE_FRACTIONS;
+      }
     else if( bc_type == "catalytic_wall" )
       {
 	bc_type_out = CATALYTIC_WALL;
@@ -141,6 +145,54 @@ namespace GRINS
 		  libmesh_error();
 		}
 	    }
+
+	  this->set_species_bc_values( bc_id, species_mass_fracs );
+	}
+	break;
+
+      case(PRESCRIBED_MOLE_FRACTIONS):
+	{
+	  this->set_species_bc_type( bc_id, bc_type );
+
+	  unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_string);
+
+	  if( n_species_comps != _n_species )
+	    {
+	      std::cerr << "Error: The number of prescribed species values must match" << std::endl
+			<< "       the number of species in the simulation." << std::endl
+			<< "n_species       = " << _n_species << std::endl
+			<< "n_species_comps = " << n_species_comps << std::endl;
+	      libmesh_error();
+	    }
+	  
+	  std::vector<libMesh::Real> species_mole_fracs(n_species_comps);
+
+	  for( unsigned int s = 0; s < n_species_comps; s++ )
+	    {
+	      species_mole_fracs[s] = input("Physics/"+_physics_name+"/bound_species_"+bc_id_string, -1.0, s );
+
+	      if( (species_mole_fracs[s] > 1.0) ||
+		  (species_mole_fracs[s] < 0.0)   )
+		{
+		  std::cerr << "Error: prescribed species mole fraction must be between 0.0 and 1.0" << std::endl
+			    << "w[" << s << "] = " << species_mole_fracs[s] << std::endl;
+		  libmesh_error();
+		}
+	    }
+
+          // Compute M
+          libMesh::Real M = 0.0;
+          for( unsigned int s = 0; s < n_species_comps; s++ )
+	    {
+              M += species_mole_fracs[s]*_chem_mixture.M(s);
+            }
+
+          // Convert mole fractions to mass fractions
+          std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
+          for( unsigned int s = 0; s < n_species_comps; s++ )
+	    {
+              species_mass_fracs[s] = species_mole_fracs[s]*_chem_mixture.M(s)/M;
+            }
 
 	  this->set_species_bc_values( bc_id, species_mass_fracs );
 	}
@@ -373,6 +425,7 @@ namespace GRINS
 	// Do nothing BC
 	break;
       case(PRESCRIBED_SPECIES):
+      case(PRESCRIBED_MOLE_FRACTIONS):
 	{
 	  std::set<GRINS::BoundaryID> dbc_ids;
 	  dbc_ids.insert(bc_id);
