@@ -453,9 +453,18 @@ namespace GRINS
 	       var != _species_vars.end();
 	       ++var )
 	    {
-	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, *var,
-						 -1.0, 
-						 this->get_neumann_bound_func( bc_id, *var ) );
+              if( this->is_axisymmetric() )
+                {
+                  _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
+                                                                  request_jacobian, *var, -1.0, 
+                                                                  this->get_neumann_bound_func( bc_id, *var ) );
+                }
+              else
+                {
+                  _bound_conds.apply_neumann_normal( context, cache,
+                                                     request_jacobian, *var, 1.0, 
+                                                     this->get_neumann_bound_func( bc_id, *var ) );
+                }
 	    }
 	}
 	break;
@@ -482,9 +491,18 @@ namespace GRINS
 
 	      const VariableIndex var = _species_vars[species_idx];
 
-	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, var,
-						 1.0, 
-						 this->get_neumann_bound_func( bc_id, var ) );
+              if( this->is_axisymmetric() )
+                {
+                  _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
+                                                                  request_jacobian, var, 1.0, 
+                                                                  this->get_neumann_bound_func( bc_id, var ) );
+                }
+              else
+                {
+                  _bound_conds.apply_neumann_normal( context, cache,
+                                                     request_jacobian, var, 1.0, 
+                                                     this->get_neumann_bound_func( bc_id, var ) );
+                }
 	    }
 
 	  for( std::vector<Species>::const_iterator product = products.begin();
@@ -501,9 +519,18 @@ namespace GRINS
 
 	      const VariableIndex var = _species_vars[species_idx];
 
-	      _bound_conds.apply_neumann_normal( context, cache, request_jacobian, var,
-						 1.0, 
-						 this->get_neumann_bound_func( bc_id, var ) );
+              if( this->is_axisymmetric() )
+                {
+                  _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
+                                                                  request_jacobian, var, 1.0, 
+                                                                  this->get_neumann_bound_func( bc_id, var ) );
+                }
+              else
+                {
+                  _bound_conds.apply_neumann_normal( context, cache,
+                                                     request_jacobian, var, 1.0, 
+                                                     this->get_neumann_bound_func( bc_id, var ) );
+                }
 	    }
 
 	}

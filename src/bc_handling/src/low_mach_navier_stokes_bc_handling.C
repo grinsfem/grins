@@ -95,11 +95,6 @@ namespace GRINS
     else if( bc_type == "general_heat_flux" )
       bc_type_out = GENERAL_HEAT_FLUX;
 
-    else if( bc_type == "axisymmetric" )
-      {
-	bc_type_out = AXISYMMETRIC;
-	this->_axisymmetric = true;
-      }
     else
       {
 	// Call base class to detect any physics-common boundary conditions
@@ -250,11 +245,13 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
+
       case(AXISYMMETRIC):
-	  {
+        {
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
 	break;
+
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions

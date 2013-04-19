@@ -234,8 +234,14 @@ namespace GRINS
   {
     int bc_type_out;
     if( bc_type_in == "periodic" )
-      bc_type_out = PERIODIC;
-
+      {
+        bc_type_out = PERIODIC;
+      }
+    else if( bc_type_in == "axisymmetric" )
+      {
+        bc_type_out = AXISYMMETRIC;
+        this->_axisymmetric = true;
+      }
     else
       {
 	std::cerr << "=========================================================="  << std::endl

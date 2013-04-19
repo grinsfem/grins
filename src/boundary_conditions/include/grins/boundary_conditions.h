@@ -79,6 +79,14 @@ namespace GRINS
 			       const libMesh::Real sign,
 			       const libMesh::Real value ) const;
 
+    //! Applies Neumann boundary conditions for the constant case.
+    /*! This method is for the case where Neumann boundary condition is
+        not in terms of a flux vector, but rather only the normal component.*/
+    void apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
+                                            const GRINS::VariableIndex var,
+                                            const libMesh::Real sign,
+                                            const libMesh::Real value ) const;
+
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
@@ -108,6 +116,17 @@ namespace GRINS
 			       const GRINS::VariableIndex var,
 			       const libMesh::Real sign,
 			       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+
+    //! Applies Neumann boundary conditions using a user-supplied function.
+    /*!  This method is for the case where Neumann boundary condition is
+         not in terms of a flux vector, but rather only the normal component.
+         This function must also be aware of the Jacobian with respect to other variables. */
+    void apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
+                                            const CachedValues& cache,
+                                            const bool request_jacobian,
+                                            const GRINS::VariableIndex var,
+                                            const libMesh::Real sign,
+                                            std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
