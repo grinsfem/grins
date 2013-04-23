@@ -50,7 +50,7 @@ namespace GRINS
   public:
 
     Visualization( const GetPot& input );
-    ~Visualization();
+    virtual ~Visualization();
 
     void output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system );
     void output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
