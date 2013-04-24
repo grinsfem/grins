@@ -203,6 +203,18 @@ namespace GRINS
       case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
+
+          // Set specified components of Dirichlet data to zero.
+          // Other component is handled in user BC factory.
+	  std::string fix_var = input( "Physics/"+_physics_name+"/general_velocity_fix_"+bc_id_string, "DIE!" );
+
+	  GRINS::DBCContainer cont_fix;
+	  cont_fix.add_var_name( fix_var );
+	  cont_fix.add_bc_id( bc_id );
+
+	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func_fix( new ZeroFunction<Number>() );
+	  cont_fix.set_func( func_fix );
+	  this->attach_dirichlet_bound_func( cont_fix );
 	}
 	break;
       case(ISOTHERMAL_WALL):
