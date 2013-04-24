@@ -75,6 +75,9 @@ namespace GRINS
 
     //! Gas constant for mixture in [J/kg-K]
     libMesh::Real R( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    //! Gas constant for mixture in [J/kg-K]
+    libMesh::Real R_from_X( const std::vector<libMesh::Real>& mole_fractions ) const;
     
     //! Molecular weight (molar mass) for species s in [g/mol] or [kg/kmol]
     libMesh::Real M( const unsigned int s ) const;
@@ -86,6 +89,14 @@ namespace GRINS
       \f$ M_s \f$ is the molecular weight (molar mass) of species \f$ s \f$
     */
     libMesh::Real M( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    //! Molecular weight (molar mass) for mixture in [g/mol] or [kg/kmol]
+    /*!
+      \f$ M = \sum_s x_sM_s \f$ where
+      \f$ x_s \f$ is the mole fraction of species \f$ s \f$ and
+      \f$ M_s \f$ is the molecular weight (molar mass) of species \f$ s \f$
+    */
+    libMesh::Real M_from_X( const std::vector<libMesh::Real>& mole_fractions ) const;
 
     //! Species mole fraction
     /*! 
