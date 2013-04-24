@@ -66,16 +66,19 @@ AX_PATH_LIBMESH_NEW(0.9.0,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
-               USE_LIBMESH_CXX_FLAGS=0
-               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,0,[Define if libmesh cxxflags enabled]),
-               USE_LIBMESH_CXX_FLAGS=1
-               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled]))
-
+               [case "${enableval}" in
+                   yes) USE_LIBMESH_CXX_FLAGS=1 ;;
+                    no) USE_LIBMESH_CXX_FLAGS=0 ;;
+ 		     *) AC_MSG_ERROR(bad value ${enableval} for libmesh-flags) ;;
+                esac],
+               [USE_LIBMESH_CXX_FLAGS=1])
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
+   AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled])
    CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
+   AC_DEFINE(USE_LIBMESH_CXX_FLAGS,0,[Define if libmesh cxxflags enabled])
    CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
 fi
 
