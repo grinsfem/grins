@@ -505,7 +505,7 @@ FILE_VERSION_FILTER    =
 # file name after the option, if omitted DoxygenLayout.xml will be used as the name 
 # of the layout file.
 
-LAYOUT_FILE            = doxygen/docs.layout
+LAYOUT_FILE            = @abs_top_srcdir@/doxygen/docs.layout
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -578,8 +578,8 @@ INPUT                  = src/bc_handling          \
                          src/utilities            \
                          src/visualization        \
                          test                     \
-		       	 doxygen/grins.page       \
-			 doxygen/txt_common
+		       	 @abs_top_srcdir@/doxygen/grins.page       \
+			 @abs_top_srcdir@/doxygen/txt_common
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -636,7 +636,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = examples doxygen/fig_common doxygen/txt_common
+EXAMPLE_PATH           = examples @abs_top_srcdir@/doxygen/fig_common @abs_top_srcdir@/doxygen/txt_common
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -656,7 +656,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH             = doxygen/images doxygen/fig_common
+IMAGE_PATH             = @abs_top_srcdir@/doxygen/images @abs_top_srcdir@/doxygen/fig_common
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
@@ -797,7 +797,7 @@ HTML_HEADER            =
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = doxygen/txt_common/footer.html
+HTML_FOOTER            = @abs_top_srcdir@/doxygen/txt_common/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
@@ -1252,7 +1252,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = doxygen/txt_common/
+INCLUDE_PATH           = @abs_top_srcdir@/doxygen/txt_common/
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 
