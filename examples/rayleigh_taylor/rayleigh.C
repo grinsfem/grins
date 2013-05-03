@@ -33,6 +33,7 @@
 // GRINS
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
+#include "grins/math_constants.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -126,12 +127,14 @@ Real initial_values( const Point& p, const Parameters &params,
       if( p(1) >= 0.5 ) value = 2.0;
       else value = 1.0;
     }
+  
   else if( unknown_name == "v" )
     {
-      value = -0.00025*std::sqrt(5.0/3.0)*std::sin(4*3.14159265*p(0));
+      value = -0.025*std::sqrt(5.0/3.0)*std::cos(8*GRINS::Constants::pi*p(0));
+      //value = 0.0;
     }
-  else if( unknown_name == "p0" )
-    value = params.get<Real>("p0_init");
+  //else if( unknown_name == "p0" )
+  //  value = params.get<Real>("p0_init");
 
   else
     value = 0.0;
