@@ -71,6 +71,12 @@ namespace GRINS
     if( bc_type == "no_slip" )
       bc_type_out = NO_SLIP;
 
+    else if( bc_type == "zero_x_velocity" )
+      bc_type_out = ZERO_X_VELOCITY;
+
+    else if( bc_type == "zero_y_velocity" )
+      bc_type_out = ZERO_Y_VELOCITY;
+
     else if( bc_type == "parabolic_profile" )
       bc_type_out = PARABOLIC_PROFILE;
 
@@ -120,6 +126,16 @@ namespace GRINS
       {
       case(NO_SLIP):
 	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(ZERO_X_VELOCITY):
+        {
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(ZERO_Y_VELOCITY):
+        {
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
 	break;
@@ -290,6 +306,40 @@ namespace GRINS
 
     switch( bc_type )
       {
+      case(ZERO_X_VELOCITY):
+        {
+          std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(u_var);
+
+          ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+      case(ZERO_Y_VELOCITY):
+        {
+          std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(v_var);
+
+          ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
       case(NO_SLIP):
 	{
 	  std::set<BoundaryID> dbc_ids;
