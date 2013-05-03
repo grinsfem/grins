@@ -4,7 +4,7 @@
 #-----------------------------------
 
 PECOS_extra_dependencies = $(abs_top_srcdir)/doxygen/grins.page \
-			   $(abs_top_builddir)/doxygen/txt_common/about.page \
+			   $(abs_top_builddir)/doxygen/txt_common/about_vpath.page \
 			   $(abs_top_srcdir)/doxygen/txt_common/gpl.page \
 			   $(abs_top_srcdir)/doxygen/txt_common/acknowledgment.page
 
@@ -166,6 +166,6 @@ DX_CLEANFILES = \
     $(DX_CLEAN_PS) \
     $(DX_CLEAN_PDF) \
     @DX_DOCDIR@/@PACKAGE@.tag \
-    doxygen/txt_common/about.page 
+    doxygen/txt_common/about_vpath.page 
 
 endif DX_COND_doc

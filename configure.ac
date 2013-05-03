@@ -289,7 +289,7 @@ DX_PS_FEATURE(OFF)
 
 DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
 
-AC_CONFIG_FILES(doxygen/txt_common/about.page)
+AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
