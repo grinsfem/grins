@@ -567,17 +567,17 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = src/bc_handling          \
-                         src/boundary_conditions  \
-                         src/error_estimation     \
-                         src/kinetics             \
-                         src/mat_props            \
-                         src/physics              \
-                         src/qoi                  \
-                         src/solver               \
-                         src/utilities            \
-                         src/visualization        \
-                         test                     \
+INPUT                  = @abs_top_srcdir@/src/bc_handling          \
+                         @abs_top_srcdir@/src/boundary_conditions  \
+                         @abs_top_srcdir@/src/error_estimation     \
+                         @abs_top_srcdir@/src/kinetics             \
+                         @abs_top_srcdir@/src/mat_props            \
+                         @abs_top_srcdir@/src/physics              \
+                         @abs_top_srcdir@/src/qoi                  \
+                         @abs_top_srcdir@/src/solver               \
+                         @abs_top_srcdir@/src/utilities            \
+                         @abs_top_srcdir@/src/visualization        \
+                         @abs_top_srcdir@/test                     \
 		       	 @abs_top_srcdir@/doxygen/grins.page       \
 			 @abs_top_builddir@/doxygen/txt_common/about_vpath.page \
 			 @abs_top_srcdir@/doxygen/txt_common/acknowledgement.page \
