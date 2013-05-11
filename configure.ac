@@ -88,7 +88,7 @@ AX_CXXFLAGS_WARN_ALL
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
 dnl---------------------------------------------------------
-if test "x$LIBMESH_LIBTOOL" == "x1"; then
+if test "x$LIBMESH_HAVE_LIBTOOL" == "x1"; then
   LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la'
 else
   LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la $(LIBMESH_LDFLAGS)'
