@@ -193,6 +193,7 @@ namespace GRINS
 	      (-_rho*u_phi[i][qp]*(U*grad_v)        // convection term
 	       +p*u_gradphi[i][qp](1)              // pressure term
 	       -_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+
 	    if (_dim == 3)
 	      {
 		Fw(i) += jac *
@@ -380,7 +381,7 @@ namespace GRINS
 
                     if( this->_bc_handler->is_axisymmetric() )
                       {
-                        Kpu(i,j) += u_phi[j][qp]/r;
+                        Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac;
                       }
 		  } // end of the inner dof (j) loop
 
