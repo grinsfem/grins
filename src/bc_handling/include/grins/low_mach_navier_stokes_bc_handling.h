@@ -77,7 +77,9 @@ namespace GRINS
 
     LowMachNavierStokesBCHandling();
 
-    enum LMNS_BC_TYPES{NO_SLIP=0, 
+    enum LMNS_BC_TYPES{NO_SLIP=0,
+                       ZERO_X_VELOCITY,
+                       ZERO_Y_VELOCITY,
 		       PRESCRIBED_VELOCITY, 
 		       GENERAL_VELOCITY, 
 		       PARABOLIC_PROFILE, 
@@ -85,8 +87,7 @@ namespace GRINS
 		       GENERAL_ISOTHERMAL_WALL,
 		       ADIABATIC_WALL, 
 		       PRESCRIBED_HEAT_FLUX, 
-		       GENERAL_HEAT_FLUX,
-		       AXISYMMETRIC};
+		       GENERAL_HEAT_FLUX};
 
   };
 

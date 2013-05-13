@@ -75,6 +75,12 @@ namespace GRINS
   
     Real time;
 
+    if( context.output_vis ) 
+      {
+	context.postprocessing->update_quantities( *(context.equation_system) );
+	context.vis->output( context.equation_system );
+      }
+    
     // Now we begin the timestep loop to compute the time-accurate
     // solution of the equations.
     for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)

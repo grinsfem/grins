@@ -42,7 +42,7 @@ namespace GRINS
   public:
 
     VisualizationFactory();
-    ~VisualizationFactory();
+    virtual ~VisualizationFactory();
 
     virtual std::tr1::shared_ptr<GRINS::Visualization> build(const GetPot& input);
   };

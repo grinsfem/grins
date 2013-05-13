@@ -47,7 +47,7 @@ namespace GRINS
     This class manages the list of ChemicalSpecies for a requested set
     of species from input.
     \todo This should probably be a singleton class, but being lazy for now.
-   */
+  */
   class ChemicalMixture
   {
   public:
@@ -75,6 +75,9 @@ namespace GRINS
 
     //! Gas constant for mixture in [J/kg-K]
     libMesh::Real R( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    //! Gas constant for mixture in [J/kg-K]
+    libMesh::Real R_from_X( const std::vector<libMesh::Real>& mole_fractions ) const;
     
     //! Molecular weight (molar mass) for species s in [g/mol] or [kg/kmol]
     libMesh::Real M( const unsigned int s ) const;
@@ -84,26 +87,34 @@ namespace GRINS
       \f$ \frac{1}{M} = \sum_s \frac{w_s}{M_s}\f$ where
       \f$ w_s \f$ is the mass fraction of species \f$ s \f$ and
       \f$ M_s \f$ is the molecular weight (molar mass) of species \f$ s \f$
-     */
+    */
     libMesh::Real M( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    //! Molecular weight (molar mass) for mixture in [g/mol] or [kg/kmol]
+    /*!
+      \f$ M = \sum_s x_sM_s \f$ where
+      \f$ x_s \f$ is the mole fraction of species \f$ s \f$ and
+      \f$ M_s \f$ is the molecular weight (molar mass) of species \f$ s \f$
+    */
+    libMesh::Real M_from_X( const std::vector<libMesh::Real>& mole_fractions ) const;
 
     //! Species mole fraction
     /*! 
       Given mixture molar mass M and mass fraction for species,
       compute species mole fraction using the relationship
       \f$ w_i = x_i \frac{M_i}{M} \f$ 
-     */
+    */
     libMesh::Real X( const unsigned int species, const libMesh::Real M, const libMesh::Real mass_fraction ) const;
 
     //! All species mole fractions
     void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
-	    std::vector<libMesh::Real>& mole_fractions ) const;
+            std::vector<libMesh::Real>& mole_fractions ) const;
 
     libMesh::Real molar_density( const unsigned int species, const libMesh::Real rho,
-			const libMesh::Real mass_fraction ) const;
+                                 const libMesh::Real mass_fraction ) const;
 
     void molar_densities( const libMesh::Real rho, const std::vector<libMesh::Real>& mass_fractions,
-			  std::vector<libMesh::Real>& molar_densities ) const;
+                          std::vector<libMesh::Real>& molar_densities ) const;
 
   protected:
 
@@ -187,8 +198,8 @@ namespace GRINS
 
   inline
   libMesh::Real ChemicalMixture::molar_density( const unsigned int species,
-				       const libMesh::Real rho,
-				       const libMesh::Real mass_fraction ) const
+                                                const libMesh::Real rho,
+                                                const libMesh::Real mass_fraction ) const
   {
     libmesh_assert_greater( rho, 0.0 );
     return rho*mass_fraction/this->M(species);
@@ -196,15 +207,15 @@ namespace GRINS
 
   inline
   void ChemicalMixture::molar_densities( const libMesh::Real rho,
-					 const std::vector<libMesh::Real>& mass_fractions,
-					 std::vector<libMesh::Real>& molar_densities ) const
+                                         const std::vector<libMesh::Real>& mass_fractions,
+                                         std::vector<libMesh::Real>& molar_densities ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), this->n_species() );
     libmesh_assert_equal_to( molar_densities.size(), this->n_species() );
     libmesh_assert_greater( rho, 0.0 );
     for( unsigned int s = 0; s < this->n_species(); s++ )
       {
-	molar_densities[s] = rho*mass_fractions[s]/this->M(s);
+        molar_densities[s] = rho*mass_fractions[s]/this->M(s);
       }
     return;
   }

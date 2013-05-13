@@ -62,18 +62,23 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.0,yes)
+AX_PATH_LIBMESH_NEW(0.9.1,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
-               AC_HELP_STRING([--enable-libmesh-flags],[enable use of libmesh cxxflags for CXXFLAGS]),
-               USE_LIBMESH_CXX_FLAGS=1
-               AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled]),[])
-
+               AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
+               [case "${enableval}" in
+                   yes) USE_LIBMESH_CXX_FLAGS=1 ;;
+                    no) USE_LIBMESH_CXX_FLAGS=0 ;;
+ 		     *) AC_MSG_ERROR(bad value ${enableval} for libmesh-flags) ;;
+                esac],
+               [USE_LIBMESH_CXX_FLAGS=1])
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
+   AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled])
    CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
+   AC_DEFINE(USE_LIBMESH_CXX_FLAGS,0,[Define if libmesh cxxflags enabled])
    CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
 fi
 
@@ -83,7 +88,7 @@ AX_CXXFLAGS_WARN_ALL
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
 dnl---------------------------------------------------------
-if test "x$LIBMESH_LIBTOOL" == "x1"; then
+if test "x$LIBMESH_HAVE_LIBTOOL" == "x1"; then
   LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la'
 else
   LIBGRINS_LIBS='$(top_builddir)/src/libgrins.la $(LIBMESH_LDFLAGS)'
@@ -284,7 +289,7 @@ DX_PS_FEATURE(OFF)
 
 DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
 
-AC_CONFIG_FILES(doxygen/txt_common/about.page)
+AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
@@ -336,7 +341,8 @@ AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)
 dnl-----------------------------------------------
 dnl Generate Makefiles
 dnl-----------------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
+		 doxygen/grins.dox examples/Makefile])
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()

@@ -82,6 +82,15 @@ namespace GRINS
     return R;
   }
 
+  libMesh::Real ChemicalMixture::R_from_X( const std::vector<libMesh::Real>& mole_fractions ) const
+  {
+    libmesh_assert_equal_to( mole_fractions.size(), _chemical_species.size() );
+
+    libMesh::Real M = this->M_from_X( mole_fractions );
+
+    return Constants::R_universal/M;
+  }
+
   libMesh::Real ChemicalMixture::M( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _chemical_species.size() );
@@ -93,6 +102,19 @@ namespace GRINS
       }
 
     return 1.0/M;
+  }
+
+  libMesh::Real ChemicalMixture::M_from_X( const std::vector<libMesh::Real>& mole_fractions ) const
+  {
+    libmesh_assert_equal_to( mole_fractions.size(), _chemical_species.size() );
+
+    libMesh::Real M = 0.0;
+    for( unsigned int s = 0; s < mole_fractions.size(); s++ )
+      {
+	M += mole_fractions[s]*(this->M(s));
+      }
+
+    return M;
   }
 
   void ChemicalMixture:: X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 

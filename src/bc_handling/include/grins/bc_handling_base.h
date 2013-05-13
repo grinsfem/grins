@@ -157,7 +157,8 @@ namespace GRINS
 
     std::string _physics_name;
 
-    enum BC_BASE{ PERIODIC = -1};
+    enum BC_BASE{ PERIODIC = -2,
+                  AXISYMMETRIC };
 
     //! Flag to cache whether or not there is an axisymmetric boundary present
     static bool _axisymmetric;

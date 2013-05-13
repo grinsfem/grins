@@ -3,11 +3,10 @@
 # dependencies here.
 #-----------------------------------
 
-PECOS_extra_dependencies = doxygen/grins.page 
-			   doxygen/txt_common/about.page \
-			   doxygen/txt_common/gpl.page \
-                           doxygen/txt_common/lgpl.page \
-			   doxygen/txt_common/acknowledgment.page
+PECOS_extra_dependencies = $(abs_top_srcdir)/doxygen/grins.page \
+			   $(abs_top_builddir)/doxygen/txt_common/about_vpath.page \
+			   $(abs_top_srcdir)/doxygen/txt_common/gpl.page \
+			   $(abs_top_srcdir)/doxygen/txt_common/acknowledgment.page
 
 ## --------------------------------- ##
 ## Format-independent Doxygen rules. ##
@@ -152,7 +151,8 @@ docs: doxygen-doc
 
 @DX_DOCDIR@/@PACKAGE@.tag: $(DX_CONFIG) $(pkginclude_HEADERS) $(PECOS_extra_dependencies)
 	  rm -rf @DX_DOCDIR@
-	  $(DX_ENV) $(DX_DOXYGEN) $(srcdir)/$(DX_CONFIG)
+	  mkdir -p @DX_DOCDIR@
+	  $(DX_ENV) $(DX_DOXYGEN) $(DX_CONFIG)
 
 DX_CLEANFILES = \
     -r \
@@ -166,6 +166,6 @@ DX_CLEANFILES = \
     $(DX_CLEAN_PS) \
     $(DX_CLEAN_PDF) \
     @DX_DOCDIR@/@PACKAGE@.tag \
-    doxygen/txt_common/about.page 
+    doxygen/txt_common/about_vpath.page 
 
 endif DX_COND_doc

@@ -188,15 +188,31 @@ namespace GRINS
 	// Prescribed constant heat flux
       case(PRESCRIBED_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann( context, _T_var, -1.0,
-				      this->get_neumann_bc_value(bc_id) );
+          if( this->is_axisymmetric() )
+            {
+              _bound_conds.apply_neumann_axisymmetric( context, _T_var, -1.0,
+                                                       this->get_neumann_bc_value(bc_id) );
+            }
+          else
+            {
+              _bound_conds.apply_neumann( context, _T_var, -1.0,
+                                          this->get_neumann_bc_value(bc_id) );
+            }
 	}
 	break;
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-	  _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
-				      this->get_neumann_bound_func( bc_id, _T_var ) );
+          if( this->is_axisymmetric() )
+            {
+              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
+                                                       this->get_neumann_bound_func( bc_id, _T_var ) );
+            }
+          else
+            {
+              _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
+                                          this->get_neumann_bound_func( bc_id, _T_var ) );
+            }
 	}
 	break;
       default:

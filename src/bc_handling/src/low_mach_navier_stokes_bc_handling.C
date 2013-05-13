@@ -71,6 +71,12 @@ namespace GRINS
     if( bc_type == "no_slip" )
       bc_type_out = NO_SLIP;
 
+    else if( bc_type == "zero_x_velocity" )
+      bc_type_out = ZERO_X_VELOCITY;
+
+    else if( bc_type == "zero_y_velocity" )
+      bc_type_out = ZERO_Y_VELOCITY;
+
     else if( bc_type == "parabolic_profile" )
       bc_type_out = PARABOLIC_PROFILE;
 
@@ -95,11 +101,6 @@ namespace GRINS
     else if( bc_type == "general_heat_flux" )
       bc_type_out = GENERAL_HEAT_FLUX;
 
-    else if( bc_type == "axisymmetric" )
-      {
-	bc_type_out = AXISYMMETRIC;
-	this->_axisymmetric = true;
-      }
     else
       {
 	// Call base class to detect any physics-common boundary conditions
@@ -125,6 +126,16 @@ namespace GRINS
       {
       case(NO_SLIP):
 	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(ZERO_X_VELOCITY):
+        {
+	  this->set_dirichlet_bc_type( bc_id, bc_type );
+	}
+	break;
+      case(ZERO_Y_VELOCITY):
+        {
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
 	break;
@@ -208,6 +219,18 @@ namespace GRINS
       case(GENERAL_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
+
+          // Set specified components of Dirichlet data to zero.
+          // Other component is handled in user BC factory.
+	  std::string fix_var = input( "Physics/"+_physics_name+"/general_velocity_fix_"+bc_id_string, "DIE!" );
+
+	  GRINS::DBCContainer cont_fix;
+	  cont_fix.add_var_name( fix_var );
+	  cont_fix.add_bc_id( bc_id );
+
+	  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func_fix( new ZeroFunction<Number>() );
+	  cont_fix.set_func( func_fix );
+	  this->attach_dirichlet_bound_func( cont_fix );
 	}
 	break;
       case(ISOTHERMAL_WALL):
@@ -250,11 +273,13 @@ namespace GRINS
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	}
 	break;
+
       case(AXISYMMETRIC):
-	  {
+        {
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
 	}
 	break;
+
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
@@ -281,6 +306,40 @@ namespace GRINS
 
     switch( bc_type )
       {
+      case(ZERO_X_VELOCITY):
+        {
+          std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(u_var);
+
+          ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+      case(ZERO_Y_VELOCITY):
+        {
+          std::set<BoundaryID> dbc_ids;
+	  dbc_ids.insert(bc_id);
+	
+	  std::vector<VariableIndex> dbc_vars;
+	  dbc_vars.push_back(v_var);
+
+          ZeroFunction<Number> zero;
+	
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
+						 dbc_vars, 
+						 &zero );
+	
+	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
       case(NO_SLIP):
 	{
 	  std::set<BoundaryID> dbc_ids;

@@ -93,7 +93,8 @@ namespace GRINS
 
     // Needs to start larger than the LMNS_BC_TYPES end
     enum RLMNS_BC_TYPES{ ZERO_SPECIES_FLUX=20, 
-			 PRESCRIBED_SPECIES, 
+			 PRESCRIBED_SPECIES,
+                         PRESCRIBED_MOLE_FRACTIONS,
 			 CATALYTIC_WALL,
 			 GENERAL_SPECIES };
 

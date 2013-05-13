@@ -573,7 +573,7 @@ namespace GRINS
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_u_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_T_var];
 
     unsigned int n_qpoints = context.element_qrule->n_points();
 

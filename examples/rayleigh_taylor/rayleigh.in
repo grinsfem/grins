@@ -2,7 +2,7 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'LowMachNavierStokes LowMachNavierStokesBraackStabilization'
+enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 
 
 
@@ -13,18 +13,18 @@ V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 T_FE_family = 'LAGRANGE'
 
-V_order = 'SECOND'
-T_order = 'SECOND'
+V_order = 'FIRST'
+T_order = 'FIRST'
 P_order = 'FIRST'
 
 # Thermodynamic pressure
-p0 = '1.0'
+p0 = '2.0'
 
 # Gas constant
 R = '1.0'
 
 # Gravity vector
-g = '0.0 -1.0'
+g = '0.0 10.0'
 
 
 conductivity_model = 'constant'
@@ -40,6 +40,9 @@ specific_heat_model = 'constant'
 vel_bc_ids = '2 3 1 0'
 vel_bc_types = 'no_slip periodic periodic no_slip'
 
+#vel_bc_ids = '2 3 1 0'
+#vel_bc_types = 'no_slip zero_x_velocity zero_x_velocity no_slip'
+
 temp_bc_ids = '0 2'
 temp_bc_types = 'isothermal isothermal'
 
@@ -49,17 +52,19 @@ periodic_offset_3 = '0.25 0.0'
 T_wall_0 = 1.0
 T_wall_2 = 2.0
 
-enable_thermo_press_calc = 'true'
+enable_thermo_press_calc = 'false'
 
 pin_pressure = true
 pin_location = '0.0 0.0'
 pin_value = '0.0'
 
 
-[../LowMachNavierStokesVMSStabilization]
+[]
 
-tau_constant = '1'
-tau_factor = '0.01'
+[Stabilization]
+
+tau_constant = '10'
+tau_factor = '0.05'
 
 
 []
@@ -68,11 +73,11 @@ tau_factor = '0.01'
 
 [./Viscosity]
 
-mu = '0.01' #[kg/m-s]
+mu = '1.0e-2' #[kg/m-s]
 
 [../Conductivity]
 
-k = '0.001' #[W/m-K]
+k = '1.0e-3' #[W/m-K]
 
 [../SpecificHeat]
 
@@ -99,23 +104,26 @@ domain_x2_min = '0.0'
 domain_x2_max = '1.0'
 
 mesh_nx1 = 50
-mesh_nx2 = 200
+mesh_nx2 = 100
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = true 
 theta = 1.0
-n_timesteps = 10
-deltat = 0.0001
+n_timesteps = 500
+deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
-max_linear_iterations = 2500
+max_nonlinear_iterations = '30'
+max_linear_iterations = '2500'
 
-verify_analytic_jacobians = 0.0
+relative_residual_tolerance = '1.0e-10'
+absolute_residual_tolerance = '1.0e-16'
 
-initial_linear_tolerance = 1.0e-10
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
 
 use_numerical_jacobians_only = 'true'
 
@@ -125,11 +133,13 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 
 output_vis = 'true'
-vis_output_file_prefix = 'rt'
+vis_output_file_prefix = './output/rt'
 
-output_residual = true
+output_residual = 'false' 
 
 output_format = 'ExodusII xdr'
+
+output_vars = 'rho'
 
 # Options for print info to the screen
 [screen-options]

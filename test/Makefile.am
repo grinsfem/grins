@@ -1,6 +1,7 @@
 BUILT_SOURCES   = .license.stamp
 
-check_PROGRAMS  = test_ns_couette_flow_2d_x
+check_PROGRAMS =
+check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
 check_PROGRAMS += test_stokes_poiseuille_flow
 check_PROGRAMS += test_ns_poiseuille_flow
@@ -22,21 +23,23 @@ check_PROGRAMS += grins_kinetics_regression
 check_PROGRAMS += catalytic_wall_unit
 check_PROGRAMS += hartmann_flow_exact
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
-              -I$(top_srcdir)/src/physics/include \
-              -I$(top_srcdir)/src/boundary_conditions/include \
-              -I$(top_srcdir)/src/utilities/include \
-              -I$(top_srcdir)/src/visualization/include \
-              -I$(top_srcdir)/src/mat_props/include \
-              -I$(top_srcdir)/src/bc_handling/include \
-              -I$(top_srcdir)/src/qoi/include \
-              -I$(top_srcdir)/src/kinetics/include
+AM_CPPFLAGS = 
+AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
 
-AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
-               $(LIBMESH_CPPFLAGS) \
-               $(GRVY_CFLAGS)
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
+AM_CPPFLAGS += $(GRVY_CFLAGS)
 
-AM_LDFLAGS = $(LIBGRINS_LIBS)
+AM_LDFLAGS = 
+AM_LDFLAGS += $(LIBGRINS_LIBS)
 
 #----------------
 # Cantera support
@@ -50,8 +53,8 @@ endif
 # MASA support
 #--------------
 if MASA_ENABLED
-  AM_CPPFLAGS           += $(MASA_CXXFLAGS)
-  AM_LDFLAGS            += $(MASA_LIBS)
+  AM_CPPFLAGS += $(MASA_CXXFLAGS)
+  AM_LDFLAGS += $(MASA_LIBS)
 endif
 
 # Sources for these tests
@@ -78,23 +81,31 @@ catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 hartmann_flow_exact_SOURCES = $(top_srcdir)/test/hartmann_flow_exact.C
 
 # List of source files for license stamping
-testsrc  = $(test_ns_couette_flow_2d_x_SOURCES)
-testsrc += $(test_ns_couette_flow_2d_y_SOURCES)
-testsrc += $(test_stokes_poiseuille_flow_SOURCES)
-testsrc += $(test_ns_poiseuille_flow_SOURCES)
-testsrc += $(test_axi_ns_poiseuille_flow_SOURCES)
-testsrc += $(test_axi_ns_con_cyl_flow_SOURCES)
-testsrc += $(test_thermally_driven_flow_SOURCES)
-testsrc += $(gaussian_profiles_SOURCES)
-testsrc += $(vorticity_qoi_SOURCES)
-testsrc += $(low_mach_cavity_benchmark_regression_SOURCES)
-testsrc += $(backward_facing_step_regression_SOURCES)
-testsrc += $(reacting_low_mach_cantera_regression_SOURCES)
-testsrc += $(arrhenius_rate_test_SOURCES)
-testsrc += $(grins_kinetics_regression_SOURCES)
+STAMPED_FILES = 
+STAMPED_FILES += $(test_ns_couette_flow_2d_x_SOURCES)
+STAMPED_FILES += $(test_ns_couette_flow_2d_y_SOURCES)
+STAMPED_FILES += $(test_stokes_poiseuille_flow_SOURCES)
+STAMPED_FILES += $(test_ns_poiseuille_flow_SOURCES)
+STAMPED_FILES += $(test_axi_ns_poiseuille_flow_SOURCES)
+STAMPED_FILES += $(test_axi_ns_con_cyl_flow_SOURCES)
+STAMPED_FILES += $(test_thermally_driven_flow_SOURCES)
+STAMPED_FILES += $(gaussian_profiles_SOURCES)
+STAMPED_FILES += $(vorticity_qoi_SOURCES)
+STAMPED_FILES += $(low_mach_cavity_benchmark_regression_SOURCES)
+STAMPED_FILES += $(grins_flow_regression_SOURCES)
+STAMPED_FILES += $(chem_mixture_SOURCES)
+STAMPED_FILES += $(cea_thermo_test_SOURCES)
+STAMPED_FILES += $(cantera_chem_thermo_test_SOURCES)
+STAMPED_FILES += $(cantera_transport_test_SOURCES)
+STAMPED_FILES += $(ideal_gas_mixture_cantera_SOURCES)
+STAMPED_FILES += $(reacting_low_mach_regression_SOURCES)
+STAMPED_FILES += $(arrhenius_rate_test_SOURCES)
+STAMPED_FILES += $(grins_kinetics_regression_SOURCES)
+STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
 
 #Define tests to actually be run
-TESTS  = gaussian_profiles
+TESTS =
+TESTS += gaussian_profiles
 TESTS += chem_mixture
 TESTS += cea_thermo_test
 TESTS += catalytic_wall_unit
@@ -103,6 +114,7 @@ TESTS += cantera_transport_test
 TESTS += ideal_gas_mixture_cantera
 TESTS += arrhenius_rate_test
 TESTS += grins_kinetics_regression.sh
+
 TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_x.sh
 TESTS += $(top_builddir)/test/test_ns_couette_flow_2d_y.sh
 TESTS += $(top_builddir)/test/test_stokes_poiseuille_flow.sh
@@ -147,8 +159,7 @@ if CODE_COVERAGE_ENABLED
 endif
 
 .license.stamp: $(top_srcdir)/LICENSE
-	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE \
-	$(testsrc)
+	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(STAMPED_FILES)
 	echo 'updated source license headers' >$@
 
 # Required for AX_AM_MACROS
