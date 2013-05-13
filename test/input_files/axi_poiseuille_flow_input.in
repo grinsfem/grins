@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 2 
-mesh_nx2 = 1 
+mesh_nx1 = 5 
+mesh_nx2 = 5 
 
 domain_x1_max = 1.0
 
@@ -21,13 +21,16 @@ max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
 
-verify_analytic_jacobians = 1.e-6
+relative_residual_tolerance = '1.0e-14'
+
+absolute_residual_tolerance = '1.0e-10'
+
+verify_analytic_jacobians = '1.e-6'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
-output_vis = false 
-vis_output_file_prefix = axi_poiseuille 
+output_vis = 'false' 
+vis_output_file_prefix = 'axi_poiseuille' 
 
 # Options for print info to the screen
 [screen-options]
@@ -42,10 +45,10 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'AxisymmetricIncompressibleNavierStokes'
+enabled_physics = 'IncompressibleNavierStokes'
 
 # Options for Incompressible Navier-Stokes physics
-[./AxisymmetricIncompressibleNavierStokes]
+[./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND
@@ -60,22 +63,19 @@ mu = 1.0
 # i = bottom -> 3
 # i = top    -> 1
 
-bc_ids = '1 3 2 0'
+bc_ids = '1 3 0 2 '
 bc_types = 'no_slip axisymmetric general_velocity general_velocity'
 
 
-pin_pressure = true 
+pin_pressure = 'true'
 pin_value = 100.0
 pin_location = '0.5 0.5'
 
 [../VariableNames]
 
 Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
+u_velocity = 'r_vel'
+v_velocity = 'z_vel'
 pressure = 'p'
-r_velocity = 'r_vel'
-z_velocity = 'z_vel'
 
 []
