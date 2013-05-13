@@ -72,6 +72,8 @@ namespace GRINS
 
     //! Enable pressure pinning
     bool _pin_pressure;
+
+    bool _is_axisymmetric;
     
   private:
     IncompressibleNavierStokes();
