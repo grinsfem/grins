@@ -300,7 +300,7 @@ namespace GRINS
     VariableIndex T_var = system->variable_number( _T_var_name );
     VariableIndex u_var = system->variable_number( _u_var_name );
     VariableIndex v_var = system->variable_number( _v_var_name );
-    VariableIndex w_var;
+    VariableIndex w_var = -1;
     if( dim == 3 )
       w_var = system->variable_number( _w_var_name );
 
