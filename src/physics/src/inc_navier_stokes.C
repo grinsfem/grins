@@ -42,18 +42,16 @@ namespace GRINS
   IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase(physics_name,input),
       _p_pinning(input,physics_name),
-      _pin_pressure( input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false ) ),
-      _is_axisymmetric(false)
+      _pin_pressure( input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false ) )
   {
     this->read_input_options(input);
 
     // This is deleted in the base class
     _bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
 
-    if( _bc_handler->is_axisymmetric() ||
-        input( "Physics/"+incompressible_navier_stokes+"/is_axisymmetric", false ) )
+    if( _bc_handler->is_axisymmetric() )
       {
-        _is_axisymmetric = true;
+        this->_is_axisymmetric = true;
       }
 
     return;

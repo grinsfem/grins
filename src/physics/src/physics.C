@@ -44,9 +44,16 @@ namespace GRINS
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
     : _physics_name( physics_name ),
-      _bc_handler(NULL)
+      _bc_handler(NULL),
+      _is_axisymmetric(false)
   {
     this->read_input_options(input);
+
+    if( input( "Physics/is_axisymmetric", false ) )
+      {
+        _is_axisymmetric = true;
+      }
+
     return;
   }
 
