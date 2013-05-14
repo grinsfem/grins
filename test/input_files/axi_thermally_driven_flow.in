@@ -41,7 +41,7 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'AxisymmetricIncompressibleNavierStokes AxisymmetricHeatTransfer AxisymmetricBoussinesqBuoyancy'
+enabled_physics = 'IncompressibleNavierStokes AxisymmetricHeatTransfer AxisymmetricBoussinesqBuoyancy'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -50,7 +50,7 @@ enabled_physics = 'AxisymmetricIncompressibleNavierStokes AxisymmetricHeatTransf
 # i = top    -> 1
 
 # Options for Incompressible Navier-Stokes physics
-[./AxisymmetricIncompressibleNavierStokes]
+[./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND
