@@ -40,28 +40,16 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 
-# src/kinetics files
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/arrhenius_rate.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction_set.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/grins_kinetics.C
-
 # src/mat_props files
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_species.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_curve_fit.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_singleton.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_transport.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/ideal_gas_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
 
 # src/physics files
@@ -165,30 +153,17 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
 
-# src/kinetics headers
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/arrhenius_rate.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_set.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/grins_kinetics.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_enum.h
-
 # src/mat_props headers
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/species_enum.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_species.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_mixture.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_curve_fit.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_thermo.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_singleton.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_thermo.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_transport.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_kinetics.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/ideal_gas_mixture.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_transport.h
 
 # src/physics headers
@@ -302,7 +277,6 @@ AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
