@@ -86,6 +86,10 @@ namespace GRINS
 				   const std::string& viscosity,
 				   const std::string& specific_heat ) const;
 
+    void add_reacting_low_mach( const GetPot& input,
+                                const std::string& physics_to_add,
+                                GRINS::PhysicsList& physics_list );
+
   }; // class PhysicsFactory
 
 } // namespace GRINS

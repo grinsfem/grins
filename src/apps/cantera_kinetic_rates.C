@@ -32,7 +32,7 @@
 #ifdef GRINS_HAVE_CANTERA
 
 // Cantera
-#include "grins/cantera_kinetics.h"
+#include "cantera/IdealGasMix.h"
 
 int main(int argc, char* argv[])
 {

@@ -29,24 +29,33 @@
 #ifndef GRINS_CANTERA_THERMO_H
 #define GRINS_CANTERA_THERMO_H
 
-// libMesh
-#include "libmesh/getpot.h"
-
-// GRINS
-#include "grins/chemical_mixture.h"
-#include "grins/cached_values.h"
-#include "grins/cantera_singleton.h"
+#include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
 
+// C++
+#include <vector>
+
+// GRINS
+#include "grins/cantera_chemistry.h"
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+
+// libMesh forward declarations
+class GetPot;
+
 namespace GRINS
 {
+  // GRINS forward declarations
+  class CanteraMixture;
+  class CachedValues;
   
   class CanteraThermodynamics
   {
   public:
 
-    CanteraThermodynamics( const GetPot& input, const ChemicalMixture& chem_mixture );
+    CanteraThermodynamics( const CanteraMixture& mixture );
     ~CanteraThermodynamics();
 
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
@@ -57,18 +66,9 @@ namespace GRINS
 
     void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
 
-    //! This is just a dummy for the GRINS interface. Returns 0.0.
-    /*! \todo Should look into actually implementing this because the functionality is probably there. */
-    libMesh::Real h_RT_minus_s_R( const CachedValues& cache, unsigned int qp, unsigned int species ) const;
-
-    //! This is just a dummy for the GRINS interface. Returns 0.0.
-    /*! \todo Should look into actually implementing this because the functionality is probably there. */
-    void h_RT_minus_s_R( const CachedValues& cache, unsigned int qp,
-			 std::vector<libMesh::Real>& h_RT_minus_s_R) const;
-
   protected:
 
-    const ChemicalMixture& _chem_mixture;
+    const CanteraChemistry _cantera_chemistry;
 
     Cantera::IdealGasMix& _cantera_gas;
 
@@ -77,23 +77,6 @@ namespace GRINS
     CanteraThermodynamics();
 
   };
-
-  /* ------------------------- Inline Functions -------------------------*/
-  inline
-  libMesh::Real CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/,
-					      unsigned int /*qp*/, 
-					      unsigned int /*species*/ ) const
-  {
-    return 0.0;
-  }
-
-  inline
-  void CanteraThermodynamics::h_RT_minus_s_R( const CachedValues& /*cache*/, unsigned int /*qp*/,
-					      std::vector<libMesh::Real>& h_RT_minus_s_R ) const
-  {
-    std::fill( h_RT_minus_s_R.begin(), h_RT_minus_s_R.end(), 0.0 );
-    return;
-  }
 
 } // namespace GRINS
 

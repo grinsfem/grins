@@ -31,13 +31,9 @@
 
 // GRINS
 #include "grins/cached_quantities_enum.h"
-#include "grins/cea_thermo.h"
-#include "grins/cantera_thermo.h"
-#include "grins/constant_transport.h"
-#include "grins/cantera_transport.h"
-#include "grins/cantera_kinetics.h"
-#include "grins/grins_kinetics.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
+#include "grins/cantera_mixture.h"
+#include "grins/cantera_evaluator.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -46,16 +42,18 @@
 
 namespace GRINS
 {
-  template<class Mixture>
-  ReactingLowMachNavierStokes<Mixture>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
+  template<typename Mixture, typename Evaluator>
+  ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
     : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
 
     // This is deleted in the base class
+    /*
     this->_bc_handler = new ReactingLowMachNavierStokesBCHandling( physics_name, input,
 								   this->_gas_mixture.chem_mixture() );
+    */
 
     if( this->_bc_handler->is_axisymmetric() )
       {
@@ -65,14 +63,14 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  ReactingLowMachNavierStokes<Mixture>::~ReactingLowMachNavierStokes()
+  template<typename Mixture, typename Evaluator>
+  ReactingLowMachNavierStokes<Mixture,Evaluator>::~ReactingLowMachNavierStokes()
   {
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::read_input_options( const GetPot& input )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::read_input_options( const GetPot& input )
   {
     // Other quantities read in base class
 
@@ -82,8 +80,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::init_context( libMesh::FEMContext& context )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( libMesh::FEMContext& context )
   {
     // First call base class
     GRINS::ReactingLowMachNavierStokesBase<Mixture>::init_context(context);
@@ -102,10 +100,10 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::element_time_derivative( bool compute_jacobian,
-								      libMesh::FEMContext& context,
-								      CachedValues& cache )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative( bool compute_jacobian,
+                                                                                libMesh::FEMContext& context,
+                                                                                CachedValues& cache )
   {
     unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -126,10 +124,10 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::side_time_derivative( bool compute_jacobian,
-								   libMesh::FEMContext& context,
-								   CachedValues& cache )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian,
+                                                                             libMesh::FEMContext& context,
+                                                                             CachedValues& cache )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
 
@@ -146,10 +144,10 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::mass_residual( bool /*compute_jacobian*/,
-							    libMesh::FEMContext& /*context*/,
-							    CachedValues& /*cache*/ )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::mass_residual( bool /*compute_jacobian*/,
+                                                                      libMesh::FEMContext& /*context*/,
+                                                                      CachedValues& /*cache*/ )
   {
     libmesh_not_implemented();
     /*
@@ -159,10 +157,10 @@ namespace GRINS
   }
 
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
-								       unsigned int qp,
-								       const CachedValues& cache )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
+                                                                                 unsigned int qp,
+                                                                                 const CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
@@ -241,10 +239,10 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_species_time_deriv(libMesh::FEMContext& context, 
-									 unsigned int qp,
-									 const CachedValues& cache)
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(libMesh::FEMContext& context, 
+                                                                                   unsigned int qp,
+                                                                                   const CachedValues& cache)
   {
     // Convenience
     const VariableIndex s0_var = this->_species_vars[0];
@@ -316,8 +314,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
 									  unsigned int qp,
 									  const CachedValues& cache)
   {
@@ -438,10 +436,10 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::assemble_energy_time_deriv( libMesh::FEMContext& context, 
-									 unsigned int qp,
-									 const CachedValues& cache)
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( libMesh::FEMContext& context, 
+                                                                                   unsigned int qp,
+                                                                                   const CachedValues& cache)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
@@ -519,10 +517,12 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
-										    CachedValues& cache ) const
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
+                                                                                              CachedValues& cache ) const
   {
+    Evaluator gas_evaluator( this->_gas_mixture );
+
     const unsigned int n_qpoints = context.element_qrule->n_points();
 
     std::vector<libMesh::Real> u, v, w, T, p, p0;
@@ -586,11 +586,11 @@ namespace GRINS
 	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars[s],qp);
 	  }
 	
-	M[qp] = this->_gas_mixture.M( mass_fractions[qp] );
+	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
 
-	R[qp] = this->_gas_mixture.R( mass_fractions[qp] );
+	R[qp] = gas_evaluator.R_mix( mass_fractions[qp] );
 
-	rho[qp] = this->rho( T[qp], p0[qp], mass_fractions[qp] );
+	rho[qp] = this->rho( T[qp], p0[qp], R[qp] );
       }
     
     cache.set_values(Cache::X_VELOCITY, u);
@@ -620,7 +620,7 @@ namespace GRINS
 
     cache.set_values(Cache::MIXTURE_DENSITY, rho);
 
-    /* These quantities must be computed after rho, T, mass_fractions, p0
+    /* These quantities must be computed after T, mass_fractions, p0
        are set into the cache. */
     std::vector<libMesh::Real> mu;
     mu.resize(n_qpoints);
@@ -631,67 +631,47 @@ namespace GRINS
     std::vector<libMesh::Real> k;
     k.resize(n_qpoints);
 
-    std::vector<std::vector<libMesh::Real> > h;
-    h.resize(n_qpoints);
+    std::vector<std::vector<libMesh::Real> > h_s;
+    h_s.resize(n_qpoints);
 
-    std::vector<std::vector<libMesh::Real> > h_RT_minus_s_R;
-    h_RT_minus_s_R.resize(n_qpoints);
+    std::vector<std::vector<libMesh::Real> > D_s;
+    D_s.resize(n_qpoints);
 
-    std::vector<std::vector<libMesh::Real> > molar_densities;
-    molar_densities.resize(n_qpoints);
+    std::vector<std::vector<libMesh::Real> > omega_dot_s;
+    omega_dot_s.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	mu[qp] = this->_gas_mixture.mu(cache,qp);
-	cp[qp] = this->_gas_mixture.cp(cache,qp);
-	k[qp]  = this->_gas_mixture.k(cache,qp);
+	mu[qp] = gas_evaluator.mu(cache,qp);
+	cp[qp] = gas_evaluator.cp(cache,qp);
+	k[qp]  = gas_evaluator.k(cache,qp);
 
-	h[qp].resize(this->_n_species);
-	this->_gas_mixture.h( cache, qp, h[qp] );
+	h_s[qp].resize(this->_n_species);
+	gas_evaluator.h_s( cache, qp, h_s[qp] );
 
-	h_RT_minus_s_R[qp].resize(this->_n_species);
-	this->_gas_mixture.h_RT_minus_s_R( cache, qp, h_RT_minus_s_R[qp] );
+	D_s[qp].resize(this->_n_species);
+	gas_evaluator.D( cache, qp, D_s[qp] );
 
-	molar_densities[qp].resize(this->_n_species);
-	this->_gas_mixture.chem_mixture().molar_densities( rho[qp], mass_fractions[qp], 
-							   molar_densities[qp] );
+	omega_dot_s[qp].resize(this->_n_species);
+	gas_evaluator.omega_dot( cache, qp, omega_dot_s[qp] );
       }
 
     cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
     cache.set_values(Cache::MIXTURE_SPECIFIC_HEAT_P, cp);
     cache.set_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY, k);
-    cache.set_vector_values(Cache::SPECIES_ENTHALPY, h);
-    cache.set_vector_values(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY, 
-			    h_RT_minus_s_R);
-    cache.set_vector_values(Cache::MOLAR_DENSITIES, molar_densities);
-
-    /* Diffusion coefficients need rho, cp, k computed first.
-       omega_dot may need h_RT_minus_s_R, molar_densities. */
-    std::vector<std::vector<libMesh::Real> > D;
-    D.resize(n_qpoints);
-
-    std::vector<std::vector<libMesh::Real> > omega_dot;
-    omega_dot.resize(n_qpoints);
-
-    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
-      {
-	D[qp].resize(this->_n_species);
-	this->_gas_mixture.D( cache, qp, D[qp] );
-
-	omega_dot[qp].resize(this->_n_species);
-	this->_gas_mixture.omega_dot( cache, qp, omega_dot[qp] );
-      }
-
-    cache.set_vector_values(Cache::DIFFUSION_COEFFS, D);
-    cache.set_vector_values(Cache::OMEGA_DOT, omega_dot);
+    cache.set_vector_values(Cache::SPECIES_ENTHALPY, h_s);
+    cache.set_vector_values(Cache::DIFFUSION_COEFFS, D_s);
+    cache.set_vector_values(Cache::OMEGA_DOT, omega_dot_s);
 
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
-										 CachedValues& cache ) const
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
+                                                                                           CachedValues& cache ) const
   {
+    Evaluator gas_evaluator( this->_gas_mixture );
+
     const unsigned int n_qpoints = context.side_qrule->n_points();
 
     // Need for Catalytic Wall
@@ -717,7 +697,7 @@ namespace GRINS
 	  }
 	const libMesh::Real p0 = this->get_p0_steady_side(context, qp);
 
-	rho[qp] = this->rho( T[qp], p0, mass_fractions[qp] );
+	rho[qp] = this->rho( T[qp], p0, gas_evaluator.R_mix(mass_fractions[qp]) );
       }
 
     cache.set_values(Cache::TEMPERATURE, T);
@@ -727,11 +707,13 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokes<Mixture>::compute_element_cache( const libMesh::FEMContext& context, 
-								    const std::vector<libMesh::Point>& points,
-								    CachedValues& cache ) const
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const libMesh::FEMContext& context, 
+                                                                              const std::vector<libMesh::Point>& points,
+                                                                              CachedValues& cache ) const
   {
+    Evaluator gas_evaluator( this->_gas_mixture );
+
     if( cache.is_active(Cache::MIXTURE_DENSITY) )
       {
 	std::vector<libMesh::Real> rho_values;
@@ -746,7 +728,7 @@ namespace GRINS
 	    libMesh::Real p0 = this->get_p0_steady(context,*point);
 	    this->mass_fractions( *point, context, mass_fracs );
 
-	    rho_values.push_back(this->rho( T, p0, mass_fracs) );
+	    rho_values.push_back(this->rho( T, p0, gas_evaluator.R_mix(mass_fracs) ) );
 	  }
 
 	cache.set_values( Cache::MIXTURE_DENSITY, rho_values );
@@ -805,7 +787,7 @@ namespace GRINS
 
         for( unsigned int p = 0; p < points.size(); p++ )
 	  {
-	    cp_values.push_back( this->_gas_mixture.cp( cache, p ) );
+	    cp_values.push_back( gas_evaluator.cp( cache, p ) );
 	  }
 
 	cache.set_values( Cache::MIXTURE_SPECIFIC_HEAT_P, cp_values );
@@ -837,9 +819,9 @@ namespace GRINS
 	  {
 	    this->mass_fractions( points[p], context, mass_fracs );
 
-	    libMesh::Real M = this->_gas_mixture.M(mass_fracs);
+	    libMesh::Real M = gas_evaluator.M_mix(mass_fracs);
 
-	    this->_gas_mixture.X(M,mass_fracs,mole_fractions[p]);
+	    gas_evaluator.X(M,mass_fracs,mole_fractions[p]);
 	  }
 
 	cache.set_vector_values(Cache::MOLE_FRACTIONS, mole_fractions );
@@ -864,7 +846,7 @@ namespace GRINS
 	for( unsigned int p = 0; p < points.size(); p++ )
 	  {
 	    h[p].resize(this->_n_species);
-	    this->_gas_mixture.h(cache, p, h[p]);
+	    gas_evaluator.h_s(cache, p, h[p]);
 	  }
 
 	cache.set_vector_values( Cache::SPECIES_ENTHALPY, h );
@@ -873,50 +855,26 @@ namespace GRINS
     if( cache.is_active(Cache::OMEGA_DOT) )
       {
 	{
-	  std::vector<libMesh::Real> T, p0, rho, R;
+	  std::vector<libMesh::Real> T, p0;
 	  T.resize( points.size() );
 	  p0.resize( points.size() );
-	  rho.resize( points.size() );
-	  R.resize( points.size() );
 
-	  std::vector<std::vector<libMesh::Real> > Y, molar_densities;
+	  std::vector<std::vector<libMesh::Real> > Y;
 	  Y.resize( points.size() );
-	  molar_densities.resize( points.size() );
 
 	  for( unsigned int p = 0; p < points.size(); p++ )
 	    {
 	      T[p] = this->T(points[p],context);
+
 	      p0[p] = this->get_p0_steady(context,points[p]);
 
 	      Y[p].resize(this->_n_species);
 	      this->mass_fractions( points[p], context, Y[p] );
-
-	      rho[p] = this->rho( T[p], p0[p], Y[p] );
-
-	      R[p] = this->_gas_mixture.R( Y[p] );
-
-	      molar_densities[p].resize( this->_n_species );
-	      this->_gas_mixture.chem_mixture().molar_densities( rho[p], 
-								 Y[p], 
-								 molar_densities[p] );
 	    }
 
 	  cache.set_values( Cache::TEMPERATURE, T );
 	  cache.set_values( Cache::THERMO_PRESSURE, p0 );
-	  cache.set_values( Cache::MIXTURE_DENSITY, rho );
-	  cache.set_values( Cache::MIXTURE_GAS_CONSTANT, R );
 	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
-	  cache.set_vector_values( Cache::MOLAR_DENSITIES, molar_densities );
-	  
-	  std::vector<std::vector<libMesh::Real> > h;
-	  h.resize( points.size() );
-	  for( unsigned int p = 0; p < points.size(); p++ )
-	    {
-	      h[p].resize(this->_n_species);
-	      this->_gas_mixture.h_RT_minus_s_R( cache, p, h[p] );
-	    }
-	  cache.set_vector_values( Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY, h );
-
 	}
 
 	std::vector<std::vector<libMesh::Real> > omega_dot;
@@ -925,7 +883,7 @@ namespace GRINS
 	for( unsigned int p = 0; p < points.size(); p++ )
 	  {
 	    omega_dot[p].resize(this->_n_species);
-	    this->_gas_mixture.omega_dot( cache, p, omega_dot[p] );
+	    gas_evaluator.omega_dot( cache, p, omega_dot[p] );
 	  }
 
 	cache.set_vector_values(Cache::OMEGA_DOT, omega_dot );
@@ -934,12 +892,9 @@ namespace GRINS
     return;
   }
 
-  // Instantiate
-  template class ReactingLowMachNavierStokes< IdealGasMixture<CEAThermodynamics,ConstantTransport,Kinetics> >;
-#ifdef GRINS_HAVE_CANTERA
-  template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
-  template class ReactingLowMachNavierStokes< IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics> >;
-  template class ReactingLowMachNavierStokes< IdealGasMixture<CEAThermodynamics,ConstantTransport,CanteraKinetics> >;
-#endif
-
 } // namespace GRINS
+
+// Instantiate
+#ifdef GRINS_HAVE_CANTERA
+template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
+#endif

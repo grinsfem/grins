@@ -26,64 +26,87 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_CANTERA_TRANSPORT_H
-#define GRINS_CANTERA_TRANSPORT_H
+#ifndef GRINS_CANTERA_MIXTURE_H
+#define GRINS_CANTERA_MIXTURE_H
 
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
 
-// C++
-#include <vector>
-
 // libMesh
-#include "libmesh/libmesh_common.h"
+#include "libmesh/threads.h"
+
+// Cantera
+#include "cantera/IdealGasMix.h"
+#include "cantera/transport.h"
+
+// Boost
+#include <boost/scoped_ptr.hpp>
 
 // libMesh forward declarations
 class GetPot;
 
-// Cantera forward declarations
-namespace Cantera
+namespace
 {
-  class IdealGasMix;
-  class Transport;
+  static libMesh::Threads::spin_mutex cantera_mutex;
 }
 
 namespace GRINS
 {
-
-  // GRINS forward declarations
-  class CachedValues;
-  class CanteraMixture;
-
-  class CanteraTransport
+  class CanteraMixture
   {
   public:
-    
-    CanteraTransport( CanteraMixture& mixture );
-    ~CanteraTransport();
 
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
+    CanteraMixture( const GetPot& input );
+    ~CanteraMixture();
 
-    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
+    Cantera::IdealGasMix& get_chemistry();
+    const Cantera::IdealGasMix& get_chemistry() const;
 
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D ) const;
+    Cantera::Transport& get_transport();
+
+    libMesh::Real M( unsigned int species ) const;
 
   protected:
 
-    Cantera::IdealGasMix& _cantera_gas;
+    boost::scoped_ptr<Cantera::IdealGasMix> _cantera_gas;
 
-    Cantera::Transport& _cantera_transport;
+    boost::scoped_ptr<Cantera::Transport> _cantera_transport;
 
   private:
 
-    CanteraTransport();
+    CanteraMixture();
 
   };
 
-} // namespace GRINS
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  Cantera::IdealGasMix& CanteraMixture::get_chemistry()
+  {
+    return (*_cantera_gas);
+  }
+
+  inline
+  const Cantera::IdealGasMix& CanteraMixture::get_chemistry() const
+  {
+    return (*_cantera_gas);
+  }
+
+  inline
+  Cantera::Transport& CanteraMixture::get_transport()
+  {
+    return (*_cantera_transport);
+  }
+
+  inline
+  libMesh::Real CanteraMixture::M( unsigned int species ) const
+  {
+    // Cantera returns molar mass in kg/kmol
+    return _cantera_gas->molarMass(species);
+  }
+
+} // end namespace GRINS
 
 #endif // GRINS_HAVE_CANTERA
 
-#endif // GRINS_CANTERA_TRANSPORT_H
+#endif // GRINS_CANTERA_MIXTURE_H

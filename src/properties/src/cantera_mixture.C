@@ -26,64 +26,44 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_CANTERA_TRANSPORT_H
-#define GRINS_CANTERA_TRANSPORT_H
-
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
 
-// C++
-#include <vector>
+// This class
+#include "grins/cantera_mixture.h"
 
 // libMesh
-#include "libmesh/libmesh_common.h"
-
-// libMesh forward declarations
-class GetPot;
-
-// Cantera forward declarations
-namespace Cantera
-{
-  class IdealGasMix;
-  class Transport;
-}
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-
-  // GRINS forward declarations
-  class CachedValues;
-  class CanteraMixture;
-
-  class CanteraTransport
+  CanteraMixture::CanteraMixture( const GetPot& input )
+    : _cantera_gas(NULL),
+      _cantera_transport(NULL)
   {
-  public:
-    
-    CanteraTransport( CanteraMixture& mixture );
-    ~CanteraTransport();
+    const std::string cantera_chem_file = input( "Physics/Chemistry/chem_file", "DIE!" );
+    const std::string mixture = input( "Physics/Chemistry/mixture", "DIE!" );
 
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
+    try
+      {
+        _cantera_gas.reset( new Cantera::IdealGasMix( cantera_chem_file, mixture ) );
+        _cantera_transport.reset( Cantera::newTransportMgr("Mix", _cantera_gas.get()) );
+      }
+    catch(Cantera::CanteraError)
+      {
+        Cantera::showErrors(std::cerr);
+        libmesh_error();
+      }
 
-    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
+    return;
+  }
 
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D ) const;
+  CanteraMixture::~CanteraMixture()
+  {
+    return;
+  }
 
-  protected:
-
-    Cantera::IdealGasMix& _cantera_gas;
-
-    Cantera::Transport& _cantera_transport;
-
-  private:
-
-    CanteraTransport();
-
-  };
-
-} // namespace GRINS
+}// end namespace GRINS
 
 #endif // GRINS_HAVE_CANTERA
-
-#endif // GRINS_CANTERA_TRANSPORT_H

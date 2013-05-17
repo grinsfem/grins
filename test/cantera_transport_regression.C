@@ -31,7 +31,12 @@
 
 //GRINS
 #include "grins_config.h"
+#include "grins/cantera_mixture.h"
 #include "grins/cantera_transport.h"
+#include "grins/cached_values.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 int main(int argc, char* argv[])
 {
@@ -53,9 +58,9 @@ int main(int argc, char* argv[])
   species[3] = input( "Physics/Chemistry/species", "DIE!", 3 );
   species[4] = input( "Physics/Chemistry/species", "DIE!", 4 );
 
-  GRINS::ChemicalMixture chem_mixture(species);
+  GRINS::CanteraMixture cantera_mixture(input);
 
-  GRINS::CanteraTransport cantera_trans(input,chem_mixture);
+  GRINS::CanteraTransport cantera_trans(cantera_mixture);
 
   double T = 1000.0;
 

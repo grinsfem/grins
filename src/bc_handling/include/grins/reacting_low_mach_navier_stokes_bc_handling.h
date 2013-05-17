@@ -30,16 +30,16 @@
 
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
-#include "grins/chemical_mixture.h"
 
 namespace GRINS
 {
+  template<typename Chemistry>
   class ReactingLowMachNavierStokesBCHandling : public LowMachNavierStokesBCHandling
   {
   public:
 
     ReactingLowMachNavierStokesBCHandling( const std::string& physics_name, const GetPot& input,
-					   const ChemicalMixture& chem_mixture );
+					   const Chemistry& chem_mixture );
 
     virtual ~ReactingLowMachNavierStokesBCHandling();
 
@@ -81,11 +81,11 @@ namespace GRINS
     std::vector<std::string> _species_var_names;
     std::vector<GRINS::VariableIndex> _species_vars;
 
-    std::map<BoundaryID,std::vector<Species> > _reactant_list;
-    std::map<BoundaryID,std::vector<Species> > _product_list;
-    std::map<BoundaryID,std::map<Species,libMesh::Real> > _catalycities;
+    std::map<BoundaryID,std::vector<unsigned int> > _reactant_list;
+    std::map<BoundaryID,std::vector<unsigned int> > _product_list;
+    std::map<BoundaryID,std::map<unsigned int,libMesh::Real> > _catalycities;
 
-    const ChemicalMixture& _chem_mixture;
+    const Chemistry& _chemistry;
 
   private:
 

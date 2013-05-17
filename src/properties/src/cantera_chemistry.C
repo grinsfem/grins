@@ -33,27 +33,17 @@
 // This class
 #include "grins/cantera_chemistry.h"
 
+// GRINS
+#include "grins/cantera_mixture.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  CanteraChemistry::CanteraChemistry( const GetPot& input )
-    : _cantera_gas(NULL)
+  CanteraChemistry::CanteraChemistry( const CanteraMixture& mixture )
+    : _cantera_gas(mixture.get_chemistry())
   {
-    const std::string cantera_chem_file = input( "Physics/Chemistry/chem_file", "DIE!" );
-    const std::string mixture = input( "Physics/Chemistry/mixture", "DIE!" );
-
-    try
-      {
-        _cantera_gas.reset( new Cantera::IdealGasMix( cantera_chem_file, mixture ) );
-      }
-    catch(Cantera::CanteraError)
-      {
-        Cantera::showErrors(std::cerr);
-        libmesh_error();
-      }
-
     return;
   }
 
@@ -64,7 +54,7 @@ namespace GRINS
   
   libMesh::Real CanteraChemistry::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
     
     libMesh::Real M = 0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
@@ -77,7 +67,7 @@ namespace GRINS
 
   libMesh::Real CanteraChemistry::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
     
     libMesh::Real R = 0.0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
@@ -91,7 +81,7 @@ namespace GRINS
   void CanteraChemistry::X( libMesh::Real M_mix, const std::vector<libMesh::Real>& mass_fractions, 
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
 
     libmesh_assert_equal_to( mole_fractions.size(), mass_fractions.size() );
 

@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  template<class Mixture>
+  template<typename Mixture, typename Evaluator>
   class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase<Mixture>
   {
   public:

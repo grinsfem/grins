@@ -28,10 +28,16 @@
 
 #include <iomanip>
 
+// GRINS
 #include "grins_config.h"
-#include "grins/cantera_singleton.h"
+#include "grins/cantera_mixture.h"
+#include "grins/cantera_chemistry.h"
 #include "grins/cantera_thermo.h"
 #include "grins/cantera_kinetics.h"
+#include "grins/cached_values.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 int main(int argc, char* argv[])
 {
@@ -53,13 +59,13 @@ int main(int argc, char* argv[])
   species[3] = input( "Physics/Chemistry/species", "DIE!", 3 );
   species[4] = input( "Physics/Chemistry/species", "DIE!", 4 );
 
-  GRINS::ChemicalMixture chem_mixture(species);
+  GRINS::CanteraMixture cantera_mixture(input);
 
-  Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance( input );
+  Cantera::IdealGasMix& cantera = cantera_mixture.get_chemistry();
 
-  GRINS::CanteraThermodynamics cantera_thermo(input,chem_mixture);
+  GRINS::CanteraThermodynamics cantera_thermo(cantera_mixture);
   
-  GRINS::CanteraKinetics cantera_kinetics(input,chem_mixture);
+  GRINS::CanteraKinetics cantera_kinetics(cantera_mixture);
 
   double T = 1500.0;
 

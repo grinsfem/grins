@@ -32,25 +32,23 @@
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
+
 // Cantera
 #include "cantera/IdealGasMix.h"
-
-// Boost
-#include <boost/scoped_ptr.hpp>
 
 // libMesh
 #include "libmesh/libmesh_common.h"
 
-// libMesh forward declarations
-class GetPot;
-
 namespace GRINS
 {
+  // GRINS forward declaration
+  class CanteraMixture;
+
   class CanteraChemistry
   {
   public:
 
-    CanteraChemistry( const GetPot& input );
+    CanteraChemistry( const CanteraMixture& mixture );
     ~CanteraChemistry();
 
     libMesh::Real M( unsigned int species ) const;
@@ -66,13 +64,18 @@ namespace GRINS
     void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
 	    std::vector<libMesh::Real>& mole_fractions ) const;
 
+    unsigned int species_index( const std::string& species_name ) const;
+
+    std::string species_name( unsigned int species_index ) const;
+
   protected:
 
-    boost::scoped_ptr<Cantera::IdealGasMix> _cantera_gas;
+    const Cantera::IdealGasMix& _cantera_gas;
 
   private:
 
     CanteraChemistry();
+
   };
 
   /* ------------------------- Inline Functions -------------------------*/
@@ -80,7 +83,7 @@ namespace GRINS
   libMesh::Real CanteraChemistry::M( unsigned int species ) const
   {
     // Cantera returns molar mass in kg/kmol
-    return _cantera_gas->molarMass(species);
+    return _cantera_gas.molarMass(species);
   }
 
   inline
@@ -88,7 +91,7 @@ namespace GRINS
   {
     // Cantera::GasConstant in J/kmol-K
     // Cantera returns molar mass in kg/kmol
-    return Cantera::GasConstant/_cantera_gas->molarMass(species);
+    return Cantera::GasConstant/_cantera_gas.molarMass(species);
   }
 
   inline
@@ -97,6 +100,18 @@ namespace GRINS
                                      libMesh::Real mass_fraction ) const
   {
     return mass_fraction*M_mix/this->M(species);
+  }
+
+  inline
+  unsigned int CanteraChemistry::species_index( const std::string& species_name ) const
+  {
+    return _cantera_gas.speciesIndex( species_name );
+  }
+
+  inline
+  std::string CanteraChemistry::species_name( unsigned int species_index ) const
+  {
+    return _cantera_gas.speciesName( species_index );
   }
 
 } // end namespace GRINS

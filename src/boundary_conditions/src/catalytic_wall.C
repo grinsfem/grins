@@ -31,7 +31,7 @@
 
 // GRINS
 #include "grins/cached_values.h"
-#include "grins/chemical_mixture.h"
+#include "grins/cantera_chemistry.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -39,15 +39,16 @@
 namespace GRINS
 {
 
-  CatalyticWall::CatalyticWall( const ChemicalMixture& chem_mixture,
-				const unsigned int species_index,
-				const VariableIndex T_var,
-				const libMesh::Real gamma )
+  template<typename Chemistry>
+  CatalyticWall<Chemistry>::CatalyticWall( const Chemistry& chemistry,
+                                           const unsigned int species_index,
+                                           const VariableIndex T_var,
+                                           const libMesh::Real gamma )
     : NeumannFuncObj(),
-      _chem_mixture(chem_mixture),
+      _chemistry(chemistry),
       _species_index(species_index),
       _T_var(T_var),
-      _helper( _chem_mixture.R(_species_index), _chem_mixture.M(_species_index), gamma )
+      _helper( _chemistry.R(_species_index), _chemistry.M(_species_index), gamma )
   {
     _jac_vars.resize(1);
     _jac_vars[0] = _T_var;
@@ -55,14 +56,16 @@ namespace GRINS
     return;
   }
 
-  CatalyticWall::~CatalyticWall()
+  template<typename Chemistry>
+  CatalyticWall<Chemistry>::~CatalyticWall()
   {
     return;
   }
 
-  libMesh::Real CatalyticWall::normal_value( const libMesh::FEMContext& /*context*/,
-					     const CachedValues& cache,
-					     const unsigned int qp )
+  template<typename Chemistry>
+  libMesh::Real CatalyticWall<Chemistry>::normal_value( const libMesh::FEMContext& /*context*/,
+                                                        const CachedValues& cache,
+                                                        const unsigned int qp )
   {
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
     
@@ -75,9 +78,10 @@ namespace GRINS
     return this->omega_dot( rho_s, T );
   }
 
-  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& /*context*/,
-						  const CachedValues& cache,
-						  const unsigned int qp )
+  template<typename Chemistry>
+  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const libMesh::FEMContext& /*context*/,
+                                                             const CachedValues& cache,
+                                                             const unsigned int qp )
   {
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
     
@@ -87,15 +91,16 @@ namespace GRINS
 
     const libMesh::Real rho_s = rho*w_s;
 
-    const libMesh::Real R = _chem_mixture.R( cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
+    const libMesh::Real R = _chemistry.R_mix( cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp] );
     
     return this->domega_dot_dws( rho_s, w_s, T, R );
   }
 
-  libMesh::Real CatalyticWall::normal_derivative( const libMesh::FEMContext& /*context*/,
-						  const CachedValues& cache,
-						  const unsigned int qp, 
-						  const GRINS::VariableIndex jac_var )
+  template<typename Chemistry>
+  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const libMesh::FEMContext& /*context*/,
+                                                             const CachedValues& cache,
+                                                             const unsigned int qp, 
+                                                             const GRINS::VariableIndex jac_var )
   {
     libmesh_assert_equal_to( jac_var, _T_var );
 
@@ -109,5 +114,10 @@ namespace GRINS
 
     return this->domega_dot_dT( rho_s, T );
   }
+
+  // Instantiate
+#ifdef GRINS_HAVE_CANTERA
+  template class CatalyticWall<CanteraChemistry>;
+#endif
 
 } // namespace GRINS

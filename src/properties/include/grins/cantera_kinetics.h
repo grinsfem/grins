@@ -29,32 +29,42 @@
 #ifndef GRINS_CANTERA_KINETICS_H
 #define GRINS_CANTERA_KINETICS_H
 
-// libMesh
-#include "libmesh/getpot.h"
-
-// GRINS
-#include "grins/chemical_mixture.h"
-#include "grins/cached_values.h"
-#include "grins/cantera_singleton.h"
+#include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
 
+// C++
+#include <vector>
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+
+// libMesh forward declarations
+class GetPot;
+
+// Cantera forward declarations
+namespace Cantera
+{
+  class IdealGasMix;
+}
+
 namespace GRINS
 {
+  // GRINS forward declarations
+  class CachedValues;
+  class CanteraMixture;
 
   class CanteraKinetics
   {
   public:
 
-    CanteraKinetics( const GetPot& input, const ChemicalMixture& chem_mixture );
+    CanteraKinetics( CanteraMixture& mixture );
     ~CanteraKinetics();
 
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
 
   protected:
-
-    const ChemicalMixture& _chem_mixture;
 
     Cantera::IdealGasMix& _cantera_gas;
 

@@ -26,21 +26,28 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins/cantera_kinetics.h"
+#include "grins_config.h"
 
 #ifdef GRINS_HAVE_CANTERA
 
-namespace
-{
-  libMesh::Threads::spin_mutex kinetics_mutex;
-}
+// This class
+#include "grins/cantera_kinetics.h"
+
+// GRINS
+#include "grins/cached_values.h"
+#include "grins/cantera_mixture.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+
+// Cantera
+#include "cantera/IdealGasMix.h"
 
 namespace GRINS
 {
 
-  CanteraKinetics::CanteraKinetics( const GetPot& input, const ChemicalMixture& chem_mixture )
-    : _chem_mixture(chem_mixture),
-      _cantera_gas( CanteraSingleton::cantera_instance(input) )
+  CanteraKinetics::CanteraKinetics( CanteraMixture& mixture )
+    :  _cantera_gas( mixture.get_chemistry() )
   {
     return;
   }
@@ -54,8 +61,6 @@ namespace GRINS
 				   unsigned int qp,
 				   std::vector<libMesh::Real>& omega_dot ) const
   {
-    libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -66,9 +71,10 @@ namespace GRINS
     libmesh_assert_greater(P,0.0);
 
     {
-      //libMesh::Threads::spin_mutex::scoped_lock lock(kinetics_mutex);
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
+      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+      
       try
 	{
 	  _cantera_gas.setState_TPY(T, P, &Y[0]);
@@ -79,35 +85,34 @@ namespace GRINS
 	  Cantera::showErrors(std::cerr);
 	  libmesh_error();
 	}
-      
-#ifdef DEBUG
-      for( unsigned int s = 0; s < omega_dot.size(); s++ )
-	{
-	  if( libMesh::libmesh_isnan(omega_dot[s]) )
-	    {
-	      std::cout << "T = " << T << std::endl
-			<< "P = " << P << std::endl;
-	      for( unsigned int s = 0; s < omega_dot.size(); s++ )
-		{
-		  std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
-		}
-	      for( unsigned int s = 0; s < omega_dot.size(); s++ )
-		{
-		  std::cout << "omega_dot[" << s << "] = " << omega_dot[s] << std::endl;
-		}
-
-	      libmesh_error();	      
-	    }
-	}
-#endif
-
-      for( unsigned int s = 0; s < omega_dot.size(); s++ )
-	{
-	  // convert [kmol/m^3-s] to [kg/m^3-s]
-	  omega_dot[s] *= this->_chem_mixture.M(s);
-	}
-
     }
+
+#ifdef DEBUG
+    for( unsigned int s = 0; s < omega_dot.size(); s++ )
+      {
+        if( libMesh::libmesh_isnan(omega_dot[s]) )
+          {
+            std::cout << "T = " << T << std::endl
+                      << "P = " << P << std::endl;
+            for( unsigned int s = 0; s < omega_dot.size(); s++ )
+              {
+                std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
+              }
+            for( unsigned int s = 0; s < omega_dot.size(); s++ )
+              {
+                std::cout << "omega_dot[" << s << "] = " << omega_dot[s] << std::endl;
+              }
+
+            libmesh_error();	      
+          }
+      }
+#endif
+      
+    for( unsigned int s = 0; s < omega_dot.size(); s++ )
+      {
+        // convert [kmol/m^3-s] to [kg/m^3-s]
+        omega_dot[s] *= this->_cantera_gas.molarMass(s);
+      }
 
     return;
   }

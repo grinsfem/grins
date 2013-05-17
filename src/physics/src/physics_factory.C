@@ -30,12 +30,10 @@
 #include "grins/physics_factory.h"
 
 // GRINS
-#include "grins/cea_thermo.h"
 #include "grins/cantera_thermo.h"
-#include "grins/constant_transport.h"
+//#include "grins/constant_transport.h"
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
-#include "grins/grins_kinetics.h"
 #include "grins/physics.h"
 #include "grins/stokes.h"
 #include "grins/inc_navier_stokes.h"
@@ -51,9 +49,11 @@
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
 #include "grins/low_mach_navier_stokes_vms_stab.h"
 #include "grins/grins_physics_names.h"
+
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
+
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
@@ -264,75 +264,47 @@ namespace GRINS
       }
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
-	std::string chem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/chemistry_library", "cantera" );
-	std::string thermo_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermodynamics_library", "cantera" );
-	std::string transport_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/transport_library", "cantera" );
-
-	if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
-	  {
-#ifdef GRINS_HAVE_CANTERA
-
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,CanteraTransport,CanteraKinetics > >(physics_to_add,input));
-
-#else
-
-	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
-		      << std::endl;
-	    libmesh_error();
-
-#endif // GRINS_HAVE_CANTERA
-	  }
-	else if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "grins_constant" )
-	  {
-#ifdef GRINS_HAVE_CANTERA
-
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CanteraThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
-
-#else
-
-	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
-		      << std::endl;
-	    libmesh_error();
-
-#endif // GRINS_HAVE_CANTERA
-	  }
-	else if( chem_lib == "cantera" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
-	  {
-#ifdef GRINS_HAVE_CANTERA
-
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< CEAThermodynamics,ConstantTransport,CanteraKinetics > >(physics_to_add,input));
-
-#else
-
-	    std::cerr << "Error: Cantera not enable. Cannot use Cantera library."
-		      << std::endl;
-	    libmesh_error();
-
-#endif // GRINS_HAVE_CANTERA
-	  }
-	else if( chem_lib == "grins" && thermo_lib == "grins_cea" && transport_lib == "grins_constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new GRINS::ReactingLowMachNavierStokes< GRINS::IdealGasMixture< GRINS::CEAThermodynamics,GRINS::ConstantTransport,GRINS::Kinetics > >(physics_to_add,input));
-	  }
-	else
-	  {
-	    std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl
-		      << "       for ReactingLowMachNavierStokes physics." << std::endl
-		      << "       chemistry library      = " << chem_lib << std::endl
-		      << "       thermodynamics library = " << thermo_lib << std::endl
-		      << "       transport library = " << transport_lib << std::endl;
-	    libmesh_error();
-	  }
+        this->add_reacting_low_mach( input, physics_to_add, physics_list );
       }
-
     else
       {
-	std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
-	libmesh_error();
+        std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
+        libmesh_error();
+      }
+  
+    return;
+  }
+
+  void PhysicsFactory::add_reacting_low_mach( const GetPot& input,
+                                              const std::string& physics_to_add,
+                                              GRINS::PhysicsList& physics_list )
+  {
+    std::string chem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/chemistry_library", "cantera" );
+    std::string thermo_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermodynamics_library", "cantera" );
+    std::string transport_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/transport_library", "cantera" );
+
+    if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
+      {
+#ifdef GRINS_HAVE_CANTERA
+        /*
+        physics_list[physics_to_add] = 
+          PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<CanteraChemistry>(physics_to_add,input));
+        */
+#else
+        std::cerr << "Error: Cantera not enabled. Cannot use Cantera library."
+                  << std::endl;
+        libmesh_error();
+
+#endif // GRINS_HAVE_CANTERA
+      }
+    else
+      {
+        std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl
+                  << "       for ReactingLowMachNavierStokes physics." << std::endl
+                  << "       chemistry library      = " << chem_lib << std::endl
+                  << "       thermodynamics library = " << thermo_lib << std::endl
+                  << "       transport library = " << transport_lib << std::endl;
+        libmesh_error();
       }
 
     return;

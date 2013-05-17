@@ -42,15 +42,12 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_
 
 # src/mat_props files
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_thermo.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_transport.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
+#libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
 
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
@@ -84,7 +81,12 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_st
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
 
 # src/properties files
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_chemistry.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_thermo.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_kinetics.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_evaluator.C
 
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
@@ -155,16 +157,11 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic
 
 # src/mat_props headers
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
 include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_singleton.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_thermo.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_transport.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_kinetics.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_transport.h
+#include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
@@ -201,7 +198,12 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_nav
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 
 # src/properties headers
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_thermo.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_evaluator.h
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
