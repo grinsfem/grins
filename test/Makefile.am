@@ -137,8 +137,8 @@ TESTS += coupled_stokes_ns.sh
 TESTS += reacting_low_mach_cantera_regression.sh
 TESTS += reacting_low_mach_grins_kinetics_regression.sh
 TESTS += reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh
-TESTS += test/magnetostatics_regression.sh
-TESTS += test/hartmann_flow_exact.sh
+TESTS += magnetostatics_regression.sh
+TESTS += hartmann_flow_exact.sh
 
 shellfiles_src  = test_ns_couette_flow_2d_x.sh
 shellfiles_src += test_ns_couette_flow_2d_y.sh
