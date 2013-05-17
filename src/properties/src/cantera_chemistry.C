@@ -64,7 +64,7 @@ namespace GRINS
   
   libMesh::Real CanteraChemistry::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpeices() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
     
     libMesh::Real M = 0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
@@ -77,7 +77,7 @@ namespace GRINS
 
   libMesh::Real CanteraChemistry::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpeices() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
     
     libMesh::Real R = 0.0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
@@ -91,7 +91,7 @@ namespace GRINS
   void CanteraChemistry::X( libMesh::Real M_mix, const std::vector<libMesh::Real>& mass_fractions, 
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
-    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpeices() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
 
     libmesh_assert_equal_to( mole_fractions.size(), mass_fractions.size() );
 
