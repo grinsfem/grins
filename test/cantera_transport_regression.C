@@ -33,10 +33,18 @@
 #include "grins_config.h"
 #include "grins/cantera_transport.h"
 
-int main()
+int main(int argc, char* argv[])
 {
 #ifdef GRINS_HAVE_CANTERA
-  GetPot input( "./input_files/cantera_transport.in" );
+  // Check command line count.
+  if( argc < 2 )
+    {
+      // TODO: Need more consistent error handling.
+      std::cerr << "Error: Must specify input file." << std::endl;
+      exit(1); // TODO: something more sophisticated for parallel runs?
+    }
+  
+  GetPot input( argv[1] );
 
   std::vector<std::string> species(5);
   species[0] = input( "Physics/Chemistry/species", "DIE!", 0 );
