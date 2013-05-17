@@ -323,6 +323,7 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics
 AC_CONFIG_FILES(test/cantera_chemistry_unit.sh,                           [chmod +x test/cantera_chemistry_unit.sh])
 AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
+AC_CONFIG_FILES(test/ideal_gas_mixture_cantera_regression.sh,             [chmod +x test/ideal_gas_mixture_cantera_regression.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
