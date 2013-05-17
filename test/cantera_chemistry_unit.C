@@ -54,16 +54,30 @@ int main( int argc, char* argv[] )
 
   std::vector<double> mass_fractions( 5, 0.2 );
 
-  double R_exact = Cantera::GasConstant*( 0.2/28.016 + 0.2/32.0 + 0.2/14.008 + 0.2/16.0 + 0.2/30.008 );
+  const double M_N2 = 14.00674*2;
+  const double M_O2 = 15.9994*2;
+  const double M_N = 14.00674;
+  const double M_O = 15.9994;
+  const double M_NO = (14.00674+15.9994);
 
-  double M_exact = 1.0/( 0.2*( 1.0/28.016 + 1.0/32.0 + 1.0/14.008 + 1.0/16.0 + 1.0/30.008) );
+  double R_exact = Cantera::GasConstant*( mass_fractions[0]/M_N2
+                                          + mass_fractions[1]/M_O2 
+                                          + mass_fractions[3]/M_N
+                                          + mass_fractions[4]/M_O
+                                          + mass_fractions[2]/M_NO );
+
+  double M_exact = 1.0/( mass_fractions[0]/M_N2
+                         + mass_fractions[1]/M_O2 
+                         + mass_fractions[3]/M_N
+                         + mass_fractions[4]/M_O
+                         + mass_fractions[2]/M_NO );
   
   std::vector<double> X_exact(5, 0.0);
-  X_exact[0] = 0.2*M_exact/28.016;
-  X_exact[1] = 0.2*M_exact/32.0;
-  X_exact[2] = 0.2*M_exact/14.008;
-  X_exact[3] = 0.2*M_exact/16.0;
-  X_exact[4] = 0.2*M_exact/30.008;
+  X_exact[0] = mass_fractions[0]*M_exact/M_N2;
+  X_exact[1] = mass_fractions[1]*M_exact/M_O2;
+  X_exact[3] = mass_fractions[3]*M_exact/M_N;
+  X_exact[4] = mass_fractions[4]*M_exact/M_O;
+  X_exact[2] = mass_fractions[2]*M_exact/M_NO;
 
   int return_flag = 0;
 
