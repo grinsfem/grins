@@ -95,6 +95,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_st
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
 
+# src/properties files
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_chemistry.C
+
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
@@ -221,6 +224,9 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
+
+# src/properties headers
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h

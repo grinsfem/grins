@@ -320,6 +320,7 @@ AC_CONFIG_FILES(test/reacting_low_mach_grins_kinetics_regression.sh,      [chmod
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_grins_kinetics_regression.in)
 AC_CONFIG_FILES(test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh, [chmod +x test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics_regression.in)
+AC_CONFIG_FILES(test/cantera_chemistry_unit.sh,                           [chmod +x test/cantera_chemistry_unit.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
