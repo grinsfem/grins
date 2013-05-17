@@ -206,6 +206,8 @@ namespace GRINS
         depending on whether the solver is steady or unsteady. */
     static bool _is_steady;
 
+    bool _is_axisymmetric;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif

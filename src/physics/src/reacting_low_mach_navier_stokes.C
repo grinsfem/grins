@@ -57,6 +57,11 @@ namespace GRINS
     this->_bc_handler = new ReactingLowMachNavierStokesBCHandling( physics_name, input,
 								   this->_gas_mixture.chem_mixture() );
 
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+        this->_is_axisymmetric = true;
+      }
+
     return;
   }
 
@@ -202,7 +207,7 @@ namespace GRINS
 
     libMesh::Real jac = JxW[qp];
 
-    if( this->_bc_handler->is_axisymmetric() )
+    if( this->_is_axisymmetric )
       {
 	divU += U(0)/r;
 	jac *= r;
@@ -286,7 +291,7 @@ namespace GRINS
 
     libMesh::Real jac = JxW[qp];
 
-    if( this->_bc_handler->is_axisymmetric() )
+    if( this->_is_axisymmetric )
       {
 	jac *= r;
       }
@@ -383,7 +388,7 @@ namespace GRINS
 
     libMesh::Real jac = JxW[qp];
 
-    if( this->_bc_handler->is_axisymmetric() )
+    if( this->_is_axisymmetric )
       {
 	divU += U(0)/r;
 	jac *= r;
@@ -401,7 +406,7 @@ namespace GRINS
 		   )*jac; 
 
 	/*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
-	if( this->_bc_handler->is_axisymmetric() )
+	if( this->_is_axisymmetric )
 	  {
 	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
 	  }
@@ -497,7 +502,7 @@ namespace GRINS
 
     libMesh::Real jac = JxW[qp];
 
-    if( this->_bc_handler->is_axisymmetric() )
+    if( this->_is_axisymmetric )
       {
 	const libMesh::Number r = T_qpoint[qp](0);
 	jac *= r;

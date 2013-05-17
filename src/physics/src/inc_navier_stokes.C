@@ -49,6 +49,11 @@ namespace GRINS
     // This is deleted in the base class
     _bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
 
+    if( _bc_handler->is_axisymmetric() )
+      {
+        this->_is_axisymmetric = true;
+      }
+
     return;
   }
 
@@ -93,6 +98,9 @@ namespace GRINS
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.element_fe_var[_p_var]->get_phi();
+
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
 
     // The subvectors and submatrices we need to fill:
     //
@@ -147,9 +155,9 @@ namespace GRINS
 	if (_dim == 3)
 	  grad_w = context.interior_gradient(_w_var, qp);
 
-	libMesh::NumberVectorValue Uvec (u,v);
+	libMesh::NumberVectorValue U(u,v);
 	if (_dim == 3)
-	  Uvec(2) = w;
+	  U(2) = w;
 
 	const libMesh::Number  grad_u_x = grad_u(0);
 	const libMesh::Number  grad_u_y = grad_u(1);
@@ -161,24 +169,40 @@ namespace GRINS
 	const libMesh::Number  grad_w_y = (_dim == 3)?grad_w(1):0;
 	const libMesh::Number  grad_w_z = (_dim == 3)?grad_w(2):0;
 
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( _is_axisymmetric )
+          {
+            jac *= r;
+          }
+
 	// First, an i-loop over the velocity degrees of freedom.
 	// We know that n_u_dofs == n_v_dofs so we can compute contributions
 	// for both at the same time.
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fu(i) += JxW[qp] *
-	      (-_rho*u_phi[i][qp]*(Uvec*grad_u)        // convection term
+	    Fu(i) += jac *
+	      (-_rho*u_phi[i][qp]*(U*grad_u)        // convection term
 	       +p*u_gradphi[i][qp](0)              // pressure term
 	       -_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
-	    Fv(i) += JxW[qp] *
-	      (-_rho*u_phi[i][qp]*(Uvec*grad_v)        // convection term
+            /*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
+            if( _is_axisymmetric )
+              {
+                Fu(i) += u_phi[i][qp]*( p/r - _mu*U(0)/(r*r) )*jac;
+              }
+
+	    Fv(i) += jac *
+	      (-_rho*u_phi[i][qp]*(U*grad_v)        // convection term
 	       +p*u_gradphi[i][qp](1)              // pressure term
 	       -_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+
 	    if (_dim == 3)
 	      {
-		Fw(i) += JxW[qp] *
-		  (-_rho*u_phi[i][qp]*(Uvec*grad_w)        // convection term
+		Fw(i) += jac *
+		  (-_rho*u_phi[i][qp]*(U*grad_w)        // convection term
 		   +p*u_gradphi[i][qp](2)              // pressure term
 		   -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
 	      }
@@ -192,35 +216,43 @@ namespace GRINS
 		    //   u_phi[i][qp]*u_phi[j][qp],
 		    //   (u_gradphi[i][qp]*u_gradphi[j][qp])
 
-		    Kuu(i,j) += JxW[qp] *
-		      (-_rho*u_phi[i][qp]*(Uvec*u_gradphi[j][qp])       // convection term
+		    Kuu(i,j) += jac *
+		      (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
 		       -_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
 		       -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
-		    Kuv(i,j) += JxW[qp] *
+
+                    
+                    if( _is_axisymmetric )
+                      {
+                        Kuu(i,j) -= u_phi[i][qp]*_mu*u_phi[j][qp]/(r*r)*jac;
+                      }
+
+		    Kuv(i,j) += jac *
 		      (-_rho*u_phi[i][qp]*grad_u_y*u_phi[j][qp]);           // convection term
 
-		    Kvv(i,j) += JxW[qp] *
-		      (-_rho*u_phi[i][qp]*(Uvec*u_gradphi[j][qp])       // convection term
+		    Kvv(i,j) += jac *
+		      (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
 		       -_rho*u_phi[i][qp]*grad_v_y*u_phi[j][qp]             // convection term
 		       -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
-		    Kvu(i,j) += JxW[qp] *
+
+		    Kvu(i,j) += jac *
 		      (-_rho*u_phi[i][qp]*grad_v_x*u_phi[j][qp]);           // convection term
 
 		    if (_dim == 3)
 		      {
-			Kuw(i,j) += JxW[qp] *
+			Kuw(i,j) += jac *
 			  (-_rho*u_phi[i][qp]*grad_u_z*u_phi[j][qp]);           // convection term
 
-			Kvw(i,j) += JxW[qp] *
+			Kvw(i,j) += jac *
 			  (-_rho*u_phi[i][qp]*grad_v_z*u_phi[j][qp]);           // convection term
 
-			Kww(i,j) += JxW[qp] *
-			  (-_rho*u_phi[i][qp]*(Uvec*u_gradphi[j][qp])       // convection term
+			Kww(i,j) += jac *
+			  (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
 			   -_rho*u_phi[i][qp]*grad_w_z*u_phi[j][qp]             // convection term
 			   -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
-			Kwu(i,j) += JxW[qp] *
+			Kwu(i,j) += jac *
 			  (-_rho*u_phi[i][qp]*grad_w_x*u_phi[j][qp]);           // convection term
-			Kwv(i,j) += JxW[qp] *
+			Kwv(i,j) += jac *
 			  (-_rho*u_phi[i][qp]*grad_w_y*u_phi[j][qp]);           // convection term
 		      }
 		  } // end of the inner dof (j) loop
@@ -228,13 +260,24 @@ namespace GRINS
 		// Matrix contributions for the up, vp and wp couplings
 		for (unsigned int j=0; j != n_p_dofs; j++)
 		  {
-		    Kup(i,j) += JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
-		    Kvp(i,j) += JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
+		    Kup(i,j) += u_gradphi[i][qp](0)*p_phi[j][qp]*jac;
+		    Kvp(i,j) += u_gradphi[i][qp](1)*p_phi[j][qp]*jac;
+
 		    if (_dim == 3)
-		      Kwp(i,j) += JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
+                      {
+                        Kwp(i,j) += u_gradphi[i][qp](2)*p_phi[j][qp]*jac;
+                      }
+
+                    if( _is_axisymmetric )
+                      {
+                        Kup(i,j) += u_phi[i][qp]*p_phi[j][qp]/r*jac;
+                      }
+
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.elem_solution_derivative)
+                
+
+	      } // end - if (compute_jacobian)
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -270,10 +313,18 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.element_fe_var[_u_var]->get_dphi();
 
+    // The velocity shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.element_fe_var[_u_var]->get_phi();
+
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.element_fe_var[_p_var]->get_phi();
 
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
+    
     // The subvectors and submatrices we need to fill:
     //
     // Kpu, Kpv, Kpw, Fp
@@ -291,6 +342,12 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
+        libMesh::Number u;
+        if( _is_axisymmetric )
+          { 
+            u = context.interior_value( _u_var, qp );
+          }
+        
 	// Compute the velocity gradient at the old Newton iterate.
 	libMesh::Gradient grad_u, grad_v, grad_w;
 	grad_u = context.interior_gradient(_u_var, qp);
@@ -298,27 +355,42 @@ namespace GRINS
 	if (_dim == 3)
 	  grad_w = context.interior_gradient(_w_var, qp);
 
+        libMesh::Number divU = grad_u(0) + grad_v(1);
+        if (this->_dim == 3)
+          divU += grad_w(2);
+
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( _is_axisymmetric )
+          {
+            divU += u/r;
+            jac *= r;
+          }
+
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    Fp(i) += JxW[qp] * p_phi[i][qp] *
-	      (grad_u(0) + grad_v(1));
-	    if (_dim == 3)
-	      Fp(i) += JxW[qp] * p_phi[i][qp] *
-		(grad_w(2));
+	    Fp(i) += p_phi[i][qp]*divU*jac;
 
 	    if (compute_jacobian)
 	      {
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
-		    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
-		    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
+		    Kpu(i,j) += p_phi[i][qp]*u_gradphi[j][qp](0)*jac;
+		    Kpv(i,j) += p_phi[i][qp]*u_gradphi[j][qp](1)*jac;
 		    if (_dim == 3)
-		      Kpw(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
+		      Kpw(i,j) += p_phi[i][qp]*u_gradphi[j][qp](2)*jac;
+
+                    if( _is_axisymmetric )
+                      {
+                        Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac;
+                      }
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.elem_solution_derivative)
+	      } // end - if (compute_jacobian)
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -351,6 +423,9 @@ namespace GRINS
     // We assume the same for each flow variable
     const std::vector<std::vector<libMesh::Real> >& u_phi = 
       context.element_fe_var[_u_var]->get_phi();
+
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
 
     // The number of local degrees of freedom in each variable
     const unsigned int n_u_dofs = context.dof_indices_var[_u_var].size();
@@ -385,13 +460,22 @@ namespace GRINS
 	if( _dim == 3 )
 	  w_dot = context.interior_value(_w_var, qp);
       
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( _is_axisymmetric )
+          {
+            jac *= r;
+          }
+
 	for (unsigned int i = 0; i != n_u_dofs; ++i)
 	  {
-	    F_u(i) += JxW[qp]*_rho*u_dot*u_phi[i][qp];
-	    F_v(i) += JxW[qp]*_rho*v_dot*u_phi[i][qp];
+	    F_u(i) += _rho*u_dot*u_phi[i][qp]*jac;
+	    F_v(i) += _rho*v_dot*u_phi[i][qp]*jac;
 
 	    if( _dim == 3 )
-	      F_w(i) += JxW[qp]*_rho*w_dot*u_phi[i][qp];
+	      F_w(i) += _rho*w_dot*u_phi[i][qp]*jac;
 	  
 	    if( compute_jacobian )
               {
@@ -399,7 +483,7 @@ namespace GRINS
 		  {
 		    // Assuming rho is constant w.r.t. u, v, w
 		    // and T (if Boussinesq added).
-		    libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
+		    libMesh::Real value = _rho*u_phi[i][qp]*u_phi[j][qp]*jac;
 
 		    M_uu(i,j) += value;
 		    M_vv(i,j) += value;

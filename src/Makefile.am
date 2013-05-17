@@ -17,15 +17,52 @@ endif
 #----------------------------------------------
 libgrins_la_SOURCES =
 
-# src/solver files
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_solver.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/mesh_builder.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_factory.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_steady_solver.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_unsteady_solver.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation_builder.C
-libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
+# src/bc_handling files
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/bc_handling_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/heat_transfer_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_heat_transfer_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/inc_navier_stokes_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/low_mach_navier_stokes_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
+
+# src/boundary_conditions files
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/boundary_conditions.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/bc_factory.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/neumann_func_obj.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/parabolic_profile.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/gaussian_profile.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/gaussian_xy_profile.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/concentric_cylinder_profile.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
+
+# src/kinetics files
+libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/arrhenius_rate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction.C
+libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction_set.C
+libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/grins_kinetics.C
+
+# src/mat_props files
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_species.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_mixture.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_curve_fit.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_thermo.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_singleton.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_thermo.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_transport.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_kinetics.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/ideal_gas_mixture.C
+libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
 
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
@@ -35,7 +72,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_stab_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_adjoint_stab.C
-libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_inc_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_source.C
@@ -67,20 +103,24 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/magnetostatics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/lorentz_force.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_instantiation.C
 
-# src/boundary_conditions files
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/boundary_conditions.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/bc_factory.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/neumann_func_obj.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/parabolic_profile.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/gaussian_profile.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/gaussian_xy_profile.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/concentric_cylinder_profile.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
+# src/properties files
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_chemistry.C
+
+# src/qoi files
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_factory.C
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/vorticity.C
+
+# src/solver files
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_solver.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/mesh_builder.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_factory.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_steady_solver.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_unsteady_solver.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation_builder.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
 
 # src/utilities files
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/grins_version.C
@@ -96,48 +136,11 @@ libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/visualization_factory
 libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/postprocessed_quantities.C
 libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/postprocessing_factory.C
 
-# src/mat_props files
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_species.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_curve_fit.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_thermo.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_singleton.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_thermo.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_transport.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/ideal_gas_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
 
-# src/bc_handling files
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/bc_handling_base.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/heat_transfer_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_heat_transfer_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/inc_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_inc_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/low_mach_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_electrostatics_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_magnetostatics_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/electrostatics_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/magnetostatics_bc_handling.C
-
-# src/qoi files
-libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
-libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
-libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_factory.C
-libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/vorticity.C
-
-# src/kinetics files
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/arrhenius_rate.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction_set.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/grins_kinetics.C
 
 # This is for installing .C files that are needed for instantiating
 # with different template parameters in user code
@@ -154,22 +157,65 @@ sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
 includedir = $(prefix)/include/grins
 include_HEADERS =
 
-# src/solver headers
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_solver.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/mesh_builder.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_factory.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_steady_solver.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_unsteady_solver.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation_builder.h
-include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_context.h
+# src/bc_handling headers
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/inc_navier_stokes_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_electrostatics_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_magnetostatics_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/electrostatics_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/magnetostatics_bc_handling.h
+
+# src/boundary_conditions headers
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_types.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/boundary_conditions.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_factory.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/neumann_func_obj.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/parabolic_profile.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gaussian_profile.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gaussian_xy_profile.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/concentric_cylinder_profile.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/dbc_container.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pressure_pinning.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_container.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+
+# src/kinetics headers
+include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/arrhenius_rate.h
+include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction.h
+include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_set.h
+include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/grins_kinetics.h
+include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_enum.h
+
+# src/mat_props headers
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/species_enum.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_species.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_mixture.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_curve_fit.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_thermo.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_singleton.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_thermo.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_transport.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_kinetics.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/ideal_gas_mixture.h
+include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_transport.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/variable_name_defaults.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/var_typedefs.h
-include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_inc_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes.h
@@ -206,21 +252,26 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/lorentz_force.h
 
-# src/boundary_conditions headers
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_types.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/boundary_conditions.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_factory.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/neumann_func_obj.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/parabolic_profile.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gaussian_profile.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gaussian_xy_profile.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/concentric_cylinder_profile.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/dbc_container.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pressure_pinning.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_container.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+# src/properties headers
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
+
+# src/qoi headers
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_base.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_factory.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_names.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/vorticity.h
+
+# src/solver headers
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_solver.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/mesh_builder.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_factory.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_steady_solver.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_unsteady_solver.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation_builder.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_context.h
+
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
@@ -239,52 +290,6 @@ include_HEADERS += $(top_srcdir)/src/visualization/include/grins/visualization.h
 include_HEADERS += $(top_srcdir)/src/visualization/include/grins/visualization_factory.h
 include_HEADERS += $(top_srcdir)/src/visualization/include/grins/postprocessed_quantities.h
 include_HEADERS += $(top_srcdir)/src/visualization/include/grins/postprocessing_factory.h
-
-# src/mat_props headers
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/species_enum.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_species.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_mixture.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_curve_fit.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_thermo.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_singleton.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_thermo.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_transport.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_kinetics.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/ideal_gas_mixture.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_transport.h
-
-# src/bc_handling headers
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/inc_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_inc_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_electrostatics_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_magnetostatics_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/electrostatics_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/magnetostatics_bc_handling.h
-
-# src/qoi headers
-include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
-include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_base.h
-include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_factory.h
-include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_names.h
-include_HEADERS += $(top_srcdir)/src/qoi/include/grins/vorticity.h
-
-# src/kinetics headers
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/arrhenius_rate.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_set.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/grins_kinetics.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_enum.h
 
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
@@ -321,15 +326,18 @@ endif
 #Local Directories to include for build
 #--------------------------------------
 AM_CPPFLAGS = 
-AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
+
 AM_CPPFLAGS += -I$(top_builddir)/src/utilities/include #For grins_version.h
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)

@@ -32,13 +32,13 @@ output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = false 
-print_mesh_info = false
-print_log_info = false
-solver_verbose = false
-solver_quiet = true
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
 
-echo_physics = 'false'
+echo_physics = 'true'
 
 # Options related to all Physics
 [Physics]
@@ -57,8 +57,8 @@ enabled_physics = 'AxisymmetricElectrostatics AxisymmetricMagnetostatics'
 FE_family = LAGRANGE_VEC 
 A_order = FIRST
 
-sigma = 1.0
-mu = 1.0
+sigma = '1.0'
+mu = '1.0'
 
 bc_ids = '2 3 1 0'
 bc_types = 'unbounded axisymmetric unbounded unbounded'
@@ -74,7 +74,8 @@ bc_types = 'axisymmetric insulating_wall prescribed_current prescribed_voltage'
 
 V_wall_1 = '2.0'
 E_wall_2 = '0.0 1.0'
- 
+
+sigma = '${Physics/AxisymmetricMagnetostatics/sigma}' 
 
 [../VariableNames]
 

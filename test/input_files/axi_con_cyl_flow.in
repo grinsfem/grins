@@ -3,7 +3,7 @@
 mesh_option = create_2D_mesh
 element_type = QUAD9
 mesh_nx1 = 500 
-mesh_nx2 = 1
+mesh_nx2 = 1 
 
 domain_x1_min = 1.0
 domain_x1_max = 2.0
@@ -45,10 +45,12 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'AxisymmetricIncompressibleNavierStokes'
+enabled_physics = 'IncompressibleNavierStokes'
+
+is_axisymmetric = 'true'
 
 # Options for Incompressible Navier-Stokes physics
-[./AxisymmetricIncompressibleNavierStokes]
+[./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
 V_order = SECOND
@@ -66,7 +68,7 @@ mu = 1.0
 bc_ids = '1 3 2 0'
 bc_types = 'no_slip prescribed_vel general_velocity general_velocity'
 
-bound_vel_3 = '0.0 2.0'
+bound_vel_3 = '0.0 2.0 0.0'
 
 pin_pressure = true 
 pin_value = 100.0
@@ -75,11 +77,8 @@ pin_location = '1.5 0.5'
 [../VariableNames]
 
 Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
+u_velocity = 'r_vel'
+v_velocity = 'z_vel'
 pressure = 'p'
-r_velocity = 'r_vel'
-z_velocity = 'z_vel'
 
 []

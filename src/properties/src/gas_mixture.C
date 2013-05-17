@@ -26,24 +26,26 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_PHYSICAL_CONSTANTS_H
-#define GRINS_PHYSICAL_CONSTANTS_H
+// This class
+#include "grins/gas_mixture.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  namespace Constants
+  GasMixture::GasMixture( const GetPot& input )
+    : _chemistry( input ),
+      _thermo( input, _chemistry ),
+      _transport( input, _chemistry, _thermo ),
+      _kinetics( input, _chemistry, _thermo )
   {
-    /*!
-     * Universal Gas Constant, R, expressed in J/(kmol-K)
-     */
-    const libMesh::Real R_universal = 8314.4621;
+    return;
+  }
+  
+  GasMixture::~GasMixture()
+  {
+    return;
+  }
 
-    /*!
-     * Avogadro's number, particles per mole.
-     */
-    const libMesh::Real Avogadro = 6.02214179e23;
-
-  } // namespace Constants
-} // namespace GRINS
-
-#endif //GRINS_PHYSICAL_CONSTANTS_H
+} // end namespace GRINS

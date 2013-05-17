@@ -49,6 +49,11 @@ namespace GRINS
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
 
+    if( this->_bc_handler->is_axisymmetric() )
+      {
+        this->_is_axisymmetric = true;
+      }
+
     return;
   }
 
@@ -99,11 +104,8 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.element_fe_var[this->_T_var]->get_dphi();
 
-    // The subvectors and submatrices we need to fill:
-    //
-    // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
-    // e.g., for \alpha = T and \beta = v we get: K_{Tu} = R_{T},{u}
-    //
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
 
     // We do this in the incompressible Navier-Stokes class and need to do it here too
     // since _w_var won't have been defined in the global map.
@@ -147,23 +149,30 @@ namespace GRINS
 	libMesh::Number k = this->_k( T );
 	libMesh::Number dk_dT = this->_k.deriv( T );
 
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( this->_is_axisymmetric )
+          {
+            jac *= r;
+          }
+
 	// First, an i-loop over the  degrees of freedom.
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) += JxW[qp] *
+	    FT(i) += jac *
 	      (-this->_rho*this->_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
 	       - k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
-	    if (compute_jacobian && context.elem_solution_derivative)
+	    if (compute_jacobian)
 	      {
-		libmesh_assert (context.elem_solution_derivative == 1.0);
-
 		for (unsigned int j=0; j != n_T_dofs; j++)
 		  {
 		    // TODO: precompute some terms like:
 		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-		    KTT(i,j) += JxW[qp] *
+		    KTT(i,j) += jac *
 		      (-this->_rho*this->_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
 		       -k*(T_gradphi[i][qp]*T_gradphi[j][qp]) 
 		       -dk_dT*T_phi[j][qp]*grad_T*T_gradphi[i][qp]); // diffusion term
@@ -173,10 +182,10 @@ namespace GRINS
 		// Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
-		    KTu(i,j) += JxW[qp]*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
-		    KTv(i,j) += JxW[qp]*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
+		    KTu(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+		    KTv(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
 		    if (this->_dim == 3)
-		      KTw(i,j) += JxW[qp]*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
+		      KTw(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.elem_solution_derivative)
@@ -237,6 +246,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& phi = 
       context.element_fe_var[this->_T_var]->get_phi();
 
+    const std::vector<libMesh::Point>& u_qpoint = 
+      context.element_fe_var[this->_u_var]->get_xyz();
+
     // The number of local degrees of freedom in each variable
     const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
 
@@ -256,16 +268,25 @@ namespace GRINS
 	// while u will be given by the interior_* functions.
 	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( this->_is_axisymmetric )
+          {
+            jac *= r;
+          }
+
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F(i) += JxW[qp]*(this->_rho*this->_Cp*T_dot*phi[i][qp] );
+	    F(i) += (this->_rho*this->_Cp*T_dot*phi[i][qp] )*jac;
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
 		    // We're assuming rho, cp are constant w.r.t. T here.
-                    M(i,j) += JxW[qp]*this->_rho*this->_Cp*phi[j][qp]*phi[i][qp] ;
+                    M(i,j) += JxW[qp]*this->_rho*this->_Cp*phi[j][qp]*phi[i][qp]*jac;
                   }
               }// End of check on Jacobian
           

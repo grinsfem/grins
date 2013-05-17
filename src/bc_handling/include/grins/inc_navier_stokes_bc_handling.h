@@ -61,8 +61,6 @@ namespace GRINS
 
     std::string _u_var_name, _v_var_name, _w_var_name;
 
-    VariableIndex _u_var, _v_var, _w_var;
-
   private:
 
     IncompressibleNavierStokesBCHandling();

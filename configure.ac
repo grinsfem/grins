@@ -284,7 +284,7 @@ DX_CHI_FEATURE(OFF)
 DX_MAN_FEATURE(OFF)
 DX_RTF_FEATURE(OFF)
 DX_XML_FEATURE(OFF)
-DX_PDF_FEATURE(ON)
+DX_PDF_FEATURE(OFF)
 DX_PS_FEATURE(OFF)
 
 DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
@@ -320,8 +320,12 @@ AC_CONFIG_FILES(test/reacting_low_mach_grins_kinetics_regression.sh,      [chmod
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_grins_kinetics_regression.in)
 AC_CONFIG_FILES(test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh, [chmod +x test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics_regression.in)
-AC_CONFIG_FILES(test/magnetostatics_regression.sh,            [chmod +x test/magnetostatics_regression.sh])
-AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                  [chmod +x test/hartmann_flow_exact.sh])
+AC_CONFIG_FILES(test/cantera_chemistry_unit.sh,                           [chmod +x test/cantera_chemistry_unit.sh])
+AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
+AC_CONFIG_FILES(test/input_files/cantera_transport.in)
+AC_CONFIG_FILES(test/ideal_gas_mixture_cantera_regression.sh,             [chmod +x test/ideal_gas_mixture_cantera_regression.sh])
+AC_CONFIG_FILES(test/magnetostatics_regression.sh,                        [chmod +x test/magnetostatics_regression.sh])
+AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                              [chmod +x test/hartmann_flow_exact.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

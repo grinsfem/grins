@@ -36,10 +36,18 @@
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
 
-int main()
+int main(int argc, char* argv[])
 {
 #ifdef GRINS_HAVE_CANTERA
-  GetPot input( "./input_files/cantera_transport.in" );
+  // Check command line count.
+  if( argc < 2 )
+    {
+      // TODO: Need more consistent error handling.
+      std::cerr << "Error: Must specify input file." << std::endl;
+      exit(1); // TODO: something more sophisticated for parallel runs?
+    }
+
+  GetPot input( argv[1] );
 
   GRINS::IdealGasMixture<GRINS::CanteraThermodynamics,GRINS::CanteraTransport,GRINS::CanteraKinetics> gas( input );
 
@@ -163,11 +171,11 @@ int main()
     }
 
   std::vector<double> h_reg(5,0.0);
-  h_reg[0] = 1.3708031466651920e+06;
-  h_reg[1] = 1.2691593487863187e+06;
-  h_reg[2] = 4.3657076051206365e+06;
-  h_reg[3] = 3.5526729566942364e+07;
-  h_reg[4] = 1.7154371363422986e+07;
+  h_reg[0] = 1.3708015144567785e+06;
+  h_reg[1] = 1.2691578376046643e+06;
+  h_reg[2] = 4.3657024068945460e+06;
+  h_reg[3] = 3.5526687265444122e+07;
+  h_reg[4] = 1.7154350937799267e+07;
 
   for( unsigned int i = 0; i < 5; i++ )
     {

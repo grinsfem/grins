@@ -40,7 +40,6 @@
 #include "grins/stokes.h"
 #include "grins/inc_navier_stokes.h"
 #include "grins/inc_navier_stokes_adjoint_stab.h"
-#include "grins/axisym_inc_navier_stokes.h"
 #include "grins/heat_transfer.h"
 #include "grins/heat_transfer_source.h"
 #include "grins/heat_transfer_adjoint_stab.h"
@@ -149,11 +148,6 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization(physics_to_add,input) );
-      }
-    else if( physics_to_add == axisymmetric_incomp_navier_stokes )
-      {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new AxisymmetricIncompressibleNavierStokes(physics_to_add,input) );
       }
     else if( physics_to_add == heat_transfer )
       {
@@ -436,16 +430,6 @@ namespace GRINS
 	      }
 	  }
 
-	// For AxisymmetricHeatTransfer, we need AxisymmetricIncompNavierStokes
-	if( physics->first == axisymmetric_heat_transfer )
-	  {
-	    if( physics_list.find(axisymmetric_incomp_navier_stokes) == 
-		physics_list.end() )
-	      {
-		this->physics_consistency_error( axisymmetric_heat_transfer, 
-						 axisymmetric_incomp_navier_stokes  );
-	      }
-	  }
 	// For BoussinesqBuoyancy, we need both HeatTransfer and IncompressibleNavierStokes
 	if( physics->first == boussinesq_buoyancy )
 	  {
@@ -464,11 +448,6 @@ namespace GRINS
 	   and AxisymmetricIncompNavierStokes */
 	if( physics->first == axisymmetric_boussinesq_buoyancy )
 	  {
-	    if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
-	      {
-		this->physics_consistency_error( axisymmetric_boussinesq_buoyancy, 
-						 axisymmetric_incomp_navier_stokes );
-	      }
 
 	    if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
 	      {
@@ -547,7 +526,7 @@ namespace GRINS
 	  }
 
 	/* For AxisymmetricLorentzForce, we'd better have AxisymmetricElectrostatics,
-	   AxisymmetricMagnetostatic, and AxisymmetricIncompressibleNavierStokes */
+	   AxisymmetricMagnetostatic, and IncompressibleNavierStokes */
 	if( physics->first == axisymmetric_lorentz_force )
 	  {
 	    if( physics_list.find(axisymmetric_electrostatics) == physics_list.end() )
@@ -560,9 +539,9 @@ namespace GRINS
 		this->physics_consistency_error( physics->first, axisymmetric_magnetostatics );
 	      }
 
-	    if( physics_list.find(axisymmetric_incomp_navier_stokes) == physics_list.end() )
+            if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
 	      {
-		this->physics_consistency_error( physics->first, axisymmetric_incomp_navier_stokes );
+		this->physics_consistency_error( physics->first, incompressible_navier_stokes );
 	      }
 	  }
 
