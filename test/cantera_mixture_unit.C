@@ -33,7 +33,6 @@
 
 // GRINS
 #include "grins/cantera_mixture.h"
-#include "grins/cantera_chemistry.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -51,8 +50,7 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
   
-  GRINS::CanteraMixture mixture(input);
-  GRINS::CanteraChemistry cantera(mixture);
+  GRINS::CanteraMixture cantera(input);
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

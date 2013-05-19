@@ -12,12 +12,11 @@ check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += cantera_chemistry_unit
+check_PROGRAMS += cantera_mixture_unit
 check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_transport_regression
-check_PROGRAMS += ideal_gas_mixture_cantera_regression
+check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += grins_kinetics_regression
 check_PROGRAMS += catalytic_wall_unit
 
 AM_CPPFLAGS = 
@@ -67,12 +66,11 @@ gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
-cantera_chemistry_unit_SOURCES = $(top_srcdir)/test/cantera_chemistry_unit.C
+cantera_mixture_unit_SOURCES = $(top_srcdir)/test/cantera_mixture_unit.C
 cantera_chem_thermo_test_SOURCES = $(top_srcdir)/test/cantera_chem_thermo_test.C
 cantera_transport_regression_SOURCES = $(top_srcdir)/test/cantera_transport_regression.C
-ideal_gas_mixture_cantera_regression_SOURCES = $(top_srcdir)/test/ideal_gas_mixture_cantera_regression.C
+cantera_evaluator_regression_SOURCES = $(top_srcdir)/test/cantera_evaluator_regression.C
 reacting_low_mach_regression_SOURCES = $(top_srcdir)/test/reacting_low_mach_regression.C
-grins_kinetics_regression_SOURCES = $(top_srcdir)/test/grins_kinetics_regression.C
 catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 
 # List of source files for license stamping
@@ -88,10 +86,10 @@ STAMPED_FILES += $(gaussian_profiles_SOURCES)
 STAMPED_FILES += $(vorticity_qoi_SOURCES)
 STAMPED_FILES += $(low_mach_cavity_benchmark_regression_SOURCES)
 STAMPED_FILES += $(grins_flow_regression_SOURCES)
-STAMPED_FILES += $(cantera_chemistry_unit_SOURCES)
+STAMPED_FILES += $(cantera_mixture_unit_SOURCES)
 STAMPED_FILES += $(cantera_chem_thermo_test_SOURCES)
 STAMPED_FILES += $(cantera_transport_regression_SOURCES)
-STAMPED_FILES += $(ideal_gas_mixture_cantera_regression_SOURCES)
+STAMPED_FILES += $(cantera_evaluator_regression_SOURCES)
 STAMPED_FILES += $(reacting_low_mach_regression_SOURCES)
 STAMPED_FILES += $(grins_kinetics_regression_SOURCES)
 STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
@@ -99,12 +97,11 @@ STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
 #Define tests to actually be run
 TESTS =
 TESTS += gaussian_profiles
-TESTS += cantera_chemistry_unit.sh
-TESTS += catalytic_wall_unit
+TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_regression.sh
-TESTS += ideal_gas_mixture_cantera_regression.sh
-TESTS += grins_kinetics_regression.sh
+TESTS += cantera_evaluator_regression.sh
+TESTS += catalytic_wall_unit_cantera.sh
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
@@ -142,7 +139,7 @@ shellfiles_src += cantera_chem_thermo_test.sh
 shellfiles_src += reacting_low_mach_cantera_regression.sh
 shellfiles_src += cantera_transport_regression.sh
 shellfiles_src += cantera_chemistry_unit.sh
-shellfiles_src += ideal_gas_mixture_cantera_regression.sh
+shellfiles_src += cantera_evaluator_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids

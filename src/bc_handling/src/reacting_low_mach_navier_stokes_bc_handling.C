@@ -32,7 +32,7 @@
 // GRINS
 #include "grins/string_utils.h"
 #include "grins/catalytic_wall.h"
-#include "grins/cantera_chemistry.h"
+#include "grins/cantera_mixture.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -598,7 +598,7 @@ namespace GRINS
   
   // Instantiate
 #ifdef GRINS_HAVE_CANTERA
-  template class ReactingLowMachNavierStokesBCHandling<CanteraChemistry>;
+  template class ReactingLowMachNavierStokesBCHandling<CanteraMixture>;
 #endif
 
 } // namespace GRINS

@@ -43,8 +43,8 @@
 namespace GRINS
 {
 
-  CanteraThermodynamics::CanteraThermodynamics( const CanteraMixture& mixture )
-    : _cantera_chemistry( CanteraChemistry(mixture) ),
+  CanteraThermodynamics::CanteraThermodynamics( CanteraMixture& mixture )
+    : _cantera_mixture(mixture),
       _cantera_gas(mixture.get_chemistry())
   {
     return;
@@ -149,7 +149,7 @@ namespace GRINS
 
     }
 
-    return h_RT[species]*_cantera_chemistry.R(species)*T;
+    return h_RT[species]*_cantera_mixture.R(species)*T;
   }
 
   void CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
@@ -181,7 +181,7 @@ namespace GRINS
 
     for( unsigned int s = 0; s < h.size(); s++ )
       {
-	h[s] *= _cantera_chemistry.R(s)*T;
+	h[s] *= _cantera_mixture.R(s)*T;
       }
 
     }

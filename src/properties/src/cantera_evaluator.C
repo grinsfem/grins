@@ -39,8 +39,8 @@
 namespace GRINS
 {
 
-  CanteraEvaluator::CanteraEvaluator( const CanteraMixture& mixture )
-    : _chem( CanteraChemistry(mixture) ),
+  CanteraEvaluator::CanteraEvaluator( CanteraMixture& mixture )
+    : _chem( mixture ),
       _thermo( CanteraThermodynamics(mixture) ),
       _transport( CanteraTransport(mixture) ),
       _kinetics( CanteraKinetics(mixture) )

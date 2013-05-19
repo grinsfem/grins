@@ -763,7 +763,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
-									     CachedValues& cache ) const
+									     CachedValues& cache )
   {
     const unsigned int n_qpoints = context.element_qrule->n_points();
 
@@ -829,7 +829,7 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
 							     const std::vector<libMesh::Point>& points,
-							     CachedValues& cache ) const
+							     CachedValues& cache )
   {
     if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
       {

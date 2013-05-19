@@ -315,15 +315,14 @@ AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
 AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh,             [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
-AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	                  [chmod +x test/grins_kinetics_regression.sh])
-AC_CONFIG_FILES(test/reacting_low_mach_grins_kinetics_regression.sh,      [chmod +x test/reacting_low_mach_grins_kinetics_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_grins_kinetics_regression.in)
 AC_CONFIG_FILES(test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh, [chmod +x test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics_regression.in)
-AC_CONFIG_FILES(test/cantera_chemistry_unit.sh,                           [chmod +x test/cantera_chemistry_unit.sh])
+AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
 AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
-AC_CONFIG_FILES(test/ideal_gas_mixture_cantera_regression.sh,             [chmod +x test/ideal_gas_mixture_cantera_regression.sh])
+AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

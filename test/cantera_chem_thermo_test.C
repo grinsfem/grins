@@ -31,7 +31,6 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/cantera_mixture.h"
-#include "grins/cantera_chemistry.h"
 #include "grins/cantera_thermo.h"
 #include "grins/cantera_kinetics.h"
 #include "grins/cached_values.h"
@@ -143,11 +142,11 @@ int main(int argc, char* argv[])
   od_reg[3] = -1.5287063762539863e+04;
   od_reg[4] = 1.2490795641209472e+04; */
 
-  od_reg[0] = 9.3634775856169406e+04;
-  od_reg[1] = -3.3749569237184612e+05;
-  od_reg[2] = 2.5814937544198355e+05;
-  od_reg[3] = -2.1414118918565838e+05;
-  od_reg[4] = 1.9985273025935155e+05;
+  od_reg[0] = 9.3626353539094969e+04;
+  od_reg[1] = -3.3748303628338216e+05;
+  od_reg[2] = 2.5813337444763799e+05;
+  od_reg[3] = -2.1412192748531760e+05;
+  od_reg[4] = 1.9984523578196683e+05;
 
   for( unsigned int i = 0; i < 5; i++ )
     {
@@ -163,11 +162,11 @@ int main(int argc, char* argv[])
     }
   
   std::vector<double> h_reg(5,0.0);
-  h_reg[0] = 1.3708015144567785e+06;
-  h_reg[1] = 1.2691578376046643e+06;
-  h_reg[2] = 4.3657024068945460e+06;
-  h_reg[3] = 3.5526687265444122e+07;
-  h_reg[4] = 1.7154350937799267e+07;
+  h_reg[0] = 1.3709248272267890e+06;
+  h_reg[1] = 1.2692054328083945e+06;
+  h_reg[2] = 4.3659730250572553e+06;
+  h_reg[3] = 3.5529883128718123e+07;
+  h_reg[4] = 1.7154994250083648e+07;
 
   for( unsigned int i = 0; i < 5; i++ )
     {

@@ -34,21 +34,18 @@
 #ifdef GRINS_HAVE_CANTERA
 
 // GRINS
-#include "grins/cantera_chemistry.h"
+#include "grins/cantera_mixture.h"
 #include "grins/cantera_thermo.h"
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
 
 namespace GRINS
 {
-  // GRINS forward declarations
-  class CanteraMixture;
-
   class CanteraEvaluator
   {
   public:
 
-    CanteraEvaluator( const CanteraMixture& mixture );
+    CanteraEvaluator( CanteraMixture& mixture );
     ~CanteraEvaluator();
 
     // Chemistry
@@ -92,7 +89,7 @@ namespace GRINS
 
   protected:
 
-    CanteraChemistry _chem;
+    CanteraMixture& _chem;
 
     CanteraThermodynamics _thermo;
 

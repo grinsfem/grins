@@ -36,14 +36,17 @@
 // C++
 #include <vector>
 
-// GRINS
-#include "grins/cantera_chemistry.h"
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 
 // libMesh forward declarations
 class GetPot;
+
+// Cantera forward declarations
+namespace Cantera
+{
+  class IdealGasMix;
+}
 
 namespace GRINS
 {
@@ -55,7 +58,7 @@ namespace GRINS
   {
   public:
 
-    CanteraThermodynamics( const CanteraMixture& mixture );
+    CanteraThermodynamics( CanteraMixture& mixture );
     ~CanteraThermodynamics();
 
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
@@ -68,7 +71,7 @@ namespace GRINS
 
   protected:
 
-    const CanteraChemistry _cantera_chemistry;
+    CanteraMixture& _cantera_mixture;
 
     Cantera::IdealGasMix& _cantera_gas;
 

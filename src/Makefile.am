@@ -82,7 +82,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_chemistry.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_kinetics.C
@@ -199,7 +198,6 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_mixture.h
-include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_thermo.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h

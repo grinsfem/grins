@@ -31,7 +31,7 @@
 
 // GRINS
 #include "grins/cached_values.h"
-#include "grins/cantera_chemistry.h"
+#include "grins/cantera_mixture.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -117,7 +117,7 @@ namespace GRINS
 
   // Instantiate
 #ifdef GRINS_HAVE_CANTERA
-  template class CatalyticWall<CanteraChemistry>;
+  template class CatalyticWall<CanteraMixture>;
 #endif
 
 } // namespace GRINS

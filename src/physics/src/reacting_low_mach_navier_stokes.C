@@ -519,7 +519,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
-                                                                                              CachedValues& cache ) const
+                                                                                              CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 
@@ -668,7 +668,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
-                                                                                           CachedValues& cache ) const
+                                                                                           CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 
@@ -710,7 +710,7 @@ namespace GRINS
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const libMesh::FEMContext& context, 
                                                                               const std::vector<libMesh::Point>& points,
-                                                                              CachedValues& cache ) const
+                                                                              CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 

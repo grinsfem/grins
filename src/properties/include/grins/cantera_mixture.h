@@ -67,6 +67,21 @@ namespace GRINS
 
     libMesh::Real M( unsigned int species ) const;
 
+    libMesh::Real M_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    libMesh::Real R( unsigned int species ) const;
+
+    libMesh::Real R_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
+
+    libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
+
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+	    std::vector<libMesh::Real>& mole_fractions ) const;
+
+    unsigned int species_index( const std::string& species_name ) const;
+
+    std::string species_name( unsigned int species_index ) const;
+
   protected:
 
     boost::scoped_ptr<Cantera::IdealGasMix> _cantera_gas;
@@ -103,6 +118,34 @@ namespace GRINS
   {
     // Cantera returns molar mass in kg/kmol
     return _cantera_gas->molarMass(species);
+  }
+
+  inline
+  libMesh::Real CanteraMixture::R( unsigned int species ) const
+  {
+    // Cantera::GasConstant in J/kmol-K
+    // Cantera returns molar mass in kg/kmol
+    return Cantera::GasConstant/_cantera_gas->molarMass(species);
+  }
+
+  inline
+  libMesh::Real CanteraMixture::X( unsigned int species,
+                                   libMesh::Real M_mix,
+                                   libMesh::Real mass_fraction ) const
+  {
+    return mass_fraction*M_mix/this->M(species);
+  }
+
+  inline
+  unsigned int CanteraMixture::species_index( const std::string& species_name ) const
+  {
+    return _cantera_gas->speciesIndex( species_name );
+  }
+
+  inline
+  std::string CanteraMixture::species_name( unsigned int species_index ) const
+  {
+    return _cantera_gas->speciesName( species_index );
   }
 
 } // end namespace GRINS
