@@ -30,10 +30,12 @@
 #include "grins/physics_factory.h"
 
 // GRINS
+#include "grins/cantera_mixture.h"
 #include "grins/cantera_thermo.h"
 //#include "grins/constant_transport.h"
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
+#include "grins/cantera_evaluator.h"
 #include "grins/physics.h"
 #include "grins/stokes.h"
 #include "grins/inc_navier_stokes.h"
@@ -124,9 +126,6 @@ namespace GRINS
 				    const std::string& physics_to_add,
 				    PhysicsList& physics_list )
   {
-    typedef std::tr1::shared_ptr<Physics> PhysicsPtr;
-    typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
-
     if( physics_to_add == incompressible_navier_stokes )
       {
 	physics_list[physics_to_add] = 
@@ -286,10 +285,8 @@ namespace GRINS
     if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        /*
         physics_list[physics_to_add] = 
-          PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<CanteraChemistry>(physics_to_add,input));
-        */
+          PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<CanteraMixture,CanteraEvaluator>(physics_to_add,input));
 #else
         std::cerr << "Error: Cantera not enabled. Cannot use Cantera library."
                   << std::endl;
