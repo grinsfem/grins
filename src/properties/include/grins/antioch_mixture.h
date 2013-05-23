@@ -37,6 +37,8 @@
 #include "libmesh/libmesh_common.h"
 
 // Antioch
+#include "antioch/vector_utils_decl.h"
+#include "antioch/metaprogramming.h"
 #include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
 #include "antioch/cea_mixture.h"
@@ -69,6 +71,16 @@ namespace GRINS
 
     void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
 	    std::vector<libMesh::Real>& mole_fractions ) const;
+
+    libMesh::Real molar_density( const unsigned int species,
+                                 const libMesh::Real rho,
+                                 const libMesh::Real mass_fraction ) const;
+
+    void molar_densities( const libMesh::Real rho,
+			  const std::vector<libMesh::Real>& mass_fractions,
+			  std::vector<libMesh::Real>& molar_densities ) const;
+
+    unsigned int n_species() const;
 
     unsigned int species_index( const std::string& species_name ) const;
 
@@ -134,6 +146,12 @@ namespace GRINS
   }
 
   inline
+  unsigned int AntiochMixture::n_species() const
+  {
+    return _antioch_gas->n_species();
+  }
+
+  inline
   unsigned int AntiochMixture::species_index( const std::string& species_name ) const
   {
     return _antioch_gas->active_species_name_map().find(species_name)->second;
@@ -156,6 +174,23 @@ namespace GRINS
   const Antioch::CEAThermoMixture<libMesh::Real>& AntiochMixture::cea_mixture() const
   {
     return *_cea_mixture.get();
+  }
+
+  inline
+  libMesh::Real AntiochMixture::molar_density( const unsigned int species,
+                                               const libMesh::Real rho,
+                                               const libMesh::Real mass_fraction ) const
+  {
+    return _antioch_gas->molar_density( species, rho, mass_fraction );
+  }
+
+  inline
+  void AntiochMixture::molar_densities( const libMesh::Real rho,
+                                        const std::vector<libMesh::Real>& mass_fractions,
+                                        std::vector<libMesh::Real>& molar_densities ) const
+  {
+    _antioch_gas->molar_densities( rho, mass_fractions, molar_densities );
+    return;
   }
   
 } // end namespace GRINS
