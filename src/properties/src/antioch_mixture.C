@@ -36,10 +36,16 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+// Antioch
+#include "antioch/read_reaction_set_data_xml.h"
+#include "antioch/cea_mixture_ascii_parsing.h"
+
 namespace GRINS
 {
   AntiochMixture::AntiochMixture( const GetPot& input )
-    : _antioch_gas(NULL)
+    : _antioch_gas(NULL),
+      _reaction_set(NULL),
+      _cea_mixture(NULL)
   {
     if( !input.have_variable("Physics/Chemistry/species") )
       {
@@ -55,7 +61,24 @@ namespace GRINS
         species_list[s] = input( "Physics/Chemistry/species", "DIE!", s );
       }
 
-    _antioch_gas.reset( new Antioch::ChemicalMixture<double>( species_list ) );
+    _antioch_gas.reset( new Antioch::ChemicalMixture<libMesh::Real>( species_list ) );
+
+    _reaction_set.reset( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) );
+
+    if( !input.have_variable("Physics/Chemistry/chem_file") )
+      {
+        std::cerr << "Error: Must specify XML chemistry file to use Antioch." << std::endl;
+        libmesh_error();
+      }
+
+    std::string xml_filename = input( "Physics/Chemistry/chem_file", "DIE!");
+    bool verbose_read = input("screen-options/verbose_kinetics_read", false );
+      
+    Antioch::read_reaction_set_data_xml<libMesh::Real>( xml_filename, verbose_read, *_reaction_set.get() );
+
+    _cea_mixture.reset( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) );
+
+    Antioch::read_cea_mixture_data_ascii_default( *_cea_mixture.get() );
 
     return;
   }

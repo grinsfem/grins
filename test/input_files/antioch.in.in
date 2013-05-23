@@ -5,5 +5,9 @@
   [./Chemistry]
 
      species        = 'N2   O2   NO N  O'
+     chem_file      = '@abs_top_srcdir@/test/input_files/air.xml'
 []
 
+[screen-options]
+
+verbose_kinetics_read = 'true'

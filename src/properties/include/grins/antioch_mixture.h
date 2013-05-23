@@ -39,6 +39,8 @@
 // Antioch
 #include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
+#include "antioch/cea_mixture.h"
+#include "antioch/reaction_set.h"
 
 // Boost
 #include <boost/scoped_ptr.hpp>
@@ -72,9 +74,17 @@ namespace GRINS
 
     std::string species_name( unsigned int species_index ) const;
 
+    const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
+
+    const Antioch::CEAThermoMixture<libMesh::Real>& cea_mixture() const;
+
   protected:
 
-    boost::scoped_ptr<Antioch::ChemicalMixture<double> > _antioch_gas;
+    boost::scoped_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
+
+    boost::scoped_ptr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
+
+    boost::scoped_ptr<Antioch::CEAThermoMixture<libMesh::Real> > _cea_mixture;
 
   private:
 
@@ -134,6 +144,18 @@ namespace GRINS
   {
     libmesh_not_implemented();
     return "dummy";
+  }
+
+  inline
+  const Antioch::ReactionSet<libMesh::Real>& AntiochMixture::reaction_set() const
+  {
+    return *_reaction_set.get();
+  }
+
+  inline
+  const Antioch::CEAThermoMixture<libMesh::Real>& AntiochMixture::cea_mixture() const
+  {
+    return *_cea_mixture.get();
   }
   
 } // end namespace GRINS
