@@ -111,7 +111,7 @@ namespace GRINS
     for( unsigned int s = 0; s < omega_dot.size(); s++ )
       {
         // convert [kmol/m^3-s] to [kg/m^3-s]
-        omega_dot[s] *= this->_cantera_gas.molarMass(s);
+        omega_dot[s] *= this->_cantera_gas.molecularWeight(s);
       }
 
     return;

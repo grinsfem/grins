@@ -117,7 +117,7 @@ namespace GRINS
   libMesh::Real CanteraMixture::M( unsigned int species ) const
   {
     // Cantera returns molar mass in kg/kmol
-    return _cantera_gas->molarMass(species);
+    return _cantera_gas->molecularWeight(species);
   }
 
   inline
@@ -125,7 +125,7 @@ namespace GRINS
   {
     // Cantera::GasConstant in J/kmol-K
     // Cantera returns molar mass in kg/kmol
-    return Cantera::GasConstant/_cantera_gas->molarMass(species);
+    return Cantera::GasConstant/_cantera_gas->molecularWeight(species);
   }
 
   inline
