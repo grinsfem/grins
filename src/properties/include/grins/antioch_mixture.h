@@ -37,6 +37,7 @@
 #include "libmesh/libmesh_common.h"
 
 // Antioch
+#include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
 
 // Boost
@@ -81,6 +82,60 @@ namespace GRINS
 
   };
 
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real AntiochMixture::M( unsigned int species ) const 
+  {
+    return _antioch_gas->M(species);
+  }
+
+  inline
+  libMesh::Real AntiochMixture::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
+  {
+    return _antioch_gas->M(mass_fractions);
+  }
+
+  inline
+  libMesh::Real AntiochMixture::R( unsigned int species ) const 
+  {
+    return _antioch_gas->R(species);
+  }
+
+  inline
+  libMesh::Real AntiochMixture::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
+  {
+    return _antioch_gas->R(mass_fractions);
+  }
+
+  inline
+  libMesh::Real AntiochMixture::X( unsigned int species, const libMesh::Real M,
+                                   const libMesh::Real mass_fraction ) const
+  {
+    return _antioch_gas->X(species,M,mass_fraction);
+  }
+
+  inline
+  void AntiochMixture::X( libMesh::Real M,
+                          const std::vector<libMesh::Real>& mass_fractions, 
+                          std::vector<libMesh::Real>& mole_fractions ) const
+  {
+    _antioch_gas->X(M,mass_fractions,mole_fractions);
+    return;
+  }
+
+  inline
+  unsigned int AntiochMixture::species_index( const std::string& species_name ) const
+  {
+    return _antioch_gas->active_species_name_map().find(species_name)->second;
+  }
+
+  inline
+  std::string AntiochMixture::species_name( unsigned int /*species_index*/ ) const
+  {
+    libmesh_not_implemented();
+    return "dummy";
+  }
+  
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
