@@ -48,6 +48,15 @@ namespace GRINS
     try
       {
         _cantera_gas.reset( new Cantera::IdealGasMix( cantera_chem_file, mixture ) );
+      }
+    catch(Cantera::CanteraError)
+      {
+        Cantera::showErrors(std::cerr);
+        libmesh_error();
+      }
+
+    try
+      {
         _cantera_transport.reset( Cantera::newTransportMgr("Mix", _cantera_gas.get()) );
       }
     catch(Cantera::CanteraError)
