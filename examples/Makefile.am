@@ -17,12 +17,21 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
 AM_CPPFLAGS += $(GRVY_CFLAGS)
 
+AM_LDFLAGS =
 #----------------
 # Cantera support
 #----------------
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
-   AM_LDFLAGS   = $(CANTERA_LDFLAGS)
+   AM_LDFLAGS  += $(CANTERA_LDFLAGS)
+endif
+
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #=======================================================================

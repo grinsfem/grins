@@ -237,6 +237,9 @@ fi
 AC_SUBST(HAVE_CANTERA)
 AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
+
+AX_PATH_ANTIOCH(0.0.1,no)
+
  
 dnl-------------------
 dnl Check for TRILINOS

@@ -86,6 +86,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_kinetics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_evaluator.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_mixture.C
 
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
@@ -202,6 +203,7 @@ include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_thermo.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_mixture.h
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
@@ -297,6 +299,14 @@ AM_CPPFLAGS += $(GRVY_CFLAGS)
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
    libgrins_la_LIBADD  += $(CANTERA_LDFLAGS)
+endif
+
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   libgrins_la_LIBADD  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #-------------

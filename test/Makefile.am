@@ -46,6 +46,14 @@ if CANTERA_ENABLED
    AM_LDFLAGS += $(CANTERA_LDFLAGS)
 endif
 
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
+endif
+
 #--------------
 # MASA support
 #--------------
