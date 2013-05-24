@@ -39,8 +39,7 @@
 namespace GRINS
 {
   AntiochCEAThermo::AntiochCEAThermo( const AntiochMixture& mixture )
-    : _antioch_mixture(mixture),
-      _antioch_cea_evaluator(mixture.cea_mixture())
+    : _antioch_cea_evaluator(mixture.cea_mixture())
   {
     return;
   }

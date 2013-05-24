@@ -69,8 +69,6 @@ namespace GRINS
     void h_s( const Antioch::TempCache<libMesh::Real>& cache, std::vector<libMesh::Real>& h_s ) const;
 
   protected:
-    
-    const AntiochMixture& _antioch_mixture;
 
     Antioch::CEAEvaluator<libMesh::Real> _antioch_cea_evaluator;
 
