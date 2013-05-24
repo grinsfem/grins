@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
 #else
       return_flag = 77;
-#endif;
+#endif
     }
   else
     {

@@ -87,9 +87,10 @@ libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_kinetics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_evaluator.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_mixture.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_cea_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_kinetics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator.C
-
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator_instantiate.C
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
@@ -206,6 +207,7 @@ include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_evaluator.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_cea_thermo.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_evaluator.h
 

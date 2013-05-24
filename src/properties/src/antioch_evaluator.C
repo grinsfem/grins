@@ -39,65 +39,101 @@
 
 namespace GRINS
 {
-
-  AntiochEvaluator::AntiochEvaluator( AntiochMixture& mixture )
+  template<typename AntiochThermo>
+  AntiochEvaluator<AntiochThermo>::AntiochEvaluator( const AntiochMixture& mixture )
     : _chem( mixture ),
+      _thermo( mixture ),
       _kinetics( AntiochKinetics(mixture) ),
       _temp_cache( new Antioch::TempCache<libMesh::Real>(0.0) )
   {
     return;
   }
 
-  AntiochEvaluator::~AntiochEvaluator()
+  template<typename AntiochThermo>
+  AntiochEvaluator<AntiochThermo>::~AntiochEvaluator()
   {
     return;
   }
 
-  libMesh::Real AntiochEvaluator::cp( const CachedValues& cache, unsigned int qp )
+  template<typename AntiochThermo>
+  libMesh::Real AntiochEvaluator<AntiochThermo>::cp( const CachedValues& cache, unsigned int qp )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    /*! \todo AntiochStatMechThermo doesn't need the full TempCache, just T.
+      Should we try and optimize for that case? */
+    this->check_and_reset_temp_cache(T);
+
+    return _thermo.cp( *(_temp_cache.get()), Y );
   }
 
-  libMesh::Real AntiochEvaluator::cv( const CachedValues& cache, unsigned int qp )
+  template<typename AntiochThermo>
+  libMesh::Real AntiochEvaluator<AntiochThermo>::cv( const CachedValues& cache, unsigned int qp )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    /*! \todo AntiochStatMechThermo doesn't need the full TempCache, just T.
+      Should we try and optimize for that case? */
+    this->check_and_reset_temp_cache(T);
+
+    return _thermo.cv( *(_temp_cache.get()), Y );
   }
      
-  libMesh::Real AntiochEvaluator::h_s(const CachedValues& cache, unsigned int qp, unsigned int species)
+  template<typename AntiochThermo>
+  libMesh::Real AntiochEvaluator<AntiochThermo>::h_s( const CachedValues& cache, unsigned int qp,
+                                                      unsigned int species )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+    /*! \todo AntiochStatMechThermo doesn't need the full TempCache, just T.
+      Should we try and optimize for that case? */
+    this->check_and_reset_temp_cache(T);
+
+    return _thermo.h_s( *(_temp_cache.get()), species );
   }
   
-  void AntiochEvaluator::h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h)
+  template<typename AntiochThermo>
+  void AntiochEvaluator<AntiochThermo>::h_s( const CachedValues& cache, unsigned int qp,
+                                             std::vector<libMesh::Real>& h_s )
   {
-    libmesh_not_implemented();
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+    /*! \todo AntiochStatMechThermo doesn't need the full TempCache, just T.
+      Should we try and optimize for that case? */
+    this->check_and_reset_temp_cache(T);
+
+    _thermo.h_s( *(_temp_cache.get()), h_s );
+    
     return;
   }
 
-  libMesh::Real AntiochEvaluator::mu( const CachedValues& cache, unsigned int qp )
+  template<typename AntiochThermo>
+  libMesh::Real AntiochEvaluator<AntiochThermo>::mu( const CachedValues& cache, unsigned int qp )
   {
     libmesh_not_implemented();
     return 0.0;
   }
 
-  libMesh::Real AntiochEvaluator::k( const CachedValues& cache, unsigned int qp )
+  template<typename AntiochThermo>
+  libMesh::Real AntiochEvaluator<AntiochThermo>::k( const CachedValues& cache, unsigned int qp )
   {
     libmesh_not_implemented();
     return 0.0;
   }
 
-  void AntiochEvaluator::D( const CachedValues& cache, unsigned int qp,
-                            std::vector<libMesh::Real>& D )
+  template<typename AntiochThermo>
+  void AntiochEvaluator<AntiochThermo>::D( const CachedValues& cache, unsigned int qp,
+                                           std::vector<libMesh::Real>& D )
   {
     libmesh_not_implemented();
     return;
   }
 
-  void AntiochEvaluator::omega_dot( const CachedValues& cache, unsigned int qp,
-                                    std::vector<libMesh::Real>& omega_dot )
+  template<typename AntiochThermo>
+  void AntiochEvaluator<AntiochThermo>::omega_dot( const CachedValues& cache, unsigned int qp,
+                                                   std::vector<libMesh::Real>& omega_dot )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
@@ -111,7 +147,8 @@ namespace GRINS
     return;
   }
 
-  void AntiochEvaluator::check_and_reset_temp_cache( const libMesh::Real T )
+  template<typename AntiochThermo>
+  void AntiochEvaluator<AntiochThermo>::check_and_reset_temp_cache( const libMesh::Real T )
   {
     if( _temp_cache->T != T )
       {

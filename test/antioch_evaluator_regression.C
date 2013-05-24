@@ -37,26 +37,16 @@
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_evaluator.h"
 #include "grins/cached_values.h"
+#include "grins/antioch_cea_thermo.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
-int main( int argc, char* argv[] )
+template <typename Thermo>
+int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 {
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify input file." << std::endl;
-      exit(1);
-    }
-
-  GetPot input( argv[1] );
-  
-  GRINS::AntiochMixture antioch_mixture(input);
-
-  GRINS::AntiochEvaluator antioch_evaluator( antioch_mixture );
+  GRINS::AntiochEvaluator<Thermo> antioch_evaluator( antioch_mixture );
 
   libMesh::Real T = 1000;
 
@@ -136,6 +126,28 @@ int main( int argc, char* argv[] )
 
   return return_flag;
 }
+
+int main( int argc, char* argv[] )
+{
+  // Check command line count.
+  if( argc < 2 )
+    {
+      // TODO: Need more consistent error handling.
+      std::cerr << "Error: Must specify input file." << std::endl;
+      exit(1);
+    }
+
+  GetPot input( argv[1] );
+  
+  GRINS::AntiochMixture antioch_mixture(input);
+
+  int return_flag = 0;
+
+  return_flag = test_evaluator<GRINS::AntiochCEAThermo>( antioch_mixture );
+
+  return return_flag;
+}
+
 #else //GRINS_HAVE_ANTIOCH
 int main()
 {

@@ -48,11 +48,12 @@ namespace GRINS
   // GRINS forward declarations
   class CachedValues;
 
+  template<typename AntiochThermo>
   class AntiochEvaluator
   {
   public:
 
-    AntiochEvaluator( AntiochMixture& mixture );
+    AntiochEvaluator( const AntiochMixture& mixture );
     ~AntiochEvaluator();
 
     // Chemistry
@@ -80,7 +81,7 @@ namespace GRINS
      
     libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
 
-    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h);
+    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
 
     // Transport
     libMesh::Real mu( const CachedValues& cache, unsigned int qp );
@@ -96,7 +97,9 @@ namespace GRINS
 
   protected:
 
-    AntiochMixture& _chem;
+    const AntiochMixture& _chem;
+
+    AntiochThermo _thermo;
 
     AntiochKinetics _kinetics;
 
@@ -111,52 +114,60 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
+  template<typename AntiochThermo>
   inline
-  libMesh::Real AntiochEvaluator::M( unsigned int species ) const
+  libMesh::Real AntiochEvaluator<AntiochThermo>::M( unsigned int species ) const
   {
     return _chem.M(species);
   }
 
+  template<typename AntiochThermo>
   inline
-  libMesh::Real AntiochEvaluator::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real AntiochEvaluator<AntiochThermo>::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.M_mix(mass_fractions);
   }
 
+  template<typename AntiochThermo>
   inline
-  libMesh::Real AntiochEvaluator::R( unsigned int species ) const
+  libMesh::Real AntiochEvaluator<AntiochThermo>::R( unsigned int species ) const
   {
     return _chem.R(species);
   }
 
+  template<typename AntiochThermo>
   inline
-  libMesh::Real AntiochEvaluator::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real AntiochEvaluator<AntiochThermo>::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.R_mix(mass_fractions);
   }
   
+  template<typename AntiochThermo>
   inline
-  libMesh::Real AntiochEvaluator::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
+  libMesh::Real AntiochEvaluator<AntiochThermo>::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
   {
     return _chem.X(species,M,mass_fraction);
   }
   
+  template<typename AntiochThermo>
   inline
-  void AntiochEvaluator::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+  void AntiochEvaluator<AntiochThermo>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
     return;
   }
   
+  template<typename AntiochThermo>
   inline
-  unsigned int AntiochEvaluator::species_index( const std::string& species_name ) const
+  unsigned int AntiochEvaluator<AntiochThermo>::species_index( const std::string& species_name ) const
   {
     return _chem.species_index(species_name);
   }
   
+  template<typename AntiochThermo>
   inline
-  std::string AntiochEvaluator::species_name( unsigned int species_index ) const
+  std::string AntiochEvaluator<AntiochThermo>::species_name( unsigned int species_index ) const
   {
     return _chem.species_name(species_index);
   }
