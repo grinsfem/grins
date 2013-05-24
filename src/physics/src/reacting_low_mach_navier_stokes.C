@@ -37,6 +37,7 @@
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_evaluator.h"
 #include "grins/antioch_cea_thermo.h"
+#include "grins/antioch_stat_mech_thermo.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -901,4 +902,5 @@ template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::C
 #endif
 #ifdef GRINS_HAVE_ANTIOCH
 template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo> >;
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo> >;
 #endif

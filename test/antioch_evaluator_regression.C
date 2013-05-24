@@ -38,6 +38,7 @@
 #include "grins/antioch_evaluator.h"
 #include "grins/cached_values.h"
 #include "grins/antioch_cea_thermo.h"
+#include "grins/antioch_stat_mech_thermo.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -95,6 +96,30 @@ template<>
 int test_h_s<GRINS::AntiochCEAThermo>( const libMesh::Real h_s )
 {
   double h_s_reg = 7.6606764036494098e+05;
+
+  return test_generic(h_s,h_s_reg,"h_s");
+}
+
+template<>
+int test_cp<GRINS::AntiochStatMechThermo>( const libMesh::Real cp )
+{
+  double cp_reg = 1.2309250447693457e+03;
+
+  return test_generic(cp,cp_reg,"cp");
+}
+
+template<>
+int test_cv<GRINS::AntiochStatMechThermo>( const libMesh::Real cv )
+{
+  double cv_reg = 8.4154861698257866e+02;
+
+  return test_generic(cv,cv_reg,"cv");
+}
+
+template<>
+int test_h_s<GRINS::AntiochStatMechThermo>( const libMesh::Real h_s )
+{
+  double h_s_reg = 1.0736808921399815e+06;
 
   return test_generic(h_s,h_s_reg,"h_s");
 }
@@ -245,6 +270,9 @@ int main( int argc, char* argv[] )
 
   std::cout << "Running AntiochCEAThermo regression test." << std::endl;
   return_flag = test_evaluator<GRINS::AntiochCEAThermo>( antioch_mixture );
+
+  std::cout << std::endl <<  "Running AntiochStatMechThermo regression test." << std::endl;
+  return_flag = test_evaluator<GRINS::AntiochStatMechThermo>( antioch_mixture );
 
   return return_flag;
 }

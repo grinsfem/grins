@@ -30,14 +30,23 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_cea_thermo.h"
+// This class
 #include "grins/antioch_stat_mech_thermo.h"
 
-// This class
-#include "antioch_evaluator.C"
+namespace GRINS
+{
+  AntiochStatMechThermo::AntiochStatMechThermo( const AntiochMixture& mixture )
+    : _antioch_mixture(mixture),
+      _antioch_thermo(mixture.chemical_mixture())
+  {
+    return;
+  }
 
-template class GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo>;
-template class GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo>;
+  AntiochStatMechThermo::~AntiochStatMechThermo()
+  {
+    return;
+  }
 
-#endif //GRINS_HAVE_ANTIOCH
+} // end namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH
