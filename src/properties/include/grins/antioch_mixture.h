@@ -38,7 +38,6 @@
 
 // Antioch
 #include "antioch/vector_utils_decl.h"
-#include "antioch/metaprogramming.h"
 #include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
 #include "antioch/cea_mixture.h"

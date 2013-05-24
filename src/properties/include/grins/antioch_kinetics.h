@@ -41,7 +41,6 @@
 
 // Antioch
 #include "antioch/vector_utils_decl.h"
-#include "antioch/metaprogramming.h"
 #include "antioch/vector_utils.h"
 #include "antioch/kinetics_evaluator.h"
 #include "antioch/cea_evaluator.h"
