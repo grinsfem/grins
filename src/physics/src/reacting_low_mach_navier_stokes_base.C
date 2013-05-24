@@ -34,6 +34,7 @@
 // GRINS
 #include "grins/cached_quantities_enum.h"
 #include "grins/cantera_mixture.h"
+#include "grins/antioch_mixture.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -211,4 +212,7 @@ namespace GRINS
 //Instantiate
 #ifdef GRINS_HAVE_CANTERA
 template class GRINS::ReactingLowMachNavierStokesBase<GRINS::CanteraMixture>;
+#endif
+#ifdef GRINS_HAVE_ANTIOCH
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochMixture>;
 #endif

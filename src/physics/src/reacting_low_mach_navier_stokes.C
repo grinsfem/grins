@@ -34,6 +34,8 @@
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
+#include "grins/antioch_mixture.h"
+#include "grins/antioch_evaluator.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -895,4 +897,7 @@ namespace GRINS
 // Instantiate
 #ifdef GRINS_HAVE_CANTERA
 template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
+#endif
+#ifdef GRINS_HAVE_ANTIOCH
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator>;
 #endif

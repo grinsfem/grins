@@ -32,6 +32,7 @@
 // GRINS
 #include "grins/cached_values.h"
 #include "grins/cantera_mixture.h"
+#include "grins/antioch_mixture.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -115,9 +116,12 @@ namespace GRINS
     return this->domega_dot_dT( rho_s, T );
   }
 
-  // Instantiate
-#ifdef GRINS_HAVE_CANTERA
-  template class CatalyticWall<CanteraMixture>;
-#endif
+} // end namespace GRINS
 
-} // namespace GRINS
+// Instantiate
+#ifdef GRINS_HAVE_CANTERA
+template class GRINS::CatalyticWall<GRINS::CanteraMixture>;
+#endif
+#ifdef GRINS_HAVE_ANTIOCH
+template class GRINS::CatalyticWall<GRINS::AntiochMixture>;
+#endif

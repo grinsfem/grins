@@ -33,6 +33,7 @@
 #include "grins/string_utils.h"
 #include "grins/catalytic_wall.h"
 #include "grins/cantera_mixture.h"
+#include "grins/antioch_mixture.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -595,10 +596,13 @@ namespace GRINS
 
     return;
   }
-  
-  // Instantiate
-#ifdef GRINS_HAVE_CANTERA
-  template class ReactingLowMachNavierStokesBCHandling<CanteraMixture>;
-#endif
 
 } // namespace GRINS
+
+// Instantiate
+#ifdef GRINS_HAVE_CANTERA
+template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::CanteraMixture>;
+#endif
+#ifdef GRINS_HAVE_ANTIOCH
+template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::AntiochMixture>;
+#endif
