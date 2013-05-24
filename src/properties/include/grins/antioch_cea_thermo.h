@@ -72,7 +72,7 @@ namespace GRINS
     
     const AntiochMixture& _antioch_mixture;
 
-    const Antioch::CEAEvaluator<libMesh::Real>& _antioch_cea_evaluator;
+    Antioch::CEAEvaluator<libMesh::Real> _antioch_cea_evaluator;
 
   private:
 
