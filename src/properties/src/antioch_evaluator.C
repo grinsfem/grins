@@ -44,7 +44,7 @@ namespace GRINS
     : _chem( mixture ),
       _thermo( mixture ),
       _kinetics( AntiochKinetics(mixture) ),
-      _temp_cache( new Antioch::TempCache<libMesh::Real>(0.0) )
+      _temp_cache( new Antioch::TempCache<libMesh::Real>(1.0) )
   {
     return;
   }
@@ -148,7 +148,7 @@ namespace GRINS
   }
 
   template<typename AntiochThermo>
-  void AntiochEvaluator<AntiochThermo>::check_and_reset_temp_cache( const libMesh::Real T )
+  void AntiochEvaluator<AntiochThermo>::check_and_reset_temp_cache( const libMesh::Real& T )
   {
     if( _temp_cache->T != T )
       {

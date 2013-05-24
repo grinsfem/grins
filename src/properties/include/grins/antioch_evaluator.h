@@ -105,7 +105,10 @@ namespace GRINS
 
     boost::scoped_ptr<Antioch::TempCache<libMesh::Real> > _temp_cache;
 
-    void check_and_reset_temp_cache( const libMesh::Real T );
+    //! Helper method for managing _temp_cache
+    /*! T *MUST* be pass-by-reference because of the structure
+        of Antioch::TempCache! */
+    void check_and_reset_temp_cache( const libMesh::Real& T );
 
   private:
 

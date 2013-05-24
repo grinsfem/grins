@@ -42,7 +42,42 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+// Boost
+#include "boost/math/special_functions/fpclassify.hpp" //isnan
+
 #ifdef GRINS_HAVE_ANTIOCH
+int test_cp_generic( const libMesh::Real cp, const libMesh::Real cp_reg )
+{
+  int return_flag = 0;
+
+  const double tol = std::numeric_limits<double>::epsilon()*10;
+
+  const double rel_error = std::fabs( (cp - cp_reg)/cp_reg );
+
+  if( rel_error > tol )
+    {
+      return_flag = 1;
+      std::cout << "Mismatch in cp!" << std::endl
+                << "cp = " << cp << std::endl
+                << "cp_reg = " << cp_reg << std::endl
+                << "rel_error = " << rel_error << std::endl;
+    }
+  
+  return return_flag;
+}
+
+template<typename Thermo>
+int test_cp( const libMesh::Real cp );
+
+template<>
+int test_cp<GRINS::AntiochCEAThermo>( const libMesh::Real cp )
+{
+  double cp_reg = 1.2361869971209990e+03;
+
+  return test_cp_generic(cp,cp_reg);
+}
+
+
 template <typename Thermo>
 int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 {
@@ -78,6 +113,15 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 
   std::vector<libMesh::Real> omega_dot(n_species,0.0);
 
+  libMesh::Real cp =  antioch_evaluator.cp( cache, 0 );
+
+  std::cout << std::scientific << std::setprecision(16)
+            << "cp = " << cp << std::endl;
+
+  int return_flag = 0;
+
+  return_flag = test_cp<Thermo>( cp );
+
   antioch_evaluator.omega_dot( cache, 0, omega_dot );
 
   for( unsigned int i = 0; i < n_species; i++ )
@@ -86,7 +130,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
                 << "omega_dot(" << i << ") = " << omega_dot[i] << std::endl;
     }
 
-  int return_flag = 0;
+  
   double tol = std::numeric_limits<double>::epsilon()*10;
 
   // Check that omega_dot sums to 1
@@ -101,6 +145,21 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
       std::cout << "Error: Sum of mass sources not equal to zero!" << std::endl
                 << "sum = " << sum << std::endl;
       return_flag = 1;
+    }
+
+  bool omega_is_nan = false;
+  for( unsigned int s = 0; s < n_species; s++ )
+    {
+      if( boost::math::isnan(omega_dot[s]) )
+        {
+          omega_is_nan = true;
+          return_flag = 1;
+        }
+    }
+
+  if( omega_is_nan )
+    {
+      std::cerr << "Error: Detected NAN's for omega_dot!" << std::endl;
     }
 
   // Now check against regression values
@@ -127,6 +186,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
   return return_flag;
 }
 
+
 int main( int argc, char* argv[] )
 {
   // Check command line count.
@@ -143,6 +203,7 @@ int main( int argc, char* argv[] )
 
   int return_flag = 0;
 
+  std::cout << "Running AntiochCEAThermo regression test." << std::endl;
   return_flag = test_evaluator<GRINS::AntiochCEAThermo>( antioch_mixture );
 
   return return_flag;
