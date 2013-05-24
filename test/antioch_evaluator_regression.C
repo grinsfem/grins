@@ -46,20 +46,20 @@
 #include "boost/math/special_functions/fpclassify.hpp" //isnan
 
 #ifdef GRINS_HAVE_ANTIOCH
-int test_cp_generic( const libMesh::Real cp, const libMesh::Real cp_reg )
+int test_generic( const libMesh::Real value, const libMesh::Real value_reg, const std::string& name )
 {
   int return_flag = 0;
 
   const double tol = std::numeric_limits<double>::epsilon()*10;
 
-  const double rel_error = std::fabs( (cp - cp_reg)/cp_reg );
+  const double rel_error = std::fabs( (value - value_reg)/value_reg );
 
   if( rel_error > tol )
     {
       return_flag = 1;
-      std::cout << "Mismatch in cp!" << std::endl
-                << "cp = " << cp << std::endl
-                << "cp_reg = " << cp_reg << std::endl
+      std::cout << "Mismatch in "+name  << std::endl
+                << name+" = " << value << std::endl
+                << name+"_reg = " << value_reg << std::endl
                 << "rel_error = " << rel_error << std::endl;
     }
   
@@ -69,12 +69,34 @@ int test_cp_generic( const libMesh::Real cp, const libMesh::Real cp_reg )
 template<typename Thermo>
 int test_cp( const libMesh::Real cp );
 
+template<typename Thermo>
+int test_cv( const libMesh::Real cv );
+
+template<typename Thermo>
+int test_h_s( const libMesh::Real h_s );
+
 template<>
 int test_cp<GRINS::AntiochCEAThermo>( const libMesh::Real cp )
 {
   double cp_reg = 1.2361869971209990e+03;
 
-  return test_cp_generic(cp,cp_reg);
+  return test_generic(cp,cp_reg,"cp");
+}
+
+template<>
+int test_cv<GRINS::AntiochCEAThermo>( const libMesh::Real cv )
+{
+  double cv_reg = 8.4681056933423179e+02;
+
+  return test_generic(cv,cv_reg,"cv");
+}
+
+template<>
+int test_h_s<GRINS::AntiochCEAThermo>( const libMesh::Real h_s )
+{
+  double h_s_reg = 7.6606764036494098e+05;
+
+  return test_generic(h_s,h_s_reg,"h_s");
 }
 
 
@@ -118,9 +140,27 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
   std::cout << std::scientific << std::setprecision(16)
             << "cp = " << cp << std::endl;
 
-  int return_flag = 0;
+  libMesh::Real cv =  antioch_evaluator.cv( cache, 0 );
 
-  return_flag = test_cp<Thermo>( cp );
+  std::cout << std::scientific << std::setprecision(16)
+            << "cv = " << cv << std::endl;
+
+  libMesh::Real h_s =  antioch_evaluator.h_s( cache, 0, 0 );
+
+  std::cout << std::scientific << std::setprecision(16)
+            << "h_s = " << h_s << std::endl;
+
+  int return_flag = 0;
+  int return_flag_temp = 0;
+
+  return_flag_temp = test_cp<Thermo>( cp );
+  if( return_flag_temp != 0 ) return_flag = 1;
+
+  return_flag_temp = test_cv<Thermo>( cv );
+  if( return_flag_temp != 0 ) return_flag = 1;
+  
+  return_flag_temp = test_h_s<Thermo>( h_s );
+  if( return_flag_temp != 0 ) return_flag = 1;
 
   antioch_evaluator.omega_dot( cache, 0, omega_dot );
 
