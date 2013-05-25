@@ -12,6 +12,10 @@ if CANTERA_ENABLED
    bin_PROGRAMS += cantera_kinetic_rates
 endif
 
+if ANTIOCH_ENABLED
+   bin_PROGRAMS += antioch_thermo_tables
+endif
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -278,6 +282,11 @@ endif
 if CANTERA_ENABLED
    cantera_kinetic_rates_SOURCES = $(top_srcdir)/src/apps/cantera_kinetic_rates.C
    cantera_kinetic_rates_LDADD = libgrins.la
+endif
+
+if ANTIOCH_ENABLED
+   antioch_thermo_tables_SOURCES = $(top_srcdir)/src/apps/antioch_thermo_tables.C
+   antioch_thermo_tables_LDADD = libgrins.la
 endif
 
 #--------------------------------------
