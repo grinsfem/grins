@@ -88,6 +88,31 @@ namespace GRINS
     return;
   }
 
+  std::string AntiochMixture::species_name( unsigned int species_index ) const
+  {
+    libmesh_assert_less(species_index, _antioch_gas->n_species());
+
+    std::string name = "dummy";
+
+    for( std::map<std::string,unsigned int>::const_iterator it = _antioch_gas->active_species_name_map().begin();
+         it != _antioch_gas->active_species_name_map().end(); it++ )
+      {
+        if( it->second == species_index )
+          {
+            name = it->first;
+          }
+      }
+
+    if( name == std::string("dummy") )
+      {
+        std::cerr << "Error: Could not find a species name for the given index!"
+                  << std::endl;
+        libmesh_error();
+      }
+
+    return name;
+  }
+
 }// end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH

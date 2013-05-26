@@ -160,13 +160,6 @@ namespace GRINS
   }
 
   inline
-  std::string AntiochMixture::species_name( unsigned int /*species_index*/ ) const
-  {
-    libmesh_not_implemented();
-    return "dummy";
-  }
-
-  inline
   const Antioch::ChemicalMixture<libMesh::Real>& AntiochMixture::chemical_mixture() const
   {
     return *_antioch_gas.get();
