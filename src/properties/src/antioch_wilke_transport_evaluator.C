@@ -33,18 +33,67 @@
 // This class
 #include "grins/antioch_wilke_transport_evaluator.h"
 
+// GRINS
+#include "grins/cached_values.h"
+
 namespace GRINS
 {
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
-    : _wilke_evaluator( mixture.wilke_mixture(), mixture.viscosity(), mixture.conductivity() )
+    : AntiochEvaluator<Thermo>( mixture ),
+      _wilke_evaluator( mixture.wilke_mixture(), mixture.viscosity(), mixture.conductivity() ),
+      _diffusivity( mixture.diffusivity() )
   {
     return;
   }
 
-  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::~AntiochWilkeTransportEvaluator()
+  template<typename T, typename V, typename C, typename D>
+  AntiochWilkeTransportEvaluator<T,V,C,D>::~AntiochWilkeTransportEvaluator()
   {
+    return;
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::mu( const CachedValues& cache, unsigned int qp )
+  {
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    return _wilke_evaluator.mu( T, Y );
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::k( const CachedValues& cache, unsigned int qp )
+  {
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    return _wilke_evaluator.k( T, Y );
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  void AntiochWilkeTransportEvaluator<Th,V,C,D>::mu_and_k( const CachedValues& cache, unsigned int qp,
+                                                           libMesh::Real& mu, libMesh::Real k ) 
+  {
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    _wilke_evaluator.mu_and_k( T, Y, mu, k );
+    return;
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  void AntiochWilkeTransportEvaluator<Th,V,C,D>::D( const CachedValues& cache, unsigned int qp,
+                                                    std::vector<libMesh::Real>& D )
+  {
+    const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+    
+    /*! \todo Find a way to cache these so we don't have to recompute them */
+    const libMesh::Real cp = this->cp(cache,qp);
+    const libMesh::Real k = this->k(cache,qp);
+
+    std::fill( D.begin(), D.end(), _diffusivity.D(rho,cp,k) );
+    
     return;
   }
 

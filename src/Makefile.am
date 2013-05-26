@@ -95,7 +95,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_cea_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_stat_mech_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture_instantiate.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
@@ -223,6 +222,7 @@ include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_tran
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_evaluator.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h

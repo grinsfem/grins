@@ -32,12 +32,6 @@
 // GRINS
 #include "grins/cached_quantities_enum.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
-#include "grins/cantera_mixture.h"
-#include "grins/cantera_evaluator.h"
-#include "grins/antioch_mixture.h"
-#include "grins/antioch_evaluator.h"
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -894,12 +888,3 @@ namespace GRINS
   }
 
 } // namespace GRINS
-
-// Instantiate
-#ifdef GRINS_HAVE_CANTERA
-template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
-#endif
-#ifdef GRINS_HAVE_ANTIOCH
-//template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo> >;
-//template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo> >;
-#endif

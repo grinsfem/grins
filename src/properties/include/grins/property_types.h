@@ -26,21 +26,23 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_config.h"
+#ifndef GRINS_PROPERTY_TYPES_H
+#define GRINS_PROPERTY_TYPES_H
 
-#ifdef GRINS_HAVE_ANTIOCH
+// These are "dummy" types to help force operator overloading
+namespace GRINS
+{
+  template<typename Thermo>
+  struct thermo_type{};
 
-// GRINS
-#include "grins/antioch_evaluator.h"
+  template<typename Viscosity>
+  struct viscosity_type{};
 
-// Antioch
-#include "antioch/cea_evaluator.h"
-#include "antioch/stat_mech_thermo.h"
+  template<typename Conductivity>
+  struct conductivity_type{};
 
-// This class
-#include "antioch_evaluator.C"
+  template<typename Diffusivity>
+  struct diffusivity_type{};
+}
 
-template class GRINS::AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >;
-template class GRINS::AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >;
-
-#endif //GRINS_HAVE_ANTIOCH
+#endif // GRINS_PROPERTY_TYPES_H

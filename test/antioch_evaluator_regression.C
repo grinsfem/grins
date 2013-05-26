@@ -28,6 +28,8 @@
 
 #include "grins_config.h"
 
+#ifdef GRINS_HAVE_ANTIOCH
+
 // C++
 #include <iomanip>
 #include <limits>
@@ -37,16 +39,17 @@
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_evaluator.h"
 #include "grins/cached_values.h"
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
+// Antioch
+#include "antioch/cea_evaluator.h"
+#include "antioch/stat_mech_thermo.h"
+
 // Boost
 #include "boost/math/special_functions/fpclassify.hpp" //isnan
 
-#ifdef GRINS_HAVE_ANTIOCH
 int test_generic( const libMesh::Real value, const libMesh::Real value_reg, const std::string& name )
 {
   int return_flag = 0;
@@ -77,7 +80,7 @@ template<typename Thermo>
 int test_h_s( const libMesh::Real h_s );
 
 template<>
-int test_cp<GRINS::AntiochCEAThermo>( const libMesh::Real cp )
+int test_cp<Antioch::CEAEvaluator<libMesh::Real> >( const libMesh::Real cp )
 {
   double cp_reg = 1.2361869971209990e+03;
 
@@ -85,7 +88,7 @@ int test_cp<GRINS::AntiochCEAThermo>( const libMesh::Real cp )
 }
 
 template<>
-int test_cv<GRINS::AntiochCEAThermo>( const libMesh::Real cv )
+int test_cv<Antioch::CEAEvaluator<libMesh::Real> >( const libMesh::Real cv )
 {
   double cv_reg = 8.4681056933423179e+02;
 
@@ -93,7 +96,7 @@ int test_cv<GRINS::AntiochCEAThermo>( const libMesh::Real cv )
 }
 
 template<>
-int test_h_s<GRINS::AntiochCEAThermo>( const libMesh::Real h_s )
+int test_h_s<Antioch::CEAEvaluator<libMesh::Real> >( const libMesh::Real h_s )
 {
   double h_s_reg = 7.6606764036494098e+05;
 
@@ -101,7 +104,7 @@ int test_h_s<GRINS::AntiochCEAThermo>( const libMesh::Real h_s )
 }
 
 template<>
-int test_cp<GRINS::AntiochStatMechThermo>( const libMesh::Real cp )
+int test_cp<Antioch::StatMechThermodynamics<libMesh::Real> >( const libMesh::Real cp )
 {
   double cp_reg = 1.2309250447693457e+03;
 
@@ -109,7 +112,7 @@ int test_cp<GRINS::AntiochStatMechThermo>( const libMesh::Real cp )
 }
 
 template<>
-int test_cv<GRINS::AntiochStatMechThermo>( const libMesh::Real cv )
+int test_cv<Antioch::StatMechThermodynamics<libMesh::Real> >( const libMesh::Real cv )
 {
   double cv_reg = 8.4154861698257866e+02;
 
@@ -117,7 +120,7 @@ int test_cv<GRINS::AntiochStatMechThermo>( const libMesh::Real cv )
 }
 
 template<>
-int test_h_s<GRINS::AntiochStatMechThermo>( const libMesh::Real h_s )
+int test_h_s<Antioch::StatMechThermodynamics<libMesh::Real> >( const libMesh::Real h_s )
 {
   double h_s_reg = 1.0736808921399815e+06;
 
@@ -269,10 +272,10 @@ int main( int argc, char* argv[] )
   int return_flag = 0;
 
   std::cout << "Running AntiochCEAThermo regression test." << std::endl;
-  return_flag = test_evaluator<GRINS::AntiochCEAThermo>( antioch_mixture );
+  return_flag = test_evaluator<Antioch::CEAEvaluator<libMesh::Real> >( antioch_mixture );
 
   std::cout << std::endl <<  "Running AntiochStatMechThermo regression test." << std::endl;
-  return_flag = test_evaluator<GRINS::AntiochStatMechThermo>( antioch_mixture );
+  return_flag = test_evaluator<Antioch::StatMechThermodynamics<libMesh::Real> >( antioch_mixture );
 
   return return_flag;
 }

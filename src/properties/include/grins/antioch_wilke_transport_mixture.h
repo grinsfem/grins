@@ -35,6 +35,7 @@
 
 // GRINS
 #include "grins/antioch_mixture.h"
+#include "grins/property_types.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -57,17 +58,7 @@
 // These are "dummy" types to help force operator overloading
 namespace GRINS
 {
-  template<typename Thermo>
-  struct thermo_type{};
-
-  template<typename Viscosity>
-  struct viscosity_type{};
-
-  template<typename Conductivity>
-  struct conductivity_type{};
-
-  template<typename Diffusivity>
-  struct diffusivity_type{};
+  
 }
 
 namespace GRINS
@@ -86,6 +77,8 @@ namespace GRINS
     const Viscosity& viscosity() const;
     
     const Conductivity& conductivity() const;
+
+    const Diffusivity& diffusivity() const;
 
   protected:
 
@@ -204,6 +197,13 @@ namespace GRINS
   const Conductivity& AntiochWilkeTransportMixture<T,V,Conductivity,D>::conductivity() const
   {
     return *_conductivity.get();
+  }
+
+  template<typename T, typename V, typename C, typename Diffusivity>
+  inline
+  const Diffusivity& AntiochWilkeTransportMixture<T,V,C,Diffusivity>::diffusivity() const
+  {
+    return *_diffusivity.get();
   }
 
 } // end namespace GRINS

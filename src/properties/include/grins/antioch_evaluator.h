@@ -36,25 +36,27 @@
 // GRINS
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_kinetics.h"
+#include "grins/cached_values.h"
+#include "grins/property_types.h"
 
 // Antioch
 #include "antioch/temp_cache.h"
+#include "antioch/cea_evaluator.h"
+#include "antioch/stat_mech_thermo.h"
 
 // Boost
 #include <boost/scoped_ptr.hpp>
 
 namespace GRINS
 {
-  // GRINS forward declarations
-  class CachedValues;
-
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   class AntiochEvaluator
   {
   public:
 
     AntiochEvaluator( const AntiochMixture& mixture );
-    ~AntiochEvaluator();
+
+    virtual ~AntiochEvaluator();
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;
@@ -83,17 +85,6 @@ namespace GRINS
 
     void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
 
-    // Transport
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp );
-
-    libMesh::Real k( const CachedValues& cache, unsigned int qp );
-
-    void mu_and_k( const CachedValues& cache, unsigned int qp,
-                   libMesh::Real& mu, libMesh::Real k );
-
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D );
-
     // Kinetics
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot );
@@ -103,12 +94,9 @@ namespace GRINS
     const AntiochMixture& _chem;
     
     // This is a template type
-    Thermo _thermo;
+    boost::scoped_ptr<Thermo> _thermo;
 
-    // This is a template type
-    Transport _transport;
-
-    AntiochKinetics _kinetics;
+    boost::scoped_ptr<AntiochKinetics> _kinetics;
 
     boost::scoped_ptr<Antioch::TempCache<libMesh::Real> > _temp_cache;
 
@@ -117,67 +105,90 @@ namespace GRINS
         of Antioch::TempCache! */
     void check_and_reset_temp_cache( const libMesh::Real& T );
 
+    /* Below we will specialize the specialized_build_* functions to the appropriate type.
+       This way, we can control how the cached transport objects get constructed
+       based on the template type. This is achieved by the dummy types forcing operator
+       overloading for each of the specialized types. */
+    void build_thermo( const AntiochMixture& mixture )
+    { specialized_build_thermo( mixture, _thermo, thermo_type<Thermo>() ); }
+
   private:
 
     AntiochEvaluator();
 
+    void specialized_build_thermo( const AntiochMixture& mixture,
+                                   boost::scoped_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
+                                   thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
+    {
+      thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
+      return;
+    }
+    
+    void specialized_build_thermo( const AntiochMixture& mixture,
+                                   boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
+                                   thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
+    {
+      thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( mixture.cea_mixture() ) );
+      return;
+    }
+
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo,Transport>::M( unsigned int species ) const
+  libMesh::Real AntiochEvaluator<Thermo>::M( unsigned int species ) const
   {
     return _chem.M(species);
   }
 
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo,Transport>::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real AntiochEvaluator<Thermo>::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.M_mix(mass_fractions);
   }
 
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo,Transport>::R( unsigned int species ) const
+  libMesh::Real AntiochEvaluator<Thermo>::R( unsigned int species ) const
   {
     return _chem.R(species);
   }
 
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo,Transport>::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real AntiochEvaluator<Thermo>::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.R_mix(mass_fractions);
   }
   
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo,Transport>::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
+  libMesh::Real AntiochEvaluator<Thermo>::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
   {
     return _chem.X(species,M,mass_fraction);
   }
   
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  void AntiochEvaluator<Thermo,Transport>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
-                            std::vector<libMesh::Real>& mole_fractions ) const
+  void AntiochEvaluator<Thermo>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+                                    std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
     return;
   }
   
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  unsigned int AntiochEvaluator<Thermo,Transport>::species_index( const std::string& species_name ) const
+  unsigned int AntiochEvaluator<Thermo>::species_index( const std::string& species_name ) const
   {
     return _chem.species_index(species_name);
   }
   
-  template<typename Thermo, typename Transport>
+  template<typename Thermo>
   inline
-  std::string AntiochEvaluator<Thermo,Transport>::species_name( unsigned int species_index ) const
+  std::string AntiochEvaluator<Thermo>::species_name( unsigned int species_index ) const
   {
     return _chem.species_name(species_index);
   }
