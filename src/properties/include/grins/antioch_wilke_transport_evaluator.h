@@ -26,18 +26,42 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#ifndef GRINS_ANTIOCH_WILKE_TRANSPORT_EVALUATOR_H
+#define GRINS_ANTIOCH_WILKE_TRANSPORT_EVALUATOR_H
+
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
+namespace GRINS
+{
+  template<typename Viscosity, typename Conductivity>
+  class AntiochWilkeTransportEvaluator
+  {
+  public:
+    
+    AntiochWilkeTransportEvaluator( const AntiochMixture& mixture );
+    ~AntiochWilkeTransportEvaluator();
 
-// This class
-#include "antioch_evaluator.C"
+    libMesh::Real mu( const libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions );
 
-//template class GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo>;
-//template class GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo>;
+    libMesh::Real k( const libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions );
 
-#endif //GRINS_HAVE_ANTIOCH
+    void mu_and_k( const libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions,
+                   libMesh::Real& mu, libMesh::Real& k );
+
+  protected:
+
+    Antioch::WilkeEvaluator<Viscosity,Conductivity> _wilke_evaluator;
+
+  private:
+
+    AntiochWilkeTransportEvaluator();
+
+  };
+
+} // end namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH
+
+#endif // GRINS_ANTIOCH_WILKE_TRANSPORT_EVALUATOR_H

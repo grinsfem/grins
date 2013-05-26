@@ -44,7 +44,7 @@
 #include "antioch/reaction_set.h"
 
 // Boost
-#include <boost/scoped_ptr.hpp>
+#include "boost/scoped_ptr.hpp"
 
 // libMesh forward declarations
 class GetPot;
@@ -56,7 +56,8 @@ namespace GRINS
   public:
 
     AntiochMixture( const GetPot& input );
-    ~AntiochMixture();
+
+    virtual ~AntiochMixture();
 
     libMesh::Real M( unsigned int species ) const;
 

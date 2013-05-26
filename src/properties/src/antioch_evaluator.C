@@ -39,24 +39,25 @@
 
 namespace GRINS
 {
-  template<typename AntiochThermo>
-  AntiochEvaluator<AntiochThermo>::AntiochEvaluator( const AntiochMixture& mixture )
+  template<typename Thermo, typename Transport>
+  AntiochEvaluator<Thermo,Transport>::AntiochEvaluator( const AntiochMixture& mixture )
     : _chem( mixture ),
       _thermo( mixture ),
+      _transport( mixture ),
       _kinetics( AntiochKinetics(mixture) ),
       _temp_cache( new Antioch::TempCache<libMesh::Real>(1.0) )
   {
     return;
   }
 
-  template<typename AntiochThermo>
-  AntiochEvaluator<AntiochThermo>::~AntiochEvaluator()
+  template<typename Thermo, typename Transport>
+  AntiochEvaluator<Thermo,Transport>::~AntiochEvaluator()
   {
     return;
   }
 
-  template<typename AntiochThermo>
-  libMesh::Real AntiochEvaluator<AntiochThermo>::cp( const CachedValues& cache, unsigned int qp )
+  template<typename Thermo, typename Transport>
+  libMesh::Real AntiochEvaluator<Thermo,Transport>::cp( const CachedValues& cache, unsigned int qp )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -68,8 +69,8 @@ namespace GRINS
     return _thermo.cp( *(_temp_cache.get()), Y );
   }
 
-  template<typename AntiochThermo>
-  libMesh::Real AntiochEvaluator<AntiochThermo>::cv( const CachedValues& cache, unsigned int qp )
+  template<typename Thermo, typename Transport>
+  libMesh::Real AntiochEvaluator<Thermo,Transport>::cv( const CachedValues& cache, unsigned int qp )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -81,8 +82,8 @@ namespace GRINS
     return _thermo.cv( *(_temp_cache.get()), Y );
   }
      
-  template<typename AntiochThermo>
-  libMesh::Real AntiochEvaluator<AntiochThermo>::h_s( const CachedValues& cache, unsigned int qp,
+  template<typename Thermo, typename Transport>
+  libMesh::Real AntiochEvaluator<Thermo,Transport>::h_s( const CachedValues& cache, unsigned int qp,
                                                       unsigned int species )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
@@ -94,8 +95,8 @@ namespace GRINS
     return _thermo.h_s( *(_temp_cache.get()), species );
   }
   
-  template<typename AntiochThermo>
-  void AntiochEvaluator<AntiochThermo>::h_s( const CachedValues& cache, unsigned int qp,
+  template<typename Thermo, typename Transport>
+  void AntiochEvaluator<Thermo,Transport>::h_s( const CachedValues& cache, unsigned int qp,
                                              std::vector<libMesh::Real>& h_s )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
@@ -109,30 +110,45 @@ namespace GRINS
     return;
   }
 
-  template<typename AntiochThermo>
-  libMesh::Real AntiochEvaluator<AntiochThermo>::mu( const CachedValues& cache, unsigned int qp )
+  template<typename Thermo, typename Transport>
+  libMesh::Real AntiochEvaluator<Thermo,Transport>::mu( const CachedValues& cache, unsigned int qp )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    return _transport.mu( T, Y );
   }
 
-  template<typename AntiochThermo>
-  libMesh::Real AntiochEvaluator<AntiochThermo>::k( const CachedValues& cache, unsigned int qp )
+  template<typename Thermo, typename Transport>
+  libMesh::Real AntiochEvaluator<Thermo,Transport>::k( const CachedValues& cache, unsigned int qp )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    return _transport.k( T, Y );
   }
 
-  template<typename AntiochThermo>
-  void AntiochEvaluator<AntiochThermo>::D( const CachedValues& cache, unsigned int qp,
+  template<typename Thermo, typename Transport>
+  void AntiochEvaluator<Thermo,Transport>::mu_and_k( const CachedValues& cache, unsigned int qp,
+                                                     libMesh::Real& mu, libMesh::Real k ) 
+  {
+    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
+
+    _transport.mu_and_k( T, Y, mu, k );
+    return;
+  }
+
+  template<typename Thermo, typename Transport>
+  void AntiochEvaluator<Thermo,Transport>::D( const CachedValues& cache, unsigned int qp,
                                            std::vector<libMesh::Real>& D )
   {
     libmesh_not_implemented();
     return;
   }
 
-  template<typename AntiochThermo>
-  void AntiochEvaluator<AntiochThermo>::omega_dot( const CachedValues& cache, unsigned int qp,
+  template<typename Thermo, typename Transport>
+  void AntiochEvaluator<Thermo,Transport>::omega_dot( const CachedValues& cache, unsigned int qp,
                                                    std::vector<libMesh::Real>& omega_dot )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
@@ -147,8 +163,8 @@ namespace GRINS
     return;
   }
 
-  template<typename AntiochThermo>
-  void AntiochEvaluator<AntiochThermo>::check_and_reset_temp_cache( const libMesh::Real& T )
+  template<typename Thermo, typename Transport>
+  void AntiochEvaluator<Thermo,Transport>::check_and_reset_temp_cache( const libMesh::Real& T )
   {
     if( _temp_cache->T != T )
       {

@@ -25,19 +25,28 @@
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
 // GRINS
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
+#include "grins/antioch_wilke_transport_mixture.h"
+
+// Antioch
+#include "antioch/vector_utils_decl.h"
+#include "antioch/vector_utils.h"
 
 // This class
-#include "antioch_evaluator.C"
+#include "antioch_wilke_transport_mixture.C"
 
-//template class GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo>;
-//template class GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo>;
+template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                   Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+
+template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
 
 #endif //GRINS_HAVE_ANTIOCH

@@ -30,14 +30,15 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
+namespace GRINS
+{
+  template<typename Viscosity, typename Conductivity>
+  AntiochWilkeTransportEvaluator<Viscosity,Conductivity>::AntiochWilkeTransportEvaluator( const AntiochMixture& mixture )
+    : _wilke_evaluator( mixture.wilke_mixture(), mixture.viscosity(), mixture.conductivity() )
+  {
+    return;
+  }
 
-// This class
-#include "antioch_evaluator.C"
+} // end namespace GRINS
 
-//template class GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo>;
-//template class GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo>;
-
-#endif //GRINS_HAVE_ANTIOCH
+#endif // GRINS_HAVE_ANTIOCH

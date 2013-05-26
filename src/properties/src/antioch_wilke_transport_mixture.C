@@ -30,14 +30,40 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_cea_thermo.h"
-#include "grins/antioch_stat_mech_thermo.h"
-
 // This class
-#include "antioch_evaluator.C"
+#include "grins/antioch_wilke_transport_mixture.h"
 
-//template class GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo>;
-//template class GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo>;
+// libMesh
+#include "libmesh/getpot.h"
 
-#endif //GRINS_HAVE_ANTIOCH
+namespace GRINS
+{
+  template<typename T, typename V, typename C, typename D>
+  AntiochWilkeTransportMixture<T,V,C,D>::AntiochWilkeTransportMixture( const GetPot& input )
+    : AntiochMixture(input),
+      _wilke_mixture(*(this->_antioch_gas.get())),
+      _thermo(NULL),
+      _viscosity(NULL),
+      _conductivity(NULL),
+      _diffusivity(NULL)
+  {
+    this->build_thermo( input );
+
+    this->build_viscosity( input );
+
+    this->build_conductivity( input );
+
+    this->build_diffusivity( input );
+
+    return;
+  }
+
+  template<typename T, typename V, typename C, typename D>
+  AntiochWilkeTransportMixture<T,V,C,D>::~AntiochWilkeTransportMixture()
+  {
+    return;
+  }
+
+} // end namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH
