@@ -644,9 +644,8 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	mu[qp] = gas_evaluator.mu(cache,qp);
+	gas_evaluator.mu_and_k(cache,qp,mu[qp],k[qp]);
 	cp[qp] = gas_evaluator.cp(cache,qp);
-	k[qp]  = gas_evaluator.k(cache,qp);
 
 	h_s[qp].resize(this->_n_species);
 	gas_evaluator.h_s( cache, qp, h_s[qp] );
@@ -901,6 +900,6 @@ namespace GRINS
 template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
 #endif
 #ifdef GRINS_HAVE_ANTIOCH
-template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo> >;
-template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo> >;
+//template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochCEAThermo> >;
+//template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochMixture,GRINS::AntiochEvaluator<GRINS::AntiochStatMechThermo> >;
 #endif
