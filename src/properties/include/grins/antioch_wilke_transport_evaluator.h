@@ -33,14 +33,23 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// GRINS
+#include "grins/antioch_wilke_transport_mixture.h"
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+
+// Antioch
+#include "antioch/wilke_evaluator.h"
+
 namespace GRINS
 {
-  template<typename Viscosity, typename Conductivity>
+  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   class AntiochWilkeTransportEvaluator
   {
   public:
     
-    AntiochWilkeTransportEvaluator( const AntiochMixture& mixture );
+    AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
     ~AntiochWilkeTransportEvaluator();
 
     libMesh::Real mu( const libMesh::Real T, const std::vector<libMesh::Real>& mass_fractions );
@@ -59,6 +68,33 @@ namespace GRINS
     AntiochWilkeTransportEvaluator();
 
   };
+
+  /* ------------------------- Inline Functions -------------------------*/
+  template<typename Th, typename V, typename C, typename D>
+  inline
+  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
+                                                              const std::vector<libMesh::Real>& mass_fractions )
+  {
+    return _wilke_evaluator.mu(T, mass_fractions);
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  inline
+  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
+                                                             const std::vector<libMesh::Real>& mass_fractions )
+  {
+    return _wilke_evaluator.k(T, mass_fractions);
+  }
+
+  template<typename Th, typename V, typename C, typename D>
+  inline
+  void AntiochWilkeTransportEvaluator<Th,V,C,D>::mu_and_k( const libMesh::Real T,
+                                                           const std::vector<libMesh::Real>& mass_fractions,
+                                                           libMesh::Real& mu, libMesh::Real& k )
+  {
+    _wilke_evaluator.mu_and_k(T, mass_fractions, mu, k);
+    return;
+  }
 
 } // end namespace GRINS
 

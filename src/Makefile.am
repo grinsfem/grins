@@ -27,7 +27,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/heat_transfer_bc_handli
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_heat_transfer_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/inc_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/low_mach_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
 
 # src/boundary_conditions files
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/boundary_conditions.C
@@ -41,8 +41,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
 
 # src/mat_props files
 libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
@@ -80,9 +80,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_stab_helper.C
-libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
-libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_mixture.C
@@ -98,6 +98,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_kinetics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator_instantiate.C
 
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
@@ -220,6 +222,7 @@ include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_stat_mech_
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_evaluator.h
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h

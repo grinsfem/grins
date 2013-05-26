@@ -208,11 +208,3 @@ namespace GRINS
   }
 
 } // end namespace GRINS
-
-//Instantiate
-#ifdef GRINS_HAVE_CANTERA
-template class GRINS::ReactingLowMachNavierStokesBase<GRINS::CanteraMixture>;
-#endif
-#ifdef GRINS_HAVE_ANTIOCH
-template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochMixture>;
-#endif

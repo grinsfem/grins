@@ -30,24 +30,24 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// This class
+// GRINS
 #include "grins/antioch_wilke_transport_evaluator.h"
 
-namespace GRINS
-{
-  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
-    : _wilke_evaluator( mixture.wilke_mixture(), mixture.viscosity(), mixture.conductivity() )
-  {
-    return;
-  }
+// Antioch
+#include "antioch/vector_utils_decl.h"
+#include "antioch/vector_utils.h"
 
-  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::~AntiochWilkeTransportEvaluator()
-  {
-    return;
-  }
+// This class
+#include "antioch_wilke_transport_evaluator.C"
 
-} // end namespace GRINS
+template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                     Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                     Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
 
-#endif // GRINS_HAVE_ANTIOCH
+template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                     Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                     Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+
+#endif //GRINS_HAVE_ANTIOCH
