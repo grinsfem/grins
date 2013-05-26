@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   output << "# T [K]       CEA h_s         StatMech h_s" << std::endl;
   output.close();
 
-  for( unsigned int i = 0; i < 97; i++ )
+  for( unsigned int i = 0; i < 56; i++ )
     {
       double T = T0 + i*delta_T;
 
@@ -102,7 +102,8 @@ int main(int argc, char* argv[])
       for( unsigned int s = 0; s < n_species; s++)
         {
           output << std::scientific << std::setprecision(16)
-                 << stat_mech_thermo.h_tot( s, T ) << " ";
+                 << stat_mech_thermo.h_tot( s, T ) - stat_mech_thermo.h_tot( s, 298.15 ) 
+                    + stat_mech_thermo.e_0( s ) << " ";
         }
       
       for( unsigned int s = 0; s < n_species; s++)
