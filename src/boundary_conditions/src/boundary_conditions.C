@@ -240,6 +240,8 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+
 	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
 	      context.side_fe_var[*var2]->get_phi();
@@ -252,7 +254,7 @@ namespace GRINS
 		  {
 		    for (unsigned int j=0; j != n_var2_dofs; j++)
 		      {
-			K_var(i,j) += sign*JxW_side[qp]*jac_value*normals[qp]*
+			K_var2(i,j) += sign*JxW_side[qp]*jac_value*normals[qp]*
 			  var_phi_side[i][qp]*var2_phi_side[j][qp];
 		      }
 		  }
@@ -314,6 +316,8 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            
 	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
 	      context.side_fe_var[*var2]->get_phi();
@@ -326,7 +330,7 @@ namespace GRINS
 		  {
 		    for (unsigned int j=0; j != n_var2_dofs; j++)
 		      {
-			K_var(i,j) += sign*jac_value*
+			K_var2(i,j) += sign*jac_value*
 			  var_phi_side[i][qp]*var2_phi_side[j][qp]*JxW_side[qp];
 		      }
 		  }
@@ -394,6 +398,8 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+
 	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
 	      context.side_fe_var[*var2]->get_phi();
@@ -408,7 +414,7 @@ namespace GRINS
 		  {
 		    for (unsigned int j=0; j != n_var2_dofs; j++)
 		      {
-			K_var(i,j) += sign*r*jac_value*
+			K_var2(i,j) += sign*r*jac_value*
 			  var_phi_side[i][qp]*var2_phi_side[j][qp]*JxW_side[qp];
 		      }
 		  }
@@ -480,6 +486,8 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+
 	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
 	      context.side_fe_var[*var2]->get_phi();
@@ -494,7 +502,7 @@ namespace GRINS
 		  {
 		    for (unsigned int j=0; j != n_var2_dofs; j++)
 		      {
-			K_var(i,j) += sign*r*JxW_side[qp]*jac_value*normals[qp]*
+			K_var2(i,j) += sign*r*JxW_side[qp]*jac_value*normals[qp]*
 			  var_phi_side[i][qp]*var2_phi_side[j][qp];
 		      }
 		  }
