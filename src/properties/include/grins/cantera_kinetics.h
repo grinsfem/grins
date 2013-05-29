@@ -64,6 +64,10 @@ namespace GRINS
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
 
+    void omega_dot( const libMesh::Real T, const libMesh::Real P,
+                    const std::vector<libMesh::Real>& mass_fractions,
+                    std::vector<libMesh::Real>& omega_dot ) const;
+
   protected:
 
     Cantera::IdealGasMix& _cantera_gas;

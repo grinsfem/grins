@@ -65,11 +65,20 @@ namespace GRINS
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
-    libmesh_assert_equal_to( Y.size(), omega_dot.size() );
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
+    this->omega_dot( T, P, Y, omega_dot );
+
+    return;
+  }
+
+  void CanteraKinetics::omega_dot( const libMesh::Real T, const libMesh::Real P,
+                                   const std::vector<libMesh::Real>& mass_fractions,
+                                   std::vector<libMesh::Real>& omega_dot ) const
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), omega_dot.size() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
     libmesh_assert_greater(T,0.0);
     libmesh_assert_greater(P,0.0);
-
+    
     {
       /*! \todo Need to make sure this will work in a threaded environment.
 	Not sure if we will get thread lock here or not. */
@@ -77,7 +86,7 @@ namespace GRINS
       
       try
 	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
+	  _cantera_gas.setState_TPY(T, P, &mass_fractions[0]);
 	  _cantera_gas.getNetProductionRates(&omega_dot[0]);
 	}
       catch(Cantera::CanteraError)
@@ -96,7 +105,7 @@ namespace GRINS
                       << "P = " << P << std::endl;
             for( unsigned int s = 0; s < omega_dot.size(); s++ )
               {
-                std::cout << "Y[" << s << "] = " << Y[s] << std::endl;
+                std::cout << "Y[" << s << "] = " << mass_fractions[s] << std::endl;
               }
             for( unsigned int s = 0; s < omega_dot.size(); s++ )
               {
