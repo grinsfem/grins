@@ -47,8 +47,6 @@ int do_transport_eval( const GetPot& input )
 {
   GRINS::AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
 
-  std::cout << mixture.viscosity() << std::endl;
-
   GRINS::AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
