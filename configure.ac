@@ -329,6 +329,7 @@ AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
+AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 
 dnl-----------------------------------------------

@@ -21,6 +21,7 @@ check_PROGRAMS += catalytic_wall_unit
 check_PROGRAMS += antioch_mixture_unit
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_evaluator_regression
+check_PROGRAMS += antioch_wilke_evaluator_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -86,6 +87,7 @@ catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 antioch_mixture_unit_SOURCES = $(top_srcdir)/test/antioch_mixture_unit.C
 antioch_kinetics_regression_SOURCES = $(top_srcdir)/test/antioch_kinetics_regression.C
 antioch_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_evaluator_regression.C
+antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_evaluator_regression.C
 
 # List of source files for license stamping
 STAMPED_FILES = 
@@ -110,6 +112,7 @@ STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
 STAMPED_FILES += $(antioch_mixture_unit_SOURCES)
 STAMPED_FILES += $(antioch_kinetics_regression_SOURCES)
 STAMPED_FILES += $(antioch_evaluator_regression_SOURCES)
+STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
 
 #Define tests to actually be run
 TESTS =
@@ -122,6 +125,7 @@ TESTS += catalytic_wall_unit_cantera.sh
 TESTS += antioch_mixture_unit.sh
 TESTS += antioch_kinetics_regression.sh
 TESTS += antioch_evaluator_regression.sh
+TESTS += antioch_wilke_evaluator_regression.sh
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
@@ -165,6 +169,7 @@ shellfiles_src += cantera_evaluator_regression.sh
 shellfiles_src += antioch_mixture_unit.sh
 shellfiles_src += antioch_kinetics_unit.sh
 shellfiles_src += antioch_evaluator_unit.sh
+shellfiles_src += antioch_wilke_evaluator_unit.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
