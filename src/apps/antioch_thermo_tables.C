@@ -89,14 +89,14 @@ int main(int argc, char* argv[])
       double T = T0 + i*delta_T;
 
       output.open( "thermo.dat", std::ios::app );
+      output << std::scientific << std::setprecision(16);
       output << T << " ";
 
       Antioch::TempCache<double> T_cache(T);
 
       for( unsigned int s = 0; s < n_species; s++)
         {
-          output << std::scientific << std::setprecision(16)
-                 << cea_thermo.h(T_cache,s) << " ";
+          output << cea_thermo.h(T_cache,s) << " ";
         }
 
       for( unsigned int s = 0; s < n_species; s++)
