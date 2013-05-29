@@ -78,6 +78,8 @@ namespace GRINS
     void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
 	    std::vector<libMesh::Real>& mole_fractions ) const;
 
+    unsigned int n_species() const;
+
     unsigned int species_index( const std::string& species_name ) const;
 
     std::string species_name( unsigned int species_index ) const;
@@ -134,6 +136,12 @@ namespace GRINS
                                    libMesh::Real mass_fraction ) const
   {
     return mass_fraction*M_mix/this->M(species);
+  }
+
+  inline
+  unsigned int CanteraMixture::n_species() const
+  {
+    return _cantera_gas->nSpecies();
   }
 
   inline
