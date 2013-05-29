@@ -15,6 +15,7 @@ endif
 if ANTIOCH_ENABLED
    bin_PROGRAMS += antioch_thermo_tables
    bin_PROGRAMS += antioch_kinetic_rates
+   bin_PROGRAMS += antioch_transport_values
 endif
 
 #----------------------------------------------
@@ -294,6 +295,9 @@ if ANTIOCH_ENABLED
 
    antioch_kinetic_rates_SOURCES = $(top_srcdir)/src/apps/antioch_kinetic_rates.C
    antioch_kinetic_rates_LDADD = libgrins.la
+
+   antioch_transport_values_SOURCES = $(top_srcdir)/src/apps/antioch_transport_values.C
+   antioch_transport_values_LDADD = libgrins.la
 endif
 
 #--------------------------------------
