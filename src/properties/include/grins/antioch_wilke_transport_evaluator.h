@@ -64,9 +64,19 @@ namespace GRINS
     void D( const CachedValues& cache, unsigned int qp,
 	    std::vector<libMesh::Real>& D );
 
+    libMesh::Real mu( const libMesh::Real T,
+                      const std::vector<libMesh::Real>& Y );
+
+    libMesh::Real k( const libMesh::Real T,
+                     const std::vector<libMesh::Real>& Y );
+
+    void D( const libMesh::Real rho, const libMesh::Real cp,
+            const libMesh::Real k,
+	    std::vector<libMesh::Real>& D );
+    
   protected:
 
-    Antioch::WilkeEvaluator<Viscosity,Conductivity> _wilke_evaluator;
+    boost::scoped_ptr<Antioch::WilkeEvaluator<Viscosity,Conductivity> > _wilke_evaluator;
 
     const Diffusivity& _diffusivity;
 

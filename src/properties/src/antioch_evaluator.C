@@ -106,6 +106,22 @@ namespace GRINS
   }
 
   template<>
+  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cp( const libMesh::Real T,
+                                                                             const std::vector<libMesh::Real>& Y )
+  {
+    this->check_and_reset_temp_cache(T);
+
+    return _thermo->cp( *(_temp_cache.get()), Y );
+  }
+
+  template<>
+  libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::cp( const libMesh::Real T,
+                                                                                       const std::vector<libMesh::Real>& Y )
+  {
+    return _thermo->cp( T, T, Y );
+  }
+
+  template<>
   libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cv( const CachedValues& cache,
                                                                              unsigned int qp )
   {

@@ -133,47 +133,47 @@ namespace GRINS
                                       viscosity_type<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> > > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
+      
+      Antioch::read_sutherland_data_ascii_default( *(viscosity.get()) );
+      return;
+    }
 
-       Antioch::read_sutherland_data_ascii_default( *(viscosity.get()) );
-       return;
-     }
+    void specialized_build_viscosity( const GetPot& /*input*/,
+                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > >& viscosity,
+                                      viscosity_type<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > > )
+    {
+      viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
 
-     void specialized_build_viscosity( const GetPot& /*input*/,
-                                       boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > >& viscosity,
-                                       viscosity_type<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > > )
-     {
-       viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
+      Antioch::read_blottner_data_ascii_default( *(viscosity.get()) );
+      return;
+    }
 
-       Antioch::read_blottner_data_ascii_default( *(viscosity.get()) );
-       return;
-     }
+    void specialized_build_conductivity( const GetPot& /*input*/,
+                                         boost::scoped_ptr<Antioch::EuckenThermalConductivity<Thermo> >& conductivity,
+                                         conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
+    {
+      conductivity.reset( new Antioch::EuckenThermalConductivity<Thermo>( *_thermo.get() ) );
+      return;
+    }
 
-     void specialized_build_conductivity( const GetPot& /*input*/,
-                                          boost::scoped_ptr<Antioch::EuckenThermalConductivity<Thermo> >& conductivity,
-                                          conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
-     {
-       conductivity.reset( new Antioch::EuckenThermalConductivity<Thermo>( *_thermo.get() ) );
-       return;
-     }
-
-     void specialized_build_diffusivity( const GetPot& input,
-                                         boost::scoped_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >& diffusivity,
-                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
-     {
-       if( !input.have_variable( "Physics/Chemistry/diffusivity" ) )
-         {
-           std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
-                     << std::endl;
+    void specialized_build_diffusivity( const GetPot& input,
+                                        boost::scoped_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >& diffusivity,
+                                        diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
+    {
+      if( !input.have_variable( "Physics/Antioch/Le" ) )
+        {
+          std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
+                    << std::endl;
            
-           libmesh_error();
-         }
+          libmesh_error();
+        }
        
-       const libMesh::Real Le = input( "Physics/Chemistry/diffusivity", 0.0 );
+      const libMesh::Real Le = input( "Physics/Antioch/Le", 0.0 );
        
-       diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( Le ) );
+      diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( Le ) );
        
-       return;
-     }
+      return;
+    }
 
   };
 
