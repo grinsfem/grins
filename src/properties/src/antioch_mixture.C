@@ -39,32 +39,15 @@
 // Antioch
 #include "antioch/read_reaction_set_data_xml.h"
 #include "antioch/cea_mixture_ascii_parsing.h"
+#include "antioch/stat_mech_thermo.h"
 
 namespace GRINS
 {
   AntiochMixture::AntiochMixture( const GetPot& input )
-    : _antioch_gas(NULL),
-      _reaction_set(NULL),
-      _cea_mixture(NULL)
+    : AntiochChemistry(input),
+      _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
+      _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) )
   {
-    if( !input.have_variable("Physics/Chemistry/species") )
-      {
-        std::cerr << "Error: Must specify species list to use Antioch." << std::endl;
-        libmesh_error();
-      }
-
-    unsigned int n_species = input.vector_variable_size("Physics/Chemistry/species");
-    std::vector<std::string> species_list(n_species);
-
-    for( unsigned int s = 0; s < n_species; s++ )
-      {
-        species_list[s] = input( "Physics/Chemistry/species", "DIE!", s );
-      }
-
-    _antioch_gas.reset( new Antioch::ChemicalMixture<libMesh::Real>( species_list ) );
-
-    _reaction_set.reset( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) );
-
     if( !input.have_variable("Physics/Chemistry/chem_file") )
       {
         std::cerr << "Error: Must specify XML chemistry file to use Antioch." << std::endl;
@@ -76,9 +59,9 @@ namespace GRINS
       
     Antioch::read_reaction_set_data_xml<libMesh::Real>( xml_filename, verbose_read, *_reaction_set.get() );
 
-    _cea_mixture.reset( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) );
-
     Antioch::read_cea_mixture_data_ascii_default( *_cea_mixture.get() );
+
+    this->build_stat_mech_ref_correction();
 
     return;
   }
@@ -88,29 +71,18 @@ namespace GRINS
     return;
   }
 
-  std::string AntiochMixture::species_name( unsigned int species_index ) const
+  void AntiochMixture::build_stat_mech_ref_correction()
   {
-    libmesh_assert_less(species_index, _antioch_gas->n_species());
+    Antioch::StatMechThermodynamics<libMesh::Real> thermo( *(this->_antioch_gas.get()) );
 
-    std::string name = "dummy";
-
-    for( std::map<std::string,unsigned int>::const_iterator it = _antioch_gas->active_species_name_map().begin();
-         it != _antioch_gas->active_species_name_map().end(); it++ )
+    _h_stat_mech_ref_correction.resize(this->n_species());
+    
+    for( unsigned int s = 0; s < this->n_species(); s++ )
       {
-        if( it->second == species_index )
-          {
-            name = it->first;
-          }
+        _h_stat_mech_ref_correction[s] = -thermo.h_tot( s, 298.15 ) + thermo.e_0(s);
       }
-
-    if( name == std::string("dummy") )
-      {
-        std::cerr << "Error: Could not find a species name for the given index!"
-                  << std::endl;
-        libmesh_error();
-      }
-
-    return name;
+    
+    return;
   }
 
 }// end namespace GRINS

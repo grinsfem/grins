@@ -122,7 +122,7 @@ int test_cv<Antioch::StatMechThermodynamics<libMesh::Real> >( const libMesh::Rea
 template<>
 int test_h_s<Antioch::StatMechThermodynamics<libMesh::Real> >( const libMesh::Real h_s )
 {
-  double h_s_reg = 1.0736808921399815e+06;
+  double h_s_reg = 7.6397682090011111e+05;
 
   return test_generic(h_s,h_s_reg,"h_s");
 }

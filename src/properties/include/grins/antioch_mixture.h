@@ -33,6 +33,10 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// GRINS
+#include "grins/antioch_chemistry.h"
+#include "grins/property_types.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -51,7 +55,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class AntiochMixture
+  class AntiochMixture : public AntiochChemistry
   {
   public:
 
@@ -59,50 +63,21 @@ namespace GRINS
 
     virtual ~AntiochMixture();
 
-    libMesh::Real M( unsigned int species ) const;
-
-    libMesh::Real M_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
-
-    libMesh::Real R( unsigned int species ) const;
-
-    libMesh::Real R_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
-
-    libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
-
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
-	    std::vector<libMesh::Real>& mole_fractions ) const;
-
-    libMesh::Real molar_density( const unsigned int species,
-                                 const libMesh::Real rho,
-                                 const libMesh::Real mass_fraction ) const;
-
-    void molar_densities( const libMesh::Real rho,
-			  const std::vector<libMesh::Real>& mass_fractions,
-			  std::vector<libMesh::Real>& molar_densities ) const;
-
-    unsigned int n_species() const;
-
-    unsigned int species_index( const std::string& species_name ) const;
-
-    std::string species_name( unsigned int species_index ) const;
-
-    const Antioch::ChemicalMixture<libMesh::Real>& chemical_mixture() const;
-
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 
     const Antioch::CEAThermoMixture<libMesh::Real>& cea_mixture() const;
 
-    libMesh::Real h_ref_correction( unsigned int species ) const;
+    libMesh::Real h_stat_mech_ref_correction( unsigned int species ) const;
 
   protected:
-
-    boost::scoped_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
 
     boost::scoped_ptr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
     boost::scoped_ptr<Antioch::CEAThermoMixture<libMesh::Real> > _cea_mixture;
 
-    std::vector<libMesh::Real> _h_ref_correction;
+    std::vector<libMesh::Real> _h_stat_mech_ref_correction;
+
+    void build_stat_mech_ref_correction();
 
   private:
 
@@ -111,64 +86,6 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  inline
-  libMesh::Real AntiochMixture::M( unsigned int species ) const 
-  {
-    return _antioch_gas->M(species);
-  }
-
-  inline
-  libMesh::Real AntiochMixture::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
-  {
-    return _antioch_gas->M(mass_fractions);
-  }
-
-  inline
-  libMesh::Real AntiochMixture::R( unsigned int species ) const 
-  {
-    return _antioch_gas->R(species);
-  }
-
-  inline
-  libMesh::Real AntiochMixture::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
-  {
-    return _antioch_gas->R(mass_fractions);
-  }
-
-  inline
-  libMesh::Real AntiochMixture::X( unsigned int species, const libMesh::Real M,
-                                   const libMesh::Real mass_fraction ) const
-  {
-    return _antioch_gas->X(species,M,mass_fraction);
-  }
-
-  inline
-  void AntiochMixture::X( libMesh::Real M,
-                          const std::vector<libMesh::Real>& mass_fractions, 
-                          std::vector<libMesh::Real>& mole_fractions ) const
-  {
-    _antioch_gas->X(M,mass_fractions,mole_fractions);
-    return;
-  }
-
-  inline
-  unsigned int AntiochMixture::n_species() const
-  {
-    return _antioch_gas->n_species();
-  }
-
-  inline
-  unsigned int AntiochMixture::species_index( const std::string& species_name ) const
-  {
-    return _antioch_gas->active_species_name_map().find(species_name)->second;
-  }
-
-  inline
-  const Antioch::ChemicalMixture<libMesh::Real>& AntiochMixture::chemical_mixture() const
-  {
-    return *_antioch_gas.get();
-  }
-
   inline
   const Antioch::ReactionSet<libMesh::Real>& AntiochMixture::reaction_set() const
   {
@@ -182,26 +99,9 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real AntiochMixture::molar_density( const unsigned int species,
-                                               const libMesh::Real rho,
-                                               const libMesh::Real mass_fraction ) const
+  libMesh::Real AntiochMixture::h_stat_mech_ref_correction( unsigned int species ) const
   {
-    return _antioch_gas->molar_density( species, rho, mass_fraction );
-  }
-
-  inline
-  void AntiochMixture::molar_densities( const libMesh::Real rho,
-                                        const std::vector<libMesh::Real>& mass_fractions,
-                                        std::vector<libMesh::Real>& molar_densities ) const
-  {
-    _antioch_gas->molar_densities( rho, mass_fractions, molar_densities );
-    return;
-  }
-
-  inline
-  libMesh::Real AntiochMixture::h_ref_correction( unsigned int species ) const
-  {
-    return _h_ref_correction[species];
+    return _h_stat_mech_ref_correction[species];
   }
   
 } // end namespace GRINS
