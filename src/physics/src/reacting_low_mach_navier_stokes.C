@@ -746,7 +746,36 @@ namespace GRINS
 
     if( cache.is_active(Cache::MIXTURE_THERMAL_CONDUCTIVITY) )
       {
-	libmesh_not_implemented();
+	std::vector<libMesh::Real> k_values;
+	k_values.reserve( points.size() );
+
+        std::vector<libMesh::Real> T;
+        T.resize( points.size() );
+
+	std::vector<std::vector<libMesh::Real> >  mass_fracs;
+	mass_fracs.resize( points.size() );
+
+        for( unsigned int i = 0; i < points.size(); i++ )
+	  {
+            mass_fracs[i].resize( this->_n_species );
+	  }
+
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    T[p] = this->T(points[p],context);
+
+            this->mass_fractions( points[p], context, mass_fracs[p] );
+          }
+        
+        cache.set_values( Cache::TEMPERATURE, T );
+        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
+
+        for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    k_values.push_back( gas_evaluator.k( cache, p ) );
+	  }
+
+	cache.set_values( Cache::MIXTURE_THERMAL_CONDUCTIVITY, k_values );
       }
 
     if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_P) )
@@ -850,9 +879,11 @@ namespace GRINS
     if( cache.is_active(Cache::OMEGA_DOT) )
       {
 	{
-	  std::vector<libMesh::Real> T, p0;
+	  std::vector<libMesh::Real> T, R, rho, p0;
 	  T.resize( points.size() );
-	  p0.resize( points.size() );
+	  R.resize( points.size() );
+          rho.resize( points.size() );
+          p0.resize( points.size() );
 
 	  std::vector<std::vector<libMesh::Real> > Y;
 	  Y.resize( points.size() );
@@ -861,14 +892,20 @@ namespace GRINS
 	    {
 	      T[p] = this->T(points[p],context);
 
-	      p0[p] = this->get_p0_steady(context,points[p]);
-
 	      Y[p].resize(this->_n_species);
 	      this->mass_fractions( points[p], context, Y[p] );
+
+              R[p] = gas_evaluator.R_mix( Y[p] );
+
+              p0[p] = this->get_p0_steady(context, points[p] );
+
+              rho[p] = this->rho( T[p], p0[p], R[p] );
 	    }
 
 	  cache.set_values( Cache::TEMPERATURE, T );
-	  cache.set_values( Cache::THERMO_PRESSURE, p0 );
+	  cache.set_values( Cache::MIXTURE_GAS_CONSTANT, R);
+          cache.set_values(Cache::MIXTURE_DENSITY, rho);
+          cache.set_values(Cache::THERMO_PRESSURE, p0);
 	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
 	}
 
