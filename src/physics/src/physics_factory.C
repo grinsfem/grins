@@ -32,7 +32,6 @@
 // GRINS
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_thermo.h"
-//#include "grins/constant_transport.h"
 #include "grins/cantera_transport.h"
 #include "grins/cantera_kinetics.h"
 #include "grins/cantera_evaluator.h"
@@ -61,6 +60,8 @@
 #include "grins/constant_source_func.h"
 
 #include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_constant_transport_mixture.h"
+#include "grins/antioch_constant_transport_evaluator.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -346,6 +347,60 @@ namespace GRINS
                                       << "diffusivity_model  = " << diffusivity_model << std::endl
                                       << "thermo_model       = " << thermo_model << std::endl;
                             libmesh_error();
+              }
+          }
+        else if( mixing_model == std::string("constant") )
+          {
+            if( viscosity_model != std::string("constant") )
+              {
+                std::cerr << "Error: For constant mixing_model, viscosity model must be constant!"
+                          << std::endl;
+                libmesh_error();
+              }
+
+            if( diffusivity_model != std::string("constant_lewis") )
+              {
+                std::cerr << "Error: For constant mixing_model, diffusivity model must be constant_lewis!"
+                          << std::endl;
+                libmesh_error();
+              }
+
+            if( (thermo_model == std::string("stat_mech")) &&
+                (conductivity_model == std::string("constant")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (conductivity_model == std::string("constant")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("stat_mech")) &&
+                (conductivity_model == std::string("constant_prandtl")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (conductivity_model == std::string("constant_prandtl")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
+              }
+            else
+              {
+                std::cerr << "Error: Unknown Antioch model combination: "
+                          << "viscosity_model    = " << viscosity_model << std::endl
+                          << "conductivity_model = " << conductivity_model << std::endl
+                          << "diffusivity_model  = " << diffusivity_model << std::endl
+                          << "thermo_model       = " << thermo_model << std::endl;
+                libmesh_error();
               }
           }
         else // mixing_model
