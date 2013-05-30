@@ -146,6 +146,10 @@ TESTS += reacting_low_mach_cantera_regression.sh
 
 XFAIL_TESTS = reacting_low_mach_cantera_regression.sh
 
+TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
+TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
+TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 
 shellfiles_src =

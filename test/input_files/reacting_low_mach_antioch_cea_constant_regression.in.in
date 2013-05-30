@@ -1,4 +1,17 @@
 # Options related to all Physics
+[Materials]
+
+[./Viscosity]
+
+mu = '1.0e-5'
+
+[../Conductivity]
+
+k = '0.02'
+
+[]
+
+
 [Physics]
 
 enabled_physics = 'ReactingLowMachNavierStokes'
@@ -10,9 +23,10 @@ chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
 [../Antioch]
 
-mixing_model = 'wilke'
-viscosity_model = 'blottner'
-conductivity_model = 'eucken'
+mixing_model = 'constant'
+thermo_model = 'cea'
+viscosity_model = 'constant'
+conductivity_model = 'constant'
 diffusivity_model = 'constant_lewis'
 
 Le = '1.4'
