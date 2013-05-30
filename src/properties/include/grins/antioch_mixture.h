@@ -92,6 +92,8 @@ namespace GRINS
 
     const Antioch::CEAThermoMixture<libMesh::Real>& cea_mixture() const;
 
+    libMesh::Real h_ref_correction( unsigned int species ) const;
+
   protected:
 
     boost::scoped_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
@@ -99,6 +101,8 @@ namespace GRINS
     boost::scoped_ptr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
     boost::scoped_ptr<Antioch::CEAThermoMixture<libMesh::Real> > _cea_mixture;
+
+    std::vector<libMesh::Real> _h_ref_correction;
 
   private:
 
@@ -192,6 +196,12 @@ namespace GRINS
   {
     _antioch_gas->molar_densities( rho, mass_fractions, molar_densities );
     return;
+  }
+
+  inline
+  libMesh::Real AntiochMixture::h_ref_correction( unsigned int species ) const
+  {
+    return _h_ref_correction[species];
   }
   
 } // end namespace GRINS

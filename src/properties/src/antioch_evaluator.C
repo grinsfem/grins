@@ -162,7 +162,7 @@ namespace GRINS
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
-    return _thermo->h_tot( species, T );
+    return _thermo->h_tot( species, T ) + _chem.h_ref_correction(species);
   }
 
   template<>
