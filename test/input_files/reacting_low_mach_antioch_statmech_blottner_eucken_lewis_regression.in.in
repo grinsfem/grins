@@ -63,7 +63,7 @@ T_wall_3 = '300'
 
 species_bc_ids = '3'
 species_bc_types = 'prescribed_species'
-bound_species_3 = '0.99 0.01'
+bound_species_3 = '0.6 0.4'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
