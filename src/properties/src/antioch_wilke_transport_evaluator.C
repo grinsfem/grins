@@ -73,7 +73,7 @@ namespace GRINS
 
   template<typename Th, typename V, typename C, typename D>
   void AntiochWilkeTransportEvaluator<Th,V,C,D>::mu_and_k( const CachedValues& cache, unsigned int qp,
-                                                           libMesh::Real& mu, libMesh::Real k ) 
+                                                           libMesh::Real& mu, libMesh::Real& k ) 
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];

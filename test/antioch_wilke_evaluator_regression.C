@@ -147,6 +147,11 @@ int test_evaluator( const GetPot& input )
 
   libMesh::Real k = evaluator.k( cache, 0 );
 
+  libMesh::Real mu2 = 0.0;
+  libMesh::Real k2 = 0.0;
+
+  evaluator.mu_and_k( cache, 0, mu2, k2 );
+
   std::vector<libMesh::Real> D(n_species,0.0);
 
   evaluator.D( cache, 0, D );
@@ -171,6 +176,12 @@ int test_evaluator( const GetPot& input )
   if( return_flag_temp != 0 ) return_flag = 1;
 
   return_flag_temp = test_k<Thermo,Conductivity>( k );
+  if( return_flag_temp != 0 ) return_flag = 1;
+
+  return_flag_temp = test_mu<Viscosity>( mu2 );
+  if( return_flag_temp != 0 ) return_flag = 1;
+
+  return_flag_temp = test_k<Thermo,Conductivity>( k2 );
   if( return_flag_temp != 0 ) return_flag = 1;
   
   return_flag_temp = test_D<Thermo,Viscosity,Conductivity,Diffusivity>( D );
