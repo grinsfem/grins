@@ -91,11 +91,10 @@ libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_evaluator.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_chemistry.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture_instantiate.C
-libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_constant_transport_instantiate.C
 
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
@@ -199,6 +198,7 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_nav
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 
 # src/properties headers
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_conductivity.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_prandtl_conductivity.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_specific_heat.h
@@ -210,12 +210,14 @@ include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_evaluator.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_chemistry.h
-include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_kinetics.h
-include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_evaluator.h
-include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_constant_transport_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_constant_transport_evaluator.h
+
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
