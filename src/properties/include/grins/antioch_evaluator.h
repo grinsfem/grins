@@ -124,6 +124,14 @@ namespace GRINS
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
+
+      _h_ref_correction.resize(this->n_species());
+      
+      for( unsigned int s = 0; s < this->n_species(); s++ )
+        {
+          _h_ref_correction[s] = -thermo->h_tot( s, 298.15 ) + thermo->e_0(s);
+        }
+
       return;
     }
     

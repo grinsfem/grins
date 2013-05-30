@@ -26,37 +26,64 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_BLOTTNER_VISCOSITY_H
-#define GRINS_BLOTTNER_VISCOSITY_H
+#ifndef GRINS_CONSTANT_CONDUCTIVITY_H
+#define GRINS_CONSTANT_CONDUCTIVITY_H
 
 // libMesh
 #include "libmesh/libmesh_common.h"
-#include "libmesh/getpot.h"
+
+class GetPot;
 
 namespace GRINS
 {
-  class BlottnerViscosity
+  class ConstantConductivity
   {
   public:
 
-    BlottnerViscosity( libMesh::Real a, libMesh::Real b, libMesh::Real c );
-    BlottnerViscosity( const GetPot& input );
-    ~BlottnerViscosity();
+    ConstantConductivity( const GetPot& input );
+    ~ConstantConductivity();
 
-    libMesh::Real mu( libMesh::Real T ) const;
-    
-  protected:
+    libMesh::Real operator()() const;
 
-    const libMesh::Real _a;
-    const libMesh::Real _b;
-    const libMesh::Real _c;
-    
+    libMesh::Real operator()( const libMesh::Real T ) const;
+
+    libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
+
+    libMesh::Real deriv( const libMesh::Real T ) const;
+
   private:
+
+    ConstantConductivity();
     
-    BlottnerViscosity();
+    const libMesh::Real _k;
 
   };
+  
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real ConstantConductivity::operator()() const
+  {
+    return _k;
+  }
 
-} // namespace GRINS
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*T*/ ) const
+  {
+    return (*this)();
+  }
 
-#endif //GRINS_BLOTTNER_VISCOSITY_H
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*mu*/, const libMesh::Real /*cp*/ ) const
+  {
+    return (*this)();
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::deriv( const libMesh::Real /*T*/ ) const
+  {
+    return 0.0;
+  }
+  
+} // end namespace GRINS
+
+#endif // GRINS_CONSTANT_CONDUCTIVITY_H

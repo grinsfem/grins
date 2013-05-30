@@ -26,23 +26,30 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_VISCOSITY_H
-#define CONSTANT_VISCOSITY_H
+// This class
+#include "grins/constant_viscosity.h"
 
-// GRINS
-#include "grins/grins_constant_function.h"
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  class ConstantViscosity : public GRINS::ConstantFunction
+
+  ConstantViscosity::ConstantViscosity( const GetPot& input )
+    : _mu( input( "Materials/Viscosity/mu", 0.0 ) )
   {
-  public:
+    if( !input.have_variable("Materials/Viscosity/mu") )
+      {
+        std::cerr << "Error: Must specify viscosity value for constant viscosity model!" << std::endl;
+        libmesh_error();
+      }
 
-    ConstantViscosity();
-    ~ConstantViscosity();
+    return;
+  }
 
-    void read_input_options( const GetPot& input );
+  ConstantViscosity::~ConstantViscosity()
+  {
+    return;
+  }
 
-  };
-}
-#endif //CONSTANT_VISCOSITY_H
+} // namespace GRINS

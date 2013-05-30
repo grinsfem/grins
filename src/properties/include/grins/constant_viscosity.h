@@ -26,30 +26,56 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-// This class
-#include "grins/constant_conductivity.h"
+#ifndef GRINS_CONSTANT_VISCOSITY_H
+#define GRINS_CONSTANT_VISCOSITY_H
 
 // libMesh
-#include "libmesh/getpot.h"
+#include "libmesh/libmesh_common.h"
+
+class GetPot;
 
 namespace GRINS
 {
-
-  ConstantConductivity::ConstantConductivity()
-    : ConstantFunction()
+  class ConstantViscosity
   {
-    return;
+  public:
+
+    ConstantViscosity( const GetPot& input );
+    ~ConstantViscosity();
+
+    libMesh::Real operator()() const;
+
+    libMesh::Real operator()( const libMesh::Real T ) const;
+
+    libMesh::Real deriv( const libMesh::Real T ) const;
+
+  private:
+
+    ConstantViscosity();
+
+    libMesh::Real _mu;
+
+  };
+
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real ConstantViscosity::operator()() const
+  {
+    return _mu;
   }
 
-  ConstantConductivity::~ConstantConductivity()
+  inline
+  libMesh::Real ConstantViscosity::operator()( const libMesh::Real /*T*/ ) const
   {
-    return;
+    return (*this)();
   }
 
-  void ConstantConductivity::read_input_options( const GetPot& input )
+  inline
+  libMesh::Real ConstantViscosity::deriv( const libMesh::Real /*T*/ ) const
   {
-    _value = input( "Materials/Conductivity/k", -1.0 );
-    return;
+    return 0.0;
   }
 
-}
+} // end namespace GRINS
+
+#endif // GRINS_CONSTANT_VISCOSITY_H

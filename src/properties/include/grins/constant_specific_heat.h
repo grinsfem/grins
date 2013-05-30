@@ -26,24 +26,56 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-// This class
-#include "grins/grins_constant_function.h"
+#ifndef GRINS_CONSTANT_SPECIFIC_HEAT_H
+#define GRINS_CONSTANT_SPECIFIC_HEAT_H
 
 // libMesh
-#include "libmesh/getpot.h"
+#include "libmesh/libmesh_common.h"
+
+class GetPot;
 
 namespace GRINS
 {
-
-  ConstantFunction::ConstantFunction()
-    : _value( -1.0 )
+  class ConstantSpecificHeat
   {
-    return;
+  public:
+
+    ConstantSpecificHeat( const GetPot& input );
+    ~ConstantSpecificHeat();
+
+    libMesh::Real operator()() const;
+
+    libMesh::Real operator()( const libMesh::Real T ) const;
+
+    libMesh::Real deriv( const libMesh::Real T ) const;
+
+  private:
+
+    ConstantSpecificHeat();
+
+    libMesh::Real _cp;
+
+  };
+
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real ConstantSpecificHeat::operator()() const
+  {
+    return _cp;
   }
 
-  ConstantFunction::~ConstantFunction()
+  inline
+  libMesh::Real ConstantSpecificHeat::operator()( const libMesh::Real /*T*/ ) const
   {
-    return;
+    return (*this)();
   }
 
-} // namespace GRINS
+  inline
+  libMesh::Real ConstantSpecificHeat::deriv( const libMesh::Real /*T*/ ) const
+  {
+    return 0.0;
+  }
+
+}// end namespace GRINS
+
+#endif // GRINS_CONSTANT_SPECIFIC_HEAT_H

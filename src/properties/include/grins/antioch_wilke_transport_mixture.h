@@ -26,8 +26,8 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_ANTIOCH_TRANSPORT_MIXTURE_H
-#define GRINS_ANTIOCH_TRANSPORT_MIXTURE_H
+#ifndef GRINS_WILKE_ANTIOCH_TRANSPORT_MIXTURE_H
+#define GRINS_WILKE_ANTIOCH_TRANSPORT_MIXTURE_H
 
 #include "grins_config.h"
 
@@ -124,7 +124,7 @@ namespace GRINS
         {
           _h_ref_correction[s] = -thermo->h_tot( s, 298.15 ) + thermo->e_0(s);
         }
-        
+
       return;
     }
     
@@ -218,4 +218,4 @@ namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
 
-#endif // GRINS_ANTIOCH_TRANSPORT_MIXTURE_H
+#endif // GRINS_WILKE_ANTIOCH_TRANSPORT_MIXTURE_H

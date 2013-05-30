@@ -46,15 +46,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
 
-# src/mat_props files
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
-#libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
-
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
@@ -87,6 +78,11 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_st
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
 
 # src/properties files
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_prandtl_conductivity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_specific_heat.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_viscosity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_source_func.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_mixture.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_thermo.C
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
@@ -167,14 +163,6 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
 
-# src/mat_props headers
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
-#include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
-
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics.h
@@ -210,6 +198,11 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_nav
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 
 # src/properties headers
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_conductivity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_prandtl_conductivity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_specific_heat.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_viscosity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_source_func.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_mixture.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_thermo.h
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.h
@@ -307,7 +300,6 @@ AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include

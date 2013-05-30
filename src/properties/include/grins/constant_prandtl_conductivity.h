@@ -26,37 +26,38 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_CONSTANT_FUNCTION_H
-#define GRINS_CONSTANT_FUNCTION_H
+#ifndef GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
+#define GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
 
 // libMesh
-#include "libmesh/libmesh.h"
+#include "libmesh/libmesh_common.h"
 
-// libMesh forward declarations
 class GetPot;
 
 namespace GRINS
 {
-  class ConstantFunction
+  class ConstantPrandtlConductivity
   {
   public:
 
-    ConstantFunction();
-    ~ConstantFunction();
+    ConstantPrandtlConductivity( const GetPot& input );
+    ~ConstantPrandtlConductivity();
 
-    virtual void read_input_options( const GetPot& input ) =0;
+    libMesh::Real k( const libMesh::Real mu, const libMesh::Real cp ) const;
 
-    inline
-    libMesh::Real operator()( libMesh::Real ) const
-    { return _value; }
+  private:
 
-    inline
-    libMesh::Real deriv( libMesh::Real ) const
-    { return 0.0; }
+    const libMesh::Real _Pr;
 
-  protected:
-
-    libMesh::Real _value;
   };
-}
-#endif //GRINS_CONSTANT_FUNCTION_H
+  
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real ConstantPrandtlConductivity::k( const libMesh::Real mu, const libMesh::Real cp ) const
+  {
+    return mu*cp/_Pr;
+  }
+  
+} // end namespace GRINS
+
+#endif // GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H

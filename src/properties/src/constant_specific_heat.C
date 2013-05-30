@@ -26,23 +26,30 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef CONSTANT_CONDUCTIVITY_H
-#define CONSTANT_CONDUCTIVITY_H
+// This class
+#include "grins/constant_specific_heat.h"
 
-// GRINS
-#include "grins/grins_constant_function.h"
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  class ConstantConductivity : public GRINS::ConstantFunction
+
+  ConstantSpecificHeat::ConstantSpecificHeat( const GetPot& input )
+    : _cp( input( "Materials/SpecificHeat/cp", 0.0 ) )
   {
-  public:
+    if( !input.have_variable("Materials/SpecificHeat/cp") )
+      {
+        std::cerr << "Error: Must specify cp value for constant specific heat model!" << std::endl;
+        libmesh_error();
+      }
 
-    ConstantConductivity();
-    ~ConstantConductivity();
+    return;
+  }
 
-    void read_input_options( const GetPot& input );
+  ConstantSpecificHeat::~ConstantSpecificHeat()
+  {
+    return;
+  }
 
-  };
-}
-#endif //CONSTANT_CONDUCTIVITY_H
+} // namespace GRINS

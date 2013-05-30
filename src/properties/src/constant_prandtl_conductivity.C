@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------
 
 // This class
-#include "grins/constant_viscosity.h"
+#include "grins/constant_prandtl_conductivity.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -35,21 +35,20 @@
 namespace GRINS
 {
 
-  ConstantViscosity::ConstantViscosity()
-    : ConstantFunction()
+  ConstantPrandtlConductivity::ConstantPrandtlConductivity( const GetPot& input )
+    : _Pr( input("Physics/ConstantProperties/Pr", 0.0) )
+  {
+    if( !input.have_variable("Physics/ConstantProperties/Pr") )
+      {
+        std::cerr << "Error: Must specify Prandtl number for constant_prandtl conductivity model!" << std::endl;
+        libmesh_error();
+      }
+    return;
+  }
+
+  ConstantPrandtlConductivity::~ConstantPrandtlConductivity()
   {
     return;
   }
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
-
-  void ConstantViscosity::read_input_options( const GetPot& input )
-  {
-    _value = input( "Materials/Viscosity/mu", -1.0 );
-    return;
-  }
-
-} // namespace GRINS
+} // end namespace GRINS

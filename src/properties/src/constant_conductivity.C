@@ -26,26 +26,29 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins/constant_transport.h"
+// This class
+#include "grins/constant_conductivity.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  ConstantTransport::ConstantTransport( const GetPot& input, const ChemicalMixture& chem_mixture )
-    : _chem_mixture(chem_mixture),
-      _mu( input( "Physics/Transport/viscosity", -1.0 ) ),
-      _k( input( "Physics/Transport/thermal_conductivity", -1.0 ) ),
-      _Le( input( "Physics/Transport/Lewis_number", -1.0 ) )
-  {
-    libmesh_assert_greater( _mu, 0.0 );
-    libmesh_assert_greater( _k, 0.0 );
-    libmesh_assert_greater( _Le, 0.0 );
 
+  ConstantConductivity::ConstantConductivity( const GetPot& input )
+    : _k( input("Materials/Conductivity/k", 0.0) )
+  {
+    if( !input.have_variable("Materials/Conductivity/k") )
+      {
+        std::cerr << "Error: Must specify conducitivity value for constant conductivity model!" << std::endl;
+        libmesh_error();
+      }
     return;
   }
 
-  ConstantTransport::~ConstantTransport()
+  ConstantConductivity::~ConstantConductivity()
   {
     return;
   }
 
-} // namespace GRINS
+} // end namespace GRINS
