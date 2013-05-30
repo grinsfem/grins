@@ -736,7 +736,36 @@ namespace GRINS
 
     if( cache.is_active(Cache::MIXTURE_VISCOSITY) )
       {
-	libmesh_not_implemented();
+	std::vector<libMesh::Real> mu_values;
+	mu_values.reserve( points.size() );
+
+        std::vector<libMesh::Real> T;
+        T.resize( points.size() );
+
+	std::vector<std::vector<libMesh::Real> >  mass_fracs;
+	mass_fracs.resize( points.size() );
+
+        for( unsigned int i = 0; i < points.size(); i++ )
+	  {
+            mass_fracs[i].resize( this->_n_species );
+	  }
+
+	for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+	    T[p] = this->T(points[p],context);
+
+            this->mass_fractions( points[p], context, mass_fracs[p] );
+          }
+        
+        cache.set_values( Cache::TEMPERATURE, T );
+        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
+
+        for( unsigned int p = 0; p < points.size(); p++ )
+	  {
+            mu_values.push_back( gas_evaluator.mu( cache, p ) );
+	  }
+
+	cache.set_values( Cache::MIXTURE_VISCOSITY, mu_values );
       }
 
     if( cache.is_active(Cache::SPECIES_THERMAL_CONDUCTIVITY) )
