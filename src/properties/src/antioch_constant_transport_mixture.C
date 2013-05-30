@@ -37,11 +37,11 @@ namespace GRINS
   template<typename Thermo>
   AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input )
     : AntiochMixture(input),
-      _mu( input("Physics/Antioch/mu", 0.0) ),
+      _mu( input("Materials/Viscosity/mu", 0.0) ),
       _conductivity(NULL),
       _diffusivity( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( input("Physics/Antioch/Le", 0.0) ) )
   {
-    if( !input.have_variable("Physics/Antioch/mu") )
+    if( !input.have_variable("Materials/Viscosity/mu") )
       {
         std::cerr << "Error: Must specify viscosity value for constant viscosity model!" << std::endl;
         libmesh_error();
@@ -53,6 +53,8 @@ namespace GRINS
                   << std::endl;
         libmesh_error();
       }
+
+    this->build_conductivity(input);
 
     return;
   }
