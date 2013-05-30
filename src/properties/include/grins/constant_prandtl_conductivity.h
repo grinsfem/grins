@@ -43,7 +43,7 @@ namespace GRINS
     ConstantPrandtlConductivity( const GetPot& input );
     ~ConstantPrandtlConductivity();
 
-    libMesh::Real k( const libMesh::Real mu, const libMesh::Real cp ) const;
+    libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
 
   private:
 
@@ -53,7 +53,7 @@ namespace GRINS
   
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  libMesh::Real ConstantPrandtlConductivity::k( const libMesh::Real mu, const libMesh::Real cp ) const
+  libMesh::Real ConstantPrandtlConductivity::operator()( const libMesh::Real mu, const libMesh::Real cp ) const
   {
     return mu*cp/_Pr;
   }
