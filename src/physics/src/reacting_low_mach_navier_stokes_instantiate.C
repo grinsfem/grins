@@ -28,6 +28,7 @@
 
 #include "grins_config.h"
 
+#include "reacting_low_mach_navier_stokes_base.C"
 #include "reacting_low_mach_navier_stokes.C"
 
 #ifdef GRINS_HAVE_CANTERA
@@ -35,6 +36,7 @@
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
 
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::CanteraMixture>;
 template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
 
 #endif // GRINS_HAVE_CANTERA
@@ -46,6 +48,26 @@ template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::C
 #include "grins/antioch_wilke_transport_mixture.h"
 #include "grins/antioch_wilke_transport_evaluator.h"
 
+#include "grins/antioch_constant_transport_mixture.h"
+#include "grins/antioch_constant_transport_evaluator.h"
+
+/* -------------------- ReactingLowMachNavierStokesBase -------------------- */
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                          Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
+
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                          Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
+
+
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity> >;
+template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity> >;
+
+
+/* -------------------- ReactingLowMachNavierStokes -------------------- */
 template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
                                                                                       Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
                                                                                       Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
@@ -63,6 +85,19 @@ template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochWilkeTransportMi
                                                                                         Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
                                                                                         Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                         Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
+
+
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                                  GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >;
+
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                                  GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >;
+
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                                  GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >;
+
+template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                                  GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >;
 
 #endif //GRINS_HAVE_ANTIOCH
 
