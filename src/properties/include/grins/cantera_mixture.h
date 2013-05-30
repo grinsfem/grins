@@ -84,6 +84,11 @@ namespace GRINS
 
     std::string species_name( unsigned int species_index ) const;
 
+    const CanteraMixture& chemistry() const;
+
+    //! This is basically dummy, but is needed for template games elsewhere.
+    typedef CanteraMixture ChemistryParent;
+
   protected:
 
     boost::scoped_ptr<Cantera::IdealGasMix> _cantera_gas;
@@ -154,6 +159,12 @@ namespace GRINS
   std::string CanteraMixture::species_name( unsigned int species_index ) const
   {
     return _cantera_gas->speciesName( species_index );
+  }
+
+  inline
+  const CanteraMixture& CanteraMixture::chemistry() const
+  {
+    return *this;
   }
 
 } // end namespace GRINS

@@ -89,6 +89,8 @@ namespace GRINS
 
     const Antioch::ChemicalMixture<libMesh::Real>& chemical_mixture() const;
 
+    const AntiochChemistry& chemistry() const;
+
   protected:
 
     boost::scoped_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
@@ -173,6 +175,12 @@ namespace GRINS
   {
     _antioch_gas->molar_densities( rho, mass_fractions, molar_densities );
     return;
+  }
+
+  inline
+  const AntiochChemistry& AntiochChemistry::chemistry() const
+  {
+    return *this;
   }
   
 } // end namespace GRINS

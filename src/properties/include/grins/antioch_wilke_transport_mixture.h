@@ -80,6 +80,8 @@ namespace GRINS
 
     const Diffusivity& diffusivity() const;
 
+    typedef AntiochChemistry ChemistryParent;
+    
   protected:
 
     Antioch::WilkeMixture<libMesh::Real> _wilke_mixture;

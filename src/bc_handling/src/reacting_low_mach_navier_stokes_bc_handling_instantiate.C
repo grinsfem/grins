@@ -40,16 +40,8 @@ template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::CanteraMixtur
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-#include "grins/antioch_wilke_transport_mixture.h"
+#include "grins/antioch_chemistry.h"
 
-template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                                Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
-                                                                                                Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                                                Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
-
-template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                                Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
-                                                                                                Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                                                Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
+template class GRINS::ReactingLowMachNavierStokesBCHandling<GRINS::AntiochChemistry>;
 
 #endif //GRINS_HAVE_ANTIOCH

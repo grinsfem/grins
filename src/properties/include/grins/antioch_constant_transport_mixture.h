@@ -63,6 +63,8 @@ namespace GRINS
 
     const Antioch::ConstantLewisDiffusivity<libMesh::Real>& diffusivity() const;
 
+    typedef AntiochChemistry ChemistryParent;
+
   protected:
 
     libMesh::Real _mu;

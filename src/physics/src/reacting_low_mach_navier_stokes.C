@@ -48,8 +48,8 @@ namespace GRINS
     this->read_input_options(input);
 
     // This is deleted in the base class
-    this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<Mixture>( physics_name, input,
-                                                                            this->_gas_mixture );
+    this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<typename Mixture::ChemistryParent>( physics_name, input,
+                                                                                                      this->_gas_mixture.chemistry() );
 
     if( this->_bc_handler->is_axisymmetric() )
       {
