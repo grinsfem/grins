@@ -34,9 +34,7 @@ p0 = '10' #[Pa]
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
 
-chemistry_library      = 'cantera'
-transport_library      = 'grins_constant'
-thermodynamics_library = 'cantera'
+thermochemistry_library = 'cantera'
 
 # Boundary ids:
 # j = bottom -> 0

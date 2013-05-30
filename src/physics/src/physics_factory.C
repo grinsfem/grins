@@ -60,6 +60,8 @@
 #include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
 
+#include "grins/antioch_wilke_transport_evaluator.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -278,11 +280,9 @@ namespace GRINS
                                               const std::string& physics_to_add,
                                               GRINS::PhysicsList& physics_list )
   {
-    std::string chem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/chemistry_library", "cantera" );
-    std::string thermo_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermodynamics_library", "cantera" );
-    std::string transport_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/transport_library", "cantera" );
+    std::string thermochem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );;
 
-    if( chem_lib == "cantera" && thermo_lib == "cantera" && transport_lib == "cantera" )
+    if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
         physics_list[physics_to_add] = 
@@ -294,13 +294,78 @@ namespace GRINS
 
 #endif // GRINS_HAVE_CANTERA
       }
+    else if( thermochem_lib == "antioch" )
+      {
+#ifdef GRINS_HAVE_ANTIOCH
+        std::string mixing_model = input( "Physics/Antioch/mixing_model" , "wilke" );
+
+        std::string thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
+        std::string viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
+        std::string conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
+        std::string diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+
+        if( mixing_model == std::string("wilke") )
+          {
+            if( (thermo_model == std::string("stat_mech")) &&
+                (diffusivity_model == std::string("constant_lewis")) &&
+                (conductivity_model == std::string("eucken")) &&
+                (viscosity_model == std::string("sutherland")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
+                             GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                 Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                 Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                 Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                             GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                  Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                  Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                  Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("stat_mech")) &&
+                     (diffusivity_model == std::string("constant_lewis")) &&
+                     (conductivity_model == std::string("eucken")) &&
+                     (viscosity_model == std::string("blottner")) )
+              {
+                physics_list[physics_to_add] = 
+                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
+                             GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                 Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                 Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                 Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                             GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
+              }
+            else
+              {
+                            std::cerr << "Error: Unknown Antioch model combination: "
+                                      << "viscosity_model    = " << viscosity_model << std::endl
+                                      << "conductivity_model = " << conductivity_model << std::endl
+                                      << "diffusivity_model  = " << diffusivity_model << std::endl
+                                      << "thermo_model       = " << thermo_model << std::endl;
+                            libmesh_error();
+              }
+          }
+        else // mixing_model
+          {
+            std::cerr << "Error: Unknown Antioch mixing_model "
+                      << mixing_model << "!" << std::endl;
+            libmesh_error();
+          }
+#else
+        std::cerr << "Error: Antioch not enabled. Cannot use Antioch library."
+                  << std::endl;
+        libmesh_error();
+
+#endif // GRINS_HAVE_ANTIOCH
+      }
     else
       {
-        std::cerr << "Error: Invalid combination of chemistry, transport, and thermodynamics libraries" << std::endl
+        std::cerr << "Error: Invalid thermo-chemistry library" << std::endl
                   << "       for ReactingLowMachNavierStokes physics." << std::endl
-                  << "       chemistry library      = " << chem_lib << std::endl
-                  << "       thermodynamics library = " << thermo_lib << std::endl
-                  << "       transport library = " << transport_lib << std::endl;
+                  << "       thermochemistry_library = " << thermochem_lib << std::endl;
         libmesh_error();
       }
 
