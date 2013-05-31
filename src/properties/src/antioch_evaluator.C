@@ -30,6 +30,9 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// C++
+#include <limits>
+
 // This class
 #include "grins/antioch_evaluator.h"
 
@@ -60,7 +63,7 @@ namespace GRINS
   void AntiochEvaluator<Thermo>::omega_dot( const CachedValues& cache, unsigned int qp,
                                             std::vector<libMesh::Real>& omega_dot )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
     const libMesh::Real R_mix = cache.get_cached_values(Cache::MIXTURE_GAS_CONSTANT)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -87,7 +90,7 @@ namespace GRINS
   libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cp( const CachedValues& cache,
                                                                              unsigned int qp )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     this->check_and_reset_temp_cache(T);
@@ -106,7 +109,7 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cp( const libMesh::Real T,
+  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cp( const libMesh::Real& T,
                                                                              const std::vector<libMesh::Real>& Y )
   {
     this->check_and_reset_temp_cache(T);
@@ -115,7 +118,7 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::cp( const libMesh::Real T,
+  libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::cp( const libMesh::Real& T,
                                                                                        const std::vector<libMesh::Real>& Y )
   {
     return _thermo->cp( T, T, Y );
@@ -125,7 +128,7 @@ namespace GRINS
   libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cv( const CachedValues& cache,
                                                                              unsigned int qp )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     this->check_and_reset_temp_cache(T);
@@ -148,7 +151,7 @@ namespace GRINS
                                                                               unsigned int qp,
                                                                               unsigned int species )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
     this->check_and_reset_temp_cache(T);
 
@@ -170,7 +173,7 @@ namespace GRINS
                                                                      unsigned int qp,
                                                                      std::vector<libMesh::Real>& h_s )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
     this->check_and_reset_temp_cache(T);
 
