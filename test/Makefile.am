@@ -151,6 +151,7 @@ TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
 
 shellfiles_src =
 shellfiles_src += test_ns_couette_flow_2d_x.sh
@@ -176,6 +177,7 @@ shellfiles_src += antioch_kinetics_unit.sh
 shellfiles_src += antioch_evaluator_unit.sh
 shellfiles_src += antioch_wilke_evaluator_unit.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
