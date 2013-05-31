@@ -34,6 +34,9 @@ bc_handling_incdir = $(top_srcdir)/src/bc_handling/include
 qoi_srcdir = $(top_srcdir)/src/qoi/src
 qoi_incdir = $(top_srcdir)/src/qoi/include
 
+error_estimation_srcdir = $(top_srcdir)/src/error_estimation/src
+error_estimation_incdir = $(top_srcdir)/src/error_estimation/include
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -41,6 +44,7 @@ qoi_incdir = $(top_srcdir)/src/qoi/include
 solver_SRC   = $(solver_srcdir)/grins_solver.C \
                $(solver_srcdir)/mesh_builder.C \
                $(solver_srcdir)/simulation.C \
+               $(solver_srcdir)/model_adaptive_simulation.C \
                $(solver_srcdir)/solver_factory.C \
                $(solver_srcdir)/grins_steady_solver.C \
                $(solver_srcdir)/grins_unsteady_solver.C \
@@ -106,9 +110,13 @@ bc_handling_SRC = $(bc_handling_srcdir)/bc_handling_base.C \
                   $(bc_handling_srcdir)/low_mach_navier_stokes_bc_handling.C
 
 qoi_SRC = $(qoi_srcdir)/average_nusselt_number.C \
+          $(qoi_srcdir)/vorticity.C \
           $(qoi_srcdir)/qoi_base.C \
           $(qoi_srcdir)/qoi_factory.C \
           $(qoi_srcdir)/vorticity.C
+
+error_estimation_SRC =  $(error_estimation_srcdir)/model_error_estimator.C \
+                        $(error_estimation_srcdir)/model_error_assembly.C
 
 sfilesdir = $(prefix)/src
 sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
@@ -119,6 +127,7 @@ sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
 solver_INC   = $(solver_incdir)/grins_solver.h \
                $(solver_incdir)/mesh_builder.h \
                $(solver_incdir)/simulation.h \
+               $(solver_incdir)/model_adaptive_simulation.h \
                $(solver_incdir)/solver_factory.h \
                $(solver_incdir)/grins_steady_solver.h \
                $(solver_incdir)/grins_unsteady_solver.h \
@@ -188,14 +197,18 @@ bc_handling_INC = $(bc_handling_incdir)/bc_handling_base.h \
                   $(bc_handling_incdir)/low_mach_navier_stokes_bc_handling.h
 
 qoi_INC = $(qoi_incdir)/average_nusselt_number.h \
+          $(qoi_incdir)/vorticity.h \
           $(qoi_incdir)/qoi_base.h \
           $(qoi_incdir)/qoi_factory.h \
           $(qoi_incdir)/qoi_names.h \
           $(qoi_incdir)/vorticity.h
 
+error_estimation_INC = $(error_estimation_incdir)/model_error_estimator.h \
+                       $(error_estimation_incdir)/model_error_assembly.h
+
 include_HEADERS = $(solver_INC) $(physics_INC) $(boundary_conditions_INC) \
                   $(utilities_INC) $(visualization_INC) $(matprops_INC) \
-                  $(bc_handling_INC) $(qoi_INC)
+                  $(bc_handling_INC) $(qoi_INC) $(error_estimation_INC)
 
 libgrins_la_SOURCES = $(solver_SRC) \
                       $(physics_SRC) \
@@ -204,7 +217,8 @@ libgrins_la_SOURCES = $(solver_SRC) \
                       $(visualization_SRC) \
                       $(matprops_SRC) \
                       $(bc_handling_SRC) \
-                      $(qoi_SRC)
+                      $(qoi_SRC) \
+                      $(error_estimation_SRC)
 
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh.la
@@ -235,7 +249,7 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir)
+AM_CPPFLAGS = -I$(solver_incdir) -I$(physics_incdir) -I$(boundary_conditions_incdir) -I$(utilities_incdir) -I$(visualization_incdir) -I$(matprops_incdir) -I$(bc_handling_incdir) -I$(qoi_incdir) -I$(error_estimation_incdir)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_INCLUDE) \
@@ -267,7 +281,7 @@ endif
         $(matprops_INC) $(matprops_SRC) \
         $(bc_handling_INC) $(bc_handling_SRC) \
         $(solver_SOURCES) $(grins_version_SOURCES) \
-        $(qoi_SRC)
+        $(qoi_SRC) $(error_estimation_SRC)
 	echo 'updated source license headers' >$@
 
 EXTRA_DIST = common

@@ -84,6 +84,29 @@ GRINS::PhysicsList GRINS::PhysicsFactory::build( const GetPot& input )
       std::cout <<  "==========================================================" << std::endl;
     }
 
+  if( input( "screen-options/echo_subdomains_per_physics", true ) )
+    {
+      std::cout << "==========================================================" << std::endl
+  		<< "List of Enabled Subdomains per Physics:" << std::endl;
+
+      for( GRINS::PhysicsListIter it = physics_list.begin();
+	         it != physics_list.end();
+	         it++ )
+	    {
+	      std::cout << it->first << ": ";
+
+        std::set<libMesh::subdomain_id_type> subdom_list = (it->second)->get_enabled_subdomains();
+        for( std::set<libMesh::subdomain_id_type>::const_iterator id = subdom_list.begin();
+             id != subdom_list.end();
+             id++ )
+        {
+          std::cout << *id << ", ";
+        }
+        std::cout << std::endl;
+	    }
+      std::cout <<  "==========================================================" << std::endl;
+    }
+
   return physics_list;
 }
 

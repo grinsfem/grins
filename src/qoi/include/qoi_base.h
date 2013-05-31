@@ -76,6 +76,16 @@ namespace GRINS
      */
     virtual void output_qoi( std::ostream& out ) const;
 
+    /*
+     * Return immutable vector _qoi_cache, a protected member.
+     */
+    const std::vector<Number> get_enabled_qois();
+
+    /*
+     * Like get_enabled_qois(), but different return type.
+     */
+    const libMesh::QoISet get_enabled_qoi_set();
+
     //! Accessor for value of QoI for given qoi_index.
     /*!
      * Returns value of QoI for qoi_index. Currently, we only store a single QoI,

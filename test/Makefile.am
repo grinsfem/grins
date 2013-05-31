@@ -17,7 +17,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/solver/include \
               -I$(top_srcdir)/src/visualization/include \
               -I$(top_srcdir)/src/mat_props/include \
               -I$(top_srcdir)/src/bc_handling/include \
-              -I$(top_srcdir)/src/qoi/include
+              -I$(top_srcdir)/src/qoi/include \
+              -I$(top_srcdir)/src/error_estimation/include
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) \
                $(LIBMESH_CPPFLAGS) \

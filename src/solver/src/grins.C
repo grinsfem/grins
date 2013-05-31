@@ -33,6 +33,7 @@
 // GRINS
 #include "simulation_builder.h"
 #include "simulation.h"
+#include "model_adaptive_simulation.h"
 
 // GRVY
 #ifdef HAVE_GRVY
@@ -70,19 +71,49 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
  
-  GRINS::SimulationBuilder sim_builder;
+  if( libMesh_inputfile( "Adaptivity/model_adaptive_sim", false ) )
+  {
+    std::string adj_input_filename = libMesh_inputfile( "Adaptivity/adjoint_input_filename",
+        libMesh_input_filename ); // adjoint input defaults to forward input
+    std::string res_input_filename = libMesh_inputfile( "Adaptivity/residual_input_filename",
+        adj_input_filename ); // residual input defaults to adjoint input
+    GetPot adjoint_input( adj_input_filename );
+    GetPot residual_input( res_input_filename );
 
-  GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder );
+    GRINS::SimulationBuilder for_sim_builder;
+    GRINS::SimulationBuilder adj_sim_builder;
+    GRINS::SimulationBuilder res_sim_builder;
+
+    GRINS::ModelAdaptiveSimulation grins(
+        libMesh_inputfile,
+        adj_input_filename,
+        res_input_filename,
+        for_sim_builder,
+        adj_sim_builder,
+        res_sim_builder );
 
 #ifdef USE_GRVY_TIMERS
-  grvy_timer.EndTimer("Initialize Solver");
+    grvy_timer.EndTimer("Initialize Solver");
 
-  // Attach GRVY timer to solver
-  grins.attach_grvy_timer( &grvy_timer );
+    // Attach GRVY timer to solver
+    grins.attach_grvy_timer( &grvy_timer );
 #endif
+    grins.run();
+  }
+  else
+  {
+    GRINS::SimulationBuilder sim_builder;
 
-grins.run();
+    GRINS::Simulation grins( libMesh_inputfile, sim_builder );
+
+#ifdef USE_GRVY_TIMERS
+    grvy_timer.EndTimer("Initialize Solver");
+
+    // Attach GRVY timer to solver
+    grins.attach_grvy_timer( &grvy_timer );
+#endif
+    grins.run();
+  }
 
 #ifdef USE_GRVY_TIMERS
   grvy_timer.Finalize();

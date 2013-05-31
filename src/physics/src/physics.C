@@ -101,6 +101,11 @@ void GRINS::Physics::attach_dirichlet_bound_func( const GRINS::DBCContainer& dir
   return;
 }
 
+const std::set<libMesh::subdomain_id_type> GRINS::Physics::get_enabled_subdomains()
+{
+  return (this)->_enabled_subdomains;
+}
+
 #ifdef USE_GRVY_TIMERS
 void GRINS::Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
 {

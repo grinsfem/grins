@@ -72,6 +72,23 @@ namespace GRINS
     return;
   }
 
+  const std::vector<Number> QoIBase::get_enabled_qois()
+  {
+    return (this)->_qoi_cache;
+  }
+
+  const libMesh::QoISet QoIBase::get_enabled_qoi_set()
+  {
+    libMesh::QoISet qoi_set;
+    for( unsigned int i = 0;
+         i < this->_qoi_cache.size();
+         i++ )
+    {
+      qoi_set.add_index( i );
+    }
+    return qoi_set;
+  }
+
   Number QoIBase::get_qoi( unsigned int qoi_index ) const
   {
     return _qoi_cache[qoi_index];
