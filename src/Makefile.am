@@ -115,7 +115,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/grins_version.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/input_utils.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/cached_values.C
-libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/tinyxml2.cpp
 
 # src/visualization files
 libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/steady_visualization.C
@@ -243,7 +242,6 @@ include_HEADERS += $(top_srcdir)/src/utilities/include/grins/input_utils.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/math_constants.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_values.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_quantities_enum.h
-include_HEADERS += $(top_srcdir)/src/utilities/include/grins/tinyxml2.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/string_utils.h
 
 # src/visualization headers
