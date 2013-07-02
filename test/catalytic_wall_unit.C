@@ -30,30 +30,23 @@
 #include <iomanip>
 
 // GRINS
-#include "grins/chemical_mixture.h"
 #include "grins/catalytic_wall.h"
+#include "grins/cantera_mixture.h"
 
-int main()
+// libMesh
+#include "libmesh/getpot.h"
+
+template<typename ChemicalMixture>
+int test( ChemicalMixture& chem_mixture )
 {
-  std::vector<std::string> species_str_list;
-  const unsigned int n_species = 5;
-  species_str_list.reserve(n_species);
-  species_str_list.push_back( "N2" );
-  species_str_list.push_back( "O2" );
-  species_str_list.push_back( "N" );
-  species_str_list.push_back( "O" );
-  species_str_list.push_back( "NO" );
-
-  GRINS::ChemicalMixture chem_mixture( species_str_list );
-
-  const unsigned int N_index = 2;
+  const unsigned int N_index = chem_mixture.species_index("N");
 
   const GRINS::VariableIndex T_var_dummy = 5;
 
   const double gamma = 0.03;
 
-  GRINS::CatalyticWall wall_N( chem_mixture, N_index, T_var_dummy, gamma );
-  GRINS::CatalyticWall wall_N2( chem_mixture, N_index, T_var_dummy, -gamma );
+  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, T_var_dummy, gamma );
+  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, T_var_dummy, -gamma );
 
   const double w_s = 0.2;
 
@@ -61,8 +54,8 @@ int main()
   const double rho_s = rho*w_s;
 
   const double T = 620.1;
-  const double R_N = chem_mixture.R( chem_mixture.active_species_name_map().find("N")->second );
-  const double M_N = chem_mixture.M( chem_mixture.active_species_name_map().find("N")->second );
+  const double R_N = chem_mixture.R( chem_mixture.species_index("N") );
+  const double M_N = chem_mixture.M( chem_mixture.species_index("N") );
   const double R = 30.1;
 
   const double omega_dot_exact = rho_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) );
@@ -174,3 +167,29 @@ int main()
   return return_flag;
 }
 
+
+int main(int argc, char* argv[])
+{
+  std::string test_type = argv[1];
+
+  GetPot input( argv[2] );
+
+  int return_flag = 0;
+
+  if( test_type == "cantera" )
+    {
+#ifdef GRINS_HAVE_CANTERA
+      GRINS::CanteraMixture chem_mixture( input );
+      return_flag = test<GRINS::CanteraMixture>( chem_mixture );
+#else
+      return_flag = 77;
+#endif
+    }
+  else
+    {
+      std::cerr << "Invalid test type " << test_type << std::endl;
+      return_flag = 1;
+    }
+
+  return return_flag;
+}

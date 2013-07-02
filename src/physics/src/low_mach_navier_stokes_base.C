@@ -44,7 +44,10 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _mu(input),
+      _cp(input),
+      _k(input)
   {
     this->read_input_options(input);
 
@@ -85,11 +88,6 @@ namespace GRINS
     this->_w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
     this->_p_var_name = input("Physics/VariableNames/pressure", p_var_name_default );
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
-
-    // Read material parameters
-    this->_mu.read_input_options( input );
-    this->_cp.read_input_options( input );
-    this->_k.read_input_options( input );
 
     // Read thermodynamic state info
     _p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */

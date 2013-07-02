@@ -33,11 +33,10 @@
 #include "grins_config.h"
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
-#include "grins/ideal_gas_mixture.h"
 
 namespace GRINS
 {
-  template<class Mixture>
+  template<typename Mixture>
   class ReactingLowMachNavierStokesBase : public Physics
   {
   public:
@@ -63,8 +62,7 @@ namespace GRINS
     void mass_fractions( const libMesh::Point& p, const libMesh::FEMContext& c,
 			 std::vector<libMesh::Real>& mass_fracs ) const;
 
-    libMesh::Real rho( libMesh::Real T, libMesh::Real p0,
-		       const std::vector<libMesh::Real>& mass_fractions) const;
+    libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
     libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
 
@@ -156,13 +154,13 @@ namespace GRINS
   inline
   libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::rho( libMesh::Real T, 
 							       libMesh::Real p0,
-							       const std::vector<libMesh::Real>& mass_fractions) const
+                                                               libMesh::Real R_mix) const
   {
     libMesh::Real value = 0;
     if( this->_fixed_density )
       value = this->_fixed_rho_value;
     else
-      value = p0/(this->_gas_mixture.R(mass_fractions)*T);
+      value = p0/(R_mix*T);
 
     return value;
   }

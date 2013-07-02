@@ -1,0 +1,89 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// Copyright (C) 2010-2013 The PECOS Development Team
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
+// Public License as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
+//
+//-----------------------------------------------------------------------el-
+//
+// $Id$
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+#ifndef GRINS_CONSTANT_CONDUCTIVITY_H
+#define GRINS_CONSTANT_CONDUCTIVITY_H
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+
+class GetPot;
+
+namespace GRINS
+{
+  class ConstantConductivity
+  {
+  public:
+
+    ConstantConductivity( const GetPot& input );
+    ~ConstantConductivity();
+
+    libMesh::Real operator()() const;
+
+    libMesh::Real operator()( const libMesh::Real T ) const;
+
+    libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
+
+    libMesh::Real deriv( const libMesh::Real T ) const;
+
+  private:
+
+    ConstantConductivity();
+    
+    const libMesh::Real _k;
+
+  };
+  
+  /* ------------------------- Inline Functions -------------------------*/
+  inline
+  libMesh::Real ConstantConductivity::operator()() const
+  {
+    return _k;
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*T*/ ) const
+  {
+    return (*this)();
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*mu*/, const libMesh::Real /*cp*/ ) const
+  {
+    return (*this)();
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::deriv( const libMesh::Real /*T*/ ) const
+  {
+    return 0.0;
+  }
+  
+} // end namespace GRINS
+
+#endif // GRINS_CONSTANT_CONDUCTIVITY_H

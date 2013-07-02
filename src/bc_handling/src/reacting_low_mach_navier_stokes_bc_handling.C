@@ -41,14 +41,15 @@
 
 namespace GRINS
 {
-  ReactingLowMachNavierStokesBCHandling::ReactingLowMachNavierStokesBCHandling( const std::string& physics_name,
-										const GetPot& input,
-										const ChemicalMixture& chem_mixture )
+  template<typename Chemistry>
+  ReactingLowMachNavierStokesBCHandling<Chemistry>::ReactingLowMachNavierStokesBCHandling( const std::string& physics_name,
+                                                                                           const GetPot& input,
+                                                                                           const Chemistry& chemistry )
     : LowMachNavierStokesBCHandling(physics_name,input),
       _n_species( input.vector_variable_size("Physics/Chemistry/species") ),
       _species_var_names(_n_species),
       _species_vars(_n_species),
-      _chem_mixture(chem_mixture)
+      _chemistry(chemistry)
   {
 
     for( unsigned int s = 0; s < _n_species; s++ )
@@ -66,12 +67,14 @@ namespace GRINS
     return;
   }
 
-  ReactingLowMachNavierStokesBCHandling::~ReactingLowMachNavierStokesBCHandling()
+  template<typename Chemistry>
+  ReactingLowMachNavierStokesBCHandling<Chemistry>::~ReactingLowMachNavierStokesBCHandling()
   {
     return;
   }
 
-  int ReactingLowMachNavierStokesBCHandling::string_to_int( const std::string& bc_type ) const
+  template<typename Chemistry>
+  int ReactingLowMachNavierStokesBCHandling<Chemistry>::string_to_int( const std::string& bc_type ) const
   {
     int bc_type_out;
 
@@ -103,7 +106,8 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::init_bc_types( const GRINS::BoundaryID bc_id, 
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_bc_types( const GRINS::BoundaryID bc_id, 
 							     const std::string& bc_id_string, 
 							     const int bc_type, 
 							     const GetPot& input )
@@ -184,14 +188,14 @@ namespace GRINS
           libMesh::Real M = 0.0;
           for( unsigned int s = 0; s < n_species_comps; s++ )
 	    {
-              M += species_mole_fracs[s]*_chem_mixture.M(s);
+              M += species_mole_fracs[s]*_chemistry.M(s);
             }
 
           // Convert mole fractions to mass fractions
           std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
           for( unsigned int s = 0; s < n_species_comps; s++ )
 	    {
-              species_mass_fracs[s] = species_mole_fracs[s]*_chem_mixture.M(s)/M;
+              species_mass_fracs[s] = species_mole_fracs[s]*_chemistry.M(s)/M;
             }
 
 	  this->set_species_bc_values( bc_id, species_mass_fracs );
@@ -219,8 +223,8 @@ namespace GRINS
 
 	  const unsigned int n_reactions = input.vector_variable_size(reactions_string);
 
-	  std::vector<Species> reactants;
-	  std::vector<Species> products;
+	  std::vector<unsigned int> reactants;
+	  std::vector<unsigned int> products;
 
 	  // Here, we are assuming 1 reactant and 1 product per reaction
 	  reactants.reserve( n_reactions );
@@ -241,13 +245,13 @@ namespace GRINS
 	      if( partners.size() == 2 )
 		{
 		  // Parse the reactant and product species and cache
-		  const Species& r_species = _chem_mixture.species_name_map().find( reactant )->second;
-		  const Species& p_species = _chem_mixture.species_name_map().find( product )->second;
+		  const unsigned int r_species = _chemistry.species_index( reactant );
+		  const unsigned int p_species = _chemistry.species_index( product );
 
 		  // Make sure there's something in there already. Fix for GLIBCXX_DEBUG error.
 		  if( _reactant_list.find(bc_id) != _reactant_list.end() )
 		    {
-		      std::vector<Species>::const_iterator r_it =
+		      std::vector<unsigned int>::const_iterator r_it =
 			std::find( (_reactant_list.find(bc_id)->second).begin(),
 				   (_reactant_list.find(bc_id)->second).end(),
 				   r_species );
@@ -259,7 +263,7 @@ namespace GRINS
 			  libmesh_error();
 			}
 
-		      std::vector<Species>::const_iterator p_it =
+		      std::vector<unsigned int>::const_iterator p_it =
 			std::find( (_product_list.find(bc_id)->second).begin(),
 				   (_product_list.find(bc_id)->second).end(),
 				   p_species );
@@ -299,7 +303,7 @@ namespace GRINS
 
 		    if( _catalycities.find(bc_id) == _catalycities.end() )
 		      {
-			std::map<Species,libMesh::Real> dummy;
+			std::map<unsigned int,libMesh::Real> dummy;
 			dummy.insert( std::make_pair( r_species, gamma_r ) );
 			_catalycities.insert( std::make_pair( bc_id, dummy ) );
 		      }
@@ -341,7 +345,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_bc_data( const libMesh::FEMSystem& system )
   {
     // Call base class
     LowMachNavierStokesBCHandling::init_bc_data(system);
@@ -364,8 +369,8 @@ namespace GRINS
 	    NBCContainer cont;
 	    cont.set_bc_id( bc_id );
 
-	    const std::vector<Species>& reactants = _reactant_list.find(bc_id)->second;
-	    const std::vector<Species>& products = _product_list.find(bc_id)->second;
+	    const std::vector<unsigned int>& reactants = _reactant_list.find(bc_id)->second;
+	    const std::vector<unsigned int>& products = _product_list.find(bc_id)->second;
 
 	    /*! \todo  Here we are assuming the same number of reactants and products */
 	    libmesh_assert_equal_to( reactants.size(), products.size() );
@@ -374,17 +379,17 @@ namespace GRINS
 	    for( unsigned int r = 0; r < n_reactions; r++ )
 	      {
 		/*! \todo  Here we are assuming the same number of reactants and products */
-		unsigned int r_species_idx = _chem_mixture.species_list_map().find(reactants[r])->second;
-		unsigned int p_species_idx = _chem_mixture.species_list_map().find(products[r])->second;
+		unsigned int r_species_idx = reactants[r];
+		unsigned int p_species_idx = products[r];
 
-		libMesh::Real gamma = (_catalycities.find(bc_id)->second).find(reactants[r])->second; 
+		libMesh::Real gamma = (_catalycities.find(bc_id)->second).find(r_species_idx)->second; 
 		
 		// -gamma since the reactant is being consumed
 		{
-		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall( _chem_mixture,
-										r_species_idx,
-										_T_var,
-										-gamma ) );
+		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
+                                                                                           r_species_idx,
+                                                                                           _T_var,
+                                                                                           -gamma ) );
 		  
 		  VariableIndex var = _species_vars[r_species_idx];
 		  
@@ -394,10 +399,10 @@ namespace GRINS
 		// Now products. Using the same gamma as the reactant.
 		/*! \todo  Here we are assuming the same number of reactants and products */
 		{
-		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall( _chem_mixture,
-										r_species_idx, /* reactant! */
-										_T_var,
-										gamma ) );
+		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
+                                                                                           r_species_idx, /* reactant! */
+                                                                                           _T_var,
+                                                                                           gamma ) );
 		  
 		  VariableIndex var = _species_vars[p_species_idx];
 		  
@@ -414,7 +419,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
 								       libMesh::DofMap& dof_map,
 								       GRINS::BoundaryID bc_id,
 								       GRINS::BCType bc_type ) const
@@ -457,26 +463,30 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type )
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type )
   {
     _species_bc_map[bc_id] = bc_type;
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::set_species_bc_values( GRINS::BoundaryID bc_id, 
-								     const std::vector<libMesh::Real>& species_values )
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::set_species_bc_values( GRINS::BoundaryID bc_id, 
+                                                                                const std::vector<libMesh::Real>& species_values )
   {
     _species_bc_values[bc_id] = species_values;
     return;
   }
 
-  libMesh::Real ReactingLowMachNavierStokesBCHandling::get_species_bc_value( GRINS::BoundaryID bc_id, 
+  template<typename Chemistry>
+  libMesh::Real ReactingLowMachNavierStokesBCHandling<Chemistry>::get_species_bc_value( GRINS::BoundaryID bc_id, 
 									     unsigned int species ) const
   {
     return (_species_bc_values.find(bc_id)->second)[species];
   }
 
-  void ReactingLowMachNavierStokesBCHandling::init_dirichlet_bcs( libMesh::FEMSystem* system ) const
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_dirichlet_bcs( libMesh::FEMSystem* system ) const
   {
     LowMachNavierStokesBCHandling::init_dirichlet_bcs(system);
 
@@ -492,7 +502,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+  template<typename Chemistry>
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::user_apply_neumann_bcs( libMesh::FEMContext& context,
 								      const GRINS::CachedValues& cache,
 								      const bool request_jacobian,
 								      const BoundaryID bc_id,
@@ -527,22 +538,14 @@ namespace GRINS
 	  libmesh_assert( _reactant_list.find(bc_id) != _reactant_list.end() );
 	  libmesh_assert( _product_list.find(bc_id)  != _product_list.end() );
 
-	  const std::vector<Species>& reactants = _reactant_list.find(bc_id)->second;
-	  const std::vector<Species>& products = _product_list.find(bc_id)->second;
+	  const std::vector<unsigned int>& reactants = _reactant_list.find(bc_id)->second;
+	  const std::vector<unsigned int>& products = _product_list.find(bc_id)->second;
 
-	  for( std::vector<Species>::const_iterator reactant = reactants.begin();
+	  for( std::vector<unsigned int>::const_iterator reactant = reactants.begin();
 	       reactant != reactants.end();
 	       ++reactant )
 	    {
-	      /*! \todo We should just cache the map between species and variable number explicitly */
-	      std::vector<std::string>::const_iterator it = std::search_n( _species_var_names.begin(),
-									   _species_var_names.end(),
-									   1,
-									   "w_"+_chem_mixture.species_inverse_name_map().find(*reactant)->second );
-
-	      unsigned int species_idx = static_cast<unsigned int>(it - _species_var_names.begin());
-
-	      const VariableIndex var = _species_vars[species_idx];
+	      const VariableIndex var = _species_vars[*reactant];
 
               if( this->is_axisymmetric() )
                 {
@@ -558,19 +561,11 @@ namespace GRINS
                 }
 	    }
 
-	  for( std::vector<Species>::const_iterator product = products.begin();
+	  for( std::vector<unsigned int>::const_iterator product = products.begin();
 	       product != products.end();
 	       ++product )
 	    {
-	      /*! \todo We should just cache the map between species and variable number explicitly */
-	      std::vector<std::string>::const_iterator it = std::search_n( _species_var_names.begin(),
-									   _species_var_names.end(),
-									   1,
-									   "w_"+_chem_mixture.species_inverse_name_map().find(*product)->second );
-
-	      unsigned int species_idx = static_cast<unsigned int>(it - _species_var_names.begin());
-
-	      const VariableIndex var = _species_vars[species_idx];
+	      const VariableIndex var = _species_vars[*product];
 
               if( this->is_axisymmetric() )
                 {

@@ -59,6 +59,9 @@ namespace GRINS
 
   protected:
 
+    typedef std::tr1::shared_ptr<Physics> PhysicsPtr;
+    typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
+
     //! Figures out which GRINS::Physics pointer to create
     /*! This is the primary method to override if the user wants to extend
         the physics capabilities. The strategy is to conditionally add the
@@ -85,6 +88,10 @@ namespace GRINS
 				   const std::string& conductivity,
 				   const std::string& viscosity,
 				   const std::string& specific_heat ) const;
+
+    void add_reacting_low_mach( const GetPot& input,
+                                const std::string& physics_to_add,
+                                GRINS::PhysicsList& physics_list );
 
   }; // class PhysicsFactory
 

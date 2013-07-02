@@ -1,0 +1,17 @@
+#
+# Defines any systems that will be solved
+[Physics]
+
+  [./Chemistry]
+
+     species        = 'N2   O2   NO N  O'
+     chem_file      = '@abs_top_srcdir@/test/input_files/air.xml'
+
+   [../Antioch]
+
+     Le = '1.4'
+[]
+
+[screen-options]
+
+verbose_kinetics_read = 'true'

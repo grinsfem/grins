@@ -12,6 +12,12 @@ if CANTERA_ENABLED
    bin_PROGRAMS += cantera_kinetic_rates
 endif
 
+if ANTIOCH_ENABLED
+   bin_PROGRAMS += antioch_thermo_tables
+   bin_PROGRAMS += antioch_kinetic_rates
+   bin_PROGRAMS += antioch_transport_values
+endif
+
 #----------------------------------------------
 # List of source files to build dynamic library
 #----------------------------------------------
@@ -23,7 +29,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/heat_transfer_bc_handli
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/axisym_heat_transfer_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/inc_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/low_mach_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
+libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
 
 # src/boundary_conditions files
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/boundary_conditions.C
@@ -37,32 +43,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
-
-# src/kinetics files
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/arrhenius_rate.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/reaction_set.C
-libgrins_la_SOURCES += $(top_srcdir)/src/kinetics/src/grins_kinetics.C
-
-# src/mat_props files
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/grins_constant_function.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_conductivity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_specific_heat.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_source_func.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_species.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/chemical_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_curve_fit.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cea_thermo.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/blottner_viscosity.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_singleton.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_thermo.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_transport.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/cantera_kinetics.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/ideal_gas_mixture.C
-libgrins_la_SOURCES += $(top_srcdir)/src/mat_props/src/constant_transport.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
 
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
@@ -91,12 +73,27 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_stab_helper.C
-libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
-libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
 
 # src/properties files
-libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_chemistry.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_prandtl_conductivity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_specific_heat.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_viscosity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_source_func.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_mixture.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_thermo.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_transport.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_kinetics.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/cantera_evaluator.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_chemistry.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_mixture.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_kinetics.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_evaluator_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/antioch_constant_transport_instantiate.C
 
 # src/qoi files
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
@@ -118,7 +115,6 @@ libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/grins_version.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/input_utils.C
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/cached_values.C
-libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/tinyxml2.cpp
 
 # src/visualization files
 libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/steady_visualization.C
@@ -165,32 +161,6 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
 
-# src/kinetics headers
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/arrhenius_rate.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_set.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/grins_kinetics.h
-include_HEADERS += $(top_srcdir)/src/kinetics/include/grins/reaction_enum.h
-
-# src/mat_props headers
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/grins_constant_function.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_conductivity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_specific_heat.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_source_func.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/species_enum.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_species.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/chemical_mixture.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_curve_fit.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cea_thermo.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/blottner_viscosity.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_singleton.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_thermo.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_transport.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/cantera_kinetics.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/ideal_gas_mixture.h
-include_HEADERS += $(top_srcdir)/src/mat_props/include/grins/constant_transport.h
-
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics.h
@@ -226,7 +196,26 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_nav
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 
 # src/properties headers
-include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_conductivity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_prandtl_conductivity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_specific_heat.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_viscosity.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/constant_source_func.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_thermo.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_transport.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_kinetics.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_chemistry.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_kinetics.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_wilke_transport_evaluator.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_constant_transport_mixture.h
+include_HEADERS += $(top_srcdir)/src/properties/include/grins/antioch_constant_transport_evaluator.h
+
 
 # src/qoi headers
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/average_nusselt_number.h
@@ -253,7 +242,6 @@ include_HEADERS += $(top_srcdir)/src/utilities/include/grins/input_utils.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/math_constants.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_values.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_quantities_enum.h
-include_HEADERS += $(top_srcdir)/src/utilities/include/grins/tinyxml2.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/string_utils.h
 
 # src/visualization headers
@@ -295,6 +283,17 @@ if CANTERA_ENABLED
    cantera_kinetic_rates_LDADD = libgrins.la
 endif
 
+if ANTIOCH_ENABLED
+   antioch_thermo_tables_SOURCES = $(top_srcdir)/src/apps/antioch_thermo_tables.C
+   antioch_thermo_tables_LDADD = libgrins.la
+
+   antioch_kinetic_rates_SOURCES = $(top_srcdir)/src/apps/antioch_kinetic_rates.C
+   antioch_kinetic_rates_LDADD = libgrins.la
+
+   antioch_transport_values_SOURCES = $(top_srcdir)/src/apps/antioch_transport_values.C
+   antioch_transport_values_LDADD = libgrins.la
+endif
+
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
@@ -302,8 +301,6 @@ AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
@@ -323,6 +320,14 @@ AM_CPPFLAGS += $(GRVY_CFLAGS)
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
    libgrins_la_LIBADD  += $(CANTERA_LDFLAGS)
+endif
+
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   libgrins_la_LIBADD  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #-------------

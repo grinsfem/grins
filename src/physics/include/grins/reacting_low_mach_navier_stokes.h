@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  template<class Mixture>
+  template<typename Mixture, typename Evaluator>
   class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase<Mixture>
   {
   public:
@@ -63,14 +63,14 @@ namespace GRINS
 				CachedValues& cache );
 
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
-							CachedValues& cache ) const;
+							CachedValues& cache );
 
     virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
-						     CachedValues& cache ) const;
+						     CachedValues& cache );
 
     virtual void compute_element_cache( const libMesh::FEMContext& context,
 					const std::vector<libMesh::Point>& points,
-					CachedValues& cache ) const;
+					CachedValues& cache );
 
   protected:
 

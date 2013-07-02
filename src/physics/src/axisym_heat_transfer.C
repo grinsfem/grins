@@ -47,7 +47,8 @@ namespace GRINS
   template< class Conductivity>
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 								    const GetPot& input)
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _k(input)
   {
     this->read_input_options(input);
   
@@ -80,8 +81,6 @@ namespace GRINS
 
     this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
     this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
-
-    this->_k.read_input_options( input );
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
