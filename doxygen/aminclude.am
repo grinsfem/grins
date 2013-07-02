@@ -5,7 +5,7 @@
 
 PECOS_extra_dependencies = $(abs_top_srcdir)/doxygen/grins.page \
 			   $(abs_top_builddir)/doxygen/txt_common/about_vpath.page \
-			   $(abs_top_srcdir)/doxygen/txt_common/gpl.page \
+			   $(abs_top_srcdir)/doxygen/txt_common/lgpl.page \
 			   $(abs_top_srcdir)/doxygen/txt_common/acknowledgment.page
 
 ## --------------------------------- ##
