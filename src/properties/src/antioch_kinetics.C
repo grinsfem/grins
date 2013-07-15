@@ -73,8 +73,7 @@ namespace GRINS
 
     _antioch_mixture.molar_densities( rho, mass_fractions, molar_densities );
 
-    _antioch_kinetics.compute_mass_sources( temp_cache.T, rho, R_mix,
-                                            mass_fractions,
+    _antioch_kinetics.compute_mass_sources( temp_cache.T,
                                             molar_densities,
                                             h_RT_minus_s_R,
                                             omega_dot );
