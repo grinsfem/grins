@@ -20,20 +20,15 @@
 // 02110-1301 USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id: bc_factory.C 33233 2012-09-21 05:22:22Z pbauman $
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
-#ifndef ERROR_ESTIMATOR_FACTORY_H
-#define ERROR_ESTIMATOR_FACTORY_H
+#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_H
+#define GRINS_ERROR_ESTIMATOR_FACTORY_H
 
 // GRINS
 #include "grins/qoi_base.h"
 
 // libMesh
-#include "libmesh/adjoint_refinement_estimator.h"
+#include "libmesh/error_estimator.h"
 
 // libMesh forward declartions
 class GetPot;
@@ -51,15 +46,18 @@ namespace GRINS
     virtual std::tr1::shared_ptr<libMesh::ErrorEstimator> build( const GetPot& input,
 								 std::tr1::shared_ptr<QoIBase> qoi_base );
 
-    virtual std::tr1::shared_ptr<libMesh::AdjointRefinementEstimator> build_adjref( const GetPot& input,
-										    std::tr1::shared_ptr<QoIBase> qoi_base );
+  protected:
 
-    private:
+    enum ErrorEstimatorEnum{ ADJOINT_RESIDUAL = 0,
+                             ADJOINT_REFINEMENT,
+                             KELLY,
+                             PATCH_RECOVERY,
+                             WEIGHTED_PATCH_RECOVERY,
+                             UNIFORM_REFINEMENT };
 
-    libMesh::Real _refine_fraction;
-    libMesh::Real _coarsen_fraction;
+    ErrorEstimatorEnum string_to_enum( const std::string& estimator_type ) const;
 
   };
 
 } // end namespace GRINS
-#endif // ERROR_ESTIMATOR_FACTORY_H
+#endif // GRINS_ERROR_ESTIMATOR_FACTORY_H

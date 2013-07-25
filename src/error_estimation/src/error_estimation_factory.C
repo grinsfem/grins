@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id: bc_factory.C 33233 2012-09-21 05:22:22Z pbauman $
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/error_estimation_factory.h"
@@ -38,79 +33,114 @@
 namespace GRINS
 {
 
-  ErrorEstimatorFactory::ErrorEstimatorFactory( )
+  ErrorEstimatorFactory::ErrorEstimatorFactory()
   {
     return;
   }
 
-  ErrorEstimatorFactory::~ErrorEstimatorFactory( )
+  ErrorEstimatorFactory::~ErrorEstimatorFactory()
   {
     return;
   }
 
-  std::tr1::shared_ptr<ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input,
-								     std::tr1::shared_ptr<GRINS::QoIBase> qoi_base )
+  std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input,
+                                                                              std::tr1::shared_ptr<QoIBase> qoi_base )
   {
     // check if qoi_base is an empty pointer (user set no QoI), in that case return empty pointer.
     if( qoi_base == std::tr1::shared_ptr<QoIBase>() )
-    {
-      return std::tr1::shared_ptr<ErrorEstimator>();
-    }
+      {
+        return std::tr1::shared_ptr<libMesh::ErrorEstimator>();
+      }
 
-    std::tr1::shared_ptr<ErrorEstimator> error_estimator;
-    AdjointResidualErrorEstimator *adjoint_residual_estimator = new AdjointResidualErrorEstimator;
+    std::string estimator_type = input("Adaptivity/estimator_type", "none");
+
+    ErrorEstimatorEnum estimator_enum = this->string_to_enum( estimator_type );
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
     
-    error_estimator.reset( adjoint_residual_estimator );
+    switch( estimator_enum )
+      {
+      case(ADJOINT_RESIDUAL):
+        {
+          error_estimator.reset( new AdjointResidualErrorEstimator );
     
-    //adjoint_residual_estimator->adjoint_already_solved = true;
-    
-    std::string estimator_type = input( "Adaptivity/estimator_type", "patch" );
-    if( estimator_type == "patch" )
-    {
-      PatchRecoveryErrorEstimator *p1 = new PatchRecoveryErrorEstimator;
-      adjoint_residual_estimator->primal_error_estimator().reset( p1 );
+          AdjointResidualErrorEstimator* adjoint_error_estimator = libmesh_cast_ptr<AdjointResidualErrorEstimator*>( error_estimator );
+          
+          libMesh::PatchRecoveryErrorEstimator *p1 = new libMesh::PatchRecoveryErrorEstimator;
+          adjoint_error_estimator->primal_error_estimator().reset( p1 );
       
-      PatchRecoveryErrorEstimator *p2 = new PatchRecoveryErrorEstimator;
-      adjoint_residual_estimator->dual_error_estimator().reset( p2 );   
+          libMesh::PatchRecoveryErrorEstimator *p2 = new libMesh::PatchRecoveryErrorEstimator;
+          adjoint_error_estimator->dual_error_estimator().reset( p2 );   
       
-      bool patch_reuse = input( "Adaptivity/patch_reuse", true );
-      adjoint_residual_estimator->primal_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
-      p1->set_patch_reuse( patch_reuse );
+          bool patch_reuse = input( "Adaptivity/patch_reuse", true );
+          adjoint_error_estimator->primal_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
+          p1->set_patch_reuse( patch_reuse );
       
-      adjoint_residual_estimator->dual_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
-      p2->set_patch_reuse( patch_reuse );
-    }
-    else
-    {
-      out << "Error: unrecognized option for estimator_type" << std::endl;
-      libmesh_error();
-    }
+          adjoint_residual_estimator->dual_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
+          p2->set_patch_reuse( patch_reuse );
+        }
+        break;
+
+      case(ADJOINT_REFINEMENT):
+      case(KELLY):
+      case(PATCH_RECOVERY):
+      case(WEIGHTED_PATCH_RECOVERY):
+      case(UNIFORM_REFINEMENT):
+        {
+          libmesh_not_implemented();
+        }
+      break;
+
+      default:
+        {
+          std::cerr << "Error: Invalid error estimator type " << estimator_type << std::endl;
+          libmesh_error();
+        }
     
     return error_estimator;
   }
 
-  std::tr1::shared_ptr<AdjointRefinementEstimator> ErrorEstimatorFactory::build_adjref(
-    const GetPot& input,
-    std::tr1::shared_ptr<GRINS::QoIBase> qoi_base )
-  {
-    std::tr1::shared_ptr<AdjointRefinementEstimator> error_estimator;
+    ErrorEstimatorEnum ErrorEstimatorFactory::string_to_enum( const std::string& estimator_type ) const
+    {
+      ErrorEstimatorEnum value;
 
-    /*
-    error_estimator->_coarsen_fraction = input( "Adaptivity/coarsen_fraction", 0. );
-    error_estimator->_refine_fraction = input( "Adaptivity/refine_fraction", 0. );
+      if( estimator_type == std::string("adjoint_residual") )
+        {
+          value = ADJOINT_RESIDUAL;
+        }
+      else if( estimator_type == std::string("adjoint_refinement") )
+        {
+          value = ADJOINT_REFINEMENT;
+        }
+      else if( estimator_type == std::string("kelly") )
+        {
+          value = KELLY;
+        }
+      else if( estimator_type == std::string("patch_recovery") )
+        {
+          value = PATCH_RECOVERY;
+        }
+      else if( estimator_type == std::string("weighted_patch_recovery") )
+        {
+          value = WEIGHTED_PATCH_RECOVERY;
+        }
+      else if( estimator_type == std::string("uniform_refinement") )
+        {
+          value = UNIFORM_REFINEMENT;
+        }
+      else
+        {
+          std::cerr << "Error: Invalid error estimator type " << estimator_type << std::endl
+                    << "Valid error estimator types are: adjoint_residual" << std::endl
+                    << "                                 adjoint_refinement" << std::endl
+                    << "                                 kelly" << std::endl
+                    << "                                 patch_recovery" << std::endl
+                    << "                                 weighted_patch_recovery" << std::endl
+                    << "                                 uniform_refinement" << std::endl;
+          libmesh_error();
+        }
 
-    AdjointRefinementEstimator *adjoint_refinement_estimator = new AdjointRefinementEstimator;
-    
-    error_estimator.reset( adjoint_refinement_estimator );
-    
-    adjoint_refinement_estimator->qoi_set() = qoi_base->get_enabled_qoi_set();
-    // adjoint_refinement_estimator->adjoint_already_solved = true;
-
-    // For now perform 1 uniform h-refinement as libMesh throws errors if adjoint space is same.
-    adjoint_refinement_estimator->number_h_refinements = 1;
-    */
-        
-    return error_estimator;
-  }
+      return value;
+    }
 
 } // namespace GRINS
