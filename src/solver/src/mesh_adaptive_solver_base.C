@@ -41,8 +41,11 @@ namespace GRINS
       _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
       _output_adjoint_sol( input("MeshAdaptivity/output_adjoint_sol", false) ),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
-      _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") )
+      _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
+      _refinement_type(INVALID)
   {
+    this->set_refinement_type( input, _refinement_type );
+
     return;
   }
   
@@ -62,6 +65,40 @@ namespace GRINS
     _mesh_refinement->coarsen_threshold() = _coarsen_threshold;
 
     return; 
+  }
+
+  void MeshAdaptiveSolverBase::set_refinement_type( const GetPot& input,
+                                                    MeshAdaptiveSolverBase::RefinementFlaggingType& refinement_type )
+  {
+    // Check that either nelem_target or global tolerance was set
+    if( !input.have_variable("MeshAdaptivity/absolute_global_tolerance") &&
+        !input.have_variable("MeshAdaptivity/nelem_target") )
+      {
+        std::cerr << "Error: Must specify either global tolerance or element number target" << std::endl
+                  << "       for mesh adaptive solver." << std::endl;
+        libmesh_error();
+      }
+
+    // Make sure *both* weren't set
+    if( input.have_variable("MeshAdaptivity/absolute_global_tolerance") &&
+        input.have_variable("MeshAdaptivity/nelem_target") )
+      {
+        std::cerr << "Error: Can only specify either global tolerance or element number target" << std::endl
+                  << "       for mesh adaptive solver." << std::endl;
+        libmesh_error();
+      }
+
+    if( input.have_variable("MeshAdaptivity/absolute_global_tolerance") )
+      {
+        refinement_type = ERROR_TOLERANCE;
+      }
+    
+    if( input.have_variable("MeshAdaptivity/nelem_target") )
+      {
+        refinement_type = N_ELEM_TARGET;
+      }
+
+    return;
   }
 
 } // end namespace GRINS

@@ -56,6 +56,10 @@ namespace GRINS
 
   protected:
 
+    enum RefinementFlaggingType{ INVALID = 0,
+                                 ERROR_TOLERANCE,
+                                 N_ELEM_TARGET };
+
     unsigned int _max_r_steps;
     bool _coarsen_by_parents;
     libMesh::Real _absolute_global_tolerance;
@@ -67,9 +71,18 @@ namespace GRINS
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
+    RefinementFlaggingType _refinement_type;
+
     boost::scoped_ptr<libMesh::MeshRefinement> _mesh_refinement;
 
     void build_mesh_refinement( libMesh::MeshBase& mesh );
+
+    void set_refinement_type( const GetPot& input,
+                              RefinementFlaggingType& refinement_type );
+
+  private:
+
+    MeshAdaptiveSolverBase();
 
   };
 
