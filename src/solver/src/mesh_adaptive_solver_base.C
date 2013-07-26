@@ -47,7 +47,7 @@ namespace GRINS
   {
     this->set_refinement_type( input, _refinement_type );
 
-    this->check_for_adjoint_solve( input, _do_adjoint_solve );
+    _do_adjoint_solve = this->check_for_adjoint_solve( input );
 
     return;
   }
@@ -104,16 +104,18 @@ namespace GRINS
     return;
   }
 
-  void MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input, bool& do_adjoint_solve )
+  bool MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input )
   {
     std::string error_estimator = input("MeshAdaptivity/estimator_type");
+
+    bool do_adjoint_solve = false;
 
     if( error_estimator.find("adjoint") != error_estimator.end() )
       {
         do_adjoint_solve = true;
       }
 
-    return;
+    return do_adjoint_solve;
   }
 
 } // end namespace GRINS

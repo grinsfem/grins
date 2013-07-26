@@ -82,7 +82,7 @@ namespace GRINS
     void set_refinement_type( const GetPot& input,
                               RefinementFlaggingType& refinement_type );
 
-    void check_for_adjoint_solve( const GetPot& input, bool do_adjoint_solve );
+    bool check_for_adjoint_solve( const GetPot& input );
 
   private:
 
