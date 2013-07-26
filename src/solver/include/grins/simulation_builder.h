@@ -67,9 +67,6 @@ namespace GRINS
     std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
 									 std::tr1::shared_ptr<QoIBase> qoi );
 
-    std::tr1::shared_ptr<libMesh::AdjointRefinementEstimator> build_adjoint_refinement_estimator( const GetPot& input,
-												  std::tr1::shared_ptr<QoIBase> qoi );
-
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 
     void attach_solver_factory( std::tr1::shared_ptr<SolverFactory> solver_factory );

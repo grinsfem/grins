@@ -46,6 +46,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
 
+# src/error_estimation files
+libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_factory.C
+
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
@@ -162,6 +165,9 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+
+# src/error_estimation headers
+include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estimation_factory.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h

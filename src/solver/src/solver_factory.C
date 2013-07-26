@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/solver_factory.h"
@@ -32,7 +27,6 @@
 // GRINS
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
-#include "grins/grins_mesh_adaptive_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -44,17 +38,9 @@ namespace GRINS
     return;
   }
 
-  if(transient)
+  SolverFactory::~SolverFactory()
   {
-    solver = new GRINS::UnsteadySolver( input );
-  }
-  else if( mesh_adaptive )
-  {
-    solver = new GRINS::MeshAdaptiveSolver( input );
-  }
-  else
-  {
-    solver = new GRINS::SteadySolver( input );
+    return;
   }
 
   std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
