@@ -24,23 +24,8 @@
 #ifndef GRINS_MESH_ADAPTIVE_SOLVER_H
 #define GRINS_MESH_ADAPTIVE_SOLVER_H
 
-// C++
-#include <string>
-
 // GRINS
-#include "grins/grins_solver.h"
-
-//libMesh
-#include "libmesh/libmesh.h"
-#include "libmesh/auto_ptr.h"
-#include "libmesh/mesh_refinement.h"
-
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class MeshBase;
-}
+#include "grins/mesh_adaptive_solver_base.h"
 
 namespace GRINS
 {
@@ -48,7 +33,7 @@ namespace GRINS
   class SolverContext;
   class MultiphysicsSystem;
 
-  class MeshAdaptiveSolver : public Solver
+  class MeshAdaptiveSolver : public MeshAdaptiveSolverBase
   {
   public:
 
@@ -60,22 +45,8 @@ namespace GRINS
 
   protected:
 
-    unsigned int _max_r_steps;
-    bool _coarsen_by_parents;
-    libMesh::Real _absolute_global_tolerance;
-    unsigned int _nelem_target;
-    libMesh::Real _refine_fraction;
-    libMesh::Real _coarsen_fraction;
-    libMesh::Real _coarsen_threshold;
-    bool _output_adjoint_sol;
-    bool _plot_cell_errors;
-    std::string _error_plot_prefix;
-
-    libMesh::AutoPtr<libMesh::MeshRefinement> _mesh_refinement;
-
     virtual void init_time_solver( MultiphysicsSystem* system );
 
-    void build_mesh_refinement( libMesh::MeshBase& mesh );
   };
 
 } // end namespace GRINS

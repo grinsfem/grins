@@ -33,22 +33,8 @@
 #include "libmesh/steady_solver.h"
 
 GRINS::MeshAdaptiveSolver::MeshAdaptiveSolver( const GetPot& input )
-  : Solver( input )
+  : MeshAdaptiveSolverBase( input )
 {
-  std::string param_path = "Adaptivity/"; // general section for model- and hp-adaptivity
-  this->_max_r_steps = input( param_path + "max_r_steps", 5 );
-  this->_coarsen_by_parents = true;
-  this->_absolute_global_tolerance = input( param_path + "absolute_global_tolerance", 0 );
-  this->_nelem_target = input( param_path + "nelem_target", 0 );
-  this->_refine_fraction = input( param_path + "refine_percentage", 0.2 );
-  this->_coarsen_fraction = input( param_path + "coarsen_percentage", 0.2 );
-  this->_coarsen_threshold = input( param_path + "coarsen_threshold", 0 );
-  this->_output_adjoint_sol = input( param_path + "output_adjoint_sol", false );
-
-  // Output options
-  this->_plot_cell_errors = input( param_path + "plot_cell_errors", false );
-  this->_error_plot_prefix = input( param_path + "error_plot_prefix", "cell_error" );
-
   return;
 }
 
@@ -160,15 +146,3 @@ void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
   return;
 }
 
-void GRINS::MeshAdaptiveSolver::build_mesh_refinement( libMesh::MeshBase &mesh )
-{
-  this->_mesh_refinement.reset( new libMesh::MeshRefinement( mesh ) );
-  this->_mesh_refinement->coarsen_by_parents() = this->_coarsen_by_parents;
-  this->_mesh_refinement->absolute_global_tolerance() = this->_absolute_global_tolerance;
-  this->_mesh_refinement->nelem_target() = this->_nelem_target;
-  this->_mesh_refinement->refine_fraction() = this->_refine_fraction;
-  this->_mesh_refinement->coarsen_fraction() = this->_coarsen_fraction;  
-  this->_mesh_refinement->coarsen_threshold() = this->_coarsen_threshold;
-
-  return; 
-}
