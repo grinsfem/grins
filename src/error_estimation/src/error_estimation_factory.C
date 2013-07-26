@@ -52,7 +52,7 @@ namespace GRINS
         return std::tr1::shared_ptr<libMesh::ErrorEstimator>();
       }
 
-    std::string estimator_type = input("Adaptivity/estimator_type", "none");
+    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
 
     ErrorEstimatorEnum estimator_enum = this->string_to_enum( estimator_type );
 
@@ -72,7 +72,7 @@ namespace GRINS
           libMesh::PatchRecoveryErrorEstimator *p2 = new libMesh::PatchRecoveryErrorEstimator;
           adjoint_error_estimator->dual_error_estimator().reset( p2 );   
       
-          bool patch_reuse = input( "Adaptivity/patch_reuse", true );
+          bool patch_reuse = input( "MeshAdaptivity/patch_reuse", true );
           adjoint_error_estimator->primal_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
           p1->set_patch_reuse( patch_reuse );
       
