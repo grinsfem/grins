@@ -113,6 +113,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_steady_solver.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_unsteady_solver.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation_builder.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/mesh_adaptive_solver_base.C
 
 # src/utilities files
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/grins_version.C
@@ -241,6 +242,7 @@ include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_steady_solver.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_unsteady_solver.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation_builder.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_context.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/mesh_adaptive_solver_base.h
 
 
 # src/utilities headers
