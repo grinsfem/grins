@@ -119,7 +119,7 @@ namespace GRINS
 	    
 	    const std::vector<libMesh::Point>& normals = side_fe->get_normals();
 
-	    unsigned int n_qpoints = (c.get_side_qrule())->n_points();
+	    unsigned int n_qpoints = c.get_side_qrule().n_points();
 	    
 	    libMesh::Number& qoi = c.elem_qoi[0];
 	    

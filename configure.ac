@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.1,yes)
+AX_PATH_LIBMESH_NEW(0.9.2,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
