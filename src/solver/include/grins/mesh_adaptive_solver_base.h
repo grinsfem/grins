@@ -71,6 +71,8 @@ namespace GRINS
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
+    bool _do_adjoint_solve;
+
     RefinementFlaggingType _refinement_type;
 
     boost::scoped_ptr<libMesh::MeshRefinement> _mesh_refinement;
@@ -79,6 +81,8 @@ namespace GRINS
 
     void set_refinement_type( const GetPot& input,
                               RefinementFlaggingType& refinement_type );
+
+    void check_for_adjoint_solve( const GetPot& input, bool do_adjoint_solve );
 
   private:
 

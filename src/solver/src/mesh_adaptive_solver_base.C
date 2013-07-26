@@ -42,9 +42,12 @@ namespace GRINS
       _output_adjoint_sol( input("MeshAdaptivity/output_adjoint_sol", false) ),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
+      _do_adjoint_solve(false),
       _refinement_type(INVALID)
   {
     this->set_refinement_type( input, _refinement_type );
+
+    this->check_for_adjoint_solve( input, _do_adjoint_solve );
 
     return;
   }
@@ -96,6 +99,18 @@ namespace GRINS
     if( input.have_variable("MeshAdaptivity/nelem_target") )
       {
         refinement_type = N_ELEM_TARGET;
+      }
+
+    return;
+  }
+
+  void MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input, bool& do_adjoint_solve )
+  {
+    std::string error_estimator = input("MeshAdaptivity/estimator_type");
+
+    if( error_estimator.find("adjoint") != error_estimator.end() )
+      {
+        do_adjoint_solve = true;
       }
 
     return;
