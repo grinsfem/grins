@@ -20,14 +20,9 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
-#include "grins/grins_mesh_adaptive_solver.h"
+#include "grins/mesh_adaptive_solver.h"
 
 // GRINS
 #include "grins/solver_context.h"
@@ -71,13 +66,7 @@ void GRINS::MeshAdaptiveSolver::init_time_solver( GRINS::MultiphysicsSystem* sys
   return;
 }
 
-void GRINS::MeshAdaptiveSolver::solve( GRINS::MultiphysicsSystem* system,
-				 std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-         std::tr1::shared_ptr<GRINS::QoIBase> qoi_base,
-				 std::tr1::shared_ptr<GRINS::Visualization> vis,
-				 bool output_vis, 
-				 bool output_residual,
-         std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator )
+void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
 {
   // Mesh and mesh refinement
   libMesh::MeshBase& mesh = context.equation_system->get_mesh();

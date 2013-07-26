@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 #ifndef GRINS_MESH_ADAPTIVE_SOLVER_H
 #define GRINS_MESH_ADAPTIVE_SOLVER_H
@@ -61,17 +56,7 @@ namespace GRINS
 
     virtual ~MeshAdaptiveSolver();
 
-    virtual void solve( GRINS::MultiphysicsSystem* system,
-			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
-			std::tr1::shared_ptr<libMesh::EquationSystems>(),
-      std::tr1::shared_ptr<GRINS::QoIBase> qoi_base =
-      std::tr1::shared_ptr<GRINS::QoIBase>(),
-			std::tr1::shared_ptr<GRINS::Visualization> vis = 
-			std::tr1::shared_ptr<GRINS::Visualization>(),
-			bool output_vis = false,
-			bool output_residual = false,
-      std::tr1::shared_ptr<libMesh::ErrorEstimator> =
-      std::tr1::shared_ptr<libMesh::ErrorEstimator>() );
+    virtual void solve(  SolverContext& context );
 
   protected:
 
