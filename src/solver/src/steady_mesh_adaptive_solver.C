@@ -77,10 +77,13 @@ namespace GRINS
           }
 
         // Solve adjoint system
-        context.system->adjoint_solve();
+        if( _do_adjoint_solve )
+          {
+            context.system->adjoint_solve();
+          }
 
         // At the moment output data is overwritten every mesh refinement step
-        if( output_vis && this->_output_adjoint_sol )
+        if( output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
           {
             libMesh::NumericVector<Number>& dual_solution = context.system->get_adjoint_solution(0);
 
@@ -130,7 +133,8 @@ namespace GRINS
         std::cout << "Refinement step " << r_step+1 << "/" << this->_max_r_steps
                   << ": refined mesh to " << mesh.n_active_elem() << " elements."
                   << std::endl << std::endl;
-      }
+
+      } // r_step for-loop
 
     return;
   }
