@@ -21,8 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_MESH_ADAPTIVE_SOLVER_H
-#define GRINS_MESH_ADAPTIVE_SOLVER_H
+#ifndef GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
+#define GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
 
 // GRINS
 #include "grins/mesh_adaptive_solver_base.h"
@@ -33,13 +33,13 @@ namespace GRINS
   class SolverContext;
   class MultiphysicsSystem;
 
-  class MeshAdaptiveSolver : public MeshAdaptiveSolverBase
+  class SteadyMeshAdaptiveSolver : public MeshAdaptiveSolverBase
   {
   public:
 
-    MeshAdaptiveSolver( const GetPot& input );
+    SteadyMeshAdaptiveSolver( const GetPot& input );
 
-    virtual ~MeshAdaptiveSolver();
+    virtual ~SteadyMeshAdaptiveSolver();
 
     virtual void solve(  SolverContext& context );
 
@@ -50,4 +50,4 @@ namespace GRINS
   };
 
 } // end namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+#endif // GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
