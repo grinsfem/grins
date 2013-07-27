@@ -108,26 +108,21 @@ namespace GRINS
           {
             error.plot_error( this->_error_plot_prefix+".exo", mesh );
           }
-    
-        if( this->_absolute_global_tolerance >= 0. && this->_nelem_target == 0.)
+
+        // Check for convergence of error
+        bool converged = this->check_for_convergence();
+        
+        if( converged )
           {
-            _mesh_refinement->flag_elements_by_error_tolerance( error );
+            break;
           }
-        // Adaptively refine based on reaching a target number of elements
         else
           {
-            if( mesh.n_active_elem() >= this->_nelem_target )
-              {
-                std::cout<<"We reached the target number of elements."<<std::endl <<std::endl;
-                break;
-              }
-            
-            _mesh_refinement->flag_elements_by_nelem_target( error );
-          }
-        _mesh_refinement->refine_and_coarsen_elements();
+            _mesh_refinement->refine_and_coarsen_elements();
     
-        // Dont forget to reinit the system after each adaptive refinement!
-        equation_system->reinit();
+            // Dont forget to reinit the system after each adaptive refinement!
+            equation_system->reinit();
+          }
 
         // This output cannot be toggled in the input file.
         std::cout << "Refinement step " << r_step+1 << "/" << this->_max_r_steps
