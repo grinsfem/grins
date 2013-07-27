@@ -84,6 +84,8 @@ namespace GRINS
 
     bool check_for_adjoint_solve( const GetPot& input );
 
+    bool check_for_convergence();
+
   private:
 
     MeshAdaptiveSolverBase();

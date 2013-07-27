@@ -118,4 +118,55 @@ namespace GRINS
     return do_adjoint_solve;
   }
 
+  bool MeshAdaptiveSolverBase::check_for_convergence()
+  {
+    bool converged = false;
+
+    switch(_refinement_type)
+      {
+      case(ERROR_TOLERANCE):
+        {
+
+        }
+        break;
+
+      case(N_ELEM_TARGET):
+        {
+        }
+        break;
+        
+      case(INVALID):
+        {
+
+        }
+        break;
+
+      // Wat?!
+      default:
+        {
+          libmesh_error();
+        }
+
+      } // switch(_refinement_type)
+    
+
+    if( this->_absolute_global_tolerance >= 0. && this->_nelem_target == 0.)
+          {
+            _mesh_refinement->flag_elements_by_error_tolerance( error );
+          }
+        // Adaptively refine based on reaching a target number of elements
+        else
+          {
+            if( mesh.n_active_elem() >= this->_nelem_target )
+              {
+                std::cout<<"We reached the target number of elements."<<std::endl <<std::endl;
+                break;
+              }
+            
+            _mesh_refinement->flag_elements_by_nelem_target( error );
+          }
+
+    return converged;
+  }
+
 } // end namespace GRINS
