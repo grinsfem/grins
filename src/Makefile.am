@@ -142,7 +142,7 @@ sfiles_DATA = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 includedir = $(prefix)/include/grins
 include_HEADERS =
 
-# src/bc_handing headers
+# src/bc_handling headers
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
