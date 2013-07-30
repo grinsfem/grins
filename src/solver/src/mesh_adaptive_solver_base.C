@@ -168,7 +168,9 @@ namespace GRINS
         error_estimate = error.l2_norm();
       }
 
-    std::cout << "Error estimate = " << error_estimate << std::endl;
+    std::cout << "==========================================================" << std::endl
+              << "Error estimate = " << error_estimate << std::endl
+              << "==========================================================" << std::endl;
 
     // For now, we just check the norm
     if( error_estimate <= _absolute_global_tolerance )

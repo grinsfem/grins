@@ -27,6 +27,7 @@
 // GRINS
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
+#include "grins/qoi_base.h"
 
 // libMesh
 #include "libmesh/error_vector.h"
@@ -62,11 +63,17 @@ namespace GRINS
     this->build_mesh_refinement( mesh );
 
     // This output cannot be toggled in the input file.
-    out << "Performing " << this->_max_r_steps << " adaptive refinements" << std::endl;
+    std::cout << "==========================================================" << std::endl
+              << "Performing " << this->_max_refinement_steps << " adaptive refinements" << std::endl
+              << "==========================================================" << std::endl;
 
     // GRVY timers contained in here (if enabled)
-    for ( unsigned int r_step = 0; r_step < this->_max_r_steps; r_step++ )
+    for ( unsigned int r_step = 0; r_step < this->_max_refinement_steps; r_step++ )
       {
+        std::cout << "==========================================================" << std::endl
+                  << "Adaptive Refinement Step " << r_step << std::endl
+                  << "==========================================================" << std::endl;
+
         // Solve the forward problem
         context.system->solve();
 
@@ -79,7 +86,9 @@ namespace GRINS
         // Solve adjoint system
         if( _do_adjoint_solve )
           {
-            std::cout << "Solving adjiont problem." << std::endl;
+            std::cout << "==========================================================" << std::endl
+                      << "Solving adjoint problem." << std::endl
+                      << "==========================================================" << std::endl;
             context.system->adjoint_solve();
             context.system->set_adjoint_already_solved(true);
           }
@@ -102,8 +111,10 @@ namespace GRINS
 
         // Now we construct the data structures for the mesh refinement process 
         libMesh::ErrorVector error;
-
-        std::cout << "Estimating error" << std::endl;
+        
+        std::cout << "==========================================================" << std::endl
+                  << "Estimating error" << std::endl
+                  << "==========================================================" << std::endl;
         context.error_estimator->estimate_error( *context.system, error );
 
         // Plot error vector
@@ -113,28 +124,48 @@ namespace GRINS
           }
 
         // Check for convergence of error
-        std::cout << "Checking convergence" << std::endl;
+        std::cout << "==========================================================" << std::endl
+                  << "Checking convergence" << std::endl
+                  << "==========================================================" << std::endl;
         bool converged = this->check_for_convergence( error );
         
         if( converged )
           {
             // Break out of adaptive loop
-            std::cout << "Convergence detected!" << std::endl;
+            std::cout << "==========================================================" << std::endl
+                      << "Convergence detected!" << std::endl
+                      << "==========================================================" << std::endl;
             break;
           }
         else
           {
-            this->flag_elements_for_refinement( error );
-            _mesh_refinement->refine_and_coarsen_elements();
-    
-            // Dont forget to reinit the system after each adaptive refinement!
-            context.equation_system->reinit();
-          }
+            // Only bother refining if we're on the last step.
+            if( r_step < this->_max_refinement_steps -1 )
+              {
+                std::cout << "==========================================================" << std::endl
+                          << "Performing Mesh Refinement" << std::endl
+                          << "==========================================================" << std::endl;
 
-        // This output cannot be toggled in the input file.
-        std::cout << "Refinement step " << r_step+1 << "/" << this->_max_r_steps
-                  << ": refined mesh to " << mesh.n_active_elem() << " elements."
-                  << std::endl << std::endl;
+                this->flag_elements_for_refinement( error );
+                _mesh_refinement->refine_and_coarsen_elements();
+    
+                // Dont forget to reinit the system after each adaptive refinement!
+                context.equation_system->reinit();
+
+                // This output cannot be toggled in the input file.
+                std::cout << "==========================================================" << std::endl
+                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem() 
+                          << " active elements" << std::endl
+                          << "            " << std::setw(16) << context.system->n_active_dofs() 
+                          << " active dofs" << std::endl
+                          << "==========================================================" << std::endl;
+
+                context.system->assemble_qoi( libMesh::QoISet( *context.system ) );
+                const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(context.system->get_qoi());
+                my_qoi->output_qoi( std::cout );
+                std::cout << std::endl;
+              }
+          }
 
       } // r_step for-loop
 
