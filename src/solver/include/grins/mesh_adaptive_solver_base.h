@@ -64,7 +64,7 @@ namespace GRINS
                                  ELEM_FRACTION,
                                  MEAN_STD_DEV };
 
-    unsigned int _max_r_steps;
+    unsigned int _max_refinement_steps;
     bool _coarsen_by_parents;
     libMesh::Real _absolute_global_tolerance;
     unsigned int _nelem_target;
