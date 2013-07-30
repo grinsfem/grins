@@ -46,6 +46,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
 
+# src/error_estimation files
+libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_factory.C
+
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
@@ -110,6 +113,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_steady_solver.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_unsteady_solver.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/simulation_builder.C
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/solver_context.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/mesh_adaptive_solver_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/steady_mesh_adaptive_solver.C
 
 # src/utilities files
 libgrins_la_SOURCES += $(top_srcdir)/src/utilities/src/grins_version.C
@@ -138,9 +143,9 @@ includedir = $(prefix)/include/grins
 include_HEADERS =
 
 # src/bc_handling headers
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
-include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/inc_navier_stokes_bc_handling.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
 include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
@@ -160,6 +165,9 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+
+# src/error_estimation headers
+include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estimation_factory.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
@@ -233,6 +241,8 @@ include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_steady_solver.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_unsteady_solver.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/simulation_builder.h
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/solver_context.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/mesh_adaptive_solver_base.h
+include_HEADERS += $(top_srcdir)/src/solver/include/grins/steady_mesh_adaptive_solver.h
 
 
 # src/utilities headers

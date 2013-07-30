@@ -143,4 +143,53 @@ namespace GRINS
     return;
   }
 
+  void AverageNusseltNumber::side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& )
+  {
+    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+
+    for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
+	 id != _bc_ids.end(); id++ )
+      {
+	if( c.has_side_boundary_id( (*id) ) )
+	  {
+	    libMesh::FEBase* T_side_fe;
+	    c.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
+
+	    const std::vector<libMesh::Real> &JxW = T_side_fe->get_JxW();
+	    
+	    const std::vector<libMesh::Point>& normals = T_side_fe->get_normals();
+
+	    unsigned int n_qpoints = c.get_side_qrule().n_points();
+	    
+            const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
+
+            const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
+
+	    DenseSubVector<Number>& dQ_dT = *c.elem_qoi_subderivatives[0][_T_var];
+
+	    // Loop over quadrature points  
+	    
+	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
+	      {
+		// Get the solution value at the quadrature point
+		libMesh::Gradient grad_T = 0.0; 
+		c.side_gradient(this->_T_var, qp, grad_T);
+		
+		// Update the elemental increment dR for each qp
+		//qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
+
+                for( unsigned int i = 0; i != n_T_dofs; i++ )
+                  {
+                    dQ_dT(i) += _scaling*_k*T_gradphi[i][qp]*normals[qp]*JxW[qp];
+                  }
+
+	      } // quadrature loop
+
+	  } // end check on boundary id
+
+      }
+
+    return;
+  }
+
 } //namespace GRINS
