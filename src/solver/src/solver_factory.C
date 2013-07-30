@@ -50,19 +50,19 @@ namespace GRINS
 
     bool transient = input("unsteady-solver/transient", false );
 
-    Solver* solver;
+    std::tr1::shared_ptr<Solver> solver(NULL);
 
     if(transient && !mesh_adaptive)
       {
-	solver = new UnsteadySolver( input );
+        solver.reset( new UnsteadySolver(input) );
       }
     else if( !transient && !mesh_adaptive )
       {
-	solver = new SteadySolver( input );
+        solver.reset( new SteadySolver(input) );
       }
     else if( !transient && mesh_adaptive )
       {
-        solver = new SteadyMeshAdaptiveSolver( input );
+        solver.reset( new SteadyMeshAdaptiveSolver(input) );
       }
     else if( transient && mesh_adaptive )
       {
@@ -73,7 +73,7 @@ namespace GRINS
         std::cerr << "Invalid solver options!" << std::endl;
       }
 
-    return std::tr1::shared_ptr<Solver>(solver);
+    return solver;
   }
 
 } // namespace GRINS
