@@ -142,16 +142,6 @@ sfiles_DATA = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 includedir = $(prefix)/include/grins
 include_HEADERS =
 
-solver_INC   = $(solver_incdir)/grins/grins_solver.h \
-               $(solver_incdir)/grins/mesh_builder.h \
-               $(solver_incdir)/grins/simulation.h \
-               $(solver_incdir)/grins/solver_factory.h \
-               $(solver_incdir)/grins/grins_steady_solver.h \
-               $(solver_incdir)/grins/grins_unsteady_solver.h \
-               $(solver_incdir)/grins/grins_mesh_adaptive_solver.h \
-               $(solver_incdir)/grins/simulation_builder.h \
-               $(solver_incdir)/grins/solver_context.h
-
 # src/boundary_conditions headers
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_types.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/boundary_conditions.h
