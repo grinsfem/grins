@@ -79,7 +79,9 @@ namespace GRINS
         // Solve adjoint system
         if( _do_adjoint_solve )
           {
+            std::cout << "Solving adjiont problem." << std::endl;
             context.system->adjoint_solve();
+            context.system->set_adjoint_already_solved(true);
           }
 
         // At the moment output data is overwritten every mesh refinement step
@@ -101,6 +103,7 @@ namespace GRINS
         // Now we construct the data structures for the mesh refinement process 
         libMesh::ErrorVector error;
 
+        std::cout << "Estimating error" << std::endl;
         context.error_estimator->estimate_error( *context.system, error );
 
         // Plot error vector
@@ -110,11 +113,13 @@ namespace GRINS
           }
 
         // Check for convergence of error
+        std::cout << "Checking convergence" << std::endl;
         bool converged = this->check_for_convergence( error );
         
         if( converged )
           {
             // Break out of adaptive loop
+            std::cout << "Convergence detected!" << std::endl;
             break;
           }
         else
