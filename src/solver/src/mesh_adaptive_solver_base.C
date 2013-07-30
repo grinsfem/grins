@@ -21,12 +21,16 @@
 //
 //-----------------------------------------------------------------------el-
 
+// C++
+#include <numeric>
+
 // This class
 #include "grins/mesh_adaptive_solver_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/mesh_base.h"
+#include "libmesh/error_vector.h"
 
 namespace GRINS
 {
@@ -43,7 +47,8 @@ namespace GRINS
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
       _do_adjoint_solve(false),
-      _refinement_type(INVALID)
+      _refinement_type(INVALID),
+      _mesh_refinement(NULL)
   {
     this->set_refinement_type( input, _refinement_type );
 
@@ -75,40 +80,72 @@ namespace GRINS
   {
     std::string refinement_stategy = input("MeshAdaptivity/refinement_strategy", "elem_fraction" ); 
 
+    if( !input.have_variable("MeshAdaptivity/absolute_global_tolerance" ) )
+      {
+        std::cerr << "Error: Must specify absolute_global_tolerance for" << std::endl
+                  << "       adaptive refinement algorithms."
+                  << std::endl;
+        
+        libmesh_error();
+      }
+
     if( refinement_stategy == std::string("error_tolerance") )
       {
         refinement_type = ERROR_TOLERANCE;
+      }
 
-        if( !input.have_varaible("MeshAdaptivity/absolute_global_tolerance" ) )
+    else if( refinement_stategy == std::string("nelem_target") )
+      {
+        refinement_type = N_ELEM_TARGET;
+
+        if( !input.have_variable("MeshAdaptivity/nelem_target") )
           {
-            std::cerr << "Error: Must specify absolute_global_tolerance for" << std::endl
+            std::cerr << "Error: Must specify nelem_target for" << std::endl
                       << "       for error_tolerance refinement strategy."
                       << std::endl;
 
             libmesh_error();
           }
       }
-
-    else if( refinement_stategy == std::string("nelem_target") )
-      {
-
-      }
     
-    if( input.have_variable("MeshAdaptivity/nelem_target") )
+    else if( refinement_stategy == std::string("error_fraction") )
       {
-        refinement_type = N_ELEM_TARGET;
+        refinement_type = ERROR_FRACTION;
+      }
+
+    else if( refinement_stategy == std::string("elem_fraction") )
+      {
+        refinement_type = ELEM_FRACTION;
+      }
+
+    else if( refinement_stategy == std::string("mean_std_dev") )
+      {
+        refinement_type = MEAN_STD_DEV;
+      }
+
+    else
+      {
+        std::cerr << "Error: Invalid refinement strategy " << refinement_stategy << std::endl
+                  << "       Valid refinement strategy options are: absolute_global_tolerance" << std::endl
+                  << "                                              error_tolerance" << std::endl
+                  << "                                              nelem_target" << std::endl
+                  << "                                              error_fraction" << std::endl
+                  << "                                              elem_fraction" << std::endl
+                  << "                                              mean_std_dev" << std::endl;
+
+        libmesh_error();
       }
 
     return;
   }
 
-  bool MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input )
+  bool MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input ) const
   {
-    std::string error_estimator = input("MeshAdaptivity/estimator_type");
+    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
 
     bool do_adjoint_solve = false;
 
-    if( error_estimator.find("adjoint") != error_estimator.end() )
+    if( error_estimator.find("adjoint") != std::string::npos )
       {
         do_adjoint_solve = true;
       }
@@ -116,26 +153,57 @@ namespace GRINS
     return do_adjoint_solve;
   }
 
-  bool MeshAdaptiveSolverBase::check_for_convergence()
+  bool MeshAdaptiveSolverBase::check_for_convergence( const libMesh::ErrorVector& error ) const
   {
     bool converged = false;
 
+    // For now, we just check the sum
+    if( std::accumulate( error.begin(), error.end(), 0 ) <= _absolute_global_tolerance )
+      {
+        converged = true;
+      }
+
+    return converged;
+  }
+  
+  void MeshAdaptiveSolverBase::flag_elements_for_refinement( const libMesh::ErrorVector& error )
+  {
     switch(_refinement_type)
       {
       case(ERROR_TOLERANCE):
         {
-
+          _mesh_refinement->flag_elements_by_error_tolerance( error );
         }
         break;
 
       case(N_ELEM_TARGET):
         {
+          _mesh_refinement->flag_elements_by_nelem_target( error );
         }
         break;
         
+      case( ERROR_FRACTION ):
+        {
+          _mesh_refinement->flag_elements_by_error_fraction( error );
+        }
+        break;
+        
+      case( ELEM_FRACTION ):
+        {
+          _mesh_refinement->flag_elements_by_elem_fraction( error );
+        }
+        break;
+
+      case( MEAN_STD_DEV ):
+        {
+          _mesh_refinement->flag_elements_by_mean_stddev( error );
+        }
+        break;
+
       case(INVALID):
         {
-
+          std::cerr << "Error: Invalid refinement option!" << std::endl;
+          libmesh_error();
         }
         break;
 
@@ -146,25 +214,8 @@ namespace GRINS
         }
 
       } // switch(_refinement_type)
-    
 
-    if( this->_absolute_global_tolerance >= 0. && this->_nelem_target == 0.)
-          {
-            _mesh_refinement->flag_elements_by_error_tolerance( error );
-          }
-        // Adaptively refine based on reaching a target number of elements
-        else
-          {
-            if( mesh.n_active_elem() >= this->_nelem_target )
-              {
-                std::cout<<"We reached the target number of elements."<<std::endl <<std::endl;
-                break;
-              }
-            
-            _mesh_refinement->flag_elements_by_nelem_target( error );
-          }
-
-    return converged;
+    return;
   }
 
 } // end namespace GRINS

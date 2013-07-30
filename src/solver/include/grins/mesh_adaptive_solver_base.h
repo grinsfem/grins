@@ -42,6 +42,7 @@ class GetPot;
 namespace libMesh
 {
   class MeshBase;
+  class ErrorVector;
 }
 
 namespace GRINS
@@ -85,9 +86,11 @@ namespace GRINS
     void set_refinement_type( const GetPot& input,
                               RefinementFlaggingType& refinement_type );
 
-    bool check_for_adjoint_solve( const GetPot& input );
+    bool check_for_adjoint_solve( const GetPot& input ) const;
 
-    bool check_for_convergence();
+    bool check_for_convergence( const libMesh::ErrorVector& error ) const;
+
+    void flag_elements_for_refinement( const libMesh::ErrorVector& error );
 
   private:
 
