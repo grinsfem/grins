@@ -29,6 +29,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/patch_recovery_error_estimator.h"
 #include "libmesh/qoi_set.h"
+#include "libmesh/kelly_error_estimator.h"
 
 namespace GRINS
 {
@@ -77,9 +78,19 @@ namespace GRINS
         }
         break;
 
-      case(ADJOINT_REFINEMENT):
       case(KELLY):
+        {
+          error_estimator.reset( new libMesh::KellyErrorEstimator );
+        }
+        break;
+
       case(PATCH_RECOVERY):
+        {
+          error_estimator.reset( new libMesh::PatchRecoveryErrorEstimator );
+        }
+        break;
+
+      case(ADJOINT_REFINEMENT):
       case(WEIGHTED_PATCH_RECOVERY):
       case(UNIFORM_REFINEMENT):
         {
