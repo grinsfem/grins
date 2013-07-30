@@ -142,6 +142,14 @@ sfiles_DATA = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 includedir = $(prefix)/include/grins
 include_HEADERS =
 
+# src/bc_handing headers
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/bc_handling_base.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/heat_transfer_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/inc_navier_stokes_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
+include_HEADERS += $(top_srcdir)/src/bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
+
 # src/boundary_conditions headers
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/bc_types.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/boundary_conditions.h
