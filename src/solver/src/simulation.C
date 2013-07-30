@@ -52,7 +52,8 @@ namespace GRINS
        _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
        _print_qoi( input("screen-options/print_qoi", false ) ),
        _output_vis( input("vis-options/output_vis", false ) ),
-       _output_residual( input( "vis-options/output_residual", false ) )
+       _output_residual( input( "vis-options/output_residual", false ) ),
+       _error_estimator(NULL)
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
@@ -89,6 +90,9 @@ namespace GRINS
 	
 	_multiphysics_system->attach_qoi( &(*(this->_qoi)) );
       }
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
     this->check_for_restart( input );
 
