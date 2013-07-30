@@ -20,52 +20,34 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
-#ifndef GRINS_SOLVER_CONTEXT_H
-#define GRINS_SOLVER_CONTEXT_H
-
-#include "boost/tr1/memory.hpp"
-
-// libMesh
-#include "libmesh/equation_systems.h"
+#ifndef GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
+#define GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
 
 // GRINS
-#include "grins/visualization.h"
-#include "grins/postprocessed_quantities.h"
+#include "grins/mesh_adaptive_solver_base.h"
 
 namespace GRINS
 {
-  // Forward declarations
+  // Forward declartions
+  class SolverContext;
   class MultiphysicsSystem;
 
-  //! Simple class to hold objects passed to Solver::solve
-  /*! Allows some flexibility for adding objects needed to pass to the Solver::solve
-      method so that the solver can still be agnostic to creation etc. of those objects,
-      but can operate on them. 
-   */
-  class SolverContext
+  class SteadyMeshAdaptiveSolver : public MeshAdaptiveSolverBase
   {
   public:
-    
-    SolverContext();
-    ~SolverContext();
 
-    GRINS::MultiphysicsSystem* system;
-    std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
-    std::tr1::shared_ptr<GRINS::Visualization> vis;
-    bool output_vis;
-    bool output_residual;
+    SteadyMeshAdaptiveSolver( const GetPot& input );
 
-    std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
+    virtual ~SteadyMeshAdaptiveSolver();
 
-    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
+    virtual void solve(  SolverContext& context );
+
+  protected:
+
+    virtual void init_time_solver( MultiphysicsSystem* system );
 
   };
 
 } // end namespace GRINS
-#endif // GRINS_SOLVER_CONTEXT_H
+#endif // GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
