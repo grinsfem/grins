@@ -27,6 +27,7 @@
 // GRINS
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
+#include "grins/steady_mesh_adaptive_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -51,13 +52,25 @@ namespace GRINS
 
     Solver* solver;
 
-    if(transient)
+    if(transient && !mesh_adaptive)
       {
 	solver = new UnsteadySolver( input );
       }
-    else
+    else if( !transient && !mesh_adaptive )
       {
 	solver = new SteadySolver( input );
+      }
+    else if( !transient && mesh_adaptive )
+      {
+        solver = new SteadyMeshAdaptiveSolver( input );
+      }
+    else if( transient && mesh_adaptive )
+      {
+        libmesh_not_implemented();
+      }
+    else
+      {
+        std::cerr << "Invalid solver options!" << std::endl;
       }
 
     return std::tr1::shared_ptr<Solver>(solver);
