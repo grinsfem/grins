@@ -157,8 +157,21 @@ namespace GRINS
   {
     bool converged = false;
 
-    // For now, we just check the sum
-    if( std::accumulate( error.begin(), error.end(), 0 ) <= _absolute_global_tolerance )
+    libMesh::Real error_estimate = 0.0;
+
+    if( _do_adjoint_solve )
+      {
+        error_estimate = std::accumulate( error.begin(), error.end(), 0.0 );
+      }
+    else
+      {
+        error_estimate = error.l2_norm();
+      }
+
+    std::cout << "Error estimate = " << error_estimate << std::endl;
+
+    // For now, we just check the norm
+    if( error_estimate <= _absolute_global_tolerance )
       {
         converged = true;
       }
