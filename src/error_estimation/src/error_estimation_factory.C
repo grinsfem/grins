@@ -68,7 +68,7 @@ namespace GRINS
           libMesh::PatchRecoveryErrorEstimator *p2 = new libMesh::PatchRecoveryErrorEstimator;
           adjoint_error_estimator->dual_error_estimator().reset( p2 );   
       
-          bool patch_reuse = input( "MeshAdaptivity/patch_reuse", true );
+          bool patch_reuse = input( "MeshAdaptivity/patch_reuse", false );
           adjoint_error_estimator->primal_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
           p1->set_patch_reuse( patch_reuse );
       
