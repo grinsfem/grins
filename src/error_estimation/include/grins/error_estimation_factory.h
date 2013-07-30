@@ -43,8 +43,8 @@ namespace GRINS
 
     virtual ~ErrorEstimatorFactory();
 
-    virtual std::tr1::shared_ptr<libMesh::ErrorEstimator> build( const GetPot& input,
-								 std::tr1::shared_ptr<QoIBase> qoi_base );
+    virtual std::tr1::shared_ptr<libMesh::ErrorEstimator> build( const GetPot& input, 
+                                                                 const libMesh::QoISet& qoi_set );
 
   protected:
 

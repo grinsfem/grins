@@ -65,7 +65,7 @@ namespace GRINS
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > build_postprocessing( const GetPot& input );
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-									 std::tr1::shared_ptr<QoIBase> qoi );
+                                                                         const libMesh::QoISet& qoi_set );
 
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 
@@ -81,7 +81,7 @@ namespace GRINS
 
     void attach_postprocessing_factory( std::tr1::shared_ptr<PostprocessingFactory> postprocessing_factory );
 
-  void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
+    void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
 
   protected:
     

@@ -43,15 +43,9 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input,
-                                                                              std::tr1::shared_ptr<QoIBase> qoi_base )
+  std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input, 
+                                                                              const libMesh::QoISet& qoi_set )
   {
-    // check if qoi_base is an empty pointer (user set no QoI), in that case return empty pointer.
-    if( qoi_base == std::tr1::shared_ptr<QoIBase>() )
-      {
-        return std::tr1::shared_ptr<libMesh::ErrorEstimator>();
-      }
-
     std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
 
     ErrorEstimatorEnum estimator_enum = this->string_to_enum( estimator_type );
@@ -66,6 +60,8 @@ namespace GRINS
     
           libMesh::AdjointResidualErrorEstimator* adjoint_error_estimator = libmesh_cast_ptr<libMesh::AdjointResidualErrorEstimator*>( error_estimator.get() );
           
+          adjoint_error_estimator->qoi_set() = qoi_set;
+
           libMesh::PatchRecoveryErrorEstimator *p1 = new libMesh::PatchRecoveryErrorEstimator;
           adjoint_error_estimator->primal_error_estimator().reset( p1 );
       
