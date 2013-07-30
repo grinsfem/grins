@@ -73,27 +73,25 @@ namespace GRINS
   void MeshAdaptiveSolverBase::set_refinement_type( const GetPot& input,
                                                     MeshAdaptiveSolverBase::RefinementFlaggingType& refinement_type )
   {
-    // Check that either nelem_target or global tolerance was set
-    if( !input.have_variable("MeshAdaptivity/absolute_global_tolerance") &&
-        !input.have_variable("MeshAdaptivity/nelem_target") )
-      {
-        std::cerr << "Error: Must specify either global tolerance or element number target" << std::endl
-                  << "       for mesh adaptive solver." << std::endl;
-        libmesh_error();
-      }
+    std::string refinement_stategy = input("MeshAdaptivity/refinement_strategy", "elem_fraction" ); 
 
-    // Make sure *both* weren't set
-    if( input.have_variable("MeshAdaptivity/absolute_global_tolerance") &&
-        input.have_variable("MeshAdaptivity/nelem_target") )
-      {
-        std::cerr << "Error: Can only specify either global tolerance or element number target" << std::endl
-                  << "       for mesh adaptive solver." << std::endl;
-        libmesh_error();
-      }
-
-    if( input.have_variable("MeshAdaptivity/absolute_global_tolerance") )
+    if( refinement_stategy == std::string("error_tolerance") )
       {
         refinement_type = ERROR_TOLERANCE;
+
+        if( !input.have_varaible("MeshAdaptivity/absolute_global_tolerance" ) )
+          {
+            std::cerr << "Error: Must specify absolute_global_tolerance for" << std::endl
+                      << "       for error_tolerance refinement strategy."
+                      << std::endl;
+
+            libmesh_error();
+          }
+      }
+
+    else if( refinement_stategy == std::string("nelem_target") )
+      {
+
       }
     
     if( input.have_variable("MeshAdaptivity/nelem_target") )

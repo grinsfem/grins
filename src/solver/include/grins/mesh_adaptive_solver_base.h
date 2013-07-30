@@ -58,7 +58,10 @@ namespace GRINS
 
     enum RefinementFlaggingType{ INVALID = 0,
                                  ERROR_TOLERANCE,
-                                 N_ELEM_TARGET };
+                                 N_ELEM_TARGET,
+                                 ERROR_FRACTION,
+                                 ELEM_FRACTION,
+                                 MEAN_STD_DEV };
 
     unsigned int _max_r_steps;
     bool _coarsen_by_parents;
