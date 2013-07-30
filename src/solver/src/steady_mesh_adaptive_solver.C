@@ -83,13 +83,13 @@ namespace GRINS
           }
 
         // At the moment output data is overwritten every mesh refinement step
-        if( output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
+        if( context.output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
           {
             libMesh::NumericVector<Number>& dual_solution = context.system->get_adjoint_solution(0);
 
             // Swap primal and dual to write out dual solution
             primal_solution.swap( dual_solution );          
-            vis->output( equation_system );
+            context.vis->output( context.equation_system );
             primal_solution.swap( dual_solution );          
           }
 
@@ -110,18 +110,20 @@ namespace GRINS
           }
 
         // Check for convergence of error
-        bool converged = this->check_for_convergence();
+        bool converged = this->check_for_convergence( error );
         
         if( converged )
           {
+            // Break out of adaptive loop
             break;
           }
         else
           {
+            this->flag_elements_for_refinement( error );
             _mesh_refinement->refine_and_coarsen_elements();
     
             // Dont forget to reinit the system after each adaptive refinement!
-            equation_system->reinit();
+            context.equation_system->reinit();
           }
 
         // This output cannot be toggled in the input file.
