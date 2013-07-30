@@ -91,9 +91,9 @@ namespace GRINS
         }
       break;
 
+      // wat?!
       default:
         {
-          std::cerr << "Error: Invalid error estimator type " << estimator_type << std::endl;
           libmesh_error();
         }
 
