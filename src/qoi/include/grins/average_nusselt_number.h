@@ -47,6 +47,8 @@ namespace GRINS
 
     virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
 
+    virtual void side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+
     virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
   protected:
