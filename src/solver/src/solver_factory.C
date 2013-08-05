@@ -50,7 +50,7 @@ namespace GRINS
 
     bool transient = input("unsteady-solver/transient", false );
 
-    std::tr1::shared_ptr<Solver> solver(NULL);
+    std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
 
     if(transient && !mesh_adaptive)
       {

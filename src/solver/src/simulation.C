@@ -53,7 +53,7 @@ namespace GRINS
        _print_qoi( input("screen-options/print_qoi", false ) ),
        _output_vis( input("vis-options/output_vis", false ) ),
        _output_residual( input( "vis-options/output_residual", false ) ),
-       _error_estimator(NULL)
+       _error_estimator() // effectively NULL
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
