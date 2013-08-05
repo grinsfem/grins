@@ -47,7 +47,7 @@ namespace GRINS
   std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input, 
                                                                               const libMesh::QoISet& qoi_set )
   {
-    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
+    std::string estimator_type = input("MeshAdaptivity/estimator_type", "patch_recovery");
 
     ErrorEstimatorEnum estimator_enum = this->string_to_enum( estimator_type );
 
