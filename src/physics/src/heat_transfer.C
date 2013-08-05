@@ -129,18 +129,16 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number u, v, w;
+	libMesh::Number u, v;
 	u = context.interior_value(_u_var, qp);
 	v = context.interior_value(_v_var, qp);
-	if (_dim == 3)
-	  w = context.interior_value(_w_var, qp);
 
 	libMesh::Gradient grad_T;
 	grad_T = context.interior_gradient(_T_var, qp);
 
 	libMesh::NumberVectorValue U (u,v);
 	if (_dim == 3)
-	  U(2) = w;
+	  U(2) = context.interior_value(_w_var, qp);
 
         const libMesh::Number r = u_qpoint[qp](0);
 
