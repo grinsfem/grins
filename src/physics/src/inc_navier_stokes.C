@@ -342,12 +342,6 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::Number u;
-        if( _is_axisymmetric )
-          { 
-            u = context.interior_value( _u_var, qp );
-          }
-        
 	// Compute the velocity gradient at the old Newton iterate.
 	libMesh::Gradient grad_u, grad_v, grad_w;
 	grad_u = context.interior_gradient(_u_var, qp);
@@ -365,6 +359,7 @@ namespace GRINS
 
         if( _is_axisymmetric )
           {
+            libMesh::Number u = context.interior_value( _u_var, qp );
             divU += u/r;
             jac *= r;
           }

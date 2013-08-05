@@ -182,30 +182,27 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w, T;
+	libMesh::Number u, v, T;
 	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
 	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-	if (this->_dim == 3)
-	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
 
 	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
 	libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
 	libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
 
-	libMesh::Gradient grad_w;
-	if (this->_dim == 3)
-	  grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
-
 	libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
-	  U(2) = w;
+	  U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
 
 	libMesh::Number divU = grad_u(0) + grad_v(1);
 	if (this->_dim == 3)
-	  divU += grad_w(2);
+          {
+	    libMesh::Gradient grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
+	    divU += grad_w(2);
+          }
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
@@ -250,11 +247,9 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w, p, p0, T;
+	libMesh::Number u, v, p, p0, T;
 	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
 	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-	if (this->_dim == 3)
-	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
 
 	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 	p = cache.get_cached_values(Cache::PRESSURE)[qp];
@@ -279,7 +274,7 @@ namespace GRINS
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
-	  U(2) = w;
+	  U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
 
 	libMesh::Number divU = grad_u(0) + grad_v(1);
 	if (this->_dim == 3)
@@ -404,12 +399,9 @@ namespace GRINS
     unsigned int n_qpoints = context.element_qrule->n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w, T, p0;
+	libMesh::Number u, v, T, p0;
 	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
 	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-	if (this->_dim == 3)
-	  w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
-
 	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 	p0 = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
 
@@ -417,7 +409,7 @@ namespace GRINS
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
-	  U(2) = w;
+	  U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
 
 	libMesh::Number k = this->_k(T);
 	libMesh::Number cp = this->_cp(T);

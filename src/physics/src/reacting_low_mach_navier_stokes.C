@@ -174,17 +174,15 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number>& Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
-    libMesh::Number u, v, w, T;
+    libMesh::Number u, v, T;
     u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
     v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-    if (this->_dim == 3)
-      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
     
     T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
     libMesh::NumberVectorValue U(u,v);
     if (this->_dim == 3)
-      U(2) = w;
+      U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
 
     libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
     libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
