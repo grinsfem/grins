@@ -324,12 +324,15 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
 AM_CPPFLAGS += $(GRVY_CFLAGS)
 
+AM_LDFLAGS =
+
 #----------------
 # Cantera support
 #----------------
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
-   libgrins_la_LIBADD  += $(CANTERA_LDFLAGS)
+   AM_LDFLAGS += $(CANTERA_LDFLAGS)
+   libgrins_la_LIBADD  += $(CANTERA_LIBS)
 endif
 
 #----------------
@@ -345,7 +348,7 @@ endif
 #-------------
 if MASA_ENABLED
   AM_CPPFLAGS += $(MASA_CXXFLAGS)
-  AM_LDFLAGS  = $(MASA_LIBS)
+  libgrins_la_LIBADD += $(MASA_LIBS)
 endif
 
 #--------------

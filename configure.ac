@@ -193,36 +193,39 @@ if test "$enable_cantera" != no; then
 
    ac_cantera_save_CPPFLAGS="$CPPFLAGS"
    ac_cantera_save_LDFLAGS="$LDFLAGS"
+   ac_cantera_save_LIBS="$LIBS"
 
    CANTERA_PREFIX=$with_cantera
 
    CPPFLAGS="-I$CANTERA_PREFIX/include"
    # v2.0.x with scons
-   LDFLAGS="-L$CANTERA_PREFIX/lib -lcantera_shared"
+   LDFLAGS="-L$CANTERA_PREFIX/lib"
+   LIBS="-lcantera_shared"
    
    if (test -f $CANTERA_PREFIX/lib/libcvode_shared*); then
-      LDFLAGS="$LDFLAGS -lcvode_shared"
+      LIBS="$LIBS -lcvode_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctmath_shared*); then
-      LDFLAGS="$LDFLAGS -lctmath_shared"
+      LIBS="$LIBS -lctmath_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctf2c_shared*); then
-      LDFLAGS="$LDFLAGS -lctf2c_shared"
+      LIBS="$LIBS -lctf2c_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libexecstream_shared*); then
-      LDFLAGS="$LDFLAGS -lexecstream_shared"
+      LIBS="$LIBS -lexecstream_shared"
    fi
 
    CANTERA_CPPFLAGS="${CPPFLAGS}"
    CANTERA_LDFLAGS="${LDFLAGS}"
+   CANTERA_LIBS="${LIBS}"
 
    dnl We don't want these in the final link line since we'll already have BLAS
    dnl from PETSC etc., but these are needed for the test to pass.
    if (test -f $CANTERA_PREFIX/lib/libctblas_shared*); then
-      LDFLAGS="$LDFLAGS -lctblas_shared"
+      LIBS="$LIBS -lctblas_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctlapack_shared*); then
-      LDFLAGS="$LDFLAGS -lctlapack_shared"
+      LIBS="$LIBS -lctlapack_shared"
    fi
 
    #--------------------------------------------------------------
@@ -241,17 +244,20 @@ if test "$enable_cantera" != no; then
 
    CPPFLAGS="$ac_cantera_save_CPPFLAGS"
    LDFLAGS="$ac_cantera_save_LDFLAGS"
+   LIBS="$ac_cantera_save_LIBS"
 
    if test "x${found_cantera_library}" = "xyes" ; then
       HAVE_CANTERA=1
       AC_DEFINE(HAVE_CANTERA, 1, [Flag indicating support for Cantera chemistry])
       AC_SUBST(CANTERA_CPPFLAGS)
       AC_SUBST(CANTERA_LDFLAGS)
+      AC_SUBST(CANTERA_LIBS)
       AC_SUBST(CANTERA_PREFIX)
    else
       AC_MSG_NOTICE([Disabling optional Cantera chemistry support])
       CANTERA_CPPFLAGS=""
       CANTERA_LDFLAGS=""
+      CANTERA_LIBS=""
    fi
 fi
 

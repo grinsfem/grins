@@ -38,8 +38,10 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
 AM_CPPFLAGS += $(GRVY_CFLAGS)
 
+LIBS =
+LIBS += $(LIBGRINS_LIBS)
+
 AM_LDFLAGS = 
-AM_LDFLAGS += $(LIBGRINS_LIBS)
 
 #----------------
 # Cantera support
@@ -47,6 +49,7 @@ AM_LDFLAGS += $(LIBGRINS_LIBS)
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
    AM_LDFLAGS += $(CANTERA_LDFLAGS)
+   LIBS += $(CANTERA_LIBS)
 endif
 
 #----------------
@@ -54,7 +57,7 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
+   LIBS += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #--------------
@@ -62,7 +65,7 @@ endif
 #--------------
 if MASA_ENABLED
   AM_CPPFLAGS += $(MASA_CXXFLAGS)
-  AM_LDFLAGS += $(MASA_LIBS)
+  LIBS += $(MASA_LIBS)
 endif
 
 # Sources for these tests

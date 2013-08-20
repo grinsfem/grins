@@ -23,6 +23,7 @@ AM_LDFLAGS =
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
    AM_LDFLAGS  += $(CANTERA_LDFLAGS)
+   LIBGRINS_LIBS += $(CANTERA_LIBS)
 endif
 
 #----------------
@@ -30,7 +31,7 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
+   LIBGRINS_LIBS += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #=======================================================================
