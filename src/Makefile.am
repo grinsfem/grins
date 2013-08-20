@@ -101,6 +101,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_joule_heating.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/electrostatics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/magnetostatics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/lorentz_force.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/joule_heating.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_instantiation.C
 
 # src/properties files
@@ -251,6 +252,7 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_joule_heating.
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/lorentz_force.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/joule_heating.h
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/cantera_chemistry.h
