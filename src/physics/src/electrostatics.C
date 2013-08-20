@@ -185,7 +185,7 @@ namespace GRINS
 
   void Electrostatics::compute_element_cache( const libMesh::FEMContext& context, 
 					      const std::vector<libMesh::Point>& points,
-					      CachedValues& cache ) const
+					      CachedValues& cache )
   {
     // Electric Field
     if( cache.is_active(Cache::ELECTRIC_FIELD_X) )

@@ -1,0 +1,17 @@
+aclocal.m4
+autom4te.cache
+build-aux
+configure
+grins_config.h.tmp.in
+grins_config.h.tmp.in~
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+Makefile.in
+doxygen/Makefile.in
+examples/Makefile.in
+src/Makefile.in
+test/Makefile.in
+

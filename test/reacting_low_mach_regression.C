@@ -71,19 +71,28 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  // If we have Cantera, always run
-#ifdef GRINS_HAVE_CANTERA
-  return_flag = run(argc,argv,libMesh_inputfile);
-#else
-  if( std::string( libMesh_inputfile("Physics/ReactingLowMachNavierStokes/chemistry_library", "DIE!") ) == std::string("cantera") )
+  std::string chem_lib = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/thermochemistry_library", "DIE!");
+
+  if( chem_lib == std::string("cantera") )
     {
+#ifdef GRINS_HAVE_CANTERA
+      return_flag = run(argc,argv,libMesh_inputfile);
+#else
       return_flag = 77;
+#endif
+    }
+  else if( chem_lib == std::string("antioch") )
+    {
+#ifdef GRINS_HAVE_ANTIOCH
+      return_flag = run(argc,argv,libMesh_inputfile);
+#else
+      return_flag = 77;
+#endif
     }
   else
     {
-      return_flag = run(argc,argv,libMesh_inputfile);
+      return_flag = 1;
     }
-#endif
 
   return return_flag;
 }

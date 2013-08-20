@@ -12,24 +12,22 @@ check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += chem_mixture
-check_PROGRAMS += cantera_chemistry_unit
-check_PROGRAMS += cea_thermo_test
+check_PROGRAMS += cantera_mixture_unit
 check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_transport_regression
-check_PROGRAMS += ideal_gas_mixture_cantera_regression
+check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += arrhenius_rate_test
-check_PROGRAMS += grins_kinetics_regression
 check_PROGRAMS += catalytic_wall_unit
 check_PROGRAMS += hartmann_flow_exact
+check_PROGRAMS += antioch_mixture_unit
+check_PROGRAMS += antioch_kinetics_regression
+check_PROGRAMS += antioch_evaluator_regression
+check_PROGRAMS += antioch_wilke_evaluator_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
@@ -52,6 +50,14 @@ if CANTERA_ENABLED
    AM_LDFLAGS += $(CANTERA_LDFLAGS)
 endif
 
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
+endif
+
 #--------------
 # MASA support
 #--------------
@@ -72,17 +78,17 @@ gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
 vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
-chem_mixture_SOURCES = $(top_srcdir)/test/chem_mixture.C
-cantera_chemistry_unit_SOURCES = $(top_srcdir)/test/cantera_chemistry_unit.C
-cea_thermo_test_SOURCES = $(top_srcdir)/test/cea_thermo_test.C
+cantera_mixture_unit_SOURCES = $(top_srcdir)/test/cantera_mixture_unit.C
 cantera_chem_thermo_test_SOURCES = $(top_srcdir)/test/cantera_chem_thermo_test.C
 cantera_transport_regression_SOURCES = $(top_srcdir)/test/cantera_transport_regression.C
-ideal_gas_mixture_cantera_regression_SOURCES = $(top_srcdir)/test/ideal_gas_mixture_cantera_regression.C
+cantera_evaluator_regression_SOURCES = $(top_srcdir)/test/cantera_evaluator_regression.C
 reacting_low_mach_regression_SOURCES = $(top_srcdir)/test/reacting_low_mach_regression.C
-arrhenius_rate_test_SOURCES = $(top_srcdir)/test/arrhenius_rate_test.C
-grins_kinetics_regression_SOURCES = $(top_srcdir)/test/grins_kinetics_regression.C
 catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 hartmann_flow_exact_SOURCES = $(top_srcdir)/test/hartmann_flow_exact.C
+antioch_mixture_unit_SOURCES = $(top_srcdir)/test/antioch_mixture_unit.C
+antioch_kinetics_regression_SOURCES = $(top_srcdir)/test/antioch_kinetics_regression.C
+antioch_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_evaluator_regression.C
+antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_evaluator_regression.C
 
 # List of source files for license stamping
 STAMPED_FILES = 
@@ -97,29 +103,30 @@ STAMPED_FILES += $(gaussian_profiles_SOURCES)
 STAMPED_FILES += $(vorticity_qoi_SOURCES)
 STAMPED_FILES += $(low_mach_cavity_benchmark_regression_SOURCES)
 STAMPED_FILES += $(grins_flow_regression_SOURCES)
-STAMPED_FILES += $(chem_mixture_SOURCES)
-STAMPED_FILES += $(cantera_chemistry_unit_SOURCES)
-STAMPED_FILES += $(cea_thermo_test_SOURCES)
+STAMPED_FILES += $(cantera_mixture_unit_SOURCES)
 STAMPED_FILES += $(cantera_chem_thermo_test_SOURCES)
 STAMPED_FILES += $(cantera_transport_regression_SOURCES)
-STAMPED_FILES += $(ideal_gas_mixture_cantera_regression_SOURCES)
+STAMPED_FILES += $(cantera_evaluator_regression_SOURCES)
 STAMPED_FILES += $(reacting_low_mach_regression_SOURCES)
-STAMPED_FILES += $(arrhenius_rate_test_SOURCES)
 STAMPED_FILES += $(grins_kinetics_regression_SOURCES)
 STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
+STAMPED_FILES += $(antioch_mixture_unit_SOURCES)
+STAMPED_FILES += $(antioch_kinetics_regression_SOURCES)
+STAMPED_FILES += $(antioch_evaluator_regression_SOURCES)
+STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
 
 #Define tests to actually be run
 TESTS =
 TESTS += gaussian_profiles
-TESTS += chem_mixture
-TESTS += cantera_chemistry_unit.sh
-TESTS += cea_thermo_test
-TESTS += catalytic_wall_unit
+TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_regression.sh
-TESTS += ideal_gas_mixture_cantera_regression.sh
-TESTS += arrhenius_rate_test
-TESTS += grins_kinetics_regression.sh
+TESTS += cantera_evaluator_regression.sh
+TESTS += catalytic_wall_unit_cantera.sh
+TESTS += antioch_mixture_unit.sh
+TESTS += antioch_kinetics_regression.sh
+TESTS += antioch_evaluator_regression.sh
+TESTS += antioch_wilke_evaluator_regression.sh
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
@@ -134,11 +141,18 @@ TESTS += test_vorticity_qoi.sh
 TESTS += low_mach_cavity_benchmark_regression.sh
 TESTS += backward_facing_step_regression.sh
 TESTS += coupled_stokes_ns.sh
-TESTS += reacting_low_mach_cantera_regression.sh
-TESTS += reacting_low_mach_grins_kinetics_regression.sh
-TESTS += reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh
 TESTS += magnetostatics_regression.sh
 TESTS += hartmann_flow_exact.sh
+
+TESTS += reacting_low_mach_cantera_regression.sh
+XFAIL_TESTS = reacting_low_mach_cantera_regression.sh
+
+TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
+TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
+TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
 
 shellfiles_src  = test_ns_couette_flow_2d_x.sh
 shellfiles_src += test_ns_couette_flow_2d_y.sh
@@ -153,12 +167,20 @@ shellfiles_src += test_vorticity_qoi.sh
 shellfiles_src += low_mach_cavity_benchmark_regression.sh
 shellfiles_src += backward_facing_step_regression.sh
 shellfiles_src += coupled_stokes_ns.sh
-shellfiles_src += cantera_chem_thermo_test.sh
 shellfiles_src += reacting_low_mach_cantera_regression.sh
+shellfiles_src += cantera_mixture_unit.sh
+shellfiles_src += cantera_chem_thermo_test.sh
 shellfiles_src += cantera_transport_regression.sh
 shellfiles_src += cantera_chemistry_unit.sh
 shellfiles_src += ideal_gas_mixture_cantera_regression.sh
 shellfiles_src += magnetostatics_regression.sh
+shellfiles_src += cantera_evaluator_regression.sh
+shellfiles_src += antioch_mixture_unit.sh
+shellfiles_src += antioch_kinetics_unit.sh
+shellfiles_src += antioch_evaluator_unit.sh
+shellfiles_src += antioch_wilke_evaluator_unit.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids

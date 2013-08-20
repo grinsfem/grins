@@ -203,7 +203,7 @@ namespace GRINS
 
   void LorentzForce::compute_element_cache( const libMesh::FEMContext& context, 
 					    const std::vector<libMesh::Point>& points,
-					    CachedValues& cache ) const
+					    CachedValues& cache )
   {
     // Lorentz Force
     if( cache.is_active(Cache::LORENTZ_FORCE_X) )

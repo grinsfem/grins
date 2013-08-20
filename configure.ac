@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.1,yes)
+AX_PATH_LIBMESH_NEW(0.9.2,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
@@ -84,6 +84,27 @@ fi
 
 dnl -Wall warnings, -Wall the time.
 AX_CXXFLAGS_WARN_ALL
+
+dnl--------------------------
+dnl Even if no dependency needed it,
+dnl C++11 makes our asserts nicer,
+dnl so let's try and enable it.
+dnl--------------------------
+AC_ARG_ENABLE(cxx11,
+              AC_HELP_STRING([--enable-cxx11],
+                             [build with C++11 support]),
+              [case "${enableval}" in
+                yes)  enablecxx11=yes ;;
+                 no)  enablecxx11=no ;;
+                  *)  AC_MSG_ERROR(bad value ${enableval} for --enable-cxx11) ;;
+               esac],
+               [enablecxx11=optional])
+
+if (test x$enablecxx11 = xyes); then
+  AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
+elif (test x$enablecxx11 = xoptional); then
+  AX_CXX_COMPILE_STDCXX_11(noext, optional)
+fi
 
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
@@ -237,6 +258,9 @@ fi
 AC_SUBST(HAVE_CANTERA)
 AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
+
+AX_PATH_ANTIOCH(0.0.5,no)
+
  
 dnl-------------------
 dnl Check for TRILINOS
@@ -315,17 +339,37 @@ AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
 AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh,             [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
-AC_CONFIG_FILES(test/grins_kinetics_regression.sh,	                  [chmod +x test/grins_kinetics_regression.sh])
-AC_CONFIG_FILES(test/reacting_low_mach_grins_kinetics_regression.sh,      [chmod +x test/reacting_low_mach_grins_kinetics_regression.sh])
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_grins_kinetics_regression.in)
-AC_CONFIG_FILES(test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh, [chmod +x test/reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh])
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_catalytic_wall_grins_kinetics_regression.in)
-AC_CONFIG_FILES(test/cantera_chemistry_unit.sh,                           [chmod +x test/cantera_chemistry_unit.sh])
+AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
 AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
-AC_CONFIG_FILES(test/ideal_gas_mixture_cantera_regression.sh,             [chmod +x test/ideal_gas_mixture_cantera_regression.sh])
 AC_CONFIG_FILES(test/magnetostatics_regression.sh,                        [chmod +x test/magnetostatics_regression.sh])
 AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                              [chmod +x test/hartmann_flow_exact.sh])
+AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
+AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
+AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
+AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
+AC_CONFIG_FILES(test/input_files/antioch.in)
+
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_constant_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_constant_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_prandtl_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

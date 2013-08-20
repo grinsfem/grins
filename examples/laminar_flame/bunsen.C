@@ -38,7 +38,6 @@
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
 #include "grins/physics_factory.h"
-#include "grins/cantera_singleton.h"
 #include "grins/bc_factory.h"
 #include "grins/physics_factory.h"
 
@@ -152,7 +151,7 @@ int main(int argc, char* argv[])
       p0 = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/p0", 1.0e5);
 
 #ifdef GRINS_HAVE_CANTERA
-      Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance(libMesh_inputfile);
+      //Cantera::IdealGasMix& cantera = GRINS::CanteraSingleton::cantera_instance(libMesh_inputfile);
 #endif
 
       libMesh::Real& w_H2 = params.set<libMesh::Real>( "w_H2" );

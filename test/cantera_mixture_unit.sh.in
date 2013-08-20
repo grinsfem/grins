@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/cantera_mixture_unit"
+
+INPUT="@top_builddir@/test/input_files/cantera_chem_thermo.in"
+
+$PROG $INPUT $PETSC_OPTIONS 

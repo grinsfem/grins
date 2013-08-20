@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/solver_factory.h"
@@ -32,13 +27,13 @@
 // GRINS
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
+#include "grins/steady_mesh_adaptive_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-
   SolverFactory::SolverFactory()
   {
     return;
@@ -51,20 +46,34 @@ namespace GRINS
 
   std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
   {
+    bool mesh_adaptive = input("MeshAdaptivity/mesh_adaptive", false );
+
     bool transient = input("unsteady-solver/transient", false );
 
-    Solver* solver;
+    std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
 
-    if(transient)
+    if(transient && !mesh_adaptive)
       {
-	solver = new UnsteadySolver( input );
+        solver.reset( new UnsteadySolver(input) );
+      }
+    else if( !transient && !mesh_adaptive )
+      {
+        solver.reset( new SteadySolver(input) );
+      }
+    else if( !transient && mesh_adaptive )
+      {
+        solver.reset( new SteadyMeshAdaptiveSolver(input) );
+      }
+    else if( transient && mesh_adaptive )
+      {
+        libmesh_not_implemented();
       }
     else
       {
-	solver = new SteadySolver( input );
+        std::cerr << "Invalid solver options!" << std::endl;
       }
 
-    return std::tr1::shared_ptr<Solver>(solver);
+    return solver;
   }
 
 } // namespace GRINS

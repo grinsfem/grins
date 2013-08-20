@@ -100,7 +100,7 @@ namespace GRINS
 	c.get_element_fe<libMesh::Real>(this->_u_var, element_fe);
 	const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
 
-	unsigned int n_qpoints = (c.get_element_qrule())->n_points();
+	unsigned int n_qpoints = c.get_element_qrule().n_points();
 
 	/*! \todo Need to generalize this to the multiple QoI case */
 	libMesh::Number& qoi = c.elem_qoi[0];
@@ -139,7 +139,7 @@ namespace GRINS
 
 	// Local DOF count and quadrature point count
 	const unsigned int n_T_dofs = c.dof_indices_var[0].size();
-	unsigned int n_qpoints = (c.get_element_qrule())->n_points();  
+	unsigned int n_qpoints = c.get_element_qrule().n_points();  
 
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C

@@ -1,27 +1,36 @@
 BUILT_SOURCES   = .license.stamp
 EXTRA_DIST =
 
-AM_CPPFLAGS =
-AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS = 
+AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/mat_props/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/kinetics/include
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
 AM_CPPFLAGS += $(GRVY_CFLAGS)
 
+AM_LDFLAGS =
 #----------------
 # Cantera support
 #----------------
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
-   AM_LDFLAGS   = $(CANTERA_LDFLAGS)
+   AM_LDFLAGS  += $(CANTERA_LDFLAGS)
+endif
+
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #=======================================================================

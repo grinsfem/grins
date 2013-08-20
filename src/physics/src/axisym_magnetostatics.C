@@ -283,7 +283,7 @@ namespace GRINS
     DenseSubMatrix<Number> &K = *context.elem_subjacobians[_A_var][_A_var];
     DenseSubVector<Number> &F = *context.elem_subresiduals[_A_var];
     
-    const unsigned int n_qpoints = (context.get_side_qrule())->n_points();
+    const unsigned int n_qpoints = context.get_side_qrule().n_points();
     
     std::vector<BoundaryID> ids = context.side_boundary_ids();
     for( std::vector<BoundaryID>::const_iterator it = ids.begin();
@@ -424,7 +424,7 @@ namespace GRINS
 
   void AxisymmetricMagnetostatics::compute_element_cache( const libMesh::FEMContext& context, 
 							  const std::vector<libMesh::Point>& points,
-							  CachedValues& cache ) const
+							  CachedValues& cache )
   {
     // Magnetic Field
     if( cache.is_active(Cache::MAGNETIC_FIELD_X) )

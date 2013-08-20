@@ -26,7 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/simulation_builder.h"
+
+// libMesh
+#include "libmesh/error_estimator.h"
+#include "libmesh/adjoint_refinement_estimator.h"
 
 namespace GRINS
 {
@@ -37,7 +42,8 @@ namespace GRINS
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
       _qoi_factory( new QoIFactory ),
-      _postprocessing_factory( new PostprocessingFactory )
+      _postprocessing_factory( new PostprocessingFactory ),
+      _error_estimator_factory( new ErrorEstimatorFactory )
   {
     return;
   }
@@ -87,6 +93,11 @@ namespace GRINS
     this->_postprocessing_factory = postprocessing_factory; 
   }
 
+  void SimulationBuilder::attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory )
+  {
+    this->_error_estimator_factory = error_estimator_factory;
+  }
+
   std::tr1::shared_ptr<libMesh::Mesh> SimulationBuilder::build_mesh( const GetPot& input )
   {
     return (this->_mesh_builder)->build(input);
@@ -126,5 +137,11 @@ namespace GRINS
   {
     return (this->_postprocessing_factory)->build(input);
   }
+
+  std::tr1::shared_ptr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input,
+                                                                                          const libMesh::QoISet& qoi_set)
+   {
+     return (this->_error_estimator_factory)->build(input,qoi_set);
+   }
 
 } //namespace GRINS

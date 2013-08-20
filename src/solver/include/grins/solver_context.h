@@ -63,6 +63,8 @@ namespace GRINS
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
 
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
+
   };
 
 } // end namespace GRINS

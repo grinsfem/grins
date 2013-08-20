@@ -43,13 +43,13 @@ namespace GRINS
 {
   // GRINS forward declarations
   class CachedValues;
-  class ChemicalMixture;
 
+  template<typename Chemistry>
   class CatalyticWall : public NeumannFuncObj
   {
   public:
 
-    CatalyticWall( const ChemicalMixture& chem_mixture,
+    CatalyticWall( const Chemistry& chem_mixture,
 		   const unsigned int species_index,
 		   const VariableIndex T_var,
 		   const libMesh::Real gamma );
@@ -79,7 +79,7 @@ namespace GRINS
 
   protected:
 
-    const ChemicalMixture& _chem_mixture;
+    const Chemistry& _chemistry;
 
     unsigned int _species_index;
 
@@ -94,28 +94,31 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-
+  template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
+  libMesh::Real CatalyticWall<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
     return this->_helper.omega_dot(rho_s,T);
   }
 
+  template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
-					       const libMesh::Real T, const libMesh::Real R ) const
+  libMesh::Real CatalyticWall<Chemistry>::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
+                                                          const libMesh::Real T, const libMesh::Real R ) const
   {
     return this->_helper.domega_dot_dws(rho_s, w_s, T, R);
   }
 
+  template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
+  libMesh::Real CatalyticWall<Chemistry>::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
     return this->_helper.domega_dot_dT(rho_s,T);
   }
 
+  template<typename Chemistry>
   inline
-  void CatalyticWall::set_gamma( const libMesh::Real gamma )
+  void CatalyticWall<Chemistry>::set_gamma( const libMesh::Real gamma )
   {
     this->_helper.set_gamma(gamma);
     return;

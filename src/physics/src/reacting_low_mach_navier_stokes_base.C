@@ -26,17 +26,15 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#include "grins_config.h"
+
 // This class
 #include "grins/reacting_low_mach_navier_stokes_base.h"
 
 // GRINS
 #include "grins/cached_quantities_enum.h"
-#include "grins/cea_thermo.h"
-#include "grins/cantera_thermo.h"
-#include "grins/constant_transport.h"
-#include "grins/cantera_transport.h"
-#include "grins/cantera_kinetics.h"
-#include "grins/grins_kinetics.h"
+#include "grins/cantera_mixture.h"
+#include "grins/antioch_mixture.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -209,12 +207,4 @@ namespace GRINS
     return;
   }
 
-  //Instantiate
-  template class ReactingLowMachNavierStokesBase< IdealGasMixture<CEAThermodynamics,ConstantTransport,Kinetics> >;
-#ifdef GRINS_HAVE_CANTERA
-  template class ReactingLowMachNavierStokesBase< IdealGasMixture<CanteraThermodynamics,CanteraTransport,CanteraKinetics> >;
-  template class ReactingLowMachNavierStokesBase< IdealGasMixture<CanteraThermodynamics,ConstantTransport,CanteraKinetics> >;
-  template class ReactingLowMachNavierStokesBase< IdealGasMixture<CEAThermodynamics,ConstantTransport,CanteraKinetics> >;
-#endif
-
-} // namespace GRINS
+} // end namespace GRINS
