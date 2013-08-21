@@ -192,9 +192,10 @@ Number exact_solution( const Point& p,
   const double mu = 1.0;
   const double dpdx = -1.0;
 
-  Number f;
+  Number f = 0;
   // Hardcoded to velocity in input file.
   if( var == "z_vel" ) f = -dpdx*100.0/(4.0*mu)*(r0*r0 - r*r);
+  else libmesh_assert(false);
 
   return f;
 }
