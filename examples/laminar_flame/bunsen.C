@@ -249,8 +249,8 @@ libMesh::Real initial_values( const Point& p, const Parameters &params,
 {
   libMesh::Real value = 0.0;
 
-  const libMesh::Real r = p(0);
-  const libMesh::Real z = p(1);
+  // const libMesh::Real r = p(0);
+  // const libMesh::Real z = p(1);
   libMesh::Real T = 0.0;
 
   /*
@@ -262,8 +262,7 @@ libMesh::Real initial_values( const Point& p, const Parameters &params,
   */
     T = 298.0;
 
-  libMesh::Real p0 = 0.0;
-  p0 = params.get<libMesh::Real>("p0");
+  // libMesh::Real p0 = params.get<libMesh::Real>("p0");
 
   /*
   if( unknown_name.find( "w_" ) != std::string::npos )
