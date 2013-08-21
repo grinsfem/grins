@@ -426,17 +426,15 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, w;
+	libMesh::Number u, v;
 	u = context.fixed_interior_value(this->_u_var, qp);
 	v = context.fixed_interior_value(this->_v_var, qp);
-	if (this->_dim == 3)
-	  w = context.fixed_interior_value(this->_w_var, qp);
 
 	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
 
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
-	  U(2) = w;
+	  U(2) = context.fixed_interior_value(this->_w_var, qp); // w
 
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
 	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
