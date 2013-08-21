@@ -186,10 +186,11 @@ Number exact_solution( const Point& p,
   const double x = p(0);
   const double y = p(1);
 
-  Number f;
+  Number f = 0;
   // Hardcoded to velocity in input file.
   if( var == "u" ) f = 4*y*(1-y);
-  if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
+  else if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
+  else libmesh_assert(false);
 
   return f;
 }
