@@ -22,6 +22,7 @@ check_PROGRAMS += antioch_mixture_unit
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_evaluator_regression
 check_PROGRAMS += antioch_wilke_evaluator_regression
+check_PROGRAMS += composite_function_unit
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -90,6 +91,7 @@ antioch_mixture_unit_SOURCES = $(top_srcdir)/test/antioch_mixture_unit.C
 antioch_kinetics_regression_SOURCES = $(top_srcdir)/test/antioch_kinetics_regression.C
 antioch_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_evaluator_regression.C
 antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_evaluator_regression.C
+composite_function_unit_SOURCES = $(top_srcdir)/test/composite_function_unit.C
 
 # List of source files for license stamping
 STAMPED_FILES = 
@@ -115,6 +117,7 @@ STAMPED_FILES += $(antioch_mixture_unit_SOURCES)
 STAMPED_FILES += $(antioch_kinetics_regression_SOURCES)
 STAMPED_FILES += $(antioch_evaluator_regression_SOURCES)
 STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
+STAMPED_FILES += $(composite_function_unit_SOURCES)
 
 #Define tests to actually be run
 TESTS =
@@ -155,6 +158,7 @@ TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
+TESTS += composite_function_unit
 
 shellfiles_src =
 shellfiles_src += test_ns_couette_flow_2d_x.sh
