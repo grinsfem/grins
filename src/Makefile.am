@@ -253,6 +253,7 @@ include_HEADERS += $(top_srcdir)/src/utilities/include/grins/math_constants.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_values.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/string_utils.h
+include_HEADERS += $(top_srcdir)/src/utilities/include/grins/composite_function.h
 
 # src/visualization headers
 include_HEADERS += $(top_srcdir)/src/visualization/include/grins/steady_visualization.h
