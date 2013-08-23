@@ -180,9 +180,9 @@ shellfiles_src += cantera_chem_thermo_test.sh
 shellfiles_src += cantera_transport_regression.sh
 shellfiles_src += cantera_evaluator_regression.sh
 shellfiles_src += antioch_mixture_unit.sh
-shellfiles_src += antioch_kinetics_unit.sh
-shellfiles_src += antioch_evaluator_unit.sh
-shellfiles_src += antioch_wilke_evaluator_unit.sh
+shellfiles_src += antioch_kinetics_regression.sh
+shellfiles_src += antioch_evaluator_regression.sh
+shellfiles_src += antioch_wilke_evaluator_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
 
