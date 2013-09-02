@@ -77,7 +77,10 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+    if(this->_dim == 3)
+      Fw = context.elem_subresiduals[this->_w_var]; // R_{w}
+
     libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
@@ -118,7 +121,7 @@ namespace GRINS
 		       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 
 	    if(this->_dim == 3)
-	      Fw(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
+	      (*Fw)(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
 			 + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
 			 + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
 	  }
@@ -159,7 +162,10 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+    if(this->_dim == 3)
+      Fw = context.elem_subresiduals[this->_w_var]; // R_{w}
+
     libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
 
     unsigned int n_qpoints = context.element_qrule->n_points();
@@ -197,7 +203,8 @@ namespace GRINS
 				     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
 				     )*JxW[qp];
 
-	    Fw(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
+            if(this->_dim == 3)
+	      (*Fw)(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
 				     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
 				     )*JxW[qp];
 	  }
