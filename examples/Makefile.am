@@ -139,13 +139,15 @@ EXTRA_DIST += $(rlmnsex_DATA)
 #=======================================================================
 # Vortex Example
 #=======================================================================
-#vortexexdir = $(prefix)/examples/thermal_vortex
-#vortexex_PROGRAMS = vortex
-#vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexexdir = $(prefix)/examples/thermal_vortex
+vortexex_PROGRAMS = vortex
+vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
 
-#vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
+vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
 
-#vortex_LDADD = $(LIBGRINS_LIBS)
+vortex_LDADD = $(LIBGRINS_LIBS)
+
+EXTRA_DIST += $(vortexex_DATA)
 
 #=======================================================================
 # Laminar Flame Example
