@@ -399,6 +399,9 @@ AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()
 
+dnl Hackish fix for Ubuntu/Debian libtool
+perl -pi -e 's/link_all_deplibs=no/link_all_deplibs=yes/' libtool
+
 dnl------------------------------
 dnl Final summary
 dnl------------------------------
