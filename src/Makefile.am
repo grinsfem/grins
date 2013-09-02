@@ -134,7 +134,16 @@ libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/postprocessing_factor
 # This is for installing .C files that are needed for instantiating
 # with different template parameters in user code
 sfilesdir = $(prefix)/src
-sfiles_DATA = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
+sfiles_DATA  = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
+sfiles_DATA += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
+sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
+sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_evaluator.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_mixture.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_evaluator.C
 
 #----------------------------
 #INCLUDES we want distributed
@@ -369,7 +378,8 @@ STAMPED_FILES += $(top_srcdir)/src/apps/cantera_kinetic_rates.C
 	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(STAMPED_FILES)
 	echo 'updated source license headers' >$@
 
-EXTRA_DIST = common
+EXTRA_DIST  = common
+EXTRA_DIST += $(sfiles_DATA)
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

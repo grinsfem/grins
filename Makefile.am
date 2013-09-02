@@ -9,6 +9,8 @@ EXTRA_DIST       = README.md CHANGES LICENSE COPYING docs contrib
 aclocaldir = $(prefix)/share/aclocal
 aclocal_DATA = $(top_srcdir)/share/aclocal/*
 
+EXTRA_DIST += $(aclocal_DATA)
+
 #doxygendir = $(prefix)/doxygen
 #doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 

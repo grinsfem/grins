@@ -54,6 +54,8 @@ toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
 toy_SOURCES = $(top_srcdir)/examples/toyprob/toy.C
 toy_LDADD = $(LIBGRINS_LIBS)
 
+EXTRA_DIST += $(toyprob_DATA)
+
 #=======================================================================
 # Cavity Benchmark
 #=======================================================================
@@ -132,6 +134,8 @@ rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/air_2sp.xml
 rlmns_SOURCES = $(top_srcdir)/examples/reacting_flow/rlmns.C
 rlmns_LDADD = $(LIBGRINS_LIBS)
 
+EXTRA_DIST += $(rlmnsex_DATA)
+
 #=======================================================================
 # Vortex Example
 #=======================================================================
@@ -151,6 +155,11 @@ laminarflame_PROGRAMS = bunsen
 laminarflame_DATA  = $(top_srcdir)/examples/laminar_flame/bunsen.in
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/elements.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+
+EXTRA_DIST += $(laminarflame_DATA)
 
 bunsen_SOURCES  = $(top_srcdir)/examples/laminar_flame/bunsen.C
 bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C
