@@ -142,6 +142,7 @@ EXTRA_DIST += $(rlmnsex_DATA)
 vortexexdir = $(prefix)/examples/thermal_vortex
 vortexex_PROGRAMS = vortex
 vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
 
 vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
 
