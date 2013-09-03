@@ -160,6 +160,7 @@ laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
 
 EXTRA_DIST += $(laminarflame_DATA)
 
