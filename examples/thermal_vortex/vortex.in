@@ -20,8 +20,8 @@ mu = '1.846e-5'
 # imin,imax = 4, 2
 # jmin,jmax = 1, 3
 # kmin,kmax = 0, 5
-bc_ids = '0 4 3 2 5 1'
-bc_types = 'no_slip inflow inflow inflow inflow inflow'
+# bc_ids = '0 4 3 2 5 1'
+# bc_types = 'no_slip inflow inflow inflow inflow inflow'
 
 pin_pressure = 'true'
 pin_location = '-0.5 -0.5 0.0'
