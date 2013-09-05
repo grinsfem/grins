@@ -30,8 +30,10 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation.h"
+#include "grins/bc_factory.h"
 #include "grins/gaussian_xy_profile.h"
+#include "grins/simulation.h"
+#include "grins/simulation_builder.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -40,6 +42,7 @@
 
 // libMesh
 #include "libmesh/parallel.h"
+#include "libmesh/zero_function.h"
 
 class VortexBCFactory : public GRINS::BoundaryConditionsFactory
 {

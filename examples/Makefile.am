@@ -139,13 +139,16 @@ EXTRA_DIST += $(rlmnsex_DATA)
 #=======================================================================
 # Vortex Example
 #=======================================================================
-#vortexexdir = $(prefix)/examples/thermal_vortex
-#vortexex_PROGRAMS = vortex
-#vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexexdir = $(prefix)/examples/thermal_vortex
+vortexex_PROGRAMS = vortex
+vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
 
-#vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
+vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
 
-#vortex_LDADD = $(LIBGRINS_LIBS)
+vortex_LDADD = $(LIBGRINS_LIBS)
+
+EXTRA_DIST += $(vortexex_DATA)
 
 #=======================================================================
 # Laminar Flame Example
@@ -158,6 +161,7 @@ laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
 
 EXTRA_DIST += $(laminarflame_DATA)
 
