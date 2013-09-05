@@ -77,20 +77,23 @@ namespace GRINS
   {
     libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
 
-    if (_target_tolerance) {
-      libMesh::TwostepTimeSolver *outer_solver = 
-        new TwostepTimeSolver(*system);
+    if (_target_tolerance)
+      {
+        libMesh::TwostepTimeSolver *outer_solver = 
+          new TwostepTimeSolver(*system);
 
-      outer_solver->target_tolerance = _target_tolerance;
-      outer_solver->upper_tolerance = _upper_tolerance;
-      outer_solver->max_growth = _max_growth;
+        outer_solver->target_tolerance = _target_tolerance;
+        outer_solver->upper_tolerance = _upper_tolerance;
+        outer_solver->max_growth = _max_growth;
 
-      outer_solver->core_time_solver =
-        libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
-      system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(outer_solver);
-    } else {
-      system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
-    }
+        outer_solver->core_time_solver =
+          libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
+        system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(outer_solver);
+      } 
+    else
+      {
+        system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
+      }
 
     // Set theta parameter for time-stepping scheme
     time_solver->theta = this->_theta;
