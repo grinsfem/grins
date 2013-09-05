@@ -36,6 +36,7 @@
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/euler_solver.h"
+#include "libmesh/twostep_time_solver.h"
 
 namespace GRINS
 {
@@ -45,9 +46,26 @@ namespace GRINS
       _theta( input("unsteady-solver/theta", 0.5 ) ),
       _n_timesteps( input("unsteady-solver/n_timesteps", 1 ) ),
       /*! \todo Is this the best default for delta t?*/
-      _deltat( input("unsteady-solver/deltat", 0.0 ) )
+      _deltat( input("unsteady-solver/deltat", 0.0 ) ),
+      _target_tolerance( input("unsteady-solver/target_tolerance", 0.0 ) ),
+      _upper_tolerance( input("unsteady-solver/upper_tolerance", 0.0 ) ),
+      _max_growth( input("unsteady-solver/max_growth", 0.0 ) )
   {
-    return;
+    const unsigned int n_component_norm =
+      input.vector_variable_size("unsteady-solver/component_norm");
+    for (unsigned int i=0; i != n_component_norm; ++i)
+      {
+        const std::string current_norm = input("component_norm", std::string("L2"), i);
+        // TODO: replace this with string_to_enum with newer libMesh
+        if (current_norm == "L2")
+          _component_norm.set_type(i, libMeshEnums::L2);
+        else if (current_norm == "H1")
+          _component_norm.set_type(i, libMeshEnums::H1);
+        else
+          libmesh_not_implemented();
+      }
+
+
   }
 
   UnsteadySolver::~UnsteadySolver()
@@ -59,7 +77,23 @@ namespace GRINS
   {
     libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
 
-    system->time_solver = libMesh::AutoPtr<TimeSolver>(time_solver);
+    if (_target_tolerance)
+      {
+        libMesh::TwostepTimeSolver *outer_solver = 
+          new TwostepTimeSolver(*system);
+
+        outer_solver->target_tolerance = _target_tolerance;
+        outer_solver->upper_tolerance = _upper_tolerance;
+        outer_solver->max_growth = _max_growth;
+
+        outer_solver->core_time_solver =
+          libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
+        system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(outer_solver);
+      } 
+    else
+      {
+        system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
+      }
 
     // Set theta parameter for time-stepping scheme
     time_solver->theta = this->_theta;
@@ -86,7 +120,7 @@ namespace GRINS
     for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
       {
 	std::cout << "==========================================================" << std::endl
-		  << "                 Beginning time step " << t_step  << std::endl
+		  << "   Beginning time step " << t_step  << ", t = " << context.system->time << ", dt = " << context.system->deltat << std::endl
 		  << "==========================================================" << std::endl;
 
 	// GRVY timers contained in here (if enabled)
