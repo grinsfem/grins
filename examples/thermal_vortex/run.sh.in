@@ -1,5 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 mkdir -p output
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
 
 $LIBMESH_RUN @prefix@/examples/thermal_vortex/vortex ./vortex.in $GRINS_SOLVER_OPTIONS
