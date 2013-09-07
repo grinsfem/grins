@@ -60,79 +60,88 @@ namespace GRINS
     ~BoundaryConditions();
 
     //! Applies Neumann boundary conditions for the constant case.
+    template<typename FEShape>
     void apply_neumann( libMesh::FEMContext& context,
-			const GRINS::VariableIndex var,
+			const VariableIndex var,
 			const libMesh::Real sign,
 			const libMesh::Point& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
+    template<typename FEShape>
     void apply_neumann_axisymmetric( libMesh::FEMContext& context,
-				     const GRINS::VariableIndex var,
+				     const VariableIndex var,
 				     const libMesh::Real sign,
 				     const libMesh::Point& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is
         not in terms of a flux vector, but rather only the normal component.*/
+    template<typename FEShape>
     void apply_neumann_normal( libMesh::FEMContext& context,
-			       const GRINS::VariableIndex var,
+			       const VariableIndex var,
 			       const libMesh::Real sign,
 			       const libMesh::Real value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is
         not in terms of a flux vector, but rather only the normal component.*/
+    template<typename FEShape>
     void apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
-                                            const GRINS::VariableIndex var,
+                                            const VariableIndex var,
                                             const libMesh::Real sign,
                                             const libMesh::Real value ) const;
 
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
+    template<typename FEShape>
     void apply_neumann( libMesh::FEMContext& context,
 			const CachedValues& cache,
 			const bool request_jacobian,
-			const GRINS::VariableIndex var,
+			const VariableIndex var,
 			const libMesh::Real sign,
-			std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+			std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
+    template<typename FEShape>
     void apply_neumann_axisymmetric( libMesh::FEMContext& context,
 				     const CachedValues& cache,
 				     const bool request_jacobian,
-				     const GRINS::VariableIndex var,
+				     const VariableIndex var,
 				     const libMesh::Real sign,
-				     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+				     const std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*!  This method is for the case where Neumann boundary condition is
          not in terms of a flux vector, but rather only the normal component.
          This function must also be aware of the Jacobian with respect to other variables. */
+    template<typename FEShape>
     void apply_neumann_normal( libMesh::FEMContext& context,
 			       const CachedValues& cache,
 			       const bool request_jacobian,
-			       const GRINS::VariableIndex var,
+			       const VariableIndex var,
 			       const libMesh::Real sign,
-			       std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+			       std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*!  This method is for the case where Neumann boundary condition is
          not in terms of a flux vector, but rather only the normal component.
          This function must also be aware of the Jacobian with respect to other variables. */
+    template<typename FEShape>
     void apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
                                             const CachedValues& cache,
                                             const bool request_jacobian,
-                                            const GRINS::VariableIndex var,
+                                            const VariableIndex var,
                                             const libMesh::Real sign,
-                                            std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func  ) const;
+                                            std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
+    template<typename FEShape>
     void pin_value( libMesh::FEMContext& context, const CachedValues& cache,
 		    const bool request_jacobian,
-		    const GRINS::VariableIndex var, const double value,
+		    const VariableIndex var, const double value,
 		    const libMesh::Point& pin_location, const double penalty = 1.0 );
 
   };

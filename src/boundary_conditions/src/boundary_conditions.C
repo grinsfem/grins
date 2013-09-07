@@ -47,16 +47,17 @@ namespace GRINS
   {
     return;
   }
-
+  
   BoundaryConditions::~BoundaryConditions( )
   {
     return;
   }
 
+  template<typename FEShape>
   void BoundaryConditions::apply_neumann( libMesh::FEMContext& context,
-					  const VariableIndex var,
-					  const libMesh::Real sign,
-					  const libMesh::Point& value ) const
+                                          const VariableIndex var,
+                                          const libMesh::Real sign,
+                                          const libMesh::Point& value ) const
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -84,10 +85,11 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
-							const GRINS::VariableIndex var,
-							const libMesh::Real sign,
-							libMesh::Real value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
+                                                 const VariableIndex var,
+                                                 const libMesh::Real sign,
+                                                 libMesh::Real value ) const
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -113,10 +115,11 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
-                                                                     const GRINS::VariableIndex var,
-                                                                     const libMesh::Real sign,
-                                                                     libMesh::Real value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
+                                                              const VariableIndex var,
+                                                              const libMesh::Real sign,
+                                                              libMesh::Real value ) const
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -148,11 +151,11 @@ namespace GRINS
     return;
   }
 
-
+  template<typename FEShape>
   void BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
-						       const VariableIndex var,
-						       const libMesh::Real sign,
-						       const libMesh::Point& value ) const
+                                                       const VariableIndex var,
+                                                       const libMesh::Real sign,
+                                                       const libMesh::Point& value ) const
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -186,12 +189,13 @@ namespace GRINS
     return;
   }
 
+  template<typename FEShape>
   void BoundaryConditions::apply_neumann( libMesh::FEMContext& context,
-					  const CachedValues& cache,
-					  const bool request_jacobian,
-					  const VariableIndex var,
-					  const libMesh::Real sign,
-					  const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
+                                          const CachedValues& cache,
+                                          const bool request_jacobian,
+                                          const VariableIndex var,
+                                          const libMesh::Real sign,
+                                          const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -264,12 +268,13 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
-							const CachedValues& cache,
-							const bool request_jacobian,
-							const GRINS::VariableIndex var,
-							const libMesh::Real sign,
-							const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
+                                                 const CachedValues& cache,
+                                                 const bool request_jacobian,
+                                                 const VariableIndex var,
+                                                 const libMesh::Real sign,
+                                                 const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -308,11 +313,11 @@ namespace GRINS
 
     // Now must take care of the case that the boundary condition depends on variables
     // other than var.
-    std::vector<GRINS::VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
+    std::vector<VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
 
     if( (other_jac_vars.size() > 0) && request_jacobian )
       {
-	for( std::vector<GRINS::VariableIndex>::const_iterator var2 = other_jac_vars.begin();
+	for( std::vector<VariableIndex>::const_iterator var2 = other_jac_vars.begin();
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
@@ -340,12 +345,13 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
-                                                                     const CachedValues& cache,
-                                                                     const bool request_jacobian,
-                                                                     const GRINS::VariableIndex var,
-                                                                     const libMesh::Real sign,
-                                                                     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
+                                                              const CachedValues& cache,
+                                                              const bool request_jacobian,
+                                                              const VariableIndex var,
+                                                              const libMesh::Real sign,
+                                                              const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -390,11 +396,11 @@ namespace GRINS
 
     // Now must take care of the case that the boundary condition depends on variables
     // other than var.
-    std::vector<GRINS::VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
+    std::vector<VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
 
     if( (other_jac_vars.size() > 0) && request_jacobian )
       {
-	for( std::vector<GRINS::VariableIndex>::const_iterator var2 = other_jac_vars.begin();
+	for( std::vector<VariableIndex>::const_iterator var2 = other_jac_vars.begin();
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
@@ -425,13 +431,13 @@ namespace GRINS
   }
 
 
-
-  void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
-							      const CachedValues& cache,
-							      const bool request_jacobian,
-							      const GRINS::VariableIndex var,
-							      const libMesh::Real sign,
-							      std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
+                                                       const CachedValues& cache,
+                                                       const bool request_jacobian,
+                                                       const VariableIndex var,
+                                                       const libMesh::Real sign,
+                                                       std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
@@ -511,14 +517,15 @@ namespace GRINS
       }
     return;
   }
-
+  
+  template<typename FEShape>
   void BoundaryConditions::pin_value( libMesh::FEMContext& context,
-				      const CachedValues& /*cache*/,
-				      const bool request_jacobian,
-				      const VariableIndex var, 
-				      const double pin_value,
-				      const libMesh::Point& pin_location, 
-				      const double penalty )
+                                      const CachedValues& /*cache*/,
+                                      const bool request_jacobian,
+                                      const VariableIndex var, 
+                                      const double pin_value,
+                                      const libMesh::Point& pin_location, 
+                                      const double penalty )
   {
     if (context.get_elem().contains_point(pin_location))
       {
@@ -560,4 +567,35 @@ namespace GRINS
     return;
   }
 
+
 } // namespace GRINS
+
+// Instantiate
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
+
+
+
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::Real>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::pin_value<libMesh::Real>( libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const double, const libMesh::Point&, const double);
+template void GRINS::BoundaryConditions::pin_value<libMesh::RealGradient>( libMesh::FEMContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const double, const libMesh::Point&, const double);
