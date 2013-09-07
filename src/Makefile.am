@@ -1,5 +1,7 @@
 BUILT_SOURCES   = .license.stamp
 
+CLEANFILES = .license.stamp
+
 #----------------------------------------
 # Programs and libraries we want to build
 #----------------------------------------
@@ -365,7 +367,7 @@ endif
 # Code coverage
 #--------------
 if CODE_COVERAGE_ENABLED
-  CLEANFILES = *.gcda *.gcno
+  CLEANFILES += *.gcda *.gcno
 endif
 
 #---------------------------------
