@@ -1,4 +1,7 @@
 BUILT_SOURCES   = .license.stamp
+
+CLEANFILES = .license.stamp
+
 EXTRA_DIST =
 
 AM_CPPFLAGS = 

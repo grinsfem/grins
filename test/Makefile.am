@@ -1,5 +1,7 @@
 BUILT_SOURCES   = .license.stamp
 
+CLEANFILES = .license.stamp
+
 check_PROGRAMS =
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
@@ -190,7 +192,7 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catal
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 
 if CODE_COVERAGE_ENABLED
-  CLEANFILES = *.gcda *.gcno
+  CLEANFILES += *.gcda *.gcno
 endif
 
 .license.stamp: $(top_srcdir)/LICENSE
