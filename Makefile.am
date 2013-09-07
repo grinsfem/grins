@@ -43,18 +43,18 @@ AUX_DIST        += build-aux/depcomp
 AUX_DIST        += build-aux/ltmain.sh
 
 # Additional files to be deleted by 'make distclean'
-DISTCLEANFILES = _configs.sed
+DISTCLEANFILES  = _configs.sed
+DISTCLEANFILES += config.log
+DISTCLEANFILES += grins_config.h
 
 # Files to be deleted by 'make maintainer-clean'
 MAINTAINERCLEANFILES = aclocal.m4                               \
                        aminclude.am                             \
                        autom4te.cache/*                         \
                        $(AUX_DIST)                              \
-                       config.log                               \
                        config.status                            \
                        config.sub                               \
                        configure                                \
-                       grins_config.h                           \
                        grins_config.h.tmp.in                    \
                        grins_config.h.tmp.in~                   \
                        Makefile.in                              \
