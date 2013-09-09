@@ -79,15 +79,15 @@ namespace GRINS
     LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);
 
     // We also need the side shape functions, etc.
-    context.side_fe_var[this->_u_var]->get_JxW();
-    context.side_fe_var[this->_u_var]->get_phi();
-    context.side_fe_var[this->_u_var]->get_dphi();
-    context.side_fe_var[this->_u_var]->get_xyz();
+    context.get_side_fe(this->_u_var)->get_JxW();
+    context.get_side_fe(this->_u_var)->get_phi();
+    context.get_side_fe(this->_u_var)->get_dphi();
+    context.get_side_fe(this->_u_var)->get_xyz();
 
-    context.side_fe_var[this->_T_var]->get_JxW();
-    context.side_fe_var[this->_T_var]->get_phi();
-    context.side_fe_var[this->_T_var]->get_dphi();
-    context.side_fe_var[this->_T_var]->get_xyz();
+    context.get_side_fe(this->_T_var)->get_JxW();
+    context.get_side_fe(this->_T_var)->get_phi();
+    context.get_side_fe(this->_T_var)->get_dphi();
+    context.get_side_fe(this->_T_var)->get_xyz();
 
     return;
   }
@@ -166,19 +166,19 @@ namespace GRINS
 								CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.element_fe_var[this->_p_var]->get_phi();
+      context.get_element_fe(this->_p_var)->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -221,30 +221,30 @@ namespace GRINS
 								    CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
 
     // Check number of dofs is same for _u_var, v_var and w_var.
-    libmesh_assert (n_u_dofs == context.dof_indices_var[this->_v_var].size());
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
     if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == context.dof_indices_var[this->_w_var].size());
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.element_fe_var[this->_u_var]->get_phi();
+      context.get_element_fe(this->_u_var)->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.element_fe_var[this->_u_var]->get_dphi();
+      context.get_element_fe(this->_u_var)->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_w_var); // R_{w}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Number u, v, p, p0, T;
@@ -310,9 +310,9 @@ namespace GRINS
 	      }
 
 	    /*
-	      if (compute_jacobian && context.elem_solution_derivative)
+	      if (compute_jacobian && context.get_elem_solution_derivative())
 	      {
-              libmesh_assert (context.elem_solution_derivative == 1.0);
+              libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
               for (unsigned int j=0; j != n_u_dofs; j++)
 	      {
@@ -363,7 +363,7 @@ namespace GRINS
 	      Kwp(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](2)*p_phi[j][qp];
 	      } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.elem_solution_derivative)
+	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
 	      } // end of the outer dof (i) loop
 	      } // end of the quadrature point (qp) loop
@@ -380,23 +380,23 @@ namespace GRINS
 								  CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[this->_T_var]->get_phi();
+      context.get_element_fe(this->_T_var)->get_phi();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[this->_T_var]->get_dphi();
+      context.get_element_fe(this->_T_var)->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Number u, v, T, p0;
@@ -435,19 +435,19 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi = 
-      context.element_fe_var[this->_p_var]->get_phi();
+      context.get_element_fe(this->_p_var)->get_phi();
   
     // The number of local degrees of freedom in each variable
-    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_p = *context.elem_subresiduals[this->_p_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p = context.get_elem_residual(this->_p_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -476,25 +476,25 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi = 
-      context.element_fe_var[this->_u_var]->get_phi();
+      context.get_element_fe(this->_u_var)->get_phi();
   
     // The number of local degrees of freedom in each variable
-    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
 
     // for convenience
     if (this->_dim != 3)
       this->_w_var = this->_u_var;
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_u = *context.elem_subresiduals[this->_u_var];
-    libMesh::DenseSubVector<libMesh::Real> &F_v = *context.elem_subresiduals[this->_v_var];
-    libMesh::DenseSubVector<libMesh::Real> &F_w = *context.elem_subresiduals[this->_w_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_u = context.get_elem_residual(this->_u_var);
+    libMesh::DenseSubVector<libMesh::Real> &F_v = context.get_elem_residual(this->_v_var);
+    libMesh::DenseSubVector<libMesh::Real> &F_w = context.get_elem_residual(this->_w_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -555,19 +555,19 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi = 
-      context.element_fe_var[this->_T_var]->get_phi();
+      context.get_element_fe(this->_T_var)->get_phi();
   
     // The number of local degrees of freedom in each variable
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_T_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_T = context.get_elem_residual(this->_T_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -600,15 +600,15 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
+    const unsigned int n_p0_dofs = context.get_dof_indices(this->_p0_var).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p0 = context.get_elem_residual(this->_p0_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -647,19 +647,19 @@ namespace GRINS
 									     libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
+    const unsigned int n_p0_dofs = context.get_dof_indices(this->_p0_var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    //const std::vector<libMesh::libMesh::Real> &JxW_side = context.side_fe_var[this->_T_var]->get_JxW();
+    //const std::vector<libMesh::libMesh::Real> &JxW_side = context.get_side_fe(this->_T_var)->get_JxW();
 
-    //const std::vector<Point> &normals = context.side_fe_var[this->_T_var]->get_normals();
+    //const std::vector<Point> &normals = context.get_side_fe(this->_T_var)->get_normals();
 
-    //libMesh::DenseSubVector<libMesh::Number> &F_p0 = *context.elem_subresiduals[this->_p0_var]; // residual
+    //libMesh::DenseSubVector<libMesh::Number> &F_p0 = context.get_elem_residual(this->_p0_var); // residual
 
     // Physical location of the quadrature points
-    //const std::vector<libMesh::Point>& qpoint = context.side_fe_var[this->_T_var]->get_xyz();
+    //const std::vector<libMesh::Point>& qpoint = context.get_side_fe(this->_T_var)->get_xyz();
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	/*
@@ -697,28 +697,28 @@ namespace GRINS
 									   libMesh::FEMContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p0_dofs = context.dof_indices_var[this->_p0_var].size();
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
-    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p0_dofs = context.get_dof_indices(this->_p0_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
 
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[this->_T_var]->get_phi();
+      context.get_element_fe(this->_T_var)->get_phi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.element_fe_var[this->_p_var]->get_phi();
+      context.get_element_fe(this->_p_var)->get_phi();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F_p0 = *context.elem_subresiduals[this->_p0_var];
-    libMesh::DenseSubVector<libMesh::Real> &F_T = *context.elem_subresiduals[this->_T_var];
-    libMesh::DenseSubVector<libMesh::Real> &F_p = *context.elem_subresiduals[this->_p_var];
+    libMesh::DenseSubVector<libMesh::Real> &F_p0 = context.get_elem_residual(this->_p0_var);
+    libMesh::DenseSubVector<libMesh::Real> &F_T = context.get_elem_residual(this->_T_var);
+    libMesh::DenseSubVector<libMesh::Real> &F_p = context.get_elem_residual(this->_p_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -757,7 +757,7 @@ namespace GRINS
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
 									     CachedValues& cache )
   {
-    const unsigned int n_qpoints = context.element_qrule->n_points();
+    const unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     std::vector<libMesh::Real> u, v, w, T, p, p0;
     u.resize(n_qpoints);

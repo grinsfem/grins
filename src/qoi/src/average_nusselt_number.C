@@ -121,7 +121,7 @@ namespace GRINS
 
 	    unsigned int n_qpoints = c.get_side_qrule().n_points();
 	    
-	    libMesh::Number& qoi = c.elem_qoi[0];
+	    libMesh::Number& qoi = c.get_qois()[0];
 	    
 	    // Loop over quadrature points  
 	    
@@ -165,7 +165,7 @@ namespace GRINS
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
 
-	    DenseSubVector<Number>& dQ_dT = *c.elem_qoi_subderivatives[0][_T_var];
+	    DenseSubVector<Number>& dQ_dT = c.get_qoi_derivatives(0, _T_var);
 
 	    // Loop over quadrature points  
 	    

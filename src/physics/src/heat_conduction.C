@@ -90,15 +90,15 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.element_fe_var[_T_var]->get_JxW();
-    context.element_fe_var[_T_var]->get_phi();
-    context.element_fe_var[_T_var]->get_dphi();
-    context.element_fe_var[_T_var]->get_xyz();
+    context.get_element_fe(_T_var)->get_JxW();
+    context.get_element_fe(_T_var)->get_phi();
+    context.get_element_fe(_T_var)->get_dphi();
+    context.get_element_fe(_T_var)->get_xyz();
 
-    context.side_fe_var[_T_var]->get_JxW();
-    context.side_fe_var[_T_var]->get_phi();
-    context.side_fe_var[_T_var]->get_dphi();
-    context.side_fe_var[_T_var]->get_xyz();
+    context.get_side_fe(_T_var)->get_JxW();
+    context.get_side_fe(_T_var)->get_phi();
+    context.get_side_fe(_T_var)->get_dphi();
+    context.get_side_fe(_T_var)->get_xyz();
 
     return;
   }
@@ -108,22 +108,22 @@ namespace GRINS
 						CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
     // We get some references to cell-specific data that
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_T_var)->get_JxW();
 
     // The temperature shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[_T_var]->get_dphi();
+      context.get_element_fe(_T_var)->get_dphi();
 
     const std::vector<libMesh::Point>& q_points = 
-      context.element_fe_var[_T_var]->get_xyz();
+      context.get_element_fe(_T_var)->get_xyz();
 
     // The subvectors and submatrices we need to fill:
     //
@@ -131,9 +131,9 @@ namespace GRINS
     // e.g., for \alpha = T and \beta = v we get: K_{Tu} = R_{T},{u}
     //
 
-    libMesh::DenseSubMatrix<Number> &KTT = *context.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
+    libMesh::DenseSubMatrix<Number> &KTT = context.get_elem_jacobian(_T_var, _T_var); // R_{T},{T}
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<Number> &FT = context.get_elem_residual(_T_var); // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -141,7 +141,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -168,7 +168,7 @@ namespace GRINS
 		      ( -_k*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.elem_solution_derivative)
+	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -185,21 +185,21 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<Real> &JxW = 
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_T_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<Real> >& phi = 
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_T_var)->get_phi();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F = *context.elem_subresiduals[_T_var];
+    DenseSubVector<Real> &F = context.get_elem_residual(_T_var);
 
-    DenseSubMatrix<Real> &M = *context.elem_subjacobians[_T_var][_T_var];
+    DenseSubMatrix<Real> &M = context.get_elem_jacobian(_T_var, _T_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
