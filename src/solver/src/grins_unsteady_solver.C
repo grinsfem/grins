@@ -38,6 +38,9 @@
 #include "libmesh/euler_solver.h"
 #include "libmesh/twostep_time_solver.h"
 
+// C++
+#include <ctime>
+
 namespace GRINS
 {
 
@@ -107,39 +110,55 @@ namespace GRINS
 
     context.system->deltat = this->_deltat;
   
-    Real time;
+    Real sim_time;
 
     if( context.output_vis ) 
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
+
+    std::time_t first_wall_time = std::time(NULL);
     
     // Now we begin the timestep loop to compute the time-accurate
     // solution of the equations.
     for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
       {
+        std::time_t latest_wall_time = std::time(NULL);
+
 	std::cout << "==========================================================" << std::endl
-		  << "   Beginning time step " << t_step  << ", t = " << context.system->time << ", dt = " << context.system->deltat << std::endl
+		  << "   Beginning time step " << t_step  <<
+                     ", t = " << context.system->time <<
+                     ", dt = " << context.system->deltat <<
+                     ", runtime = " << (latest_wall_time - first_wall_time) << 
+                     std::endl
 		  << "==========================================================" << std::endl;
 
 	// GRVY timers contained in here (if enabled)
 	context.system->solve();
 
-	time = context.system->time;
+	sim_time = context.system->time;
 
 	if( context.output_vis )
 	  {
 	    context.postprocessing->update_quantities( *(context.equation_system) );
-	    context.vis->output( context.equation_system, t_step, time );
+	    context.vis->output( context.equation_system, t_step, sim_time );
 	  }
 
 	if( context.output_residual ) context.vis->output_residual( context.equation_system, 
-								    context.system, t_step, time );
+								    context.system, t_step, sim_time );
 
 	// Advance to the next timestep
 	context.system->time_solver->advance_timestep();
       }
+
+    std::time_t final_wall_time = std::time(NULL);
+    std::cout << "==========================================================" << std::endl
+	      << "   Ending time steppping, t = " << context.system->time <<
+                 ", runtime = " << (final_wall_time - first_wall_time) << 
+                 std::endl
+              << "==========================================================" << std::endl;
+
 
     return;
   }
