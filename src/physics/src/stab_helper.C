@@ -52,7 +52,7 @@ namespace GRINS
     libMesh::RealGradient g( fe->get_dxidx()[qp] + fe->get_detadx()[qp],
 			     fe->get_dxidy()[qp] + fe->get_detady()[qp] );
   
-    if( c.dim == 3 )
+    if( c.get_dim() == 3 )
       {
 	g(0) += fe->get_dzetadx()[qp];
 	g(1) += fe->get_dzetady()[qp];
@@ -79,7 +79,7 @@ namespace GRINS
 			   dxidy*dxidy + detady*detady,
 			   0.0 );
   
-    if( c.dim == 3 )
+    if( c.get_dim() == 3 )
       {
 	libMesh::Real dxidz = fe->get_dxidz()[qp];
       

@@ -56,25 +56,25 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[this->_T_var]->get_dphi();
+      context.get_element_fe(this->_T_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
-      context.element_fe_var[this->_T_var]->get_d2phi();
+      context.get_element_fe(this->_T_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.element_fe_var[this->_T_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -112,25 +112,25 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[this->_T_var]->get_dphi();
+      context.get_element_fe(this->_T_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
-      context.element_fe_var[this->_T_var]->get_d2phi();
+      context.get_element_fe(this->_T_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.element_fe_var[this->_T_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );

@@ -59,20 +59,20 @@ namespace GRINS
 					  const libMesh::Point& value ) const
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = context.get_side_fe(var)->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	for (unsigned int i=0; i != n_var_dofs; i++)
@@ -90,18 +90,18 @@ namespace GRINS
 							libMesh::Real value ) const
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	for (unsigned int i=0; i != n_var_dofs; i++)
@@ -119,22 +119,22 @@ namespace GRINS
                                                                      libMesh::Real value ) const
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      context.get_side_fe(var)->get_xyz();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         const libMesh::Number r = var_qpoint[qp](0);
@@ -155,24 +155,24 @@ namespace GRINS
 						       const libMesh::Point& value ) const
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      context.get_side_fe(var)->get_xyz();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = context.get_side_fe(var)->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Number r = var_qpoint[qp](0);
@@ -194,21 +194,21 @@ namespace GRINS
 					  const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = context.get_side_fe(var)->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var, var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -240,11 +240,11 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var, *var2); // jacobian
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      context.get_side_fe(*var2)->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -272,19 +272,19 @@ namespace GRINS
 							const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var, var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -316,11 +316,11 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var, *var2); // jacobian
             
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      context.get_side_fe(*var2)->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -348,23 +348,23 @@ namespace GRINS
                                                                      const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      context.get_side_fe(var)->get_xyz();
     
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var, var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -398,11 +398,11 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var, *var2); // jacobian
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      context.get_side_fe(*var2)->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -434,25 +434,25 @@ namespace GRINS
 							      std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
   {
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      context.get_side_fe(var)->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      context.get_side_fe(var)->get_xyz();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = context.get_side_fe(var)->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var, var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -486,11 +486,11 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var, *var2); // jacobian
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      context.get_side_fe(*var2)->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -520,35 +520,35 @@ namespace GRINS
 				      const libMesh::Point& pin_location, 
 				      const double penalty )
   {
-    if (context.elem->contains_point(pin_location))
+    if (context.get_elem().contains_point(pin_location))
       {
-	libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-	libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+	libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+	libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var, var); // jacobian
 
 	// The number of local degrees of freedom in p variable.
-	const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+	const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
 	libMesh::Number var_value = context.point_value(var, pin_location);
 
-	libMesh::FEType fe_type = context.element_fe_var[var]->get_fe_type();
+	libMesh::FEType fe_type = context.get_element_fe(var)->get_fe_type();
       
 	libMesh::Point point_loc_in_masterelem = 
-	  libMesh::FEInterface::inverse_map(context.dim, fe_type, context.elem, pin_location);
+	  libMesh::FEInterface::inverse_map(context.get_dim(), fe_type, &context.get_elem(), pin_location);
 
 	std::vector<libMesh::Real> phi(n_var_dofs);
 
 	for (unsigned int i=0; i != n_var_dofs; i++)
-	  phi[i] = libMesh::FEInterface::shape( context.dim, fe_type, context.elem, i, 
+	  phi[i] = libMesh::FEInterface::shape( context.get_dim(), fe_type, &context.get_elem(), i, 
 						point_loc_in_masterelem );
       
 	for (unsigned int i=0; i != n_var_dofs; i++)
 	  {
 	    F_var(i) += penalty*(var_value - pin_value)*phi[i];
 	  
-	    /** \todo What the hell is the context.elem_solution_derivative all about? */
-	    if (request_jacobian && context.elem_solution_derivative)
+	    /** \todo What the hell is the context.get_elem_solution_derivative() all about? */
+	    if (request_jacobian && context.get_elem_solution_derivative())
 	      {
-		libmesh_assert (context.elem_solution_derivative == 1.0);
+		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 	      
 		for (unsigned int j=0; j != n_var_dofs; j++)
 		  K_var(i,j) += penalty*phi[i]*phi[j];

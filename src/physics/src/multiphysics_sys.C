@@ -149,7 +149,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
 							     cache );
@@ -185,7 +185,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->side_time_derivative( compute_jacobian, c,
 							  cache );
@@ -221,7 +221,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->element_constraint( compute_jacobian, c,
 							cache);
@@ -257,7 +257,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->side_constraint( compute_jacobian, c,
 						     cache);
@@ -293,7 +293,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->mass_residual( compute_jacobian, c,
 						   cache);
