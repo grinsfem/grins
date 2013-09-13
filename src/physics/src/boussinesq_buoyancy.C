@@ -98,30 +98,30 @@ namespace GRINS
       _w_var = _u_var; // for convenience
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[_u_var].size();
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_u_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_u_var]->get_JxW();
+      context.get_element_fe(_u_var)->get_JxW();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.element_fe_var[_u_var]->get_phi();
+      context.get_element_fe(_u_var)->get_phi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_T_var)->get_phi();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_w_var); // R_{w}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<libMesh::Number> &KuT = *context.elem_subjacobians[_u_var][_T_var]; // R_{u},{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KvT = *context.elem_subjacobians[_v_var][_T_var]; // R_{v},{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwT = *context.elem_subjacobians[_w_var][_T_var]; // R_{w},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KuT = context.get_elem_jacobian(_u_var, _T_var); // R_{u},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KvT = context.get_elem_jacobian(_v_var, _T_var); // R_{v},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KwT = context.get_elem_jacobian(_w_var, _T_var); // R_{w},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -129,7 +129,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {

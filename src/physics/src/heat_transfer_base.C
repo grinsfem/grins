@@ -112,15 +112,15 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.element_fe_var[_T_var]->get_JxW();
-    context.element_fe_var[_T_var]->get_phi();
-    context.element_fe_var[_T_var]->get_dphi();
-    context.element_fe_var[_T_var]->get_xyz();
+    context.get_element_fe(_T_var)->get_JxW();
+    context.get_element_fe(_T_var)->get_phi();
+    context.get_element_fe(_T_var)->get_dphi();
+    context.get_element_fe(_T_var)->get_xyz();
 
-    context.side_fe_var[_T_var]->get_JxW();
-    context.side_fe_var[_T_var]->get_phi();
-    context.side_fe_var[_T_var]->get_dphi();
-    context.side_fe_var[_T_var]->get_xyz();
+    context.get_side_fe(_T_var)->get_JxW();
+    context.get_side_fe(_T_var)->get_phi();
+    context.get_side_fe(_T_var)->get_dphi();
+    context.get_side_fe(_T_var)->get_xyz();
 
     return;
   }

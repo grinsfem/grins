@@ -53,7 +53,7 @@ namespace GRINS
     HeatTransferBase::init_context(context);
 
     // We also need second derivatives, so initialize those.
-    context.element_fe_var[this->_T_var]->get_d2phi();
+    context.get_element_fe(this->_T_var)->get_d2phi();
 
     return;
   }
