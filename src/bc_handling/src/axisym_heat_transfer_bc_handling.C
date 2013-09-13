@@ -125,7 +125,7 @@ namespace GRINS
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	
-	  libMesh::Point q_in;
+	  libMesh::RealGradient q_in;
 	
 	  int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_string);
 	

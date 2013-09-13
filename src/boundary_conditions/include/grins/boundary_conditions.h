@@ -34,11 +34,12 @@
 
 // libMesh
 #include "libmesh/libmesh.h"
+#include "libmesh/vector_value.h"
+#include "libmesh/tensor_tools.h"
 
 // libMesh forward declarations
 namespace libMesh
 {
-  class Point;
   class DiffContext;
 }
 
@@ -64,14 +65,14 @@ namespace GRINS
     void apply_neumann( libMesh::FEMContext& context,
 			const VariableIndex var,
 			const libMesh::Real sign,
-			const libMesh::Point& value ) const;
+			const libMesh::RealGradient& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     template<typename FEShape>
     void apply_neumann_axisymmetric( libMesh::FEMContext& context,
 				     const VariableIndex var,
 				     const libMesh::Real sign,
-				     const libMesh::Point& value ) const;
+				     const libMesh::RealGradient& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is
