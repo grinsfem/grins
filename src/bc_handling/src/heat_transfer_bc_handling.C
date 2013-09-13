@@ -190,13 +190,13 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric<libMesh::Real>( context, _T_var, -1.0,
-                                                                      this->get_neumann_bc_value(bc_id) );
+              _bound_conds.apply_neumann_axisymmetric( context, _T_var, -1.0,
+                                                       this->get_neumann_bc_value(bc_id) );
             }
           else
             {
-              _bound_conds.apply_neumann<libMesh::Real>( context, _T_var, -1.0,
-                                                         this->get_neumann_bc_value(bc_id) );
+              _bound_conds.apply_neumann( context, _T_var, -1.0,
+                                          this->get_neumann_bc_value(bc_id) );
             }
 	}
 	break;
@@ -205,13 +205,13 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric<libMesh::Real>( context, cache, request_jacobian, _T_var, -1.0, 
-                                                                      this->get_neumann_bound_func( bc_id, _T_var ) );
+              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
+                                                       this->get_neumann_bound_func( bc_id, _T_var ) );
             }
           else
             {
-              _bound_conds.apply_neumann<libMesh::Real>( context, cache, request_jacobian, _T_var, -1.0, 
-                                                         this->get_neumann_bound_func( bc_id, _T_var ) );
+              _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
+                                          this->get_neumann_bound_func( bc_id, _T_var ) );
             }
 	}
 	break;
