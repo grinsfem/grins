@@ -65,14 +65,14 @@ namespace GRINS
     void apply_neumann( libMesh::FEMContext& context,
 			const VariableIndex var,
 			const libMesh::Real sign,
-			const libMesh::RealGradient& value ) const;
+			const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     template<typename FEShape>
     void apply_neumann_axisymmetric( libMesh::FEMContext& context,
 				     const VariableIndex var,
 				     const libMesh::Real sign,
-				     const libMesh::RealGradient& value ) const;
+				     const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is

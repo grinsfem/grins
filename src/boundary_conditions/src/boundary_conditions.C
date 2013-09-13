@@ -57,9 +57,9 @@ namespace GRINS
   void BoundaryConditions::apply_neumann( libMesh::FEMContext& context,
                                           const VariableIndex var,
                                           const libMesh::Real sign,
-                                          const libMesh::RealGradient& value ) const
+                                          const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const
   {
-    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
     context.get_side_fe( var, side_fe );
 
     // The number of local degrees of freedom in each variable.
@@ -69,7 +69,7 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side = side_fe->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side = side_fe->get_phi();
 
     const std::vector<libMesh::Point> &normals = side_fe->get_normals();
 
@@ -163,9 +163,9 @@ namespace GRINS
   void BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
                                                        const VariableIndex var,
                                                        const libMesh::Real sign,
-                                                       const libMesh::RealGradient& value ) const
+                                                       const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const
   {
-    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
     context.get_side_fe( var, side_fe );
 
     // The number of local degrees of freedom in each variable.
@@ -175,7 +175,7 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
+    const std::vector<std::vector<FEShape> >& var_phi_side =
       side_fe->get_phi();
 
     // Physical location of the quadrature points
@@ -608,10 +608,10 @@ namespace GRINS
 
 // Instantiate
 template void GRINS::BoundaryConditions::apply_neumann<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
-template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealTensor&) const;
 
 template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
-template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealTensor&) const;
 
 template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real& ) const;
 template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient& ) const;
