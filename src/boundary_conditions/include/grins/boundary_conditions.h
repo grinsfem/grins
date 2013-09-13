@@ -89,7 +89,7 @@ namespace GRINS
     void apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
                                             const VariableIndex var,
                                             const libMesh::Real sign,
-                                            const libMesh::Real value ) const;
+                                            const FEShape& value ) const;
 
 
     //! Applies Neumann boundary conditions using a user-supplied function.
