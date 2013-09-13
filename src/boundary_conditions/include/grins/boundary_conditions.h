@@ -80,7 +80,7 @@ namespace GRINS
     void apply_neumann_normal( libMesh::FEMContext& context,
 			       const VariableIndex var,
 			       const libMesh::Real sign,
-			       const libMesh::Real value ) const;
+			       const FEShape& value ) const;
 
     //! Applies Neumann boundary conditions for the constant case.
     /*! This method is for the case where Neumann boundary condition is

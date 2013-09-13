@@ -89,17 +89,19 @@ namespace GRINS
   void BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
                                                  const VariableIndex var,
                                                  const libMesh::Real sign,
-                                                 libMesh::Real value ) const
+                                                 const FEShape& value ) const
   {
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom in each variable.
     const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(var)->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.get_side_fe(var)->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side = side_fe->get_phi();
 
     libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
@@ -577,8 +579,8 @@ template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(li
 template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
 template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Point&) const;
 
-template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
-template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real& ) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient& ) const;
 
 template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::Real>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
 template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::RealGradient>(libMesh::FEMContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real) const;
