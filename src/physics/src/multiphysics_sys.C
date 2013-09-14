@@ -125,6 +125,30 @@ namespace GRINS
     return;
   }
 
+  libMesh::AutoPtr<libMesh::DiffContext> MultiphysicsSystem::build_context()
+  {
+    libMesh::FEMContext* fc = new libMesh::FEMContext(*this);
+
+    libMesh::AutoPtr<libMesh::DiffContext> ap(fc);
+
+    libMesh::DifferentiablePhysics* phys = libMesh::FEMSystem::get_physics();
+
+    libmesh_assert(phys);
+
+    // If we are solving a moving mesh problem, tell that to the Context
+    fc->set_mesh_system(phys->get_mesh_system());
+    fc->set_mesh_x_var(phys->get_mesh_x_var());
+    fc->set_mesh_y_var(phys->get_mesh_y_var());
+    fc->set_mesh_z_var(phys->get_mesh_z_var());
+
+    ap->set_deltat_pointer( &deltat );
+
+    // If we are solving the adjoint problem, tell that to the Context
+    ap->is_adjoint() = this->get_time_solver().is_adjoint();
+
+    return ap;
+  }
+
   void MultiphysicsSystem::init_context( libMesh::DiffContext &context )
   {
     libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
