@@ -42,8 +42,9 @@ namespace GRINS
 
   UnsteadySolver::UnsteadySolver( const GetPot& input )
     : Solver(input),
-      _theta( input("unsteady-solver/theta", 0.5 ) ),
       _n_timesteps( input("unsteady-solver/n_timesteps", 1 ) ),
+      _backtrack_deltat( input("unsteady-solver/backtrack_deltat", 0 ) ),
+      _theta( input("unsteady-solver/theta", 0.5 ) ),
       /*! \todo Is this the best default for delta t?*/
       _deltat( input("unsteady-solver/deltat", 0.0 ) ),
       _target_tolerance( input("unsteady-solver/target_tolerance", 0.0 ) ),
@@ -97,6 +98,7 @@ namespace GRINS
 
     // Set theta parameter for time-stepping scheme
     time_solver->theta = this->_theta;
+    time_solver->reduce_deltat_on_diffsolver_failure = this->_backtrack_deltat;
 
     return;
   }
