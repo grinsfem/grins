@@ -88,6 +88,7 @@ namespace GRINS
         outer_solver->target_tolerance = _target_tolerance;
         outer_solver->upper_tolerance = _upper_tolerance;
         outer_solver->max_growth = _max_growth;
+        outer_solver->quiet = false;
 
         outer_solver->core_time_solver =
           libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
