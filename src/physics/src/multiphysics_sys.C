@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/composite_function.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -127,19 +128,19 @@ namespace GRINS
 
   libMesh::AutoPtr<libMesh::DiffContext> MultiphysicsSystem::build_context()
   {
-    libMesh::FEMContext* fc = new libMesh::FEMContext(*this);
+    AssemblyContext* context = new AssemblyContext(*this);
 
-    libMesh::AutoPtr<libMesh::DiffContext> ap(fc);
+    libMesh::AutoPtr<libMesh::DiffContext> ap(context);
 
     libMesh::DifferentiablePhysics* phys = libMesh::FEMSystem::get_physics();
 
     libmesh_assert(phys);
 
     // If we are solving a moving mesh problem, tell that to the Context
-    fc->set_mesh_system(phys->get_mesh_system());
-    fc->set_mesh_x_var(phys->get_mesh_x_var());
-    fc->set_mesh_y_var(phys->get_mesh_y_var());
-    fc->set_mesh_z_var(phys->get_mesh_z_var());
+    context->set_mesh_system(phys->get_mesh_system());
+    context->set_mesh_x_var(phys->get_mesh_x_var());
+    context->set_mesh_y_var(phys->get_mesh_y_var());
+    context->set_mesh_z_var(phys->get_mesh_z_var());
 
     ap->set_deltat_pointer( &deltat );
 
