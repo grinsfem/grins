@@ -48,7 +48,6 @@ class GetPot;
 namespace libMesh
 {
   class FEMSystem;
-  class FEMContext;
   class Elem;
 }
 
@@ -60,6 +59,7 @@ namespace GRINS
   class ICHandlingBase;
   class NBCContainer;
   class DBCContainer;
+  class AssemblyContext;
 
   template <typename Scalar>
   class CompositeFunction;
@@ -128,7 +128,7 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

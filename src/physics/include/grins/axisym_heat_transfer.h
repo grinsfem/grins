@@ -35,7 +35,7 @@
 
 namespace GRINS
 {
-
+  
   //! Physics class for Axisymmetric Heat Transfer
   /*
     This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
@@ -62,7 +62,7 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

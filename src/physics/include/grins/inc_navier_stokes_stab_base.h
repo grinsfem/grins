@@ -41,7 +41,7 @@ namespace GRINS
     virtual ~IncompressibleNavierStokesStabilizationBase();
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     libMesh::Real compute_res_continuity( libMesh::FEMContext& context,
 					  unsigned int qp ) const;

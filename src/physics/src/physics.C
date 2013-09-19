@@ -145,7 +145,7 @@ namespace GRINS
     return;
   }
   
-  void Physics::init_context( libMesh::FEMContext& /*context*/ )
+  void Physics::init_context( AssemblyContext& /*context*/ )
   {
     return;
   }

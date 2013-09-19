@@ -26,6 +26,7 @@
 #include "grins/reacting_low_mach_navier_stokes.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
@@ -33,7 +34,6 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -77,7 +77,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
     GRINS::ReactingLowMachNavierStokesBase::init_context(context);

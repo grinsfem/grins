@@ -25,8 +25,8 @@
 // This class
 #include "grins/inc_navier_stokes_stab_base.h"
 
-// libMesh
-#include "libmesh/fem_context.h"
+// GRINS
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
@@ -46,7 +46,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationBase::init_context( libMesh::FEMContext& context )
+  void IncompressibleNavierStokesStabilizationBase::init_context( AssemblyContext& context )
   {
     // First call base class
     IncompressibleNavierStokesBase::init_context(context);

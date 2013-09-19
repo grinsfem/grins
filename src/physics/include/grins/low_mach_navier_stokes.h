@@ -49,7 +49,7 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,

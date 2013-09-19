@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 #include "grins/low_mach_navier_stokes_bc_handling.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
@@ -71,7 +72,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::init_context( libMesh::FEMContext& context )
+  void LowMachNavierStokes<Mu,SH,TC>::init_context( AssemblyContext& context )
   {
     // First call base class
     LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);

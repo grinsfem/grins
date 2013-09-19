@@ -25,6 +25,9 @@
 // This class
 #include "grins/heat_transfer_stab_base.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 namespace GRINS
 {
 
@@ -43,7 +46,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferStabilizationBase::init_context( libMesh::FEMContext& context )
+  void HeatTransferStabilizationBase::init_context( AssemblyContext& context )
   {
     // First call base class
     HeatTransferBase::init_context(context);
