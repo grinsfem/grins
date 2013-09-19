@@ -98,7 +98,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative( bool compute_jacobian,
-                                                                                libMesh::FEMContext& context,
+                                                                                AssemblyContext& context,
                                                                                 CachedValues& cache )
   {
     unsigned int n_qpoints = context.get_element_qrule().n_points();

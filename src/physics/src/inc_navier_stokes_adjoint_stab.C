@@ -25,6 +25,9 @@
 // This class
 #include "grins/inc_navier_stokes_adjoint_stab.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 //libMesh
 #include "libmesh/quadrature.h"
 
@@ -46,7 +49,7 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
-										libMesh::FEMContext& context,
+										AssemblyContext& context,
 										CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

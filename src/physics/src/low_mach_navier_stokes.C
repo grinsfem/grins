@@ -94,7 +94,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-							       libMesh::FEMContext& context,
+							       AssemblyContext& context,
 							       CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

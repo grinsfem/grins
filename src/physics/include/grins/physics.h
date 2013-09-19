@@ -135,7 +135,7 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-                                          libMesh::FEMContext& context,
+                                          AssemblyContext& context,
                                           CachedValues& cache );
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary

@@ -26,11 +26,11 @@
 #include "grins/inc_navier_stokes.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
 
 // libMesh
-#include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
@@ -62,7 +62,7 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokes::element_time_derivative( bool compute_jacobian,
-							    libMesh::FEMContext& context,
+							    AssemblyContext& context,
 							    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

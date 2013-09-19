@@ -102,7 +102,7 @@ namespace GRINS
   }
 
   void HeatConduction::element_time_derivative( bool compute_jacobian,
-						libMesh::FEMContext& context,
+						AssemblyContext& context,
 						CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.

@@ -26,13 +26,13 @@
 #include "grins/heat_transfer_source.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_source_func.h"
 
 // libMesh
 #include "libmesh/utility.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -66,7 +66,7 @@ namespace GRINS
 
   template< class SourceFunction >
   void HeatTransferSource<SourceFunction>::element_time_derivative( bool /*compute_jacobian*/,
-								    libMesh::FEMContext& context,
+								    AssemblyContext& context,
 								    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
