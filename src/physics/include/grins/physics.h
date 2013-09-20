@@ -145,7 +145,7 @@ namespace GRINS
 
     //! Constraint part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
-                                     libMesh::FEMContext& context,
+                                     AssemblyContext& context,
                                      CachedValues& cache );
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary

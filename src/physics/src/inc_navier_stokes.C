@@ -287,7 +287,7 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokes::element_constraint( bool compute_jacobian,
-						       libMesh::FEMContext& context,
+						       AssemblyContext& context,
 						       CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
