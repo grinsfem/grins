@@ -150,7 +150,7 @@ namespace GRINS
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_constraint( bool compute_jacobian,
-                                  libMesh::FEMContext& context,
+                                  AssemblyContext& context,
                                   CachedValues& cache );
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
