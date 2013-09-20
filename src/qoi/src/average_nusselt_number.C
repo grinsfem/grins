@@ -27,10 +27,10 @@
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -101,7 +101,7 @@ namespace GRINS
 
   void AverageNusseltNumber::side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
@@ -141,7 +141,7 @@ namespace GRINS
 
   void AverageNusseltNumber::side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )

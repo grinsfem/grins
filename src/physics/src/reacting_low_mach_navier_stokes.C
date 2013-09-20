@@ -146,9 +146,7 @@ namespace GRINS
                                                                       CachedValues& /*cache*/ )
   {
     libmesh_not_implemented();
-    /*
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-    */
+
     return;
   }
 
