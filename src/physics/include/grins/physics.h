@@ -155,7 +155,7 @@ namespace GRINS
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
-                                libMesh::FEMContext& context,
+                                AssemblyContext& context,
                                 CachedValues& cache );
 
     void init_bcs( libMesh::FEMSystem* system );

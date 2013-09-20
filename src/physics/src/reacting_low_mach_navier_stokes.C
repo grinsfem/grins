@@ -142,7 +142,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::mass_residual( bool /*compute_jacobian*/,
-                                                                      libMesh::FEMContext& /*context*/,
+                                                                      AssemblyContext& /*context*/,
                                                                       CachedValues& /*cache*/ )
   {
     libmesh_not_implemented();
@@ -154,7 +154,7 @@ namespace GRINS
 
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( AssemblyContext& context, 
                                                                                  unsigned int qp,
                                                                                  const CachedValues& cache )
   {
@@ -234,7 +234,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(AssemblyContext& context, 
                                                                                    unsigned int qp,
                                                                                    const CachedValues& cache)
   {
@@ -309,7 +309,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(AssemblyContext& context, 
 									  unsigned int qp,
 									  const CachedValues& cache)
   {
@@ -431,7 +431,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( AssemblyContext& context, 
                                                                                    unsigned int qp,
                                                                                    const CachedValues& cache)
   {

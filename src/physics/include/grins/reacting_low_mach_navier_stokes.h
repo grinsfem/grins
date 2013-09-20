@@ -55,7 +55,7 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
@@ -85,19 +85,19 @@ namespace GRINS
 
   protected:
 
-    void assemble_mass_time_deriv(libMesh::FEMContext& c, 
+    void assemble_mass_time_deriv(AssemblyContext& c, 
 				  unsigned int qp,
 				  const CachedValues& cache);
 
-    void assemble_species_time_deriv(libMesh::FEMContext& c, 
+    void assemble_species_time_deriv(AssemblyContext& c, 
 				     unsigned int qp,
 				     const CachedValues& cache);
 
-    void assemble_momentum_time_deriv(libMesh::FEMContext& c, 
+    void assemble_momentum_time_deriv(AssemblyContext& c, 
 				      unsigned int qp,
 				      const CachedValues& cache);
 
-    void assemble_energy_time_deriv(libMesh::FEMContext& c, 
+    void assemble_energy_time_deriv(AssemblyContext& c, 
 				    unsigned int qp,
 				    const CachedValues& cache);
 

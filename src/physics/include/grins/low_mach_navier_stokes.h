@@ -62,7 +62,7 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,

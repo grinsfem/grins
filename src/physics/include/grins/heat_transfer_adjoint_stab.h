@@ -44,7 +44,7 @@ namespace GRINS
 					  CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
     
   private:

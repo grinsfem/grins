@@ -144,7 +144,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-						     libMesh::FEMContext& context,
+						     AssemblyContext& context,
 						     CachedValues& /*cache*/ )
   {
     this->assemble_continuity_mass_residual( compute_jacobian, context );

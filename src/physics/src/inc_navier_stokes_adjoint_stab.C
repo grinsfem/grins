@@ -134,7 +134,7 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
-								      libMesh::FEMContext& context,
+								      AssemblyContext& context,
 								      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

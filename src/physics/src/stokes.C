@@ -291,7 +291,7 @@ namespace GRINS
   }
 
   void Stokes::mass_residual( bool compute_jacobian,
-			      libMesh::FEMContext& context,
+			      AssemblyContext& context,
 			      CachedValues& /*cache*/)
   {
     // Element Jacobian * quadrature weights for interior integration
