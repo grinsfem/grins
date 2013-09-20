@@ -140,7 +140,7 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_time_derivative( bool compute_jacobian,
-                                       libMesh::FEMContext& context,
+                                       AssemblyContext& context,
                                        CachedValues& cache );
 
     //! Constraint part(s) of physics for element interiors

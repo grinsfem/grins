@@ -122,7 +122,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian,
-                                                                             libMesh::FEMContext& context,
+                                                                             AssemblyContext& context,
                                                                              CachedValues& cache )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */

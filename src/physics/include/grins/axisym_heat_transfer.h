@@ -73,7 +73,7 @@ namespace GRINS
 					  CachedValues& cache  );
 
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context,
+				       AssemblyContext& context,
 				       CachedValues& cache );
 
     // Mass matrix part(s)
