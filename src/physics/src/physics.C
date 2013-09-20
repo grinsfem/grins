@@ -150,31 +150,31 @@ namespace GRINS
     return;
   }
 
-  void Physics::compute_element_time_derivative_cache( const libMesh::FEMContext&,
+  void Physics::compute_element_time_derivative_cache( const AssemblyContext&,
 						       CachedValues& )
   {
     return;
   }
 
-  void Physics::compute_side_time_derivative_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_side_time_derivative_cache( const AssemblyContext& /*context*/,
 						    CachedValues& /*cache*/ )
    {
      return;
    }
 
-  void Physics::compute_element_constraint_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_element_constraint_cache( const AssemblyContext& /*context*/,
 						  CachedValues& /*cache*/ )
   {
     return;
   }
 
-  void Physics::compute_side_constraint_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_side_constraint_cache( const AssemblyContext& /*context*/,
 					       CachedValues& /*cache*/ )
   {
     return;
   }
 
-  void Physics::compute_mass_residual_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
 					     CachedValues& /*cache*/ )
   {
     return;

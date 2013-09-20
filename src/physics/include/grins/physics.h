@@ -167,19 +167,19 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
-    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
                                                         CachedValues& cache );
 
-    virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context,
+    virtual void compute_side_time_derivative_cache( const AssemblyContext& context,
                                                      CachedValues& cache );
 
-    virtual void compute_element_constraint_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_constraint_cache( const AssemblyContext& context,
                                                    CachedValues& cache );
 
-    virtual void compute_side_constraint_cache( const libMesh::FEMContext& context,
+    virtual void compute_side_constraint_cache( const AssemblyContext& context,
                                                 CachedValues& cache );
 
-    virtual void compute_mass_residual_cache( const libMesh::FEMContext& context,
+    virtual void compute_mass_residual_cache( const AssemblyContext& context,
                                               CachedValues& cache );
 
     virtual void compute_element_cache( const libMesh::FEMContext& context, 
