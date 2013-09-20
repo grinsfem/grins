@@ -80,6 +80,7 @@ namespace GRINS
         libMesh::NumericVector<Number>& primal_solution = *(context.system->solution);
         if( context.output_vis )
           {
+            context.postprocessing->update_quantities( *(context.equation_system) );
             context.vis->output( context.equation_system );
           }
 
