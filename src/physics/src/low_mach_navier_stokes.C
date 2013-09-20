@@ -818,7 +818,7 @@ namespace GRINS
   
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const libMesh::FEMContext& context, 
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const AssemblyContext& context, 
 							     const std::vector<libMesh::Point>& points,
 							     CachedValues& cache )
   {

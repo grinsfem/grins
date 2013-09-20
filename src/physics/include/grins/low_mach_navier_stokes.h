@@ -68,7 +68,7 @@ namespace GRINS
     virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
 							CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_cache( const AssemblyContext& context,
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 

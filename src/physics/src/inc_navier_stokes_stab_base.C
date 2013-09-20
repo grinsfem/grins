@@ -60,7 +60,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real IncompressibleNavierStokesStabilizationBase::compute_res_continuity( libMesh::FEMContext& context,
+  libMesh::Real IncompressibleNavierStokesStabilizationBase::compute_res_continuity( AssemblyContext& context,
 										     unsigned int qp ) const
   {
     libMesh::RealGradient grad_u, grad_v;
@@ -78,7 +78,7 @@ namespace GRINS
     return divU;
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_steady( libMesh::FEMContext& context,
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_steady( AssemblyContext& context,
 												  unsigned int qp ) const
   {
     libMesh::RealGradient U( context.fixed_interior_value(this->_u_var, qp), 
@@ -115,7 +115,7 @@ namespace GRINS
     return rhoUdotGradU + grad_p - this->_mu*divGradU;
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_transient( libMesh::FEMContext& context,
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_transient( AssemblyContext& context,
 												     unsigned int qp ) const
   {
     libMesh::RealGradient u_dot( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );

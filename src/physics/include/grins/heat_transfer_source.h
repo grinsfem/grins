@@ -37,7 +37,6 @@ class GetPot;
 
 namespace libMesh
 {
-  class FEMContext;
   class FEMSystem;
 }
 

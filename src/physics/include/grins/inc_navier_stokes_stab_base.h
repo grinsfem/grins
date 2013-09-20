@@ -43,13 +43,13 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-    libMesh::Real compute_res_continuity( libMesh::FEMContext& context,
+    libMesh::Real compute_res_continuity( AssemblyContext& context,
 					  unsigned int qp ) const;
     
-    libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
+    libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
 						       unsigned int qp ) const;
     
-    libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
+    libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
 							  unsigned int qp ) const;
 
   protected:

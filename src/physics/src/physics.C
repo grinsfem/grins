@@ -180,7 +180,7 @@ namespace GRINS
     return;
   }
 
-  void Physics::compute_element_cache( const libMesh::FEMContext&,
+  void Physics::compute_element_cache( const AssemblyContext&,
 				       const std::vector<libMesh::Point>&,
 				       CachedValues& )
   {

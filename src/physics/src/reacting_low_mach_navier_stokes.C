@@ -701,7 +701,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const AssemblyContext& context, 
                                                                               const std::vector<libMesh::Point>& points,
                                                                               CachedValues& cache )
   {

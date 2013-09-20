@@ -66,7 +66,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( AssemblyContext& context,
 											       unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -92,7 +92,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( AssemblyContext& context,
 												  unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -112,7 +112,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( libMesh::FEMContext& context,
+  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( AssemblyContext& context,
 												     unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -201,7 +201,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( libMesh::FEMContext& context,
+  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( AssemblyContext& context,
 													unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -216,7 +216,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( AssemblyContext& context,
 											   unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -236,7 +236,7 @@ namespace GRINS
 
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( AssemblyContext& context,
 											      unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);

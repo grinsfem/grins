@@ -57,7 +57,7 @@ namespace GRINS
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
 					 const GRINS::CachedValues& cache,
 					 const bool request_jacobian,
 					 const GRINS::BoundaryID bc_id,

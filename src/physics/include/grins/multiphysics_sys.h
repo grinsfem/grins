@@ -132,7 +132,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
-    void compute_element_cache( const libMesh::FEMContext& context,
+    void compute_element_cache( const AssemblyContext& context,
 				const std::vector<libMesh::Point>& points,
 				CachedValues& cache ) const;
 
