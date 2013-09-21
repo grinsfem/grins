@@ -67,6 +67,18 @@ namespace GRINS
 
     libMesh::Real get_p0_transient( const libMesh::FEMContext& c, unsigned int qp ) const;
 
+    virtual libMesh::Real cp_mix( const libMesh::Real T,
+                                  const std::vector<libMesh::Real>& Y ) =0;
+
+    virtual libMesh::Real mu( const libMesh::Real T,
+                              const std::vector<libMesh::Real>& Y ) =0;
+
+    virtual libMesh::Real k( const libMesh::Real T,
+                             const std::vector<libMesh::Real>& Y ) =0;
+
+    virtual void D( const libMesh::Real rho, const libMesh::Real cp,
+                    const libMesh::Real k,
+                    std::vector<libMesh::Real>& D ) =0;
 
   protected:
 

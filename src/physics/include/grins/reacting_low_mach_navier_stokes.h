@@ -70,6 +70,19 @@ namespace GRINS
 
     const Mixture& gas_mixture() const;
 
+    virtual libMesh::Real cp_mix( const libMesh::Real T,
+                                  const std::vector<libMesh::Real>& Y );
+
+    virtual libMesh::Real mu( const libMesh::Real T,
+                              const std::vector<libMesh::Real>& Y );
+
+    virtual libMesh::Real k( const libMesh::Real T,
+                             const std::vector<libMesh::Real>& Y );
+
+    virtual void D( const libMesh::Real rho, const libMesh::Real cp,
+                    const libMesh::Real k,
+                    std::vector<libMesh::Real>& D );
+
   protected:
 
     void assemble_mass_time_deriv(libMesh::FEMContext& c, 
