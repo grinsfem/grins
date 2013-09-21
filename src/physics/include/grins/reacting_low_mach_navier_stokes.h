@@ -31,7 +31,7 @@
 namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
-  class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase<Mixture>
+  class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase
   {
   public:
 
@@ -68,6 +68,8 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
+    const Mixture& gas_mixture() const;
+
   protected:
 
     void assemble_mass_time_deriv(libMesh::FEMContext& c, 
@@ -86,6 +88,8 @@ namespace GRINS
 				    unsigned int qp,
 				    const CachedValues& cache);
 
+    Mixture _gas_mixture;
+
     //! Enable pressure pinning
     bool _pin_pressure;
     
@@ -96,6 +100,13 @@ namespace GRINS
     ReactingLowMachNavierStokes();
 
   };
+
+  template<typename Mixture, typename Evaluator>
+  inline
+  const Mixture& ReactingLowMachNavierStokes<Mixture,Evaluator>::gas_mixture() const
+  {
+    return _gas_mixture;
+  }
 
 } // namespace GRINS
 

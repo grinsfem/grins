@@ -40,11 +40,9 @@
 
 namespace GRINS
 {
-  template<class Mixture>
-  ReactingLowMachNavierStokesBase<Mixture>::ReactingLowMachNavierStokesBase(const std::string& physics_name, 
+  ReactingLowMachNavierStokesBase::ReactingLowMachNavierStokesBase(const std::string& physics_name, 
 									    const GetPot& input)
     : Physics(physics_name, input),
-      _gas_mixture(input),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
       _fixed_rho_value( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 ) )
   {
@@ -53,14 +51,12 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  ReactingLowMachNavierStokesBase<Mixture>::~ReactingLowMachNavierStokesBase()
+  ReactingLowMachNavierStokesBase::~ReactingLowMachNavierStokesBase()
   {
     return;
   }
-
-  template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::read_input_options( const GetPot& input )
+  
+  void ReactingLowMachNavierStokesBase::read_input_options( const GetPot& input )
   {
     // Read FE family info
     this->_species_FE_family = libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_FE_family", "LAGRANGE") );
@@ -119,8 +115,7 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::init_variables( libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokesBase::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -151,8 +146,7 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokesBase::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -176,8 +170,7 @@ namespace GRINS
     return;
   }
 
-  template<class Mixture>
-  void ReactingLowMachNavierStokesBase<Mixture>::init_context( libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokesBase::init_context( libMesh::FEMContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

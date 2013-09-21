@@ -38,7 +38,8 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
+    : ReactingLowMachNavierStokesBase(physics_name,input),
+      _gas_mixture(input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
@@ -76,7 +77,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( libMesh::FEMContext& context )
   {
     // First call base class
-    GRINS::ReactingLowMachNavierStokesBase<Mixture>::init_context(context);
+    GRINS::ReactingLowMachNavierStokesBase::init_context(context);
 
     // We also need the side shape functions, etc.
     context.get_side_fe(this->_u_var)->get_JxW();
