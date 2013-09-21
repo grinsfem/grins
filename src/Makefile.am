@@ -79,6 +79,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_stab_help
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
 
 # src/properties files

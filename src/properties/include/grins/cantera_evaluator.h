@@ -86,6 +86,36 @@ namespace GRINS
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
 
+    libMesh::Real cp( const libMesh::Real& /*T*/,
+                      const std::vector<libMesh::Real>& /*Y*/ )
+    {
+      libmesh_not_implemented();
+      return 0.0;
+    }
+
+    libMesh::Real mu( const libMesh::Real& /*T*/,
+                      const std::vector<libMesh::Real>& /*Y*/ )
+    {
+      libmesh_not_implemented();
+      return 0.0;
+    }
+
+    libMesh::Real k( const libMesh::Real& /*T*/,
+                     const std::vector<libMesh::Real>& /*Y*/ )
+    {
+      libmesh_not_implemented();
+      return 0.0;
+    }
+
+    void D( const libMesh::Real /*rho*/,
+            const libMesh::Real /*cp*/,
+            const libMesh::Real /*k*/,
+	    std::vector<libMesh::Real>& /*D*/ )
+    {
+      libmesh_not_implemented();
+      return;
+    }
+
   protected:
 
     CanteraMixture& _chem;

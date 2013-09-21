@@ -38,7 +38,8 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
+    : ReactingLowMachNavierStokesBase(physics_name,input),
+      _gas_mixture(input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
@@ -76,7 +77,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( libMesh::FEMContext& context )
   {
     // First call base class
-    GRINS::ReactingLowMachNavierStokesBase<Mixture>::init_context(context);
+    GRINS::ReactingLowMachNavierStokesBase::init_context(context);
 
     // We also need the side shape functions, etc.
     context.get_side_fe(this->_u_var)->get_JxW();
@@ -945,6 +946,44 @@ namespace GRINS
       }
 
     return;
+  }
+  
+  template<typename Mixture, typename Evaluator>
+  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::cp_mix( const libMesh::Real T,
+                                                                        const std::vector<libMesh::Real>& Y )
+  {
+    Evaluator gas_evaluator( this->_gas_mixture );
+    
+    return gas_evaluator.cp( T, Y );
+  }
+
+  template<typename Mixture, typename Evaluator>
+  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::mu( const libMesh::Real T,
+                                                                    const std::vector<libMesh::Real>& Y )
+  {
+    Evaluator gas_evaluator( this->_gas_mixture );
+    
+    return gas_evaluator.mu( T, Y );
+  }
+
+  template<typename Mixture, typename Evaluator>
+  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::k( const libMesh::Real T,
+                                                                   const std::vector<libMesh::Real>& Y )
+  {
+    Evaluator gas_evaluator( this->_gas_mixture );
+    
+    return gas_evaluator.k( T, Y );
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::D( const libMesh::Real rho,
+                                                          const libMesh::Real cp,
+                                                          const libMesh::Real k,
+                                                          std::vector<libMesh::Real>& D )
+  {
+    Evaluator gas_evaluator( this->_gas_mixture );
+    
+    return gas_evaluator.D( rho, cp, k, D );
   }
 
 } // namespace GRINS
