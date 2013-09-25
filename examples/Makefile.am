@@ -88,6 +88,15 @@ liddrivencavity_SCRIPTS = $(top_builddir)/examples/lid_driven_cavity/run.sh
 EXTRA_DIST += $(liddrivencavity_DATA)
 
 #=======================================================================
+# Convection Cell Example
+#=======================================================================
+convectioncelldir = $(prefix)/examples/convection_cell
+convectioncell_DATA = $(top_srcdir)/examples/convection_cell/convection_cell.in
+convectioncell_SCRIPTS = $(top_builddir)/examples/convection_cell/run.sh
+
+EXTRA_DIST += $(convectioncell_DATA)
+
+#=======================================================================
 # Mass Injection Example
 #=======================================================================
 massinjectiondir = $(prefix)/examples/mass_injection
