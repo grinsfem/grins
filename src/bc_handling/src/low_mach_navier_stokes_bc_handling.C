@@ -44,13 +44,17 @@ namespace GRINS
   {
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/vel_bc_types";
+    std::string var_str = "Physics/"+_physics_name+"/vel_bc_variables";
+    std::string val_str = "Physics/"+_physics_name+"/vel_bc_values";
 
-    this->read_bc_data( input, id_str, bc_str );
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
     id_str = "Physics/"+_physics_name+"/temp_bc_ids";
     bc_str = "Physics/"+_physics_name+"/temp_bc_types";
+    var_str = "Physics/"+_physics_name+"/temp_bc_variables";
+    val_str = "Physics/"+_physics_name+"/temp_bc_values";
 
-    this->read_bc_data( input, id_str, bc_str );
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
     return;
   }
@@ -116,6 +120,8 @@ namespace GRINS
   void LowMachNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
 						     const std::string& bc_id_string, 
 						     const int bc_type, 
+					             const std::string& bc_vars, 
+					             const std::string& bc_value, 
 						     const GetPot& input )
   {
     switch(bc_type)
@@ -279,7 +285,8 @@ namespace GRINS
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+                                         bc_vars, bc_value, input );
 	}
       } // End switch(bc_type)
   

@@ -32,6 +32,7 @@
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/periodic_boundary.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -62,10 +63,14 @@ namespace GRINS
   }
 
   void BCHandlingBase::read_bc_data( const GetPot& input, const std::string& id_str,
-				     const std::string& bc_str)
+				     const std::string& bc_str,
+				     const std::string& var_str,
+				     const std::string& val_str)
   {
     int num_ids = input.vector_variable_size(id_str);
     int num_bcs = input.vector_variable_size(bc_str);
+    int num_vars = input.vector_variable_size(var_str);
+    int num_vals = input.vector_variable_size(val_str);
 
     if( num_ids != num_bcs )
       {
@@ -85,7 +90,11 @@ namespace GRINS
 	ss << bc_id;
 	std::string bc_id_string = ss.str();
 
-	this->init_bc_types( bc_id, bc_id_string, bc_type, input );
+        std::string bc_val = input(val_str, std::string(""), i );
+
+        std::string bc_vars = input(var_str, std::string(""), i );
+
+	this->init_bc_types( bc_id, bc_id_string, bc_type, bc_vars, bc_val, input );
       }
 
     return;
@@ -233,6 +242,10 @@ namespace GRINS
       {
         bc_type_out = PERIODIC;
       }
+    else if( bc_type_in == "dirichlet" )
+      {
+        bc_type_out = DIRICHLET;
+      }
     else if( bc_type_in == "axisymmetric" )
       {
         bc_type_out = AXISYMMETRIC;
@@ -252,6 +265,8 @@ namespace GRINS
   void BCHandlingBase::init_bc_types( const BoundaryID bc_id, 
 				      const std::string& bc_id_string, 
 				      const int bc_type, 
+                                      const std::string& bc_vars,
+                                      const std::string& bc_value,
 				      const GetPot& input )
   {
     switch(bc_type)
@@ -336,6 +351,21 @@ namespace GRINS
 	  // Now stash the container object for use later in initialization
 	  _periodic_bcs.push_back( pbc );
 
+	}
+	break;
+      case(DIRICHLET):
+	{
+          DBCContainer dirichlet_bc;
+
+          dirichlet_bc.add_var_name(bc_vars);
+
+          dirichlet_bc.add_bc_id(bc_id);
+
+          dirichlet_bc.set_func
+            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+              (new libMesh::ParsedFunction<Number>(bc_value)));
+
+          this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
 	break;
 
