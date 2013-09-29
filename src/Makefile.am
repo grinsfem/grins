@@ -51,6 +51,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_
 # src/error_estimation files
 libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_factory.C
 
+# src/ic_handling files
+libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/ic_handling_base.C
+
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
@@ -180,6 +183,9 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic
 
 # src/error_estimation headers
 include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estimation_factory.h
+
+# src/ic_handling headers
+include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/ic_handling_base.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
@@ -324,6 +330,7 @@ AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include

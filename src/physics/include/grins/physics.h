@@ -57,6 +57,7 @@ namespace GRINS
 {
   // GRINS forward declarations
   class BCHandlingBase;
+  class ICHandlingBase;
   class NBCContainer;
   class DBCContainer;
 
@@ -181,6 +182,8 @@ namespace GRINS
 
     BCHandlingBase* get_bc_handler(); 
 
+    ICHandlingBase* get_ic_handler(); 
+
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
@@ -193,6 +196,8 @@ namespace GRINS
     const PhysicsName& _physics_name;
 
     GRINS::BCHandlingBase* _bc_handler;
+
+    GRINS::ICHandlingBase* _ic_handler;
 
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;
@@ -219,6 +224,12 @@ namespace GRINS
   BCHandlingBase* Physics::get_bc_handler()
   {
     return _bc_handler;
+  }
+
+  inline
+  ICHandlingBase* Physics::get_ic_handler()
+  {
+    return _ic_handler;
   }
 
 } // End namespace GRINS
