@@ -97,6 +97,10 @@ public:
       libmesh_assert_equal_to (output.size(),
 			       reverse_index_map.size());
 
+      // Necessary in case we have output components not covered by
+      // any subfunctions
+      output.zero();
+
       libMesh::DenseVector<Output> temp;
       for (unsigned int i=0; i != subfunctions.size(); ++i)
 	{
@@ -115,6 +119,10 @@ public:
                             const libMesh::Point& p,
                             libMesh::Real time)
     {
+      if (i >= reverse_index_map.size() ||
+          reverse_index_map[i].first == libMesh::invalid_uint)
+        return 0;
+
       libmesh_assert_less(reverse_index_map[i].first,
 		          subfunctions.size());
       libmesh_assert_not_equal_to(reverse_index_map[i].second,
