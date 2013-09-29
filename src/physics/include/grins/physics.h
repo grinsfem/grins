@@ -61,6 +61,9 @@ namespace GRINS
   class NBCContainer;
   class DBCContainer;
 
+  template <typename Scalar>
+  class CompositeFunction;
+
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
     This abstract base class defines the API for use within the MultiphysicsSystem. Each physics
@@ -156,6 +159,9 @@ namespace GRINS
 				CachedValues& cache );
 
     void init_bcs( libMesh::FEMSystem* system );
+
+    void init_ics( libMesh::FEMSystem* system,
+                   GRINS::CompositeFunction<Number>& all_ics );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 

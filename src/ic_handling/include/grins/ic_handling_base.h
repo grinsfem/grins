@@ -43,6 +43,10 @@ namespace libMesh
 
 namespace GRINS
 {
+  // GRINS forward declarations
+  template <typename Scalar>
+  class CompositeFunction;
+
   //! Base class for reading and handling initial conditions for physics classes
   class ICHandlingBase
   {
@@ -56,12 +60,14 @@ namespace GRINS
 
     virtual void read_ic_data( const GetPot& input, const std::string& id_str,
 			       const std::string& ic_str,
+			       const std::string& var_str,
                                const std::string& value_str );
 
     //! Override this method to initialize any system-dependent data.
     /*! Override this method to, for example, cache a System variable
         number. */
-    virtual void init_ic_data( const libMesh::FEMSystem& system );
+    virtual void init_ic_data( const libMesh::FEMSystem& system,
+                               GRINS::CompositeFunction<Number>& all_ics );
 
     // User will need to implement these functions for IC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
@@ -69,6 +75,7 @@ namespace GRINS
     virtual void init_ic_types( const libMesh::subdomain_id_type ic_id, 
 				const std::string& ic_id_string, 
 				const int ic_type, 
+				const std::string& ic_vars_string, 
 				const std::string& ic_value_string, 
 				const GetPot& input );
 

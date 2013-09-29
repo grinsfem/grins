@@ -25,6 +25,9 @@
 // This class
 #include "grins/multiphysics_sys.h"
 
+// GRINS
+#include "grins/composite_function.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -98,6 +101,21 @@ namespace GRINS
       {
 	// Initialize builtin BC's for each physics
 	(physics_iter->second)->init_bcs( this );
+      }
+
+    CompositeFunction<Number> ic_function;
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	// Initialize builtin IC's for each physics
+	(physics_iter->second)->init_ics( this, ic_function );
+      }
+
+    if (ic_function.n_subfunctions())
+      {
+        libmesh_assert(ic_function.n_components() == this->n_vars());
+        this->project_solution(&ic_function);
       }
 
     // Next, call parent init_data function to intialize everything.

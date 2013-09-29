@@ -127,6 +127,14 @@ public:
     return libMesh::AutoPtr<libMesh::FunctionBase<Output> > (returnval);
   }
 
+  unsigned int n_subfunctions () const {
+    return subfunctions.size();
+  }
+
+  unsigned int n_components () const {
+    return reverse_index_map.size();
+  }
+
 private:
   // list of functions which fill in our values
   std::vector<libMesh::FunctionBase<Output> *> subfunctions;

@@ -29,6 +29,9 @@
 // This class
 #include "grins/ic_handling_base.h"
 
+// GRINS
+#include "grins/composite_function.h"
+
 // libMesh
 #include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
@@ -40,7 +43,8 @@
 namespace GRINS
 {
   ICHandlingBase::ICHandlingBase(const std::string& physics_name)
-    : _physics_name( physics_name )   
+    : _physics_name( physics_name ),
+      _ic_func(NULL)
   {
     return;
   }
@@ -58,15 +62,24 @@ namespace GRINS
 
   void ICHandlingBase::read_ic_data( const GetPot& input, const std::string& id_str,
 				     const std::string& ic_str,
+				     const std::string& var_str,
 				     const std::string& value_str)
   {
     int num_ids = input.vector_variable_size(id_str);
     int num_ics = input.vector_variable_size(ic_str);
+    int num_vars = input.vector_variable_size(var_str);
     int num_values = input.vector_variable_size(value_str);
 
     if( num_ids != num_ics )
       {
 	std::cerr << "Error: Must specify equal number of subdomain ids and initial condition types"
+		  << std::endl;
+	libmesh_error();
+      }
+
+    if( num_ids != num_vars )
+      {
+	std::cerr << "Error: Must specify equal number of subdomain ids and variable name lists"
 		  << std::endl;
 	libmesh_error();
       }
@@ -89,6 +102,7 @@ namespace GRINS
 	int ic_id = input(id_str, -1, i );
 	std::string ic_type_in = input(ic_str, "NULL", i );
 	std::string ic_value_in = input(value_str, "NULL", i );
+	std::string ic_vars_in = input(var_str, "NULL", i );
 
 	int ic_type = this->string_to_int( ic_type_in );
 
@@ -96,15 +110,23 @@ namespace GRINS
 	ss << ic_id;
 	std::string ic_id_string = ss.str();
 
-	this->init_ic_types( ic_id, ic_id_string, ic_type, ic_value_in, input );
+	this->init_ic_types( ic_id, ic_id_string, ic_type, ic_vars_in, ic_value_in, input );
       }
 
     return;
   }
 
-  void ICHandlingBase::init_ic_data( const libMesh::FEMSystem& /*system*/ )
+  void ICHandlingBase::init_ic_data( const libMesh::FEMSystem& system,
+                                     GRINS::CompositeFunction<Number>& all_ics )
   {
-    return;
+    if (this->get_ic_func())
+      {
+        std::vector<unsigned int> index_map;
+
+        // FIXME
+
+        all_ics.attach_subfunction(*this->get_ic_func(), index_map);
+      }
   }
 
   int ICHandlingBase::string_to_int( const std::string& ic_type_in ) const
@@ -132,6 +154,7 @@ namespace GRINS
   void ICHandlingBase::init_ic_types( const libMesh::subdomain_id_type ic_id, 
 				      const std::string& ic_id_string, 
 				      const int ic_type, 
+				      const std::string& ic_vars_string, 
 				      const std::string& ic_value_string, 
 				      const GetPot& input )
   {
