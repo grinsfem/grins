@@ -52,6 +52,9 @@ public:
 	delete subfunctions[i];
     }
 
+  // Attach a new subfunction, along with a map from the indices of
+  // that subfunction to the indices of the global function.
+  // (*this)(index_map[i]) will return f(i).
   void attach_subfunction (const libMesh::FunctionBase<Output>& f,
 			   const std::vector<unsigned int>& index_map)
     {

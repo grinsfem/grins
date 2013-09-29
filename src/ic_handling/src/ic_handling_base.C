@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins/composite_function.h"
+#include "grins/string_utils.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -39,12 +40,17 @@
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/periodic_boundary.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/parsed_function.h"
+#include "libmesh/const_function.h"
+
+// C++
+#include "sstream"
 
 namespace GRINS
 {
   ICHandlingBase::ICHandlingBase(const std::string& physics_name)
-    : _physics_name( physics_name ),
-      _ic_func(NULL)
+    : _ic_func(NULL),
+      _physics_name( physics_name )
   {
     return;
   }
@@ -123,7 +129,10 @@ namespace GRINS
       {
         std::vector<unsigned int> index_map;
 
-        // FIXME
+        for (unsigned int i=0; i != _subfunction_variables.size();
+             ++i)
+          index_map.push_back
+            (system.variable_number(_subfunction_variables[i]));
 
         all_ics.attach_subfunction(*this->get_ic_func(), index_map);
       }
@@ -158,10 +167,22 @@ namespace GRINS
 				      const std::string& ic_value_string, 
 				      const GetPot& input )
   {
+    SplitString(ic_vars_string, ":", _subfunction_variables);
+
     switch(ic_type)
       {
       case(PARSED):
 	{
+          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<Number> >
+            (new libMesh::ParsedFunction<Number>(ic_value_string));
+	}
+	break;
+
+      case(CONSTANT):
+	{
+          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<Number> >
+            (new libMesh::ConstFunction<Number>
+              (string_to_T<libMesh::Number>(ic_value_string)));
 	}
 	break;
 
