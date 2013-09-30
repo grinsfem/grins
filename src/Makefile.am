@@ -53,6 +53,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_f
 
 # src/ic_handling files
 libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/ic_handling_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/generic_ic_handler.C
 
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
@@ -186,6 +187,7 @@ include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estima
 
 # src/ic_handling headers
 include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/ic_handling_base.h
+include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/generic_ic_handler.h
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
