@@ -63,7 +63,9 @@ namespace GRINS
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
-			       const std::string& bc_str );
+			       const std::string& bc_str,
+			       const std::string& var_str,
+                               const std::string& val_str );
 
     //! Override this method to initialize any system-dependent data.
     /*! Override this method to, for example, cache a System variable
@@ -108,6 +110,8 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
@@ -151,7 +155,9 @@ namespace GRINS
 
     std::string _physics_name;
 
-    enum BC_BASE{ PERIODIC = -2,
+    enum BC_BASE{ PERIODIC = -4,
+                  CONSTANT_DIRICHLET,
+                  PARSED_DIRICHLET,
                   AXISYMMETRIC };
 
     //! Flag to cache whether or not there is an axisymmetric boundary present
