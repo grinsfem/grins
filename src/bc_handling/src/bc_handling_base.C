@@ -373,7 +373,7 @@ namespace GRINS
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-              (new libMesh::ConstantFunction<Number>(bc_value)));
+              (new libMesh::ConstFunction<Number>(bc_value)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
