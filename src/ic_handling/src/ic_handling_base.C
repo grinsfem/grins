@@ -129,6 +129,8 @@ namespace GRINS
       {
         std::vector<unsigned int> index_map;
 
+        libmesh_assert(_subfunction_variables.size());
+
         for (unsigned int i=0; i != _subfunction_variables.size();
              ++i)
           index_map.push_back
@@ -167,7 +169,14 @@ namespace GRINS
 				      const std::string& ic_value_string, 
 				      const GetPot& input )
   {
-    SplitString(ic_vars_string, ":", _subfunction_variables);
+    // FIXME: SplitString fails in the single-variable case
+    // SplitString(ic_vars_string, ":", _subfunction_variables);
+
+    // Let's just get one-variable-per-IC working now
+    _subfunction_variables.clear();
+    _subfunction_variables.push_back(ic_vars_string);
+
+    libmesh_assert(_subfunction_variables.size());
 
     switch(ic_type)
       {
