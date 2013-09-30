@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -71,7 +72,7 @@ namespace Bunsen
   }
 
   void BunsenSource::element_time_derivative( bool /*compute_jacobian*/,
-					      libMesh::FEMContext& context,
+					      GRINS::AssemblyContext& context,
 					      GRINS::CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

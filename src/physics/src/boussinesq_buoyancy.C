@@ -26,10 +26,12 @@
 #include "grins_config.h"
 #include "grins/boussinesq_buoyancy.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -83,7 +85,7 @@ namespace GRINS
   }
 
   void BoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
-						    libMesh::FEMContext& context,
+						    AssemblyContext& context,
 						    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

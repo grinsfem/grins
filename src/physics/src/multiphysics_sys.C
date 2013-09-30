@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/composite_function.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -125,9 +126,33 @@ namespace GRINS
     return;
   }
 
-  void MultiphysicsSystem::init_context( libMesh::DiffContext &context )
+  libMesh::AutoPtr<libMesh::DiffContext> MultiphysicsSystem::build_context()
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    AssemblyContext* context = new AssemblyContext(*this);
+
+    libMesh::AutoPtr<libMesh::DiffContext> ap(context);
+
+    libMesh::DifferentiablePhysics* phys = libMesh::FEMSystem::get_physics();
+
+    libmesh_assert(phys);
+
+    // If we are solving a moving mesh problem, tell that to the Context
+    context->set_mesh_system(phys->get_mesh_system());
+    context->set_mesh_x_var(phys->get_mesh_x_var());
+    context->set_mesh_y_var(phys->get_mesh_y_var());
+    context->set_mesh_z_var(phys->get_mesh_z_var());
+
+    ap->set_deltat_pointer( &deltat );
+
+    // If we are solving the adjoint problem, tell that to the Context
+    ap->is_adjoint() = this->get_time_solver().is_adjoint();
+
+    return ap;
+  }
+
+  void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
+  {
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -143,7 +168,7 @@ namespace GRINS
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 						    libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
   
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -179,7 +204,7 @@ namespace GRINS
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						 libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -215,7 +240,7 @@ namespace GRINS
   bool MultiphysicsSystem::element_constraint( bool request_jacobian,
 					       libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -251,7 +276,7 @@ namespace GRINS
   bool MultiphysicsSystem::side_constraint( bool request_jacobian,
 					    libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -287,7 +312,7 @@ namespace GRINS
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
 					  libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -341,7 +366,7 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
+  void MultiphysicsSystem::compute_element_cache( const AssemblyContext& context,
 						  const std::vector<libMesh::Point>& points,
 						  CachedValues& cache ) const
   {

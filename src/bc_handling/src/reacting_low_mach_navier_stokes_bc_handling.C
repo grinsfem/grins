@@ -504,7 +504,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void ReactingLowMachNavierStokesBCHandling<Chemistry>::user_apply_neumann_bcs( libMesh::FEMContext& context,
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::user_apply_neumann_bcs( AssemblyContext& context,
 								      const GRINS::CachedValues& cache,
 								      const bool request_jacobian,
 								      const BoundaryID bc_id,

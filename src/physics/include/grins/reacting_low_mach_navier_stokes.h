@@ -42,29 +42,29 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context,
+				       AssemblyContext& context,
 				       CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
-    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
+    virtual void compute_element_time_derivative_cache( const AssemblyContext& context, 
 							CachedValues& cache );
 
-    virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
+    virtual void compute_side_time_derivative_cache( const AssemblyContext& context, 
 						     CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_cache( const AssemblyContext& context,
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
@@ -85,19 +85,19 @@ namespace GRINS
 
   protected:
 
-    void assemble_mass_time_deriv(libMesh::FEMContext& c, 
+    void assemble_mass_time_deriv(AssemblyContext& c, 
 				  unsigned int qp,
 				  const CachedValues& cache);
 
-    void assemble_species_time_deriv(libMesh::FEMContext& c, 
+    void assemble_species_time_deriv(AssemblyContext& c, 
 				     unsigned int qp,
 				     const CachedValues& cache);
 
-    void assemble_momentum_time_deriv(libMesh::FEMContext& c, 
+    void assemble_momentum_time_deriv(AssemblyContext& c, 
 				      unsigned int qp,
 				      const CachedValues& cache);
 
-    void assemble_energy_time_deriv(libMesh::FEMContext& c, 
+    void assemble_energy_time_deriv(AssemblyContext& c, 
 				    unsigned int qp,
 				    const CachedValues& cache);
 

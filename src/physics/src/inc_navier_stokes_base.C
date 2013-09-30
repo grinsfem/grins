@@ -25,11 +25,13 @@
 // This class
 #include "grins/inc_navier_stokes.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/utility.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 
 namespace GRINS
@@ -104,7 +106,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesBase::init_context( libMesh::FEMContext &context )
+  void IncompressibleNavierStokesBase::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

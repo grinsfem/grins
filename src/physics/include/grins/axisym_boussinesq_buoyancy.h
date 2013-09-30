@@ -34,12 +34,6 @@
 #include "libmesh/enum_fe_family.h"
 #include "libmesh/point.h"
 
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMContext;
-}
-
 namespace GRINS
 {  
   //! Adds Axisymmetric Boussinesq bouyancy source term
@@ -75,7 +69,7 @@ namespace GRINS
         the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
   protected:

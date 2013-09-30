@@ -48,7 +48,6 @@ class GetPot;
 namespace libMesh
 {
   class FEMSystem;
-  class FEMContext;
   class Elem;
 }
 
@@ -60,6 +59,7 @@ namespace GRINS
   class ICHandlingBase;
   class NBCContainer;
   class DBCContainer;
+  class AssemblyContext;
 
   template <typename Scalar>
   class CompositeFunction;
@@ -112,7 +112,7 @@ namespace GRINS
 
     //! Sets whether this physics is to be solved with a steady solver or not
     /*! Since the member variable is static, only needs to be called on a single
-        physics. */
+      physics. */
     void set_is_steady( bool is_steady );
 
     //! Returns whether or not this physics is being solved with a steady solver.
@@ -124,39 +124,39 @@ namespace GRINS
       This is done separately from init_variables() because the MultiphysicsSystem must initialize
       its base class before time_evolving variables can be set. Default implementation is no
       time evolving variables.
-     */
+    */
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context,
-				       CachedValues& cache );
+                                       AssemblyContext& context,
+                                       CachedValues& cache );
 
     //! Constraint part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context,
-				     CachedValues& cache );
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
     virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context,
-				  CachedValues& cache );
+                                  AssemblyContext& context,
+                                  CachedValues& cache );
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
     void init_bcs( libMesh::FEMSystem* system );
 
@@ -167,24 +167,24 @@ namespace GRINS
 
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
-    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
-							CachedValues& cache );
+    virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
+                                                        CachedValues& cache );
 
-    virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context,
-						     CachedValues& cache );
+    virtual void compute_side_time_derivative_cache( const AssemblyContext& context,
+                                                     CachedValues& cache );
 
-    virtual void compute_element_constraint_cache( const libMesh::FEMContext& context,
-						   CachedValues& cache );
+    virtual void compute_element_constraint_cache( const AssemblyContext& context,
+                                                   CachedValues& cache );
 
-    virtual void compute_side_constraint_cache( const libMesh::FEMContext& context,
-						CachedValues& cache );
+    virtual void compute_side_constraint_cache( const AssemblyContext& context,
+                                                CachedValues& cache );
 
-    virtual void compute_mass_residual_cache( const libMesh::FEMContext& context,
-					      CachedValues& cache );
+    virtual void compute_mass_residual_cache( const AssemblyContext& context,
+                                              CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context, 
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    virtual void compute_element_cache( const AssemblyContext& context, 
+                                        const std::vector<libMesh::Point>& points,
+                                        CachedValues& cache );
 
     BCHandlingBase* get_bc_handler(); 
 
@@ -210,7 +210,7 @@ namespace GRINS
     
     //! Caches whether or not the solver that's being used is steady or not.
     /*! This is need, for example, in flow stabilization as the tau terms change
-        depending on whether the solver is steady or unsteady. */
+      depending on whether the solver is steady or unsteady. */
     static bool _is_steady;
 
     bool _is_axisymmetric;

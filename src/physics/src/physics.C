@@ -145,42 +145,42 @@ namespace GRINS
     return;
   }
   
-  void Physics::init_context( libMesh::FEMContext& /*context*/ )
+  void Physics::init_context( AssemblyContext& /*context*/ )
   {
     return;
   }
 
-  void Physics::compute_element_time_derivative_cache( const libMesh::FEMContext&,
+  void Physics::compute_element_time_derivative_cache( const AssemblyContext&,
 						       CachedValues& )
   {
     return;
   }
 
-  void Physics::compute_side_time_derivative_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_side_time_derivative_cache( const AssemblyContext& /*context*/,
 						    CachedValues& /*cache*/ )
    {
      return;
    }
 
-  void Physics::compute_element_constraint_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_element_constraint_cache( const AssemblyContext& /*context*/,
 						  CachedValues& /*cache*/ )
   {
     return;
   }
 
-  void Physics::compute_side_constraint_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_side_constraint_cache( const AssemblyContext& /*context*/,
 					       CachedValues& /*cache*/ )
   {
     return;
   }
 
-  void Physics::compute_mass_residual_cache( const libMesh::FEMContext& /*context*/,
+  void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
 					     CachedValues& /*cache*/ )
   {
     return;
   }
 
-  void Physics::compute_element_cache( const libMesh::FEMContext&,
+  void Physics::compute_element_cache( const AssemblyContext&,
 				       const std::vector<libMesh::Point>&,
 				       CachedValues& )
   {
@@ -188,35 +188,35 @@ namespace GRINS
   }
 
   void Physics::element_time_derivative( bool /*compute_jacobian*/,
-					 libMesh::FEMContext& /*context*/,
+					 AssemblyContext& /*context*/,
 					 CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::side_time_derivative( bool /*compute_jacobian*/,
-				      libMesh::FEMContext& /*context*/,
+				      AssemblyContext& /*context*/,
 				      CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::element_constraint( bool /*compute_jacobian*/,
-				    libMesh::FEMContext& /*context*/,
+				    AssemblyContext& /*context*/,
 				    CachedValues& /*cache*/ )
   {
     return;
   }
 
   void Physics::side_constraint( bool /*compute_jacobian*/,
-				 libMesh::FEMContext& /*context*/,
+				 AssemblyContext& /*context*/,
 				 CachedValues& /*cache*/ )
   {
     return;
   }   
 
   void Physics::mass_residual( bool /*compute_jacobian*/,
-			       libMesh::FEMContext& /*context*/,
+			       AssemblyContext& /*context*/,
 			       CachedValues& /*cache*/ )
   {
     return;

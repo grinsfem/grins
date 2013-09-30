@@ -29,6 +29,7 @@
 #include "grins_config.h"
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
@@ -48,46 +49,46 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext &context );
+    virtual void init_context( AssemblyContext& context );
 
     unsigned int n_species() const;
 
-    libMesh::Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
+    libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
-    void mass_fractions( const libMesh::Point& p, const libMesh::FEMContext& c,
+    void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
                          std::vector<libMesh::Real>& mass_fracs ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, unsigned int qp ) const;
 
-    libMesh::Real get_p0_steady_side( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady_side( const AssemblyContext& c, unsigned int qp ) const;
  
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, const libMesh::Point& p ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, const libMesh::Point& p ) const;
 
-    libMesh::Real get_p0_transient( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_transient( const AssemblyContext& c, unsigned int qp ) const;
 
     //! Method to interface to thermochemistry quantity
     /*! Intended to be called externally from Physics class, e.g. in a QoI.
-        This way, we can leverage the Physics class for the thermochemistry.*/
+      This way, we can leverage the Physics class for the thermochemistry.*/
     virtual libMesh::Real cp_mix( const libMesh::Real T,
                                   const std::vector<libMesh::Real>& Y ) =0;
 
     //! Method to interface to thermochemistry quantity
     /*! Intended to be called externally from Physics class, e.g. in a QoI.
-        This way, we can leverage the Physics class for the thermochemistry.*/
+      This way, we can leverage the Physics class for the thermochemistry.*/
     virtual libMesh::Real mu( const libMesh::Real T,
                               const std::vector<libMesh::Real>& Y ) =0;
 
     //! Method to interface to thermochemistry quantity
     /*! Intended to be called externally from Physics class, e.g. in a QoI.
-        This way, we can leverage the Physics class for the thermochemistry.*/
+      This way, we can leverage the Physics class for the thermochemistry.*/
     virtual libMesh::Real k( const libMesh::Real T,
                              const std::vector<libMesh::Real>& Y ) =0;
 
     //! Method to interface to thermochemistry quantity
     /*! Intended to be called externally from Physics class, e.g. in a QoI.
-        This way, we can leverage the Physics class for the thermochemistry.*/
+      This way, we can leverage the Physics class for the thermochemistry.*/
     virtual void D( const libMesh::Real rho, const libMesh::Real cp,
                     const libMesh::Real k,
                     std::vector<libMesh::Real>& D ) =0;
@@ -144,12 +145,12 @@ namespace GRINS
   
   inline
   libMesh::Real ReactingLowMachNavierStokesBase::T( const libMesh::Point& p, 
-                                                    const libMesh::FEMContext& c ) const
+                                                    const AssemblyContext& c ) const
   { return c.point_value(_T_var,p); }
 
   inline
   void ReactingLowMachNavierStokesBase::mass_fractions( const libMesh::Point& p, 
-                                                        const libMesh::FEMContext& c,
+                                                        const AssemblyContext& c,
                                                         std::vector<libMesh::Real>& mass_fracs ) const
   {
     libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
@@ -177,7 +178,7 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const libMesh::FEMContext& c, 
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
                                                                 unsigned int qp ) const
   {
     libMesh::Real p0;
@@ -193,7 +194,7 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady_side( const libMesh::FEMContext& c, 
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady_side( const AssemblyContext& c, 
                                                                      unsigned int qp ) const
   {
     libMesh::Real p0;
@@ -209,7 +210,7 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const libMesh::FEMContext& c, 
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
                                                                 const libMesh::Point& p ) const
   {
     libMesh::Real p0;
@@ -225,7 +226,7 @@ namespace GRINS
   }
   
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_transient( const libMesh::FEMContext& c,
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_transient( const AssemblyContext& c,
                                                                    unsigned int qp ) const
   {
     libMesh::Real p0;

@@ -23,6 +23,7 @@
 
 
 // This class
+#include "grins/assembly_context.h"
 #include "grins/heat_transfer_adjoint_stab.h"
 
 // libMesh
@@ -44,7 +45,7 @@ namespace GRINS
   }
 
   void HeatTransferAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
-								  libMesh::FEMContext& context,
+								  AssemblyContext& context,
 								  CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -100,7 +101,7 @@ namespace GRINS
   }
 
   void HeatTransferAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
-							libMesh::FEMContext& context,
+							AssemblyContext& context,
 							CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

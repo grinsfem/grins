@@ -21,37 +21,20 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
-#define GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
-
-//GRINS
-#include "grins/inc_navier_stokes_stab_base.h"
+// This class
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
-  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
-  class IncompressibleNavierStokesAdjointStabilization : public IncompressibleNavierStokesStabilizationBase
+  AssemblyContext::AssemblyContext( const libMesh::System& system )
+    : libMesh::FEMContext(system)
   {
-
-  public:
-
-    IncompressibleNavierStokesAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~IncompressibleNavierStokesAdjointStabilization();
-
-    virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
-
-    virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+    return;
+  }
     
-  private:
-
-    IncompressibleNavierStokesAdjointStabilization();
-
-  };
+  AssemblyContext::~AssemblyContext()
+  {
+    return;
+  }
 
 } // end namespace GRINS
-
-#endif // GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H

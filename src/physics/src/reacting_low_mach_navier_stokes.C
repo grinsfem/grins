@@ -26,6 +26,7 @@
 #include "grins/reacting_low_mach_navier_stokes.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
@@ -33,7 +34,6 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -77,7 +77,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
     GRINS::ReactingLowMachNavierStokesBase::init_context(context);
@@ -98,7 +98,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative( bool compute_jacobian,
-                                                                                libMesh::FEMContext& context,
+                                                                                AssemblyContext& context,
                                                                                 CachedValues& cache )
   {
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -122,7 +122,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian,
-                                                                             libMesh::FEMContext& context,
+                                                                             AssemblyContext& context,
                                                                              CachedValues& cache )
   {
     /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
@@ -142,19 +142,17 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::mass_residual( bool /*compute_jacobian*/,
-                                                                      libMesh::FEMContext& /*context*/,
+                                                                      AssemblyContext& /*context*/,
                                                                       CachedValues& /*cache*/ )
   {
     libmesh_not_implemented();
-    /*
-    FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
-    */
+
     return;
   }
 
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( AssemblyContext& context, 
                                                                                  unsigned int qp,
                                                                                  const CachedValues& cache )
   {
@@ -234,7 +232,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(AssemblyContext& context, 
                                                                                    unsigned int qp,
                                                                                    const CachedValues& cache)
   {
@@ -309,7 +307,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(AssemblyContext& context, 
 									  unsigned int qp,
 									  const CachedValues& cache)
   {
@@ -431,7 +429,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( AssemblyContext& context, 
                                                                                    unsigned int qp,
                                                                                    const CachedValues& cache)
   {
@@ -512,7 +510,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const AssemblyContext& context, 
                                                                                               CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
@@ -660,7 +658,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_side_time_derivative_cache( const libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_side_time_derivative_cache( const AssemblyContext& context, 
                                                                                            CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
@@ -701,7 +699,7 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const libMesh::FEMContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const AssemblyContext& context, 
                                                                               const std::vector<libMesh::Point>& points,
                                                                               CachedValues& cache )
   {

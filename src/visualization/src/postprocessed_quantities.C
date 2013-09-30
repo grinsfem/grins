@@ -21,8 +21,11 @@
 //
 //-----------------------------------------------------------------------el-
 
-
+// This class
 #include "grins/postprocessed_quantities.h"
+
+// GRINS
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
@@ -608,7 +611,7 @@ namespace GRINS
       }
 
     // Create the context we'll be using to compute MultiphysicsSystem quantities
-    _multiphysics_context.reset( new libMesh::FEMContext( *_multiphysics_sys ) );
+    _multiphysics_context.reset( new AssemblyContext( *_multiphysics_sys ) );
     _multiphysics_sys->init_context(*_multiphysics_context);
     return;
   }
@@ -666,6 +669,6 @@ namespace GRINS
   }
 
   // Instantiate
-  template class PostProcessedQuantities<Real>;
+  template class PostProcessedQuantities<libMesh::Real>;
 
 } // namespace GRINS

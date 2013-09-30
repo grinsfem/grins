@@ -27,24 +27,22 @@
 
 // GRINS
 #include "grins/cached_values.h"
-
-// libMesh
-#include "libmesh/fem_context.h"
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
 
-  NeumannFuncObj::NeumannFuncObj( )
+  NeumannFuncObj::NeumannFuncObj()
   {
     return;
   }
 
-  NeumannFuncObj::~NeumannFuncObj( )
+  NeumannFuncObj::~NeumannFuncObj()
   {
     return;
   }
 
-  libMesh::Point NeumannFuncObj::value( const libMesh::FEMContext&,
+  libMesh::Point NeumannFuncObj::value( const AssemblyContext&,
 					const CachedValues&,
 					const unsigned int )
   {
@@ -53,7 +51,7 @@ namespace GRINS
     return libMesh::Point();
   }
 
-  libMesh::Real NeumannFuncObj::normal_value( const libMesh::FEMContext&,
+  libMesh::Real NeumannFuncObj::normal_value( const AssemblyContext&,
 					      const CachedValues&,
 					      const unsigned int )
   {
@@ -62,7 +60,7 @@ namespace GRINS
     return 0.0;
   }
 
-  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+  libMesh::Point NeumannFuncObj::derivative( const AssemblyContext&,
 					     const CachedValues&,
 					     const unsigned int )
   {
@@ -71,7 +69,7 @@ namespace GRINS
     return libMesh::Point(0.0,0.0,0.0);
   }
 
-  libMesh::Point NeumannFuncObj::derivative( const libMesh::FEMContext&,
+  libMesh::Point NeumannFuncObj::derivative( const AssemblyContext&,
 					     const CachedValues&,
 					     const unsigned int,
 					     const VariableIndex )
@@ -82,7 +80,7 @@ namespace GRINS
   }
   
 
-  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+  libMesh::Real NeumannFuncObj::normal_derivative( const AssemblyContext&,
 						   const CachedValues&,
 						   const unsigned )
   {
@@ -91,7 +89,7 @@ namespace GRINS
     return 0.0;
   }
 
-  libMesh::Real NeumannFuncObj::normal_derivative( const libMesh::FEMContext&,
+  libMesh::Real NeumannFuncObj::normal_derivative( const AssemblyContext&,
 						   const CachedValues&,
 						   const unsigned int, 
 						   const VariableIndex )

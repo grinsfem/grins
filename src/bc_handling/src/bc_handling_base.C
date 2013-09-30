@@ -189,7 +189,7 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
+  void BCHandlingBase::apply_neumann_bcs( AssemblyContext& context,
 					  const GRINS::CachedValues& cache,
 					  const bool request_jacobian,
 					  const BoundaryID bc_id ) const
@@ -417,7 +417,7 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& /*context*/,
+  void BCHandlingBase::user_apply_neumann_bcs( AssemblyContext& /*context*/,
 					       const GRINS::CachedValues& /*cache*/,
 					       const bool /*request_jacobian*/,
 					       const GRINS::BoundaryID /*bc_id*/,

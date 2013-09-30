@@ -26,9 +26,7 @@
 
 //GRINS
 #include "grins/stab_helper.h"
-
-// libMesh
-#include "libmesh/fem_context.h"
+#include "grins/assembly_context.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -43,7 +41,7 @@ namespace GRINS
 
     ~HeatTransferStabilizationHelper();
 
-    libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
+    libMesh::Real compute_tau_energy( AssemblyContext& c,
 				      libMesh::RealTensor& G,
 				      libMesh::Real rho,
 				      libMesh::Real cp,
@@ -59,7 +57,7 @@ namespace GRINS
 
   /* ------------- Inline Functions ---------------*/
   inline
-  libMesh::Real HeatTransferStabilizationHelper::compute_tau_energy( libMesh::FEMContext& c,
+  libMesh::Real HeatTransferStabilizationHelper::compute_tau_energy( AssemblyContext& c,
 								     libMesh::RealTensor& G,
 								     libMesh::Real rho,
 								     libMesh::Real cp,

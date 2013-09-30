@@ -96,6 +96,9 @@ namespace GRINS
     //! System initialization. Calls each physics implementation of init_variables()
     virtual void init_data();
 
+    //! Override FEMSystem::build_context in order to use our own AssemblyContext
+    virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
+
     //! Context initialization. Calls each physics implementation of init_context()
     virtual void init_context( libMesh::DiffContext &context );
 
@@ -129,7 +132,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
-    void compute_element_cache( const libMesh::FEMContext& context,
+    void compute_element_cache( const AssemblyContext& context,
 				const std::vector<libMesh::Point>& points,
 				CachedValues& cache ) const;
 

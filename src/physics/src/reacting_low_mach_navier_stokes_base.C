@@ -28,6 +28,7 @@
 #include "grins/reacting_low_mach_navier_stokes_base.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/cantera_mixture.h"
 #include "grins/antioch_mixture.h"
@@ -36,7 +37,6 @@
 #include "libmesh/string_to_enum.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -170,7 +170,7 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBase::init_context( libMesh::FEMContext& context )
+  void ReactingLowMachNavierStokesBase::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

@@ -57,6 +57,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/generic_ic_handler.C
 
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/assembly_context.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_base.C
@@ -191,6 +192,7 @@ include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/generic_ic_handle
 
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/assembly_context.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/variable_name_defaults.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/var_typedefs.h

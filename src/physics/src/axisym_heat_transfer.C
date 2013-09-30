@@ -26,6 +26,7 @@
 #include "grins/axisym_heat_transfer.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/axisym_heat_transfer_bc_handling.h"
 #include "grins/constant_conductivity.h"
 #include "grins/generic_ic_handler.h"
@@ -35,7 +36,6 @@
 #include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
@@ -113,7 +113,7 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::init_context( libMesh::FEMContext& context )
+  void AxisymmetricHeatTransfer<Conductivity>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -136,7 +136,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool compute_jacobian,
-									libMesh::FEMContext& context,
+									AssemblyContext& context,
 									CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -259,7 +259,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
-								     libMesh::FEMContext& context,
+								     AssemblyContext& context,
 								     CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -285,7 +285,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool compute_jacobian,
-							      libMesh::FEMContext& context,
+							      AssemblyContext& context,
 							      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

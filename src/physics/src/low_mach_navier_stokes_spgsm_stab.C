@@ -26,6 +26,7 @@
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
@@ -53,7 +54,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-										 libMesh::FEMContext& context,
+										 AssemblyContext& context,
 										 CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -72,7 +73,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-								       libMesh::FEMContext& context,
+								       AssemblyContext& context,
 								       CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -91,7 +92,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool /*compute_jacobian*/,
-											libMesh::FEMContext& context )
+											AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
@@ -144,7 +145,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/,
-										      libMesh::FEMContext& context )
+										      AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
@@ -219,7 +220,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
-										    libMesh::FEMContext& context )
+										    AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
@@ -277,7 +278,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool /*compute_jacobian*/,
-											   libMesh::FEMContext& context)
+											   AssemblyContext& context)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
@@ -327,7 +328,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/,
-											 libMesh::FEMContext& context )
+											 AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
@@ -403,7 +404,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool /*compute_jacobian*/,
-										       libMesh::FEMContext& context )
+										       AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();

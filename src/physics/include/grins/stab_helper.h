@@ -29,14 +29,12 @@
 #include "libmesh/tensor_value.h"
 #include "libmesh/fe_base.h"
 
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMContext;
-}
 
 namespace GRINS
 {
+  // GRINS forward declarations
+  class AssemblyContext;
+
   class StabilizationHelper
   {
   public:
@@ -45,12 +43,12 @@ namespace GRINS
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient compute_g( libMesh::FEBase* fe,
-				     libMesh::FEMContext& c,
+				     AssemblyContext& c,
 				     unsigned int qp ) const;
     
     /*! \todo Should we inline this? */
     libMesh::RealTensor compute_G( libMesh::FEBase* fe,
-				   libMesh::FEMContext& c,
+				   AssemblyContext& c,
 				   unsigned int qp ) const;
 
   };

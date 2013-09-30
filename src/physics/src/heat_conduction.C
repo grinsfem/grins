@@ -26,6 +26,7 @@
 #include "grins/heat_conduction.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 
@@ -33,7 +34,6 @@
 #include "libmesh/string_to_enum.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -83,7 +83,7 @@ namespace GRINS
     return;
   }
 
-  void HeatConduction::init_context( libMesh::FEMContext& context )
+  void HeatConduction::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -102,7 +102,7 @@ namespace GRINS
   }
 
   void HeatConduction::element_time_derivative( bool compute_jacobian,
-						libMesh::FEMContext& context,
+						AssemblyContext& context,
 						CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
@@ -175,7 +175,7 @@ namespace GRINS
   }
 
   void HeatConduction::mass_residual( bool compute_jacobian,
-				      libMesh::FEMContext& context,
+				      AssemblyContext& context,
 				      CachedValues& /*cache*/ )
   {
     // First we get some references to cell-specific data that

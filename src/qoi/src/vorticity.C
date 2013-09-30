@@ -27,10 +27,10 @@
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -88,7 +88,7 @@ namespace GRINS
 
   void Vorticity::element_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     if( _subdomain_ids.find( (&c.get_elem())->subdomain_id() ) != _subdomain_ids.end() )
       {
@@ -116,7 +116,7 @@ namespace GRINS
 
   void Vorticity::element_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet & )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     if( _subdomain_ids.find( (&c.get_elem())->subdomain_id() ) != _subdomain_ids.end() )
       {
