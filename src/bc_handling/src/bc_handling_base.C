@@ -32,6 +32,7 @@
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/periodic_boundary.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/const_function.h"
 #include "libmesh/parsed_function.h"
 
 namespace GRINS
