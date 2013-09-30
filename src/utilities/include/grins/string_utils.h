@@ -25,15 +25,27 @@
 #ifndef GRINS_STRING_UTILS_H
 #define GRINS_STRING_UTILS_H
 
-// C++
-#include <string>
-#include <vector>
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 
+// C++
+#include <sstream>
+#include <string>
+#include <vector>
+
 namespace GRINS
 {
+  template <typename T>
+  inline
+  T string_to_T(const std::string& input)
+  {
+    std::istringstream converter(input);
+    T returnval;
+    converter >> returnval;
+    libmesh_assert(!converter.fail());
+    return returnval;
+  }
+
   /*!
     Split on colon, and return name, int value pair.
     Taken from FIN-S for XML parsing.
