@@ -242,9 +242,13 @@ namespace GRINS
       {
         bc_type_out = PERIODIC;
       }
-    else if( bc_type_in == "dirichlet" )
+    else if( bc_type_in == "constant_dirichlet" )
       {
-        bc_type_out = DIRICHLET;
+        bc_type_out = CONSTANT_DIRICHLET;
+      }
+    else if( bc_type_in == "parsed_dirichlet" )
+      {
+        bc_type_out = PARSED_DIRICHLET;
       }
     else if( bc_type_in == "axisymmetric" )
       {
@@ -353,7 +357,29 @@ namespace GRINS
 
 	}
 	break;
-      case(DIRICHLET):
+
+      case(CONSTANT_DIRICHLET):
+	{
+          DBCContainer dirichlet_bc;
+
+          dirichlet_bc.add_var_name(bc_vars);
+
+          dirichlet_bc.add_bc_id(bc_id);
+
+          // FIXME: This can go in after we merge string_to_T from
+          // ic_values branch
+          Number bc_value = 0; // string_to_T<Number>(bc_value);
+          libmesh_not_implemented();
+
+          dirichlet_bc.set_func
+            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+              (new libMesh::ConstantFunction<Number>(bc_value)));
+
+          this->attach_dirichlet_bound_func(dirichlet_bc);
+	}
+	break;
+
+      case(PARSED_DIRICHLET):
 	{
           DBCContainer dirichlet_bc;
 
