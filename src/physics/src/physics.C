@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/ic_handling_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -41,6 +42,7 @@ namespace GRINS
 		    const GetPot& input )
     : _physics_name( physics_name ),
       _bc_handler(NULL),
+      _ic_handler(new ICHandlingBase(physics_name)),
       _is_axisymmetric(false)
   {
     this->read_input_options(input);
@@ -57,6 +59,9 @@ namespace GRINS
   {
     // If a derived class created a bc_handler object, we kill it here.
     if( _bc_handler ) delete _bc_handler;
+
+    if( _ic_handler ) delete _ic_handler;
+
     return;
   }
 
@@ -111,6 +116,18 @@ namespace GRINS
 	_bc_handler->init_dirichlet_bcs( system );
 	_bc_handler->init_dirichlet_bc_func_objs( system );
 	_bc_handler->init_periodic_bcs( system );
+      }
+
+    return;
+  }
+
+
+  void Physics::init_ics( libMesh::FEMSystem* system,
+                          GRINS::CompositeFunction<Number>& all_ics )
+  {
+    if( _ic_handler )
+      {
+	_ic_handler->init_ic_data( *system, all_ics );
       }
 
     return;

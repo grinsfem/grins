@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 
 // libMesh
@@ -44,12 +45,14 @@ namespace GRINS
     this->read_input_options(input);
 
     // This is deleted in the base class
-    _bc_handler = new HeatTransferBCHandling( physics_name, input );
+    this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
 
     if( _bc_handler->is_axisymmetric() )
       {
         this->_is_axisymmetric = true;
       }
+
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }

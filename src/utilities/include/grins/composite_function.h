@@ -52,6 +52,9 @@ public:
 	delete subfunctions[i];
     }
 
+  // Attach a new subfunction, along with a map from the indices of
+  // that subfunction to the indices of the global function.
+  // (*this)(index_map[i]) will return f(i).
   void attach_subfunction (const libMesh::FunctionBase<Output>& f,
 			   const std::vector<unsigned int>& index_map)
     {
@@ -94,6 +97,10 @@ public:
       libmesh_assert_equal_to (output.size(),
 			       reverse_index_map.size());
 
+      // Necessary in case we have output components not covered by
+      // any subfunctions
+      output.zero();
+
       libMesh::DenseVector<Output> temp;
       for (unsigned int i=0; i != subfunctions.size(); ++i)
 	{
@@ -112,6 +119,10 @@ public:
                             const libMesh::Point& p,
                             libMesh::Real time)
     {
+      if (i >= reverse_index_map.size() ||
+          reverse_index_map[i].first == libMesh::invalid_uint)
+        return 0;
+
       libmesh_assert_less(reverse_index_map[i].first,
 		          subfunctions.size());
       libmesh_assert_not_equal_to(reverse_index_map[i].second,
@@ -125,6 +136,14 @@ public:
     for (unsigned int i=0; i != subfunctions.size(); ++i)
       returnval->attach_subfunction(*subfunctions[i], index_maps[i]);
     return libMesh::AutoPtr<libMesh::FunctionBase<Output> > (returnval);
+  }
+
+  unsigned int n_subfunctions () const {
+    return subfunctions.size();
+  }
+
+  unsigned int n_components () const {
+    return reverse_index_map.size();
   }
 
 private:

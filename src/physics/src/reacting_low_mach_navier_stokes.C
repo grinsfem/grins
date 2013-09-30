@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/cached_quantities_enum.h"
+#include "grins/generic_ic_handler.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
 
 // libMesh
@@ -52,6 +53,8 @@ namespace GRINS
       {
         this->_is_axisymmetric = true;
       }
+
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }

@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/axisym_heat_transfer_bc_handling.h"
 #include "grins/constant_conductivity.h"
+#include "grins/generic_ic_handler.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -49,7 +50,8 @@ namespace GRINS
     this->read_input_options(input);
   
     // This is deleted in the base class
-    _bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
+    this->_bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }

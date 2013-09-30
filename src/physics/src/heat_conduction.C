@@ -26,6 +26,7 @@
 #include "grins/heat_conduction.h"
 
 // GRINS
+#include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 
 // libMesh
@@ -53,7 +54,8 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
     // This is deleted in the base class
-    _bc_handler = new HeatTransferBCHandling( physics_name, input );
+    this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }

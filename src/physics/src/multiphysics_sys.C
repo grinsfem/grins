@@ -25,6 +25,9 @@
 // This class
 #include "grins/multiphysics_sys.h"
 
+// GRINS
+#include "grins/composite_function.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -102,6 +105,22 @@ namespace GRINS
 
     // Next, call parent init_data function to intialize everything.
     libMesh::FEMSystem::init_data();
+
+    // After solution has been initialized we can project initial
+    // conditions to it
+    CompositeFunction<Number> ic_function;
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	// Initialize builtin IC's for each physics
+	(physics_iter->second)->init_ics( this, ic_function );
+      }
+
+    if (ic_function.n_subfunctions())
+      {
+        this->project_solution(&ic_function);
+      }
 
     return;
   }

@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/generic_ic_handler.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -41,7 +42,8 @@ namespace GRINS
       _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
   {
     // This is deleted in the base class
-    _bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
+    this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }
