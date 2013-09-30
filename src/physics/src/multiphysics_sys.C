@@ -103,6 +103,11 @@ namespace GRINS
 	(physics_iter->second)->init_bcs( this );
       }
 
+    // Next, call parent init_data function to intialize everything.
+    libMesh::FEMSystem::init_data();
+
+    // After solution has been initialized we can project initial
+    // conditions to it
     CompositeFunction<Number> ic_function;
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
@@ -114,12 +119,8 @@ namespace GRINS
 
     if (ic_function.n_subfunctions())
       {
-        libmesh_assert(ic_function.n_components() == this->n_vars());
         this->project_solution(&ic_function);
       }
-
-    // Next, call parent init_data function to intialize everything.
-    libMesh::FEMSystem::init_data();
 
     return;
   }
