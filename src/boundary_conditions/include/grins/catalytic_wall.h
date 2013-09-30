@@ -29,16 +29,11 @@
 #include "grins/neumann_func_obj.h"
 #include "grins/catalytic_wall_helper.h"
 
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMContext;
-}
-
 namespace GRINS
 {
   // GRINS forward declarations
   class CachedValues;
+  class AssemblyContext;
 
   template<typename Chemistry>
   class CatalyticWall : public NeumannFuncObj
@@ -52,14 +47,14 @@ namespace GRINS
 
     ~CatalyticWall();
 
-    virtual libMesh::Real normal_value( const libMesh::FEMContext& context,
+    virtual libMesh::Real normal_value( const AssemblyContext& context,
 					const CachedValues& cache,
 					const unsigned int qp );
 
-    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Real normal_derivative( const AssemblyContext& context, const CachedValues& cache,
 					     const unsigned int qp );
 
-    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Real normal_derivative( const AssemblyContext& context, const CachedValues& cache,
 					     const unsigned int qp, 
 					     const GRINS::VariableIndex jac_var );
 

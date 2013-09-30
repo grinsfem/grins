@@ -173,7 +173,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+  void HeatTransferBCHandling::user_apply_neumann_bcs( AssemblyContext& context,
 						       const GRINS::CachedValues& cache,
 						       const bool request_jacobian,
 						       const BoundaryID bc_id,

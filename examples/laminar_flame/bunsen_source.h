@@ -27,6 +27,11 @@
 // GRINS
 #include "grins/physics.h"
 
+namespace GRINS
+{
+  class AssemblyContext;
+}
+
 namespace Bunsen
 {
   class BunsenSource : public GRINS::Physics
@@ -41,7 +46,7 @@ namespace Bunsen
     virtual void init_variables( libMesh::FEMSystem* system );
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  GRINS::AssemblyContext& context,
 					  GRINS::CachedValues& cache );
 
   protected:

@@ -26,6 +26,7 @@
 #include "grins/low_mach_navier_stokes_base.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
@@ -166,7 +167,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBase<Mu,SH,TC>::init_context( libMesh::FEMContext &context )
+  void LowMachNavierStokesBase<Mu,SH,TC>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

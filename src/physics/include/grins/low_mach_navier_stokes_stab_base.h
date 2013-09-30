@@ -43,24 +43,24 @@ namespace GRINS
     virtual ~LowMachNavierStokesStabilizationBase();
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
-    libMesh::Real compute_res_continuity_steady( libMesh::FEMContext& context,
+    libMesh::Real compute_res_continuity_steady( AssemblyContext& context,
 						 unsigned int qp ) const;
     
-    libMesh::Real compute_res_continuity_transient( libMesh::FEMContext& context,
+    libMesh::Real compute_res_continuity_transient( AssemblyContext& context,
 						    unsigned int qp ) const;
     
-    libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
+    libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
 						       unsigned int qp ) const;
     
-    libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
+    libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
 							  unsigned int qp ) const;
     
-    libMesh::Real compute_res_energy_steady( libMesh::FEMContext& context,
+    libMesh::Real compute_res_energy_steady( AssemblyContext& context,
 					     unsigned int qp ) const;
     
-    libMesh::Real compute_res_energy_transient( libMesh::FEMContext& context,
+    libMesh::Real compute_res_energy_transient( AssemblyContext& context,
 						unsigned int qp ) const;
 
   protected:

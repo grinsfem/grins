@@ -58,7 +58,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real CatalyticWall<Chemistry>::normal_value( const libMesh::FEMContext& /*context*/,
+  libMesh::Real CatalyticWall<Chemistry>::normal_value( const AssemblyContext& /*context*/,
                                                         const CachedValues& cache,
                                                         const unsigned int qp )
   {
@@ -74,7 +74,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const libMesh::FEMContext& /*context*/,
+  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const AssemblyContext& /*context*/,
                                                              const CachedValues& cache,
                                                              const unsigned int qp )
   {
@@ -92,7 +92,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const libMesh::FEMContext& /*context*/,
+  libMesh::Real CatalyticWall<Chemistry>::normal_derivative( const AssemblyContext& /*context*/,
                                                              const CachedValues& cache,
                                                              const unsigned int qp, 
                                                              const GRINS::VariableIndex jac_var )

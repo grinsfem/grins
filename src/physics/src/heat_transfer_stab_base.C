@@ -25,6 +25,9 @@
 // This class
 #include "grins/heat_transfer_stab_base.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 namespace GRINS
 {
 
@@ -43,7 +46,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferStabilizationBase::init_context( libMesh::FEMContext& context )
+  void HeatTransferStabilizationBase::init_context( AssemblyContext& context )
   {
     // First call base class
     HeatTransferBase::init_context(context);
@@ -54,7 +57,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real HeatTransferStabilizationBase::compute_res_steady( libMesh::FEMContext& context,
+  libMesh::Real HeatTransferStabilizationBase::compute_res_steady( AssemblyContext& context,
 								   unsigned int qp ) const
   {
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
@@ -68,7 +71,7 @@ namespace GRINS
     return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
 
-  libMesh::Real HeatTransferStabilizationBase::compute_res_transient( libMesh::FEMContext& context,
+  libMesh::Real HeatTransferStabilizationBase::compute_res_transient( AssemblyContext& context,
 								      unsigned int qp ) const
   {
     libMesh::Real T_dot = context.interior_value(this->_T_var, qp);

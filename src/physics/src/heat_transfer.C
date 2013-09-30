@@ -27,12 +27,12 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
 
@@ -68,7 +68,7 @@ namespace GRINS
   }
 
   void HeatTransfer::element_time_derivative( bool compute_jacobian,
-					      libMesh::FEMContext& context,
+					      AssemblyContext& context,
 					      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -189,7 +189,7 @@ namespace GRINS
   }
 
   void HeatTransfer::side_time_derivative( bool compute_jacobian,
-					   libMesh::FEMContext& context,
+					   AssemblyContext& context,
 					   CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -214,7 +214,7 @@ namespace GRINS
   }
 
   void HeatTransfer::mass_residual( bool compute_jacobian,
-				    libMesh::FEMContext& context,
+				    AssemblyContext& context,
 				    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS

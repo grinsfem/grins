@@ -37,7 +37,7 @@ namespace GRINS
 
     ~LowMachNavierStokesStabilizationHelper();
 
-    libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
+    libMesh::Real compute_tau_energy( AssemblyContext& c,
 				      unsigned int qp,
 				      libMesh::RealGradient& g,
 				      libMesh::RealTensor& G,
@@ -51,7 +51,7 @@ namespace GRINS
 
   /* ------------- Inline Functions ---------------*/
   inline
-  libMesh::Real LowMachNavierStokesStabilizationHelper::compute_tau_energy( libMesh::FEMContext& c,
+  libMesh::Real LowMachNavierStokesStabilizationHelper::compute_tau_energy( AssemblyContext& c,
 									    unsigned int qp,
 									    libMesh::RealGradient& g,
 									    libMesh::RealTensor& G,

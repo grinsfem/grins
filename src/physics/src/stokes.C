@@ -28,6 +28,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -54,7 +55,7 @@ namespace GRINS
   }
 
   void Stokes::element_time_derivative( bool compute_jacobian,
-					libMesh::FEMContext& context,
+					AssemblyContext& context,
 					CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -198,7 +199,7 @@ namespace GRINS
   }
 
   void Stokes::element_constraint( bool compute_jacobian,
-				   libMesh::FEMContext& context,
+				   AssemblyContext& context,
 				   CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -290,7 +291,7 @@ namespace GRINS
   }
 
   void Stokes::mass_residual( bool compute_jacobian,
-			      libMesh::FEMContext& context,
+			      AssemblyContext& context,
 			      CachedValues& /*cache*/)
   {
     // Element Jacobian * quadrature weights for interior integration

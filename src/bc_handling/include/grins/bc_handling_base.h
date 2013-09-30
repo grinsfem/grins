@@ -42,13 +42,15 @@
 // libMesh forward declarations
 namespace libMesh
 {
-  class FEMContext;
   class FEMSystem;
   class DofMap;
 }
 
 namespace GRINS
 {
+  // GRINS forward declarations
+  class AssemblyContext;
+
   //! Base class for reading and handling boundary conditions for physics classes
   class BCHandlingBase
   {
@@ -73,12 +75,12 @@ namespace GRINS
         By default, does nothing. */
     virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    virtual void apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void apply_neumann_bcs( AssemblyContext& context,
 				    const GRINS::CachedValues& cache,
 				    const bool request_jacobian,
 				    const GRINS::BoundaryID bc_id ) const;
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
 					 const GRINS::CachedValues& cache,
 					 const bool request_jacobian,
 					 const GRINS::BoundaryID bc_id,

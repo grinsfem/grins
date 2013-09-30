@@ -25,9 +25,11 @@
 // This class
 #include "grins/pressure_pinning.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_interface.h"
 
@@ -69,7 +71,7 @@ namespace GRINS
 				   const double penalty )
   {
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
-    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
 
     if (c.get_elem().contains_point(_pin_location))
       {

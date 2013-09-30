@@ -26,9 +26,7 @@
 
 // GRINS
 #include "grins/stab_helper.h"
-
-// libMesh
-#include "libmesh/fem_context.h"
+#include "grins/assembly_context.h"
 
 // libMesh foward declarations
 class GetPot;
@@ -46,7 +44,7 @@ namespace GRINS
     libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
 					  libMesh::RealGradient& g  ) const;
 
-    libMesh::Real compute_tau_momentum( libMesh::FEMContext& c,
+    libMesh::Real compute_tau_momentum( AssemblyContext& c,
 					unsigned int qp,
 					libMesh::RealGradient& g,
 					libMesh::RealTensor& G,
@@ -55,7 +53,7 @@ namespace GRINS
 					libMesh::Real T,
 					bool is_steady ) const;
 
-    libMesh::Real compute_tau( libMesh::FEMContext& c,
+    libMesh::Real compute_tau( AssemblyContext& c,
 			       unsigned int qp,
 			       libMesh::Real mat_prop_sq,
 			       libMesh::RealGradient& g,
@@ -109,7 +107,7 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau_momentum( libMesh::FEMContext& c,
+  libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau_momentum( AssemblyContext& c,
 										     unsigned int qp,
 										     libMesh::RealGradient& g,
 										     libMesh::RealTensor& G,
@@ -122,7 +120,7 @@ namespace GRINS
   }
   
   inline
-  libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau( libMesh::FEMContext& c,
+  libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau( AssemblyContext& c,
 									    unsigned int /*qp*/,
 									    libMesh::Real mat_prop_sq,
 									    libMesh::RealGradient& /*g*/,
