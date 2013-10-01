@@ -23,7 +23,7 @@
 
 
 // This class
-#include "grins/inc_navier_stokes.h"
+#include "grins/inc_navier_stokes_base.h"
 
 // GRINS
 #include "grins/assembly_context.h"
