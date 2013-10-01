@@ -24,6 +24,7 @@
 
 // This class
 #include "grins/bc_handling_base.h"
+#include "grins/composite_function.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -115,7 +116,10 @@ namespace GRINS
 	 it != _dirichlet_bound_funcs.end();
 	 it++ )
       {
-	// First, get variable names and convert them to variable id's
+	// First, get variable names. We convert them to variable ids,
+        // both to tell the DirichletBoundary what variables to
+        // project and to tell the CompositeFunction what remapping to
+        // do.
 	std::vector<VariableName> var_names = (*it).get_var_names();
       
 	std::vector<VariableIndex> dbc_vars;
@@ -133,10 +137,15 @@ namespace GRINS
 	// Get Dirichlet bc functor
 	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
 
+        // Remap indices as necessary
+        GRINS::CompositeFunction<Number> remapped_func;
+        remapped_func.attach_subfunction(*func, dbc_vars);
+
 	// Now create DirichletBoundary object and give it to libMesh
 	// libMesh makes it own copy of the DirichletBoundary so we can
 	// let this one die.
-	libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
+	libMesh::DirichletBoundary dbc( bc_ids, dbc_vars,
+                                        &remapped_func );
       
 	dof_map.add_dirichlet_boundary( dbc );
       }
