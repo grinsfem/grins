@@ -25,6 +25,9 @@
 // This class
 #include "grins/bc_handling_base.h"
 
+// GRINS
+#include "grins/string_utils.h"
+
 // libMesh
 #include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
@@ -367,14 +370,11 @@ namespace GRINS
 
           dirichlet_bc.add_bc_id(bc_id);
 
-          // FIXME: This can go in after we merge string_to_T from
-          // ic_values branch
-          Number bc_value = 0; // string_to_T<Number>(bc_value);
-          libmesh_not_implemented();
+          Number bc_val_num = string_to_T<Number>(bc_value);
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-              (new libMesh::ConstFunction<Number>(bc_value)));
+              (new libMesh::ConstFunction<Number>(bc_val_num)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
