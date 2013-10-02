@@ -369,6 +369,8 @@ namespace GRINS
 
 	    if (compute_jacobian)
 	      {
+                libmesh_assert_equal_to (context.get_elem_solution_derivative(), 1.0);
+
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
 		    Kpu(i,j) += p_phi[i][qp]*u_gradphi[j][qp](0)*jac;
