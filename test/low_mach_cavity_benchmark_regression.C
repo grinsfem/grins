@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.
-  const Real exact_qoi = 4.8158910675853654e+00;
+  const Real exact_qoi = 4.8158910676325055;
 
   const Real tol = 8.0e-12;
 
