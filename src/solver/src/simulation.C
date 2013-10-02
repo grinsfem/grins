@@ -30,6 +30,9 @@
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
 
+// libMesh
+#include "libmesh/dof_map.h"
+
 namespace GRINS
 {
 
@@ -69,6 +72,12 @@ namespace GRINS
     _postprocessing->initialize( *_multiphysics_system, *_equation_system );
 
     _solver->initialize( input, _equation_system, _multiphysics_system );
+
+    // Useful for debugging
+    if( input("screen-options/print_dof_constraints", false ) )
+      {
+        _multiphysics_system->get_dof_map().print_dof_constraints();
+      }
 
     // This *must* be done after equation_system->init in order to get variable indices
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
