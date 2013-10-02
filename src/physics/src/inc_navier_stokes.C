@@ -388,11 +388,7 @@ namespace GRINS
       } // end of the quadrature point (qp) loop
 
 
-    // Pin p = p_value at p_point
-    if( _pin_pressure )
-      {
-	_p_pinning.pin_value( context, compute_jacobian, _p_var );
-      }
+    
   
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -402,6 +398,19 @@ namespace GRINS
     return;
   }
 
+  void IncompressibleNavierStokes::side_constraint( bool compute_jacobian,
+                                                    AssemblyContext& context,
+                                                    CachedValues& cache )
+  {
+    // Pin p = p_value at p_point
+    if( _pin_pressure )
+      {
+	_p_pinning.pin_value( context, compute_jacobian, _p_var );
+      }
+
+    return;
+  }
+  
   void IncompressibleNavierStokes::mass_residual( bool compute_jacobian,
 						  AssemblyContext& context,
 						  CachedValues& /*cache*/ )
