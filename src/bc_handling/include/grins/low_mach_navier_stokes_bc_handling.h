@@ -69,7 +69,7 @@ namespace GRINS
     std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
 
     // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
+     std::vector<std::pair<BoundaryID,BCType> > _temp_bc_map;
 
   private:
 
