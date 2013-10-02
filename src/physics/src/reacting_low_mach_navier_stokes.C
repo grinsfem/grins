@@ -111,12 +111,6 @@ namespace GRINS
 	this->assemble_energy_time_deriv(context, qp, cache);
       }
 
-    // Pin p = p_value at p_point
-    if( this->_pin_pressure )
-      {
-	this->_p_pinning.pin_value( context, compute_jacobian, this->_p_var );
-      }
-
     return;
   }
 
@@ -135,6 +129,20 @@ namespace GRINS
 	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 
 	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+      }
+
+    return;
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_constraint( bool compute_jacobian,
+                                                                        AssemblyContext& context,
+                                                                        CachedValues& cache )
+  {
+    // Pin p = p_value at p_point
+    if( _pin_pressure )
+      {
+	_p_pinning.pin_value( context, compute_jacobian, _p_var );
       }
 
     return;

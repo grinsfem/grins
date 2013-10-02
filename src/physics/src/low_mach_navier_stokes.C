@@ -105,12 +105,6 @@ namespace GRINS
     this->assemble_momentum_time_deriv( compute_jacobian, context, cache );
     this->assemble_energy_time_deriv( compute_jacobian, context, cache );
 
-    // Pin p = p_value at p_point
-    if( this->_pin_pressure )
-      {
-	this->_p_pinning.pin_value( context, compute_jacobian, this->_p_var);
-      }
-
     if( this->_enable_thermo_press_calc )
       this->assemble_thermo_press_elem_time_deriv( compute_jacobian, context );
 
@@ -137,6 +131,20 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
 	this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
 #endif
+      }
+
+    return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::side_constraint( bool compute_jacobian,
+                                                       AssemblyContext& context,
+                                                       CachedValues& cache )
+  {
+    // Pin p = p_value at p_point
+    if( this->_pin_pressure )
+      {
+	this->_p_pinning.pin_value( context, compute_jacobian, this->_p_var);
       }
 
     return;
