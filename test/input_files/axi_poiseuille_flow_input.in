@@ -42,6 +42,9 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
+print_dof_constraints = 'true'
+print_residual = 'true'
+
 # Options related to all Physics
 [Physics]
 
