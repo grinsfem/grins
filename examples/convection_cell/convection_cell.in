@@ -22,13 +22,11 @@ mu = '1.846e-5'
 # i = bottom -> 3
 # i = top    -> 1
 
-bc_ids = '2 3 1 0'
-bc_types = 'prescribed_vel no_slip no_slip no_slip'
-
-bound_vel_2 = '1.0 0.0 0.0'
+bc_ids = '0 1 2 3'
+bc_types = 'no_slip no_slip no_slip no_slip'
 
 pin_pressure = true
-pin_location = '0.0 0.00'
+pin_location = '0.0 0.0'
 pin_value = '0.0'
 
 rho = '1.0'
@@ -45,12 +43,17 @@ T_order = 'SECOND'
 # i = bottom -> 3
 # i = top    -> 1
 
-bc_ids = '0 2 3 1'
-bc_types = 'isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall'
+bc_ids = '0 1 2 3'
+bc_types = 'parsed_dirichlet adiabatic_wall isothermal_wall adiabatic_wall'
+bc_variables = 'T na na na'
+bc_values = '{340.0+(abs(x)<=2)*30} na na na'
 
-T_wall_0 = '340.0'
-T_wall_2 = '280.0'
+T_wall_5 = '280.0'
 
+ic_ids = '0'
+ic_types = 'constant'
+ic_variables = 'T'
+ic_values = '300.0'
 
 rho = '1.77'
 Cp = '1004.9'
@@ -66,12 +69,12 @@ rho_ref = '1.77'
 beta_T = '0.003333333333'
 
 # Gravity vector
-g = '0.0 0.0 -9.81' #[m/s^2]
+g = '0.0 -9.81' #[m/s^2]
 
 [Stabilization]
 
-tau_constant = '5'
-tau_factor = '0.1'
+tau_constant = '20'
+tau_factor = '0.005'
 
 []
 
@@ -88,25 +91,27 @@ tau_factor = '0.1'
 mesh_option = create_2D_mesh
 element_type = QUAD9
 
-domain_x1_min = 0.0
-domain_x1_max = 1.0
-domain_x2_min = -1.0
-domain_x2_max = 0.0
+domain_x1_min = -10.0
+domain_x1_max = 10.0
+domain_x2_min = 0.0
+domain_x2_max = 4.0
 
-mesh_nx1 = '15' 
-mesh_nx2 = '15'
+mesh_nx1 = '20' 
+mesh_nx2 = '8'
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'true' 
 theta = 1.0
-n_timesteps = '50'
-deltat = '0.05'
+n_timesteps = '500'
+deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  100 
-max_linear_iterations = 2500
+max_nonlinear_iterations =  10
+max_linear_iterations = 5000
+
+relative_residual_tolerance = '1.0e-10'
 
 verify_analytic_jacobians = 0.0
 
@@ -129,7 +134,7 @@ output_format = 'ExodusII'
 # Options for print info to the screen
 [screen-options]
 
-system_name = 'LidDrivenCavity'
+system_name = 'ConvectionCell'
 
 print_equation_system_info = true
 print_mesh_info = true
@@ -144,7 +149,6 @@ print_element_jacobians = 'false'
 Temperature = 'T'
 u_velocity = 'u'
 v_velocity = 'v'
-w_velocity = 'w'
 pressure = 'p'
 
 []
