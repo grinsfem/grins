@@ -130,8 +130,10 @@ namespace GRINS
 
     //! Map between boundary id and Dirichlet boundary condition type
     /*! We need to keep this around because the libMesh::DirichletBoundary
-      objects can't be created until we init the variables */
-    std::map< GRINS::BoundaryID, GRINS::BCType> _dirichlet_bc_map;
+        objects can't be created until we init the variables. We use a
+        vector of pairs so that the boundary condition functors get added
+        to the libMesh::DofMap in the same order as in the input file. */
+    std::vector<std::pair<BoundaryID,BCType> > _dirichlet_bc_map;
 
     //! Map between boundary id and Neumann boundary condition type
     std::map< GRINS::BoundaryID, GRINS::BCType> _neumann_bc_map;
@@ -202,9 +204,17 @@ namespace GRINS
   inline
   GRINS::BCType BCHandlingBase::get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const
   {
-    std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator it = 
-      _dirichlet_bc_map.find(bc_id);
-    return it->second;
+    BCType bc_type_out = -100;
+
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
+      {
+        if( it->first == bc_id ) bc_type_out = it->second;
+      }
+
+    libmesh_assert_not_equal_to( bc_type_out, -100 );
+
+    return bc_type_out;
   }
 
 }

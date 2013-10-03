@@ -73,7 +73,7 @@ namespace GRINS
     std::map< GRINS::BoundaryID, std::vector<libMesh::Real> > _species_bc_values;
 
     // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _species_bc_map;
+    std::vector<std::pair<BoundaryID,BCType> > _species_bc_map;
 
     unsigned int _n_species;
     std::vector<std::string> _species_var_names;
