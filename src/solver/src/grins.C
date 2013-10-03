@@ -59,6 +59,17 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
+  // GetPot doesn't throw an error for a nonexistent file?
+  {
+    std::ifstream i(libMesh_input_filename.c_str());
+    if (!i)
+      {
+        std::cerr << "Error: Could not read from libMesh input file "
+                << libMesh_input_filename << std::endl;
+        exit(1);
+      }
+  }
+
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
