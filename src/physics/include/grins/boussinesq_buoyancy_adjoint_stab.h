@@ -22,49 +22,56 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_BOUSSINESQ_BUOYANCY_H
-#define GRINS_BOUSSINESQ_BUOYANCY_H
+#ifndef GRINS_BOUSSINESQ_BUOYANCY_ADJOINT_STAB_H
+#define GRINS_BOUSSINESQ_BUOYANCY_ADJOINT_STAB_H
 
 // GRINS
 #include "grins/boussinesq_buoyancy_base.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 namespace GRINS
 {  
-  //! Adds Boussinesq bouyancy source term
+  //! Adds Boussinesq bouyancy adjoint stabilization source term
   /*!
-    This class implements the Boussinesq approximation for thermal buoyancy.
-    Namely:
-    \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
-    where
-    \f$ \rho_0 = \f$ reference density, 
-    \f$ T_0 = \f$ reference temperature,
-    \f$ \beta_T = \f$ coefficient of thermal expansion, and
-    \f$ \mathbf{g} = \f$ the gravitional vector.
-    This source term to the governing flow equations through the
-    element_time_derivative routine. This class requires a flow physics enabled
-    and the ConvectiveHeatTransfer physics class enabled.
+    This class implements the adjiont stabilization term for the BoussinesqBuoyancy
+    Physics. Intended to be used with IncompressibleNavierStokesAdjointStabilization
+    and HeatTransferStabilization.
    */
-  class BoussinesqBuoyancy : public BoussinesqBuoyancyBase
+  class BoussinesqBuoyancyAdjointStabilization : public BoussinesqBuoyancyBase
   {
   public:
     
-    BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
+    BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancy();
+    ~BoussinesqBuoyancyAdjointStabilization();
 
-    //! Source term contribution for BoussinesqBuoyancy
-    /*! This is the main part of the class. This will add the source term to
-        the IncompressibleNavierStokes class.
-     */
+    virtual void init_context( AssemblyContext& context );
+
+    virtual void init_variables( libMesh::FEMSystem* system );
+
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext& context,
 					  CachedValues& cache );
 
+  protected:
+
+    libMesh::Number _rho, _mu;
+
+    IncompressibleNavierStokesStabilizationHelper _stab_helper;
+
+    std::string _p_var_name;
+
+    VariableIndex _p_var; /* Index for pressure field */
+
+    libMeshEnums::FEFamily _P_FE_family;
+
+    libMeshEnums::Order _P_order;
+
   private:
 
-    BoussinesqBuoyancy();
+    BoussinesqBuoyancyAdjointStabilization();
 
   };
 
 } // end namespace GRINS
-#endif // GRINS_BOUSSINESQ_BUOYANCY_H
+#endif // GRINS_BOUSSINESQ_BUOYANCY_ADJOINT_STAB_H
