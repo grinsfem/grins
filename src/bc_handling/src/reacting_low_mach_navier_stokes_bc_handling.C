@@ -467,7 +467,7 @@ namespace GRINS
   template<typename Chemistry>
   void ReactingLowMachNavierStokesBCHandling<Chemistry>::set_species_bc_type( GRINS::BoundaryID bc_id, int bc_type )
   {
-    _species_bc_map[bc_id] = bc_type;
+    _species_bc_map.push_back( std::make_pair(bc_id,bc_type) );
     return;
   }
 
@@ -493,7 +493,7 @@ namespace GRINS
 
     libMesh::DofMap& dof_map = system->get_dof_map();
 
-    for( std::map< GRINS::BoundaryID,GRINS::BCType >::const_iterator it = _species_bc_map.begin();
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _species_bc_map.begin();
 	 it != _species_bc_map.end();
 	 it++ )
       {

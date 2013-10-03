@@ -467,7 +467,7 @@ namespace GRINS
 
   void LowMachNavierStokesBCHandling::set_temp_bc_type( BoundaryID bc_id, int bc_type )
   {
-    _temp_bc_map[bc_id] = bc_type;
+    _temp_bc_map.push_back( std::make_pair(bc_id,bc_type) );
     return;
   }
 
@@ -485,16 +485,14 @@ namespace GRINS
   {
     libMesh::DofMap& dof_map = system->get_dof_map();
 
-    for( std::map< BoundaryID,BCType >::const_iterator it = _dirichlet_bc_map.begin();
-	 it != _dirichlet_bc_map.end();
-	 it++ )
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
       {
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }
 
-    for( std::map< BoundaryID,BCType >::const_iterator it = _temp_bc_map.begin();
-	 it != _temp_bc_map.end();
-	 it++ )
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _temp_bc_map.begin();
+        it != _temp_bc_map.end(); it++ )
       {
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }
