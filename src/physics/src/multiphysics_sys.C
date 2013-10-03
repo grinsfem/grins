@@ -60,6 +60,8 @@ namespace GRINS
     // Read options for MultiphysicsSystem first
     this->verify_analytic_jacobians = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
     this->print_element_jacobians = input("screen-options/print_element_jacobians", false );
+    this->print_residuals = input("screen-options/print_residual", false );
+
     _use_numerical_jacobians_only = input("linear-nonlinear-solver/use_numerical_jacobians_only", false );
   }
 
