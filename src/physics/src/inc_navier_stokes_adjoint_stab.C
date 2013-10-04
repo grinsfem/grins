@@ -68,6 +68,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.get_element_fe(this->_p_var)->get_dphi();
 
+    /*
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+    */
+
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_u_var)->get_dphi();
 
@@ -98,6 +103,14 @@ namespace GRINS
             U(2) = context.interior_value( this->_w_var, qp );
           }
       
+        /*
+          libMesh::Gradient grad_u, grad_v, grad_w;
+          grad_u = context.interior_gradient(_u_var, qp);
+          grad_v = context.interior_gradient(_v_var, qp);
+          if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
+        */
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
@@ -115,6 +128,8 @@ namespace GRINS
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
               this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+
+            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
             Fu(i) += ( tau_M*RM_s(0)*test_func - tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
@@ -154,6 +169,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.get_element_fe(this->_p_var)->get_dphi();
 
+    /*
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+    */
+
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_u_var)->get_dphi();
 
@@ -186,6 +206,14 @@ namespace GRINS
             U(2) = context.fixed_interior_value( this->_w_var, qp );
           }
 
+        /*
+          libMesh::Gradient grad_u, grad_v, grad_w;
+          grad_u = context.interior_gradient(_u_var, qp);
+          grad_v = context.interior_gradient(_v_var, qp);
+          if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
+        */
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
 
         libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
@@ -201,6 +229,8 @@ namespace GRINS
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
               this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+
+            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
             Fu(i) += tau_M*RM_t(0)*test_func*JxW[qp];
 
