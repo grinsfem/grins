@@ -96,34 +96,33 @@ namespace GRINS
         if( this->_dim == 3 )
           U(2) = context.interior_value( this->_w_var, qp );
       
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
-        libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
-        libMesh::Real RC = compute_res_continuity( context, qp );
+	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+	libMesh::Real RC = compute_res_continuity( context, qp );
 
-        // Now a loop over the pressure degrees of freedom.  This
-        // computes the contributions of the continuity equation.
-        for (unsigned int i=0; i != n_p_dofs; i++)
-          {
-            Fp(i) -= tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
-          }
+	// Now a loop over the pressure degrees of freedom.  This
+	// computes the contributions of the continuity equation.
+	for (unsigned int i=0; i != n_p_dofs; i++)
+	  {
+	    Fp(i) -= tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+	  }
 
-        for (unsigned int i=0; i != n_u_dofs; i++)
-          {
-            Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
-                       + tau_M*RM_s(0)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                       + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
+	for (unsigned int i=0; i != n_u_dofs; i++)
+	  {
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
 
-            Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
-                       + tau_M*RM_s(1)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+	    Fu(i) += ( tau_M*RM_s(0)*test_func - tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
-            if(this->_dim == 3)
-              (*Fw)(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
-                            + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                            + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
-          }
+	    Fv(i) += ( tau_M*RM_s(1)*test_func - tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+
+	    if(this->_dim == 3)
+              {
+                (*Fw)(i) += ( tau_M*RM_s(2)*test_func - tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
+              }
+	  }
 
       }
 
