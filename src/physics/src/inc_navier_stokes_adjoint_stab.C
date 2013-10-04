@@ -35,7 +35,7 @@ namespace GRINS
 {
 
   IncompressibleNavierStokesAdjointStabilization::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
-												  const GetPot& input )
+                                                                                                  const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase(physics_name,input)
   {
     this->read_input_options(input);
@@ -49,8 +49,8 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
-										AssemblyContext& context,
-										CachedValues& /*cache*/ )
+                                                                                AssemblyContext& context,
+                                                                                CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::element_time_derivative");
@@ -86,44 +86,44 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
+        libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-				 context.interior_value( this->_v_var, qp ) );
-	if( this->_dim == 3 )
-	  U(2) = context.interior_value( this->_w_var, qp );
+        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
+                                 context.interior_value( this->_v_var, qp ) );
+        if( this->_dim == 3 )
+          U(2) = context.interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
-	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+        libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
-	libMesh::Real RC = compute_res_continuity( context, qp );
+        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+        libMesh::Real RC = compute_res_continuity( context, qp );
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) -= tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
-	  }
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) -= tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+          }
 
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
-		       + tau_M*RM_s(0)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-		       + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
+                       + tau_M*RM_s(0)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+                       + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
-	    Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
-		       + tau_M*RM_s(1)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-		       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+            Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
+                       + tau_M*RM_s(1)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+                       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 
-	    if(this->_dim == 3)
-	      (*Fw)(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
-			 + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-			 + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
-	  }
+            if(this->_dim == 3)
+              (*Fw)(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
+                            + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
+                            + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
+          }
 
       }
 
@@ -134,8 +134,8 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
-								      AssemblyContext& context,
-								      CachedValues& /*cache*/ )
+                                                                      AssemblyContext& context,
+                                                                      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokesAdjointStabilization::mass_residual");
@@ -171,42 +171,42 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
+        libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
-				 context.fixed_interior_value( this->_v_var, qp ) );
-	if( this->_dim == 3 )
-	  U(2) = context.fixed_interior_value( this->_w_var, qp );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
+                                 context.fixed_interior_value( this->_v_var, qp ) );
+        if( this->_dim == 3 )
+          U(2) = context.fixed_interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
 
-	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
+        libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
-	  }
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+          }
 
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) += tau_M*RM_t(0)*( this->_rho*U*u_gradphi[i][qp] 
-				     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-				     )*JxW[qp];
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += tau_M*RM_t(0)*( this->_rho*U*u_gradphi[i][qp] 
+                                     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
+                                     )*JxW[qp];
 
-	    Fv(i) += tau_M*RM_t(1)*( this->_rho*U*u_gradphi[i][qp]
-				     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-				     )*JxW[qp];
+            Fv(i) += tau_M*RM_t(1)*( this->_rho*U*u_gradphi[i][qp]
+                                     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
+                                     )*JxW[qp];
 
             if(this->_dim == 3)
-	      (*Fw)(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
-				     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-				     )*JxW[qp];
-	  }
+              (*Fw)(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
+                                          + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
+                                          )*JxW[qp];
+          }
 
       }
 
