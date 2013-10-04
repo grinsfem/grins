@@ -70,8 +70,12 @@ g = '0.0 -9.81' #[m/s^2]
 
 [Stabilization]
 
-tau_constant = '20'
-tau_factor = '0.005'
+tau_constant_vel = '1.0'
+tau_factor_vel = '1.0'
+
+tau_constant_T = '1.0'
+tau_factor_T = '50.0'
+
 
 []
 
@@ -100,12 +104,12 @@ mesh_nx2 = '8'
 [unsteady-solver]
 transient = 'true' 
 theta = 1.0
-n_timesteps = '500'
+n_timesteps = '250'
 deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  10
+max_nonlinear_iterations =  30
 max_linear_iterations = 5000
 
 relative_residual_tolerance = '1.0e-10'
