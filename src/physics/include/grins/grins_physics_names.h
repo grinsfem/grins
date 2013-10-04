@@ -35,6 +35,8 @@ namespace GRINS
   const PhysicsName incompressible_navier_stokes = "IncompressibleNavierStokes";
   const PhysicsName incompressible_navier_stokes_adjoint_stab = 
     "IncompressibleNavierStokesAdjointStabilization";
+  const PhysicsName incompressible_navier_stokes_spgsm_stab = 
+    "IncompressibleNavierStokesSPGSMStabilization";
   const PhysicsName heat_conduction = "HeatConduction";
   const PhysicsName heat_transfer = "HeatTransfer";
   const PhysicsName heat_transfer_source = "HeatTransferSource";
