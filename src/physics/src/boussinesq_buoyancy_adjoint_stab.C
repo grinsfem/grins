@@ -123,51 +123,51 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-				 context.interior_value( this->_v_var, qp ) );
-	if( this->_dim == 3 )
+        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
+                                 context.interior_value( this->_v_var, qp ) );
+        if( this->_dim == 3 )
           {
             U(2) = context.interior_value( this->_w_var, qp );
           }
 
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
 
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number T;
-	T = context.interior_value(_T_var, qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Number T;
+        T = context.interior_value(_T_var, qp);
 
         libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
 
-	// First, an i-loop over the velocity degrees of freedom.
-	// We know that n_u_dofs == n_v_dofs so we can compute contributions
-	// for both at the same time.
+        // First, an i-loop over the velocity degrees of freedom.
+        // We know that n_u_dofs == n_v_dofs so we can compute contributions
+        // for both at the same time.
         for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
-	  }
+          {
+            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
+          }
 
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) += ( this->_rho*U*u_gradphi[i][qp]
-		       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(0)*JxW[qp];
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += ( this->_rho*U*u_gradphi[i][qp]
+                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(0)*JxW[qp];
 
-	    Fv(i) += ( this->_rho*U*u_gradphi[i][qp]
-		       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(1)*JxW[qp];
+            Fv(i) += ( this->_rho*U*u_gradphi[i][qp]
+                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(1)*JxW[qp];
 
-	    if (_dim == 3)
+            if (_dim == 3)
               {
                 (*Fw)(i) += ( this->_rho*U*u_gradphi[i][qp]
                               + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(2)*JxW[qp];
               }
 
-	    if (compute_jacobian)
-	      {
+            if (compute_jacobian)
+              {
                 libmesh_not_implemented();
-	      } // End compute_jacobian check
+              } // End compute_jacobian check
 
-	  } // End i dof loop
+          } // End i dof loop
       } // End quadrature loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
