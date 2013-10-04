@@ -68,6 +68,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.get_element_fe(this->_p_var)->get_dphi();
 
+    /*
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+    */
+
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_u_var)->get_dphi();
 
@@ -94,8 +99,18 @@ namespace GRINS
         libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
                                  context.interior_value( this->_v_var, qp ) );
         if( this->_dim == 3 )
-          U(2) = context.interior_value( this->_w_var, qp );
+          {
+            U(2) = context.interior_value( this->_w_var, qp );
+          }
       
+        /*
+          libMesh::Gradient grad_u, grad_v, grad_w;
+          grad_u = context.interior_gradient(_u_var, qp);
+          grad_v = context.interior_gradient(_v_var, qp);
+          if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
+        */
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
@@ -106,23 +121,24 @@ namespace GRINS
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) -= tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+            Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
           }
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) -= ( tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]
-                       + tau_M*RM_s(0)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                       + tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
 
-            Fv(i) -= ( tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] 
-                       + tau_M*RM_s(1)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                       + tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
+            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
+
+            Fu(i) += ( tau_M*RM_s(0)*test_func - tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
+
+            Fv(i) += ( tau_M*RM_s(1)*test_func - tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 
             if(this->_dim == 3)
-              (*Fw)(i) -= ( tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] 
-                            + tau_M*RM_s(2)*this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) )
-                            + tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
+              {
+                (*Fw)(i) += ( tau_M*RM_s(2)*test_func - tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
+              }
           }
 
       }
@@ -153,6 +169,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.get_element_fe(this->_p_var)->get_dphi();
 
+    /*
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+    */
+
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_u_var)->get_dphi();
 
@@ -163,7 +184,9 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     if(this->_dim == 3)
-      Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      {
+        Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      }
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
 
@@ -179,8 +202,18 @@ namespace GRINS
         libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
                                  context.fixed_interior_value( this->_v_var, qp ) );
         if( this->_dim == 3 )
-          U(2) = context.fixed_interior_value( this->_w_var, qp );
-      
+          {
+            U(2) = context.fixed_interior_value( this->_w_var, qp );
+          }
+
+        /*
+          libMesh::Gradient grad_u, grad_v, grad_w;
+          grad_u = context.interior_gradient(_u_var, qp);
+          grad_v = context.interior_gradient(_v_var, qp);
+          if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
+        */
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
 
         libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
@@ -194,18 +227,19 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += tau_M*RM_t(0)*( this->_rho*U*u_gradphi[i][qp] 
-                                     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-                                     )*JxW[qp];
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
 
-            Fv(i) += tau_M*RM_t(1)*( this->_rho*U*u_gradphi[i][qp]
-                                     + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-                                     )*JxW[qp];
+            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
+
+            Fu(i) += tau_M*RM_t(0)*test_func*JxW[qp];
+
+            Fv(i) += tau_M*RM_t(1)*test_func*JxW[qp];
 
             if(this->_dim == 3)
-              (*Fw)(i) += tau_M*RM_t(2)*( this->_rho*U*u_gradphi[i][qp]
-                                          + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) 
-                                          )*JxW[qp];
+              {
+                (*Fw)(i) += tau_M*RM_t(2)*test_func*JxW[qp];
+              }
           }
 
       }
