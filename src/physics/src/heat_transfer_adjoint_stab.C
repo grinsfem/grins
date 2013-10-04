@@ -33,7 +33,7 @@ namespace GRINS
 {
 
   HeatTransferAdjointStabilization::HeatTransferAdjointStabilization( const std::string& physics_name, 
-								      const GetPot& input )
+                                                                      const GetPot& input )
     : HeatTransferStabilizationBase(physics_name,input)
   {
     return;
@@ -45,8 +45,8 @@ namespace GRINS
   }
 
   void HeatTransferAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
-								  AssemblyContext& context,
-								  CachedValues& /*cache*/ )
+                                                                  AssemblyContext& context,
+                                                                  CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_time_derivative");
@@ -71,26 +71,26 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
+        libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-				 context.interior_value( this->_v_var, qp ) );
-	if( this->_dim == 3 )
-	  U(2) = context.interior_value( this->_w_var, qp );
+        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
+                                 context.interior_value( this->_v_var, qp ) );
+        if( this->_dim == 3 )
+          U(2) = context.interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
 
-	libMesh::Real RE_s = this->compute_res_steady( context, qp );
+        libMesh::Real RE_s = this->compute_res_steady( context, qp );
 
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) += tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
-				  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
-				  )*JxW[qp];
-	  }
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) += tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
+                                  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+                                  )*JxW[qp];
+          }
 
       }
 
@@ -101,8 +101,8 @@ namespace GRINS
   }
 
   void HeatTransferAdjointStabilization::mass_residual( bool /*compute_jacobian*/,
-							AssemblyContext& context,
-							CachedValues& /*cache*/ )
+                                                        AssemblyContext& context,
+                                                        CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("HeatTransferAdjointStabilization::mass_residual");
@@ -127,26 +127,26 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
+        libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
-				 context.fixed_interior_value( this->_v_var, qp ) );
-	if( this->_dim == 3 )
-	  U(2) = context.fixed_interior_value( this->_w_var, qp );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
+                                 context.fixed_interior_value( this->_v_var, qp ) );
+        if( this->_dim == 3 )
+          U(2) = context.fixed_interior_value( this->_w_var, qp );
       
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
 
-	libMesh::Real RE_t = this->compute_res_transient( context, qp );
+        libMesh::Real RE_t = this->compute_res_transient( context, qp );
 
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) -= tau_E*RE_t*( _rho*_Cp*U*T_gradphi[i][qp]
-				  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
-				  )*JxW[qp];
-	  }
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) -= tau_E*RE_t*( _rho*_Cp*U*T_gradphi[i][qp]
+                                  + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+                                  )*JxW[qp];
+          }
 
       }
 

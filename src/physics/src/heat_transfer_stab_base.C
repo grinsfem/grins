@@ -32,7 +32,7 @@ namespace GRINS
 {
 
   HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
-								const GetPot& input )
+                                                                const GetPot& input )
     : HeatTransferBase(physics_name,input),
       _stab_helper( input )
   {
@@ -58,13 +58,13 @@ namespace GRINS
   }
 
   libMesh::Real HeatTransferStabilizationBase::compute_res_steady( AssemblyContext& context,
-								   unsigned int qp ) const
+                                                                   unsigned int qp ) const
   {
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
 
     libMesh::RealGradient rhocpU( _rho*_Cp*context.fixed_interior_value(this->_u_var, qp), 
-				  _rho*_Cp*context.fixed_interior_value(this->_v_var, qp) );
+                                  _rho*_Cp*context.fixed_interior_value(this->_v_var, qp) );
     if(this->_dim == 3)
       rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_w_var, qp);
 
@@ -72,7 +72,7 @@ namespace GRINS
   }
 
   libMesh::Real HeatTransferStabilizationBase::compute_res_transient( AssemblyContext& context,
-								      unsigned int qp ) const
+                                                                      unsigned int qp ) const
   {
     libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
 
