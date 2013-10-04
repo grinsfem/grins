@@ -150,16 +150,15 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += ( this->_rho*U*u_gradphi[i][qp]
-                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(0)*JxW[qp];
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+            Fu(i) += tau_M*residual(0)*test_func*JxW[qp];
 
-            Fv(i) += ( this->_rho*U*u_gradphi[i][qp]
-                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(1)*JxW[qp];
+            Fv(i) += tau_M*residual(1)*test_func*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += ( this->_rho*U*u_gradphi[i][qp]
-                              + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(2)*JxW[qp];
+                (*Fw)(i) += tau_M*residual(2)*test_func*JxW[qp];
               }
 
             if (compute_jacobian)
