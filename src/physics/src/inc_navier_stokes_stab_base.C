@@ -112,11 +112,10 @@ namespace GRINS
         divGradU  = _stab_helper.div_GradU( hess_u, hess_v, hess_w );
       }
 
-    return rhoUdotGradU + grad_p - this->_mu*divGradU;
+    return -rhoUdotGradU - grad_p + this->_mu*divGradU;
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_transient( AssemblyContext& context,
-                                                                                                     unsigned int qp ) const
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp ) const
   {
     libMesh::RealGradient u_dot( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );
 

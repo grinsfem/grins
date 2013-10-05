@@ -29,9 +29,6 @@ pin_pressure = true
 pin_location = '0.0 0.0'
 pin_value = '0.0'
 
-rho = '1.0'
-mu = '1.0e-3'
-
 [../HeatTransfer]
 
 T_FE_family = 'LAGRANGE'
@@ -48,7 +45,7 @@ bc_types = 'parsed_dirichlet adiabatic_wall isothermal_wall adiabatic_wall'
 bc_variables = 'T na na na'
 bc_values = '{340.0+(abs(x)<=2)*30} na na na'
 
-T_wall_5 = '280.0'
+T_wall_2 = '280.0'
 
 ic_ids = '0'
 ic_types = 'constant'
@@ -73,8 +70,12 @@ g = '0.0 -9.81' #[m/s^2]
 
 [Stabilization]
 
-tau_constant = '20'
-tau_factor = '0.005'
+tau_constant_vel = '1.0'
+tau_factor_vel = '1.0'
+
+tau_constant_T = '1.0'
+tau_factor_T = '50.0'
+
 
 []
 
@@ -103,12 +104,12 @@ mesh_nx2 = '8'
 [unsteady-solver]
 transient = 'true' 
 theta = 1.0
-n_timesteps = '500'
+n_timesteps = '250'
 deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  10
+max_nonlinear_iterations =  30
 max_linear_iterations = 5000
 
 relative_residual_tolerance = '1.0e-10'

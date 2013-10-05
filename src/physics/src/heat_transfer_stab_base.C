@@ -68,7 +68,7 @@ namespace GRINS
     if(this->_dim == 3)
       rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_w_var, qp);
 
-    return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+    return -rhocpU*grad_T + _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
 
   libMesh::Real HeatTransferStabilizationBase::compute_res_transient( AssemblyContext& context,

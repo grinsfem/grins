@@ -65,6 +65,21 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
       context.get_element_fe(this->_T_var)->get_d2phi();
 
+    /*
+      const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+
+      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+      if(this->_dim == 3)
+      {
+      Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      }
+    */
+
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -79,12 +94,28 @@ namespace GRINS
         libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
                                  context.interior_value( this->_v_var, qp ) );
         if( this->_dim == 3 )
-          U(2) = context.interior_value( this->_w_var, qp );
+          {
+            U(2) = context.interior_value( this->_w_var, qp );
+          }
       
+        //libMesh::RealGradient grad_T = context.interior_gradient( this->_T_var, qp );
+
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
 
         libMesh::Real RE_s = this->compute_res_steady( context, qp );
 
+        /*
+          for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+          Fu(i) += -tau_E*RE_s*_rho*_Cp*u_phi[i][qp]*grad_T(0)*JxW[qp];
+          Fv(i) += -tau_E*RE_s*_rho*_Cp*u_phi[i][qp]*grad_T(1)*JxW[qp];
+          if( this->_dim == 3 )
+          {
+          (*Fw)(i) += -tau_E*RE_s*_rho*_Cp*u_phi[i][qp]*grad_T(2)*JxW[qp];
+          }
+          }
+        */
+  
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
             FT(i) += tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
@@ -121,6 +152,21 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
       context.get_element_fe(this->_T_var)->get_d2phi();
 
+    /*
+      const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+
+      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+      if(this->_dim == 3)
+      {
+      Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      }
+    */
+
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -137,13 +183,27 @@ namespace GRINS
         if( this->_dim == 3 )
           U(2) = context.fixed_interior_value( this->_w_var, qp );
       
+        //libMesh::RealGradient grad_T = context.fixed_interior_gradient( this->_T_var, qp );
+
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
 
         libMesh::Real RE_t = this->compute_res_transient( context, qp );
 
+        /*
+          for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+          Fu(i) += -tau_E*RE_t*_rho*_Cp*u_phi[i][qp]*grad_T(0)*JxW[qp];
+          Fv(i) += -tau_E*RE_t*_rho*_Cp*u_phi[i][qp]*grad_T(1)*JxW[qp];
+          if( this->_dim == 3 )
+          {
+          (*Fw)(i) += -tau_E*RE_t*_rho*_Cp*u_phi[i][qp]*grad_T(2)*JxW[qp];
+          }
+          }
+        */
+
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
-            FT(i) -= tau_E*RE_t*( _rho*_Cp*U*T_gradphi[i][qp]
+            FT(i) += tau_E*RE_t*( _rho*_Cp*U*T_gradphi[i][qp]
                                   + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
                                   )*JxW[qp];
           }
