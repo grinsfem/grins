@@ -62,6 +62,15 @@ namespace GRINS
                                libMesh::Gradient U,
                                bool is_steady ) const;
 
+    libMesh::Real compute_res_continuity( AssemblyContext& context,
+                                          unsigned int qp ) const;
+
+    libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
+                                                       unsigned int qp ) const;
+
+    libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
+                                                          unsigned int qp ) const;
+
     /*! \todo Should we inline this? */
     libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u, 
                                      libMesh::Gradient& grad_v ) const;

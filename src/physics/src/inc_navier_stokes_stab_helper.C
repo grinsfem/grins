@@ -107,4 +107,69 @@ namespace GRINS
                                   hess_u(0,2) + hess_v(1,2) + hess_w(2,2) );
   }
 
+  libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_res_continuity( AssemblyContext& context,
+                                                                                       unsigned int qp ) const
+  {
+    libMesh::RealGradient grad_u, grad_v;
+
+    grad_u = context.fixed_interior_gradient(this->_u_var, qp);
+    grad_v = context.fixed_interior_gradient(this->_v_var, qp);
+
+    libMesh::Real divU = grad_u(0) + grad_v(1);
+
+    if( this->_dim == 3 )
+      {
+        divU += (context.fixed_interior_gradient(this->_w_var, qp))(2);
+      }
+
+    return divU;
+  }
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_steady( AssemblyContext& context,
+                                                                                                    unsigned int qp ) const
+  {
+    libMesh::RealGradient U( context.fixed_interior_value(this->_u_var, qp),
+                             context.fixed_interior_value(this->_v_var, qp) );
+    if(this->_dim == 3)
+      U(2) = context.fixed_interior_value(this->_w_var, qp);
+
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_p_var, qp);
+
+    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_u_var, qp);
+    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_v_var, qp);
+
+    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_u_var, qp);
+    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_v_var, qp);
+
+    libMesh::RealGradient rhoUdotGradU;
+    libMesh::RealGradient divGradU;
+
+    if( this->_dim < 3 )
+      {
+        rhoUdotGradU = this->_rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
+        divGradU  = _stab_helper.div_GradU( hess_u, hess_v );
+      }
+    else
+      {
+        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_w_var, qp);
+        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_w_var, qp);
+
+        rhoUdotGradU = this->_rho*_stab_helper.UdotGradU( U, grad_u, grad_v, grad_w );
+
+        divGradU  = _stab_helper.div_GradU( hess_u, hess_v, hess_w );
+      }
+
+    return -rhoUdotGradU - grad_p + this->_mu*divGradU;
+  }
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp ) const
+  {
+    libMesh::RealGradient u_dot( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );
+
+    if(this->_dim == 3)
+      u_dot(2) = context.interior_value(this->_w_var, qp);
+
+    return this->_rho*u_dot;
+  }
+
 } // namespace GRINS
