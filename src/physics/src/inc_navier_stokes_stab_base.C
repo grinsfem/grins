@@ -52,10 +52,10 @@ namespace GRINS
     IncompressibleNavierStokesBase::init_context(context);
   
     // We need pressure derivatives
-    context.get_element_fe(this->_p_var)->get_dphi();
+    context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
     // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_u_var)->get_d2phi();
+    context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
 
     return;
   }
@@ -65,14 +65,14 @@ namespace GRINS
   {
     libMesh::RealGradient grad_u, grad_v;
 
-    grad_u = context.fixed_interior_gradient(this->_u_var, qp);
-    grad_v = context.fixed_interior_gradient(this->_v_var, qp);
+    grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
+    grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
 
     libMesh::Real divU = grad_u(0) + grad_v(1);
 
     if( this->_dim == 3 )
       {
-        divU += (context.fixed_interior_gradient(this->_w_var, qp))(2);
+        divU += (context.fixed_interior_gradient(this->_flow_vars.w_var(), qp))(2);
       }
 
     return divU;
@@ -81,18 +81,18 @@ namespace GRINS
   libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_steady( AssemblyContext& context,
                                                                                                   unsigned int qp ) const
   {
-    libMesh::RealGradient U( context.fixed_interior_value(this->_u_var, qp), 
-                             context.fixed_interior_value(this->_v_var, qp) );
+    libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
+                             context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
     if(this->_dim == 3)
-      U(2) = context.fixed_interior_value(this->_w_var, qp);
+      U(2) = context.fixed_interior_value(this->_flow_vars.w_var(), qp);
 
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_p_var, qp);
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p_var(), qp);
 
-    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_u_var, qp);
-    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_v_var, qp);
+    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
+    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
 
-    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_u_var, qp);
-    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_v_var, qp);
+    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_flow_vars.u_var(), qp);
+    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_flow_vars.v_var(), qp);
 
     libMesh::RealGradient rhoUdotGradU;
     libMesh::RealGradient divGradU;
@@ -104,8 +104,8 @@ namespace GRINS
       }
     else
       {
-        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_w_var, qp);
-        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_w_var, qp);
+        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w_var(), qp);
+        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w_var(), qp);
       
         rhoUdotGradU = this->_rho*_stab_helper.UdotGradU( U, grad_u, grad_v, grad_w );
 
@@ -117,10 +117,11 @@ namespace GRINS
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationBase::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp ) const
   {
-    libMesh::RealGradient u_dot( context.interior_value(this->_u_var, qp), context.interior_value(this->_v_var, qp) );
+    libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp),
+                                 context.interior_value(this->_flow_vars.v_var(), qp) );
 
     if(this->_dim == 3)
-      u_dot(2) = context.interior_value(this->_w_var, qp);
+      u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
     return this->_rho*u_dot;
   }

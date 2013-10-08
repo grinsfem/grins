@@ -27,10 +27,8 @@
 
 //GRINS
 #include "grins/physics.h"
+#include "grins/flow_variables.h"
 
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
@@ -46,9 +44,6 @@ namespace GRINS
     IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input);
 
     ~IncompressibleNavierStokesBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
 
     //! Initialization of Navier-Stokes variables
     /*!
@@ -68,20 +63,7 @@ namespace GRINS
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
 
-    //! Indices for each (owned) variable;
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
-    VariableIndex _p_var; /* Index for pressure field */
-
-    //! Names of each (owned) variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name;
-
-    //! Element type, read from input
-    libMeshEnums::FEFamily _FE_family;
-
-    //! Element orders, read from input
-    libMeshEnums::Order _V_order, _P_order;
+    FlowVariables _flow_vars;
 
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
