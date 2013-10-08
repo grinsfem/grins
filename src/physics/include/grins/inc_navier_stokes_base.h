@@ -65,6 +65,7 @@ namespace GRINS
   protected:
 
     //! Physical dimension of problem
+    /*! \todo Do we really need to cache this? */
     unsigned int _dim;
 
     //! Indices for each (owned) variable;
