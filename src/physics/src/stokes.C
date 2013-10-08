@@ -55,8 +55,8 @@ namespace GRINS
   }
 
   void Stokes::element_time_derivative( bool compute_jacobian,
-					AssemblyContext& context,
-					CachedValues& /*cache*/ )
+                                        AssemblyContext& context,
+                                        CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("Stokes::element_time_derivative");
@@ -118,77 +118,77 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number p, u, v, w;
-	p = context.interior_value(_p_var, qp);
-	u = context.interior_value(_u_var, qp);
-	v = context.interior_value(_v_var, qp);
-	if (_dim == 3)
-	  w = context.interior_value(_w_var, qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Number p, u, v, w;
+        p = context.interior_value(_p_var, qp);
+        u = context.interior_value(_u_var, qp);
+        v = context.interior_value(_v_var, qp);
+        if (_dim == 3)
+          w = context.interior_value(_w_var, qp);
 
-	libMesh::Gradient grad_u, grad_v, grad_w;
-	grad_u = context.interior_gradient(_u_var, qp);
-	grad_v = context.interior_gradient(_v_var, qp);
-	if (_dim == 3)
-	  grad_w = context.interior_gradient(_w_var, qp);
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        grad_u = context.interior_gradient(_u_var, qp);
+        grad_v = context.interior_gradient(_v_var, qp);
+        if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
 
-	libMesh::NumberVectorValue Uvec (u,v);
-	if (_dim == 3)
-	  Uvec(2) = w;
+        libMesh::NumberVectorValue Uvec (u,v);
+        if (_dim == 3)
+          Uvec(2) = w;
 
-	// First, an i-loop over the velocity degrees of freedom.
-	// We know that n_u_dofs == n_v_dofs so we can compute contributions
-	// for both at the same time.
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) += JxW[qp] *
-	      ( p*u_gradphi[i][qp](0)              // pressure term
-		-_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
+        // First, an i-loop over the velocity degrees of freedom.
+        // We know that n_u_dofs == n_v_dofs so we can compute contributions
+        // for both at the same time.
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += JxW[qp] *
+              ( p*u_gradphi[i][qp](0)              // pressure term
+                -_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
-	    Fv(i) += JxW[qp] *
-	      ( p*u_gradphi[i][qp](1)              // pressure term
-		-_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
-	    if (_dim == 3)
-	      {
-		Fw(i) += JxW[qp] *
-		  ( p*u_gradphi[i][qp](2)              // pressure term
-		    -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
-	      }
+            Fv(i) += JxW[qp] *
+              ( p*u_gradphi[i][qp](1)              // pressure term
+                -_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+            if (_dim == 3)
+              {
+                Fw(i) += JxW[qp] *
+                  ( p*u_gradphi[i][qp](2)              // pressure term
+                    -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
+              }
 
-	    if (compute_jacobian)
-	      {
-		for (unsigned int j=0; j != n_u_dofs; j++)
-		  {
-		    // TODO: precompute some terms like:
-		    //   (Uvec*vel_gblgradphivec[j][qp]),
-		    //   vel_phi[i][qp]*vel_phi[j][qp],
-		    //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    // TODO: precompute some terms like:
+                    //   (Uvec*vel_gblgradphivec[j][qp]),
+                    //   vel_phi[i][qp]*vel_phi[j][qp],
+                    //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
 
-		    Kuu(i,j) += JxW[qp] *
-		      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                    Kuu(i,j) += JxW[qp] *
+                      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-		    Kvv(i,j) += JxW[qp] *
-		      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                    Kvv(i,j) += JxW[qp] *
+                      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-		    if (_dim == 3)
-		      {
-			Kww(i,j) += JxW[qp] *
-			  (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
-		      }
-		  } // end of the inner dof (j) loop
+                    if (_dim == 3)
+                      {
+                        Kww(i,j) += JxW[qp] *
+                          (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                      }
+                  } // end of the inner dof (j) loop
 
-		// Matrix contributions for the up, vp and wp couplings
-		for (unsigned int j=0; j != n_p_dofs; j++)
-		  {
-		    Kup(i,j) += JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
-		    Kvp(i,j) += JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
-		    if (_dim == 3)
-		      Kwp(i,j) += JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
-		  } // end of the inner dof (j) loop
+                // Matrix contributions for the up, vp and wp couplings
+                for (unsigned int j=0; j != n_p_dofs; j++)
+                  {
+                    Kup(i,j) += JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
+                    Kvp(i,j) += JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
+                    if (_dim == 3)
+                      Kwp(i,j) += JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
+                  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+              } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
-	  } // end of the outer dof (i) loop
+          } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -199,8 +199,8 @@ namespace GRINS
   }
 
   void Stokes::element_constraint( bool compute_jacobian,
-				   AssemblyContext& context,
-				   CachedValues& /*cache*/ )
+                                   AssemblyContext& context,
+                                   CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("Stokes::element_constraint");
@@ -243,43 +243,43 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	// Compute the velocity gradient at the old Newton iterate.
-	libMesh::Gradient grad_u, grad_v, grad_w;
-	grad_u = context.interior_gradient(_u_var, qp);
-	grad_v = context.interior_gradient(_v_var, qp);
-	if (_dim == 3)
-	  grad_w = context.interior_gradient(_w_var, qp);
+        // Compute the velocity gradient at the old Newton iterate.
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        grad_u = context.interior_gradient(_u_var, qp);
+        grad_v = context.interior_gradient(_v_var, qp);
+        if (_dim == 3)
+          grad_w = context.interior_gradient(_w_var, qp);
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) += JxW[qp] * p_phi[i][qp] *
-	      (grad_u(0) + grad_v(1));
-	    if (_dim == 3)
-	      Fp(i) += JxW[qp] * p_phi[i][qp] *
-		(grad_w(2));
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += JxW[qp] * p_phi[i][qp] *
+              (grad_u(0) + grad_v(1));
+            if (_dim == 3)
+              Fp(i) += JxW[qp] * p_phi[i][qp] *
+                (grad_w(2));
 
-	    if (compute_jacobian)
-	      {
-		for (unsigned int j=0; j != n_u_dofs; j++)
-		  {
-		    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
-		    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
-		    if (_dim == 3)
-		      Kpw(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
-		  } // end of the inner dof (j) loop
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
+                    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
+                    if (_dim == 3)
+                      Kpw(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
+                  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+              } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
-	  } // end of the outer dof (i) loop
+          } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
 
 
     // Pin p = p_value at p_point
     if( _pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, _p_var );
+        _p_pinning.pin_value( context, compute_jacobian, _p_var );
       }
   
 
@@ -291,8 +291,8 @@ namespace GRINS
   }
 
   void Stokes::mass_residual( bool compute_jacobian,
-			      AssemblyContext& context,
-			      CachedValues& /*cache*/)
+                              AssemblyContext& context,
+                              CachedValues& /*cache*/)
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
@@ -324,46 +324,46 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	// For the mass residual, we need to be a little careful.
-	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real u_dot = context.interior_value(_u_var, qp);
-	libMesh::Real v_dot = context.interior_value(_v_var, qp);
+        // For the mass residual, we need to be a little careful.
+        // The time integrator is handling the time-discretization
+        // for us so we need to supply M(u_fixed)*u for the residual.
+        // u_fixed will be given by the fixed_interior_* functions
+        // while u will be given by the interior_* functions.
+        libMesh::Real u_dot = context.interior_value(_u_var, qp);
+        libMesh::Real v_dot = context.interior_value(_v_var, qp);
 
-	libMesh::Real w_dot = 0.0;
+        libMesh::Real w_dot = 0.0;
 
-	if( _dim == 3 )
-	  w_dot = context.interior_value(_w_var, qp);
+        if( _dim == 3 )
+          w_dot = context.interior_value(_w_var, qp);
       
-	for (unsigned int i = 0; i != n_u_dofs; ++i)
-	  {
-	    F_u(i) += JxW[qp]*_rho*u_dot*u_phi[i][qp];
-	    F_v(i) += JxW[qp]*_rho*v_dot*u_phi[i][qp];
+        for (unsigned int i = 0; i != n_u_dofs; ++i)
+          {
+            F_u(i) += JxW[qp]*_rho*u_dot*u_phi[i][qp];
+            F_v(i) += JxW[qp]*_rho*v_dot*u_phi[i][qp];
 
-	    if( _dim == 3 )
-	      F_w(i) += JxW[qp]*_rho*w_dot*u_phi[i][qp];
-	  
-	    if( compute_jacobian )
+            if( _dim == 3 )
+              F_w(i) += JxW[qp]*_rho*w_dot*u_phi[i][qp];
+          
+            if( compute_jacobian )
               {
-		for (unsigned int j=0; j != n_u_dofs; j++)
-		  {
-		    // Assuming rho is constant w.r.t. u, v, w
-		    // and T (if Boussinesq added).
-		    libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    // Assuming rho is constant w.r.t. u, v, w
+                    // and T (if Boussinesq added).
+                    libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
 
-		    M_uu(i,j) += value;
-		    M_vv(i,j) += value;
+                    M_uu(i,j) += value;
+                    M_vv(i,j) += value;
 
-		    if( _dim == 3)
-		      {
-			M_ww(i,j) += value;
-		      }
+                    if( _dim == 3)
+                      {
+                        M_ww(i,j) += value;
+                      }
 
-		  } // End dof loop
-	      } // End Jacobian check
-	  } // End dof loop
+                  } // End dof loop
+              } // End Jacobian check
+          } // End dof loop
       } // End quadrature loop
 
     return;
