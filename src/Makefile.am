@@ -88,6 +88,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_stab
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/flow_variables.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
@@ -228,6 +229,7 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/flow_variables.h
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
