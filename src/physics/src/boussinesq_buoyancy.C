@@ -40,7 +40,7 @@ namespace GRINS
   BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input)
   {
-      return;
+    return;
   }
 
   BoussinesqBuoyancy::~BoussinesqBuoyancy()
@@ -49,8 +49,8 @@ namespace GRINS
   }
 
   void BoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
-						    AssemblyContext& context,
-						    CachedValues& /*cache*/ )
+                                                    AssemblyContext& context,
+                                                    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancy::element_time_derivative");
@@ -95,35 +95,35 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number T;
-	T = context.interior_value(_T_var, qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Number T;
+        T = context.interior_value(_T_var, qp);
 
-	// First, an i-loop over the velocity degrees of freedom.
-	// We know that n_u_dofs == n_v_dofs so we can compute contributions
-	// for both at the same time.
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
-	    Fv(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
+        // First, an i-loop over the velocity degrees of freedom.
+        // We know that n_u_dofs == n_v_dofs so we can compute contributions
+        // for both at the same time.
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
+            Fv(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
 
-	    if (_dim == 3)
-	      Fw(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
+            if (_dim == 3)
+              Fw(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
-	    if (compute_jacobian)
-	      {
-		for (unsigned int j=0; j != n_T_dofs; j++)
-		  {
-		    KuT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
-		    KvT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+                    KuT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                    KvT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
-		    if (_dim == 3)
-		      KwT(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                    if (_dim == 3)
+                      KwT(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
-		  } // End j dof loop
-	      } // End compute_jacobian check
+                  } // End j dof loop
+              } // End compute_jacobian check
 
-	  } // End i dof loop
+          } // End i dof loop
       } // End quadrature loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
