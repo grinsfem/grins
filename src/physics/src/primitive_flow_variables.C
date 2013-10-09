@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/flow_variables.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  FlowVariables::FlowVariables( const GetPot& input, const std::string& physics_name )
+  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input, const std::string& physics_name )
     :  _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
        _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
        _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
@@ -47,12 +47,12 @@ namespace GRINS
     return;
   }
 
-  FlowVariables::~FlowVariables()
+  PrimitiveFlowVariables::~PrimitiveFlowVariables()
   {
     return;
   }
 
-  void FlowVariables::init( libMesh::FEMSystem* system )
+  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
   {
     _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
     _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);

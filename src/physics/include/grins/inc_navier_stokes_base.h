@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/flow_variables.h"
+#include "grins/primitive_flow_variables.h"
 
 
 namespace GRINS
@@ -63,7 +63,7 @@ namespace GRINS
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
 
-    FlowVariables _flow_vars;
+    PrimitiveFlowVariables _flow_vars;
 
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
