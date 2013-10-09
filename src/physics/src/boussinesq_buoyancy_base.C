@@ -36,14 +36,8 @@ namespace GRINS
 
   BoussinesqBuoyancyBase::BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") ) ),
-      _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") ) ),
-      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") ) ),
-      _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") ) ),
-      _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
-      _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
-      _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
+      _flow_vars(input,incompressible_navier_stokes),
+      _temp_vars(input,heat_transfer),
       _rho_ref( input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0) ),
       _T_ref( input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0) ),
       _beta_T( input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0) )
@@ -69,13 +63,8 @@ namespace GRINS
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
 
-    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
- 
-    // If these are already added, then we just get the index. 
-    _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
-    _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
-    if (_dim == 3)
-      _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
+    _temp_vars.init(system);
+    _flow_vars.init(system);
 
     return;
   }

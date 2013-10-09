@@ -27,10 +27,10 @@
 
 // GRINS
 #include "grins/physics.h"
+#include "grins/primitive_flow_variables.h"
+#include "grins/primitive_temp_variables.h"
 
 // libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 #include "libmesh/point.h"
 
 namespace GRINS
@@ -48,23 +48,8 @@ namespace GRINS
 
   protected:
 
-    //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
-
-    //! Temperature element order, read from input
-    libMeshEnums::Order _T_order, _V_order;
-
-    //! Name of x-velocity
-    std::string _u_var_name;
-
-    //! Name of y-velocity
-    std::string _v_var_name;
-
-    //! Name of z-velocity
-    std::string _w_var_name;
-
-    //! Name of temperature
-    std::string _T_var_name;
+    PrimitiveFlowVariables _flow_vars;
+    PrimitiveTempVariables _temp_vars;
 
     //! \f$ \rho_0 = \f$ reference density
     libMesh::Number _rho_ref;
@@ -80,19 +65,6 @@ namespace GRINS
 
      //! Physical dimension of problem
     unsigned int _dim;
-
-    // Indices for each variable;
-    //! Index for x-velocity field
-    VariableIndex _u_var;
-
-    //! Index for y-velocity field
-    VariableIndex _v_var;
-
-    //! Index for z-velocity field
-    VariableIndex _w_var;
-
-    //! Index for temperature field
-    VariableIndex _T_var;
 
   private:
 
