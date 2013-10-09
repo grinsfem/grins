@@ -22,8 +22,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_FLOW_VARIABLES_H
-#define GRINS_FLOW_VARIABLES_H
+#ifndef GRINS_PRIMITIVE_FLOW_VARIABLES_H
+#define GRINS_PRIMITIVE_FLOW_VARIABLES_H
 
 //libMesh
 #include "libmesh/enum_order.h"
@@ -105,4 +105,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif //GRINS_FLOW_VARIABLES_H
+#endif //GRINS_PRIMITIVE_FLOW_VARIABLES_H
