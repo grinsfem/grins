@@ -26,6 +26,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -62,9 +63,7 @@ namespace GRINS
     
   protected:
 
-    std::string _T_var_name;
-
-    VariableIndex _T_var;
+    PrimitiveTempVariables _temp_vars;
 
   private:
 
