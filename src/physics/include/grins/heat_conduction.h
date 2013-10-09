@@ -24,7 +24,9 @@
 #ifndef GRINS_HEAT_CONDUCTION_H
 #define GRINS_HEAT_CONDUCTION_H
 
+// GRINS
 #include "grins/physics.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 namespace GRINS
 {
@@ -63,14 +65,7 @@ namespace GRINS
 
     unsigned int _dim;
 
-    //! Indices for each variable;
-    VariableIndex _T_var;
-
-    std::string _T_var_name;
-
-    libMeshEnums::Order _T_order;
-
-    libMeshEnums::FEFamily _T_FE_family;
+    PrimitiveTempFEVariables _temp_vars;
 
     libMesh::Number _rho, _Cp, _k;
 

@@ -21,56 +21,34 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_BOUSSINESQ_BUOYANCY_BASE_H
-#define GRINS_BOUSSINESQ_BUOYANCY_BASE_H
-
-// GRINS
-#include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
+// This class
 #include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
-#include "libmesh/point.h"
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
-{  
-  class BoussinesqBuoyancyBase : public Physics
+{
+  PrimitiveTempFEVariables::PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
+    : PrimitiveTempVariables(input),
+      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) )
   {
-  public:
+    return;
+  }
+
+  PrimitiveTempFEVariables::~PrimitiveTempFEVariables()
+  {
+    return;
+  }
+
+  void PrimitiveTempFEVariables::init( libMesh::FEMSystem* system )
+  {
+    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family );
     
-    BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
-
-    ~BoussinesqBuoyancyBase();
-
-    //! Initialization of BoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-  protected:
-
-    PrimitiveFlowFEVariables _flow_vars;
-    PrimitiveTempFEVariables _temp_vars;
-
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
-
-    //! \f$ T_0 = \f$ reference temperature 
-    libMesh::Number _T_ref;
-
-    //! \f$ \beta_T = \f$ coefficient of thermal expansion
-    libMesh::Number _beta_T;
-
-    //! Gravitational vector
-    libMesh::Point _g;
-
-     //! Physical dimension of problem
-    unsigned int _dim;
-
-  private:
-
-    BoussinesqBuoyancyBase();
-
-  };
+    return;
+  }
 
 } // end namespace GRINS
-#endif // GRINS_BOUSSINESQ_BUOYANCY_BASE_H

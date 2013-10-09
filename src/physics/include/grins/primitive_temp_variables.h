@@ -21,56 +21,52 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_PRIMITIVE_TEMP_VARIABLES_H
+#define GRINS_PRIMITIVE_TEMP_VARIABLES_H
 
-#ifndef GRINS_BOUSSINESQ_BUOYANCY_BASE_H
-#define GRINS_BOUSSINESQ_BUOYANCY_BASE_H
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 // GRINS
-#include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
-
-// libMesh
-#include "libmesh/point.h"
+#include "grins/var_typedefs.h"
 
 namespace GRINS
-{  
-  class BoussinesqBuoyancyBase : public Physics
+{
+  class PrimitiveTempVariables
   {
   public:
-    
-    BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyBase();
+    PrimitiveTempVariables( const GetPot& input );
+    ~PrimitiveTempVariables();
 
-    //! Initialization of BoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system );
+
+    VariableIndex T_var() const;
 
   protected:
 
-    PrimitiveFlowFEVariables _flow_vars;
-    PrimitiveTempFEVariables _temp_vars;
+    //! Indices for each variable;
+    VariableIndex _T_var; /* Index for temperature field */
 
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
-
-    //! \f$ T_0 = \f$ reference temperature 
-    libMesh::Number _T_ref;
-
-    //! \f$ \beta_T = \f$ coefficient of thermal expansion
-    libMesh::Number _beta_T;
-
-    //! Gravitational vector
-    libMesh::Point _g;
-
-     //! Physical dimension of problem
-    unsigned int _dim;
+    //! Names of each variable in the system
+    std::string _T_var_name;
 
   private:
 
-    BoussinesqBuoyancyBase();
+    PrimitiveTempVariables();
 
   };
 
+  inline
+  VariableIndex PrimitiveTempVariables::T_var() const
+  {
+    return _T_var;
+  }
+
 } // end namespace GRINS
-#endif // GRINS_BOUSSINESQ_BUOYANCY_BASE_H
+
+#endif // GRINS_PRIMITIVE_TEMP_VARIABLES_H

@@ -47,8 +47,6 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context );
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext& context,
 					  CachedValues& cache );
@@ -58,14 +56,6 @@ namespace GRINS
     libMesh::Number _rho, _mu;
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-    std::string _p_var_name;
-
-    VariableIndex _p_var; /* Index for pressure field */
-
-    libMeshEnums::FEFamily _P_FE_family;
-
-    libMeshEnums::Order _P_order;
 
   private:
 

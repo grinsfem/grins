@@ -21,52 +21,50 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 // This class
-#include "grins_config.h"
-#include "grins/boussinesq_buoyancy_base.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
+
+// GRINS
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-
-  BoussinesqBuoyancyBase::BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name,input),
-      _flow_vars(input,incompressible_navier_stokes),
-      _temp_vars(input,heat_transfer),
-      _rho_ref( input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0) ),
-      _T_ref( input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0) ),
-      _beta_T( input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0) )
-  {
-    unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
-
-    _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 1 );
-  
-    if( g_dim == 3)
-      _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
-
-    return;
-  }
-
-  BoussinesqBuoyancyBase::~BoussinesqBuoyancyBase()
+  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
+    :  _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
+       _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
+       _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
+       _p_var_name( input("Physics/VariableNames/pressure",   p_var_name_default ) )
   {
     return;
   }
 
-  void BoussinesqBuoyancyBase::init_variables( libMesh::FEMSystem* system )
+  PrimitiveFlowVariables::~PrimitiveFlowVariables()
   {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
+    return;
+  }
 
-    _temp_vars.init(system);
-    _flow_vars.init(system);
+  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
+  {
+    libmesh_assert( system->has_variable( _u_var_name ) );
+    libmesh_assert( system->has_variable( _v_var_name ) );
+    libmesh_assert( system->has_variable( _p_var_name ) );
+
+    _u_var = system->variable_number( _u_var_name );
+    _v_var = system->variable_number( _v_var_name );
+
+    if ( system->get_mesh().mesh_dimension() == 3)
+      {
+        libmesh_assert( system->has_variable( _w_var_name ) );
+        _w_var = system->variable_number( _w_var_name );
+      }
+
+    _p_var = system->variable_number( _p_var_name );
 
     return;
   }
 
-} // namespace GRINS
+} // end namespace GRINS

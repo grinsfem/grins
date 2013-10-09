@@ -39,7 +39,12 @@ namespace GRINS
 {
 
   HeatTransferBase::HeatTransferBase( const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _flow_vars(input,incompressible_navier_stokes),
+      _temp_vars(input,heat_transfer),
+      _rho( input("Physics/"+heat_transfer+"/rho", 1.0) ),
+      _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
+      _k( input("Physics/"+heat_transfer+"/k", 1.0) )
   {
     this->read_input_options(input);
 
@@ -51,46 +56,13 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::read_input_options( const GetPot& input )
-  {
-    this->_T_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") );
-
-    this->_T_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") );
-
-    this->_rho = input("Physics/"+heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
-    this->_Cp  = input("Physics/"+heat_transfer+"/Cp", 1.0);
-    this->_k  = input("Physics/"+heat_transfer+"/k", 1.0);
-
-    this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
-    // velocity variables. We assume the same element type and order for all velocities.
-    this->_V_FE_family = 
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
-
-    this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
-
-    this->_u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    this->_v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    this->_w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
-
-    return;
-  }
-
   void HeatTransferBase::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
 
-    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
- 
-    // If these are already added, then we just get the index. 
-    _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
-    _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
-    if (_dim == 3)
-      _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
+    _flow_vars.init(system);
+    _temp_vars.init(system);
 
     return;
   }
@@ -98,7 +70,7 @@ namespace GRINS
   void HeatTransferBase::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
-    system->time_evolving(_T_var);
+    system->time_evolving(_temp_vars.T_var());
 
     return;
   }
@@ -108,15 +80,15 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_T_var)->get_JxW();
-    context.get_element_fe(_T_var)->get_phi();
-    context.get_element_fe(_T_var)->get_dphi();
-    context.get_element_fe(_T_var)->get_xyz();
+    context.get_element_fe(_temp_vars.T_var())->get_JxW();
+    context.get_element_fe(_temp_vars.T_var())->get_phi();
+    context.get_element_fe(_temp_vars.T_var())->get_dphi();
+    context.get_element_fe(_temp_vars.T_var())->get_xyz();
 
-    context.get_side_fe(_T_var)->get_JxW();
-    context.get_side_fe(_T_var)->get_phi();
-    context.get_side_fe(_T_var)->get_dphi();
-    context.get_side_fe(_T_var)->get_xyz();
+    context.get_side_fe(_temp_vars.T_var())->get_JxW();
+    context.get_side_fe(_temp_vars.T_var())->get_phi();
+    context.get_side_fe(_temp_vars.T_var())->get_dphi();
+    context.get_side_fe(_temp_vars.T_var())->get_xyz();
 
     return;
   }

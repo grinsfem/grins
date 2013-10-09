@@ -27,10 +27,7 @@
 
 // GRINS
 #include "grins/physics.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -70,13 +67,7 @@ namespace GRINS
     //! Function that computes source term.
     SourceFunction _source;
 
-    std::string _T_var_name;
-
-    libMeshEnums::FEFamily _T_FE_family;
-
-    libMeshEnums::Order _T_order;
-
-    VariableIndex _T_var; /* Index for temperature field */
+    PrimitiveTempFEVariables _temp_vars;
 
   private:
     HeatTransferSource();

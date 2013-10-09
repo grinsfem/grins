@@ -55,35 +55,38 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancy::element_time_derivative");
 #endif
-  
-    if (_dim != 3)
-      _w_var = _u_var; // for convenience
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(_u_var).size();
-    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_u_var)->get_JxW();
+      context.get_element_fe(_flow_vars.u_var())->get_JxW();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.get_element_fe(_u_var)->get_phi();
+      context.get_element_fe(_flow_vars.u_var())->get_phi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.get_element_fe(_T_var)->get_phi();
+      context.get_element_fe(_temp_vars.T_var())->get_phi();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_u_var); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_v_var); // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_w_var); // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<libMesh::Number> &KuT = context.get_elem_jacobian(_u_var, _T_var); // R_{u},{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KvT = context.get_elem_jacobian(_v_var, _T_var); // R_{v},{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwT = context.get_elem_jacobian(_w_var, _T_var); // R_{w},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KuT = context.get_elem_jacobian(_flow_vars.u_var(), _temp_vars.T_var()); // R_{u},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KvT = context.get_elem_jacobian(_flow_vars.v_var(), _temp_vars.T_var()); // R_{v},{T}
+    libMesh::DenseSubMatrix<libMesh::Number>* KwT = NULL;
+
+    if( _dim == 3 )
+      {
+        Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
+        KwT = &context.get_elem_jacobian(_flow_vars.w_var(), _temp_vars.T_var()); // R_{w},{T}
+      }
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -97,7 +100,7 @@ namespace GRINS
       {
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number T;
-        T = context.interior_value(_T_var, qp);
+        T = context.interior_value(_temp_vars.T_var(), qp);
 
         // First, an i-loop over the velocity degrees of freedom.
         // We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -108,7 +111,7 @@ namespace GRINS
             Fv(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
 
             if (_dim == 3)
-              Fw(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
+              (*Fw)(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {
@@ -118,7 +121,7 @@ namespace GRINS
                     KvT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                     if (_dim == 3)
-                      KwT(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                      (*KwT)(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                   } // End j dof loop
               } // End compute_jacobian check
