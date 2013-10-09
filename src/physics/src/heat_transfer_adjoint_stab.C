@@ -66,17 +66,17 @@ namespace GRINS
       context.get_element_fe(this->_T_var)->get_d2phi();
 
     /*
-      const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+      const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
       const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_u_var)->get_phi();
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{p}
-      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
       if(this->_dim == 3)
       {
-      Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
     */
 
@@ -91,11 +91,11 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-                                 context.interior_value( this->_v_var, qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_w_var, qp );
+            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
       
         //libMesh::RealGradient grad_T = context.interior_gradient( this->_T_var, qp );
@@ -153,17 +153,17 @@ namespace GRINS
       context.get_element_fe(this->_T_var)->get_d2phi();
 
     /*
-      const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+      const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
       const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_u_var)->get_phi();
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{p}
-      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
+      libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
       if(this->_dim == 3)
       {
-      Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+      Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
     */
 
@@ -178,10 +178,10 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
-                                 context.fixed_interior_value( this->_v_var, qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
-          U(2) = context.fixed_interior_value( this->_w_var, qp );
+          U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
       
         //libMesh::RealGradient grad_T = context.fixed_interior_gradient( this->_T_var, qp );
 

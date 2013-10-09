@@ -77,7 +77,7 @@ namespace GRINS
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(_u_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
 
     //TODO: check n_T_dofs is same as n_u_dofs, n_v_dofs, n_w_dofs
 
@@ -94,7 +94,7 @@ namespace GRINS
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.get_element_fe(_u_var)->get_phi();
+      context.get_element_fe(_flow_vars.u_var())->get_phi();
 
     // The temperature shape function gradients (in global coords.)
     // at interior quadrature points.
@@ -102,20 +102,20 @@ namespace GRINS
       context.get_element_fe(_T_var)->get_dphi();
 
     const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_u_var)->get_xyz();
-
-    // We do this in the incompressible Navier-Stokes class and need to do it here too
-    // since _w_var won't have been defined in the global map.
-    if (_dim != 3)
-      _w_var = _u_var; // for convenience
+      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     libMesh::DenseSubMatrix<libMesh::Number> &KTT = context.get_elem_jacobian(_T_var, _T_var); // R_{T},{T}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &KTu = context.get_elem_jacobian(_T_var, _u_var); // R_{T},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTv = context.get_elem_jacobian(_T_var, _v_var); // R_{T},{v}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTw = context.get_elem_jacobian(_T_var, _w_var); // R_{T},{w}
+    libMesh::DenseSubMatrix<libMesh::Number> &KTu = context.get_elem_jacobian(_T_var, _flow_vars.u_var()); // R_{T},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &KTv = context.get_elem_jacobian(_T_var, _flow_vars.v_var()); // R_{T},{v}
+    libMesh::DenseSubMatrix<libMesh::Number>* KTw = NULL;
 
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_T_var); // R_{T}
+
+    if( this->_dim == 3 )
+      {
+        KTw = &context.get_elem_jacobian(_T_var, _flow_vars.w_var()); // R_{T},{w}
+      }
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -129,15 +129,15 @@ namespace GRINS
       {
 	// Compute the solution & its gradient at the old Newton iterate.
 	libMesh::Number u, v;
-	u = context.interior_value(_u_var, qp);
-	v = context.interior_value(_v_var, qp);
+	u = context.interior_value(_flow_vars.u_var(), qp);
+	v = context.interior_value(_flow_vars.v_var(), qp);
 
 	libMesh::Gradient grad_T;
 	grad_T = context.interior_gradient(_T_var, qp);
 
 	libMesh::NumberVectorValue U (u,v);
 	if (_dim == 3)
-	  U(2) = context.interior_value(_w_var, qp);
+	  U(2) = context.interior_value(_flow_vars.w_var(), qp);
 
         const libMesh::Number r = u_qpoint[qp](0);
 
@@ -173,7 +173,7 @@ namespace GRINS
 		    KTu(i,j) += jac*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
 		    KTv(i,j) += jac*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
 		    if (_dim == 3)
-		      KTw(i,j) += jac*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
+		      (*KTw)(i,j) += jac*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -233,7 +233,7 @@ namespace GRINS
       context.get_element_fe(_T_var)->get_phi();
 
     const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_u_var)->get_xyz();
+      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
     const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();

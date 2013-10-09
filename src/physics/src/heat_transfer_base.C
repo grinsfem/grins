@@ -39,7 +39,8 @@ namespace GRINS
 {
 
   HeatTransferBase::HeatTransferBase( const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _flow_vars(input,incompressible_navier_stokes)
   {
     this->read_input_options(input);
 
@@ -65,17 +66,6 @@ namespace GRINS
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
-    // velocity variables. We assume the same element type and order for all velocities.
-    this->_V_FE_family = 
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
-
-    this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
-
-    this->_u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    this->_v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    this->_w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
-
     return;
   }
 
@@ -86,11 +76,7 @@ namespace GRINS
 
     _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
  
-    // If these are already added, then we just get the index. 
-    _u_var = system->add_variable(_u_var_name, _V_order, _V_FE_family );
-    _v_var = system->add_variable(_v_var_name, _V_order, _V_FE_family );
-    if (_dim == 3)
-      _w_var = system->add_variable(_w_var_name, _V_order, _V_FE_family );
+    _flow_vars.init(system);
 
     return;
   }
