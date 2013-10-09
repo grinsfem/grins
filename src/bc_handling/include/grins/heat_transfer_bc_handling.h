@@ -21,11 +21,12 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
+#ifndef GRINS_HEAT_TRANSFER_BC_HANDLING_H
+#define GRINS_HEAT_TRANSFER_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -62,9 +63,7 @@ namespace GRINS
     
   protected:
 
-    std::string _T_var_name;
-
-    VariableIndex _T_var;
+    PrimitiveTempVariables _temp_vars;
 
   private:
 
@@ -77,4 +76,4 @@ namespace GRINS
 
   };
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+#endif // GRINS_HEAT_TRANSFER_BC_HANDLING_H

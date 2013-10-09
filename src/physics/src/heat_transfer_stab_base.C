@@ -52,7 +52,7 @@ namespace GRINS
     HeatTransferBase::init_context(context);
 
     // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_T_var)->get_d2phi();
+    context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
 
     return;
   }
@@ -60,13 +60,13 @@ namespace GRINS
   libMesh::Real HeatTransferStabilizationBase::compute_res_steady( AssemblyContext& context,
                                                                    unsigned int qp ) const
   {
-    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
-    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
+    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
+    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
 
-    libMesh::RealGradient rhocpU( _rho*_Cp*context.fixed_interior_value(this->_u_var, qp), 
-                                  _rho*_Cp*context.fixed_interior_value(this->_v_var, qp) );
+    libMesh::RealGradient rhocpU( _rho*_Cp*context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
+                                  _rho*_Cp*context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
     if(this->_dim == 3)
-      rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_w_var, qp);
+      rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_flow_vars.w_var(), qp);
 
     return -rhocpU*grad_T + _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
@@ -74,7 +74,7 @@ namespace GRINS
   libMesh::Real HeatTransferStabilizationBase::compute_res_transient( AssemblyContext& context,
                                                                       unsigned int qp ) const
   {
-    libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+    libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
 
     return _rho*_Cp*T_dot;
   }

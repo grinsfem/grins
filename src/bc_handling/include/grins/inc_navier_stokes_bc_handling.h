@@ -26,6 +26,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/primitive_flow_variables.h"
 
 namespace GRINS
 {
@@ -57,7 +58,7 @@ namespace GRINS
     
   protected:
 
-    std::string _u_var_name, _v_var_name, _w_var_name;
+    PrimitiveFlowVariables _flow_vars;
 
   private:
 
