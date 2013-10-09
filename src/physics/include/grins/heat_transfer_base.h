@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "primitive_flow_variables.h"
+#include "primitive_flow_fe_variables.h"
 #include "primitive_temp_variables.h"
 
 namespace GRINS
@@ -63,7 +63,7 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    PrimitiveFlowVariables _flow_vars;
+    PrimitiveFlowFEVariables _flow_vars;
 
     PrimitiveTempVariables _temp_vars;
 

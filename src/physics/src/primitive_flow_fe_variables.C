@@ -22,10 +22,11 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/primitive_flow_variables.h"
+#include "grins/primitive_flow_fe_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
 
 // GRINS
@@ -33,36 +34,30 @@
 
 namespace GRINS
 {
-  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
-    :  _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
-       _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
-       _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
-       _p_var_name( input("Physics/VariableNames/pressure",   p_var_name_default ) )
+  PrimitiveFlowFEVariables::PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name )
+    :  PrimitiveFlowVariables(input),
+       _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _P_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/P_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") ) ),
+       _P_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/P_order", "FIRST") ) )
   {
     return;
   }
 
-  PrimitiveFlowVariables::~PrimitiveFlowVariables()
+  PrimitiveFlowFEVariables::~PrimitiveFlowFEVariables()
   {
     return;
   }
 
-  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
+  void PrimitiveFlowFEVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _u_var_name ) );
-    libmesh_assert( system->has_variable( _v_var_name ) );
-    libmesh_assert( system->has_variable( _p_var_name ) );
-
-    _u_var = system->variable_number( _u_var_name );
-    _v_var = system->variable_number( _v_var_name );
+    _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
+    _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
 
     if ( system->get_mesh().mesh_dimension() == 3)
-      {
-        libmesh_assert( system->has_variable( _w_var_name ) );
-        _w_var = system->variable_number( _w_var_name );
-      }
+      _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
 
-    _p_var = system->variable_number( _p_var_name );
+    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
 
     return;
   }
