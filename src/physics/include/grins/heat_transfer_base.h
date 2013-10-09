@@ -28,7 +28,7 @@
 //GRINS
 #include "grins/physics.h"
 #include "primitive_flow_fe_variables.h"
-#include "primitive_temp_variables.h"
+#include "primitive_temp_fe_variables.h"
 
 namespace GRINS
 {
@@ -65,7 +65,7 @@ namespace GRINS
 
     PrimitiveFlowFEVariables _flow_vars;
 
-    PrimitiveTempVariables _temp_vars;
+    PrimitiveTempFEVariables _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

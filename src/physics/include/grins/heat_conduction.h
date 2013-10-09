@@ -26,7 +26,7 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/primitive_temp_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 namespace GRINS
 {
@@ -65,7 +65,7 @@ namespace GRINS
 
     unsigned int _dim;
 
-    PrimitiveTempVariables _temp_vars;
+    PrimitiveTempFEVariables _temp_vars;
 
     libMesh::Number _rho, _Cp, _k;
 

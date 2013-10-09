@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/primitive_temp_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -67,7 +67,7 @@ namespace GRINS
     //! Function that computes source term.
     SourceFunction _source;
 
-    PrimitiveTempVariables _temp_vars;
+    PrimitiveTempFEVariables _temp_vars;
 
   private:
     HeatTransferSource();

@@ -26,7 +26,6 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
 
 // GRINS
@@ -34,10 +33,8 @@
 
 namespace GRINS
 {
-  PrimitiveTempVariables::PrimitiveTempVariables( const GetPot& input, const std::string& physics_name )
-    : _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
-      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) )
+  PrimitiveTempVariables::PrimitiveTempVariables( const GetPot& input )
+    : _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
     return;
   }
@@ -49,7 +46,9 @@ namespace GRINS
 
   void PrimitiveTempVariables::init( libMesh::FEMSystem* system )
   {
-    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+    libmesh_assert( system->has_variable(_T_var_name) );
+
+    _T_var = system->variable_number( _T_var_name );
     
     return;
   }

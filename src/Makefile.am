@@ -91,6 +91,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_st
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_flow_variables.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_flow_fe_variables.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_temp_variables.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_temp_fe_variables.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
@@ -234,6 +235,7 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_variables.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_fe_variables.h
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h

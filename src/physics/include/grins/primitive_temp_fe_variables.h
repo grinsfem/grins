@@ -21,56 +21,49 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
+#define GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
 
-#ifndef GRINS_BOUSSINESQ_BUOYANCY_BASE_H
-#define GRINS_BOUSSINESQ_BUOYANCY_BASE_H
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 // GRINS
-#include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
-
-// libMesh
-#include "libmesh/point.h"
+#include "grins/var_typedefs.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
-{  
-  class BoussinesqBuoyancyBase : public Physics
+{
+  class PrimitiveTempFEVariables : public PrimitiveTempVariables
   {
   public:
-    
-    BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyBase();
+    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name );
+    ~PrimitiveTempFEVariables();
 
-    //! Initialization of BoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system );
 
   protected:
 
-    PrimitiveFlowFEVariables _flow_vars;
-    PrimitiveTempFEVariables _temp_vars;
+    //! Element type, read from input
+    libMeshEnums::FEFamily _T_FE_family;
 
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
-
-    //! \f$ T_0 = \f$ reference temperature 
-    libMesh::Number _T_ref;
-
-    //! \f$ \beta_T = \f$ coefficient of thermal expansion
-    libMesh::Number _beta_T;
-
-    //! Gravitational vector
-    libMesh::Point _g;
-
-     //! Physical dimension of problem
-    unsigned int _dim;
+    //! Element orders, read from input
+    libMeshEnums::Order _T_order;
 
   private:
 
-    BoussinesqBuoyancyBase();
+    PrimitiveTempFEVariables();
 
   };
 
 } // end namespace GRINS
-#endif // GRINS_BOUSSINESQ_BUOYANCY_BASE_H
+
+#endif // GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
