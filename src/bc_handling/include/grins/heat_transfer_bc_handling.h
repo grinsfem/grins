@@ -21,8 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
+#ifndef GRINS_HEAT_TRANSFER_BC_HANDLING_H
+#define GRINS_HEAT_TRANSFER_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
@@ -77,4 +77,4 @@ namespace GRINS
 
   };
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+#endif // GRINS_HEAT_TRANSFER_BC_HANDLING_H
