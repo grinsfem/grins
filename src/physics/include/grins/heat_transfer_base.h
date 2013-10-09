@@ -28,10 +28,7 @@
 //GRINS
 #include "grins/physics.h"
 #include "primitive_flow_variables.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -47,9 +44,6 @@ namespace GRINS
     HeatTransferBase( const std::string& physics_name, const GetPot& input );
 
     ~HeatTransferBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
 
     //! Initialization Heat Transfer variables
     /*!
@@ -71,17 +65,7 @@ namespace GRINS
 
     PrimitiveFlowVariables _flow_vars;
 
-    //! Indices for each variable;
-    VariableIndex _T_var; /* Index for temperature field */
-
-    //! Names of each variable in the system
-    std::string _T_var_name;
-
-    //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family;
-
-    //! Element orders, read from input
-    libMeshEnums::Order _T_order;
+    PrimitiveTempVariables _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
