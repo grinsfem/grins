@@ -144,11 +144,9 @@ namespace GRINS
         break;
       default:
         {
-          std::cerr << "==========================================================" 
-                    << "Error: Invalid BC type for " << _physics_name << std::endl
-                    << "       Detected BC type was " << bc_type << std::endl
-                    << "==========================================================" << std::endl;
-          libmesh_error();
+	  // Call base class to detect any physics-common boundary conditions
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+                                         bc_vars, bc_value, input );
         }
       }// End switch(bc_type)
 
