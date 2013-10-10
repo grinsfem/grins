@@ -21,8 +21,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef INC_NAVIER_STOKES_STAB_BASE_H
-#define INC_NAVIER_STOKES_STAB_BASE_H
+#ifndef GRINS_INC_NAVIER_STOKES_STAB_BASE_H
+#define GRINS_INC_NAVIER_STOKES_STAB_BASE_H
 
 //GRINS
 #include "grins/inc_navier_stokes_base.h"
@@ -57,4 +57,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //INC_NAVIER_STOKES_STAB_BASE_H
+#endif // GRINS_INC_NAVIER_STOKES_STAB_BASE_H
