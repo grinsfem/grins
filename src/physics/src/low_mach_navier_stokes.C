@@ -139,7 +139,7 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::side_constraint( bool compute_jacobian,
                                                        AssemblyContext& context,
-                                                       CachedValues& cache )
+                                                       CachedValues& /* cache */ )
   {
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
