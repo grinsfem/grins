@@ -27,6 +27,8 @@
 
 //libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/mesh.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -34,13 +36,21 @@ namespace GRINS
   IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper(const GetPot& input)
     : StabilizationHelper(),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) )
+      _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
+      _flow_vars(input)
   {
     return;
   }
 
   IncompressibleNavierStokesStabilizationHelper::~IncompressibleNavierStokesStabilizationHelper()
   {
+    return;
+  }
+
+  void IncompressibleNavierStokesStabilizationHelper::init( libMesh::FEMSystem& system )
+  {
+    _flow_vars.init(&system);
+    
     return;
   }
 

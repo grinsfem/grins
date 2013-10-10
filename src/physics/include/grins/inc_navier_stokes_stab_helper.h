@@ -27,6 +27,7 @@
 // GRINS
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh foward declarations
 class GetPot;
@@ -40,6 +41,8 @@ namespace GRINS
     IncompressibleNavierStokesStabilizationHelper( const GetPot& input );
 
     ~IncompressibleNavierStokesStabilizationHelper();
+
+    void init( libMesh::FEMSystem& system );
 
     libMesh::Real compute_tau_continuity( libMesh::Real tau_M,
                                           libMesh::RealGradient& g  ) const;
@@ -103,6 +106,8 @@ namespace GRINS
   protected:
 
     libMesh::Real _C, _tau_factor;
+
+    PrimitiveFlowVariables _flow_vars;
 
   }; // class IncompressibleNavierStokesStabilizationHelper
 
