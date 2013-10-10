@@ -102,7 +102,7 @@ namespace GRINS
 
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
 
-        libMesh::Real RE_s = this->compute_res_steady( context, qp );
+        libMesh::Real RE_s = this->_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, _k );
 
         /*
           for (unsigned int i=0; i != n_u_dofs; i++)
@@ -187,7 +187,7 @@ namespace GRINS
 
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
 
-        libMesh::Real RE_t = this->compute_res_transient( context, qp );
+        libMesh::Real RE_t = this->_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
 
         /*
           for (unsigned int i=0; i != n_u_dofs; i++)

@@ -44,17 +44,11 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void init_variables( libMesh::FEMSystem* system );
-    
-    libMesh::Real compute_res_steady( AssemblyContext& context,
-				      unsigned int qp ) const;
-    
-    libMesh::Real compute_res_transient( AssemblyContext& context,
-					 unsigned int qp ) const;
 
   protected:
 
     HeatTransferStabilizationHelper _stab_helper;
-    
+
   private:
 
     HeatTransferStabilizationBase();

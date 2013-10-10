@@ -28,6 +28,7 @@
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
 #include "grins/primitive_temp_variables.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -44,19 +45,32 @@ namespace GRINS
 
     void init( libMesh::FEMSystem& system );
 
+    libMesh::Real compute_res_energy_steady( AssemblyContext& context,
+                                             unsigned int qp,
+                                             const libMesh::Real rho,
+                                             const libMesh::Real Cp,
+                                             const libMesh::Real k ) const;
+
+    libMesh::Real compute_res_energy_transient( AssemblyContext& context,
+                                                unsigned int qp,
+                                                const libMesh::Real rho,
+                                                const libMesh::Real Cp ) const;
+
     libMesh::Real compute_tau_energy( AssemblyContext& c,
-				      libMesh::RealTensor& G,
-				      libMesh::Real rho,
-				      libMesh::Real cp,
-				      libMesh::Real k,
-				      libMesh::Gradient U,
-				      bool is_steady ) const;
+                                      libMesh::RealTensor& G,
+                                      libMesh::Real rho,
+                                      libMesh::Real cp,
+                                      libMesh::Real k,
+                                      libMesh::Gradient U,
+                                      bool is_steady ) const;
 
   protected:
 
     libMesh::Real _C, _tau_factor;
 
     PrimitiveTempVariables _temp_vars;
+
+    PrimitiveFlowVariables _flow_vars;
 
   }; // class HeatTransferStabilizationHelper
 
