@@ -46,6 +46,16 @@ namespace GRINS
     return;
   }
 
+  void HeatTransferStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  {
+    // First call base class
+    HeatTransferBase::init_variables(system);
+
+    _stab_helper.init(*system);
+
+    return;
+  }
+
   void HeatTransferStabilizationBase::init_context( AssemblyContext& context )
   {
     // First call base class

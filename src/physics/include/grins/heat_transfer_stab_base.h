@@ -42,6 +42,8 @@ namespace GRINS
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
+
+    virtual void init_variables( libMesh::FEMSystem* system );
     
     libMesh::Real compute_res_steady( AssemblyContext& context,
 				      unsigned int qp ) const;
