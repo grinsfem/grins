@@ -27,6 +27,7 @@
 //GRINS
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
+#include "grins/primitive_temp_variables.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -52,6 +53,8 @@ namespace GRINS
   protected:
 
     libMesh::Real _C, _tau_factor;
+
+    PrimitiveTempVariables _temp_vars;
 
   }; // class HeatTransferStabilizationHelper
 

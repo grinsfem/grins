@@ -34,7 +34,8 @@ namespace GRINS
   HeatTransferStabilizationHelper::HeatTransferStabilizationHelper(const GetPot& input)
     : StabilizationHelper(),
       _C( input("Stabilization/tau_constant_T", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_T", input("Stabilization/tau_factor", 0.5 ) ) )
+      _tau_factor( input("Stabilization/tau_factor_T", input("Stabilization/tau_factor", 0.5 ) ) ),
+      _temp_vars(input)
   {
     return;
   }
