@@ -60,4 +60,14 @@ namespace GRINS
     return;
   }
 
+  void IncompressibleNavierStokesStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  {
+    // First call base class
+    IncompressibleNavierStokesBase::init_variables(system);
+
+    _stab_helper.init(*system);
+
+    return;
+  }
+
 } // namespace GRINS

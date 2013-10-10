@@ -69,10 +69,13 @@ namespace GRINS
                                           unsigned int qp ) const;
 
     libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
-                                                       unsigned int qp ) const;
+                                                       unsigned int qp,
+                                                       const libMesh::Real rho,
+                                                       const libMesh::Real mu ) const;
 
     libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
-                                                          unsigned int qp ) const;
+                                                          unsigned int qp,
+                                                          const libMesh::Real rho ) const;
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u, 

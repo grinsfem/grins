@@ -114,8 +114,8 @@ namespace GRINS
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
-        libMesh::Real RC = compute_res_continuity( context, qp );
+        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+        libMesh::Real RC = this->_stab_helper.compute_res_continuity( context, qp );
 
         // Now a loop over the pressure degrees of freedom.  This
         // computes the contributions of the continuity equation.
@@ -216,7 +216,7 @@ namespace GRINS
 
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
 
-        libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
+        libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
 
         // Now a loop over the pressure degrees of freedom.  This
         // computes the contributions of the continuity equation.
