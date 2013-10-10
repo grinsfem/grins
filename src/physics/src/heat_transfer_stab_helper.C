@@ -45,4 +45,11 @@ namespace GRINS
     return;
   }
 
+  void HeatTransferStabilizationHelper::init( libMesh::FEMSystem& system )
+  {
+    _temp_vars.init(&system);
+
+    return;
+  }
+
 } // namespace GRINS

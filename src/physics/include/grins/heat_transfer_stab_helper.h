@@ -42,6 +42,8 @@ namespace GRINS
 
     ~HeatTransferStabilizationHelper();
 
+    void init( libMesh::FEMSystem& system );
+
     libMesh::Real compute_tau_energy( AssemblyContext& c,
 				      libMesh::RealTensor& G,
 				      libMesh::Real rho,
