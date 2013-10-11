@@ -53,18 +53,18 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_T_var)->get_JxW();
+      context.get_element_fe(this->_temp_vars.T_var())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_T_var)->get_dphi();
+      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T_var()); // R_{T}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
+    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -73,16 +73,16 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-                                 context.interior_value( this->_v_var, qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_w_var, qp );
+            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
       
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
 
-        libMesh::Real RE_s = this->compute_res_steady( context, qp );
+        libMesh::Real RE_s = this->_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, _k );
 
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
@@ -111,18 +111,18 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_T_var)->get_JxW();
+      context.get_element_fe(this->_temp_vars.T_var())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_T_var)->get_dphi();
+      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T_var()); // R_{T}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_T_var);
+    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -131,16 +131,16 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_u_var, qp ),
-                                 context.fixed_interior_value( this->_v_var, qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.fixed_interior_value( this->_w_var, qp );
+            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
       
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
 
-        libMesh::Real RE_t = this->compute_res_transient( context, qp );
+        libMesh::Real RE_t = this->_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
 
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
