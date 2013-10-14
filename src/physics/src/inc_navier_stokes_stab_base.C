@@ -36,8 +36,6 @@ namespace GRINS
     : IncompressibleNavierStokesBase(physics_name,input),
       _stab_helper( input )
   {
-    this->read_input_options(input);
-
     return;
   }
 
