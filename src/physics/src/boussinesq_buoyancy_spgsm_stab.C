@@ -37,26 +37,18 @@ namespace GRINS
 {
   BoussinesqBuoyancySPGSMStabilization::BoussinesqBuoyancySPGSMStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
-      HeatTransferStabilizationBase(physics_name,input),
-      _p_var_name( input("Physics/VariableNames/pressure", p_var_name_default ) ),
-      _P_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") ) ),
-      _P_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/P_order", "FIRST") ) )
+      _flow_stab_helper(input),
+      _temp_stab_helper(input),
+      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
+      _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
+      _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
+      _k( input("Physics/"+heat_transfer+"/k", 1.0) )
   {
     return;
   }
 
   BoussinesqBuoyancySPGSMStabilization::~BoussinesqBuoyancySPGSMStabilization()
   {
-    return;
-  }
-
-  void BoussinesqBuoyancyAdjointStabilization::init_variables( libMesh::FEMSystem* system )
-  {
-    // First call base class
-    BoussinesqBuoyancyBase::init_variables(system);
-
-    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
-
     return;
   }
 
@@ -69,29 +61,32 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(_u_var).size();
-    const unsigned int n_p_dofs = context.get_dof_indices(_p_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_u_var)->get_JxW();
+      context.get_element_fe(_flow_vars.u_var())->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_u_var)->get_phi();
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+
+    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_p_var)->get_dphi();
+      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_u_var); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     if(this->_dim == 3)
       {
-        Fw = &context.get_elem_residual(this->_w_var); // R_{w}
+        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -101,25 +96,29 @@ namespace GRINS
     // weight functions.
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_flow_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_flow_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_u_var, qp ),
-                                 context.interior_value( this->_v_var, qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_w_var, qp );
+            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+        libMesh::Real tau_M = this->_flow_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+
+        libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
+
+        libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, _k );
 
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number T;
-        T = context.interior_value(_T_var, qp);
+        T = context.interior_value(_temp_vars.T_var(), qp);
 
         libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
 
@@ -133,16 +132,16 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += ( this->_rho*U*u_gradphi[i][qp]
-                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(0)*JxW[qp];
+            Fu(i) += ( -tau_M*residual(0)*_rho*U*u_gradphi[i][qp]
+                       + _rho*_beta_T*tau_E*RE*g(0)*u_phi[i][qp] )*JxW[qp];
 
-            Fv(i) += ( this->_rho*U*u_gradphi[i][qp]
-                       + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(1)*JxW[qp];
+            Fv(i) += ( -tau_M*residual(1)*_rho*U*u_gradphi[i][qp]
+                       + _rho*_beta_T*tau_E*RE*g(1)*u_phi[i][qp] )*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += ( this->_rho*U*u_gradphi[i][qp]
-                              + this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) ) )*tau_M*residual(2)*JxW[qp];
+                (*Fw)(i) += ( -tau_M*residual(2)*_rho*U*u_gradphi[i][qp]
+                              + _rho*_beta_T*tau_E*RE*g(2)*u_phi[i][qp] )*JxW[qp];
               }
 
             if (compute_jacobian)

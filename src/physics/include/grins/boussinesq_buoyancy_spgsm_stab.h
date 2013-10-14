@@ -27,7 +27,8 @@
 
 // GRINS
 #include "grins/boussinesq_buoyancy_base.h"
-#include "grins/heat_transfer_stabilization_base.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
+#include "grins/heat_transfer_stab_helper.h"
 
 namespace GRINS
 {  
@@ -37,9 +38,7 @@ namespace GRINS
     Physics. Intended to be used with IncompressibleNavierStokesSPGSMStabilization
     and HeatTransferSPGSMStabilization.
    */
-  class BoussinesqBuoyancySPGSMStabilization : public BoussinesqBuoyancyBase,
-                                               public HeatTransferStabilizationBase,
-                                               public IncompressibleNavierStokesStabilizationBase
+  class BoussinesqBuoyancySPGSMStabilization : public BoussinesqBuoyancyBase
   {
   public:
     
@@ -52,14 +51,11 @@ namespace GRINS
 					  CachedValues& cache );
 
   protected:
-    
-    std::string _p_var_name;
 
-    VariableIndex _p_var; /* Index for pressure field */
+    IncompressibleNavierStokesStabilizationHelper _flow_stab_helper;
+    HeatTransferStabilizationHelper _temp_stab_helper;
 
-    libMeshEnums::FEFamily _P_FE_family;
-
-    libMeshEnums::Order _P_order;
+    libMesh::Number _rho, _mu, _Cp, _k;
 
   private:
 
