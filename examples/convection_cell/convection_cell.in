@@ -2,7 +2,7 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization HeatTransfer HeatTransferAdjointStabilization BoussinesqBuoyancy'
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization HeatTransfer HeatTransferAdjointStabilization BoussinesqBuoyancy BoussinesqBuoyancyAdjointStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
@@ -10,7 +10,7 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 
-V_order = 'SECOND'
+V_order = 'FIRST'
 P_order = 'FIRST'
 
 rho = '1.77'
@@ -32,7 +32,7 @@ pin_value = '0.0'
 [../HeatTransfer]
 
 T_FE_family = 'LAGRANGE'
-T_order = 'SECOND'
+T_order = 'FIRST'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -74,7 +74,7 @@ tau_constant_vel = '1.0'
 tau_factor_vel = '1.0'
 
 tau_constant_T = '1.0'
-tau_factor_T = '50.0'
+tau_factor_T = '3.0'
 
 
 []
@@ -97,15 +97,15 @@ domain_x1_max = 10.0
 domain_x2_min = 0.0
 domain_x2_max = 4.0
 
-mesh_nx1 = '20' 
-mesh_nx2 = '8'
+mesh_nx1 = '40' 
+mesh_nx2 = '16'
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'true' 
 theta = 1.0
 n_timesteps = '250'
-deltat = '0.1'
+deltat = '0.25'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
