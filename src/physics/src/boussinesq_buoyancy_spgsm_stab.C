@@ -218,4 +218,84 @@ namespace GRINS
     return;
   }
 
+  void BoussinesqBuoyancySPGSMStabilization::mass_residual( bool compute_jacobian,
+                                                            AssemblyContext& context,
+                                                            CachedValues& /*cache*/ )
+  {
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->BeginTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
+#endif
+
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real> &JxW =
+      context.get_element_fe(_flow_vars.u_var())->get_JxW();
+
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+
+    // Get residuals
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+    if(this->_dim == 3)
+      {
+        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+      }
+
+    // Now we will build the element Jacobian and residual.
+    // Constructing the residual requires the solution and its
+    // gradient from the previous timestep.  This must be
+    // calculated at each quadrature point by summing the
+    // solution degree-of-freedom values by the appropriate
+    // weight functions.
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+        libMesh::RealGradient g = this->_flow_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_flow_stab_helper.compute_G( fe, context, qp );
+
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+        if( this->_dim == 3 )
+          {
+            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
+          }
+
+        libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
+
+        libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
+
+
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += -_rho*_beta_T*tau_E*RE*g(0)*u_phi[i][qp]*JxW[qp];
+
+            Fv(i) += -_rho*_beta_T*tau_E*RE*g(1)*u_phi[i][qp]*JxW[qp];
+
+            if (_dim == 3)
+              {
+                (*Fw)(i) += -_rho*_beta_T*tau_E*RE*g(2)*u_phi[i][qp]*JxW[qp];
+              }
+
+            if (compute_jacobian)
+              {
+                libmesh_not_implemented();
+              } // End compute_jacobian check
+
+          } // End i dof loop
+      } // End quadrature loop
+
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->EndTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
+#endif
+    
+    return;
+  }
+
 } // namespace GRINS

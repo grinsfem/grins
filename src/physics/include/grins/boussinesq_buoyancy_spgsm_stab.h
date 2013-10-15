@@ -53,6 +53,11 @@ namespace GRINS
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
                                      CachedValues& cache );
+
+    virtual void mass_residual( bool compute_jacobian,
+                                AssemblyContext& context,
+                                CachedValues& cache );
+
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _flow_stab_helper;
