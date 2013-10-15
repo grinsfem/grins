@@ -10,7 +10,7 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 
-V_order = 'SECOND'
+V_order = 'FIRST'
 P_order = 'FIRST'
 
 
@@ -65,9 +65,9 @@ mesh_nx2 = '15'
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'true' 
-theta = 1.0
-n_timesteps = '50'
-deltat = '0.05'
+theta = '1.0'
+n_timesteps = '25'
+deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

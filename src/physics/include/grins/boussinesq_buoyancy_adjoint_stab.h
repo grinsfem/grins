@@ -51,6 +51,10 @@ namespace GRINS
 					  AssemblyContext& context,
 					  CachedValues& cache );
 
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
   protected:
 
     libMesh::Number _rho, _mu;
