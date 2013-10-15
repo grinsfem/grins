@@ -39,9 +39,11 @@
 #include "grins/heat_transfer.h"
 #include "grins/heat_transfer_source.h"
 #include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/heat_transfer_spgsm_stab.h"
 #include "grins/axisym_heat_transfer.h"
 #include "grins/boussinesq_buoyancy.h"
 #include "grins/boussinesq_buoyancy_adjoint_stab.h"
+#include "grins/boussinesq_buoyancy_spgsm_stab.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -157,6 +159,11 @@ namespace GRINS
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new HeatTransferAdjointStabilization(physics_to_add,input));
       }
+    else if( physics_to_add == heat_transfer_spgsm_stab )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new HeatTransferSPGSMStabilization(physics_to_add,input));
+      }
     else if( physics_to_add == heat_transfer_source )
       {
 	std::string source_function = input( "Physics/"+physics_to_add+"/source_function", "constant" );
@@ -197,6 +204,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new BoussinesqBuoyancyAdjointStabilization(physics_to_add,input));
+      }
+    else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new BoussinesqBuoyancySPGSMStabilization(physics_to_add,input));
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
