@@ -89,10 +89,10 @@ namespace GRINS
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
-
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
