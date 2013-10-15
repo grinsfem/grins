@@ -169,7 +169,7 @@ namespace GRINS
         divGradU  = this->div_GradU( hess_u, hess_v, hess_w );
       }
 
-    return -rhoUdotGradU - grad_p + mu*divGradU;
+    return rhoUdotGradU + grad_p - mu*divGradU;
   }
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
