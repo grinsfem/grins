@@ -1,0 +1,158 @@
+diff --git a/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h b/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
+index c387393..b38e8ef 100644
+--- a/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
++++ b/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
+@@ -51,6 +51,10 @@ namespace GRINS
+ 					  AssemblyContext& context,
+ 					  CachedValues& cache );
+ 
++    virtual void element_constraint( bool compute_jacobian,
++                                     AssemblyContext& context,
++                                     CachedValues& cache );
++
+   protected:
+ 
+     libMesh::Number _rho, _mu;
+diff --git a/src/physics/src/boussinesq_buoyancy_adjoint_stab.C b/src/physics/src/boussinesq_buoyancy_adjoint_stab.C
+index fa69d5f..09a6a27 100644
+--- a/src/physics/src/boussinesq_buoyancy_adjoint_stab.C
++++ b/src/physics/src/boussinesq_buoyancy_adjoint_stab.C
+@@ -73,7 +73,6 @@ namespace GRINS
+ 
+     // The number of local degrees of freedom in each variable.
+     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+-    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
+ 
+     // Element Jacobian * quadrature weights for interior integration.
+     const std::vector<libMesh::Real> &JxW =
+@@ -85,9 +84,6 @@ namespace GRINS
+     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
+       context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+ 
+-    const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
+-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+-
+     // Get residuals
+     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
+     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+@@ -95,8 +91,6 @@ namespace GRINS
+     if(this->_dim == 3)
+       Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+ 
+-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+-
+     // Now we will build the element Jacobian and residual.
+     // Constructing the residual requires the solution and its
+     // gradient from the previous timestep.  This must be
+@@ -127,14 +121,6 @@ namespace GRINS
+ 
+         libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
+ 
+-        // First, an i-loop over the velocity degrees of freedom.
+-        // We know that n_u_dofs == n_v_dofs so we can compute contributions
+-        // for both at the same time.
+-        for (unsigned int i=0; i != n_p_dofs; i++)
+-          {
+-            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
+-          }
+-
+         for (unsigned int i=0; i != n_u_dofs; i++)
+           {
+             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+@@ -163,4 +149,70 @@ namespace GRINS
+     return;
+   }
+ 
++  void BoussinesqBuoyancyAdjointStabilization::element_constraint( bool compute_jacobian,
++                                                                   AssemblyContext& context,
++                                                                   CachedValues& /*cache*/ )
++  {
++#ifdef GRINS_USE_GRVY_TIMERS
++    this->_timer->BeginTimer("BoussinesqBuoyancyAdjointStabilization::element_constraint");
++#endif
++
++    // The number of local degrees of freedom in each variable.
++    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
++
++    // Element Jacobian * quadrature weights for interior integration.
++    const std::vector<libMesh::Real> &JxW =
++      context.get_element_fe(_flow_vars.u_var())->get_JxW();
++
++    const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
++      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
++
++    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
++
++    // Now we will build the element Jacobian and residual.
++    // Constructing the residual requires the solution and its
++    // gradient from the previous timestep.  This must be
++    // calculated at each quadrature point by summing the
++    // solution degree-of-freedom values by the appropriate
++    // weight functions.
++    unsigned int n_qpoints = context.get_element_qrule().n_points();
++
++    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
++
++    for (unsigned int qp=0; qp != n_qpoints; qp++)
++      {
++        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
++        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
++
++        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
++                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
++        if( this->_dim == 3 )
++          {
++            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
++          }
++
++        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
++
++        // Compute the solution & its gradient at the old Newton iterate.
++        libMesh::Number T;
++        T = context.interior_value(_temp_vars.T_var(), qp);
++
++        libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
++
++        // First, an i-loop over the velocity degrees of freedom.
++        // We know that n_u_dofs == n_v_dofs so we can compute contributions
++        // for both at the same time.
++        for (unsigned int i=0; i != n_p_dofs; i++)
++          {
++            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
++          }
++      } // End quadrature loop
++
++#ifdef GRINS_USE_GRVY_TIMERS
++    this->_timer->EndTimer("BoussinesqBuoyancyAdjointStabilization::element_constraint");
++#endif
++
++    return;
++  }
++
+ } // namespace GRINS
+diff --git a/src/physics/src/heat_transfer_adjoint_stab.C b/src/physics/src/heat_transfer_adjoint_stab.C
+index a797791..af60ed2 100644
+--- a/src/physics/src/heat_transfer_adjoint_stab.C
++++ b/src/physics/src/heat_transfer_adjoint_stab.C
+@@ -118,7 +118,7 @@ namespace GRINS
+   
+         for (unsigned int i=0; i != n_T_dofs; i++)
+           {
+-            FT(i) += tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
++            FT(i) += -tau_E*RE_s*( _rho*_Cp*U*T_gradphi[i][qp]
+                                   + _k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+                                   )*JxW[qp];
+           }
+diff --git a/src/physics/src/heat_transfer_stab_helper.C b/src/physics/src/heat_transfer_stab_helper.C
+index c8b155d..3aa9adf 100644
+--- a/src/physics/src/heat_transfer_stab_helper.C
++++ b/src/physics/src/heat_transfer_stab_helper.C
+@@ -70,7 +70,7 @@ namespace GRINS
+     if(context.get_system().get_mesh().mesh_dimension() == 3)
+       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w_var(), qp);
+ 
+-    return -rhocpU*grad_T + k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
++    return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+   }
+ 
+   libMesh::Real HeatTransferStabilizationHelper::compute_res_energy_transient( AssemblyContext& context,
