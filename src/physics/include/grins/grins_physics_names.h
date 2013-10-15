@@ -41,9 +41,11 @@ namespace GRINS
   const PhysicsName heat_transfer = "HeatTransfer";
   const PhysicsName heat_transfer_source = "HeatTransferSource";
   const PhysicsName heat_transfer_adjoint_stab = "HeatTransferAdjointStabilization";
+  const PhysicsName heat_transfer_spgsm_stab = "HeatTransferSPGSMStabilization";
   const PhysicsName axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
   const PhysicsName boussinesq_buoyancy = "BoussinesqBuoyancy";
   const PhysicsName boussinesq_buoyancy_adjoint_stab = "BoussinesqBuoyancyAdjointStabilization";
+  const PhysicsName boussinesq_buoyancy_spgsm_stab = "BoussinesqBuoyancySPGSMStabilization";
   const PhysicsName axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
   const PhysicsName low_mach_navier_stokes = "LowMachNavierStokes";
   const PhysicsName low_mach_navier_stokes_braack_stab = "LowMachNavierStokesBraackStabilization";
