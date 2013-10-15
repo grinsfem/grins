@@ -29,6 +29,11 @@ pin_pressure = true
 pin_location = '0.0 0.0'
 pin_value = '0.0'
 
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'v'
+ic_values = '(abs(x)<=2)*0.001'
+
 [../HeatTransfer]
 
 T_FE_family = 'LAGRANGE'
