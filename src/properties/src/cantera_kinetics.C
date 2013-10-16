@@ -36,8 +36,10 @@
 // libMesh
 #include "libmesh/getpot.h"
 
-// Cantera
+// Cantera (with compiler warnings disabled)
+#include "libmesh/ignore_warnings.h"
 #include "cantera/IdealGasMix.h"
+#include "libmesh/restore_warnings.h"
 
 namespace GRINS
 {

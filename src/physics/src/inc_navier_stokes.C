@@ -412,7 +412,7 @@ namespace GRINS
 
   void IncompressibleNavierStokes::side_constraint( bool compute_jacobian,
                                                     AssemblyContext& context,
-                                                    CachedValues& /*cache*/ )
+                                                    CachedValues& /* cache */)
   {
     // Pin p = p_value at p_point
     if( _pin_pressure )
