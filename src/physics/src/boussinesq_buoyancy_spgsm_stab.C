@@ -118,16 +118,16 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += ( -tau_M*residual(0)*_rho*U*u_gradphi[i][qp]
-                       + _rho*_beta_T*tau_E*RE*g(0)*u_phi[i][qp] )*JxW[qp];
+            Fu(i) += ( -tau_M*residual(0)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
+            // + _rho_ref*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp] )*JxW[qp];
 
-            Fv(i) += ( -tau_M*residual(1)*_rho*U*u_gradphi[i][qp]
-                       + _rho*_beta_T*tau_E*RE*g(1)*u_phi[i][qp] )*JxW[qp];
+            Fv(i) += ( -tau_M*residual(1)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
+            // + _rho_ref*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp] )*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += ( -tau_M*residual(2)*_rho*U*u_gradphi[i][qp]
-                              + _rho*_beta_T*tau_E*RE*g(2)*u_phi[i][qp] )*JxW[qp];
+                (*Fw)(i) += ( -tau_M*residual(2)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
+                // + _rho_ref*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp] )*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -222,6 +222,7 @@ namespace GRINS
                                                             AssemblyContext& context,
                                                             CachedValues& /*cache*/ )
   {
+    /*
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
 #endif
@@ -274,13 +275,13 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += -_rho*_beta_T*tau_E*RE*g(0)*u_phi[i][qp]*JxW[qp];
+            Fu(i) += -_rho_ref*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp]*JxW[qp];
 
-            Fv(i) += -_rho*_beta_T*tau_E*RE*g(1)*u_phi[i][qp]*JxW[qp];
+            Fv(i) += -_rho_ref*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += -_rho*_beta_T*tau_E*RE*g(2)*u_phi[i][qp]*JxW[qp];
+                (*Fw)(i) += -_rho_ref*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -294,7 +295,8 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
 #endif
-    
+    */
+
     return;
   }
 
