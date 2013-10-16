@@ -200,7 +200,7 @@ namespace GRINS
         // for both at the same time.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
+            Fp(i) += -tau_M*residual*p_dphi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {

@@ -119,19 +119,19 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
+        libMesh::RealGradient residual = _rho_ref*_beta_T*(T-_T_ref)*_g;
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
               this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
-            Fu(i) += tau_M*residual(0)*test_func*JxW[qp];
+            Fu(i) += -tau_M*residual(0)*test_func*JxW[qp];
 
-            Fv(i) += tau_M*residual(1)*test_func*JxW[qp];
+            Fv(i) += -tau_M*residual(1)*test_func*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += tau_M*residual(2)*test_func*JxW[qp];
+                (*Fw)(i) += -tau_M*residual(2)*test_func*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -197,14 +197,14 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient residual = -_rho_ref*_beta_T*(T-_T_ref)*_g;
+        libMesh::RealGradient residual = _rho_ref*_beta_T*(T-_T_ref)*_g;
 
         // First, an i-loop over the velocity degrees of freedom.
         // We know that n_u_dofs == n_v_dofs so we can compute contributions
         // for both at the same time.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
+            Fp(i) += -tau_M*residual*p_dphi[i][qp]*JxW[qp];
           }
       } // End quadrature loop
 
