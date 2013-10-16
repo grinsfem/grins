@@ -144,7 +144,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
-            FT(i) += -tau_E*RE_t*_rho*_Cp*U*T_gradphi[i][qp]*JxW[qp];
+            FT(i) += tau_E*RE_t*_rho*_Cp*U*T_gradphi[i][qp]*JxW[qp];
           }
 
       }
