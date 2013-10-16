@@ -24,9 +24,13 @@
 #ifndef GRINS_CATALYTIC_WALL_H
 #define GRINS_CATALYTIC_WALL_H
 
+// Boost
+#include "boost/scoped_ptr.hpp"
+
 // GRINS
 #include "grins/math_constants.h"
 #include "grins/neumann_func_obj.h"
+#include "grins/catalycity_base.h"
 
 namespace GRINS
 {
@@ -75,7 +79,7 @@ namespace GRINS
 
     VariableIndex _T_var;
 
-    libMesh::Real _gamma_s;
+    boost::scoped_ptr<CatalycityBase> _gamma_s;
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi M_s} } \f$
     const libMesh::Real _C;
@@ -91,7 +95,7 @@ namespace GRINS
   inline
   libMesh::Real CatalyticWall<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return rho_s*_gamma_s*_C*std::sqrt(T);
+    return rho_s*(*_gamma_s)(T)*_C*std::sqrt(T);
   }
 
   template<typename Chemistry>
@@ -106,14 +110,16 @@ namespace GRINS
   inline
   libMesh::Real CatalyticWall<Chemistry>::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return -0.5/T*(this->omega_dot( rho_s, T ));
+    libMesh::Real sqrtT = std::sqrt(T);
+
+    return rho_s*_C*( 0.5/sqrtT*(*_gamma_s)(T) + sqrtT*(*_gamma_s).dT(T) );
   }
 
   template<typename Chemistry>
   inline
   void CatalyticWall<Chemistry>::set_gamma( const libMesh::Real gamma )
   {
-    _gamma_s = gamma;
+    //_gamma_s = gamma;
     return;
   }
 

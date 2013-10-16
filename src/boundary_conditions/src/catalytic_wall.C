@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/cached_values.h"
+#include "grins/constant_catalycity.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -43,7 +44,7 @@ namespace GRINS
       _chemistry(chemistry),
       _species_index(species_index),
       _T_var(T_var),
-      _gamma_s(gamma),
+      _gamma_s( new ConstantCatalycity(gamma) ),
       _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi*chemistry.M(species_index)) ) )
   {
     _jac_vars.resize(1);
