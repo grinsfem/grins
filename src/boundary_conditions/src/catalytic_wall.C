@@ -43,7 +43,8 @@ namespace GRINS
       _chemistry(chemistry),
       _species_index(species_index),
       _T_var(T_var),
-      _helper( _chemistry.R(_species_index), _chemistry.M(_species_index), gamma )
+      _gamma_s(gamma),
+      _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi*chemistry.M(species_index)) ) )
   {
     _jac_vars.resize(1);
     _jac_vars[0] = _T_var;
