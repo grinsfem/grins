@@ -74,8 +74,8 @@ namespace GRINS
   {
     int num_ids = input.vector_variable_size(id_str);
     int num_bcs = input.vector_variable_size(bc_str);
-    int num_vars = input.vector_variable_size(var_str);
-    int num_vals = input.vector_variable_size(val_str);
+    // int num_vars = input.vector_variable_size(var_str);
+    // int num_vals = input.vector_variable_size(val_str);
 
     if( num_ids != num_bcs )
       {
