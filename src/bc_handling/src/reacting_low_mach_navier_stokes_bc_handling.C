@@ -29,12 +29,16 @@
 #include "grins/string_utils.h"
 #include "grins/catalytic_wall.h"
 #include "grins/constant_catalycity.h"
+#include "grins/arrhenius_catalycity.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
 #include "libmesh/dof_map.h"
 #include "libmesh/const_function.h"
 #include "libmesh/dirichlet_boundaries.h"
+
+// Boost
+#include "boost/scoped_ptr.hpp"
 
 namespace GRINS
 {
@@ -241,7 +245,7 @@ namespace GRINS
 	      /*! \todo We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc. */
 	      if( partners.size() == 2 )
 		{
-		  // Parse the reactant and product species and cache
+		  /* ------------- Parse the reactant and product species and cache ------------- */
 		  const unsigned int r_species = _chemistry.species_index( reactant );
 		  const unsigned int p_species = _chemistry.species_index( product );
 
@@ -264,39 +268,92 @@ namespace GRINS
                   species_set.insert(r_species);
                   species_set.insert(p_species);
 
-		  // Parse the corresponding catalyticities and cache
-		  std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
+		  /* ------------- Parse the corresponding catalyticities ------------- */
 
-		  if( !input.have_variable(gamma_r_string) )
-		    {
-		      std::cout << "Error: Could not find catalyticity for species " << reactant 
-				<< ", for boundary " << bc_id << std::endl;
-		      libmesh_error();
-		    }
+                  // These are temporary and will be cloned, so let them be destroyed when we're done
+                  boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                  boost::scoped_ptr<CatalycityBase> gamma_p(NULL);
+
+                  std::string catalycity_type = input("Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string+"_type", "none");
+
+                  if( catalycity_type == std::string("constant") )
+                    {
+                      std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
+                      libMesh::Real gamma = input(gamma_r_string, 0.0);
+
+                      if( !input.have_variable(gamma_r_string) )
+                        {
+                          std::cout << "Error: Could not find catalycity for species " << reactant
+                                    << ", for boundary " << bc_id << std::endl;
+                          libmesh_error();
+                        }
+
+                      /*! \todo We assuming single reaction and single product the product is generated
+                        at minus the rate the reactant is consumed. Might want to remove this someday. */
+                      gamma_r.reset( new ConstantCatalycity( -gamma ) );
                   
-                  /*! \todo We assuming single reaction and single product the product is generated
-                      at minus the rate the reactant is consumed. Might want to remove this someday. */
-                  ConstantCatalycity gamma_r( -input(gamma_r_string, 0.0) );
+                      gamma_p.reset( new ConstantCatalycity( gamma ) );
+                    }
+                  else if( catalycity_type == std::string("arrhenius") )
+                    {
+                      std::string gamma_r_string = "Physics/"+_physics_name+"/gamma0_"+reactant+"_"+bc_id_string;
+                      std::string Ta_r_string = "Physics/"+_physics_name+"/Ta_"+reactant+"_"+bc_id_string;
+
+                      libMesh::Real gamma0 = input(gamma_r_string, 0.0);
+                      libMesh::Real Ta = input(Ta_r_string, 0.0);
+
+                      if( !input.have_variable(gamma_r_string) )
+                        {
+                          std::cout << "Error: Could not find gamma0 for species " << reactant 
+                                    << ", for boundary " << bc_id << std::endl;
+                          libmesh_error();
+                        }
+
+                      if( !input.have_variable(Ta_r_string) )
+                        {
+                          std::cout << "Error: Could not find Ta for species " << reactant
+                                    << ", for boundary " << bc_id << std::endl;
+                          libmesh_error();
+                        }
+
+                      /*! \todo We assuming single reaction and single product the product is generated
+                        at minus the rate the reactant is consumed. Might want to remove this someday. */
+                      gamma_r.reset( new ArrheniusCatalycity( -gamma0, Ta ) );
                   
-                  ConstantCatalycity gamma_p( input(gamma_r_string, 0.0) );
+                      gamma_p.reset( new ArrheniusCatalycity( gamma0, Ta ) );
+                    }
+                  else
+                    {
+                      std::cerr << "Error: Unsupported catalycity type " << catalycity_type << std::endl
+                                << "       for reactant " << reactant << std::endl
+                                << "Valid catalycity types are: constant" << std::endl
+                                << "                            arrhenius" << std::endl;
+
+                      libmesh_error();
+                    }
+
+                  /* ------------- Now cache the CatalyticWall functions to init later ------------- */
+                  libmesh_assert( gamma_r );
+                  libmesh_assert( gamma_p );
 
                   // Cache reactant part to init later
-                  wall_funcs.push_back( std::make_pair(r_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_r ) ) ) );
-                  
+                  wall_funcs.push_back( std::make_pair(r_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, *gamma_r ) ) ) );
+
                   // Cache product part to init later
                   /*! \todo We assuming single reaction and single product the product is generated
-                      at minus the rate the reactant is consumed. Might want to remove this someday. */
-                  wall_funcs.push_back( std::make_pair(p_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_p ) ) ) );
-		}
-	      else
-		{
-		  std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
-			    << "in a catalytic reaction." << std::endl
-			    << "Found " << partners.size() << " species." << std::endl;
-		  libmesh_error();
-		}
+                    at minus the rate the reactant is consumed. Might want to remove this someday. */
+                  wall_funcs.push_back( std::make_pair(p_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, *gamma_p ) ) ) );
 
-	    } // end loop over catalytic reactions
+                } // if( partners.size() == 2 )
+              else
+                {
+                  std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+                            << "in a catalytic reaction." << std::endl
+                            << "Found " << partners.size() << " species." << std::endl;
+                  libmesh_error();
+                }
+
+            } // end loop over catalytic reactions
 
           // Cache everything for later
           _catalytic_walls.insert( std::make_pair( bc_id, wall_funcs ) );
