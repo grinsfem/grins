@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/string_utils.h"
 #include "grins/catalytic_wall.h"
+#include "grins/constant_catalycity.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -273,15 +274,17 @@ namespace GRINS
 		      libmesh_error();
 		    }
                   
-                  libMesh::Real gamma_r = input(gamma_r_string, 0.0);
+                  ConstantCatalycity gamma_r( -input(gamma_r_string, 0.0) );
                   
+                  ConstantCatalycity gamma_p( input(gamma_r_string, 0.0) );
+
                   // Cache reactant part to init later
-                  wall_funcs.push_back( std::make_pair(r_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, -gamma_r ) ) ) );
+                  wall_funcs.push_back( std::make_pair(r_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_r ) ) ) );
                   
                   // Cache product part to init later
                   /*! \todo We assuming single reaction and single product the product is generated
                       at minus the rate the reactant is consumed. Might want to remove this someday. */
-                  wall_funcs.push_back( std::make_pair(p_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_r ) ) ) );
+                  wall_funcs.push_back( std::make_pair(p_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_p ) ) ) );
 		}
 	      else
 		{

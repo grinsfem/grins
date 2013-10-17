@@ -45,7 +45,7 @@ namespace GRINS
 
     CatalyticWall( const Chemistry& chem_mixture,
 		   const unsigned int species_index,
-		   const libMesh::Real gamma );
+		   CatalycityBase& gamma );
 
     ~CatalyticWall();
 

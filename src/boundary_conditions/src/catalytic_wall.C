@@ -36,11 +36,11 @@ namespace GRINS
   template<typename Chemistry>
   CatalyticWall<Chemistry>::CatalyticWall( const Chemistry& chemistry,
                                            const unsigned int species_index,
-                                           const libMesh::Real gamma )
+                                           CatalycityBase& gamma )
     : NeumannFuncObj(),
       _chemistry(chemistry),
       _species_index(species_index),
-      _gamma_s( new ConstantCatalycity(gamma) ),
+      _gamma_s( gamma.clone() ),
       _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi*chemistry.M(species_index)) ) )
   {
     return;
