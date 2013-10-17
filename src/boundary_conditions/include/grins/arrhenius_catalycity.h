@@ -42,6 +42,11 @@ namespace GRINS
     virtual libMesh::Real dT( const libMesh::Real T ) const;
     
     virtual void set_params( const std::vector<libMesh::Real>& params );
+
+    //! Creates a new copy of the current class.
+    /*! A raw pointer is returned and it is assumed the user will take ownership
+        and worry about memory management. */
+    virtual CatalycityBase* clone() const;
     
   protected:
 

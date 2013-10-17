@@ -63,4 +63,9 @@ namespace GRINS
     return;
   }
 
+  CatalycityBase* ArrheniusCatalycity::clone() const
+  {
+    return new ArrheniusCatalycity( *this );
+  }
+
 } // end namespace GRINS

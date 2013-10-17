@@ -56,4 +56,9 @@ namespace GRINS
     return;
   }
 
+  CatalycityBase* ConstantCatalycity::clone() const
+  {
+    return new ConstantCatalycity( *this );
+  }
+
 } // end namespace GRINS
