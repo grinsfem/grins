@@ -274,6 +274,8 @@ namespace GRINS
 		      libmesh_error();
 		    }
                   
+                  /*! \todo We assuming single reaction and single product the product is generated
+                      at minus the rate the reactant is consumed. Might want to remove this someday. */
                   ConstantCatalycity gamma_r( -input(gamma_r_string, 0.0) );
                   
                   ConstantCatalycity gamma_p( input(gamma_r_string, 0.0) );
