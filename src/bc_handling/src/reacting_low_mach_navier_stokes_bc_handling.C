@@ -389,8 +389,12 @@ namespace GRINS
 		{
 		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
                                                                                            r_species_idx,
-                                                                                           _T_var,
                                                                                            -gamma ) );
+
+                  CatalyticWall<Chemistry>* wall_func =
+                    libmesh_cast_ptr<CatalyticWall<Chemistry>* >( func.get() );
+
+                  wall_func->init( _T_var );
 		  
 		  VariableIndex var = _species_vars[r_species_idx];
 		  
@@ -402,9 +406,13 @@ namespace GRINS
 		{
 		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
                                                                                            r_species_idx, /* reactant! */
-                                                                                           _T_var,
                                                                                            gamma ) );
 		  
+                  CatalyticWall<Chemistry>* wall_func =
+                    libmesh_cast_ptr<CatalyticWall<Chemistry>* >( func.get() );
+
+                  wall_func->init( _T_var );
+
 		  VariableIndex var = _species_vars[p_species_idx];
 		  
 		  cont.add_var_func_pair( var, func );

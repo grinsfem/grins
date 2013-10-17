@@ -45,10 +45,11 @@ namespace GRINS
 
     CatalyticWall( const Chemistry& chem_mixture,
 		   const unsigned int species_index,
-		   const VariableIndex T_var,
 		   const libMesh::Real gamma );
 
     ~CatalyticWall();
+
+    void init( const VariableIndex T_var );
 
     virtual libMesh::Real normal_value( const AssemblyContext& context,
 					const CachedValues& cache,
@@ -76,8 +77,6 @@ namespace GRINS
     const Chemistry& _chemistry;
 
     unsigned int _species_index;
-
-    VariableIndex _T_var;
 
     boost::scoped_ptr<CatalycityBase> _gamma_s;
 
