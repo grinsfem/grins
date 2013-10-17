@@ -223,12 +223,8 @@ namespace GRINS
 
 	  const unsigned int n_reactions = input.vector_variable_size(reactions_string);
 
-	  std::vector<unsigned int> reactants;
-	  std::vector<unsigned int> products;
-
-	  // Here, we are assuming 1 reactant and 1 product per reaction
-	  reactants.reserve( n_reactions );
-	  products.reserve( n_reactions );
+          std::vector<std::pair<unsigned int, std::tr1::shared_ptr<CatalyticWall<Chemistry> > > > wall_funcs;
+          std::set<unsigned int> species_set;
 
 	  for( unsigned int r = 0; r < n_reactions; r++ )
 	    {
@@ -241,48 +237,34 @@ namespace GRINS
 	      const std::string& reactant = partners[0];
 	      const std::string& product = partners[1];
 
-	      // We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc.
+	      /*! \todo We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc. */
 	      if( partners.size() == 2 )
 		{
 		  // Parse the reactant and product species and cache
 		  const unsigned int r_species = _chemistry.species_index( reactant );
 		  const unsigned int p_species = _chemistry.species_index( product );
 
-		  // Make sure there's something in there already. Fix for GLIBCXX_DEBUG error.
-		  if( _reactant_list.find(bc_id) != _reactant_list.end() )
-		    {
-		      std::vector<unsigned int>::const_iterator r_it =
-			std::find( (_reactant_list.find(bc_id)->second).begin(),
-				   (_reactant_list.find(bc_id)->second).end(),
-				   r_species );
+                  if( species_set.find(r_species) != species_set.end() )
+                    {
+                      std::cerr << "Error: Currently only support one catalytic reaction per species."
+                                << "       Found multiple reactions for species " << reactant
+                                << std::endl;
+                      libmesh_error();
+                    }
 
-		      if(  r_it != (_reactant_list.find(bc_id)->second).end() )
-			{
-			  std::cerr << "Error: Tried adding duplicate reactant " << reactant << " to reactant list."
-				    << std::endl;
-			  libmesh_error();
-			}
+                  if( species_set.find(p_species) != species_set.end() )
+                    {
+                      std::cerr << "Error: Currently only support one catalytic reaction per species."
+                                << "       Found multiple reactions for species " << product
+                                << std::endl;
+                      libmesh_error();
+                    }
 
-		      std::vector<unsigned int>::const_iterator p_it =
-			std::find( (_product_list.find(bc_id)->second).begin(),
-				   (_product_list.find(bc_id)->second).end(),
-				   p_species );
-
-		      if( p_it != (_product_list.find(bc_id)->second).end() )
-			{
-			  std::cerr << "Error: Tried adding duplicate product " << product << " to product list."
-				    << std::endl;
-			  libmesh_error();
-			}
-		    
-		    }
-
-		  reactants.push_back( r_species );
-		  products.push_back( p_species );
+                  species_set.insert(r_species);
+                  species_set.insert(p_species);
 
 		  // Parse the corresponding catalyticities and cache
 		  std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
-		  std::string gamma_p_string = "Physics/"+_physics_name+"/gamma_"+product+"_"+bc_id_string;
 
 		  if( !input.have_variable(gamma_r_string) )
 		    {
@@ -290,34 +272,16 @@ namespace GRINS
 				<< ", for boundary " << bc_id << std::endl;
 		      libmesh_error();
 		    }
-
-		  if( !input.have_variable(gamma_p_string) )
-		    {
-		      std::cout << "Error: Could not find catalyticity for species " << product 
-				<< ", for boundary " << bc_id << std::endl;
-		      libmesh_error();
-		    }
-
-		  {
-		    libMesh::Real gamma_r = input(gamma_r_string, 0.0);
-
-		    if( _catalycities.find(bc_id) == _catalycities.end() )
-		      {
-			std::map<unsigned int,libMesh::Real> dummy;
-			dummy.insert( std::make_pair( r_species, gamma_r ) );
-			_catalycities.insert( std::make_pair( bc_id, dummy ) );
-		      }
-		    else
-		      {
-			(_catalycities.find(bc_id)->second).insert( std::make_pair( r_species, gamma_r ) );
-		      }
-		  }
-
-		  {
-		    libMesh::Real gamma_p = input(gamma_p_string, 0.0);
-			
-		    (_catalycities.find(bc_id)->second).insert( std::make_pair( p_species, gamma_p ) );
-		  }
+                  
+                  libMesh::Real gamma_r = input(gamma_r_string, 0.0);
+                  
+                  // Cache reactant part to init later
+                  wall_funcs.push_back( std::make_pair(r_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, -gamma_r ) ) ) );
+                  
+                  // Cache product part to init later
+                  /*! \todo We assuming single reaction and single product the product is generated
+                      at minus the rate the reactant is consumed. Might want to remove this someday. */
+                  wall_funcs.push_back( std::make_pair(p_species, std::tr1::shared_ptr<CatalyticWall<Chemistry> >( new CatalyticWall<Chemistry>( _chemistry, r_species, gamma_r ) ) ) );
 		}
 	      else
 		{
@@ -329,8 +293,9 @@ namespace GRINS
 
 	    } // end loop over catalytic reactions
 
-	  _reactant_list.insert( std::make_pair( bc_id, reactants ) );
-	  _product_list.insert( std::make_pair( bc_id, products ) );
+          // Cache everything for later
+          _catalytic_walls.insert( std::make_pair( bc_id, wall_funcs ) );
+          _catalytic_species.insert( std::make_pair( bc_id, species_set ) );
 	}
 	break;
 
@@ -357,7 +322,7 @@ namespace GRINS
 	_species_vars[s] = system.variable_number( _species_var_names[s] );
       }
 
-    // See if we have a catalytic wall
+    // See if we have a catalytic wall and initialize them if we do
     for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _neumann_bc_map.begin();
 	 bc_map != _neumann_bc_map.end(); ++bc_map )
       {
@@ -370,60 +335,29 @@ namespace GRINS
 	    NBCContainer cont;
 	    cont.set_bc_id( bc_id );
 
-	    const std::vector<unsigned int>& reactants = _reactant_list.find(bc_id)->second;
-	    const std::vector<unsigned int>& products = _product_list.find(bc_id)->second;
+            // Grab the vector of pairs
+            std::vector<std::pair<unsigned int,std::tr1::shared_ptr<CatalyticWall<Chemistry> > > >& wall_pairs = _catalytic_walls.find(bc_id)->second;
 
-	    /*! \todo  Here we are assuming the same number of reactants and products */
-	    libmesh_assert_equal_to( reactants.size(), products.size() );
-	    unsigned int n_reactions = reactants.size();
-	    
-	    for( unsigned int r = 0; r < n_reactions; r++ )
-	      {
-		/*! \todo  Here we are assuming the same number of reactants and products */
-		unsigned int r_species_idx = reactants[r];
-		unsigned int p_species_idx = products[r];
+            // Add each of the CatalyticWalls we've cached for this BoundaryID
+            for( typename std::vector<std::pair<unsigned int,std::tr1::shared_ptr<CatalyticWall<Chemistry> > > >::iterator it = wall_pairs.begin();
+                 it != wall_pairs.end(); 
+                 ++it )
+              {
+                it->second->init( _T_var );
+                unsigned int species_idx = it->first;
+                
+                VariableIndex var = _species_vars[species_idx];
+                
+                cont.add_var_func_pair( var, it->second );
+              }
 
-		libMesh::Real gamma = (_catalycities.find(bc_id)->second).find(r_species_idx)->second; 
-		
-		// -gamma since the reactant is being consumed
-		{
-		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
-                                                                                           r_species_idx,
-                                                                                           -gamma ) );
+            this->attach_neumann_bound_func( cont );
 
-                  CatalyticWall<Chemistry>* wall_func =
-                    libmesh_cast_ptr<CatalyticWall<Chemistry>* >( func.get() );
-
-                  wall_func->init( _T_var );
-		  
-		  VariableIndex var = _species_vars[r_species_idx];
-		  
-		  cont.add_var_func_pair( var, func );
-		}
-
-		// Now products. Using the same gamma as the reactant.
-		/*! \todo  Here we are assuming the same number of reactants and products */
-		{
-		  std::tr1::shared_ptr<NeumannFuncObj> func( new CatalyticWall<Chemistry>( _chemistry,
-                                                                                           r_species_idx, /* reactant! */
-                                                                                           gamma ) );
-		  
-                  CatalyticWall<Chemistry>* wall_func =
-                    libmesh_cast_ptr<CatalyticWall<Chemistry>* >( func.get() );
-
-                  wall_func->init( _T_var );
-
-		  VariableIndex var = _species_vars[p_species_idx];
-		  
-		  cont.add_var_func_pair( var, func );
-		}
-
-	      }
-
-	    this->attach_neumann_bound_func( cont );
-
-	  } // end check on CATALYTIC_WALL
+          } // end check on CATALYTIC_WALL
       } // end loop over bc_ids
+
+    // Now clean up the catalytic wall cache because we don't need it anymore.
+    _catalytic_walls.clear();
 
     return;
   }
@@ -544,17 +478,15 @@ namespace GRINS
 
       case( CATALYTIC_WALL ):
 	{
-	  libmesh_assert( _reactant_list.find(bc_id) != _reactant_list.end() );
-	  libmesh_assert( _product_list.find(bc_id)  != _product_list.end() );
+	  libmesh_assert( _catalytic_species.find(bc_id) != _catalytic_species.end() );
 
-	  const std::vector<unsigned int>& reactants = _reactant_list.find(bc_id)->second;
-	  const std::vector<unsigned int>& products = _product_list.find(bc_id)->second;
+	  const std::set<unsigned int>& species_set = _catalytic_species.find(bc_id)->second;
 
-	  for( std::vector<unsigned int>::const_iterator reactant = reactants.begin();
-	       reactant != reactants.end();
-	       ++reactant )
+	  for( std::set<unsigned int>::const_iterator species = species_set.begin();
+	       species != species_set.end();
+	       ++species )
 	    {
-	      const VariableIndex var = _species_vars[*reactant];
+	      const VariableIndex var = _species_vars[*species];
 
               if( this->is_axisymmetric() )
                 {
@@ -568,29 +500,8 @@ namespace GRINS
                                                      request_jacobian, var, 1.0, 
                                                      this->get_neumann_bound_func( bc_id, var ) );
                 }
-	    }
-
-	  for( std::vector<unsigned int>::const_iterator product = products.begin();
-	       product != products.end();
-	       ++product )
-	    {
-	      const VariableIndex var = _species_vars[*product];
-
-              if( this->is_axisymmetric() )
-                {
-                  _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
-                                                                  request_jacobian, var, 1.0, 
-                                                                  this->get_neumann_bound_func( bc_id, var ) );
-                }
-              else
-                {
-                  _bound_conds.apply_neumann_normal( context, cache,
-                                                     request_jacobian, var, 1.0, 
-                                                     this->get_neumann_bound_func( bc_id, var ) );
-                }
-	    }
-
-	}
+	    } // end loop catalytic species
+        }
       break;
 
       default:
