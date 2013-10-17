@@ -149,9 +149,6 @@ TESTS += backward_facing_step_regression.sh
 TESTS += coupled_stokes_ns.sh
 
 TESTS += reacting_low_mach_cantera_regression.sh
-#TESTS += reacting_low_mach_grins_kinetics_regression.sh
-#TESTS += reacting_low_mach_catalytic_wall_grins_kinetics_regression.sh
-
 XFAIL_TESTS = reacting_low_mach_cantera_regression.sh
 
 TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
