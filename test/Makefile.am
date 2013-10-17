@@ -157,6 +157,7 @@ TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 
 shellfiles_src =
