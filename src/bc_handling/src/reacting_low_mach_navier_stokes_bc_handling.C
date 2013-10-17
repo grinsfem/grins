@@ -30,6 +30,7 @@
 #include "grins/catalytic_wall.h"
 #include "grins/constant_catalycity.h"
 #include "grins/arrhenius_catalycity.h"
+#include "grins/power_law_catalycity.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -575,12 +576,49 @@ namespace GRINS
         gamma_r.reset( new ArrheniusCatalycity( -gamma0, Ta ) );
         gamma_p.reset( new ArrheniusCatalycity( gamma0, Ta ) );
       }
+    else if( catalycity_type == std::string("power") )
+      {
+        std::string gamma_r_string = "Physics/"+_physics_name+"/gamma0_"+reactant+"_"+bc_id_string;
+        std::string Tref_r_string = "Physics/"+_physics_name+"/Tref_"+reactant+"_"+bc_id_string;
+        std::string alpha_r_string = "Physics/"+_physics_name+"/alpha_"+reactant+"_"+bc_id_string;
+
+        libMesh::Real gamma0 = input(gamma_r_string, 0.0);
+        libMesh::Real Tref = input(Tref_r_string, 0.0);
+        libMesh::Real alpha = input(alpha_r_string, 0.0);
+
+        if( !input.have_variable(gamma_r_string) )
+          {
+            std::cout << "Error: Could not find gamma0 for species " << reactant
+                      << ", for boundary " << bc_id << std::endl;
+            libmesh_error();
+          }
+
+        if( !input.have_variable(Tref_r_string) )
+          {
+            std::cout << "Error: Could not find Tref for species " << reactant
+                      << ", for boundary " << bc_id << std::endl;
+            libmesh_error();
+          }
+
+        if( !input.have_variable(alpha_r_string) )
+          {
+            std::cout << "Error: Could not find alpha for species " << reactant
+                      << ", for boundary " << bc_id << std::endl;
+            libmesh_error();
+          }
+
+        /*! \todo We assuming single reaction and single product the product is generated
+          at minus the rate the reactant is consumed. Might want to remove this someday. */
+        gamma_r.reset( new PowerLawCatalycity( -gamma0, Tref, alpha ) );
+        gamma_p.reset( new PowerLawCatalycity(  gamma0, Tref, alpha ) );
+      }
     else
       {
         std::cerr << "Error: Unsupported catalycity type " << catalycity_type << std::endl
                   << "       for reactant " << reactant << std::endl
                   << "Valid catalycity types are: constant" << std::endl
-                  << "                            arrhenius" << std::endl;
+                  << "                            arrhenius" << std::endl
+                  << "                            power" << std::endl;
 
         libmesh_error();
       }
