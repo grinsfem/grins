@@ -27,6 +27,7 @@ check_PROGRAMS += antioch_wilke_evaluator_regression
 check_PROGRAMS += composite_function_unit
 check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
+check_PROGRAMS += power_law_catalycity_unit
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -98,6 +99,7 @@ antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_ev
 composite_function_unit_SOURCES = $(top_srcdir)/test/composite_function_unit.C
 constant_catalycity_unit_SOURCES = $(top_srcdir)/test/constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = $(top_srcdir)/test/arrhenius_catalycity_unit.C
+power_law_catalycity_unit_SOURCES = $(top_srcdir)/test/power_law_catalycity_unit.C
 
 # List of source files for license stamping
 STAMPED_FILES = 
@@ -126,6 +128,7 @@ STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
 STAMPED_FILES += $(composite_function_unit_SOURCES)
 STAMPED_FILES += $(constant_catalycity_unit_SOURCES)
 STAMPED_FILES += $(arrhenius_catalycity_unit_SOURCES)
+STAMPED_FILES += $(power_law_catalycity_unit_SOURCES)
 
 #Define tests to actually be run
 TESTS =
@@ -142,6 +145,7 @@ TESTS += antioch_wilke_evaluator_regression.sh
 TESTS += catalytic_wall_unit_antioch.sh
 TESTS += constant_catalycity_unit
 TESTS += arrhenius_catalycity_unit
+TESTS += power_law_catalycity_unit
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
