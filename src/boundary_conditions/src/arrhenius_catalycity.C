@@ -49,7 +49,7 @@ namespace GRINS
 
   libMesh::Real ArrheniusCatalycity::dT( const libMesh::Real T ) const
   {
-    return _gamma0*_Ta/(T*T)*std::exp(_Ta/T);
+    return _gamma0*_Ta/(T*T)*std::exp(-_Ta/T);
   }
 
   void ArrheniusCatalycity::set_params( const std::vector<libMesh::Real>& params )
