@@ -70,7 +70,7 @@ namespace GRINS
 
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
-    void set_gamma( const libMesh::Real gamma );
+    void set_catalycity_params( const std::vector<libMesh::Real>& params );
 
   protected:
 
@@ -116,9 +116,9 @@ namespace GRINS
 
   template<typename Chemistry>
   inline
-  void CatalyticWall<Chemistry>::set_gamma( const libMesh::Real gamma )
+  void CatalyticWall<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
   {
-    //_gamma_s = gamma;
+    _gamma_s->set_params( params );
     return;
   }
 
