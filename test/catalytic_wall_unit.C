@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/catalytic_wall.h"
+#include "grins/constant_catalycity.h"
 #include "grins/cantera_mixture.h"
 
 // libMesh
@@ -37,12 +38,13 @@ int test( ChemicalMixture& chem_mixture )
 {
   const unsigned int N_index = chem_mixture.species_index("N");
 
-  const GRINS::VariableIndex T_var_dummy = 5;
-
   const double gamma = 0.03;
 
-  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, T_var_dummy, gamma );
-  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, T_var_dummy, -gamma );
+  GRINS::ConstantCatalycity gamma_r( -gamma );
+  GRINS::ConstantCatalycity gamma_p( gamma );
+
+  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, gamma_r );
+  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, gamma_p );
 
   const double w_s = 0.2;
 
@@ -75,11 +77,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* omega_dot tests */
   {
-    double rel_error = std::fabs( (omega_dot_N - omega_dot_exact)/omega_dot_exact );
+    double rel_error = std::fabs( (omega_dot_N + omega_dot_exact)/omega_dot_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in omega_dot_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in omega_dot_N!" << std::endl
 		  << "omega_dot_N = " << omega_dot_N << std::endl
 		  << "omega_dot_exact = " << omega_dot_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -89,11 +92,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (omega_dot_N2 + omega_dot_exact)/omega_dot_exact );
+    double rel_error = std::fabs( (omega_dot_N2 - omega_dot_exact)/omega_dot_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in omega_dot_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in omega_dot_N2!" << std::endl
 		  << "omega_dot_N2    = " << omega_dot_N2 << std::endl
 		  << "omega_dot_exact = " << omega_dot_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -104,11 +108,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* domega_dot_dT tests */
   {
-    double rel_error = std::fabs( (domega_dot_dT_N - domega_dot_dT_exact)/domega_dot_dT_exact );
+    double rel_error = std::fabs( (domega_dot_dT_N + domega_dot_dT_exact)/domega_dot_dT_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dT_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dT_N!" << std::endl
 		  << "domega_dot_dT_N = " << domega_dot_dT_N << std::endl
 		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -118,11 +123,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (domega_dot_dT_N2 + domega_dot_dT_exact)/domega_dot_dT_exact );
+    double rel_error = std::fabs( (domega_dot_dT_N2 - domega_dot_dT_exact)/domega_dot_dT_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dT_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dT_N2!" << std::endl
 		  << "domega_dot_dT_N2    = " << domega_dot_dT_N2 << std::endl
 		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -133,11 +139,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* domega_dot_dws tests */
   {
-    double rel_error = std::fabs( (domega_dot_dws_N - domega_dot_dws_exact)/domega_dot_dws_exact );
+    double rel_error = std::fabs( (domega_dot_dws_N + domega_dot_dws_exact)/domega_dot_dws_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dws_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dws_N!" << std::endl
 		  << "domega_dot_dws_N = " << domega_dot_dws_N << std::endl
 		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -147,11 +154,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (domega_dot_dws_N2 + domega_dot_dws_exact)/domega_dot_dws_exact );
+    double rel_error = std::fabs( (domega_dot_dws_N2 - domega_dot_dws_exact)/domega_dot_dws_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dws_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dws_N2!" << std::endl
 		  << "domega_dot_dws_N2    = " << domega_dot_dws_N2 << std::endl
 		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
