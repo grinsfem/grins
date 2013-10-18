@@ -133,6 +133,7 @@ TESTS += antioch_mixture_unit.sh
 TESTS += antioch_kinetics_regression.sh
 TESTS += antioch_evaluator_regression.sh
 TESTS += antioch_wilke_evaluator_regression.sh
+TESTS += catalytic_wall_unit_antioch.sh
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh

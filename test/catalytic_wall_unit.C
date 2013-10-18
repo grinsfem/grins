@@ -29,6 +29,7 @@
 #include "grins/catalytic_wall.h"
 #include "grins/constant_catalycity.h"
 #include "grins/cantera_mixture.h"
+#include "grins/antioch_chemistry.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -174,6 +175,13 @@ int test( ChemicalMixture& chem_mixture )
 
 int main(int argc, char* argv[])
 {
+  if( argc != 3 )
+    {
+      std::cerr << "Error: must specify the test type (cantera or antioch) and the input file name"
+                << std::endl;
+      exit(1);
+    }
+
   std::string test_type = argv[1];
 
   GetPot input( argv[2] );
@@ -185,6 +193,15 @@ int main(int argc, char* argv[])
 #ifdef GRINS_HAVE_CANTERA
       GRINS::CanteraMixture chem_mixture( input );
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
+#else
+      return_flag = 77;
+#endif
+    }
+  else if( test_type == "antioch" )
+    {
+#ifdef GRINS_HAVE_ANTIOCH
+      GRINS::AntiochChemistry chem_mixture( input );
+      return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
 #else
       return_flag = 77;
 #endif

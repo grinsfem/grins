@@ -350,6 +350,7 @@ AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
 AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
 AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_antioch.sh,                      [chmod +x test/catalytic_wall_unit_antioch.sh])
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
