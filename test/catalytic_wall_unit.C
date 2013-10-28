@@ -27,7 +27,9 @@
 
 // GRINS
 #include "grins/catalytic_wall.h"
+#include "grins/constant_catalycity.h"
 #include "grins/cantera_mixture.h"
+#include "grins/antioch_chemistry.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -37,12 +39,13 @@ int test( ChemicalMixture& chem_mixture )
 {
   const unsigned int N_index = chem_mixture.species_index("N");
 
-  const GRINS::VariableIndex T_var_dummy = 5;
-
   const double gamma = 0.03;
 
-  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, T_var_dummy, gamma );
-  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, T_var_dummy, -gamma );
+  GRINS::ConstantCatalycity gamma_r( -gamma );
+  GRINS::ConstantCatalycity gamma_p( gamma );
+
+  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, gamma_r );
+  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, gamma_p );
 
   const double w_s = 0.2;
 
@@ -55,7 +58,7 @@ int test( ChemicalMixture& chem_mixture )
   const double R = 30.1;
 
   const double omega_dot_exact = rho_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) );
-  const double domega_dot_dT_exact = -0.5*rho_s*gamma*std::sqrt( R_N/(T*GRINS::Constants::two_pi*M_N) );
+  const double domega_dot_dT_exact = 0.5*rho_s*gamma*std::sqrt( R_N/(T*GRINS::Constants::two_pi*M_N) );
   const double drho_dws = -rho*rho_s/R;
   const double domega_dot_dws_exact = drho_dws*w_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) )
                                     + rho*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) );
@@ -75,11 +78,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* omega_dot tests */
   {
-    double rel_error = std::fabs( (omega_dot_N - omega_dot_exact)/omega_dot_exact );
+    double rel_error = std::fabs( (omega_dot_N + omega_dot_exact)/omega_dot_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in omega_dot_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in omega_dot_N!" << std::endl
 		  << "omega_dot_N = " << omega_dot_N << std::endl
 		  << "omega_dot_exact = " << omega_dot_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -89,11 +93,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (omega_dot_N2 + omega_dot_exact)/omega_dot_exact );
+    double rel_error = std::fabs( (omega_dot_N2 - omega_dot_exact)/omega_dot_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in omega_dot_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in omega_dot_N2!" << std::endl
 		  << "omega_dot_N2    = " << omega_dot_N2 << std::endl
 		  << "omega_dot_exact = " << omega_dot_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -104,11 +109,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* domega_dot_dT tests */
   {
-    double rel_error = std::fabs( (domega_dot_dT_N - domega_dot_dT_exact)/domega_dot_dT_exact );
+    double rel_error = std::fabs( (domega_dot_dT_N + domega_dot_dT_exact)/domega_dot_dT_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dT_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dT_N!" << std::endl
 		  << "domega_dot_dT_N = " << domega_dot_dT_N << std::endl
 		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -118,11 +124,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (domega_dot_dT_N2 + domega_dot_dT_exact)/domega_dot_dT_exact );
+    double rel_error = std::fabs( (domega_dot_dT_N2 - domega_dot_dT_exact)/domega_dot_dT_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dT_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dT_N2!" << std::endl
 		  << "domega_dot_dT_N2    = " << domega_dot_dT_N2 << std::endl
 		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -133,11 +140,12 @@ int test( ChemicalMixture& chem_mixture )
 
   /* domega_dot_dws tests */
   {
-    double rel_error = std::fabs( (domega_dot_dws_N - domega_dot_dws_exact)/domega_dot_dws_exact );
+    double rel_error = std::fabs( (domega_dot_dws_N + domega_dot_dws_exact)/domega_dot_dws_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dws_N!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dws_N!" << std::endl
 		  << "domega_dot_dws_N = " << domega_dot_dws_N << std::endl
 		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -147,11 +155,12 @@ int test( ChemicalMixture& chem_mixture )
   }
 
   {
-    double rel_error = std::fabs( (domega_dot_dws_N2 + domega_dot_dws_exact)/domega_dot_dws_exact );
+    double rel_error = std::fabs( (domega_dot_dws_N2 - domega_dot_dws_exact)/domega_dot_dws_exact );
 
     if( rel_error > tol )
       {
-	std::cerr << "Mismatch in domega_dot_dws_N2!" << std::endl
+        std::cerr << std::setprecision(16) << std::scientific
+                  << "Mismatch in domega_dot_dws_N2!" << std::endl
 		  << "domega_dot_dws_N2    = " << domega_dot_dws_N2 << std::endl
 		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
@@ -166,6 +175,13 @@ int test( ChemicalMixture& chem_mixture )
 
 int main(int argc, char* argv[])
 {
+  if( argc != 3 )
+    {
+      std::cerr << "Error: must specify the test type (cantera or antioch) and the input file name"
+                << std::endl;
+      exit(1);
+    }
+
   std::string test_type = argv[1];
 
   GetPot input( argv[2] );
@@ -177,6 +193,15 @@ int main(int argc, char* argv[])
 #ifdef GRINS_HAVE_CANTERA
       GRINS::CanteraMixture chem_mixture( input );
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
+#else
+      return_flag = 77;
+#endif
+    }
+  else if( test_type == "antioch" )
+    {
+#ifdef GRINS_HAVE_ANTIOCH
+      GRINS::AntiochChemistry chem_mixture( input );
+      return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
 #else
       return_flag = 77;
 #endif

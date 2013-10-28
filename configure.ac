@@ -350,6 +350,7 @@ AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
 AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
 AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_antioch.sh,                      [chmod +x test/catalytic_wall_unit_antioch.sh])
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
@@ -372,8 +373,14 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_pra
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
 
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh])
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.in)
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

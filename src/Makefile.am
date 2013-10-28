@@ -45,8 +45,11 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalycity_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/constant_catalycity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/arrhenius_catalycity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/power_law_catalycity.C
 
 # src/error_estimation files
 libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_factory.C
@@ -187,7 +190,10 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pressure_
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalycity_base.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/constant_catalycity.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/arrhenius_catalycity.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/power_law_catalycity.h
 
 # src/error_estimation headers
 include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estimation_factory.h

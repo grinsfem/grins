@@ -24,10 +24,13 @@
 #ifndef GRINS_CATALYTIC_WALL_H
 #define GRINS_CATALYTIC_WALL_H
 
+// Boost
+#include "boost/scoped_ptr.hpp"
+
 // GRINS
 #include "grins/math_constants.h"
 #include "grins/neumann_func_obj.h"
-#include "grins/catalytic_wall_helper.h"
+#include "grins/catalycity_base.h"
 
 namespace GRINS
 {
@@ -42,10 +45,11 @@ namespace GRINS
 
     CatalyticWall( const Chemistry& chem_mixture,
 		   const unsigned int species_index,
-		   const VariableIndex T_var,
-		   const libMesh::Real gamma );
+		   CatalycityBase& gamma );
 
     ~CatalyticWall();
+
+    void init( const VariableIndex T_var );
 
     virtual libMesh::Real normal_value( const AssemblyContext& context,
 					const CachedValues& cache,
@@ -66,7 +70,7 @@ namespace GRINS
 
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
-    void set_gamma( const libMesh::Real gamma );
+    void set_catalycity_params( const std::vector<libMesh::Real>& params );
 
   protected:
 
@@ -74,9 +78,10 @@ namespace GRINS
 
     unsigned int _species_index;
 
-    VariableIndex _T_var;
+    boost::scoped_ptr<CatalycityBase> _gamma_s;
 
-    CatalyticWallHelper _helper;
+    //! \f$ \sqrt{ \frac{R_s}{2\pi M_s} } \f$
+    const libMesh::Real _C;
 
   private:
 
@@ -89,7 +94,7 @@ namespace GRINS
   inline
   libMesh::Real CatalyticWall<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return this->_helper.omega_dot(rho_s,T);
+    return rho_s*(*_gamma_s)(T)*_C*std::sqrt(T);
   }
 
   template<typename Chemistry>
@@ -97,21 +102,23 @@ namespace GRINS
   libMesh::Real CatalyticWall<Chemistry>::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
                                                           const libMesh::Real T, const libMesh::Real R ) const
   {
-    return this->_helper.domega_dot_dws(rho_s, w_s, T, R);
+    return (1.0/w_s - rho_s/R)*(this->omega_dot( rho_s, T ));
   }
 
   template<typename Chemistry>
   inline
   libMesh::Real CatalyticWall<Chemistry>::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return this->_helper.domega_dot_dT(rho_s,T);
+    libMesh::Real sqrtT = std::sqrt(T);
+
+    return rho_s*_C*( 0.5/sqrtT*(*_gamma_s)(T) + sqrtT*(*_gamma_s).dT(T) );
   }
 
   template<typename Chemistry>
   inline
-  void CatalyticWall<Chemistry>::set_gamma( const libMesh::Real gamma )
+  void CatalyticWall<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
   {
-    this->_helper.set_gamma(gamma);
+    _gamma_s->set_params( params );
     return;
   }
 

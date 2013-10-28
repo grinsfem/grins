@@ -27,9 +27,8 @@
 
 // GRINS
 #include "grins/cached_values.h"
-
-// libMesh
-#include "libmesh/fem_context.h"
+#include "grins/constant_catalycity.h"
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
@@ -37,23 +36,28 @@ namespace GRINS
   template<typename Chemistry>
   CatalyticWall<Chemistry>::CatalyticWall( const Chemistry& chemistry,
                                            const unsigned int species_index,
-                                           const VariableIndex T_var,
-                                           const libMesh::Real gamma )
+                                           CatalycityBase& gamma )
     : NeumannFuncObj(),
       _chemistry(chemistry),
       _species_index(species_index),
-      _T_var(T_var),
-      _helper( _chemistry.R(_species_index), _chemistry.M(_species_index), gamma )
+      _gamma_s( gamma.clone() ),
+      _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi*chemistry.M(species_index)) ) )
   {
-    _jac_vars.resize(1);
-    _jac_vars[0] = _T_var;
-
     return;
   }
 
   template<typename Chemistry>
   CatalyticWall<Chemistry>::~CatalyticWall()
   {
+    return;
+  }
+
+  template<typename Chemistry>
+  void CatalyticWall<Chemistry>::init( const VariableIndex T_var )
+  {
+    _jac_vars.resize(1);
+    _jac_vars[0] = T_var;
+
     return;
   }
 
@@ -97,7 +101,7 @@ namespace GRINS
                                                              const unsigned int qp, 
                                                              const GRINS::VariableIndex jac_var )
   {
-    libmesh_assert_equal_to( jac_var, _T_var );
+    libmesh_assert_equal_to( jac_var, _jac_vars[0] );
 
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
     
