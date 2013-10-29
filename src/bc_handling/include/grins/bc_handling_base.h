@@ -223,8 +223,14 @@ namespace GRINS
   bool BCHandlingBase::is_dirichlet_bc( const GRINS::BoundaryID bc_id ) const
   {
     bool value = false;
-    if( _dirichlet_bc_map.find(bc_id) != _dirichlet_bc_map.end() )
-      value = true;
+
+    /*! \todo Can probably do better than this linear search */
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
+      {
+        if( it->first == bc_id ) value = true;
+      }
+
     return value;
   }
 

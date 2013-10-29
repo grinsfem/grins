@@ -20,19 +20,14 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/lorentz_force.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -79,7 +74,7 @@ namespace GRINS
   }
 
   void LorentzForce::element_time_derivative( bool compute_jacobian,
-					      libMesh::FEMContext& context,
+					      AssemblyContext& context,
 					      CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -87,9 +82,9 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[_u_var].size();
-    const unsigned int n_A_dofs = context.dof_indices_var[_A_var].size();
-    const unsigned int n_V_dofs = context.dof_indices_var[_V_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_u_var).size();
+    const unsigned int n_A_dofs = context.get_dof_indices(_A_var).size();
+    const unsigned int n_V_dofs = context.get_dof_indices(_V_var).size();
 
     // Get finite element object
     libMesh::FEGenericBase<libMesh::RealGradient>* A_fe;
@@ -110,22 +105,26 @@ namespace GRINS
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi = u_fe->get_phi();
 
-    if (_dim != 3)
-      _w_var = _u_var; // for convenience
-
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[_u_var]; // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[_v_var]; // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number>& Fu = context.get_elem_residual(_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number>& Fv = context.get_elem_residual(_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<libMesh::Number> &KuV = *context.elem_subjacobians[_u_var][_V_var]; // R_{u},{V}
-    libMesh::DenseSubMatrix<libMesh::Number> &KvV = *context.elem_subjacobians[_v_var][_V_var]; // R_{v},{V}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwV = *context.elem_subjacobians[_w_var][_V_var]; // R_{w},{V}
+    libMesh::DenseSubMatrix<libMesh::Number>& KuV = context.get_elem_jacobian(_u_var,_V_var); // R_{u},{V}
+    libMesh::DenseSubMatrix<libMesh::Number>& KvV = context.get_elem_jacobian(_v_var,_V_var); // R_{v},{V}
+    libMesh::DenseSubMatrix<libMesh::Number>* KwV = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number> &KuA = *context.elem_subjacobians[_u_var][_A_var]; // R_{u},{A}
-    libMesh::DenseSubMatrix<libMesh::Number> &KvA = *context.elem_subjacobians[_v_var][_A_var]; // R_{v},{A}
-    libMesh::DenseSubMatrix<libMesh::Number> &KwA = *context.elem_subjacobians[_w_var][_A_var]; // R_{w},{A}
+    libMesh::DenseSubMatrix<libMesh::Number>& KuA = context.get_elem_jacobian(_u_var,_A_var); // R_{u},{A}
+    libMesh::DenseSubMatrix<libMesh::Number>& KvA = context.get_elem_jacobian(_v_var,_A_var); // R_{v},{A}
+    libMesh::DenseSubMatrix<libMesh::Number>* KwA = NULL;
+
+    if( this->_dim == 3)
+      {
+        Fw  = &context.get_elem_residual(_w_var); // R_{w}
+        KwV = &context.get_elem_jacobian(_w_var,_V_var); // R_{w},{V}
+        KwA = &context.get_elem_jacobian(_w_var,_A_var); // R_{w},{A}
+      }
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -133,7 +132,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -155,7 +154,7 @@ namespace GRINS
 
 	    if(_dim == 3 )
 	      {
-		Fw(i) += lorentz_force(2)*u_phi[i][qp]*JxW[qp];
+		(*Fw)(i) += lorentz_force(2)*u_phi[i][qp]*JxW[qp];
 	      }
 
 	    if (compute_jacobian)
@@ -169,7 +168,7 @@ namespace GRINS
 								- V_gradphi[j][qp](2)*curl_A(0) );
 		    if(_dim == 3 )
 		      {
-			KwV(i,j) += u_phi[i][qp]*JxW[qp]*(-_sigma)*( V_gradphi[j][qp](0)*curl_A(1) 
+			(*KwV)(i,j) += u_phi[i][qp]*JxW[qp]*(-_sigma)*( V_gradphi[j][qp](0)*curl_A(1) 
 								     - V_gradphi[j][qp](1)*curl_A(0) );
 		      }
 		  } // End j dof loop
@@ -184,8 +183,8 @@ namespace GRINS
 
 		    if(_dim == 3 )
 		      {
-			KwA(i,j) += u_phi[i][qp]*JxW[qp]*(-_sigma)*( grad_V(0)*A_curl_phi[j][qp](1) 
-								     - grad_V(1)*A_curl_phi[j][qp](0) );;
+			(*KwA)(i,j) += u_phi[i][qp]*JxW[qp]*(-_sigma)*( grad_V(0)*A_curl_phi[j][qp](1) 
+								     - grad_V(1)*A_curl_phi[j][qp](0) );
 		      }
 		  } // End j dof loop
 
@@ -201,7 +200,7 @@ namespace GRINS
     return;
   }
 
-  void LorentzForce::compute_element_cache( const libMesh::FEMContext& context, 
+  void LorentzForce::compute_element_cache( const AssemblyContext& context, 
 					    const std::vector<libMesh::Point>& points,
 					    CachedValues& cache )
   {

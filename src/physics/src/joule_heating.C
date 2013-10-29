@@ -26,11 +26,11 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -69,14 +69,14 @@ namespace GRINS
   }
 
   void JouleHeating::element_time_derivative( bool compute_jacobian,
-							  libMesh::FEMContext& context,
+							  AssemblyContext& context,
 							  CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("JouleHeating::element_time_derivative");
 #endif
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
-    const unsigned int n_V_dofs = context.dof_indices_var[_V_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
+    const unsigned int n_V_dofs = context.get_dof_indices(_V_var).size();
 
     FEGenericBase<libMesh::Real>* T_fe;
     FEGenericBase<libMesh::Real>* V_fe;
@@ -93,11 +93,11 @@ namespace GRINS
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& qpoint = T_fe->get_xyz();
 
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<Number> &FT = context.get_elem_residual(_T_var); // R_{T}
 
-    libMesh::DenseSubMatrix<Number> &KTV = *context.elem_subjacobians[_T_var][_V_var]; // R_{T},{V}
+    libMesh::DenseSubMatrix<Number> &KTV = context.get_elem_jacobian(_T_var,_V_var); // R_{T},{V}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {

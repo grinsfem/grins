@@ -50,7 +50,7 @@ namespace GRINS
   void HeatTransferStabilizationBase<Conductivity>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    HeatTransferBase::init_variables(system);
+    HeatTransferBase<Conductivity>::init_variables(system);
 
     _stab_helper.init(*system);
 
@@ -58,7 +58,7 @@ namespace GRINS
   }
 
   template<class Conductivity>
-  void HeatTransferStabilizationBase<Conductivity>::init_context( libMesh::FEMContext& context )
+  void HeatTransferStabilizationBase<Conductivity>::init_context( AssemblyContext& context )
   {
     // First call base class
     HeatTransferBase<Conductivity>::init_context(context);

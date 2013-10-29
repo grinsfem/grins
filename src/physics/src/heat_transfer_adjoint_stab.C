@@ -94,7 +94,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 
-        libMesh::Real T = context.interior_value(this->_T_var, qp );
+        libMesh::Real T = context.interior_value(this->_temp_vars.T_var(), qp );
 	libMesh::Real k = this->_k(T);
 
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
@@ -109,9 +109,9 @@ namespace GRINS
       
         //libMesh::RealGradient grad_T = context.interior_gradient( this->_temp_vars.T_var(), qp );
 
-        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, k,  U, this->_is_steady );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, k,  U, this->_is_steady );
 
-        libMesh::Real RE_s = this->_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, k );
+        libMesh::Real RE_s = this->_stab_helper.compute_res_energy_steady( context, qp, this->_rho, this->_Cp, k );
 
         /*
           for (unsigned int i=0; i != n_u_dofs; i++)
@@ -185,7 +185,7 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::Real T = context.interior_value(this->_T_var, qp );
+        libMesh::Real T = context.interior_value(this->_temp_vars.T_var(), qp );
         libMesh::Real k = this->_k(T);
 
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
@@ -198,9 +198,9 @@ namespace GRINS
       
         //libMesh::RealGradient grad_T = context.fixed_interior_gradient( this->_temp_vars.T_var(), qp );
 
-        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, k,  U, false );
 
-        libMesh::Real RE_t = this->_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
+        libMesh::Real RE_t = this->_stab_helper.compute_res_energy_transient( context, qp, this->_rho, this->_Cp );
 
         /*
           for (unsigned int i=0; i != n_u_dofs; i++)

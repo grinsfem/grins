@@ -31,11 +31,11 @@
 
 // GRINS
 #include "grins/magnetostatics_bc_handling.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -82,7 +82,7 @@ namespace GRINS
     return;
   }
 
-  void Magnetostatics::init_context( libMesh::FEMContext& context )
+  void Magnetostatics::init_context( AssemblyContext& context )
   {   
     libMesh::FEGenericBase<libMesh::RealGradient>* A_fe;
     libMesh::FEGenericBase<libMesh::Real>* V_fe;
@@ -121,7 +121,7 @@ namespace GRINS
   }
 
   void Magnetostatics::element_time_derivative( bool compute_jacobian,
-						libMesh::FEMContext& context,
+						AssemblyContext& context,
 						CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -129,8 +129,8 @@ namespace GRINS
 #endif
     
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_A_dofs = context.dof_indices_var[_A_var].size();
-    const unsigned int n_V_dofs = context.dof_indices_var[_V_var].size();
+    const unsigned int n_A_dofs = context.get_dof_indices(_A_var).size();
+    const unsigned int n_V_dofs = context.get_dof_indices(_V_var).size();
   
     // Get finite element object
     libMesh::FEGenericBase<libMesh::RealGradient>* A_fe;
@@ -151,11 +151,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& V_gradphi = V_fe->get_dphi();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Number> &F_A = *context.elem_subresiduals[_A_var]; // R_{A}
+    libMesh::DenseSubVector<libMesh::Number> &F_A = context.get_elem_residual(_A_var); // R_{A}
     
-    libMesh::DenseSubMatrix<libMesh::Number> &K_AA = *context.elem_subjacobians[_A_var][_A_var]; // R_{A},{A}
+    libMesh::DenseSubMatrix<libMesh::Number> &K_AA = context.get_elem_jacobian(_A_var,_A_var); // R_{A},{A}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &K_AV = *context.elem_subjacobians[_A_var][_V_var]; // R_{A},{V}
+    libMesh::DenseSubMatrix<libMesh::Number> &K_AV = context.get_elem_jacobian(_A_var,_V_var); // R_{A},{V}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -163,7 +163,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -198,7 +198,7 @@ namespace GRINS
   }
 
   void Magnetostatics::side_time_derivative( bool compute_jacobian,
-					     libMesh::FEMContext& context,
+					     AssemblyContext& context,
 					     CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -223,7 +223,7 @@ namespace GRINS
   }
   
   void Magnetostatics::side_constraint( bool compute_jacobian,
-					libMesh::FEMContext& context,
+					AssemblyContext& context,
 					CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -244,7 +244,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& phi = side_fe->get_phi();
     
     // The number of local degrees of freedom in each variable
-    const unsigned int n_A_dofs = context.dof_indices_var[_A_var].size();
+    const unsigned int n_A_dofs = context.get_dof_indices(_A_var).size();
     
     const std::vector<libMesh::Point>& normals = side_fe->get_normals();
     
@@ -252,8 +252,8 @@ namespace GRINS
     // in the discussion above.
     const Real penalty = 1.e10;
     
-    libMesh::DenseSubMatrix<libMesh::Number> &K = *context.elem_subjacobians[_A_var][_A_var];
-    libMesh::DenseSubVector<libMesh::Number> &F = *context.elem_subresiduals[_A_var];
+    libMesh::DenseSubMatrix<libMesh::Number> &K = context.get_elem_jacobian(_A_var,_A_var);
+    libMesh::DenseSubVector<libMesh::Number> &F = context.get_elem_residual(_A_var);
     
     const unsigned int n_qpoints = context.get_side_qrule().n_points();
     
@@ -310,7 +310,7 @@ namespace GRINS
   
 
   void Magnetostatics::mass_residual( bool compute_jacobian,
-				      libMesh::FEMContext& context,
+				      AssemblyContext& context,
 				      CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -337,15 +337,15 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& V_phi = V_fe->get_phi();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<Real> &F_A = *context.elem_subresiduals[_A_var];
+    libMesh::DenseSubVector<Real> &F_A = context.get_elem_residual(_A_var);
 
-    libMesh::DenseSubVector<Real> &F_V = *context.elem_subresiduals[_V_var];
+    libMesh::DenseSubVector<Real> &F_V = context.get_elem_residual(_V_var);
 
-    libMesh::DenseSubMatrix<Real> &M_AA = *context.elem_subjacobians[_A_var][_A_var];
+    libMesh::DenseSubMatrix<Real> &M_AA = context.get_elem_jacobian(_A_var,_A_var);
 
-    libMesh::DenseSubMatrix<Real> &M_VA = *context.elem_subjacobians[_V_var][_A_var];
+    libMesh::DenseSubMatrix<Real> &M_VA = context.get_elem_jacobian(_V_var,_A_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
@@ -381,7 +381,7 @@ namespace GRINS
     return;
   }
 
-  void Magnetostatics::compute_element_cache( const libMesh::FEMContext& context, 
+  void Magnetostatics::compute_element_cache( const AssemblyContext& context, 
 					      const std::vector<libMesh::Point>& points,
 					      CachedValues& cache )
   {

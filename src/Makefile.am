@@ -165,12 +165,10 @@ libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/magnetostatics_bc_handl
 # with different template parameters in user code
 sfilesdir = $(prefix)/src
 sfiles_DATA  = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
-<<<<<<< HEAD
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_stab_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
-=======
 sfiles_DATA += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
 sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
@@ -180,7 +178,6 @@ sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture.
 sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
 sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_mixture.C
 sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_evaluator.C
->>>>>>> 3b098b1d32f1e73dfe0c019709712542b0f74ac8
 
 #----------------------------
 #INCLUDES we want distributed
@@ -262,7 +259,6 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
-<<<<<<< HEAD
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_lorentz_force.h
@@ -271,12 +267,10 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/lorentz_force.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/joule_heating.h
-=======
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_fe_variables.h
->>>>>>> 3b098b1d32f1e73dfe0c019709712542b0f74ac8
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h

@@ -49,8 +49,10 @@ namespace GRINS
     
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
-    
-    this->read_bc_data( input, id_str, bc_str );
+    std::string var_str = "Physics/"+_physics_name+"/bc_variables";
+    std::string val_str = "Physics/"+_physics_name+"/bc_values";
+
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
     
     return;
   }
@@ -89,10 +91,12 @@ namespace GRINS
     return bc_type_out;
   }
   
-  void MagnetostaticsBCHandling::init_bc_types( const BoundaryID bc_id, 
-						const std::string& bc_id_string, 
-						const int bc_type, 
-						const GetPot& input )
+  void MagnetostaticsBCHandling::init_bc_types( const GRINS::BoundaryID bc_id, 
+                                                const std::string& bc_id_string, 
+                                                const int bc_type, 
+                                                const std::string& bc_vars, 
+                                                const std::string& bc_value, 
+                                                const GetPot& input )
   {
     switch(bc_type)
       {
@@ -130,7 +134,7 @@ namespace GRINS
     return;
   }
 
-  void MagnetostaticsBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+  void MagnetostaticsBCHandling::user_apply_neumann_bcs( AssemblyContext& context,
 							 const GRINS::CachedValues& cache,
 							 bool request_jacobian,
 							 BoundaryID bc_id,

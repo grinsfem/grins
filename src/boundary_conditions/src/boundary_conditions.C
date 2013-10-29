@@ -547,7 +547,7 @@ namespace GRINS
     return;
   }
 
-  void BoundaryConditions::apply_neumann_cross( libMesh::FEMContext& context,
+  void BoundaryConditions::apply_neumann_cross( AssemblyContext& context,
 						const GRINS::VariableIndex var,
 						const libMesh::Real sign,
 						const libMesh::Point& value ) const
@@ -556,7 +556,7 @@ namespace GRINS
     context.get_side_fe<libMesh::RealGradient>( var, fe );
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
     const std::vector<libMesh::Real>JxW_side = fe->get_JxW();
@@ -566,9 +566,9 @@ namespace GRINS
 
     const std::vector<libMesh::Point>& normals = fe->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	for (unsigned int i=0; i != n_var_dofs; i++)

@@ -95,7 +95,7 @@ namespace GRINS
 			std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions for the constant case, but where the value is crossed with the vector-valued test function
-    void apply_neumann_cross( libMesh::FEMContext& context,
+    void apply_neumann_cross( AssemblyContext& context,
 			      const GRINS::VariableIndex var,
 			      const libMesh::Real sign,
 			      const libMesh::Point& value ) const;

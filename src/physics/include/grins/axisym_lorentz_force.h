@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 #ifndef GRINS_AXISYM_LORENTZ_FORCE_H
 #define GRINS_AXISYM_LORENTZ_FORCE_H
@@ -61,10 +56,10 @@ namespace GRINS
         the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context, 
+    virtual void compute_element_cache( const AssemblyContext& context, 
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 

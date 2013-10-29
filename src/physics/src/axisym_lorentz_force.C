@@ -20,22 +20,17 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/axisym_lorentz_force.h"
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -97,7 +92,7 @@ namespace GRINS
   }
 
   void AxisymmetricLorentzForce::element_time_derivative( bool compute_jacobian,
-							  libMesh::FEMContext& context,
+							  AssemblyContext& context,
 							  CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -105,9 +100,9 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
-    const unsigned int n_A_dofs = context.dof_indices_var[_A_var].size();
-    const unsigned int n_V_dofs = context.dof_indices_var[_V_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_u_r_var).size();
+    const unsigned int n_A_dofs = context.get_dof_indices(_A_var).size();
+    const unsigned int n_V_dofs = context.get_dof_indices(_V_var).size();
 
     // Get finite element object
     FEGenericBase<RealGradient>* A_fe;
@@ -137,14 +132,14 @@ namespace GRINS
       u_r_fe->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &Fr = *context.elem_subresiduals[_u_r_var]; // R_{r}
-    libMesh::DenseSubVector<Number> &Fz = *context.elem_subresiduals[_u_z_var]; // R_{z}
+    libMesh::DenseSubVector<Number> &Fr = context.get_elem_residual(_u_r_var); // R_{r}
+    libMesh::DenseSubVector<Number> &Fz = context.get_elem_residual(_u_z_var); // R_{z}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<Number> &KrV = *context.elem_subjacobians[_u_r_var][_V_var]; // R_{r},{T}
-    libMesh::DenseSubMatrix<Number> &KzV = *context.elem_subjacobians[_u_z_var][_V_var]; // R_{z},{T}
-    libMesh::DenseSubMatrix<Number> &KrA = *context.elem_subjacobians[_u_r_var][_A_var]; // R_{r},{T}
-    libMesh::DenseSubMatrix<Number> &KzA = *context.elem_subjacobians[_u_z_var][_A_var]; // R_{z},{T}
+    libMesh::DenseSubMatrix<Number> &KrV = context.get_elem_jacobian(_u_r_var,_V_var); // R_{r},{T}
+    libMesh::DenseSubMatrix<Number> &KzV = context.get_elem_jacobian(_u_z_var,_V_var); // R_{z},{T}
+    libMesh::DenseSubMatrix<Number> &KrA = context.get_elem_jacobian(_u_r_var,_A_var); // R_{r},{T}
+    libMesh::DenseSubMatrix<Number> &KzA = context.get_elem_jacobian(_u_z_var,_A_var); // R_{z},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -152,7 +147,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -202,7 +197,7 @@ namespace GRINS
     return;
   }
 
-  void AxisymmetricLorentzForce::compute_element_cache( const libMesh::FEMContext& context, 
+  void AxisymmetricLorentzForce::compute_element_cache( const AssemblyContext& context, 
 							const std::vector<libMesh::Point>& points,
 							CachedValues& cache )
   {

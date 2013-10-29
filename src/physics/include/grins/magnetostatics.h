@@ -20,11 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 #ifndef GRINS_MAGNETOSTATICS_H
 #define GRINS_MAGNETOSTATICS_H
@@ -42,7 +37,6 @@ class GetPot;
 namespace libMesh
 {
   class FEMSystem;
-  class FEMContext;
 }
 
 namespace GRINS
@@ -68,30 +62,30 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context,
+				       AssemblyContext& context,
 				       CachedValues& cache );
 
     virtual void side_constraint( bool compute_jacobian,
-				  libMesh::FEMContext& context,
+				  AssemblyContext& context,
 				  CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context, 
+    virtual void compute_element_cache( const AssemblyContext& context, 
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 

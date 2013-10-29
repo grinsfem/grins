@@ -20,22 +20,17 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 // This class
 #include "grins/electrostatics.h"
 
 // GRINS
 #include "grins/electrostatics_bc_handling.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -68,20 +63,20 @@ namespace GRINS
     return;
   }
 
-  void Electrostatics::init_context( libMesh::FEMContext& context )
+  void Electrostatics::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.element_fe_var[_V_var]->get_JxW();
-    context.element_fe_var[_V_var]->get_phi();
-    context.element_fe_var[_V_var]->get_dphi();
-    context.element_fe_var[_V_var]->get_xyz();
+    context.get_element_fe(_V_var)->get_JxW();
+    context.get_element_fe(_V_var)->get_phi();
+    context.get_element_fe(_V_var)->get_dphi();
+    context.get_element_fe(_V_var)->get_xyz();
     
-    context.side_fe_var[_V_var]->get_JxW();
-    context.side_fe_var[_V_var]->get_phi();
-    context.side_fe_var[_V_var]->get_dphi();
-    context.side_fe_var[_V_var]->get_xyz();
+    context.get_side_fe(_V_var)->get_JxW();
+    context.get_side_fe(_V_var)->get_phi();
+    context.get_side_fe(_V_var)->get_dphi();
+    context.get_side_fe(_V_var)->get_xyz();
     
     return;
   }
@@ -94,7 +89,7 @@ namespace GRINS
   }
 
   void Electrostatics::element_time_derivative( bool compute_jacobian,
-						libMesh::FEMContext& context,
+						AssemblyContext& context,
 						CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -102,20 +97,20 @@ namespace GRINS
 #endif
     
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_V_dofs = context.dof_indices_var[_V_var].size();
+    const unsigned int n_V_dofs = context.get_dof_indices(_V_var).size();
   
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_V_var]->get_JxW();
+      context.get_element_fe(_V_var)->get_JxW();
     
     // The electric potential shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& V_gradphi =
-      context.element_fe_var[_V_var]->get_dphi();
+      context.get_element_fe(_V_var)->get_dphi();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<Number> &F_V = *context.elem_subresiduals[_V_var]; // R_{V}
+    libMesh::DenseSubVector<Number> &F_V = context.get_elem_residual(_V_var); // R_{V}
 
-    libMesh::DenseSubMatrix<Number> &K_VV = *context.elem_subjacobians[_V_var][_V_var]; // R_{V},{V}
+    libMesh::DenseSubMatrix<Number> &K_VV = context.get_elem_jacobian(_V_var,_V_var); // R_{V},{V}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -123,7 +118,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -159,7 +154,7 @@ namespace GRINS
 
 
   void Electrostatics::side_time_derivative( bool compute_jacobian,
-					     libMesh::FEMContext& context,
+					     AssemblyContext& context,
 					     CachedValues& cache )
   {
 #ifdef USE_GRVY_TIMERS
@@ -183,7 +178,7 @@ namespace GRINS
     return;
   }
 
-  void Electrostatics::compute_element_cache( const libMesh::FEMContext& context, 
+  void Electrostatics::compute_element_cache( const AssemblyContext& context, 
 					      const std::vector<libMesh::Point>& points,
 					      CachedValues& cache )
   {
