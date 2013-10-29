@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_H
@@ -53,26 +49,30 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-				       libMesh::FEMContext& context,
+				       AssemblyContext& context,
 				       CachedValues& cache );
+
+    virtual void side_constraint( bool compute_jacobian,
+                                  AssemblyContext& context,
+                                  CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
-    virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
 							CachedValues& cache );
 
-    virtual void compute_element_cache( const libMesh::FEMContext& context,
+    virtual void compute_element_cache( const AssemblyContext& context,
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
@@ -85,39 +85,39 @@ namespace GRINS
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian, 
-				   libMesh::FEMContext& context,
+				   AssemblyContext& context,
 				   CachedValues& cache );
 
     //! Helper function
     void assemble_momentum_time_deriv( bool compute_jacobian, 
-				       libMesh::FEMContext& context,
+				       AssemblyContext& context,
 				       CachedValues& cache );
 
     //! Helper function
     void assemble_energy_time_deriv( bool compute_jacobian, 
-				     libMesh::FEMContext& context,
+				     AssemblyContext& context,
 				     CachedValues& cache );
 
     //! Helper function
     void assemble_continuity_mass_residual( bool compute_jacobian, 
-					    libMesh::FEMContext& c );
+					    AssemblyContext& c );
 
     //! Helper function
     void assemble_momentum_mass_residual( bool compute_jacobian, 
-					  libMesh::FEMContext& c );
+					  AssemblyContext& c );
 
     //! Helper function
     void assemble_energy_mass_residual( bool compute_jacobian, 
-					libMesh::FEMContext& c );
+					AssemblyContext& c );
 
     void assemble_thermo_press_elem_time_deriv( bool compute_jacobian, 
-						libMesh::FEMContext& c );
+						AssemblyContext& c );
 
     void assemble_thermo_press_side_time_deriv( bool compute_jacobian, 
-						libMesh::FEMContext& c );
+						AssemblyContext& c );
 
     void assemble_thermo_press_mass_residual( bool compute_jacobian, 
-					      libMesh::FEMContext& c );
+					      AssemblyContext& c );
 
   private:
 

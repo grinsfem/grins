@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_BC_HANDLING_BASE_H
 #define GRINS_BC_HANDLING_BASE_H
 
@@ -46,13 +42,15 @@
 // libMesh forward declarations
 namespace libMesh
 {
-  class FEMContext;
   class FEMSystem;
   class DofMap;
 }
 
 namespace GRINS
 {
+  // GRINS forward declarations
+  class AssemblyContext;
+
   //! Base class for reading and handling boundary conditions for physics classes
   class BCHandlingBase
   {
@@ -67,7 +65,9 @@ namespace GRINS
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
     virtual void read_bc_data( const GetPot& input, const std::string& id_str,
-			       const std::string& bc_str );
+			       const std::string& bc_str,
+			       const std::string& var_str,
+                               const std::string& val_str );
 
     //! Override this method to initialize any system-dependent data.
     /*! Override this method to, for example, cache a System variable
@@ -75,12 +75,12 @@ namespace GRINS
         By default, does nothing. */
     virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-    virtual void apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void apply_neumann_bcs( AssemblyContext& context,
 				    const GRINS::CachedValues& cache,
 				    const bool request_jacobian,
 				    const GRINS::BoundaryID bc_id ) const;
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
 					 const GRINS::CachedValues& cache,
 					 const bool request_jacobian,
 					 const GRINS::BoundaryID bc_id,
@@ -112,6 +112,8 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
@@ -130,8 +132,10 @@ namespace GRINS
 
     //! Map between boundary id and Dirichlet boundary condition type
     /*! We need to keep this around because the libMesh::DirichletBoundary
-      objects can't be created until we init the variables */
-    std::map< GRINS::BoundaryID, GRINS::BCType> _dirichlet_bc_map;
+        objects can't be created until we init the variables. We use a
+        vector of pairs so that the boundary condition functors get added
+        to the libMesh::DofMap in the same order as in the input file. */
+    std::vector<std::pair<BoundaryID,BCType> > _dirichlet_bc_map;
 
     //! Map between boundary id and Neumann boundary condition type
     std::map< GRINS::BoundaryID, GRINS::BCType> _neumann_bc_map;
@@ -157,7 +161,9 @@ namespace GRINS
 
     std::string _physics_name;
 
-    enum BC_BASE{ PERIODIC = -2,
+    enum BC_BASE{ PERIODIC = -4,
+                  CONSTANT_DIRICHLET,
+                  PARSED_DIRICHLET,
                   AXISYMMETRIC };
 
     //! Flag to cache whether or not there is an axisymmetric boundary present
@@ -200,7 +206,17 @@ namespace GRINS
   inline
   GRINS::BCType BCHandlingBase::get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const
   {
-    return _dirichlet_bc_map.find(bc_id)->second;
+    BCType bc_type_out = -100;
+
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
+      {
+        if( it->first == bc_id ) bc_type_out = it->second;
+      }
+
+    libmesh_assert_not_equal_to( bc_type_out, -100 );
+
+    return bc_type_out;
   }
 
   inline

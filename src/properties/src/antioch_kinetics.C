@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #include "grins_config.h"
 
@@ -57,7 +53,7 @@ namespace GRINS
 
   void AntiochKinetics::omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                                    const libMesh::Real rho,
-                                   const libMesh::Real R_mix,
+                                   const libMesh::Real /* R_mix */,
                                    const std::vector<libMesh::Real>& mass_fractions,
                                    std::vector<libMesh::Real>& omega_dot )
   {

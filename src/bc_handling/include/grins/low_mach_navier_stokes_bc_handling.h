@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
@@ -50,6 +46,8 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
@@ -71,7 +69,7 @@ namespace GRINS
     std::map< GRINS::BoundaryID, libMesh::Real > _T_values;
 
     // We also need another map container
-    std::map< GRINS::BoundaryID, GRINS::BCType> _temp_bc_map;
+     std::vector<std::pair<BoundaryID,BCType> > _temp_bc_map;
 
   private:
 

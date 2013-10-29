@@ -20,21 +20,17 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/average_nusselt_number.h"
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -105,7 +101,7 @@ namespace GRINS
 
   void AverageNusseltNumber::side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
@@ -121,7 +117,7 @@ namespace GRINS
 
 	    unsigned int n_qpoints = c.get_side_qrule().n_points();
 	    
-	    libMesh::Number& qoi = c.elem_qoi[0];
+	    libMesh::Number& qoi = c.get_qois()[0];
 	    
 	    // Loop over quadrature points  
 	    
@@ -145,7 +141,7 @@ namespace GRINS
 
   void AverageNusseltNumber::side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& )
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
@@ -165,7 +161,7 @@ namespace GRINS
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
 
-	    DenseSubVector<Number>& dQ_dT = *c.elem_qoi_subderivatives[0][_T_var];
+	    DenseSubVector<Number>& dQ_dT = c.get_qoi_derivatives(0, _T_var);
 
 	    // Loop over quadrature points  
 	    

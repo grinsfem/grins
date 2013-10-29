@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_HEAT_TRANSFER_BASE_H
 #define GRINS_HEAT_TRANSFER_BASE_H
@@ -32,10 +28,8 @@
 //GRINS
 #include "grins_config.h"
 #include "grins/physics.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "primitive_flow_fe_variables.h"
+#include "primitive_temp_fe_variables.h"
 
 namespace GRINS
 {
@@ -53,9 +47,6 @@ namespace GRINS
 
     ~HeatTransferBase();
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     //! Initialization Heat Transfer variables
     /*!
       Add velocity and pressure variables to system.
@@ -66,7 +57,7 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
   protected:
 
@@ -74,21 +65,9 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    //! Indices for each variable;
-    VariableIndex _T_var; /* Index for temperature field */
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
+    PrimitiveFlowFEVariables _flow_vars;
 
-    //! Names of each variable in the system
-    std::string _T_var_name;
-    std::string _u_var_name, _v_var_name, _w_var_name;
-
-    //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
-
-    //! Element orders, read from input
-    libMeshEnums::Order _T_order, _V_order;
+    PrimitiveTempFEVariables _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

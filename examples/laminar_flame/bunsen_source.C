@@ -20,17 +20,14 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "bunsen_source.h"
 
 // GRINS
 #include "grins_config.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -75,7 +72,7 @@ namespace Bunsen
   }
 
   void BunsenSource::element_time_derivative( bool /*compute_jacobian*/,
-					      libMesh::FEMContext& context,
+					      GRINS::AssemblyContext& context,
 					      GRINS::CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -83,21 +80,21 @@ namespace Bunsen
 #endif
   
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_T_var)->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_T_var)->get_phi();
 
     // Locations of quadrature points
-    const std::vector<libMesh::Point>& x_qp = context.element_fe_var[_T_var]->get_xyz();
+    const std::vector<libMesh::Point>& x_qp = context.get_element_fe(_T_var)->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_T_var); // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -105,7 +102,7 @@ namespace Bunsen
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {

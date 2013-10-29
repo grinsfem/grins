@@ -20,18 +20,16 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/pressure_pinning.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_interface.h"
 
@@ -73,37 +71,37 @@ namespace GRINS
 				   const double penalty )
   {
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
-    libMesh::FEMContext &c = libMesh::libmesh_cast_ref<libMesh::FEMContext&>(context);
+    AssemblyContext &c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
 
-    if (c.elem->contains_point(_pin_location))
+    if (c.get_elem().contains_point(_pin_location))
       {
-	libMesh::DenseSubVector<libMesh::Number> &F_var = *c.elem_subresiduals[var]; // residual
-	libMesh::DenseSubMatrix<libMesh::Number> &K_var = *c.elem_subjacobians[var][var]; // jacobian
+	libMesh::DenseSubVector<libMesh::Number> &F_var = c.get_elem_residual(var); // residual
+	libMesh::DenseSubMatrix<libMesh::Number> &K_var = c.get_elem_jacobian(var, var); // jacobian
 
 	// The number of local degrees of freedom in p variable.
-	const unsigned int n_var_dofs = c.dof_indices_var[var].size();
+	const unsigned int n_var_dofs = c.get_dof_indices(var).size();
 
 	libMesh::Number var_value = c.point_value(var, _pin_location);
 
-	libMesh::FEType fe_type = c.element_fe_var[var]->get_fe_type();
+	libMesh::FEType fe_type = c.get_element_fe(var)->get_fe_type();
       
 	libMesh::Point point_loc_in_masterelem = 
-	  libMesh::FEInterface::inverse_map(c.dim, fe_type, c.elem, _pin_location);
+	  libMesh::FEInterface::inverse_map(c.get_dim(), fe_type, &c.get_elem(), _pin_location);
 
 	std::vector<libMesh::Real> phi(n_var_dofs);
 
 	for (unsigned int i=0; i != n_var_dofs; i++)
-	  phi[i] = libMesh::FEInterface::shape( c.dim, fe_type, c.elem, i, 
+	  phi[i] = libMesh::FEInterface::shape( c.get_dim(), fe_type, &c.get_elem(), i, 
 						point_loc_in_masterelem );
       
 	for (unsigned int i=0; i != n_var_dofs; i++)
 	  {
 	    F_var(i) += penalty*(var_value - _pin_value)*phi[i];
 	  
-	    /** \todo What the hell is the c.elem_solution_derivative all about? */
-	    if (request_jacobian && c.elem_solution_derivative)
+	    /** \todo What the hell is the c.get_elem_solution_derivative() all about? */
+	    if (request_jacobian && c.get_elem_solution_derivative())
 	      {
-		libmesh_assert (c.elem_solution_derivative == 1.0);
+		libmesh_assert (c.get_elem_solution_derivative() == 1.0);
 	      
 		for (unsigned int j=0; j != n_var_dofs; j++)
 		  K_var(i,j) += penalty*phi[i]*phi[j];

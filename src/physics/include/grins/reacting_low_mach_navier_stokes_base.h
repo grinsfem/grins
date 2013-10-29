@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BASE_H
 #define GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BASE_H
@@ -33,10 +29,10 @@
 #include "grins_config.h"
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
-  template<typename Mixture>
   class ReactingLowMachNavierStokesBase : public Physics
   {
   public:
@@ -53,26 +49,49 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext &context );
+    virtual void init_context( AssemblyContext& context );
 
     unsigned int n_species() const;
 
-    libMesh::Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
+    libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
-    void mass_fractions( const libMesh::Point& p, const libMesh::FEMContext& c,
-			 std::vector<libMesh::Real>& mass_fracs ) const;
+    void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
+                         std::vector<libMesh::Real>& mass_fracs ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, unsigned int qp ) const;
 
-    libMesh::Real get_p0_steady_side( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady_side( const AssemblyContext& c, unsigned int qp ) const;
  
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, const libMesh::Point& p ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, const libMesh::Point& p ) const;
 
-    libMesh::Real get_p0_transient( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_transient( const AssemblyContext& c, unsigned int qp ) const;
 
-    const Mixture& gas_mixture() const;
+    //! Method to interface to thermochemistry quantity
+    /*! Intended to be called externally from Physics class, e.g. in a QoI.
+      This way, we can leverage the Physics class for the thermochemistry.*/
+    virtual libMesh::Real cp_mix( const libMesh::Real T,
+                                  const std::vector<libMesh::Real>& Y ) =0;
+
+    //! Method to interface to thermochemistry quantity
+    /*! Intended to be called externally from Physics class, e.g. in a QoI.
+      This way, we can leverage the Physics class for the thermochemistry.*/
+    virtual libMesh::Real mu( const libMesh::Real T,
+                              const std::vector<libMesh::Real>& Y ) =0;
+
+    //! Method to interface to thermochemistry quantity
+    /*! Intended to be called externally from Physics class, e.g. in a QoI.
+      This way, we can leverage the Physics class for the thermochemistry.*/
+    virtual libMesh::Real k( const libMesh::Real T,
+                             const std::vector<libMesh::Real>& Y ) =0;
+
+    //! Method to interface to thermochemistry quantity
+    /*! Intended to be called externally from Physics class, e.g. in a QoI.
+      This way, we can leverage the Physics class for the thermochemistry.*/
+    virtual void D( const libMesh::Real rho, const libMesh::Real cp,
+                    const libMesh::Real k,
+                    std::vector<libMesh::Real>& D ) =0;
 
   protected:
 
@@ -109,8 +128,6 @@ namespace GRINS
     //! Flag to enable thermodynamic pressure calculation
     bool _enable_thermo_press_calc;
 
-    Mixture _gas_mixture;
-
     bool _fixed_density;
 
     libMesh::Real _fixed_rho_value;
@@ -121,40 +138,35 @@ namespace GRINS
 
   }; // class ReactingLowMachNavierStokesBase
 
-  template<class Mixture>
   inline
-  unsigned int ReactingLowMachNavierStokesBase<Mixture>::n_species() const
+  unsigned int ReactingLowMachNavierStokesBase::n_species() const
   { return _n_species; }
 
-  template<class Mixture>
+  
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::T( const libMesh::Point& p, 
-							     const libMesh::FEMContext& c ) const
+  libMesh::Real ReactingLowMachNavierStokesBase::T( const libMesh::Point& p, 
+                                                    const AssemblyContext& c ) const
   { return c.point_value(_T_var,p); }
 
-  
-  template<class Mixture>
   inline
-  void ReactingLowMachNavierStokesBase<Mixture>::mass_fractions( const libMesh::Point& p, 
-								 const libMesh::FEMContext& c,
-								 std::vector<libMesh::Real>& mass_fracs ) const
+  void ReactingLowMachNavierStokesBase::mass_fractions( const libMesh::Point& p, 
+                                                        const AssemblyContext& c,
+                                                        std::vector<libMesh::Real>& mass_fracs ) const
   {
     libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
 
     for( unsigned int var = 0; var < this->_n_species; var++ )
       {
-	mass_fracs[var] = c.point_value(_species_vars[var],p);
+        mass_fracs[var] = c.point_value(_species_vars[var],p);
       }
 
     return;
   }
-  
 
-  template<class Mixture>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::rho( libMesh::Real T, 
-							       libMesh::Real p0,
-                                                               libMesh::Real R_mix) const
+  libMesh::Real ReactingLowMachNavierStokesBase::rho( libMesh::Real T, 
+                                                      libMesh::Real p0,
+                                                      libMesh::Real R_mix) const
   {
     libMesh::Real value = 0;
     if( this->_fixed_density )
@@ -165,79 +177,68 @@ namespace GRINS
     return value;
   }
 
-  template<class Mixture>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::get_p0_steady( const libMesh::FEMContext& c, 
-									 unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
+                                                                unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.interior_value( _p0_var, qp );
+        p0 = c.interior_value( _p0_var, qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
 
-  template<class Mixture>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::get_p0_steady_side( const libMesh::FEMContext& c, 
-									      unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady_side( const AssemblyContext& c, 
+                                                                     unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.side_value( _p0_var, qp );
+        p0 = c.side_value( _p0_var, qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
 
-  template<class Mixture>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::get_p0_steady( const libMesh::FEMContext& c, 
-									 const libMesh::Point& p ) const
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
+                                                                const libMesh::Point& p ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.point_value( _p0_var, p );
+        p0 = c.point_value( _p0_var, p );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
-
-  template<class Mixture>
+  
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase<Mixture>::get_p0_transient( const libMesh::FEMContext& c,
-									    unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_transient( const AssemblyContext& c,
+                                                                   unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.fixed_interior_value( _p0_var, qp );
+        p0 = c.fixed_interior_value( _p0_var, qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
-  }
-
-  template<class Mixture>
-  inline
-  const Mixture& ReactingLowMachNavierStokesBase<Mixture>::gas_mixture() const
-  {
-    return _gas_mixture;
   }
 
 } // namespace GRINS

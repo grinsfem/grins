@@ -20,22 +20,18 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/boundary_conditions.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/cached_values.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
 #include "libmesh/point.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_interface.h"
@@ -47,32 +43,35 @@ namespace GRINS
   {
     return;
   }
-
+  
   BoundaryConditions::~BoundaryConditions( )
   {
     return;
   }
 
-  void BoundaryConditions::apply_neumann( libMesh::FEMContext& context,
-					  const VariableIndex var,
-					  const libMesh::Real sign,
-					  const libMesh::Point& value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann( AssemblyContext& context,
+                                          const VariableIndex var,
+                                          const libMesh::Real sign,
+                                          const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const
   {
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side = side_fe->get_phi();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = side_fe->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	for (unsigned int i=0; i != n_var_dofs; i++)
@@ -84,24 +83,27 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
-							const GRINS::VariableIndex var,
-							const libMesh::Real sign,
-							libMesh::Real value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal( AssemblyContext& context,
+                                                 const VariableIndex var,
+                                                 const libMesh::Real sign,
+                                                 const FEShape& value ) const
   {
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side = side_fe->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	for (unsigned int i=0; i != n_var_dofs; i++)
@@ -113,28 +115,33 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
-                                                                     const GRINS::VariableIndex var,
-                                                                     const libMesh::Real sign,
-                                                                     libMesh::Real value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal_axisymmetric( AssemblyContext& context,
+                                                              const VariableIndex var,
+                                                              const libMesh::Real sign,
+                                                              const FEShape& value ) const
   {
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side =
+      side_fe->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      side_fe->get_xyz();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         const libMesh::Number r = var_qpoint[qp](0);
@@ -148,31 +155,34 @@ namespace GRINS
     return;
   }
 
-
-  void BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
-						       const VariableIndex var,
-						       const libMesh::Real sign,
-						       const libMesh::Point& value ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_axisymmetric( AssemblyContext& context,
+                                                       const VariableIndex var,
+                                                       const libMesh::Real sign,
+                                                       const typename libMesh::TensorTools::IncrementRank<FEShape>::type& value ) const
   {
+    libMesh::FEGenericBase<FEShape>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+    const std::vector<std::vector<FEShape> >& var_phi_side =
+      side_fe->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      side_fe->get_xyz();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = side_fe->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Number r = var_qpoint[qp](0);
@@ -186,29 +196,33 @@ namespace GRINS
     return;
   }
 
-  void BoundaryConditions::apply_neumann( libMesh::FEMContext& context,
-					  const CachedValues& cache,
-					  const bool request_jacobian,
-					  const VariableIndex var,
-					  const libMesh::Real sign,
-					  const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann( AssemblyContext& context,
+                                          const CachedValues& cache,
+                                          const bool request_jacobian,
+                                          const VariableIndex var,
+                                          const libMesh::Real sign,
+                                          const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
+    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      side_fe->get_phi();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = side_fe->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var,var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -240,11 +254,14 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::FEGenericBase<libMesh::Real>* side_fe2 = NULL; 
+            context.get_side_fe( *var2, side_fe2 );
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var,*var2); // jacobian
+
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      side_fe2->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -264,27 +281,31 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal( libMesh::FEMContext& context,
-							const CachedValues& cache,
-							const bool request_jacobian,
-							const GRINS::VariableIndex var,
-							const libMesh::Real sign,
-							const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal( AssemblyContext& context,
+                                                 const CachedValues& cache,
+                                                 const bool request_jacobian,
+                                                 const VariableIndex var,
+                                                 const libMesh::Real sign,
+                                                 const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
+    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      side_fe->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var,var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -308,19 +329,22 @@ namespace GRINS
 
     // Now must take care of the case that the boundary condition depends on variables
     // other than var.
-    std::vector<GRINS::VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
+    std::vector<VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
 
     if( (other_jac_vars.size() > 0) && request_jacobian )
       {
-	for( std::vector<GRINS::VariableIndex>::const_iterator var2 = other_jac_vars.begin();
+	for( std::vector<VariableIndex>::const_iterator var2 = other_jac_vars.begin();
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::FEGenericBase<libMesh::Real>* side_fe2 = NULL; 
+            context.get_side_fe( *var2, side_fe2 );
+
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var,*var2); // jacobian
             
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      side_fe2->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -340,31 +364,33 @@ namespace GRINS
     return;
   }
 
-  void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric( libMesh::FEMContext& context,
-                                                                     const CachedValues& cache,
-                                                                     const bool request_jacobian,
-                                                                     const GRINS::VariableIndex var,
-                                                                     const libMesh::Real sign,
-                                                                     const std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_normal_axisymmetric( AssemblyContext& context,
+                                                              const CachedValues& cache,
+                                                              const bool request_jacobian,
+                                                              const VariableIndex var,
+                                                              const libMesh::Real sign,
+                                                              const std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
+    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+    const std::vector<std::vector<libMesh::Real> >& var_phi_side = side_fe->get_phi();
 
     // Physical location of the quadrature points
-    const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+    const std::vector<libMesh::Point>& var_qpoint = side_fe->get_xyz();
     
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var,var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -390,19 +416,22 @@ namespace GRINS
 
     // Now must take care of the case that the boundary condition depends on variables
     // other than var.
-    std::vector<GRINS::VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
+    std::vector<VariableIndex> other_jac_vars = neumann_func->get_other_jac_vars();
 
     if( (other_jac_vars.size() > 0) && request_jacobian )
       {
-	for( std::vector<GRINS::VariableIndex>::const_iterator var2 = other_jac_vars.begin();
+	for( std::vector<VariableIndex>::const_iterator var2 = other_jac_vars.begin();
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::FEGenericBase<libMesh::Real>* side_fe2 = NULL; 
+            context.get_side_fe( *var2, side_fe2 );
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var,*var2); // jacobian
+
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+	      side_fe2->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -425,34 +454,37 @@ namespace GRINS
   }
 
 
-
-  void GRINS::BoundaryConditions::apply_neumann_axisymmetric( libMesh::FEMContext& context,
-							      const CachedValues& cache,
-							      const bool request_jacobian,
-							      const GRINS::VariableIndex var,
-							      const libMesh::Real sign,
-							      std::tr1::shared_ptr<GRINS::NeumannFuncObj> neumann_func ) const
+  template<typename FEShape>
+  void BoundaryConditions::apply_neumann_axisymmetric( AssemblyContext& context,
+                                                       const CachedValues& cache,
+                                                       const bool request_jacobian,
+                                                       const VariableIndex var,
+                                                       const libMesh::Real sign,
+                                                       std::tr1::shared_ptr<NeumannFuncObj> neumann_func ) const
   {
+    libMesh::FEGenericBase<libMesh::Real>* side_fe = NULL; 
+    context.get_side_fe( var, side_fe );
+
     // The number of local degrees of freedom
-    const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+    const unsigned int n_var_dofs = context.get_dof_indices(var).size();
   
     // Element Jacobian * quadrature weight for side integration.
-    const std::vector<libMesh::Real> &JxW_side = context.side_fe_var[var]->get_JxW();
+    const std::vector<libMesh::Real> &JxW_side = side_fe->get_JxW();
 
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side =
-      context.side_fe_var[var]->get_phi();
+      side_fe->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& var_qpoint =
-      context.side_fe_var[var]->get_xyz();
+      side_fe->get_xyz();
 
-    const std::vector<libMesh::Point> &normals = context.side_fe_var[var]->get_normals();
+    const std::vector<libMesh::Point> &normals = side_fe->get_normals();
 
-    libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-    libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+    libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+    libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var,var); // jacobian
 
-    unsigned int n_qpoints = context.side_qrule->n_points();
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -486,11 +518,14 @@ namespace GRINS
 	     var2 != other_jac_vars.end();
 	     var2++ )
 	  {
-            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = *context.elem_subjacobians[var][*var2]; // jacobian
+            libMesh::FEGenericBase<libMesh::Real>* side_fe2 = NULL; 
+            context.get_side_fe( *var2, side_fe2 );
 
-	    const unsigned int n_var2_dofs = context.dof_indices_var[*var2].size();
+            libMesh::DenseSubMatrix<libMesh::Number> &K_var2 = context.get_elem_jacobian(var,*var2); // jacobian
+
+	    const unsigned int n_var2_dofs = context.get_dof_indices(*var2).size();
 	    const std::vector<std::vector<libMesh::Real> >& var2_phi_side =
-	      context.side_fe_var[*var2]->get_phi();
+              side_fe2->get_phi();
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 	      {
@@ -549,44 +584,50 @@ namespace GRINS
 
     return;
   }
-
-  void BoundaryConditions::pin_value( libMesh::FEMContext& context,
-				      const CachedValues& /*cache*/,
-				      const bool request_jacobian,
-				      const VariableIndex var, 
-				      const double pin_value,
-				      const libMesh::Point& pin_location, 
-				      const double penalty )
+  
+  template<typename FEShape>
+  void BoundaryConditions::pin_value( AssemblyContext& context,
+                                      const CachedValues& /*cache*/,
+                                      const bool request_jacobian,
+                                      const VariableIndex var, 
+                                      const double pin_value,
+                                      const libMesh::Point& pin_location, 
+                                      const double penalty )
   {
-    if (context.elem->contains_point(pin_location))
+    if (context.get_elem().contains_point(pin_location))
       {
-	libMesh::DenseSubVector<libMesh::Number> &F_var = *context.elem_subresiduals[var]; // residual
-	libMesh::DenseSubMatrix<libMesh::Number> &K_var = *context.elem_subjacobians[var][var]; // jacobian
+        libMesh::FEGenericBase<libMesh::Real>* elem_fe = NULL; 
+        context.get_element_fe( var, elem_fe );
+
+	libMesh::DenseSubVector<libMesh::Number> &F_var = context.get_elem_residual(var); // residual
+	libMesh::DenseSubMatrix<libMesh::Number> &K_var = context.get_elem_jacobian(var,var); // jacobian
 
 	// The number of local degrees of freedom in p variable.
-	const unsigned int n_var_dofs = context.dof_indices_var[var].size();
+	const unsigned int n_var_dofs = context.get_dof_indices(var).size();
 
 	libMesh::Number var_value = context.point_value(var, pin_location);
 
-	libMesh::FEType fe_type = context.element_fe_var[var]->get_fe_type();
+	libMesh::FEType fe_type = elem_fe->get_fe_type();
       
 	libMesh::Point point_loc_in_masterelem = 
-	  libMesh::FEInterface::inverse_map(context.dim, fe_type, context.elem, pin_location);
+	  libMesh::FEInterface::inverse_map(context.get_dim(), fe_type, &context.get_elem(), pin_location);
 
 	std::vector<libMesh::Real> phi(n_var_dofs);
 
 	for (unsigned int i=0; i != n_var_dofs; i++)
-	  phi[i] = libMesh::FEInterface::shape( context.dim, fe_type, context.elem, i, 
-						point_loc_in_masterelem );
+          {
+            phi[i] = libMesh::FEInterface::shape( context.get_dim(), fe_type, &context.get_elem(), i, 
+                                                  point_loc_in_masterelem );
+          }
       
 	for (unsigned int i=0; i != n_var_dofs; i++)
 	  {
 	    F_var(i) += penalty*(var_value - pin_value)*phi[i];
 	  
-	    /** \todo What the hell is the context.elem_solution_derivative all about? */
-	    if (request_jacobian && context.elem_solution_derivative)
+	    /** \todo What the hell is the context.get_elem_solution_derivative() all about? */
+	    if (request_jacobian && context.get_elem_solution_derivative())
 	      {
-		libmesh_assert (context.elem_solution_derivative == 1.0);
+		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 	      
 		for (unsigned int j=0; j != n_var_dofs; j++)
 		  K_var(i,j) += penalty*phi[i]*phi[j];
@@ -598,4 +639,35 @@ namespace GRINS
     return;
   }
 
+
 } // namespace GRINS
+
+// Instantiate
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::Real>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealTensor&) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealTensor&) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real& ) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient& ) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::Real>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::Real&) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::RealGradient>(AssemblyContext&, const GRINS::VariableIndex, const libMesh::Real, const libMesh::RealGradient&) const;
+
+
+
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::Real>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann<libMesh::RealGradient>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::Real>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_axisymmetric<libMesh::RealGradient>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::Real>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal<libMesh::RealGradient>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::Real>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+template void GRINS::BoundaryConditions::apply_neumann_normal_axisymmetric<libMesh::RealGradient>(AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const libMesh::Real, std::tr1::shared_ptr<GRINS::NeumannFuncObj>) const;
+
+template void GRINS::BoundaryConditions::pin_value<libMesh::Real>( AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const double, const libMesh::Point&, const double);
+template void GRINS::BoundaryConditions::pin_value<libMesh::RealGradient>( AssemblyContext&, const GRINS::CachedValues&, const bool, const GRINS::VariableIndex, const double, const libMesh::Point&, const double);

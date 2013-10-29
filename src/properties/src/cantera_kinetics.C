@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #include "grins_config.h"
 
@@ -40,8 +36,10 @@
 // libMesh
 #include "libmesh/getpot.h"
 
-// Cantera
+// Cantera (with compiler warnings disabled)
+#include "libmesh/ignore_warnings.h"
 #include "cantera/IdealGasMix.h"
+#include "libmesh/restore_warnings.h"
 
 namespace GRINS
 {

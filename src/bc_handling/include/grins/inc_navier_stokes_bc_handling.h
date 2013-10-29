@@ -20,16 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_INC_NAVIER_STOKES_BC_HANDLING_H
 #define GRINS_INC_NAVIER_STOKES_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/primitive_flow_variables.h"
 
 namespace GRINS
 {
@@ -50,6 +47,8 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
@@ -59,7 +58,7 @@ namespace GRINS
     
   protected:
 
-    std::string _u_var_name, _v_var_name, _w_var_name;
+    PrimitiveFlowVariables _flow_vars;
 
   private:
 

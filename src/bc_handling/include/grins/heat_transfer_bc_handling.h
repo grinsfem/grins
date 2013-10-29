@@ -20,16 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_BC_HANDLING_H
-#define HEAT_TRANSFER_BC_HANDLING_H
+
+#ifndef GRINS_HEAT_TRANSFER_BC_HANDLING_H
+#define GRINS_HEAT_TRANSFER_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -49,6 +46,8 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, 
@@ -56,7 +55,7 @@ namespace GRINS
 					  GRINS::BoundaryID bc_id, 
 					  GRINS::BCType bc_type ) const;
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
 					 const GRINS::CachedValues& cache,
 					 const bool request_jacobian,
 					 const GRINS::BoundaryID bc_id,
@@ -64,9 +63,7 @@ namespace GRINS
     
   protected:
 
-    std::string _T_var_name;
-
-    VariableIndex _T_var;
+    PrimitiveTempVariables _temp_vars;
 
   private:
 
@@ -79,4 +76,4 @@ namespace GRINS
 
   };
 }
-#endif // HEAT_TRANSFER_BC_HANDLING_H
+#endif // GRINS_HEAT_TRANSFER_BC_HANDLING_H

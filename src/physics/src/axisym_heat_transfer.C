@@ -20,25 +20,22 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/axisym_heat_transfer.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/axisym_heat_transfer_bc_handling.h"
 #include "grins/constant_conductivity.h"
+#include "grins/generic_ic_handler.h"
 
 // libMesh
 #include "libmesh/utility.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
@@ -53,7 +50,8 @@ namespace GRINS
     this->read_input_options(input);
   
     // This is deleted in the base class
-    _bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
+    this->_bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
+    this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
   }
@@ -115,20 +113,20 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::init_context( libMesh::FEMContext& context )
+  void AxisymmetricHeatTransfer<Conductivity>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.element_fe_var[_T_var]->get_JxW();
-    context.element_fe_var[_T_var]->get_phi();
-    context.element_fe_var[_T_var]->get_dphi();
-    context.element_fe_var[_T_var]->get_xyz();
+    context.get_element_fe(_T_var)->get_JxW();
+    context.get_element_fe(_T_var)->get_phi();
+    context.get_element_fe(_T_var)->get_dphi();
+    context.get_element_fe(_T_var)->get_xyz();
 
-    context.side_fe_var[_T_var]->get_JxW();
-    context.side_fe_var[_T_var]->get_phi();
-    context.side_fe_var[_T_var]->get_dphi();
-    context.side_fe_var[_T_var]->get_xyz();
+    context.get_side_fe(_T_var)->get_JxW();
+    context.get_side_fe(_T_var)->get_phi();
+    context.get_side_fe(_T_var)->get_dphi();
+    context.get_side_fe(_T_var)->get_xyz();
 
     // _u_var is registered so can we assume things related to _u_var
     // are available in FEMContext
@@ -138,7 +136,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool compute_jacobian,
-									libMesh::FEMContext& context,
+									AssemblyContext& context,
 									CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -146,8 +144,8 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
-    const unsigned int n_u_dofs = context.dof_indices_var[_u_r_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_u_r_var).size();
 
     //TODO: check n_T_dofs is same as n_u_dofs, n_v_dofs, n_w_dofs
 
@@ -156,32 +154,32 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_T_var)->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_T_var)->get_phi();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.element_fe_var[_u_r_var]->get_phi();
+      context.get_element_fe(_u_r_var)->get_phi();
 
     // The temperature shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[_T_var]->get_dphi();
+      context.get_element_fe(_T_var)->get_dphi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      context.element_fe_var[_u_r_var]->get_xyz();
+      context.get_element_fe(_u_r_var)->get_xyz();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<Number> &FT = context.get_elem_residual(_T_var); // R_{T}
 
-    libMesh::DenseSubMatrix<Number> &KTT = *context.elem_subjacobians[_T_var][_T_var]; // R_{T},{T}
+    libMesh::DenseSubMatrix<Number> &KTT = context.get_elem_jacobian(_T_var, _T_var); // R_{T},{T}
 
-    libMesh::DenseSubMatrix<Number> &KTr = *context.elem_subjacobians[_T_var][_u_r_var]; // R_{T},{r}
-    libMesh::DenseSubMatrix<Number> &KTz = *context.elem_subjacobians[_T_var][_u_z_var]; // R_{T},{z}
+    libMesh::DenseSubMatrix<Number> &KTr = context.get_elem_jacobian(_T_var, _u_r_var); // R_{T},{r}
+    libMesh::DenseSubMatrix<Number> &KTz = context.get_elem_jacobian(_T_var, _u_z_var); // R_{T},{z}
 
 
     // Now we will build the element Jacobian and residual.
@@ -190,7 +188,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -217,9 +215,9 @@ namespace GRINS
 	      (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
 	       -k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
-	    if (compute_jacobian && context.elem_solution_derivative)
+	    if (compute_jacobian && context.get_elem_solution_derivative())
 	      {
-		libmesh_assert (context.elem_solution_derivative == 1.0);
+		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
 		for (unsigned int j=0; j != n_T_dofs; j++)
 		  {
@@ -247,7 +245,7 @@ namespace GRINS
 		    KTz(i,j) += JxW[qp]*r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
 		  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.elem_solution_derivative)
+	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -261,7 +259,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
-								     libMesh::FEMContext& context,
+								     AssemblyContext& context,
 								     CachedValues& cache )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -287,7 +285,7 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool compute_jacobian,
-							      libMesh::FEMContext& context,
+							      AssemblyContext& context,
 							      CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -299,25 +297,25 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<Real> &JxW = 
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_T_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<Real> >& phi = 
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_T_var)->get_phi();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      context.element_fe_var[_u_r_var]->get_xyz();
+      context.get_element_fe(_u_r_var)->get_xyz();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F = *context.elem_subresiduals[_T_var];
+    DenseSubVector<Real> &F = context.get_elem_residual(_T_var);
 
-    DenseSubMatrix<Real> &M = *context.elem_subjacobians[_T_var][_T_var];
+    DenseSubMatrix<Real> &M = context.get_elem_jacobian(_T_var, _T_var);
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {

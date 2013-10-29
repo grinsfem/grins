@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
 #define GRINS_INC_NAVIER_STOKES_ADJOINT_STAB_H
 
@@ -43,11 +39,16 @@ namespace GRINS
     virtual ~IncompressibleNavierStokesAdjointStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
+
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
     
   private:

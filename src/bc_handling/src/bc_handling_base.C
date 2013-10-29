@@ -20,14 +20,14 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/bc_handling_base.h"
+#include "grins/composite_function.h"
+
+// GRINS
+#include "grins/string_utils.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -36,6 +36,8 @@
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/periodic_boundary.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/const_function.h"
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -66,10 +68,14 @@ namespace GRINS
   }
 
   void BCHandlingBase::read_bc_data( const GetPot& input, const std::string& id_str,
-				     const std::string& bc_str)
+				     const std::string& bc_str,
+				     const std::string& var_str,
+				     const std::string& val_str)
   {
     int num_ids = input.vector_variable_size(id_str);
     int num_bcs = input.vector_variable_size(bc_str);
+    // int num_vars = input.vector_variable_size(var_str);
+    // int num_vals = input.vector_variable_size(val_str);
 
     if( num_ids != num_bcs )
       {
@@ -89,7 +95,11 @@ namespace GRINS
 	ss << bc_id;
 	std::string bc_id_string = ss.str();
 
-	this->init_bc_types( bc_id, bc_id_string, bc_type, input );
+        std::string bc_val = input(val_str, std::string(""), i );
+
+        std::string bc_vars = input(var_str, std::string(""), i );
+
+	this->init_bc_types( bc_id, bc_id_string, bc_type, bc_vars, bc_val, input );
       }
 
     return;
@@ -109,7 +119,10 @@ namespace GRINS
 	 it != _dirichlet_bound_funcs.end();
 	 it++ )
       {
-	// First, get variable names and convert them to variable id's
+	// First, get variable names. We convert them to variable ids,
+        // both to tell the DirichletBoundary what variables to
+        // project and to tell the CompositeFunction what remapping to
+        // do.
 	std::vector<VariableName> var_names = (*it).get_var_names();
       
 	std::vector<VariableIndex> dbc_vars;
@@ -127,10 +140,15 @@ namespace GRINS
 	// Get Dirichlet bc functor
 	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
 
+        // Remap indices as necessary
+        GRINS::CompositeFunction<Number> remapped_func;
+        remapped_func.attach_subfunction(*func, dbc_vars);
+
 	// Now create DirichletBoundary object and give it to libMesh
 	// libMesh makes it own copy of the DirichletBoundary so we can
 	// let this one die.
-	libMesh::DirichletBoundary dbc( bc_ids, dbc_vars, &*func );
+	libMesh::DirichletBoundary dbc( bc_ids, dbc_vars,
+                                        &remapped_func );
       
 	dof_map.add_dirichlet_boundary( dbc );
       }
@@ -142,9 +160,8 @@ namespace GRINS
   {
     libMesh::DofMap& dof_map = system->get_dof_map();
 
-    for( std::map< BoundaryID,BCType >::const_iterator it = _dirichlet_bc_map.begin();
-	 it != _dirichlet_bc_map.end();
-	 it++ )
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
       {
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }
@@ -183,7 +200,7 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::apply_neumann_bcs( libMesh::FEMContext& context,
+  void BCHandlingBase::apply_neumann_bcs( AssemblyContext& context,
 					  const GRINS::CachedValues& cache,
 					  const bool request_jacobian,
 					  const BoundaryID bc_id ) const
@@ -203,7 +220,7 @@ namespace GRINS
 
   void BCHandlingBase::set_dirichlet_bc_type( BoundaryID bc_id, int bc_type )
   {
-    _dirichlet_bc_map[bc_id] = bc_type;
+    _dirichlet_bc_map.push_back( std::make_pair(bc_id, bc_type) );
     return;
   }
 
@@ -237,6 +254,14 @@ namespace GRINS
       {
         bc_type_out = PERIODIC;
       }
+    else if( bc_type_in == "constant_dirichlet" )
+      {
+        bc_type_out = CONSTANT_DIRICHLET;
+      }
+    else if( bc_type_in == "parsed_dirichlet" )
+      {
+        bc_type_out = PARSED_DIRICHLET;
+      }
     else if( bc_type_in == "axisymmetric" )
       {
         bc_type_out = AXISYMMETRIC;
@@ -256,6 +281,8 @@ namespace GRINS
   void BCHandlingBase::init_bc_types( const BoundaryID bc_id, 
 				      const std::string& bc_id_string, 
 				      const int bc_type, 
+                                      const std::string& bc_vars,
+                                      const std::string& bc_value,
 				      const GetPot& input )
   {
     switch(bc_type)
@@ -343,6 +370,40 @@ namespace GRINS
 	}
 	break;
 
+      case(CONSTANT_DIRICHLET):
+	{
+          DBCContainer dirichlet_bc;
+
+          dirichlet_bc.add_var_name(bc_vars);
+
+          dirichlet_bc.add_bc_id(bc_id);
+
+          Number bc_val_num = string_to_T<Number>(bc_value);
+
+          dirichlet_bc.set_func
+            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+              (new libMesh::ConstFunction<Number>(bc_val_num)));
+
+          this->attach_dirichlet_bound_func(dirichlet_bc);
+	}
+	break;
+
+      case(PARSED_DIRICHLET):
+	{
+          DBCContainer dirichlet_bc;
+
+          dirichlet_bc.add_var_name(bc_vars);
+
+          dirichlet_bc.add_bc_id(bc_id);
+
+          dirichlet_bc.set_func
+            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+              (new libMesh::ParsedFunction<Number>(bc_value)));
+
+          this->attach_dirichlet_bound_func(dirichlet_bc);
+	}
+	break;
+
       default:
 	{
 	  std::cerr << "==========================================================" 
@@ -364,7 +425,7 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::user_apply_neumann_bcs( libMesh::FEMContext& /*context*/,
+  void BCHandlingBase::user_apply_neumann_bcs( AssemblyContext& /*context*/,
 					       const GRINS::CachedValues& /*cache*/,
 					       const bool /*request_jacobian*/,
 					       const GRINS::BoundaryID /*bc_id*/,

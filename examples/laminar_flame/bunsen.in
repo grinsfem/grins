@@ -13,10 +13,14 @@ z_max = '0.003'
 
 enabled_physics = 'ReactingLowMachNavierStokes'
 
-[./Chemistry]
+[./Antioch]
+
+Le = 1.0
+
+[../Chemistry]
 
 species   = 'H2 O2 H2O H O OH HO2 N2'
-chem_file = 'bunsen_reduced.xml'
+chem_file = 'bunsen.xml'
 mixture   = 'bunsen'
 
 [../Transport]
@@ -47,9 +51,9 @@ p0 = '1e5' #[Pa]
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
 
-chemistry_library      = 'grins'
-transport_library      = 'grins_constant'
-thermodynamics_library = 'grins_cea'
+thermochemistry_library = 'antioch'
+transport_library       = 'grins_constant'
+thermodynamics_library  = 'grins_cea'
 
 # Boundary ids:
 # 1 - inner radius inlet

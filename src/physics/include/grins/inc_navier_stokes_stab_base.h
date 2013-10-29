@@ -20,13 +20,9 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-#ifndef INC_NAVIER_STOKES_STAB_BASE_H
-#define INC_NAVIER_STOKES_STAB_BASE_H
+
+#ifndef GRINS_INC_NAVIER_STOKES_STAB_BASE_H
+#define GRINS_INC_NAVIER_STOKES_STAB_BASE_H
 
 //GRINS
 #include "grins/inc_navier_stokes_base.h"
@@ -45,21 +41,14 @@ namespace GRINS
     virtual ~IncompressibleNavierStokesStabilizationBase();
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
-    libMesh::Real compute_res_continuity( libMesh::FEMContext& context,
-					  unsigned int qp ) const;
-    
-    libMesh::RealGradient compute_res_momentum_steady( libMesh::FEMContext& context,
-						       unsigned int qp ) const;
-    
-    libMesh::RealGradient compute_res_momentum_transient( libMesh::FEMContext& context,
-							  unsigned int qp ) const;
+    virtual void init_variables( libMesh::FEMSystem* system );
 
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-    
+
   private:
 
     IncompressibleNavierStokesStabilizationBase();
@@ -68,4 +57,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //INC_NAVIER_STOKES_STAB_BASE_H
+#endif // GRINS_INC_NAVIER_STOKES_STAB_BASE_H

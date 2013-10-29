@@ -20,16 +20,17 @@
 // 02110-1301 USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_BUNSEN_SOURCE_H
 #define GRINS_BUNSEN_SOURCE_H
 
 // GRINS
 #include "grins/physics.h"
+
+namespace GRINS
+{
+  class AssemblyContext;
+}
 
 namespace Bunsen
 {
@@ -45,7 +46,7 @@ namespace Bunsen
     virtual void init_variables( libMesh::FEMSystem* system );
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  GRINS::AssemblyContext& context,
 					  GRINS::CachedValues& cache );
 
   protected:

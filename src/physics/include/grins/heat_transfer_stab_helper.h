@@ -20,19 +20,15 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_HEAT_TRANSFER_STAB_HELPER_H
 #define GRINS_HEAT_TRANSFER_STAB_HELPER_H
 
 //GRINS
 #include "grins/stab_helper.h"
-
-// libMesh
-#include "libmesh/fem_context.h"
+#include "grins/assembly_context.h"
+#include "grins/primitive_temp_variables.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -47,23 +43,40 @@ namespace GRINS
 
     ~HeatTransferStabilizationHelper();
 
-    libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
-				      libMesh::RealTensor& G,
-				      libMesh::Real rho,
-				      libMesh::Real cp,
-				      libMesh::Real k,
-				      libMesh::Gradient U,
-				      bool is_steady ) const;
+    void init( libMesh::FEMSystem& system );
+
+    libMesh::Real compute_res_energy_steady( AssemblyContext& context,
+                                             unsigned int qp,
+                                             const libMesh::Real rho,
+                                             const libMesh::Real Cp,
+                                             const libMesh::Real k ) const;
+
+    libMesh::Real compute_res_energy_transient( AssemblyContext& context,
+                                                unsigned int qp,
+                                                const libMesh::Real rho,
+                                                const libMesh::Real Cp ) const;
+
+    libMesh::Real compute_tau_energy( AssemblyContext& c,
+                                      libMesh::RealTensor& G,
+                                      libMesh::Real rho,
+                                      libMesh::Real cp,
+                                      libMesh::Real k,
+                                      libMesh::Gradient U,
+                                      bool is_steady ) const;
 
   protected:
 
     libMesh::Real _C, _tau_factor;
 
+    PrimitiveTempVariables _temp_vars;
+
+    PrimitiveFlowVariables _flow_vars;
+
   }; // class HeatTransferStabilizationHelper
 
   /* ------------- Inline Functions ---------------*/
   inline
-  libMesh::Real HeatTransferStabilizationHelper::compute_tau_energy( libMesh::FEMContext& c,
+  libMesh::Real HeatTransferStabilizationHelper::compute_tau_energy( AssemblyContext& c,
 								     libMesh::RealTensor& G,
 								     libMesh::Real rho,
 								     libMesh::Real cp,

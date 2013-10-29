@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_BRAACK_STAB_H
 
@@ -45,32 +41,32 @@ namespace GRINS
     virtual ~LowMachNavierStokesBraackStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
   protected:
 
     void assemble_continuity_time_deriv( bool compute_jacobian,
-					 libMesh::FEMContext& context );
+					 AssemblyContext& context );
 
     void assemble_momentum_time_deriv( bool compute_jacobian,
-				       libMesh::FEMContext& context );
+				       AssemblyContext& context );
 
     void assemble_energy_time_deriv( bool compute_jacobian,
-				     libMesh::FEMContext& context );
+				     AssemblyContext& context );
 
     void assemble_continuity_mass_residual( bool compute_jacobian,
-					    libMesh::FEMContext& context );
+					    AssemblyContext& context );
 
     void assemble_momentum_mass_residual( bool compute_jacobian,
-					  libMesh::FEMContext& context );
+					  AssemblyContext& context );
 
     void assemble_energy_mass_residual( bool compute_jacobian,
-					libMesh::FEMContext& context );
+					AssemblyContext& context );
     
   private:
     LowMachNavierStokesBraackStabilization();

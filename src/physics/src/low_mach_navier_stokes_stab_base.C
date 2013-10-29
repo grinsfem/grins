@@ -20,16 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/low_mach_navier_stokes_stab_base.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
@@ -53,23 +50,23 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesStabilizationBase<Mu,SH,TC>::init_context( libMesh::FEMContext &context )
+  void LowMachNavierStokesStabilizationBase<Mu,SH,TC>::init_context( AssemblyContext& context )
   {
     // First call base class
     LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);
   
     // We need pressure derivatives
-    context.element_fe_var[this->_p_var]->get_dphi();
+    context.get_element_fe(this->_p_var)->get_dphi();
 
     // We also need second derivatives, so initialize those.
-    context.element_fe_var[this->_u_var]->get_d2phi();
-    context.element_fe_var[this->_T_var]->get_d2phi();
+    context.get_element_fe(this->_u_var)->get_d2phi();
+    context.get_element_fe(this->_T_var)->get_d2phi();
 
     return;
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( AssemblyContext& context,
 											       unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -95,7 +92,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( AssemblyContext& context,
 												  unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -115,7 +112,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( libMesh::FEMContext& context,
+  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( AssemblyContext& context,
 												     unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -204,7 +201,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( libMesh::FEMContext& context,
+  libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( AssemblyContext& context,
 													unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -219,7 +216,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( AssemblyContext& context,
 											   unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
@@ -239,7 +236,7 @@ namespace GRINS
 
 
   template<class Mu, class SH, class TC>
-  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( libMesh::FEMContext& context,
+  libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( AssemblyContext& context,
 											      unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);

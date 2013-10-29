@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_INC_NAVIER_STOKES_H
 #define GRINS_INC_NAVIER_STOKES_H
@@ -53,17 +49,21 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
-				     libMesh::FEMContext& context,
+				     AssemblyContext& context,
 				     CachedValues& cache );
+
+    virtual void side_constraint( bool compute_jacobian,
+                                  AssemblyContext& context,
+                                  CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
 
   protected:

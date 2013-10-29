@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_CANTERA_MIXTURE_H
 #define GRINS_CANTERA_MIXTURE_H
@@ -36,9 +32,11 @@
 // libMesh
 #include "libmesh/threads.h"
 
-// Cantera
+// Cantera (with compiler warnings disabled)
+#include "libmesh/ignore_warnings.h"
 #include "cantera/IdealGasMix.h"
 #include "cantera/transport.h"
+#include "libmesh/restore_warnings.h"
 
 // Boost
 #include <boost/scoped_ptr.hpp>

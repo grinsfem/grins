@@ -67,7 +67,11 @@ species_bc_types = 'prescribed_species catalytic_wall'
 bound_species_3 = '0.6 0.4'
 
 wall_catalytic_reactions_2 = 'N->N2'
-gamma_N_2 = '0.001'
+
+gamma_N_2_type = 'arrhenius'
+
+gamma0_N_2 = '0.001'
+Ta_N_2 = '300'
 
 # Not used at the moment - dummy.
 gamma_N2_2 = '0.00070710678'

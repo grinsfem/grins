@@ -20,13 +20,9 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-#ifndef HEAT_TRANSFER_STAB_BASE_H
-#define HEAT_TRANSFER_STAB_BASE_H
+
+#ifndef GRINS_HEAT_TRANSFER_STAB_BASE_H
+#define GRINS_HEAT_TRANSFER_STAB_BASE_H
 
 //GRINS
 #include "grins/heat_transfer_base.h"
@@ -46,18 +42,14 @@ namespace GRINS
     virtual ~HeatTransferStabilizationBase();
 
     //! Initialize context for added physics variables
-    virtual void init_context( libMesh::FEMContext& context );
-    
-    libMesh::Real compute_res_steady( libMesh::FEMContext& context,
-				      unsigned int qp ) const;
-    
-    libMesh::Real compute_res_transient( libMesh::FEMContext& context,
-					 unsigned int qp ) const;
+    virtual void init_context( AssemblyContext& context );
+
+    virtual void init_variables( libMesh::FEMSystem* system );
 
   protected:
 
     HeatTransferStabilizationHelper _stab_helper;
-    
+
   private:
 
     HeatTransferStabilizationBase();
@@ -66,4 +58,4 @@ namespace GRINS
 
 } // End namespace GRINS
 
-#endif //HEAT_TRANSFER_STAB_BASE_H
+#endif // GRINS_HEAT_TRANSFER_STAB_BASE_H

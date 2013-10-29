@@ -20,23 +20,17 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/heat_transfer_source.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_source_func.h"
 
 // libMesh
-#include "libmesh/utility.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
@@ -47,9 +41,7 @@ namespace GRINS
   HeatTransferSource<SourceFunction>::HeatTransferSource( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _source(input),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) ),
-      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+heat_transfer+"/FE_family", "LAGRANGE") ) ),
-      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+heat_transfer+"/T_order", "SECOND") ) )
+      _temp_vars(input,heat_transfer)
   {
     return;
   }
@@ -63,14 +55,14 @@ namespace GRINS
   template< class SourceFunction >
   void HeatTransferSource<SourceFunction>::init_variables( libMesh::FEMSystem* system )
   {
-     _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
+    _temp_vars.init(system);
 
     return;
   }
 
   template< class SourceFunction >
   void HeatTransferSource<SourceFunction>::element_time_derivative( bool /*compute_jacobian*/,
-								    libMesh::FEMContext& context,
+								    AssemblyContext& context,
 								    CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -78,21 +70,21 @@ namespace GRINS
 #endif
   
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[_T_var]->get_JxW();
+      context.get_element_fe(_temp_vars.T_var())->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.element_fe_var[_T_var]->get_phi();
+      context.get_element_fe(_temp_vars.T_var())->get_phi();
 
     // Locations of quadrature points
-    const std::vector<libMesh::Point>& x_qp = context.element_fe_var[_T_var]->get_xyz();
+    const std::vector<libMesh::Point>& x_qp = context.get_element_fe(_temp_vars.T_var())->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_temp_vars.T_var()); // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -100,7 +92,7 @@ namespace GRINS
     // calculated at each quadrature point by summing the
     // solution degree-of-freedom values by the appropriate
     // weight functions.
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {

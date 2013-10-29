@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/physics_factory.h"
@@ -44,6 +40,7 @@
 #include "grins/heat_transfer_adjoint_stab.h"
 #include "grins/axisym_heat_transfer.h"
 #include "grins/boussinesq_buoyancy.h"
+#include "grins/boussinesq_buoyancy_adjoint_stab.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -214,6 +211,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new BoussinesqBuoyancy(physics_to_add,input));
+      }
+    else if( physics_to_add == boussinesq_buoyancy_adjoint_stab )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new BoussinesqBuoyancyAdjointStabilization(physics_to_add,input));
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
@@ -581,6 +583,15 @@ namespace GRINS
 	    if( physics_list.find(heat_transfer) == physics_list.end() )
 	      {
 		this->physics_consistency_error( physics->first, heat_transfer  );
+	      }
+	  }
+
+        /* For BoussinesqBuoyancyAdjointStabilization, we'd better have IncompressibleNavierStokes */
+	if( physics->first == boussinesq_buoyancy_adjoint_stab )
+	  {
+	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	      {
+		this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
 	      }
 	  }
 

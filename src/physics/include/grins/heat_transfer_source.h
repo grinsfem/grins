@@ -20,28 +20,20 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_HEAT_TRANSFER_SOURCE_H
 #define GRINS_HEAT_TRANSFER_SOURCE_H
 
 // GRINS
 #include "grins/physics.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 // libMesh forward declarations
 class GetPot;
 
 namespace libMesh
 {
-  class FEMContext;
   class FEMSystem;
 }
 
@@ -67,7 +59,7 @@ namespace GRINS
         the HeatTransfer class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
   protected:
@@ -75,13 +67,7 @@ namespace GRINS
     //! Function that computes source term.
     SourceFunction _source;
 
-    std::string _T_var_name;
-
-    libMeshEnums::FEFamily _T_FE_family;
-
-    libMeshEnums::Order _T_order;
-
-    VariableIndex _T_var; /* Index for temperature field */
+    PrimitiveTempFEVariables _temp_vars;
 
   private:
     HeatTransferSource();

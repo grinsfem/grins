@@ -20,31 +20,48 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
-// This class
-#include "grins/catalytic_wall_helper.h"
+#ifndef GRINS_POWER_LAW_CATALYCITY_H
+#define GRINS_POWER_LAW_CATALYCITY_H
 
 // GRINS
-#include "grins/math_constants.h"
+#include "grins/catalycity_base.h"
 
 namespace GRINS
 {
-  CatalyticWallHelper::CatalyticWallHelper( const libMesh::Real R_s, const libMesh::Real M_s,
-					    const libMesh::Real gamma_s )
-    : _gamma_s(gamma_s),
-      _C( std::sqrt( R_s/(GRINS::Constants::two_pi*M_s) ) )
+  class PowerLawCatalycity : public CatalycityBase
   {
-    return;
-  }
+  public:
 
-  CatalyticWallHelper::~CatalyticWallHelper()
-  {
-    return;
-  }
+    PowerLawCatalycity( const libMesh::Real gamma0, const libMesh::Real Ta, const libMesh::Real alpha );
+
+    virtual ~PowerLawCatalycity();
+
+    virtual libMesh::Real operator()( const libMesh::Real T ) const;
+
+    virtual libMesh::Real dT( const libMesh::Real T ) const;
+    
+    virtual void set_params( const std::vector<libMesh::Real>& params );
+
+    //! Creates a new copy of the current class.
+    /*! A raw pointer is returned and it is assumed the user will take ownership
+        and worry about memory management. */
+    virtual CatalycityBase* clone() const;
+    
+  protected:
+
+    libMesh::Real _gamma0;
+
+    libMesh::Real _Tref;
+
+    libMesh::Real _alpha;
+
+  private:
+
+    PowerLawCatalycity();
+
+  };
 
 } // end namespace GRINS
+
+#endif // GRINS_POWER_LAW_CATALYCITY_H

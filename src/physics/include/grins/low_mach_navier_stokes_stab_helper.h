@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_STAB_HELPER_H
 
@@ -41,7 +37,7 @@ namespace GRINS
 
     virtual ~LowMachNavierStokesStabilizationHelper();
 
-    libMesh::Real compute_tau_energy( libMesh::FEMContext& c,
+    libMesh::Real compute_tau_energy( AssemblyContext& c,
 				      unsigned int qp,
 				      libMesh::RealGradient& g,
 				      libMesh::RealTensor& G,
@@ -55,7 +51,7 @@ namespace GRINS
 
   /* ------------- Inline Functions ---------------*/
   inline
-  libMesh::Real LowMachNavierStokesStabilizationHelper::compute_tau_energy( libMesh::FEMContext& c,
+  libMesh::Real LowMachNavierStokesStabilizationHelper::compute_tau_energy( AssemblyContext& c,
 									    unsigned int qp,
 									    libMesh::RealGradient& g,
 									    libMesh::RealTensor& G,

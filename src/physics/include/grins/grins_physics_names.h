@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_PHYSICS_NAMES_H
 #define GRINS_PHYSICS_NAMES_H
@@ -39,11 +35,13 @@ namespace GRINS
   const PhysicsName incompressible_navier_stokes = "IncompressibleNavierStokes";
   const PhysicsName incompressible_navier_stokes_adjoint_stab = 
     "IncompressibleNavierStokesAdjointStabilization";
+  const PhysicsName heat_conduction = "HeatConduction";
   const PhysicsName heat_transfer = "HeatTransfer";
   const PhysicsName heat_transfer_source = "HeatTransferSource";
   const PhysicsName heat_transfer_adjoint_stab = "HeatTransferAdjointStabilization";
   const PhysicsName axisymmetric_heat_transfer = "AxisymmetricHeatTransfer";
   const PhysicsName boussinesq_buoyancy = "BoussinesqBuoyancy";
+  const PhysicsName boussinesq_buoyancy_adjoint_stab = "BoussinesqBuoyancyAdjointStabilization";
   const PhysicsName axisymmetric_boussinesq_buoyancy = "AxisymmetricBoussinesqBuoyancy";
   const PhysicsName low_mach_navier_stokes = "LowMachNavierStokes";
   const PhysicsName low_mach_navier_stokes_braack_stab = "LowMachNavierStokesBraackStabilization";

@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_NEUMANN_FUNC_OBJ_H 
 #define GRINS_NEUMANN_FUNC_OBJ_H
 
@@ -37,16 +33,11 @@
 // C++
 #include <vector>
 
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMContext;
-}
-
 namespace GRINS
 {
   // GRINS forward declarations
   class CachedValues;
+  class AssemblyContext;
 
   //! Base class for general, non-constant Neumann boundary conditions
   class NeumannFuncObj
@@ -60,7 +51,7 @@ namespace GRINS
     //! Returns the value of the implemented Neumann boundary condition
     /*! This will leverage the FEMContext to get variable values and derivatives through the
       side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point value( const libMesh::FEMContext& context,
+    virtual libMesh::Point value( const AssemblyContext& context,
 				  const CachedValues& cache, const unsigned int qp );
 
     //! Returns the value of the implemented Neumann boundary condition
@@ -69,13 +60,13 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual libMesh::Real normal_value( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Real normal_value( const AssemblyContext& context, const CachedValues& cache,
 					const unsigned int qp );
     
     //! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
     /*! This will leverage the FEMContext to get variable values and derivatives through the
       side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Point derivative( const AssemblyContext& context, const CachedValues& cache,
 				       const unsigned int qp );
 
     //! Returns the derivative with respect to the primary variable of the implemented Neumann boundary condition.
@@ -84,14 +75,14 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Real normal_derivative( const AssemblyContext& context, const CachedValues& cache,
 					     const unsigned int qp );
 
     //! If needed, returns the derivative with respect to other variables in the system.
     /*! By default, does nothing. User should reimplement is this is needed.
       This will leverage the FEMContext to get variable values and derivatives through the
       side_value, side_gradient, etc. interfaces, for each quadrature point qp. */
-    virtual libMesh::Point derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Point derivative( const AssemblyContext& context, const CachedValues& cache,
 				       const unsigned int qp, 
 				       const GRINS::VariableIndex jac_var );
 
@@ -102,7 +93,7 @@ namespace GRINS
       Returns the normal component of the Neumann value. Only to be used when flux vector is
       formulated implicitly in terms of normal component. By default, does nothing since
       it's only applicable in special cases. */
-    virtual libMesh::Real normal_derivative( const libMesh::FEMContext& context, const CachedValues& cache,
+    virtual libMesh::Real normal_derivative( const AssemblyContext& context, const CachedValues& cache,
 					     const unsigned int qp, 
 					     const GRINS::VariableIndex jac_var );
 

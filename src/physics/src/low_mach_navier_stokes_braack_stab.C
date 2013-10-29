@@ -20,16 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/low_mach_navier_stokes_braack_stab.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
@@ -56,7 +53,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-										  libMesh::FEMContext& context,
+										  AssemblyContext& context,
 										  CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -75,7 +72,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-									libMesh::FEMContext& context,
+									AssemblyContext& context,
 									CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -94,26 +91,26 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool /*compute_jacobian*/,
-											 libMesh::FEMContext& context )
+											 AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.element_fe_var[this->_p_var]->get_dphi();
+      context.get_element_fe(this->_p_var)->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -151,32 +148,32 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/,
-										       libMesh::FEMContext& context )
+										       AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
 
     // Check number of dofs is same for _u_var, v_var and w_var.
-    libmesh_assert (n_u_dofs == context.dof_indices_var[this->_v_var].size());
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
     if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == context.dof_indices_var[this->_w_var].size());
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.element_fe_var[this->_u_var]->get_dphi();
+      context.get_element_fe(this->_u_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      context.element_fe_var[this->_u_var]->get_d2phi();
+      context.get_element_fe(this->_u_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_w_var); // R_{w}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -198,7 +195,7 @@ namespace GRINS
 	    grad_w = context.interior_gradient(this->_w_var, qp);
 	  }
 
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -250,25 +247,25 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
-										     libMesh::FEMContext& context )
+										     AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[this->_T_var]->get_dphi();
+      context.get_element_fe(this->_T_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
-      context.element_fe_var[this->_T_var]->get_d2phi();
+      context.get_element_fe(this->_T_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -290,7 +287,7 @@ namespace GRINS
 
 	libMesh::Number rho_cp = rho*this->_cp(T);
 
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -313,26 +310,26 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool /*compute_jacobian*/,
-											    libMesh::FEMContext& context )
+											    AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.dof_indices_var[this->_p_var].size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.element_fe_var[this->_p_var]->get_dphi();
+      context.get_element_fe(this->_p_var)->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = *context.elem_subresiduals[this->_p_var]; // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -370,32 +367,32 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/,
-											  libMesh::FEMContext& context )
+											  AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.dof_indices_var[this->_u_var].size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
 
     // Check number of dofs is same for _u_var, v_var and w_var.
-    libmesh_assert (n_u_dofs == context.dof_indices_var[this->_v_var].size());
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
     if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == context.dof_indices_var[this->_w_var].size());
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_u_var]->get_JxW();
+      context.get_element_fe(this->_u_var)->get_JxW();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.element_fe_var[this->_u_var]->get_dphi();
+      context.get_element_fe(this->_u_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      context.element_fe_var[this->_u_var]->get_d2phi();
+      context.get_element_fe(this->_u_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = *context.elem_subresiduals[this->_u_var]; // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = *context.elem_subresiduals[this->_v_var]; // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = *context.elem_subresiduals[this->_w_var]; // R_{w}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_w_var); // R_{w}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Real T = context.fixed_interior_value( this->_T_var, qp );
@@ -416,7 +413,7 @@ namespace GRINS
 	    grad_w = context.fixed_interior_gradient(this->_w_var, qp);
 	  }
 
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
@@ -468,25 +465,25 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool /*compute_jacobian*/,
-											libMesh::FEMContext& context )
+											AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.dof_indices_var[this->_T_var].size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.element_fe_var[this->_T_var]->get_JxW();
+      context.get_element_fe(this->_T_var)->get_JxW();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.element_fe_var[this->_T_var]->get_dphi();
+      context.get_element_fe(this->_T_var)->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
-      context.element_fe_var[this->_T_var]->get_d2phi();
+      context.get_element_fe(this->_T_var)->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = *context.elem_subresiduals[this->_T_var]; // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
 
-    unsigned int n_qpoints = context.element_qrule->n_points();
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -508,7 +505,7 @@ namespace GRINS
 
 	libMesh::Number rho_cp = rho*cp;
 
-	libMesh::FEBase* fe = context.element_fe_var[this->_u_var];
+	libMesh::FEBase* fe = context.get_element_fe(this->_u_var);
 
 	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
 	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );

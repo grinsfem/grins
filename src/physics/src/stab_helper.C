@@ -20,17 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/stab_helper.h"
 
-// libMesh
-#include "libmesh/fem_context.h"
+// GRINS
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
@@ -46,13 +42,13 @@ namespace GRINS
   }
 
   libMesh::RealGradient StabilizationHelper::compute_g( libMesh::FEBase* fe,
-							libMesh::FEMContext& c,
+							AssemblyContext& c,
 							unsigned int qp ) const
   {
     libMesh::RealGradient g( fe->get_dxidx()[qp] + fe->get_detadx()[qp],
 			     fe->get_dxidy()[qp] + fe->get_detady()[qp] );
   
-    if( c.dim == 3 )
+    if( c.get_dim() == 3 )
       {
 	g(0) += fe->get_dzetadx()[qp];
 	g(1) += fe->get_dzetady()[qp];
@@ -63,7 +59,7 @@ namespace GRINS
   }
 
   libMesh::RealTensor StabilizationHelper::compute_G( libMesh::FEBase* fe,
-						      libMesh::FEMContext& c,
+						      AssemblyContext& c,
 						      unsigned int qp ) const
   {     
     libMesh::Real dxidx = fe->get_dxidx()[qp];
@@ -79,7 +75,7 @@ namespace GRINS
 			   dxidy*dxidy + detady*detady,
 			   0.0 );
   
-    if( c.dim == 3 )
+    if( c.get_dim() == 3 )
       {
 	libMesh::Real dxidz = fe->get_dxidz()[qp];
       

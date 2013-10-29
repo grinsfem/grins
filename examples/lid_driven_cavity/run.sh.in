@@ -1,3 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-@prefix@/bin/grins ./lid_driven_cavity.in $GRINS_SOLVER_OPTIONS
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/lid_driven_cavity/lid_driven_cavity.in $GRINS_SOLVER_OPTIONS

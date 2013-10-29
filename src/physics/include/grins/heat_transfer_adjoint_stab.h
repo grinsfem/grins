@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
 #define GRINS_HEAT_TRANSFER_ADJOINT_STAB_H
 
@@ -45,11 +41,11 @@ namespace GRINS
     virtual ~HeatTransferAdjointStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
-				libMesh::FEMContext& context,
+				AssemblyContext& context,
 				CachedValues& cache );
     
   private:

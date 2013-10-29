@@ -352,6 +352,7 @@ AC_CONFIG_FILES(test/magnetostatics_regression.sh,                        [chmod
 AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                              [chmod +x test/hartmann_flow_exact.sh])
 AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
 AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_antioch.sh,                      [chmod +x test/catalytic_wall_unit_antioch.sh])
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
@@ -374,8 +375,14 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_pra
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
 
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh])
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.in)
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
@@ -383,9 +390,11 @@ dnl-----------------------------------------------
 AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	     [chmod +x examples/cavity_benchmark/run.sh])
 AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	     [chmod +x examples/backward_facing_step/run.sh])
 AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	     [chmod +x examples/lid_driven_cavity/run.sh])
+AC_CONFIG_FILES(examples/convection_cell/run.sh,	     [chmod +x examples/convection_cell/run.sh])
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	             [chmod +x examples/mass_injection/run.sh])
 AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	     [chmod +x examples/rayleigh_taylor/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
+AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
@@ -400,6 +409,9 @@ AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()
+
+dnl Hackish fix for Ubuntu/Debian libtool
+perl -pi -e 's/link_all_deplibs=no/link_all_deplibs=yes/' libtool
 
 dnl------------------------------
 dnl Final summary

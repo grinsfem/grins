@@ -1,5 +1,7 @@
 BUILT_SOURCES   = .license.stamp
 
+CLEANFILES = .license.stamp
+
 #----------------------------------------
 # Programs and libraries we want to build
 #----------------------------------------
@@ -43,14 +45,22 @@ libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/dbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/pbc_container.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/nbc_container.C
-libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/catalycity_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/constant_catalycity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/arrhenius_catalycity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/boundary_conditions/src/power_law_catalycity.C
 
 # src/error_estimation files
 libgrins_la_SOURCES += $(top_srcdir)/src/error_estimation/src/error_estimation_factory.C
 
+# src/ic_handling files
+libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/ic_handling_base.C
+libgrins_la_SOURCES += $(top_srcdir)/src/ic_handling/src/generic_ic_handler.C
+
 # src/physics files
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/multiphysics_sys.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/assembly_context.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_base.C
@@ -63,7 +73,9 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_source.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy_adjoint_stab.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_boussinesq_buoyancy.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics_factory.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_base.C
@@ -86,7 +98,12 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/magnetostatics.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/lorentz_force.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/joule_heating.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_instantiation.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_flow_variables.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_flow_fe_variables.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_temp_variables.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/primitive_temp_fe_variables.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
@@ -148,10 +165,22 @@ libgrins_la_SOURCES += $(top_srcdir)/src/bc_handling/src/magnetostatics_bc_handl
 # with different template parameters in user code
 sfilesdir = $(prefix)/src
 sfiles_DATA  = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
+<<<<<<< HEAD
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_stab_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
+=======
+sfiles_DATA += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
+sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
+sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_evaluator.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_mixture.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_wilke_transport_evaluator.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_mixture.C
+sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_constant_transport_evaluator.C
+>>>>>>> 3b098b1d32f1e73dfe0c019709712542b0f74ac8
 
 #----------------------------
 #INCLUDES we want distributed
@@ -185,13 +214,21 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pressure_
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_helper.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalycity_base.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/constant_catalycity.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/arrhenius_catalycity.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/power_law_catalycity.h
 
 # src/error_estimation headers
 include_HEADERS += $(top_srcdir)/src/error_estimation/include/grins/error_estimation_factory.h
 
+# src/ic_handling headers
+include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/ic_handling_base.h
+include_HEADERS += $(top_srcdir)/src/ic_handling/include/grins/generic_ic_handler.h
+
 # src/physics headers
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/multiphysics_sys.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/assembly_context.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/variable_name_defaults.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/var_typedefs.h
@@ -206,7 +243,9 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_source.
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_stab_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_adjoint_stab.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_heat_transfer.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_boussinesq_buoyancy.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics_factory.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/grins_physics_names.h
@@ -223,6 +262,7 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
+<<<<<<< HEAD
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_lorentz_force.h
@@ -231,6 +271,12 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/electrostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/magnetostatics.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/lorentz_force.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/joule_heating.h
+=======
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_variables.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_fe_variables.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_variables.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_fe_variables.h
+>>>>>>> 3b098b1d32f1e73dfe0c019709712542b0f74ac8
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h
@@ -282,6 +328,7 @@ include_HEADERS += $(top_srcdir)/src/utilities/include/grins/math_constants.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_values.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/string_utils.h
+include_HEADERS += $(top_srcdir)/src/utilities/include/grins/composite_function.h
 
 # src/visualization headers
 include_HEADERS += $(top_srcdir)/src/visualization/include/grins/steady_visualization.h
@@ -340,6 +387,7 @@ AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
@@ -384,7 +432,7 @@ endif
 # Code coverage
 #--------------
 if CODE_COVERAGE_ENABLED
-  CLEANFILES = *.gcda *.gcno
+  CLEANFILES += *.gcda *.gcno
 endif
 
 #---------------------------------
@@ -397,7 +445,8 @@ STAMPED_FILES += $(top_srcdir)/src/apps/cantera_kinetic_rates.C
 	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(STAMPED_FILES)
 	echo 'updated source license headers' >$@
 
-EXTRA_DIST = common
+EXTRA_DIST  = common
+EXTRA_DIST += $(sfiles_DATA)
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

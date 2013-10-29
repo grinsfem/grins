@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 #ifndef AXISYM_HEAT_TRANSFER_BC_HANDLING_H
 #define AXISYM_HEAT_TRANSFER_BC_HANDLING_H
 
@@ -49,9 +45,11 @@ namespace GRINS
     virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
 				const GetPot& input );
 
-    virtual void user_apply_neumann_bcs( libMesh::FEMContext& context,
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
 					 const GRINS::CachedValues& cache,
 					 const bool request_jacobian,
 					 const GRINS::BoundaryID bc_id,

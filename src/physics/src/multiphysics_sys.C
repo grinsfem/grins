@@ -20,14 +20,14 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/multiphysics_sys.h"
+
+// GRINS
+#include "grins/composite_function.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -60,6 +60,8 @@ namespace GRINS
     // Read options for MultiphysicsSystem first
     this->verify_analytic_jacobians = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
     this->print_element_jacobians = input("screen-options/print_element_jacobians", false );
+    this->print_residuals = input("screen-options/print_residual", false );
+
     _use_numerical_jacobians_only = input("linear-nonlinear-solver/use_numerical_jacobians_only", false );
   }
 
@@ -107,12 +109,52 @@ namespace GRINS
     // Next, call parent init_data function to intialize everything.
     libMesh::FEMSystem::init_data();
 
+    // After solution has been initialized we can project initial
+    // conditions to it
+    CompositeFunction<Number> ic_function;
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+	// Initialize builtin IC's for each physics
+	(physics_iter->second)->init_ics( this, ic_function );
+      }
+
+    if (ic_function.n_subfunctions())
+      {
+        this->project_solution(&ic_function);
+      }
+
     return;
   }
 
-  void MultiphysicsSystem::init_context( libMesh::DiffContext &context )
+  libMesh::AutoPtr<libMesh::DiffContext> MultiphysicsSystem::build_context()
   {
-    libMesh::FEMContext &c = libmesh_cast_ref<FEMContext&>(context);
+    AssemblyContext* context = new AssemblyContext(*this);
+
+    libMesh::AutoPtr<libMesh::DiffContext> ap(context);
+
+    libMesh::DifferentiablePhysics* phys = libMesh::FEMSystem::get_physics();
+
+    libmesh_assert(phys);
+
+    // If we are solving a moving mesh problem, tell that to the Context
+    context->set_mesh_system(phys->get_mesh_system());
+    context->set_mesh_x_var(phys->get_mesh_x_var());
+    context->set_mesh_y_var(phys->get_mesh_y_var());
+    context->set_mesh_z_var(phys->get_mesh_z_var());
+
+    ap->set_deltat_pointer( &deltat );
+
+    // If we are solving the adjoint problem, tell that to the Context
+    ap->is_adjoint() = this->get_time_solver().is_adjoint();
+
+    return ap;
+  }
+
+  void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
+  {
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -128,7 +170,7 @@ namespace GRINS
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 						    libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
   
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -149,7 +191,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
 							     cache );
@@ -164,7 +206,7 @@ namespace GRINS
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						 libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -185,7 +227,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->side_time_derivative( compute_jacobian, c,
 							  cache );
@@ -200,7 +242,7 @@ namespace GRINS
   bool MultiphysicsSystem::element_constraint( bool request_jacobian,
 					       libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -221,7 +263,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->element_constraint( compute_jacobian, c,
 							cache);
@@ -236,7 +278,7 @@ namespace GRINS
   bool MultiphysicsSystem::side_constraint( bool request_jacobian,
 					    libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -257,7 +299,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->side_constraint( compute_jacobian, c,
 						     cache);
@@ -272,7 +314,7 @@ namespace GRINS
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
 					  libMesh::DiffContext& context )
   {
-    libMesh::FEMContext& c = libmesh_cast_ref<libMesh::FEMContext&>( context );
+    AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -293,7 +335,7 @@ namespace GRINS
 	 physics_iter++ )
       {
 	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( c.elem ) )
+	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
 	    (physics_iter->second)->mass_residual( compute_jacobian, c,
 						   cache);
@@ -326,7 +368,7 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const libMesh::FEMContext& context,
+  void MultiphysicsSystem::compute_element_cache( const AssemblyContext& context,
 						  const std::vector<libMesh::Point>& points,
 						  CachedValues& cache ) const
   {

@@ -1,0 +1,160 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization HeatTransfer HeatTransferAdjointStabilization BoussinesqBuoyancy BoussinesqBuoyancyAdjointStabilization'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+
+V_order = 'FIRST'
+P_order = 'FIRST'
+
+rho = '1.77'
+mu = '1.846e-5'
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+bc_ids = '0 1 2 3'
+bc_types = 'no_slip no_slip no_slip no_slip'
+
+pin_pressure = true
+pin_location = '0.0 0.0'
+pin_value = '0.0'
+
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'v'
+ic_values = '(abs(x)<=2)*0.001'
+
+[../HeatTransfer]
+
+T_FE_family = 'LAGRANGE'
+T_order = 'FIRST'
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+bc_ids = '0 1 2 3'
+bc_types = 'parsed_dirichlet adiabatic_wall isothermal_wall adiabatic_wall'
+bc_variables = 'T na na na'
+bc_values = '{340.0+(abs(x)<=2)*30} na na na'
+
+T_wall_2 = '280.0'
+
+ic_ids = '0'
+ic_types = 'constant'
+ic_variables = 'T'
+ic_values = '300.0'
+
+rho = '1.77'
+Cp = '1004.9'
+k = '2.624e-2'
+
+[../BoussinesqBuoyancy]
+
+# Reference temperature
+T_ref = '300' #[K]
+
+rho_ref = '1.77'
+
+beta_T = '0.003333333333'
+
+# Gravity vector
+g = '0.0 -9.81' #[m/s^2]
+
+[Stabilization]
+
+tau_constant_vel = '1.0'
+tau_factor_vel = '1.0'
+
+tau_constant_T = '1.0'
+tau_factor_T = '3.0'
+
+
+[]
+
+[restart-options]
+
+#restart_file = 'convection_cell.xdr'
+
+[]
+
+
+
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+
+domain_x1_min = -10.0
+domain_x1_max = 10.0
+domain_x2_min = 0.0
+domain_x2_max = 4.0
+
+mesh_nx1 = '40' 
+mesh_nx2 = '16'
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = 'true' 
+theta = 1.0
+n_timesteps = '250'
+deltat = '0.25'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  30
+max_linear_iterations = 5000
+
+relative_residual_tolerance = '1.0e-10'
+
+verify_analytic_jacobians = 0.0
+
+initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = true
+
+vis_output_file_prefix = 'convection_cell' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'ConvectionCell'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]

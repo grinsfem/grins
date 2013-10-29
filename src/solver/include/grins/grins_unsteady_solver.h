@@ -20,17 +20,16 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_UNSTEADY_SOLVER_H
 #define GRINS_UNSTEADY_SOLVER_H
 
 //GRINS
 #include "grins/grins_solver.h"
+
+//libMesh
+#include "libmesh/system_norm.h"
 
 namespace GRINS
 {
@@ -47,10 +46,16 @@ namespace GRINS
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
-    double _theta;
     unsigned int _n_timesteps;
+    unsigned int _backtrack_deltat;
+    double _theta;
     double _deltat;
 
+    // Options for adaptive time solvers
+    double _target_tolerance;
+    double _upper_tolerance;
+    double _max_growth;
+    SystemNorm _component_norm;
   };
 
 } // end namespace GRINS

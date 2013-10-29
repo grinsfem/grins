@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/low_mach_navier_stokes_bc_handling.h"
@@ -48,13 +44,17 @@ namespace GRINS
   {
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/vel_bc_types";
+    std::string var_str = "Physics/"+_physics_name+"/vel_bc_variables";
+    std::string val_str = "Physics/"+_physics_name+"/vel_bc_values";
 
-    this->read_bc_data( input, id_str, bc_str );
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
     id_str = "Physics/"+_physics_name+"/temp_bc_ids";
     bc_str = "Physics/"+_physics_name+"/temp_bc_types";
+    var_str = "Physics/"+_physics_name+"/temp_bc_variables";
+    val_str = "Physics/"+_physics_name+"/temp_bc_values";
 
-    this->read_bc_data( input, id_str, bc_str );
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
     return;
   }
@@ -120,6 +120,8 @@ namespace GRINS
   void LowMachNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
 						     const std::string& bc_id_string, 
 						     const int bc_type, 
+					             const std::string& bc_vars, 
+					             const std::string& bc_value, 
 						     const GetPot& input )
   {
     switch(bc_type)
@@ -256,7 +258,7 @@ namespace GRINS
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	
-	  libMesh::Point q_in;
+	  libMesh::RealGradient q_in;
 	
 	  int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_string);
 	
@@ -283,7 +285,8 @@ namespace GRINS
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+                                         bc_vars, bc_value, input );
 	}
       } // End switch(bc_type)
   
@@ -464,7 +467,7 @@ namespace GRINS
 
   void LowMachNavierStokesBCHandling::set_temp_bc_type( BoundaryID bc_id, int bc_type )
   {
-    _temp_bc_map[bc_id] = bc_type;
+    _temp_bc_map.push_back( std::make_pair(bc_id,bc_type) );
     return;
   }
 
@@ -482,16 +485,14 @@ namespace GRINS
   {
     libMesh::DofMap& dof_map = system->get_dof_map();
 
-    for( std::map< BoundaryID,BCType >::const_iterator it = _dirichlet_bc_map.begin();
-	 it != _dirichlet_bc_map.end();
-	 it++ )
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _dirichlet_bc_map.begin();
+         it != _dirichlet_bc_map.end(); it++ )
       {
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }
 
-    for( std::map< BoundaryID,BCType >::const_iterator it = _temp_bc_map.begin();
-	 it != _temp_bc_map.end();
-	 it++ )
+    for( std::vector<std::pair<BoundaryID,BCType> >::const_iterator it = _temp_bc_map.begin();
+        it != _temp_bc_map.end(); it++ )
       {
 	this->user_init_dirichlet_bcs( system, dof_map, it->first, it->second );
       }

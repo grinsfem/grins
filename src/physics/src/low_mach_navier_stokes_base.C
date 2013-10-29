@@ -20,16 +20,13 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/low_mach_navier_stokes_base.h"
 
 // GRINS
+#include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
@@ -170,23 +167,23 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBase<Mu,SH,TC>::init_context( libMesh::FEMContext &context )
+  void LowMachNavierStokesBase<Mu,SH,TC>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.element_fe_var[_u_var]->get_JxW();
-    context.element_fe_var[_u_var]->get_phi();
-    context.element_fe_var[_u_var]->get_dphi();
-    context.element_fe_var[_u_var]->get_xyz();
+    context.get_element_fe(_u_var)->get_JxW();
+    context.get_element_fe(_u_var)->get_phi();
+    context.get_element_fe(_u_var)->get_dphi();
+    context.get_element_fe(_u_var)->get_xyz();
 
-    context.element_fe_var[_T_var]->get_JxW();
-    context.element_fe_var[_T_var]->get_phi();
-    context.element_fe_var[_T_var]->get_dphi();
-    context.element_fe_var[_T_var]->get_xyz();
+    context.get_element_fe(_T_var)->get_JxW();
+    context.get_element_fe(_T_var)->get_phi();
+    context.get_element_fe(_T_var)->get_dphi();
+    context.get_element_fe(_T_var)->get_xyz();
 
-    context.element_fe_var[_p_var]->get_phi();
-    context.element_fe_var[_p_var]->get_xyz();
+    context.get_element_fe(_p_var)->get_phi();
+    context.get_element_fe(_p_var)->get_xyz();
 
     return;
   }

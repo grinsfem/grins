@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #include "grins_config.h"
 
@@ -64,13 +60,13 @@ namespace GRINS
     ZeroFluxBC(){};
     virtual ~ZeroFluxBC(){};
 
-    virtual libMesh::Point value( const libMesh::FEMContext&, const CachedValues&, const unsigned int )
+    virtual libMesh::Point value( const AssemblyContext&, const CachedValues&, const unsigned int )
     { return libMesh::Point(0.0,0.0,0.0); }
 
-    virtual libMesh::Point derivative( const libMesh::FEMContext&, const CachedValues&, const unsigned int )
+    virtual libMesh::Point derivative( const AssemblyContext&, const CachedValues&, const unsigned int )
     { return libMesh::Point(0.0,0.0,0.0); }
     
-    virtual libMesh::Point derivative( const libMesh::FEMContext&, const CachedValues&,
+    virtual libMesh::Point derivative( const AssemblyContext&, const CachedValues&,
 				       const unsigned int, const VariableIndex )
     { return libMesh::Point(0.0,0.0,0.0); }
   };

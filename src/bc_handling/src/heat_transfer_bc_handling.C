@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/heat_transfer_bc_handling.h"
@@ -41,12 +37,14 @@ namespace GRINS
   HeatTransferBCHandling::HeatTransferBCHandling(const std::string& physics_name,
 						 const GetPot& input)
     : BCHandlingBase(physics_name),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
+      _temp_vars(input)
   {
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
+    std::string var_str = "Physics/"+_physics_name+"/bc_variables";
+    std::string val_str = "Physics/"+_physics_name+"/bc_values";
 
-    this->read_bc_data( input, id_str, bc_str );
+    this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
     return;
   }
@@ -83,12 +81,16 @@ namespace GRINS
 
   void HeatTransferBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _T_var = system.variable_number( _T_var_name );
+    _temp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
+
+    return;
   }
   
   void HeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 
 					      const std::string& bc_id_string, 
 					      const int bc_type, 
+					      const std::string& bc_vars, 
+					      const std::string& bc_value, 
 					      const GetPot& input )
   {
     switch(bc_type)
@@ -111,7 +113,7 @@ namespace GRINS
 	{
 	  this->set_neumann_bc_type( bc_id, bc_type );
 	
-	  libMesh::Point q_in;
+	  libMesh::RealGradient q_in;
 	
 	  int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_string);
 	
@@ -131,7 +133,8 @@ namespace GRINS
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type, input );
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+                                         bc_vars, bc_value, input );
 	}
       
       }// End switch(bc_type)
@@ -152,7 +155,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(_T_var);
+	  dbc_vars.push_back(_temp_vars.T_var());
 	
 	  ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
 	
@@ -172,7 +175,7 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBCHandling::user_apply_neumann_bcs( libMesh::FEMContext& context,
+  void HeatTransferBCHandling::user_apply_neumann_bcs( AssemblyContext& context,
 						       const GRINS::CachedValues& cache,
 						       const bool request_jacobian,
 						       const BoundaryID bc_id,
@@ -190,12 +193,12 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric( context, _T_var, -1.0,
+              _bound_conds.apply_neumann_axisymmetric( context, _temp_vars.T_var(), -1.0,
                                                        this->get_neumann_bc_value(bc_id) );
             }
           else
             {
-              _bound_conds.apply_neumann( context, _T_var, -1.0,
+              _bound_conds.apply_neumann( context, _temp_vars.T_var(), -1.0,
                                           this->get_neumann_bc_value(bc_id) );
             }
 	}
@@ -205,13 +208,13 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
-                                                       this->get_neumann_bound_func( bc_id, _T_var ) );
+              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _temp_vars.T_var(), -1.0, 
+                                                       this->get_neumann_bound_func( bc_id, _temp_vars.T_var() ) );
             }
           else
             {
-              _bound_conds.apply_neumann( context, cache, request_jacobian, _T_var, -1.0, 
-                                          this->get_neumann_bound_func( bc_id, _T_var ) );
+              _bound_conds.apply_neumann( context, cache, request_jacobian, _temp_vars.T_var(), -1.0, 
+                                          this->get_neumann_bound_func( bc_id, _temp_vars.T_var() ) );
             }
 	}
 	break;

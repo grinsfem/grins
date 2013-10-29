@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_AXISYM_BOUSSINESQ_BUOYANCY_H
 #define GRINS_AXISYM_BOUSSINESQ_BUOYANCY_H
@@ -37,12 +33,6 @@
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
 #include "libmesh/point.h"
-
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMContext;
-}
 
 namespace GRINS
 {  
@@ -79,7 +69,7 @@ namespace GRINS
         the AxisymmetricIncompNavierStokes class.
      */
     virtual void element_time_derivative( bool compute_jacobian,
-					  libMesh::FEMContext& context,
+					  AssemblyContext& context,
 					  CachedValues& cache );
 
   protected:

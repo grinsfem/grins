@@ -20,23 +20,19 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_LOW_MACH_NAVIER_STOKES_BASE_H
 #define GRINS_LOW_MACH_NAVIER_STOKES_BASE_H
 
 // GRINS
 #include "grins/physics.h"
+#include "grins/assembly_context.h"
 
 //libMesh
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
 #include "libmesh/point.h"
-#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
@@ -63,19 +59,19 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( libMesh::FEMContext& context );
+    virtual void init_context( AssemblyContext& context );
 
-    libMesh::Real T( const libMesh::Point& p, const libMesh::FEMContext& c ) const;
+    libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0 ) const;
 
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, unsigned int qp ) const;
 
-    libMesh::Real get_p0_steady_side( const libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_steady_side( const AssemblyContext& c, unsigned int qp ) const;
 
-    libMesh::Real get_p0_steady( const libMesh::FEMContext& c, const libMesh::Point& p ) const;
+    libMesh::Real get_p0_steady( const AssemblyContext& c, const libMesh::Point& p ) const;
 
-    libMesh::Real get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const;
+    libMesh::Real get_p0_transient( AssemblyContext& c, unsigned int qp ) const;
 
   protected:
 
@@ -127,7 +123,7 @@ namespace GRINS
 
   template<class V, class SH, class TC>
   inline
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::T( const libMesh::Point& p, const libMesh::FEMContext& c ) const
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::T( const libMesh::Point& p, const AssemblyContext& c ) const
   {
     return c.point_value(_T_var,p);
   }
@@ -141,7 +137,7 @@ namespace GRINS
   
   template<class V, class SH, class TC>
   inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const libMesh::FEMContext& c,
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c,
 								 unsigned int qp ) const
   {
     libMesh::Real p0;
@@ -158,7 +154,7 @@ namespace GRINS
 
   template<class V, class SH, class TC>
   inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady_side( const libMesh::FEMContext& c,
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady_side( const AssemblyContext& c,
 								      unsigned int qp ) const
   {
     libMesh::Real p0;
@@ -175,7 +171,7 @@ namespace GRINS
 
   template<class V, class SH, class TC>
   inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const libMesh::FEMContext& c, 
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c, 
 								 const libMesh::Point& p ) const
   {
     libMesh::Real p0;
@@ -192,7 +188,7 @@ namespace GRINS
 
   template<class V, class SH, class TC>
   inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_transient( libMesh::FEMContext& c, unsigned int qp ) const
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_transient( AssemblyContext& c, unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )

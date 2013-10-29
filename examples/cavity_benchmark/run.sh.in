@@ -1,3 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-@prefix@/examples/cavity_benchmark/cavity ./cavity.in $GRINS_SOLVER_OPTIONS
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+
+$GRINS_RUN @prefix@/examples/cavity_benchmark/cavity @prefix@/examples/cavity_benchmark/cavity.in $GRINS_SOLVER_OPTIONS

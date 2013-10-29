@@ -42,6 +42,9 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
+print_dof_constraints = 'true'
+print_residual = 'true'
+
 # Options related to all Physics
 [Physics]
 
@@ -69,7 +72,7 @@ bc_types = 'no_slip axisymmetric general_velocity general_velocity'
 
 pin_pressure = 'true'
 pin_value = 100.0
-pin_location = '0.5 0.5'
+pin_location = '0.0 0.0'
 
 [../VariableNames]
 
