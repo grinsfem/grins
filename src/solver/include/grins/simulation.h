@@ -101,8 +101,6 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
 
-    std::tr1::shared_ptr<QoIBase> _qoi;
-
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
 
     // Screen display options
