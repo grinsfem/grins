@@ -37,29 +37,10 @@
 namespace GRINS
 {
   AverageNusseltNumber::AverageNusseltNumber( const GetPot& input )
-    : QoIBase()
+    : QoIBase(),
+      _k( input( "QoI/NusseltNumber/thermal_conductivity", -1.0 ) ),
+      _scaling( input( "QoI/NusseltNumber/scaling", 1.0 ) );
   {
-    this->assemble_qoi_sides = true;
-    this->assemble_qoi_elements = false;
-    this->read_input_options(input);
-
-    return;
-  }
-
-  AverageNusseltNumber::~AverageNusseltNumber()
-  {
-    return;
-  }
-
-  libMesh::AutoPtr<libMesh::DifferentiableQoI> AverageNusseltNumber::clone()
-  {
-    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new AverageNusseltNumber( *this ) );
-  }
-
-  void AverageNusseltNumber::read_input_options( const GetPot& input )
-  {
-    // Read thermal conductivity
-    this->_k = input( "QoI/NusseltNumber/thermal_conductivity", -1.0 );
 
     if( this->_k < 0.0 )
       {
@@ -84,40 +65,61 @@ namespace GRINS
 	_bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
       }
 
-    this->_scaling = input( "QoI/NusseltNumber/scaling", 1.0 );
-
     return;
+  }
+
+  AverageNusseltNumber::~AverageNusseltNumber()
+  {
+    return;
+  }
+
+  QoIBase* AverageNusseltNumber::clone()
+  {
+    return new AverageNusseltNumber( *this );
   }
 
   void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
   {
     // Grab temperature variable index
-    std::string T_var_name = input("Physics/VariableNames/Temperature",
-				   T_var_name_default);
+    std::string T_var_name = input( "Physics/VariableNames/Temperature",
+				    T_var_name_default );
 
     this->_T_var = system.variable_number(T_var_name);
+
     return;
   }
 
-  void AverageNusseltNumber::side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
+  void AverageNusseltNumber::init_context( AssemblyContext& context )
   {
-    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
+    libMesh::FEBase* T_fe;
+
+    c.get_side_fe<libMesh::Real>(this->_T_var, T_fe);
+
+    T_fe->get_dphi();
+    T_fe->get_JxW();
+
+    return;
+  }
+
+  void AverageNusseltNumber::side_qoi( AssemblyContext& context,
+                                       const unsigned int qoi_index )
+  {
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
       {
-	if( c.has_side_boundary_id( (*id) ) )
+	if( context.has_side_boundary_id( (*id) ) )
 	  {
 	    libMesh::FEBase* side_fe;
-	    c.get_side_fe<libMesh::Real>(this->_T_var, side_fe);
+	    context.get_side_fe<libMesh::Real>(this->_T_var, side_fe);
 
 	    const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
 	    
 	    const std::vector<libMesh::Point>& normals = side_fe->get_normals();
 
-	    unsigned int n_qpoints = c.get_side_qrule().n_points();
+	    unsigned int n_qpoints = context.get_side_qrule().n_points();
 	    
-	    libMesh::Number& qoi = c.get_qois()[0];
+	    libMesh::Number& qoi = context.get_qois()[qoi_index];
 	    
 	    // Loop over quadrature points  
 	    
@@ -125,7 +127,7 @@ namespace GRINS
 	      {
 		// Get the solution value at the quadrature point
 		libMesh::Gradient grad_T = 0.0; 
-		c.side_gradient(this->_T_var, qp, grad_T);
+		context.side_gradient(this->_T_var, qp, grad_T);
 		
 		// Update the elemental increment dR for each qp
 		qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
@@ -139,37 +141,36 @@ namespace GRINS
     return;
   }
 
-  void AverageNusseltNumber::side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& )
+  void AverageNusseltNumber::side_qoi_derivative( AssemblyContext& context,
+                                                  const unsigned int qoi_index )
   {
-    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
 	 id != _bc_ids.end(); id++ )
       {
-	if( c.has_side_boundary_id( (*id) ) )
+	if( context.has_side_boundary_id( (*id) ) )
 	  {
 	    libMesh::FEBase* T_side_fe;
-	    c.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
+	    context.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
 
 	    const std::vector<libMesh::Real> &JxW = T_side_fe->get_JxW();
 	    
 	    const std::vector<libMesh::Point>& normals = T_side_fe->get_normals();
 
-	    unsigned int n_qpoints = c.get_side_qrule().n_points();
+	    unsigned int n_qpoints = context.get_side_qrule().n_points();
 	    
             const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
 
-	    DenseSubVector<Number>& dQ_dT = c.get_qoi_derivatives(0, _T_var);
+	    DenseSubVector<Number>& dQ_dT = context.get_qoi_derivatives(qoi_index, _T_var);
 
 	    // Loop over quadrature points  
-	    
 	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
 	      {
 		// Get the solution value at the quadrature point
 		libMesh::Gradient grad_T = 0.0; 
-		c.side_gradient(this->_T_var, qp, grad_T);
+		context.side_gradient(this->_T_var, qp, grad_T);
 		
 		// Update the elemental increment dR for each qp
 		//qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];

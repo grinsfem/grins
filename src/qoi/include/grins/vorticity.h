@@ -50,23 +50,27 @@ namespace GRINS
     virtual ~Vorticity();
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
-    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+    virtual QoIBase* clone();
 
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
         here. For example, variable indices. */
     virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
+    virtual void init_context( AssemblyContext& context );
+
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
         computed over area of input subdomain id. Vorticity computed as 
         \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
-    virtual void element_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual void element_qoi( AssemblyContext& context,
+                              const unsigned int qoi_index );
 
     //! Compute the qoi derivative with respect to the solution.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
         computed over area of input subdomain id. */
-    virtual void element_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet &qois );
+    virtual void element_qoi_derivative( AssemblyContext& context,
+                                         const unsigned int qoi_index );
 
   protected:
 

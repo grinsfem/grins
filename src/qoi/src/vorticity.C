@@ -39,35 +39,6 @@ namespace GRINS
   Vorticity::Vorticity( const GetPot& input )
     : QoIBase()
   {
-    this->assemble_qoi_elements = true;
-    this->read_input_options( input );
-
-    return;
-  }
-
-  Vorticity::~Vorticity()
-  {
-    return;
-  }
-
-  libMesh::AutoPtr<libMesh::DifferentiableQoI> Vorticity::clone()
-  {
-    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new Vorticity( *this ) );
-  }
-
-  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
-  {
-    // Grab velocity variable indices
-    std::string u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default);
-    std::string v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default);
-    this->_u_var = system.variable_number(u_var_name);
-    this->_v_var = system.variable_number(v_var_name);
-
-    return;
-  }
-
-  void Vorticity::read_input_options( const GetPot& input )
-  {
     // Extract subdomain on which to compute to qoi
     int num_ids = input.vector_variable_size( "QoI/Vorticity/enabled_subdomains" );
 
@@ -86,9 +57,44 @@ namespace GRINS
     return;
   }
 
-  void Vorticity::element_qoi( libMesh::DiffContext& context, const libMesh::QoISet& )
+  Vorticity::~Vorticity()
   {
-    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
+    return;
+  }
+
+  QoIBase* Vorticity::clone()
+  {
+    return new Vorticity( *this );
+  }
+
+  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
+  {
+    // Grab velocity variable indices
+    std::string u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default);
+    std::string v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default);
+    this->_u_var = system.variable_number(u_var_name);
+    this->_v_var = system.variable_number(v_var_name);
+
+    return;
+  }
+
+  void Vorticity::init_context( AssemblyContext& context )
+  {
+    libMesh::FEBase* u_fe, v_fe;
+    c.get_element_fe<libMesh::Real>(this->_u_var, u_fe);
+    c.get_element_fe<libMesh::Real>(this->_v_var, v_fe);
+
+    u_fe->get_dphi();
+    u_fe->get_JxW();
+
+    v_fe->get_dphi();
+
+    return;
+  }
+
+  void Vorticity::element_qoi( AssemblyContext& context,
+                               const unsigned int qoi_index )
+  {
 
     if( _subdomain_ids.find( (&c.get_elem())->subdomain_id() ) != _subdomain_ids.end() )
       {
@@ -99,7 +105,7 @@ namespace GRINS
 	unsigned int n_qpoints = c.get_element_qrule().n_points();
 
 	/*! \todo Need to generalize this to the multiple QoI case */
-	libMesh::Number& qoi = c.get_qois()[0];
+	libMesh::Number& qoi = c.get_qois()[qoi_index];
 
 	for( unsigned int qp = 0; qp != n_qpoints; qp++ )
 	  {
@@ -114,9 +120,9 @@ namespace GRINS
     return;
   }
 
-  void Vorticity::element_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet & )
+  void Vorticity::element_qoi_derivative( AssemblyContext& context,
+                                          const unsigned int qoi_index )
   {
-    AssemblyContext &c = libmesh_cast_ref<AssemblyContext&>(context);
 
     if( _subdomain_ids.find( (&c.get_elem())->subdomain_id() ) != _subdomain_ids.end() )
       {
@@ -140,8 +146,8 @@ namespace GRINS
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C
 	/*! \todo Need to generalize this to the multiple QoI case */
-	libMesh::DenseSubVector<Number> &Qu = c.get_qoi_derivatives(0, 0);
-	libMesh::DenseSubVector<Number> &Qv = c.get_qoi_derivatives(0, 1);
+	libMesh::DenseSubVector<Number> &Qu = c.get_qoi_derivatives(qoi_index, _u_var);
+	libMesh::DenseSubVector<Number> &Qv = c.get_qoi_derivatives(qoi_index, _v_var);
 
 	// Integration loop
 	for( unsigned int qp = 0; qp != n_qpoints; qp++ )

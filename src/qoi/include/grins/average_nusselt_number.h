@@ -39,17 +39,19 @@ namespace GRINS
 
     virtual ~AverageNusseltNumber();
 
-    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+    virtual QoIBase* clone();
 
-    virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual void side_qoi( AssemblyContext& context,
+                           const unsigned int qoi_index );
 
-    virtual void side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual void side_qoi_derivative( AssemblyContext& context,
+                                      const unsigned int qoi_index );
 
     virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
-  protected:
+    virtual void init_context( AssemblyContext& context );
 
-    virtual void read_input_options( const GetPot& input );
+  protected:
 
     //! Thermal conductivity
     libMesh::Real _k;
