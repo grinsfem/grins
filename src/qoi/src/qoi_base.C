@@ -33,8 +33,9 @@
 
 namespace GRINS
 {
-  QoIBase::QoIBase()
-    : libMesh::DifferentiableQoI()
+  QoIBase::QoIBase( const std::string& qoi_name )
+    : _qoi_name(qoi_name),
+      _qoi_value(0.0)
   {
     return;
   }
@@ -44,45 +45,69 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::init_qoi( std::vector<Number>& sys_qoi )
+  void QoIBase::init( const GetPot& /*input*/,
+                      const MultiphysicsSystem& /*system*/ )
   {
-    sys_qoi.resize(1, 0.0);
+    return;
+  }
+
+  void QoIBase::init_context( libMesh::DiffContext& /*context*/ )
+  {
+    return;
+  }
+
+  void QoIBase::element_qoi( AssemblyContext& /*context*/ )
+  {
+    return;
+  }
+
+  void QoIBase::element_qoi_derivative( AssemblyContext& /*context*/ )
+  {
+    return;
+  }
+
+  void QoIBase::side_qoi( AssemblyContext& /*context*/ )
+  {
+    return;
+  }
+
+  void QoIBase::side_qoi_derivative( AssemblyContext& /*context*/ )
+  {
     return;
   }
 
   void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
-                             std::vector<Number>& sys_qoi,
-                             std::vector<Number>& local_qoi,
-			     const QoISet& qoi_indices )
+                             libMesh::Number& sys_qoi,
+                             libMesh::Number& local_qoi )
   {
-    libMesh::DifferentiableQoI::parallel_op( communicator, sys_qoi, local_qoi, qoi_indices );
-    _qoi_cache = sys_qoi;
+    communicator.sum(local_qoi);
+
+    sys_qoi = local_qoi;
+
+    _qoi_value = sys_qoi;
+
+    return;
+  }
+
+  void QoIBase::thread_join( libMesh::Number& qoi, libMesh::Number& other_qoi )
+  {
+    qoi += other_qoi;
+
     return;
   }
 
   void QoIBase::output_qoi( std::ostream& out ) const
   {
-    if( !_qoi_cache.empty() )
-      {
-	out << "==========================================================" << std::endl;
+    out << "==========================================================" << std::endl;
 
-	for(  unsigned int i = 0; i < _qoi_cache.size(); i++ )
-	  {
-	    out << "QoI #" << i << " = " 
-		<< std::setprecision(16) 
-		<< std::scientific
-		<< _qoi_cache[i] << std::endl;
-	  }
+    out << _qoi_name+" = "
+        << std::setprecision(16)
+        << std::scientific
+        << _qoi_value << std::endl;
 
-	out << "==========================================================" << std::endl;
-      }
+    out << "==========================================================" << std::endl;
 
     return;
-  }
-
-  Number QoIBase::get_qoi( unsigned int qoi_index ) const
-  {
-    return _qoi_cache[qoi_index];
   }
   
 } // namespace GRINS
