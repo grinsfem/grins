@@ -21,12 +21,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 #ifndef GRINS_COMPOSITE_QOI_H
 #define GRINS_COMPOSITE_QOI_H
 
+// C++
+#include <vector>
+#include <ostream>
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+#include "libmesh/diff_qoi.h"
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class DiffContext;
+  class QoISet;
+  namespace Parallel
+  {
+    class Communicator;
+  }
+}
+
+// GRINS
+#include "grins/qoi_base.h"
+
 namespace GRINS
 {
+  // GRINS forward declarations
+  class MultiphysicsSystem;
+
   class CompositeQoI : public libMesh::DifferentiableQoI
   {
   public:
@@ -34,7 +59,12 @@ namespace GRINS
 
     virtual ~CompositeQoI();
 
+    //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
+    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+
     virtual void add_qoi( QoIBase& qoi );
+
+    unsigned int n_qois() const;
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
@@ -47,31 +77,56 @@ namespace GRINS
      */
     virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi );
 
+    virtual void init_context( libMesh::DiffContext& context );
+
+    //! Compute the qoi value for element interiors.
+    virtual void element_qoi( libMesh::DiffContext& context,
+                              const libMesh::QoISet& qoi_indices );
+
+    //! Compute the qoi derivative with respect to the solution on element interiors.
+    virtual void element_qoi_derivative( libMesh::DiffContext &context,
+                                         const libMesh::QoISet &qoi_indices );
+
+    //! Compute the qoi value on the domain boundary
+    virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+
+    //! Compute the qoi derivative with respect to the solution on the domain boundary
+    virtual void side_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet &qois );
+
+    //! Operation to accumulate the QoI from multiple MPI processes.
     /*!
-     * We call the base class then grab the sys_qoi and cache it locally to output later.
-     * If the QoI is not expressable as a sum over elements, then this will need to be
-     * overridden with the correct libMesh::Parallel operations.
+     * Calls each QoI's parallel_op function.
      */
     virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
                               std::vector<libMesh::Number>& sys_qoi,
 			      std::vector<libMesh::Number>& local_qoi,
 			      const libMesh::QoISet& qoi_indices );
 
+    //! Operation to accumulate the QoI from multiple MPI processes.
+    /*!
+     * Calls each QoI's thread_join function.
+     */
+    virtual void thread_join( std::vector<libMesh::Number>& qoi,
+                              const std::vector<libMesh::Number>& other_qoi,
+                              const QoISet& qoi_indices );
+
     //! Basic output for computed QoI's.
     void output_qoi( std::ostream& out ) const;
 
     //! Accessor for value of QoI for given qoi_index.
-    /*!
-     * Returns value of QoI for qoi_index. Currently, we only store a single QoI,
-     * so qoi_index should be zero.
-     * \todo Maybe take a libMesh::QoISet instead?
-     */
     libMesh::Number get_qoi( unsigned int qoi_index ) const;
 
-  private:
+  protected:
     
     std::vector<QoIBase*> _qois;
+
   };
+
+  inline
+  unsigned int CompositeQoI::n_qois() const
+  {
+    return _qois.size();
+  }
 
 } // end namespace GRINS
 
