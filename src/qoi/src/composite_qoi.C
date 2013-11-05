@@ -181,7 +181,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Number CompositeQoI::get_qoi( unsigned int qoi_index ) const
+  libMesh::Number CompositeQoI::get_qoi_value( unsigned int qoi_index ) const
   {
     return (*_qois[qoi_index]).value();
   }
