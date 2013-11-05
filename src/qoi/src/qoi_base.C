@@ -27,9 +27,11 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
+
+// GRINS
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
