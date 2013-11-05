@@ -48,12 +48,13 @@ namespace GRINS
     std::string qoi_list = input("QoI/enabled_qois", "none" );
 
     std::vector<std::string> qoi_names;
+
     if( qoi_list != std::string("none") )
       {
         SplitString( qoi_list, std::string(" "), qoi_names, false );
       }
 
-    std::tr1::shared_ptr<CompositeQoI> qois;
+    std::tr1::shared_ptr<CompositeQoI> qois( new CompositeQoI );
     
     if( !qoi_names.empty() )
       {
