@@ -131,11 +131,11 @@ namespace GRINS
   }
 
   inline
-  const QoIBase& get_qoi( unsigned int qoi_index ) const
+  const QoIBase& CompositeQoI::get_qoi( unsigned int qoi_index ) const
   {
-    libmesh_assert_less_than( qoi_index, this->n_qois() );
+    libmesh_assert_less( qoi_index, this->n_qois() );
 
-    return _qois[qoi_index];
+    return (*_qois[qoi_index]);
   }
 
 } // end namespace GRINS
