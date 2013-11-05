@@ -83,7 +83,7 @@ namespace GRINS
 
     // If the user actually asks for a QoI, then we add it.
     std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
-    if( qois.n_qois() > 0 )
+    if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
         qois->init(input, *_multiphysics_system );
