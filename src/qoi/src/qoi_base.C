@@ -53,27 +53,31 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::init_context( libMesh::DiffContext& /*context*/ )
+  void QoIBase::init_context( AssemblyContext& /*context*/ )
   {
     return;
   }
 
-  void QoIBase::element_qoi( AssemblyContext& /*context*/ )
+  void QoIBase::element_qoi( AssemblyContext& /*context*/,
+                             const unsigned int /*qoi_index*/ )
   {
     return;
   }
 
-  void QoIBase::element_qoi_derivative( AssemblyContext& /*context*/ )
+  void QoIBase::element_qoi_derivative( AssemblyContext& /*context*/,
+                                        const unsigned int /*qoi_index*/ )
   {
     return;
   }
 
-  void QoIBase::side_qoi( AssemblyContext& /*context*/ )
+  void QoIBase::side_qoi( AssemblyContext& /*context*/,
+                          const unsigned int /*qoi_index*/ )
   {
     return;
   }
 
-  void QoIBase::side_qoi_derivative( AssemblyContext& /*context*/ )
+  void QoIBase::side_qoi_derivative( AssemblyContext& /*context*/,
+                                     const unsigned int /*qoi_index*/ )
   {
     return;
   }
