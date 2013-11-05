@@ -64,7 +64,7 @@ namespace GRINS
 
   void CompositeQoI::init_qoi( std::vector<Number>& sys_qoi )
   {
-    sys_qoi.resize(qois.size(), 0.0);
+    sys_qoi.resize(_qois.size(), 0.0);
 
     return;
   }
@@ -74,7 +74,7 @@ namespace GRINS
     for( std::vector<QoIBase*>::iterator qoi = _qois.begin();
          qoi != _qois.end(); ++qoi )
       {
-        qoi->init(input,system);
+        (*qoi)->init(input,system);
       }
 
     return;
@@ -87,7 +87,7 @@ namespace GRINS
     for( std::vector<QoIBase*>::iterator qoi = _qois.begin();
          qoi != _qois.end(); ++qoi )
       {
-        qoi->init_context(c);
+        (*qoi)->init_context(c);
       }
 
     return;
