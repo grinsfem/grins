@@ -172,10 +172,10 @@ namespace GRINS
 
   void CompositeQoI::output_qoi( std::ostream& out ) const
   {
-    for( std::vector<QoIBase*>::iterator qoi = _qois.begin();
+    for( std::vector<QoIBase*>::const_iterator qoi = _qois.begin();
          qoi != _qois.end(); ++qoi )
       {
-        qoi->output_qoi(out);
+        (*qoi)->output_qoi(out);
       }
 
     return;
