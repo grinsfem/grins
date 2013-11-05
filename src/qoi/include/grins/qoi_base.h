@@ -58,6 +58,14 @@ namespace GRINS
      */
     virtual QoIBase* clone() const =0;
 
+    //! Does the QoI need an element interior assembly loop?
+    /*! This is pure virtual to force to user to specify. */
+    virtual bool assemble_on_interior() const =0;
+
+    //! Does the QoI need a domain boundary assembly loop?
+    /*! This is pure virtual to force to user to specify. */
+    virtual bool assemble_on_sides() const =0;
+
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.

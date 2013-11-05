@@ -36,6 +36,10 @@ namespace GRINS
   CompositeQoI::CompositeQoI()
     : libMesh::DifferentiableQoI()
   {
+    // We initialize these to false and then reset as needed by each QoI
+    assemble_qoi_sides = false;
+    assemble_qoi_elements = false;
+
     return;
   }
 
@@ -65,6 +69,16 @@ namespace GRINS
   void CompositeQoI::add_qoi( const QoIBase& qoi )
   {
     _qois.push_back( qoi.clone() );
+
+    if( qoi.assemble_on_interior() )
+      {
+        this->assemble_qoi_elements = true;
+      }
+
+    if( qoi.assemble_on_sides() )
+      {
+        this->assemble_qoi_sides = true;
+      }
 
     return;
   }

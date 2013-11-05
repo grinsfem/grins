@@ -41,6 +41,10 @@ namespace GRINS
 
     virtual QoIBase* clone() const;
 
+    virtual bool assemble_on_interior() const;
+
+    virtual bool assemble_on_sides() const;
+
     virtual void side_qoi( AssemblyContext& context,
                            const unsigned int qoi_index );
 
@@ -70,5 +74,17 @@ namespace GRINS
     AverageNusseltNumber();
 
   };
+
+  inline
+  bool AverageNusseltNumber::assemble_on_interior() const
+  {
+    return false;
+  }
+
+  inline
+  bool AverageNusseltNumber::assemble_on_sides() const
+  {
+    return true;
+  }
 }
 #endif //GRINS_AVERAGE_NUSSELT_NUMBER_H
