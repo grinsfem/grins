@@ -74,8 +74,6 @@ namespace GRINS
 
   protected:
 
-    virtual void read_input_options( const GetPot& input );
-
     //! u-velocity component variable index
     VariableIndex _u_var;
 
