@@ -39,7 +39,7 @@ namespace GRINS
 
     virtual ~AverageNusseltNumber();
 
-    virtual QoIBase* clone();
+    virtual QoIBase* clone() const;
 
     virtual void side_qoi( AssemblyContext& context,
                            const unsigned int qoi_index );

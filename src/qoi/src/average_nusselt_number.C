@@ -47,7 +47,7 @@ namespace GRINS
     return;
   }
 
-  QoIBase* AverageNusseltNumber::clone()
+  QoIBase* AverageNusseltNumber::clone() const
   {
     return new AverageNusseltNumber( *this );
   }

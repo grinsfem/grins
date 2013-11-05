@@ -55,7 +55,7 @@ namespace GRINS
     return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new CompositeQoI(*this) );
   }
 
-  void CompositeQoI::add_qoi( QoIBase& qoi )
+  void CompositeQoI::add_qoi( const QoIBase& qoi )
   {
     _qois.push_back( qoi.clone() );
 

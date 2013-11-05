@@ -50,7 +50,7 @@ namespace GRINS
     virtual ~Vorticity();
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
-    virtual QoIBase* clone();
+    virtual QoIBase* clone() const;
 
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized

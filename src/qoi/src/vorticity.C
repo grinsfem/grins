@@ -48,7 +48,7 @@ namespace GRINS
     return;
   }
 
-  QoIBase* Vorticity::clone()
+  QoIBase* Vorticity::clone() const
   {
     return new Vorticity( *this );
   }

@@ -56,7 +56,7 @@ namespace GRINS
      * We return a raw pointer, but it is expected for the user to take ownership
      * and delete the object when done.
      */
-    virtual QoIBase* clone()=0;
+    virtual QoIBase* clone() const =0;
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
