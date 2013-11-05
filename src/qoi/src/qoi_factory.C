@@ -95,6 +95,8 @@ namespace GRINS
 	 libmesh_error();
       }
 
+    libmesh_assert(qoi);
+
     qois->add_qoi( *qoi );
 
     return;
