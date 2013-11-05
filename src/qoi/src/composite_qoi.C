@@ -52,7 +52,14 @@ namespace GRINS
 
   libMesh::AutoPtr<libMesh::DifferentiableQoI> CompositeQoI::clone()
   {
-    return libMesh::AutoPtr<libMesh::DifferentiableQoI>( new CompositeQoI(*this) );
+    CompositeQoI* clone = new CompositeQoI;
+
+    for( unsigned int q = 0; q < this->n_qois(); q++ )
+      {
+        clone->add_qoi( this->get_qoi(q) );
+      }
+
+    return libMesh::AutoPtr<libMesh::DifferentiableQoI>(clone);
   }
 
   void CompositeQoI::add_qoi( const QoIBase& qoi )
