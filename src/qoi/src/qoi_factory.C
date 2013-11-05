@@ -25,6 +25,7 @@
 #include "grins/qoi_factory.h"
 
 // GRINS
+#include "grins/string_utils.h"
 #include "grins/grins_physics_names.h"
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
@@ -52,7 +53,7 @@ namespace GRINS
         SplitString( qoi_list, std::string(" "), qoi_names, false );
       }
 
-    std::tr1::shared_ptr<Composite_QoI> qois;
+    std::tr1::shared_ptr<CompositeQoI> qois;
     
     if( !qoi_names.empty() )
       {
@@ -70,7 +71,7 @@ namespace GRINS
 	  }
       }
 
-    return qoi;
+    return qois;
   }
 
   void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
@@ -127,13 +128,19 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::echo_qoi_list( const std::string& qoi_name )
+  void QoIFactory::echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois )
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl
-	      << "List of Enabled QoIs:" << std::endl
-	      << qoi_name << std::endl
-	      <<  "==========================================================" << std::endl;
+	      << "List of Enabled QoIs:" << std::endl;
+    
+    for( unsigned int q = 0; q < qois->n_qois(); q++ )
+      {
+        std::cout << qois->get_qoi(q).name() << std::endl;      
+      }
+
+    std::cout <<  "==========================================================" << std::endl;
+
     return;
   }
 

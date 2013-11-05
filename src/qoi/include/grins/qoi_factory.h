@@ -54,7 +54,7 @@ namespace GRINS
     virtual void check_qoi_physics_consistency( const GetPot& input,
 						const std::string& qoi_name );
 
-    virtual void echo_qoi_list( const std::string& qoi_name );
+    virtual void echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois );
 
     void consistency_helper( const std::set<std::string>& requested_physics,
 			     const std::set<std::string>& required_physics, 
