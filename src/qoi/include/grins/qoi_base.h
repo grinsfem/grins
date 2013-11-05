@@ -41,6 +41,7 @@ namespace GRINS
 {
   // Forward declarations
   class MultiphysicsSystem;
+  class AssemblyContext;
 
   class QoIBase
   {
