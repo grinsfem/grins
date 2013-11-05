@@ -95,7 +95,7 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::thread_join( libMesh::Number& qoi, libMesh::Number& other_qoi )
+  void QoIBase::thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi )
   {
     qoi += other_qoi;
 

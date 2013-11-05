@@ -97,7 +97,7 @@ namespace GRINS
     /*!
      * By default, this is just a sum. Override if QoI is more complex.
      */
-    virtual void thread_join( libMesh::Number& qoi, libMesh::Number& other_qoi );
+    virtual void thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi );
 
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.
