@@ -125,7 +125,7 @@ namespace GRINS
     if( this->_print_qoi )
       {
         _multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-        const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+        const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
       }
 
@@ -148,10 +148,10 @@ namespace GRINS
     return _equation_system;
   }
 
-  Number Simulation::get_qoi( unsigned int qoi_index ) const
+  libMesh::Number Simulation::get_qoi_value( unsigned int qoi_index ) const
   {
-    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-    return qoi->get_qoi(qoi_index);
+    const CompositeQoI* qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+    return qoi->get_qoi_value(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )

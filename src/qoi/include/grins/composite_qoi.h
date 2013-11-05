@@ -114,7 +114,9 @@ namespace GRINS
     void output_qoi( std::ostream& out ) const;
 
     //! Accessor for value of QoI for given qoi_index.
-    libMesh::Number get_qoi( unsigned int qoi_index ) const;
+    libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
+
+    const QoIBase& get_qoi( unsigned int qoi_index ) const;
 
   protected:
     
@@ -126,6 +128,14 @@ namespace GRINS
   unsigned int CompositeQoI::n_qois() const
   {
     return _qois.size();
+  }
+
+  inline
+  const QoIBase& get_qoi( unsigned int qoi_index ) const
+  {
+    libmesh_assert_less_than( qoi_index, this->n_qois() );
+
+    return _qois[qoi_index];
   }
 
 } // end namespace GRINS
