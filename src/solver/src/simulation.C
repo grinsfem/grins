@@ -52,6 +52,7 @@ namespace GRINS
     _print_qoi( input("screen-options/print_qoi", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _timesteps_per_vis( input("vis-options/timesteps_per_vis", false ) ),
     _error_estimator() // effectively NULL
   {
     // Only print libMesh logging info if the user requests it
@@ -117,6 +118,7 @@ namespace GRINS
     context.system = _multiphysics_system;
     context.equation_system = _equation_system;
     context.vis = _vis;
+    context.timesteps_per_vis = _timesteps_per_vis;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
     context.postprocessing = _postprocessing;

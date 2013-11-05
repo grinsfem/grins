@@ -115,6 +115,8 @@ namespace GRINS
     bool _output_vis;
     bool _output_residual;
 
+    unsigned int _timesteps_per_vis;
+
     std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
 
   private:

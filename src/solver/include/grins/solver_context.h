@@ -54,6 +54,7 @@ namespace GRINS
     GRINS::MultiphysicsSystem* system;
     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
     std::tr1::shared_ptr<GRINS::Visualization> vis;
+    unsigned int timesteps_per_vis;
     bool output_vis;
     bool output_residual;
 
