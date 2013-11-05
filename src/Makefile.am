@@ -382,7 +382,6 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   libgrins_la_LIBADD  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #-------------
