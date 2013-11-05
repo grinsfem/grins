@@ -25,6 +25,12 @@
 // This class
 #include "grins/composite_qoi.h"
 
+// GRINS
+#include "grins/assembly_context.h"
+
+// libMesh
+#include "libmesh/diff_context.h"
+
 namespace GRINS
 {
   CompositeQoI::CompositeQoI()
