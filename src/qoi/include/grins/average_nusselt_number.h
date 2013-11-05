@@ -35,7 +35,7 @@ namespace GRINS
   {
   public:
 
-    AverageNusseltNumber( const GetPot& input );
+    AverageNusseltNumber( const std::string& qoi_name );
 
     virtual ~AverageNusseltNumber();
 

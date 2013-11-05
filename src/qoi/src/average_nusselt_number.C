@@ -36,11 +36,27 @@
 
 namespace GRINS
 {
-  AverageNusseltNumber::AverageNusseltNumber( const GetPot& input )
-    : QoIBase(),
-      _k( input( "QoI/NusseltNumber/thermal_conductivity", -1.0 ) ),
-      _scaling( input( "QoI/NusseltNumber/scaling", 1.0 ) );
+  AverageNusseltNumber::AverageNusseltNumber( const std::string& qoi_name )
+    : QoIBase(qoi_name)
   {
+    return;
+  }
+
+  AverageNusseltNumber::~AverageNusseltNumber()
+  {
+    return;
+  }
+
+  QoIBase* AverageNusseltNumber::clone()
+  {
+    return new AverageNusseltNumber( *this );
+  }
+
+  void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
+  {
+    _k = input( "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+
+    _scaling = input( "QoI/NusseltNumber/scaling", 1.0 );
 
     if( this->_k < 0.0 )
       {
@@ -65,21 +81,6 @@ namespace GRINS
 	_bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
       }
 
-    return;
-  }
-
-  AverageNusseltNumber::~AverageNusseltNumber()
-  {
-    return;
-  }
-
-  QoIBase* AverageNusseltNumber::clone()
-  {
-    return new AverageNusseltNumber( *this );
-  }
-
-  void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
-  {
     // Grab temperature variable index
     std::string T_var_name = input( "Physics/VariableNames/Temperature",
 				    T_var_name_default );
@@ -93,7 +94,7 @@ namespace GRINS
   {
     libMesh::FEBase* T_fe;
 
-    c.get_side_fe<libMesh::Real>(this->_T_var, T_fe);
+    context.get_side_fe<libMesh::Real>(this->_T_var, T_fe);
 
     T_fe->get_dphi();
     T_fe->get_JxW();

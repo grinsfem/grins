@@ -36,8 +36,23 @@
 
 namespace GRINS
 {
-  Vorticity::Vorticity( const GetPot& input )
-    : QoIBase()
+  Vorticity::Vorticity( const std::string& qoi_name )
+    : QoIBase(qoi_name)
+  {
+    return;
+  }
+
+  Vorticity::~Vorticity()
+  {
+    return;
+  }
+
+  QoIBase* Vorticity::clone()
+  {
+    return new Vorticity( *this );
+  }
+
+  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
   {
     // Extract subdomain on which to compute to qoi
     int num_ids = input.vector_variable_size( "QoI/Vorticity/enabled_subdomains" );
@@ -54,21 +69,6 @@ namespace GRINS
 	_subdomain_ids.insert( s_id );
       }
 
-    return;
-  }
-
-  Vorticity::~Vorticity()
-  {
-    return;
-  }
-
-  QoIBase* Vorticity::clone()
-  {
-    return new Vorticity( *this );
-  }
-
-  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
-  {
     // Grab velocity variable indices
     std::string u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default);
     std::string v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default);

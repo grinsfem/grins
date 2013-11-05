@@ -45,7 +45,7 @@ namespace GRINS
     //! Constructor
     /*! Constructor takes GetPot object to read any input options associated
         with this QoI */
-    Vorticity( const GetPot& input );
+    Vorticity( const std::string& qoi_name );
 
     virtual ~Vorticity();
 
