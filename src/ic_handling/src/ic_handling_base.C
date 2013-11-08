@@ -169,12 +169,7 @@ namespace GRINS
 				      const std::string& ic_value_string, 
 				      const GetPot& input )
   {
-    // FIXME: SplitString fails in the single-variable case
-    // SplitString(ic_vars_string, ":", _subfunction_variables);
-
-    // Let's just get one-variable-per-IC working now
-    _subfunction_variables.clear();
-    _subfunction_variables.push_back(ic_vars_string);
+    SplitString(ic_vars_string, ":", _subfunction_variables);
 
     libmesh_assert(_subfunction_variables.size());
 
