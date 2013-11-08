@@ -35,12 +35,15 @@
 #include "grins/stokes.h"
 #include "grins/inc_navier_stokes.h"
 #include "grins/inc_navier_stokes_adjoint_stab.h"
+#include "grins/inc_navier_stokes_spgsm_stab.h"
 #include "grins/heat_transfer.h"
 #include "grins/heat_transfer_source.h"
 #include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/heat_transfer_spgsm_stab.h"
 #include "grins/axisym_heat_transfer.h"
 #include "grins/boussinesq_buoyancy.h"
 #include "grins/boussinesq_buoyancy_adjoint_stab.h"
+#include "grins/boussinesq_buoyancy_spgsm_stab.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -141,6 +144,11 @@ namespace GRINS
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization(physics_to_add,input) );
       }
+    else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
+      {
+        physics_list[physics_to_add] = 
+          PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization(physics_to_add,input) );
+      }
     else if( physics_to_add == heat_transfer )
       {
 	physics_list[physics_to_add] = 
@@ -150,6 +158,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new HeatTransferAdjointStabilization(physics_to_add,input));
+      }
+    else if( physics_to_add == heat_transfer_spgsm_stab )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new HeatTransferSPGSMStabilization(physics_to_add,input));
       }
     else if( physics_to_add == heat_transfer_source )
       {
@@ -191,6 +204,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new BoussinesqBuoyancyAdjointStabilization(physics_to_add,input));
+      }
+    else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new BoussinesqBuoyancySPGSMStabilization(physics_to_add,input));
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
@@ -438,13 +456,14 @@ namespace GRINS
 	 physics++ )
       {
 	// For IncompressibleNavierStokes*Stabilization, we'd better have IncompressibleNavierStokes
-	if( physics->first == incompressible_navier_stokes_adjoint_stab )
-	  {
-	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
-	      {
-		this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
-	      }
-	  }
+        if( (physics->first == incompressible_navier_stokes_adjoint_stab) ||
+            (physics->first == incompressible_navier_stokes_spgsm_stab) )
+          {
+            if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+              {
+                this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
+              }
+          }
 
 	// For HeatTransfer, we need IncompressibleNavierStokes
 	if( physics->first == heat_transfer )
