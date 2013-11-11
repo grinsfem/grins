@@ -56,7 +56,7 @@ namespace GRINS
 
     std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
 
-    std::tr1::shared_ptr<QoIBase> build_qoi( const GetPot& input );
+    std::tr1::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > build_postprocessing( const GetPot& input );
 

@@ -123,6 +123,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_factory.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/vorticity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/composite_qoi.C
 
 # src/solver files
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_solver.C
@@ -277,6 +278,7 @@ include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_base.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_factory.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_names.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/vorticity.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/composite_qoi.h
 
 # src/solver headers
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_solver.h

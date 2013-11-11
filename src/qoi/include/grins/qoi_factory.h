@@ -28,11 +28,7 @@
 #include "libmesh/getpot.h"
 
 //GRINS
-#include "grins/grins_physics_names.h"
-#include "grins/qoi_names.h"
-#include "grins/qoi_base.h"
-#include "grins/average_nusselt_number.h"
-#include "grins/vorticity.h"
+#include "grins/composite_qoi.h"
 
 // shared_ptr
 #include "boost/tr1/memory.hpp"
@@ -47,16 +43,18 @@ namespace GRINS
     
     virtual ~QoIFactory();
 
-    virtual std::tr1::shared_ptr<QoIBase> build(const GetPot& input);
+    virtual std::tr1::shared_ptr<CompositeQoI> build(const GetPot& input);
 
   protected:
 
-    virtual void add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<QoIBase>& qoi );
+    virtual void add_qoi( const GetPot& input,
+                          const std::string& qoi_name,
+                          std::tr1::shared_ptr<CompositeQoI>& qois );
 
     virtual void check_qoi_physics_consistency( const GetPot& input,
 						const std::string& qoi_name );
 
-    virtual void echo_qoi_list( const std::string& qoi_name );
+    virtual void echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois );
 
     void consistency_helper( const std::set<std::string>& requested_physics,
 			     const std::set<std::string>& required_physics, 

@@ -124,7 +124,7 @@ namespace GRINS
     return (this->_bc_factory)->build_neumann(equation_system);
   }
   
-  std::tr1::shared_ptr<QoIBase> SimulationBuilder::build_qoi( const GetPot& input )
+  std::tr1::shared_ptr<CompositeQoI> SimulationBuilder::build_qoi( const GetPot& input )
   {
     return (this->_qoi_factory)->build(input);
   }

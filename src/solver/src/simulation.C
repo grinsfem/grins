@@ -44,7 +44,6 @@ namespace GRINS
        _system_name( input("screen-options/system_name", "GRINS" ) ),
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
        _vis( sim_builder.build_vis(input) ),
-       _qoi( sim_builder.build_qoi(input) ),
        _postprocessing( sim_builder.build_postprocessing(input) ),
     _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
     _print_log_info( input("screen-options/print_log_info", false ) ),
@@ -84,17 +83,16 @@ namespace GRINS
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
     // If the user actually asks for a QoI, then we add it.
-    if( this->_qoi.use_count() > 0 )
+    std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
+    if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
-        this->_qoi->init(input, *_multiphysics_system );
+        qois->init(input, *_multiphysics_system );
       
-        /*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
-          but we also need to be able to get system variable numbers... */
         /* Note that we are effectively transfering ownership of the qoi pointer because
            it will be cloned in _multiphysics_system and all the calculations are done there. */
         
-        _multiphysics_system->attach_qoi( &(*(this->_qoi)) );
+        _multiphysics_system->attach_qoi( qois.get() );
       }
 
     // Must be called after setting QoI on the MultiphysicsSystem
@@ -128,8 +126,8 @@ namespace GRINS
 
     if( this->_print_qoi )
       {
-        _multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-        const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+        _multiphysics_system->assemble_qoi();
+        const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
       }
 
@@ -152,10 +150,10 @@ namespace GRINS
     return _equation_system;
   }
 
-  Number Simulation::get_qoi( unsigned int qoi_index ) const
+  libMesh::Number Simulation::get_qoi_value( unsigned int qoi_index ) const
   {
-    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-    return qoi->get_qoi(qoi_index);
+    const CompositeQoI* qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+    return qoi->get_qoi_value(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )

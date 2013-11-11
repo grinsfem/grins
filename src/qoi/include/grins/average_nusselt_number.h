@@ -35,21 +35,27 @@ namespace GRINS
   {
   public:
 
-    AverageNusseltNumber( const GetPot& input );
+    AverageNusseltNumber( const std::string& qoi_name );
 
     virtual ~AverageNusseltNumber();
 
-    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+    virtual QoIBase* clone() const;
 
-    virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual bool assemble_on_interior() const;
 
-    virtual void side_qoi_derivative( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual bool assemble_on_sides() const;
+
+    virtual void side_qoi( AssemblyContext& context,
+                           const unsigned int qoi_index );
+
+    virtual void side_qoi_derivative( AssemblyContext& context,
+                                      const unsigned int qoi_index );
 
     virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
-  protected:
+    virtual void init_context( AssemblyContext& context );
 
-    virtual void read_input_options( const GetPot& input );
+  protected:
 
     //! Thermal conductivity
     libMesh::Real _k;
@@ -68,5 +74,17 @@ namespace GRINS
     AverageNusseltNumber();
 
   };
+
+  inline
+  bool AverageNusseltNumber::assemble_on_interior() const
+  {
+    return false;
+  }
+
+  inline
+  bool AverageNusseltNumber::assemble_on_sides() const
+  {
+    return true;
+  }
 }
 #endif //GRINS_AVERAGE_NUSSELT_NUMBER_H

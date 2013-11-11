@@ -21,8 +21,15 @@
 //
 //-----------------------------------------------------------------------el-
 
-
+// This class
 #include "grins/qoi_factory.h"
+
+// GRINS
+#include "grins/string_utils.h"
+#include "grins/grins_physics_names.h"
+#include "grins/qoi_names.h"
+#include "grins/average_nusselt_number.h"
+#include "grins/vorticity.h"
 
 namespace GRINS
 {
@@ -36,43 +43,61 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<QoIBase> QoIFactory::build(const GetPot& input)
+  std::tr1::shared_ptr<CompositeQoI> QoIFactory::build(const GetPot& input)
   {
-    /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-    std::string qoi_name = input("QoI/enabled_qois", "none" );
+    std::string qoi_list = input("QoI/enabled_qois", "none" );
 
-    std::tr1::shared_ptr<QoIBase> qoi;
-    
-    if( qoi_name != "none" )
+    std::vector<std::string> qoi_names;
+
+    if( qoi_list != std::string("none") )
       {
-	this->add_qoi( input, qoi_name, qoi );
-	
-	/*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-	this->check_qoi_physics_consistency( input, qoi_name );
-	
+        SplitString( qoi_list, std::string(" "), qoi_names, false );
+      }
+
+    std::tr1::shared_ptr<CompositeQoI> qois( new CompositeQoI );
+    
+    if( !qoi_names.empty() )
+      {
+        for( std::vector<std::string>::const_iterator name = qoi_names.begin();
+             name != qoi_names.end(); ++name )
+          {
+            this->add_qoi( input, *name, qois );
+
+            this->check_qoi_physics_consistency( input, *name );
+          }
+
 	if( input( "screen-options/echo_qoi", false ) )
 	  {
-	    /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
-	    this->echo_qoi_list( qoi_name );
+	    this->echo_qoi_list( qois );
 	  }
       }
 
-    return qoi;
+    return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<QoIBase>& qoi )
+  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
   {
+    QoIBase* qoi = NULL;
+
     if( qoi_name == avg_nusselt )
-      qoi.reset( new AverageNusseltNumber( input ) );
+      {
+        qoi = new AverageNusseltNumber( avg_nusselt );
+      }
 
     else if( qoi_name == vorticity )
-      qoi.reset( new Vorticity( input ) );
+      {
+        qoi =  new Vorticity( vorticity );
+      }
 
     else
       {
 	 libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
 	 libmesh_error();
       }
+
+    libmesh_assert(qoi);
+
+    qois->add_qoi( *qoi );
 
     return;
   }
@@ -106,13 +131,19 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::echo_qoi_list( const std::string& qoi_name )
+  void QoIFactory::echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois )
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl
-	      << "List of Enabled QoIs:" << std::endl
-	      << qoi_name << std::endl
-	      <<  "==========================================================" << std::endl;
+	      << "List of Enabled QoIs:" << std::endl;
+    
+    for( unsigned int q = 0; q < qois->n_qois(); q++ )
+      {
+        std::cout << qois->get_qoi(q).name() << std::endl;      
+      }
+
+    std::cout <<  "==========================================================" << std::endl;
+
     return;
   }
 
