@@ -54,14 +54,14 @@ int test( ChemicalMixture& chem_mixture )
 
   const double T = 620.1;
   const double R_N = chem_mixture.R( chem_mixture.species_index("N") );
-  const double M_N = chem_mixture.M( chem_mixture.species_index("N") );
+  
   const double R = 30.1;
 
-  const double omega_dot_exact = rho_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) );
-  const double domega_dot_dT_exact = 0.5*rho_s*gamma*std::sqrt( R_N/(T*GRINS::Constants::two_pi*M_N) );
+  const double omega_dot_exact = rho_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) );
+  const double domega_dot_dT_exact = 0.5*rho_s*gamma*std::sqrt( R_N/(T*GRINS::Constants::two_pi) );
   const double drho_dws = -rho*rho_s/R;
-  const double domega_dot_dws_exact = drho_dws*w_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) )
-                                    + rho*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi*M_N) );
+  const double domega_dot_dws_exact = drho_dws*w_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) )
+                                    + rho*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) );
 
   int return_flag = 0;
 
