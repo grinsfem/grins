@@ -41,7 +41,7 @@ namespace GRINS
       _chemistry(chemistry),
       _species_index(species_index),
       _gamma_s( gamma.clone() ),
-      _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi*chemistry.M(species_index)) ) )
+      _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi) ) )
   {
     return;
   }
