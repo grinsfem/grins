@@ -54,6 +54,8 @@ namespace GRINS
 
     virtual void init( const libMesh::FEMSystem& system );
 
+    void set_axisymmetric( bool is_axisymmetric );
+
     //! \f$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } \f$
     libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
@@ -72,6 +74,8 @@ namespace GRINS
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi} } \f$
     const libMesh::Real _C;
+
+    bool _is_axisymmetric;
 
   };
 
