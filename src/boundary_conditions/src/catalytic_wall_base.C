@@ -25,6 +25,9 @@
 // This class
 #include "grins/catalytic_wall_base.h"
 
+// libMesh
+#include "libmesh/fem_system.h"
+
 namespace GRINS
 {
   template<typename Chemistry>

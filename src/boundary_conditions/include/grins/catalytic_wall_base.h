@@ -24,6 +24,16 @@
 #ifndef GRINS_CATALYTIC_WALL_BASE_H
 #define GRINS_CATALYTIC_WALL_BASE_H
 
+// GRINS
+#include "grins/catalycity_base.h"
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+namespace libMesh
+{
+  class FEMSystem;
+}
+
 namespace GRINS
 {
 
