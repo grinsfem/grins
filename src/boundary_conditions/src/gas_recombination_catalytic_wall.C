@@ -35,8 +35,8 @@ namespace GRINS
                                                                            const unsigned int reactant_species_idx,
                                                                            const unsigned int product_species_idx )
     : CatalyticWallBase<Chemistry>(chem_mixture,gamma,reactant_species_idx),
-    _reactant_species_idx(reactant_species_idx),
-    _product_species_idx(product_species_idx)
+      _reactant_species_idx(reactant_species_idx),
+      _product_species_idx(product_species_idx)
   {
     return;
   }
@@ -83,16 +83,27 @@ namespace GRINS
     // The var shape functions at side quadrature points.
     const std::vector<std::vector<libMesh::Real> >& var_phi_side = side_fe->get_phi();
 
+    // Physical location of the quadrature points
+    const std::vector<libMesh::Point>& var_qpoint = side_fe->get_xyz();
+
     // reactant residual
     libMesh::DenseSubVector<libMesh::Number> &F_r_var = context.get_elem_residual(_reactant_var_idx); 
 
-     // product residual
+    // product residual
     libMesh::DenseSubVector<libMesh::Number> &F_p_var = context.get_elem_residual(_product_var_idx);
 
     unsigned int n_qpoints = context.get_side_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
+        libMesh::Real jac = JxW_side[qp];
+
+        if( this->_is_axisymmetric )
+          {
+            const libMesh::Number r = var_qpoint[qp](0);
+            jac *= r;
+          }
+
         const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
 
         const libMesh::Real Y_r = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp][this->_reactant_species_idx];
@@ -103,17 +114,17 @@ namespace GRINS
 
         const libMesh::Real p_value = -r_value;
 
-	for (unsigned int i=0; i != n_var_dofs; i++)
-	  {
-	    F_r_var(i) += r_value*var_phi_side[i][qp]*JxW_side[qp];
+        for (unsigned int i=0; i != n_var_dofs; i++)
+          {
+            F_r_var(i) += r_value*var_phi_side[i][qp]*jac;
 
-            F_p_var(i) += p_value*var_phi_side[i][qp]*JxW_side[qp];
+            F_p_var(i) += p_value*var_phi_side[i][qp]*jac;
 
             if( request_jacobian )
               {
                 libmesh_not_implemented();
               }
-	  }
+          }
       }
 
     return;
