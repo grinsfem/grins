@@ -65,14 +65,14 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
   template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
+  libMesh::Real CatalyticWallBase<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
     return rho_s*(*_gamma_s)(T)*_C*std::sqrt(T);
   }
 
   template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall<Chemistry>::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
+  libMesh::Real CatalyticWallBase<Chemistry>::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
                                                           const libMesh::Real T, const libMesh::Real R ) const
   {
     return (1.0/w_s - rho_s/R)*(this->omega_dot( rho_s, T ));
@@ -80,7 +80,7 @@ namespace GRINS
 
   template<typename Chemistry>
   inline
-  libMesh::Real CatalyticWall<Chemistry>::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
+  libMesh::Real CatalyticWallBase<Chemistry>::domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
     libMesh::Real sqrtT = std::sqrt(T);
 
