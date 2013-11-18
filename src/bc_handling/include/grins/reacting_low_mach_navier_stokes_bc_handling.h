@@ -30,6 +30,7 @@
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
 #include "grins/catalytic_wall.h"
+#include "grins/catalytic_wall_base.h"
 
 namespace GRINS
 {
@@ -102,6 +103,8 @@ namespace GRINS
     /*! \todo Currently restricted to one reaction per species */
     std::map<BoundaryID,std::set<unsigned int> > _catalytic_species;
 
+    std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > > _new_catalytic_walls;
+
     const Chemistry& _chemistry;
 
   private:
@@ -113,6 +116,7 @@ namespace GRINS
 			 PRESCRIBED_SPECIES,
                          PRESCRIBED_MOLE_FRACTIONS,
 			 CATALYTIC_WALL,
+                         GAS_RECOMBINATION_CATALYTIC_WALL,
 			 GENERAL_SPECIES };
 
   };

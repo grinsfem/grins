@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/string_utils.h"
 #include "grins/catalytic_wall.h"
+#include "grins/gas_recombination_catalytic_wall.h"
 #include "grins/constant_catalycity.h"
 #include "grins/arrhenius_catalycity.h"
 #include "grins/power_law_catalycity.h"
@@ -97,6 +98,10 @@ namespace GRINS
     else if( bc_type == "catalytic_wall" )
       {
 	bc_type_out = CATALYTIC_WALL;
+      }
+    else if( bc_type == "gas_recombination_catalytic_wall" )
+      {
+        bc_type_out = GAS_RECOMBINATION_CATALYTIC_WALL;
       }
     else if( bc_type == "general_species" )
       {
@@ -306,6 +311,67 @@ namespace GRINS
 	}
 	break;
 
+      case(GAS_RECOMBINATION_CATALYTIC_WALL):
+        {
+          this->set_neumann_bc_type( bc_id, bc_type );
+
+          // Parse catalytic reactions on this wall
+	  std::string reactions_string = "Physics/"+_physics_name+"/wall_catalytic_reactions_"+bc_id_string;
+	  if( !input.have_variable(reactions_string) )
+	    {
+	      std::cerr << "Error: Could not find list of catalytic reactions for boundary id " << bc_id 
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+          const unsigned int n_reactions = input.vector_variable_size(reactions_string);
+
+          for( unsigned int r = 0; r < n_reactions; r++ )
+	    {
+              std::string reaction = input(reactions_string, "DIE!", r);
+
+	      // First, split each reaction into reactants and products
+	      std::vector<std::string> partners;
+	      SplitString(reaction, "->", partners);
+
+	      const std::string& reactant = partners[0];
+	      const std::string& product = partners[1];
+
+	      /*! \todo We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc. */
+	      if( partners.size() == 2 )
+		{
+		  /* ------------- Grab the reactant and product species indices ------------- */
+		  const unsigned int r_species = _chemistry.species_index( reactant );
+		  const unsigned int p_species = _chemistry.species_index( product );
+
+                  /* ------------- Parse and construct the corresponding catalyticities ------------- */
+
+                  // These are temporary and will be cloned, so let them be destroyed when we're done
+                  boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                  boost::scoped_ptr<CatalycityBase> gamma_p(NULL);
+
+                  this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r, gamma_p );
+
+                  /* ------------- Now cache the CatalyticWall functions to init later ------------- */
+                  libmesh_assert( gamma_r );
+
+                  std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasRecombinationCatalyticWall<Chemistry>( _chemistry, *gamma_r, r_species, p_species ) );
+
+                  _new_catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
+
+                } // if( partners.size() == 2 )
+              else
+                {
+                  std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+                            << "in a catalytic reaction." << std::endl
+                            << "Found " << partners.size() << " species." << std::endl;
+                  libmesh_error();
+                }
+
+            } // loop over reactions
+        }
+        break;
+
       default:
 	{
 	  LowMachNavierStokesBCHandling::init_bc_types( bc_id, bc_id_string, bc_type,
@@ -361,6 +427,24 @@ namespace GRINS
             this->attach_neumann_bound_func( cont );
 
           } // end check on CATALYTIC_WALL
+
+        if( bc_type == GAS_RECOMBINATION_CATALYTIC_WALL )
+          {
+            typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::iterator it_type;
+
+            std::pair< it_type, it_type > it_range = _new_catalytic_walls.equal_range( bc_id );
+
+            for( it_type it = it_range.first; it != it_range.second; ++it )
+              {
+                (it->second)->init(system);
+
+                if( this->is_axisymmetric() )
+                  {
+                    (it->second)->set_axisymmetric(true);
+                  }
+              }
+          }
+
       } // end loop over bc_ids
 
     // Now clean up the catalytic wall cache because we don't need it anymore.
@@ -508,6 +592,19 @@ namespace GRINS
                                                      this->get_neumann_bound_func( bc_id, var ) );
                 }
 	    } // end loop catalytic species
+        }
+      break;
+
+      case( GAS_RECOMBINATION_CATALYTIC_WALL ):
+        {
+          typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::const_iterator it_type;
+
+          std::pair< it_type, it_type > it_range = _new_catalytic_walls.equal_range( bc_id );
+
+          for( it_type it = it_range.first; it != it_range.second; ++it )
+              {
+                (it->second)->apply_fluxes(context, cache, request_jacobian );
+              }
         }
       break;
 
