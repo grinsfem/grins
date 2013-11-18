@@ -47,9 +47,9 @@ namespace GRINS
 
     virtual ~CatalyticWallBase();
 
-    virtual apply_fluxes( const AssemblyContext& context,
-                          const CachedValues& cache,
-                          const bool request_jacobian );
+    virtual void apply_fluxes( AssemblyContext& context,
+                               const CachedValues& cache,
+                               const bool request_jacobian ) =0;
 
     //! \f$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } \f$
     libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
