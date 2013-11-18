@@ -43,7 +43,8 @@ namespace GRINS
   public:
 
     CatalyticWallBase( const Chemistry& chem_mixture,
-                       CatalycityBase& gamma );
+                       CatalycityBase& gamma,
+                       const unsigned int reactant_species_idx );
 
     virtual ~CatalyticWallBase();
 

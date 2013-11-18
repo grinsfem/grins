@@ -32,10 +32,11 @@ namespace GRINS
 {
   template<typename Chemistry>
   CatalyticWallBase<Chemistry>::CatalyticWallBase( const Chemistry& chemistry,
-                                                   CatalycityBase& gamma )
+                                                   CatalycityBase& gamma,
+                                                   const unsigned int reactant_species_idx )
     : _chemistry(chemistry),
       _gamma_s( gamma.clone() ),
-      _C( std::sqrt( chemistry.R(species_index)/(GRINS::Constants::two_pi) ) )
+      _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) )
   {
     return;
   }
