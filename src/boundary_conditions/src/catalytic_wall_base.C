@@ -47,7 +47,13 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void CatalyticWall<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
+  void CatalyticWallBase<Chemistry>::init( const libMesh::FEMSystem& /*system*/ )
+  {
+    return;
+  }
+
+  template<typename Chemistry>
+  void CatalyticWallBase<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
   {
     _gamma_s->set_params( params );
     return;

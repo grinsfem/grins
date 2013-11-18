@@ -51,6 +51,8 @@ namespace GRINS
                                const CachedValues& cache,
                                const bool request_jacobian ) =0;
 
+    virtual void init( const libMesh::FEMSystem& system );
+
     //! \f$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } \f$
     libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
