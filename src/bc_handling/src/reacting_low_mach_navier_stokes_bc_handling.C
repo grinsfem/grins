@@ -251,9 +251,8 @@ namespace GRINS
 
                   // These are temporary and will be cloned, so let them be destroyed when we're done
                   boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
-                  boost::scoped_ptr<CatalycityBase> gamma_p(NULL);
 
-                  this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r, gamma_p );
+                  this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r );
 
                   /* ------------- Now cache the CatalyticWall functions to init later ------------- */
                   libmesh_assert( gamma_r );
@@ -470,8 +469,7 @@ namespace GRINS
                                                                              const std::string& reactant,
                                                                              const std::string& bc_id_string,
                                                                              const BoundaryID bc_id,
-                                                                             boost::scoped_ptr<CatalycityBase>& gamma_r,
-                                                                             boost::scoped_ptr<CatalycityBase>& gamma_p )
+                                                                             boost::scoped_ptr<CatalycityBase>& gamma_r )
   {
     std::string catalycity_type = input("Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string+"_type", "none");
 
@@ -487,10 +485,7 @@ namespace GRINS
             libmesh_error();
           }
 
-        /*! \todo We assuming single reaction and single product the product is generated
-          at minus the rate the reactant is consumed. Might want to remove this someday. */
-        gamma_r.reset( new ConstantCatalycity( -gamma ) );
-        gamma_p.reset( new ConstantCatalycity( gamma ) );
+        gamma_r.reset( new ConstantCatalycity( gamma ) );
       }
     else if( catalycity_type == std::string("arrhenius") )
       {
@@ -514,10 +509,7 @@ namespace GRINS
             libmesh_error();
           }
 
-        /*! \todo We assuming single reaction and single product the product is generated
-          at minus the rate the reactant is consumed. Might want to remove this someday. */
-        gamma_r.reset( new ArrheniusCatalycity( -gamma0, Ta ) );
-        gamma_p.reset( new ArrheniusCatalycity( gamma0, Ta ) );
+        gamma_r.reset( new ArrheniusCatalycity( gamma0, Ta ) );
       }
     else if( catalycity_type == std::string("power") )
       {
@@ -552,8 +544,7 @@ namespace GRINS
 
         /*! \todo We assuming single reaction and single product the product is generated
           at minus the rate the reactant is consumed. Might want to remove this someday. */
-        gamma_r.reset( new PowerLawCatalycity( -gamma0, Tref, alpha ) );
-        gamma_p.reset( new PowerLawCatalycity(  gamma0, Tref, alpha ) );
+        gamma_r.reset( new PowerLawCatalycity( gamma0, Tref, alpha ) );
       }
     else
       {
