@@ -157,7 +157,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/visualization/src/postprocessing_factor
 sfilesdir = $(prefix)/src
 sfiles_DATA  = $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 sfiles_DATA += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
-
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_base.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/gas_recombination_catalytic_wall.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
 sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_evaluator.C
