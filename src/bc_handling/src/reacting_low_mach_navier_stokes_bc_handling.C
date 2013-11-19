@@ -340,7 +340,7 @@ namespace GRINS
                     else
                       {
                         gas_reactant = split_reactants[0];
-                        solid_reactant = split_reactants[1].substr(0,split_reactants[1].find("(s)")-1);
+                        solid_reactant = split_reactants[1].substr(0,split_reactants[1].find("(s)"));
                       }
                   }
                 // Found (s) in the first entry
@@ -356,7 +356,7 @@ namespace GRINS
                       }
 
                     gas_reactant = split_reactants[1];
-                    solid_reactant = split_reactants[0].substr(0,split_reactants[0].find("(s)")-1);
+                    solid_reactant = split_reactants[0].substr(0,split_reactants[0].find("(s)"));
                   }
 
                 /* Now we have the gas reactant, the solid reactant, and the gas product strings.
