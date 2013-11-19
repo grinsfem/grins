@@ -24,13 +24,15 @@
 
 #include "grins_config.h"
 
-#include "catalytic_wall.C"
+#include "catalytic_wall_base.C"
+#include "gas_recombination_catalytic_wall.C"
 
 #ifdef GRINS_HAVE_CANTERA
 
 #include "grins/cantera_mixture.h"
 
-template class GRINS::CatalyticWall<GRINS::CanteraMixture>;
+template class GRINS::CatalyticWallBase<GRINS::CanteraMixture>;
+template class GRINS::GasRecombinationCatalyticWall<GRINS::CanteraMixture>;
 
 #endif // GRINS_HAVE_CANTERA
 
@@ -39,6 +41,7 @@ template class GRINS::CatalyticWall<GRINS::CanteraMixture>;
 
 #include "grins/antioch_chemistry.h"
 
-template class GRINS::CatalyticWall<GRINS::AntiochChemistry>;
+template class GRINS::CatalyticWallBase<GRINS::AntiochChemistry>;
+template class GRINS::GasRecombinationCatalyticWall<GRINS::AntiochChemistry>;
 
 #endif //GRINS_HAVE_ANTIOCH

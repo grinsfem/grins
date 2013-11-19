@@ -26,7 +26,8 @@
 #include <iomanip>
 
 // GRINS
-#include "grins/catalytic_wall.h"
+#include "grins/math_constants.h"
+#include "grins/gas_recombination_catalytic_wall.h"
 #include "grins/constant_catalycity.h"
 #include "grins/cantera_mixture.h"
 #include "grins/antioch_chemistry.h"
@@ -38,14 +39,13 @@ template<typename ChemicalMixture>
 int test( ChemicalMixture& chem_mixture )
 {
   const unsigned int N_index = chem_mixture.species_index("N");
+  const unsigned int N2_index = chem_mixture.species_index("N2");
 
   const double gamma = 0.03;
 
-  GRINS::ConstantCatalycity gamma_r( -gamma );
-  GRINS::ConstantCatalycity gamma_p( gamma );
+  GRINS::ConstantCatalycity gamma_r( gamma );
 
-  GRINS::CatalyticWall<ChemicalMixture> wall_N( chem_mixture, N_index, gamma_r );
-  GRINS::CatalyticWall<ChemicalMixture> wall_N2( chem_mixture, N_index, gamma_p );
+  GRINS::GasRecombinationCatalyticWall<ChemicalMixture> wall_N( chem_mixture, gamma_r, N_index, N2_index );
 
   const double w_s = 0.2;
 
@@ -66,19 +66,16 @@ int test( ChemicalMixture& chem_mixture )
   int return_flag = 0;
 
   const double omega_dot_N = wall_N.omega_dot( rho_s, T );
-  const double omega_dot_N2 = wall_N2.omega_dot( rho_s, T );
 
   const double domega_dot_dT_N = wall_N.domega_dot_dT( rho_s, T );
-  const double domega_dot_dT_N2 = wall_N2.domega_dot_dT( rho_s, T );
 
   const double domega_dot_dws_N = wall_N.domega_dot_dws( rho_s, w_s, T, R );
-  const double domega_dot_dws_N2 = wall_N2.domega_dot_dws( rho_s, w_s, T, R );
 
   const double tol = 1.0e-15;
 
   /* omega_dot tests */
   {
-    double rel_error = std::fabs( (omega_dot_N + omega_dot_exact)/omega_dot_exact );
+    double rel_error = std::fabs( (omega_dot_N - omega_dot_exact)/omega_dot_exact );
 
     if( rel_error > tol )
       {
@@ -92,24 +89,9 @@ int test( ChemicalMixture& chem_mixture )
       }
   }
 
-  {
-    double rel_error = std::fabs( (omega_dot_N2 - omega_dot_exact)/omega_dot_exact );
-
-    if( rel_error > tol )
-      {
-        std::cerr << std::setprecision(16) << std::scientific
-                  << "Mismatch in omega_dot_N2!" << std::endl
-		  << "omega_dot_N2    = " << omega_dot_N2 << std::endl
-		  << "omega_dot_exact = " << omega_dot_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
-
-	return_flag = 1;
-      }
-  }
-
   /* domega_dot_dT tests */
   {
-    double rel_error = std::fabs( (domega_dot_dT_N + domega_dot_dT_exact)/domega_dot_dT_exact );
+    double rel_error = std::fabs( (domega_dot_dT_N - domega_dot_dT_exact)/domega_dot_dT_exact );
 
     if( rel_error > tol )
       {
@@ -123,45 +105,15 @@ int test( ChemicalMixture& chem_mixture )
       }
   }
 
-  {
-    double rel_error = std::fabs( (domega_dot_dT_N2 - domega_dot_dT_exact)/domega_dot_dT_exact );
-
-    if( rel_error > tol )
-      {
-        std::cerr << std::setprecision(16) << std::scientific
-                  << "Mismatch in domega_dot_dT_N2!" << std::endl
-		  << "domega_dot_dT_N2    = " << domega_dot_dT_N2 << std::endl
-		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
-
-	return_flag = 1;
-      }
-  }
-
   /* domega_dot_dws tests */
   {
-    double rel_error = std::fabs( (domega_dot_dws_N + domega_dot_dws_exact)/domega_dot_dws_exact );
+    double rel_error = std::fabs( (domega_dot_dws_N - domega_dot_dws_exact)/domega_dot_dws_exact );
 
     if( rel_error > tol )
       {
         std::cerr << std::setprecision(16) << std::scientific
                   << "Mismatch in domega_dot_dws_N!" << std::endl
 		  << "domega_dot_dws_N = " << domega_dot_dws_N << std::endl
-		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
-
-	return_flag = 1;
-      }
-  }
-
-  {
-    double rel_error = std::fabs( (domega_dot_dws_N2 - domega_dot_dws_exact)/domega_dot_dws_exact );
-
-    if( rel_error > tol )
-      {
-        std::cerr << std::setprecision(16) << std::scientific
-                  << "Mismatch in domega_dot_dws_N2!" << std::endl
-		  << "domega_dot_dws_N2    = " << domega_dot_dws_N2 << std::endl
 		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
 		  << "rel error = " << rel_error << std::endl;
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="@top_builddir@/test/catalytic_wall_unit"
+PROG="@top_builddir@/test/gas_recombination_catalytic_wall_unit"
 
 INPUT="antioch @top_builddir@/test/input_files/antioch.in"
 
