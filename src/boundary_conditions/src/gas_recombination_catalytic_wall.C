@@ -114,11 +114,14 @@ namespace GRINS
 
         const libMesh::Real p_value = -r_value;
 
+        // Sign convention is outward normal
+        const libMesh::Real sign = -1.0;
+
         for (unsigned int i=0; i != n_var_dofs; i++)
           {
-            F_r_var(i) += r_value*var_phi_side[i][qp]*jac;
+            F_r_var(i) += sign*r_value*var_phi_side[i][qp]*jac;
 
-            F_p_var(i) += p_value*var_phi_side[i][qp]*jac;
+            F_p_var(i) += sign*p_value*var_phi_side[i][qp]*jac;
 
             if( request_jacobian )
               {
