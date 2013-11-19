@@ -29,7 +29,6 @@
 
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
-#include "grins/catalytic_wall.h"
 #include "grins/catalytic_wall_base.h"
 
 namespace GRINS
@@ -93,17 +92,7 @@ namespace GRINS
     std::vector<std::string> _species_var_names;
     std::vector<GRINS::VariableIndex> _species_vars;
 
-    //! Temporarily cache the pointers to the CatalyticWall functors
-    /*! We need to be able to init them before they get inserted into the BCHandling
-        system, so we cached the pointers here and then clean up when we're done with
-        them so they're only stored in one place. */
-    std::map<BoundaryID,std::vector<std::pair<unsigned int,std::tr1::shared_ptr<CatalyticWall<Chemistry> > > > > _catalytic_walls;
-
-    //! Cache which species are catalytic
-    /*! \todo Currently restricted to one reaction per species */
-    std::map<BoundaryID,std::set<unsigned int> > _catalytic_species;
-
-    std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > > _new_catalytic_walls;
+    std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > > _catalytic_walls;
 
     const Chemistry& _chemistry;
 
