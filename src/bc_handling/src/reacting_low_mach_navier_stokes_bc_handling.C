@@ -670,4 +670,10 @@ namespace GRINS
     return;
   }
 
+  template<typename Chemistry>
+  CatalyticWallBase<Chemistry>* ReactingLowMachNavierStokesBCHandling<Chemistry>::get_catalytic_wall( const BoundaryID bc_id )
+  {
+    return (_catalytic_walls.find(bc_id)->second).get();
+  }
+
 } // namespace GRINS
