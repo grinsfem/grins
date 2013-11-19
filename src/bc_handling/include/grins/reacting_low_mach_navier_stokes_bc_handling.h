@@ -104,6 +104,7 @@ namespace GRINS
 			 PRESCRIBED_SPECIES,
                          PRESCRIBED_MOLE_FRACTIONS,
                          GAS_RECOMBINATION_CATALYTIC_WALL,
+                         GAS_SOLID_CATALYTIC_WALL,
 			 GENERAL_SPECIES };
 
   };
