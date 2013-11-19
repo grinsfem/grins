@@ -25,6 +25,11 @@
 // This class
 #include "grins/catalytic_wall_base.h"
 
+// GRINS
+#include "grins/math_constants.h"
+#include "grins/assembly_context.h"
+#include "grins/cached_values.h"
+
 // libMesh
 #include "libmesh/fem_system.h"
 

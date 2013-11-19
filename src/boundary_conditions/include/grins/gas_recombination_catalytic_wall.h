@@ -24,6 +24,10 @@
 #ifndef GRINS_GAS_RECOMBINATION_CATALYTIC_WALL_H
 #define GRINS_GAS_RECOMBINATION_CATALYTIC_WALL_H
 
+// GRINS
+#include "grins/var_typedefs.h"
+#include "grins/catalytic_wall_base.h"
+
 namespace GRINS
 {
 

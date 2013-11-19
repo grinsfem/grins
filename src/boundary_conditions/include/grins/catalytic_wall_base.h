@@ -24,6 +24,9 @@
 #ifndef GRINS_CATALYTIC_WALL_BASE_H
 #define GRINS_CATALYTIC_WALL_BASE_H
 
+// Boost
+#include "boost/scoped_ptr.hpp"
+
 // GRINS
 #include "grins/catalycity_base.h"
 
@@ -36,6 +39,10 @@ namespace libMesh
 
 namespace GRINS
 {
+
+  // Forward declarations
+  class AssemblyContext;
+  class CachedValues;
 
   template<typename Chemistry>
   class CatalyticWallBase
