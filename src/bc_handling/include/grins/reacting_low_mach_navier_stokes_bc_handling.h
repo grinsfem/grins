@@ -73,6 +73,9 @@ namespace GRINS
 
     libMesh::Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;
 
+    /*! \todo Need to generalize this to multiple catalytic-walls-for-same-bcid case. */
+    CatalyticWallBase<Chemistry>* get_catalytic_wall( const BoundaryID bc_id );
+
   protected:
 
     void build_catalycities( const GetPot& input,
@@ -104,6 +107,7 @@ namespace GRINS
 			 PRESCRIBED_SPECIES,
                          PRESCRIBED_MOLE_FRACTIONS,
                          GAS_RECOMBINATION_CATALYTIC_WALL,
+                         GAS_SOLID_CATALYTIC_WALL,
 			 GENERAL_SPECIES };
 
   };

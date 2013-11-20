@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/string_utils.h"
 #include "grins/gas_recombination_catalytic_wall.h"
+#include "grins/gas_solid_catalytic_wall.h"
 #include "grins/constant_catalycity.h"
 #include "grins/arrhenius_catalycity.h"
 #include "grins/power_law_catalycity.h"
@@ -97,6 +98,10 @@ namespace GRINS
     else if( bc_type == "gas_recombination_catalytic_wall" )
       {
         bc_type_out = GAS_RECOMBINATION_CATALYTIC_WALL;
+      }
+    else if( bc_type == "gas_solid_catalytic_wall" )
+      {
+        bc_type_out = GAS_SOLID_CATALYTIC_WALL;
       }
     else if( bc_type == "general_species" )
       {
@@ -274,6 +279,108 @@ namespace GRINS
         }
         break;
 
+        case(GAS_SOLID_CATALYTIC_WALL):
+          {
+            this->set_neumann_bc_type( bc_id, bc_type );
+
+            // Parse catalytic reactions on this wall
+            std::string reactions_string = "Physics/"+_physics_name+"/wall_gas_solid_reactions_"+bc_id_string;
+            if( !input.have_variable(reactions_string) )
+              {
+                std::cerr << "Error: Could not find list of gas-solid catalytic reactions for boundary id "
+                          << bc_id
+                          << std::endl;
+                libmesh_error();
+              }
+
+            const unsigned int n_reactions = input.vector_variable_size(reactions_string);
+
+            for( unsigned int r = 0; r < n_reactions; r++ )
+              {
+                std::string reaction = input(reactions_string, "DIE!", r);
+
+                /* We are expecting reactions of the form
+                   X+Y(s)->Z  or
+                   Y(s)+X->X
+                So, first we'll split on the "->", then split the reactants up and
+                figure out which is the gas species and which is the solid species. */
+
+                std::vector<std::string> partners;
+                SplitString(reaction, "->", partners);
+
+                const std::string pre_split_reactants = partners[0];
+                const std::string& product = partners[1];
+
+                std::vector<std::string> split_reactants;
+                SplitString(pre_split_reactants, "+", split_reactants);
+
+                // We can only handle two reactants currently
+                if( split_reactants.size() != 2 )
+                  {
+                    std::cerr << "Error: Currently, GasSolidCatalyticWall boundary condition only supports"
+                              << std::endl
+                              << "       reactions of the form X+Y(s)->Z or Y(s)+X->X. Found "
+                              << split_reactants.size() << " reactants." << std::endl;
+                    libmesh_error();
+                  }
+
+                std::string gas_reactant;
+                std::string solid_reactant;
+                // Check if the first reactant is the solid one
+                if( split_reactants[0].find("(s)") == split_reactants[0].npos )
+                  {
+                    // If not found, check the second entry
+                    if( split_reactants[1].find("(s)") == split_reactants[1].npos )
+                      {
+                        std::cerr << "Error: could not find solid reactant for GasSolidCatalyticWall" << std::endl
+                                  << "       boundary condition. Found reactants " << split_reactants[0]
+                                  << ", " << split_reactants[1] << std::endl;
+                        libmesh_error();
+                      }
+                    else
+                      {
+                        gas_reactant = split_reactants[0];
+                        solid_reactant = split_reactants[1].substr(0,split_reactants[1].find("(s)"));
+                      }
+                  }
+                // Found (s) in the first entry
+                else
+                  {
+                    // Check that there's not 2 solid reactants
+                    if( split_reactants[1].find("(s)") != split_reactants[1].npos )
+                      {
+                        std::cerr << "Error: can have only one solid reactant for GasSolidCatalyticWall" << std::endl
+                                  << "       boundary condition. Found reactants " << split_reactants[0]
+                                  << ", " << split_reactants[1] << std::endl;
+                        libmesh_error();
+                      }
+
+                    gas_reactant = split_reactants[1];
+                    solid_reactant = split_reactants[0].substr(0,split_reactants[0].find("(s)"));
+                  }
+
+                /* Now we have the gas reactant, the solid reactant, and the gas product strings.
+                   Next we grab the species indices, build the catalycity, then build the
+                   CatalyticWallBase object. */
+                const unsigned int rg_species = _chemistry.species_index( gas_reactant );
+                const unsigned int rs_species = _chemistry.species_index( solid_reactant );
+                const unsigned int p_species  = _chemistry.species_index( product );
+
+                // This is temporary and will be cloned, so let it be destroyed when we're done
+                boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+
+                this->build_catalycities( input, gas_reactant, bc_id_string, bc_id, gamma_r );
+
+                libmesh_assert( gamma_r );
+
+                std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasSolidCatalyticWall<Chemistry>( _chemistry, *gamma_r, rg_species, rs_species, p_species ) );
+
+                _catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
+
+              } // loop over reactions
+          }
+        break;
+
       default:
 	{
 	  LowMachNavierStokesBCHandling::init_bc_types( bc_id, bc_id_string, bc_type,
@@ -304,7 +411,8 @@ namespace GRINS
 	const BoundaryID bc_id = bc_map->first;
 	const BCType bc_type = bc_map->second;
 
-        if( bc_type == GAS_RECOMBINATION_CATALYTIC_WALL )
+        if( bc_type == GAS_RECOMBINATION_CATALYTIC_WALL ||
+            bc_type == GAS_SOLID_CATALYTIC_WALL )
           {
             typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::iterator it_type;
 
@@ -441,6 +549,7 @@ namespace GRINS
 	break;
 
       case( GAS_RECOMBINATION_CATALYTIC_WALL ):
+      case( GAS_SOLID_CATALYTIC_WALL ):
         {
           typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::const_iterator it_type;
 
@@ -559,6 +668,12 @@ namespace GRINS
 
 
     return;
+  }
+
+  template<typename Chemistry>
+  CatalyticWallBase<Chemistry>* ReactingLowMachNavierStokesBCHandling<Chemistry>::get_catalytic_wall( const BoundaryID bc_id )
+  {
+    return (_catalytic_walls.find(bc_id)->second).get();
   }
 
 } // namespace GRINS
