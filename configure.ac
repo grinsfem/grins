@@ -386,6 +386,9 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_euc
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
 
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------

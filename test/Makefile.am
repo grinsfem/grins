@@ -177,6 +177,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 
 shellfiles_src =
@@ -214,6 +215,7 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regre
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
