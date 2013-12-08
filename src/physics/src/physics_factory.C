@@ -186,8 +186,17 @@ namespace GRINS
       }
     else if( physics_to_add == heat_transfer_spgsm_stab )
       {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new HeatTransferSPGSMStabilization(physics_to_add,input));
+        std::string conductivity = input( "Physics/AxisymmetricHeatTransfer/conductivity_model", "constant" );
+	if(  conductivity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferSPGSMStabilization<ConstantConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    std::cerr << "Invalid conductivity model " << conductivity << std::endl;
+	    libmesh_error();
+	  }
       }
     else if( physics_to_add == heat_transfer_source )
       {
