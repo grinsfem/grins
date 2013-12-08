@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   // Solve
   grins.run();
 
-  Number qoi = grins.get_qoi( 0 );
+  Number qoi = grins.get_qoi_value( 0 );
 
   int return_flag = 0;
   const Number exact_value = -0.5;

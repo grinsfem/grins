@@ -138,14 +138,15 @@ namespace GRINS
 
 	sim_time = context.system->time;
 
-	if( context.output_vis )
+	if( context.output_vis && !((t_step+1)%context.timesteps_per_vis) )
 	  {
 	    context.postprocessing->update_quantities( *(context.equation_system) );
 	    context.vis->output( context.equation_system, t_step, sim_time );
 	  }
 
-	if( context.output_residual ) context.vis->output_residual( context.equation_system, 
-								    context.system, t_step, sim_time );
+	if( context.output_residual && !((t_step+1)%context.timesteps_per_vis) )
+	  context.vis->output_residual( context.equation_system, context.system,
+                                        t_step, sim_time );
 
 	// Advance to the next timestep
 	context.system->time_solver->advance_timestep();

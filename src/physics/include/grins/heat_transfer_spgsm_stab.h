@@ -21,30 +21,37 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_HEAT_TRANSFER_SPGSM_STAB_H
+#define GRINS_HEAT_TRANSFER_SPGSM_STAB_H
 
-// This class
-#include "grins/solver_context.h"
+//GRINS
+#include "grins/heat_transfer_stab_base.h"
 
-// GRINS
-#include "grins/multiphysics_sys.h"
-
+//! GRINS namespace
 namespace GRINS
 {
-  SolverContext::SolverContext()
-    : system(NULL),
-      equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
-      timesteps_per_vis( 1 ),
-      output_vis( false ),
-      output_residual( false ),
-      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )
+  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
+  class HeatTransferSPGSMStabilization : public HeatTransferStabilizationBase
   {
-    return;
-  }
 
-  SolverContext::~SolverContext()
-  {
-    return;
-  }
+  public:
 
-}
+    HeatTransferSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~HeatTransferSPGSMStabilization();
+
+    virtual void element_time_derivative( bool compute_jacobian,
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
+
+    virtual void mass_residual( bool compute_jacobian,
+                                AssemblyContext& context,
+                                CachedValues& cache );
+    
+  private:
+    HeatTransferSPGSMStabilization();
+
+  }; // End HeatTransferSPGSMStabilization class declarations
+
+} // End namespace GRINS
+
+#endif // GRINS_HEAT_TRANSFER_SPGSM_STAB_H

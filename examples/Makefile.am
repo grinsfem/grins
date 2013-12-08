@@ -34,7 +34,6 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   LIBGRINS_LIBS += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #=======================================================================

@@ -19,13 +19,14 @@ check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_transport_regression
 check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += catalytic_wall_unit
 check_PROGRAMS += hartmann_flow_exact
 check_PROGRAMS += antioch_mixture_unit
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_evaluator_regression
 check_PROGRAMS += antioch_wilke_evaluator_regression
 check_PROGRAMS += composite_function_unit
+check_PROGRAMS += gas_recombination_catalytic_wall_unit
+check_PROGRAMS += gas_solid_catalytic_wall_unit
 check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
 check_PROGRAMS += power_law_catalycity_unit
@@ -64,7 +65,6 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   LIBS += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #--------------
@@ -92,13 +92,14 @@ cantera_chem_thermo_test_SOURCES = $(top_srcdir)/test/cantera_chem_thermo_test.C
 cantera_transport_regression_SOURCES = $(top_srcdir)/test/cantera_transport_regression.C
 cantera_evaluator_regression_SOURCES = $(top_srcdir)/test/cantera_evaluator_regression.C
 reacting_low_mach_regression_SOURCES = $(top_srcdir)/test/reacting_low_mach_regression.C
-catalytic_wall_unit_SOURCES = $(top_srcdir)/test/catalytic_wall_unit.C
 hartmann_flow_exact_SOURCES = $(top_srcdir)/test/hartmann_flow_exact.C
 antioch_mixture_unit_SOURCES = $(top_srcdir)/test/antioch_mixture_unit.C
 antioch_kinetics_regression_SOURCES = $(top_srcdir)/test/antioch_kinetics_regression.C
 antioch_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_evaluator_regression.C
 antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_evaluator_regression.C
 composite_function_unit_SOURCES = $(top_srcdir)/test/composite_function_unit.C
+gas_recombination_catalytic_wall_unit_SOURCES = $(top_srcdir)/test/gas_recombination_catalytic_wall_unit.C
+gas_solid_catalytic_wall_unit_SOURCES = $(top_srcdir)/test/gas_solid_catalytic_wall_unit.C
 constant_catalycity_unit_SOURCES = $(top_srcdir)/test/constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = $(top_srcdir)/test/arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = $(top_srcdir)/test/power_law_catalycity_unit.C
@@ -128,6 +129,8 @@ STAMPED_FILES += $(antioch_kinetics_regression_SOURCES)
 STAMPED_FILES += $(antioch_evaluator_regression_SOURCES)
 STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
 STAMPED_FILES += $(composite_function_unit_SOURCES)
+STAMPED_FILES += $(gas_recombination_catalytic_wall_unit_SOURCES)
+STAMPED_FILES += $(gas_solid_catalytic_wall_unit_SOURCES)
 STAMPED_FILES += $(constant_catalycity_unit_SOURCES)
 STAMPED_FILES += $(arrhenius_catalycity_unit_SOURCES)
 STAMPED_FILES += $(power_law_catalycity_unit_SOURCES)
@@ -139,12 +142,14 @@ TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_regression.sh
 TESTS += cantera_evaluator_regression.sh
-TESTS += catalytic_wall_unit_cantera.sh
 TESTS += antioch_mixture_unit.sh
 TESTS += antioch_kinetics_regression.sh
 TESTS += antioch_evaluator_regression.sh
 TESTS += antioch_wilke_evaluator_regression.sh
-TESTS += catalytic_wall_unit_antioch.sh
+TESTS += gas_recombination_catalytic_wall_unit_antioch.sh
+TESTS += gas_recombination_catalytic_wall_unit_cantera.sh
+TESTS += gas_solid_catalytic_wall_unit_antioch.sh
+TESTS += gas_solid_catalytic_wall_unit_cantera.sh
 TESTS += constant_catalycity_unit
 TESTS += arrhenius_catalycity_unit
 TESTS += power_law_catalycity_unit
@@ -176,6 +181,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
+TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 
 shellfiles_src  = test_ns_couette_flow_2d_x.sh
@@ -203,8 +209,19 @@ shellfiles_src += antioch_mixture_unit.sh
 shellfiles_src += antioch_kinetics_regression.sh
 shellfiles_src += antioch_evaluator_regression.sh
 shellfiles_src += antioch_wilke_evaluator_regression.sh
+shellfiles_src += gas_recombination_catalytic_wall_unit_antioch.sh
+shellfiles_src += gas_recombination_catalytic_wall_unit_cantera.sh
+shellfiles_src += gas_solid_catalytic_wall_unit_antioch.sh
+shellfiles_src += gas_solid_catalytic_wall_unit_cantera.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_constant_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
+shellfiles_src += reacting_low_mach_antioch_cea_constant_regression.sh
+shellfiles_src += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
+shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids

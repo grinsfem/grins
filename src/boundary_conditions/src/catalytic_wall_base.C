@@ -23,49 +23,56 @@
 
 
 // This class
-#include "grins/inc_navier_stokes_stab_base.h"
+#include "grins/catalytic_wall_base.h"
 
 // GRINS
+#include "grins/math_constants.h"
 #include "grins/assembly_context.h"
+#include "grins/cached_values.h"
+
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-
-  IncompressibleNavierStokesStabilizationBase::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
-                                                                                            const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name,input),
-      _stab_helper( input )
+  template<typename Chemistry>
+  CatalyticWallBase<Chemistry>::CatalyticWallBase( const Chemistry& chemistry,
+                                                   CatalycityBase& gamma,
+                                                   const unsigned int reactant_species_idx )
+    : _chemistry(chemistry),
+      _gamma_s( gamma.clone() ),
+      _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
+      _is_axisymmetric(false)
   {
     return;
   }
 
-  IncompressibleNavierStokesStabilizationBase::~IncompressibleNavierStokesStabilizationBase()
+  template<typename Chemistry>
+  CatalyticWallBase<Chemistry>::~CatalyticWallBase()
   {
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationBase::init_context( AssemblyContext& context )
+  template<typename Chemistry>
+  void CatalyticWallBase<Chemistry>::init( const libMesh::FEMSystem& /*system*/ )
   {
-    // First call base class
-    IncompressibleNavierStokesBase::init_context(context);
+    return;
+  }
+
+  template<typename Chemistry>
+  void CatalyticWallBase<Chemistry>::set_axisymmetric( bool is_axisymmetric )
+  {
+    this->_is_axisymmetric = is_axisymmetric;
+
+    return;
+  }
   
-    // We need pressure derivatives
-    context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
-    // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
-
-    return;
-  }
-
-  void IncompressibleNavierStokesStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  template<typename Chemistry>
+  void CatalyticWallBase<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
   {
-    // First call base class
-    IncompressibleNavierStokesBase::init_variables(system);
-
-    _stab_helper.init(*system);
-
+    _gamma_s->set_params( params );
     return;
   }
 
-} // namespace GRINS
+} // end namespace GRINS

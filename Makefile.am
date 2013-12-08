@@ -14,7 +14,7 @@ EXTRA_DIST += $(aclocal_DATA)
 #doxygendir = $(prefix)/doxygen
 #doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 
-includedir = $(prefix)/include/grins
+includedir = $(prefix)/include
 include_HEADERS = $(top_builddir)/grins_config.h
 
 # Eliminate .svn directories in dist tarball

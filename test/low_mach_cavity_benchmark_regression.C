@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 
   grins.run();
 
-  Real qoi = grins.get_qoi(0);
+  Real qoi = grins.get_qoi_value(0);
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.

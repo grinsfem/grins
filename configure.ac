@@ -265,7 +265,7 @@ AC_SUBST(HAVE_CANTERA)
 AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 
-AX_PATH_ANTIOCH(0.0.5,no)
+AX_PATH_ANTIOCH(0.0.8,no)
 
  
 dnl-------------------
@@ -345,19 +345,23 @@ AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
 AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh,             [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
+AC_CONFIG_FILES(test/input_files/air_4sp.xml)
 AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
 AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
 AC_CONFIG_FILES(test/magnetostatics_regression.sh,                        [chmod +x test/magnetostatics_regression.sh])
 AC_CONFIG_FILES(test/hartmann_flow_exact.sh,                              [chmod +x test/hartmann_flow_exact.sh])
 AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
-AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
-AC_CONFIG_FILES(test/catalytic_wall_unit_antioch.sh,                      [chmod +x test/catalytic_wall_unit_antioch.sh])
+AC_CONFIG_FILES(test/gas_recombination_catalytic_wall_unit_cantera.sh,    [chmod +x test/gas_recombination_catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/gas_recombination_catalytic_wall_unit_antioch.sh,    [chmod +x test/gas_recombination_catalytic_wall_unit_antioch.sh])
+AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_cantera.sh,            [chmod +x test/gas_solid_catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_antioch.sh,            [chmod +x test/gas_solid_catalytic_wall_unit_antioch.sh])
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
 AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
+AC_CONFIG_FILES(test/input_files/gas_surface.in)
 
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
@@ -383,6 +387,9 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_euc
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

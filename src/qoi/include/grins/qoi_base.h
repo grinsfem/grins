@@ -37,61 +37,105 @@
 // libMesh forward declarations
 class GetPot;
 
-namespace libMesh
-{
-  class QoISet;
-}
-
 namespace GRINS
 {
   // Forward declarations
   class MultiphysicsSystem;
+  class AssemblyContext;
 
-  class QoIBase : public libMesh::DifferentiableQoI
+  class QoIBase
   {
   public:
 
-    QoIBase();
+    QoIBase( const std::string& qoi_name );
+
     virtual ~QoIBase();
+
+    //! Clone this QoI
+    /*!
+     * We return a raw pointer, but it is expected for the user to take ownership
+     * and delete the object when done.
+     */
+    virtual QoIBase* clone() const =0;
+
+    //! Does the QoI need an element interior assembly loop?
+    /*! This is pure virtual to force to user to specify. */
+    virtual bool assemble_on_interior() const =0;
+
+    //! Does the QoI need a domain boundary assembly loop?
+    /*! This is pure virtual to force to user to specify. */
+    virtual bool assemble_on_sides() const =0;
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.
      */
-    virtual void init( const GetPot& /*input*/, const MultiphysicsSystem& /*system*/ ){};
+    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
-    /*!
-     * Method to allow QoI to resize libMesh::System storage of QoI computations.
-     * \todo Right now, we're only dealing with 1 QoI at a time. Need to generalize.
-     */
-    virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi );
+    virtual void init_context( AssemblyContext& context );
 
+    //! Compute the qoi value for element interiors.
+    /*! Override this method if your QoI is defined on element interiors */
+    virtual void element_qoi( AssemblyContext& context,
+                              const unsigned int qoi_index );
+
+    //! Compute the qoi derivative with respect to the solution on element interiors.
+    /*! Override this method if your QoI is defined on element interiors */
+    virtual void element_qoi_derivative( AssemblyContext &context,
+                                         const unsigned int qoi_index );
+
+    //! Compute the qoi value on the domain boundary
+    /*! Override this method if your QoI is defined on the domain boundary */
+    virtual void side_qoi( AssemblyContext& context, const unsigned int qoi_index );
+
+    //! Compute the qoi derivative with respect to the solution on the domain boundary
+    /*! Override this method if your QoI is defined on the domain boundary */
+    virtual void side_qoi_derivative( AssemblyContext& context,
+                                      const unsigned int qoi_index );
+
+    //! Call the parallel operation for this QoI and cache the value.
     /*!
-     * We call the base class then grab the sys_qoi and cache it locally to output later.
-     * If the QoI is not expressable as a sum over elements, then this will need to be
-     * overridden with the correct libMesh::Parallel operations.
+     * By default, this is just a sum. Override if QoI is more complex.
      */
     virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
-                              std::vector<libMesh::Number>& sys_qoi,
-			      std::vector<libMesh::Number>& local_qoi,
-			      const libMesh::QoISet& qoi_indices );
+                              libMesh::Number& sys_qoi,
+			      libMesh::Number& local_qoi );
+
+    //! Call the operation to accumulate this QoI from multiple threads
+    /*!
+     * By default, this is just a sum. Override if QoI is more complex.
+     */
+    virtual void thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi );
 
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.
      */
     virtual void output_qoi( std::ostream& out ) const;
 
-    //! Accessor for value of QoI for given qoi_index.
-    /*!
-     * Returns value of QoI for qoi_index. Currently, we only store a single QoI,
-     * so qoi_index should be zero.
-     * \todo Maybe take a libMesh::QoISet instead?
-     */
-    libMesh::Number get_qoi( unsigned int qoi_index ) const;
+    //! Returns the current QoI value.
+    libMesh::Number value() const;
+
+    //! Returns the name of this QoI
+    const std::string& name() const;
 
   protected:
 
-    std::vector<libMesh::Number> _qoi_cache;
+    std::string _qoi_name;
+
+    libMesh::Number _qoi_value;
   };
+
+  inline
+  libMesh::Number QoIBase::value() const
+  {
+    return _qoi_value;
+  }
+
+  inline
+  const std::string& QoIBase::name() const
+  {
+    return _qoi_name;
+  }
+
 }
 #endif // GRINS_QOI_BASE_H

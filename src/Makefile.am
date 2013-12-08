@@ -67,15 +67,18 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_stab_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_adjoint_stab.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/inc_navier_stokes_spgsm_stab.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_source.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_spgsm_stab.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_heat_transfer.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy_adjoint_stab.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/boussinesq_buoyancy_spgsm_stab.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/axisym_boussinesq_buoyancy.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/physics_factory.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_base.C
@@ -129,6 +132,7 @@ libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_base.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/qoi_factory.C
 libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/vorticity.C
+libgrins_la_SOURCES += $(top_srcdir)/src/qoi/src/composite_qoi.C
 
 # src/solver files
 libgrins_la_SOURCES += $(top_srcdir)/src/solver/src/grins_solver.C
@@ -170,7 +174,9 @@ sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_stab_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/heat_transfer_adjoint_stab.C
 sfiles_DATA += $(top_srcdir)/src/bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
-sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/catalytic_wall_base.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/gas_recombination_catalytic_wall.C
+sfiles_DATA += $(top_srcdir)/src/boundary_conditions/src/gas_solid_catalytic_wall.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_base.C
 sfiles_DATA += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes.C
 sfiles_DATA += $(top_srcdir)/src/properties/src/antioch_evaluator.C
@@ -210,7 +216,9 @@ include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/dbc_conta
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pressure_pinning.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/pbc_container.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/nbc_container.h
-include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalytic_wall_base.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gas_recombination_catalytic_wall.h
+include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/gas_solid_catalytic_wall.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/catalycity_base.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/constant_catalycity.h
 include_HEADERS += $(top_srcdir)/src/boundary_conditions/include/grins/arrhenius_catalycity.h
@@ -234,15 +242,18 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes_bas
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes_stab_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes_adjoint_stab.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/inc_navier_stokes_spgsm_stab.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_source.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_stab_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_adjoint_stab.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_transfer_spgsm_stab.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_heat_transfer.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/boussinesq_buoyancy_spgsm_stab.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/axisym_boussinesq_buoyancy.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/physics_factory.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/grins_physics_names.h
@@ -300,6 +311,7 @@ include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_base.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_factory.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/qoi_names.h
 include_HEADERS += $(top_srcdir)/src/qoi/include/grins/vorticity.h
+include_HEADERS += $(top_srcdir)/src/qoi/include/grins/composite_qoi.h
 
 # src/solver headers
 include_HEADERS += $(top_srcdir)/src/solver/include/grins/grins_solver.h
@@ -411,7 +423,6 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   libgrins_la_LIBADD  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #-------------

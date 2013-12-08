@@ -29,7 +29,7 @@
 
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
-#include "grins/catalytic_wall.h"
+#include "grins/catalytic_wall_base.h"
 
 namespace GRINS
 {
@@ -73,14 +73,16 @@ namespace GRINS
 
     libMesh::Real get_species_bc_value( GRINS::BoundaryID bc_id, unsigned int species ) const;
 
+    /*! \todo Need to generalize this to multiple catalytic-walls-for-same-bcid case. */
+    CatalyticWallBase<Chemistry>* get_catalytic_wall( const BoundaryID bc_id );
+
   protected:
 
     void build_catalycities( const GetPot& input,
                              const std::string& reactant,
                              const std::string& bc_id_string,
                              const BoundaryID bc_id,
-                             boost::scoped_ptr<CatalycityBase>& gamma_r,
-                             boost::scoped_ptr<CatalycityBase>& gamma_p );
+                             boost::scoped_ptr<CatalycityBase>& gamma_r );
 
      // We need a another container to stash dirichlet values for the speccies
     std::map< GRINS::BoundaryID, std::vector<libMesh::Real> > _species_bc_values;
@@ -92,15 +94,7 @@ namespace GRINS
     std::vector<std::string> _species_var_names;
     std::vector<GRINS::VariableIndex> _species_vars;
 
-    //! Temporarily cache the pointers to the CatalyticWall functors
-    /*! We need to be able to init them before they get inserted into the BCHandling
-        system, so we cached the pointers here and then clean up when we're done with
-        them so they're only stored in one place. */
-    std::map<BoundaryID,std::vector<std::pair<unsigned int,std::tr1::shared_ptr<CatalyticWall<Chemistry> > > > > _catalytic_walls;
-
-    //! Cache which species are catalytic
-    /*! \todo Currently restricted to one reaction per species */
-    std::map<BoundaryID,std::set<unsigned int> > _catalytic_species;
+    std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > > _catalytic_walls;
 
     const Chemistry& _chemistry;
 
@@ -112,7 +106,8 @@ namespace GRINS
     enum RLMNS_BC_TYPES{ ZERO_SPECIES_FLUX=20, 
 			 PRESCRIBED_SPECIES,
                          PRESCRIBED_MOLE_FRACTIONS,
-			 CATALYTIC_WALL,
+                         GAS_RECOMBINATION_CATALYTIC_WALL,
+                         GAS_SOLID_CATALYTIC_WALL,
 			 GENERAL_SPECIES };
 
   };

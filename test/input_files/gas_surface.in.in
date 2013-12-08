@@ -1,0 +1,19 @@
+#
+# Defines any systems that will be solved
+[Physics]
+
+  [./Chemistry]
+
+     mixture        = 'air4sp'
+     species        = 'N2 N C CN'
+     chem_file      = '@abs_top_builddir@/test/input_files/air_4sp.xml'
+     mass_fractions = '0.8 0.2 0.0 0.0'
+
+   [../Antioch]
+
+     Le = '1.4'
+[]
+
+[screen-options]
+
+verbose_kinetics_read = 'true'

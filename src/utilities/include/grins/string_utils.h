@@ -108,9 +108,16 @@ namespace GRINS
 
     newPos = input.find (delimiter, 0);
 
-    if( newPos < 0 )
+    /* We already checked if the input size was zero, so if we didn't
+       find any delimiters, we assume that there is exactly one entry
+       in the input and just return that. */
+    /*! \todo We should probably try and trim white space in this case */
+    if( newPos == input.npos )
       { 
-	return 0; 
+        results.push_back(input);
+
+        // We found 1 entry
+        return 1;
       }
 
     int numFound = 0;

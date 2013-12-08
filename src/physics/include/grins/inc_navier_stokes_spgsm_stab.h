@@ -21,47 +21,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef QOI_FACTORY_H
-#define QOI_FACTORY_H
-
-//libMesh
-#include "libmesh/getpot.h"
+#ifndef GRINS_INC_NAVIER_STOKES_SPGSM_STAB_H
+#define GRINS_INC_NAVIER_STOKES_SPGSM_STAB_H
 
 //GRINS
-#include "grins/composite_qoi.h"
-
-// shared_ptr
-#include "boost/tr1/memory.hpp"
+#include "grins/inc_navier_stokes_stab_base.h"
 
 namespace GRINS
 {
-  class QoIFactory
+  //! Adds VMS-based stabilization to LowMachNavierStokes physics class
+  class IncompressibleNavierStokesSPGSMStabilization : public IncompressibleNavierStokesStabilizationBase
   {
+
   public:
 
-    QoIFactory();
+    IncompressibleNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~IncompressibleNavierStokesSPGSMStabilization();
+
+    virtual void element_time_derivative( bool compute_jacobian,
+					  AssemblyContext& context,
+					  CachedValues& cache );
+
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
+    virtual void mass_residual( bool compute_jacobian,
+				AssemblyContext& context,
+				CachedValues& cache );
     
-    virtual ~QoIFactory();
+  private:
 
-    virtual std::tr1::shared_ptr<CompositeQoI> build(const GetPot& input);
-
-  protected:
-
-    virtual void add_qoi( const GetPot& input,
-                          const std::string& qoi_name,
-                          std::tr1::shared_ptr<CompositeQoI>& qois );
-
-    virtual void check_qoi_physics_consistency( const GetPot& input,
-						const std::string& qoi_name );
-
-    virtual void echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois );
-
-    void consistency_helper( const std::set<std::string>& requested_physics,
-			     const std::set<std::string>& required_physics, 
-			     const std::string& qoi_name );
-
-    void consistency_error_msg( const std::string& qoi_name, const std::set<std::string>& required_physics );
+    IncompressibleNavierStokesSPGSMStabilization();
 
   };
-}
-#endif // QOI_FACTORY_H
+
+} // end namespace GRINS
+
+#endif // GRINS_INC_NAVIER_STOKES_SPGSM_STAB_H

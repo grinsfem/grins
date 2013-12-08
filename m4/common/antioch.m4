@@ -146,23 +146,7 @@ HAVE_ANTIOCH=0
        fi
     fi
 
-    # Library availability
-
-    AC_MSG_CHECKING([for -lantioch linkage])
-
-    AC_LANG_PUSH([C++])
-
-    AC_LINK_IFELSE(
-                  [AC_LANG_PROGRAM([#include "antioch/antioch_version.h"],
-                                   [Antioch::get_antioch_version()])],
-                  [AC_MSG_RESULT(yes)
-                   found_library=yes],
-                  [AC_MSG_RESULT(no) 
-                   found_library=no])
-
     fi   dnl end test if header if available
-
-    AC_LANG_POP([C++])
 
     CPPFLAGS="$ac_ANTIOCH_save_CPPFLAGS"
     LDFLAGS="$ac_ANTIOCH_save_LDFLAGS"
@@ -171,9 +155,7 @@ HAVE_ANTIOCH=0
     succeeded=no
     if test "$found_header" = yes; then
         if test "$version_succeeded" = yes; then
-           if test "$found_library" = yes; then
               succeeded=yes
-           fi
         fi
     fi
 

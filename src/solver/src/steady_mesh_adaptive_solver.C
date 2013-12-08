@@ -27,7 +27,7 @@
 // GRINS
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
-#include "grins/qoi_base.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/error_vector.h"
@@ -161,8 +161,8 @@ namespace GRINS
                           << " active dofs" << std::endl
                           << "==========================================================" << std::endl;
 
-                context.system->assemble_qoi( libMesh::QoISet( *context.system ) );
-                const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(context.system->get_qoi());
+                context.system->assemble_qoi();
+                const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
                 my_qoi->output_qoi( std::cout );
                 std::cout << std::endl;
               }

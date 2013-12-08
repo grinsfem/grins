@@ -71,7 +71,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
-    Number get_qoi( unsigned int qoi_index ) const;
+    libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -101,8 +101,6 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
 
-    std::tr1::shared_ptr<QoIBase> _qoi;
-
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
 
     // Screen display options
@@ -114,6 +112,8 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+
+    unsigned int _timesteps_per_vis;
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
 
