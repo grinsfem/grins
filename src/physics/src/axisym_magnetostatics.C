@@ -345,13 +345,11 @@ namespace GRINS
 #ifdef USE_GRVY_TIMERS
     this->_timer->BeginTimer("AxisymmetricMagnetostatics::mass_residual");
 #endif
-    libmesh_not_implemented();
+    const unsigned int n_A_dofs = context.get_dof_indices(_A_var).size();
 
     // Get finite element object
     FEGenericBase<RealGradient>* A_fe;
-    FEGenericBase<Real>* V_fe;
     context.get_element_fe<RealGradient>( _A_var, A_fe );
-    context.get_element_fe<Real>( _V_var, V_fe );
 
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
@@ -363,19 +361,11 @@ namespace GRINS
     // The magnetic potential shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& A_phi =
       A_fe->get_phi();
-  
-    // The electric potential shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& V_phi =
-      V_fe->get_phi();
 
     // The subvectors and submatrices we need to fill:
     DenseSubVector<Real> &F_A = context.get_elem_residual(_A_var);
 
-    DenseSubVector<Real> &F_V = context.get_elem_residual(_V_var);
-
     DenseSubMatrix<Real> &M_AA = context.get_elem_jacobian(_A_var,_A_var);
-
-    DenseSubMatrix<Real> &M_VA = context.get_elem_jacobian(_V_var,_A_var);
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -391,22 +381,21 @@ namespace GRINS
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
 	Gradient A_dot;
-	context.fixed_interior_value<RealGradient>(_A_var, qp, A_dot);
+	context.interior_value<RealGradient>(_A_var, qp, A_dot);
 
-	/*
-	  for (unsigned int i = 0; i != n_A_dofs; ++i)
+        for (unsigned int i = 0; i != n_A_dofs; ++i)
 	  {
+            F_A(i) += -_sigma*A_dot*A_phi[i][qp]*r*JxW[qp];
 
-          if( request_jacobian )
-	  {
-	  for (unsigned int j=0; j != n_T_dofs; j++)
-	  {
-                    
-	  }
-	  }// End of check on Jacobian
+          if( compute_jacobian )
+            {
+              for (unsigned int j=0; j != n_A_dofs; j++)
+                {
+                  M_AA(i,j) += -_sigma*A_phi[j][qp]*A_phi[i][qp]*r*JxW[qp];
+                }
+            }// End of check on Jacobian
           
-	  } // End of element dof loop
-	*/      
+	  } // End of element dof loop 
 
       } // End of the quadrature point loop
 
