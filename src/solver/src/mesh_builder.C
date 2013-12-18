@@ -33,6 +33,8 @@
 #include "libmesh/string_to_enum.h"
 #include "libmesh/mesh_generation.h"
 #include "libmesh/mesh_refinement.h"
+#include "libmesh/parallel_mesh.h"
+#include "libmesh/serial_mesh.h"
 
 
 namespace GRINS
@@ -48,7 +50,7 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<libMesh::Mesh> MeshBuilder::build(const GetPot& input)
+  std::tr1::shared_ptr<libMesh::UnstructuredMesh> MeshBuilder::build(const GetPot& input)
   {
     // First, read all needed variables
     std::string mesh_option = input("mesh-options/mesh_option", "NULL");
@@ -79,8 +81,25 @@ namespace GRINS
 	libmesh_error();
       }
 
-    // Create Mesh object (defaults to dimension 1).
-    libMesh::Mesh* mesh = new libMesh::Mesh();
+    // Create UnstructuredMesh object (defaults to dimension 1).
+    libMesh::UnstructuredMesh* mesh;
+
+    // Were we specifically asked to use a ParallelMesh or SerialMesh?
+    std::string mesh_class = input("mesh-options/mesh_class", "default");
+
+    if (mesh_class == "parallel")
+      mesh = new libMesh::ParallelMesh();
+    else if (mesh_class == "serial")
+      mesh = new libMesh::SerialMesh();
+    else if (mesh_class == "default")
+      mesh = new libMesh::Mesh();
+    else
+      {
+        std::cerr << " MeshBuilder::build:"
+                  << " mesh-options/mesh_class had invalid value " << mesh_class
+                  << std::endl;
+        libmesh_error();
+      }
 
     if(mesh_option=="read_mesh_from_file")
       {
@@ -169,7 +188,7 @@ namespace GRINS
 	libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
       }
 
-    return std::tr1::shared_ptr<libMesh::Mesh>(mesh);
+    return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }
 
 } // namespace GRINS
