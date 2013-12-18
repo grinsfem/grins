@@ -94,7 +94,7 @@ namespace GRINS
     this->_error_estimator_factory = error_estimator_factory;
   }
 
-  std::tr1::shared_ptr<libMesh::Mesh> SimulationBuilder::build_mesh( const GetPot& input )
+  std::tr1::shared_ptr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh( const GetPot& input )
   {
     return (this->_mesh_builder)->build(input);
   }

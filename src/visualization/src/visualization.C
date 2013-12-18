@@ -32,6 +32,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/gmv_io.h"
 #include "libmesh/exodusII_io.h"
+#include "libmesh/mesh.h"
 #include "libmesh/nemesis_io.h"
 #include "libmesh/tecplot_io.h"
 #include "libmesh/vtk_io.h"
@@ -47,7 +48,30 @@ namespace GRINS
     // If no format specified, default to ExodusII only
     if( num_formats == 0 )
       {
-	_output_format.push_back("ExodusII");
+        // Were we specifically asked to use a ParallelMesh or SerialMesh?
+        std::string mesh_class = input("mesh-options/mesh_class", "default");
+
+        if (mesh_class == "parallel")
+	  _output_format.push_back("Nemesis");
+        else if (mesh_class == "serial")
+	  _output_format.push_back("ExodusII");
+        else if (mesh_class == "default")
+          {
+            // Is our default Mesh distributable?
+            Mesh testdefault;
+            testdefault.delete_remote_elements();
+            if (testdefault.is_serial())
+	      _output_format.push_back("ExodusII");
+            else
+	      _output_format.push_back("Nemesis");
+          }
+        else
+          {
+	    std::cerr << " Visualization::Visualization:"
+		      << " mesh-options/mesh_class had invalid value " << mesh_class
+		      << std::endl;
+	    libmesh_error();
+          }
       }
 
     for( unsigned int i = 0; i < num_formats; i++ )

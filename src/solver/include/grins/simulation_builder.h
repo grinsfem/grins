@@ -44,7 +44,7 @@ namespace GRINS
     SimulationBuilder();
     virtual ~SimulationBuilder();
 
-    std::tr1::shared_ptr<libMesh::Mesh> build_mesh( const GetPot& input );
+    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input );
 
     GRINS::PhysicsList build_physics( const GetPot& input );
 

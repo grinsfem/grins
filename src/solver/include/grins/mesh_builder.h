@@ -41,7 +41,7 @@ namespace GRINS
   {    
   public:
 
-    //! This Object handles building a libMesh::Mesh
+    //! This Object handles building a libMesh::UnstructuredMesh subclass.
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
         mesh is built; or is read from input from a specified file. */
     MeshBuilder();
@@ -49,8 +49,8 @@ namespace GRINS
 
     void read_input_options( const GetPot& input );
 
-    //! Builds the libMesh::Mesh according to input options.
-    std::tr1::shared_ptr<libMesh::Mesh> build(const GetPot& input );
+    //! Builds the libMesh::UnstructuredMesh subclass according to input options.
+    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build(const GetPot& input );
 
   };
 
