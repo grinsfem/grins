@@ -31,8 +31,9 @@
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/gmv_io.h"
-#include "libmesh/tecplot_io.h"
 #include "libmesh/exodusII_io.h"
+#include "libmesh/nemesis_io.h"
+#include "libmesh/tecplot_io.h"
 #include "libmesh/vtk_io.h"
 
 namespace GRINS
@@ -147,6 +148,18 @@ namespace GRINS
 					      *equation_system,
 					      1,
 					      time );
+	  }
+	else if ((*format) == "Nemesis")
+	  {
+	    std::string filename = filename_prefix+".nem";
+	  
+	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
+	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
+	    // one timestep per file.
+	    Nemesis_IO(mesh).write_timestep( filename,
+					     *equation_system,
+					     1,
+					     time );
 	  }
 	else if ((*format).find("xda") != std::string::npos ||
 		 (*format).find("xdr") != std::string::npos)
