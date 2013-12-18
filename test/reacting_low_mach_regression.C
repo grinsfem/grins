@@ -200,9 +200,7 @@ int run( int argc, char* argv[], const GetPot& input )
 
   int return_flag = 0;
 
-  // This is the tolerance of the iterative linear solver so
-  // it's unreasonable to expect anything better than this.
-  double tol = 5.0e-10;
+  double tol = 1.0e-8;
   
   if( u_l2error > tol   || u_h1error > tol   ||
       v_l2error > tol   || v_h1error > tol   ||
