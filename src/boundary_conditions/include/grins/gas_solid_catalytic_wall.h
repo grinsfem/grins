@@ -66,6 +66,11 @@ namespace GRINS
     libMesh::Real compute_reactant_solid_mass_consumption_dT( const libMesh::Real rho,
                                                               const libMesh::Real Y_r,
                                                               const libMesh::Real T );
+
+    libMesh::Real compute_reactant_solid_mass_consumption_dYs( const libMesh::Real rho,
+                                                               const std::vector<libMesh::Real> Y,
+                                                               const libMesh::Real T );
+
   protected:
 
     const unsigned int _reactant_gas_species_idx;
@@ -140,6 +145,27 @@ namespace GRINS
     const libMesh::Real domega_dot_dT = this->domega_dot_dT( rho_r, T )*M_solid/M_r;
 
     return -domega_dot_dT;
+  }
+
+  template<typename Chemistry>
+  inline
+  libMesh::Real GasSolidCatalyticWall<Chemistry>::compute_reactant_solid_mass_consumption_dYs( const libMesh::Real rho,
+                                                                                               const std::vector<libMesh::Real> Y,
+                                                                                               const libMesh::Real T )
+  {
+    const libMesh::Real Y_r = Y[_reactant_gas_species_idx];
+
+    const libMesh::Real rho_r = rho*Y_r;
+
+    const libMesh::Real M_r = this->_chemistry.M(_reactant_gas_species_idx);
+
+    const libMesh::Real M_solid = this->_chemistry.M(_reactant_solid_species_idx);
+
+    const libMesh::Real R = this->_chemistry.R_mix(Y);
+
+    const libMesh::Real domega_dot_dYs = this->domega_dot_dws( rho_r, Y_r, T, R )*M_solid/M_r;
+
+    return -domega_dot_dYs;
   }
 
 } // end namespace GRINS
