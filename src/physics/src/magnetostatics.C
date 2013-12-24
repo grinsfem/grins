@@ -339,11 +339,7 @@ namespace GRINS
     // The subvectors and submatrices we need to fill:
     libMesh::DenseSubVector<Real> &F_A = context.get_elem_residual(_A_var);
 
-    libMesh::DenseSubVector<Real> &F_V = context.get_elem_residual(_V_var);
-
     libMesh::DenseSubMatrix<Real> &M_AA = context.get_elem_jacobian(_A_var,_A_var);
-
-    libMesh::DenseSubMatrix<Real> &M_VA = context.get_elem_jacobian(_V_var,_A_var);
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
