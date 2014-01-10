@@ -53,8 +53,20 @@ namespace GRINS
                                         libMesh::RealTensor& G,
                                         libMesh::Real rho,
                                         libMesh::Gradient U,
-                                        libMesh::Real T,
+                                        libMesh::Real mu,
                                         bool is_steady ) const;
+
+    void compute_tau_momentum_and_derivs( AssemblyContext& c,
+                                          unsigned int qp,
+                                          libMesh::RealGradient& g,
+                                          libMesh::RealTensor& G,
+                                          libMesh::Real rho,
+                                          libMesh::Gradient U,
+                                          libMesh::Real T,
+                                          libMesh::Real &tau_M,
+                                          libMesh::Real &d_tau_M_d_rho,
+                                          libMesh::Gradient &d_tau_M_d_U,
+                                          bool is_steady ) const;
 
     libMesh::Real compute_tau( AssemblyContext& c,
                                unsigned int qp,
@@ -64,6 +76,20 @@ namespace GRINS
                                libMesh::Real rho,
                                libMesh::Gradient U,
                                bool is_steady ) const;
+
+    void compute_tau_and_derivs( AssemblyContext& c,
+                                 unsigned int qp,
+                                 libMesh::Real mat_prop_sq,
+                                 libMesh::RealGradient& g,
+                                 libMesh::RealTensor& G,
+                                 libMesh::Real rho,
+                                 libMesh::Gradient U,
+                                 libMesh::Real& tau,
+                                 libMesh::Real& d_tau_d_rho,
+                                 libMesh::Gradient& d_tau_d_U,
+                                 bool is_steady ) const;
+
+
 
     libMesh::Real compute_res_continuity( AssemblyContext& context,
                                           unsigned int qp ) const;
@@ -135,7 +161,27 @@ namespace GRINS
   {
     return this->compute_tau( c, qp, mu*mu, g, G, rho, U, is_steady );
   }
+ 
+  inline void
+  IncompressibleNavierStokesStabilizationHelper::compute_tau_momentum_and_derivs
+    ( AssemblyContext& c,
+      unsigned int qp,
+      libMesh::RealGradient& g,
+      libMesh::RealTensor& G,
+      libMesh::Real rho,
+      libMesh::Gradient U,
+      libMesh::Real mu,
+      libMesh::Real& tau_M,
+      libMesh::Real &d_tau_M_d_rho,
+      libMesh::Gradient &d_tau_M_d_U,
+      bool is_steady ) const
+  {
+    this->compute_tau_and_derivs( c, qp, mu*mu, g, G, rho, U, tau_M,
+                                  d_tau_M_d_rho, d_tau_M_d_U,
+                                  is_steady );
+  }
   
+ 
   inline
   libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau( AssemblyContext& c,
                                                                             unsigned int /*qp*/,
@@ -165,7 +211,6 @@ namespace GRINS
       libMesh::Real rho,
       libMesh::Gradient U,
       libMesh::Real& tau,
-      libMesh::Real& d_tau_d_mat_prop_sq,
       libMesh::Real& d_tau_d_rho,
       libMesh::Gradient& d_tau_d_U,
       bool is_steady ) const
@@ -177,7 +222,6 @@ namespace GRINS
     tau = rhoUGrhoU + this->_C*mat_prop_sq*GG;
     d_tau_d_rho = rhoUGrhoU*2/rho;
     d_tau_d_U = 2*rho*GrhoU;
-    d_tau_d_mat_prop_sq = this->_C*GG;
     
     if(!is_steady)
       {
@@ -192,11 +236,10 @@ namespace GRINS
     libMesh::Real root_oldtau = std::sqrt(tau);
     libMesh::Real d_tau_d_oldtau = -this->_tau_factor / (tau*root_oldtau) / 2;
 
-    d_tau_d_mat_prop_sq = d_tau_d_oldtau * d_tau_d_mat_prop_sq;
     d_tau_d_rho         = d_tau_d_oldtau * d_tau_d_rho;
     d_tau_d_U           = d_tau_d_oldtau * d_tau_d_U;
 
-    tau = this->_tau_factor / roottau;
+    tau = this->_tau_factor / root_oldtau;
   }
   
 }
