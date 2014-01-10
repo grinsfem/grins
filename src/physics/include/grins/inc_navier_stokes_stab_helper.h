@@ -153,6 +153,51 @@ namespace GRINS
 
     return this->_tau_factor/std::sqrt(tau);
   }
+
+  inline
+  void
+  IncompressibleNavierStokesStabilizationHelper::compute_tau_and_derivs
+    ( AssemblyContext& c,
+      unsigned int /*qp*/,
+      libMesh::Real mat_prop_sq,
+      libMesh::RealGradient& /*g*/, // constant
+      libMesh::RealTensor& G, // constant
+      libMesh::Real rho,
+      libMesh::Gradient U,
+      libMesh::Real& tau,
+      libMesh::Real& d_tau_d_mat_prop_sq,
+      libMesh::Real& d_tau_d_rho,
+      libMesh::Gradient& d_tau_d_U,
+      bool is_steady ) const
+  {
+    libMesh::Gradient rhoU = rho*U;
+    libMesh::Gradient GrhoU = G*rhoU;
+    libMesh::Real rhoUGrhoU = rhoU * GrhoU;
+    libMesh::Real GG = G.contract(G);
+    tau = rhoUGrhoU + this->_C*mat_prop_sq*GG;
+    d_tau_d_rho = rhoUGrhoU*2/rho;
+    d_tau_d_U = 2*rho*GrhoU;
+    d_tau_d_mat_prop_sq = this->_C*GG;
+    
+    if(!is_steady)
+      {
+        libMesh::Real two_rho_over_dt = 2*rho/c.get_deltat_value();
+        tau += two_rho_over_dt * two_rho_over_dt;
+        d_tau_d_rho += 4*two_rho_over_dt/c.get_deltat_value();
+      }
+
+    // But what we've computed so far isn't tau; we need
+    // tau = _tau_factor/ sqrt(our_tau)
+
+    libMesh::Real root_oldtau = std::sqrt(tau);
+    libMesh::Real d_tau_d_oldtau = -this->_tau_factor / (tau*root_oldtau) / 2;
+
+    d_tau_d_mat_prop_sq = d_tau_d_oldtau * d_tau_d_mat_prop_sq;
+    d_tau_d_rho         = d_tau_d_oldtau * d_tau_d_rho;
+    d_tau_d_U           = d_tau_d_oldtau * d_tau_d_U;
+
+    tau = this->_tau_factor / roottau;
+  }
   
 }
 #endif // GRINS_INC_NAVIER_STOKES_STAB_HELPER_H
