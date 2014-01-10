@@ -64,6 +64,17 @@ namespace GRINS
                                       libMesh::Gradient U,
                                       bool is_steady ) const;
 
+    void compute_tau_energy_and_derivs( AssemblyContext& c,
+                                        libMesh::RealTensor& G,
+                                        libMesh::Real rho,
+                                        libMesh::Real cp,
+                                        libMesh::Real k,
+                                        libMesh::Gradient U,
+                                        libMesh::Real &tau_E,
+                                        libMesh::Real &d_tau_E_d_rho,
+                                        libMesh::Gradient &d_tau_E_d_U,
+                                        bool is_steady ) const;
+
   protected:
 
     libMesh::Real _C, _tau_factor;
@@ -90,6 +101,47 @@ namespace GRINS
       tau += (2.0*rho*cp/c.get_deltat_value())*(2.0*rho*cp/c.get_deltat_value());
 
     return this->_tau_factor/std::sqrt(tau);
+  }
+
+
+  inline
+  void HeatTransferStabilizationHelper::compute_tau_energy_and_derivs
+    ( AssemblyContext& c,
+      libMesh::RealTensor& G,
+      libMesh::Real rho,
+      libMesh::Real cp,
+      libMesh::Real k,
+      libMesh::Gradient U,
+      libMesh::Real &tau_E,
+      libMesh::Real &d_tau_E_d_rho,
+      libMesh::Gradient &d_tau_E_d_U,
+      bool is_steady ) const
+  {
+    libMesh::Gradient rhocpU = rho*cp*U;
+    libMesh::Gradient GrhocpU = G*rhocpU;
+    libMesh::Real rhocpUGrhocpU = rhocpU * GrhocpU;
+    libMesh::Real GG = G.contract(G);
+    tau_E = (rhocpU)*(GrhocpU) + this->_C*k*k*GG;
+    d_tau_E_d_rho = rhocpUGrhocpU*2/rho/cp;
+    d_tau_E_d_U = 2*rho*cp*GrhocpU;
+    
+    if(!is_steady)
+      {
+        libMesh::Real two_rhocp_over_dt = 2*rho*cp/c.get_deltat_value();
+        tau_E += two_rhocp_over_dt * two_rhocp_over_dt;
+        d_tau_E_d_rho += 4*two_rhocp_over_dt/c.get_deltat_value();
+      }
+
+    // But what we've computed so far isn't tau; we need
+    // tau = _tau_factor/ sqrt(our_tau)
+
+    libMesh::Real root_oldtau = std::sqrt(tau_E);
+    libMesh::Real d_tau_d_oldtau = -this->_tau_factor / (tau_E*root_oldtau) / 2;
+
+    d_tau_E_d_rho         = d_tau_d_oldtau * d_tau_E_d_rho;
+    d_tau_E_d_U           = d_tau_d_oldtau * d_tau_E_d_U;
+
+    tau_E = this->_tau_factor / root_oldtau;
   }
   
 }
