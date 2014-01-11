@@ -51,6 +51,19 @@ namespace GRINS
                                              const libMesh::Real Cp,
                                              const libMesh::Real k ) const;
 
+
+    void compute_res_energy_steady_and_derivs( AssemblyContext& context,
+                                               unsigned int qp,
+                                               const libMesh::Real rho,
+                                               const libMesh::Real Cp,
+                                               const libMesh::Real k,
+                                               libMesh::Real &res,
+                                               libMesh::Real &d_res_dT,
+                                               libMesh::Gradient &d_res_dgradT,
+                                               libMesh::Tensor   &d_res_dhessT,
+                                               libMesh::Gradient &d_res_dU
+                                             ) const;
+
     libMesh::Real compute_res_energy_transient( AssemblyContext& context,
                                                 unsigned int qp,
                                                 const libMesh::Real rho,

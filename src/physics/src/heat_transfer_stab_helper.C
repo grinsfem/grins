@@ -73,6 +73,48 @@ namespace GRINS
     return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
 
+  void HeatTransferStabilizationHelper::compute_res_energy_steady_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp,
+      const libMesh::Real rho,
+      const libMesh::Real Cp,
+      const libMesh::Real k,
+      libMesh::Real &res,
+      libMesh::Real &d_res_dT,
+      libMesh::Gradient &d_res_dgradT,
+      libMesh::Tensor   &d_res_dhessT,
+      libMesh::Gradient &d_res_dU
+    ) const
+  {
+    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
+    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
+
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+          
+    const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
+      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
+
+    const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
+      context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
+
+
+    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
+                                  rho*Cp*context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
+      rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w_var(), qp);
+
+    res = rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+    d_res_dT = 0;
+    d_res_dgradT = rhocpU;
+    d_res_dhessT = 0;
+    d_res_dhessT(0,0) = -k;
+    d_res_dhessT(1,1) = -k;
+    d_res_dhessT(2,2) = -k;
+    d_res_dU = rho * Cp * grad_T;
+  }
+
+
   libMesh::Real HeatTransferStabilizationHelper::compute_res_energy_transient( AssemblyContext& context,
                                                                                unsigned int qp,
                                                                                const libMesh::Real rho,
