@@ -89,16 +89,6 @@ namespace GRINS
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
 
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
-          
-    const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
-
-    const std::vector<std::vector<libMesh::RealTensor> >& T_hessphi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
-
-
     libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
     if(context.get_system().get_mesh().mesh_dimension() == 3)
@@ -123,6 +113,22 @@ namespace GRINS
     libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
 
     return rho*Cp*T_dot;
+  }
+
+
+  void HeatTransferStabilizationHelper::compute_res_energy_transient_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp,
+      const libMesh::Real rho,
+      const libMesh::Real Cp,
+      libMesh::Real &res,
+      libMesh::Real &d_res_dTdot
+    ) const
+  {
+    libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
+
+    res = rho*Cp*T_dot;
+    d_res_dTdot = rho*Cp;
   }
 
 } // namespace GRINS
