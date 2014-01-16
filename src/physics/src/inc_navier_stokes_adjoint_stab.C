@@ -48,7 +48,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool /*compute_jacobian*/,
+  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool compute_jacobian,
                                                                                 AssemblyContext& context,
                                                                                 CachedValues& /*cache*/ )
   {
@@ -63,10 +63,8 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
 
-    /*
       const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
-    */
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
@@ -76,9 +74,36 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
+      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{uu}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
+      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{uv}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
+      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // J_{vu}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
+      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // J_{vv}
+
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
+
     if(this->_dim == 3)
-      Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+      {
+        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Kuw = &context.get_elem_jacobian
+          (_flow_vars.u_var(), _flow_vars.w_var()); // J_{uw}
+        Kvw = &context.get_elem_jacobian
+          (_flow_vars.v_var(), _flow_vars.w_var()); // J_{vw}
+        Kwu = &context.get_elem_jacobian
+          (_flow_vars.w_var(), _flow_vars.u_var()); // J_{wu}
+        Kwv = &context.get_elem_jacobian
+          (_flow_vars.w_var(), _flow_vars.v_var()); // J_{wv}
+        Kww = &context.get_elem_jacobian
+          (_flow_vars.w_var(), _flow_vars.w_var()); // J_{ww}
+      }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -104,16 +129,44 @@ namespace GRINS
           grad_w = context.interior_gradient(_flow_vars.w_var(), qp);
         */
 
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
-        libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+        libMesh::Real tau_M, tau_C;
+        libMesh::Real d_tau_M_d_rho, d_tau_C_d_rho;
+        libMesh::Gradient d_tau_M_dU, d_tau_C_dU;
+        libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
+        libMesh::Real RC;
+        libMesh::Tensor d_RC_dgradU,
+          d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
-        libMesh::Real RC = this->_stab_helper.compute_res_continuity( context, qp );
+        if (compute_jacobian)
+          {
+            this->_stab_helper.compute_tau_momentum_and_derivs
+              ( context, qp, g, G, this->_rho, U, this->_mu,
+                tau_M, d_tau_M_d_rho, d_tau_M_dU,
+                this->_is_steady );
+            this->_stab_helper.compute_tau_continuity_and_derivs
+              ( tau_M, d_tau_M_d_rho, d_tau_M_dU,
+                g,
+                tau_C, d_tau_C_d_rho, d_tau_C_dU );
+            this->_stab_helper.compute_res_momentum_steady_and_derivs
+              ( context, qp, this->_rho, this->_mu,
+                RM_s, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
+                d_RM_s_uvw_dhessuvw);
+            this->_stab_helper.compute_res_continuity_and_derivs
+              ( context, qp, RC, d_RC_dgradU );
+          }
+        else
+          {
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+            tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+            RC = this->_stab_helper.compute_res_continuity( context, qp );
+          }
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
               this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+            libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
             //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
@@ -125,8 +178,142 @@ namespace GRINS
               {
                 (*Fw)(i) += ( -tau_M*RM_s(2)*test_func - tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
               }
-          }
 
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    Kuu(i,j) += ( -d_tau_M_dU(0)*RM_s(0)*test_func
+                                  -tau_M*d_RM_s_dU(0,0)*test_func
+                                  -tau_M*RM_s(0)*d_test_func_dU(0)
+                                  - d_tau_C_dU(0)*RC*u_gradphi[i][qp](0)
+                                )*u_phi[j][qp]*JxW[qp];
+                    Kuu(i,j) += ( - tau_C*
+                                  (
+                                    d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                    d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                    d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                  )
+                                    *u_gradphi[i][qp](0)
+                                )*JxW[qp];
+                    Kuu(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
+                                )*JxW[qp];
+                    Kuu(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
+                                )*JxW[qp];
+                    Kuv(i,j) += ( -d_tau_M_dU(1)*RM_s(0)*test_func
+                                  -tau_M*d_RM_s_dU(0,1)*test_func
+                                  -tau_M*RM_s(0)*d_test_func_dU(1)
+                                )*u_phi[j][qp]*JxW[qp];
+                    Kuv(i,j) += ( - tau_C*
+                                  (
+                                    d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                    d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                    d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                  )
+                                    *u_gradphi[i][qp](0)
+                                )*JxW[qp];
+                    Kvu(i,j) += ( -d_tau_M_dU(0)*RM_s(1)*test_func
+                                  -tau_M*d_RM_s_dU(1,0)*test_func
+                                  -tau_M*RM_s(1)*d_test_func_dU(0)
+                                )*u_phi[j][qp]*JxW[qp];
+                    Kvu(i,j) += ( - tau_C*
+                                  (
+                                    d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                    d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                    d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                  )
+                                    *u_gradphi[i][qp](1)
+                                )*JxW[qp];
+                    Kvv(i,j) += ( -d_tau_M_dU(1)*RM_s(1)*test_func
+                                  -tau_M*d_RM_s_dU(1,1)*test_func
+                                  -tau_M*RM_s(1)*d_test_func_dU(1)
+                                )*u_phi[j][qp]*JxW[qp];
+                    Kvv(i,j) += ( - tau_C*
+                                  (
+                                    d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                    d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                    d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                  )
+                                    *u_gradphi[i][qp](1)
+                                )*JxW[qp];
+                    Kvv(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
+                                )*JxW[qp];
+                    Kvv(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
+                                )*JxW[qp];
+                  }
+                if(this->_dim == 3)
+                  {
+                    for (unsigned int j=0; j != n_u_dofs; j++)
+                      {
+                        (*Kuw)(i,j) += ( -d_tau_M_dU(2)*RM_s(0)*test_func
+                                         -tau_M*d_RM_s_dU(0,2)*test_func
+                                         -tau_M*RM_s(0)*d_test_func_dU(2)
+                                       )*u_phi[j][qp]*JxW[qp];
+                        (*Kuw)(i,j) += ( - tau_C*
+                                         (
+                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                         )
+                                         * u_gradphi[i][qp](0)
+                                       )*JxW[qp];
+                        (*Kvw)(i,j) += ( -d_tau_M_dU(2)*RM_s(1)*test_func
+                                         -tau_M*d_RM_s_dU(1,2)*test_func
+                                         -tau_M*RM_s(1)*d_test_func_dU(2)
+                                       )*u_phi[j][qp]*JxW[qp];
+                        (*Kvw)(i,j) += ( - tau_C*
+                                         (
+                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                         )
+                                         * u_gradphi[i][qp](1)
+                                       )*JxW[qp];
+                        (*Kwu)(i,j) += ( -d_tau_M_dU(0)*RM_s(2)*test_func
+                                         -tau_M*d_RM_s_dU(2,0)*test_func
+                                         -tau_M*RM_s(2)*d_test_func_dU(0)
+                                       )*u_phi[j][qp]*JxW[qp];
+                        (*Kwu)(i,j) += ( - tau_C*
+                                         (
+                                           d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                           d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                           d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                         )
+                                         * u_gradphi[i][qp](2)
+                                       )*JxW[qp];
+                        (*Kwv)(i,j) += ( -d_tau_M_dU(1)*RM_s(2)*test_func
+                                         -tau_M*d_RM_s_dU(2,1)*test_func
+                                         -tau_M*RM_s(2)*d_test_func_dU(1)
+                                       )*u_phi[j][qp]*JxW[qp];
+                        (*Kwv)(i,j) += ( - tau_C*
+                                         (
+                                           d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                           d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                           d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                         )
+                                         * u_gradphi[i][qp](2)
+                                       )*JxW[qp];
+                        (*Kww)(i,j) += ( -d_tau_M_dU(2)*RM_s(2)*test_func
+                                         -tau_M*d_RM_s_dU(2,2)*test_func
+                                         -tau_M*RM_s(2)*d_test_func_dU(2)
+                                       )*u_phi[j][qp]*JxW[qp];
+                        (*Kww)(i,j) += ( - tau_C*
+                                         (
+                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                         )
+                                         * u_gradphi[i][qp](2)
+                                       )*JxW[qp];
+                        (*Kww)(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
+                                       )*JxW[qp];
+                        (*Kww)(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
+                                       )*JxW[qp];
+
+                      }
+                  }
+              }
+          }
       }
 
 #ifdef GRINS_USE_GRVY_TIMERS
