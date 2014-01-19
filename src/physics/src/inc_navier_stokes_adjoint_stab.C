@@ -322,7 +322,7 @@ namespace GRINS
     return;
   }
 
-    void IncompressibleNavierStokesAdjointStabilization::element_constraint( bool /*compute_jacobian*/,
+    void IncompressibleNavierStokesAdjointStabilization::element_constraint( bool compute_jacobian,
                                                                              AssemblyContext& context,
                                                                              CachedValues& /*cache*/ )
   {
@@ -332,6 +332,7 @@ namespace GRINS
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
@@ -341,7 +342,29 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
       context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
+    // The velocity shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+
+    const std::vector<std::vector<libMesh::RealGradient> >& u_dphi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+
+    const std::vector<std::vector<libMesh::RealTensor> >& u_d2phi =
+      context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
+      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
+      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // J_{pv}
+    libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
+
+    if(this->_dim == 3)
+      {
+        Kpw = &context.get_elem_jacobian
+          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{pw}
+      }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -359,17 +382,82 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+        libMesh::Real tau_M;
+        libMesh::Real d_tau_M_d_rho;
+        libMesh::Gradient d_tau_M_dU;
+        libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
+        libMesh::Tensor d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+        if (compute_jacobian)
+          {
+            this->_stab_helper.compute_tau_momentum_and_derivs
+              ( context, qp, g, G, this->_rho, U, this->_mu,
+                tau_M, d_tau_M_d_rho, d_tau_M_dU,
+                this->_is_steady );
+            this->_stab_helper.compute_res_momentum_steady_and_derivs
+              ( context, qp, this->_rho, this->_mu,
+                RM_s, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
+                d_RM_s_uvw_dhessuvw);
+          }
+        else
+          {
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+          }
 
         // Now a loop over the pressure degrees of freedom.  This
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
-          }
+            Fp(i) += tau_M*(RM_s*p_dphi[i][qp])*JxW[qp];
 
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    Kpu(i,j) += (
+                                  d_tau_M_dU(0)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                  + tau_M*u_phi[i][qp]*
+                                  (
+                                    d_RM_s_dU(0,0)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                    d_RM_s_dU(1,0)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                    d_RM_s_dU(2,0)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                    d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](0) +
+                                    d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                  )
+                                )*JxW[qp];
+                    Kpv(i,j) += (
+                                  d_tau_M_dU(1)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                  + tau_M*u_phi[i][qp]*
+                                  (
+                                    d_RM_s_dU(0,1)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                    d_RM_s_dU(1,1)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                    d_RM_s_dU(2,1)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                    d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](1) +
+                                    d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                  )
+                                )*JxW[qp];
+                  }
+
+                if(this->_dim == 3)
+                  {
+                    for (unsigned int j=0; j != n_u_dofs; j++)
+                      {
+                        (*Kpw)(i,j) += (
+                                         d_tau_M_dU(2)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                         + tau_M*u_phi[i][qp]*
+                                         (
+                                           d_RM_s_dU(0,2)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                           d_RM_s_dU(1,2)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                           d_RM_s_dU(2,2)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                           d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](2) +
+                                           d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                         )
+                                       )*JxW[qp];
+                      }
+                  }
+              }
+          }
       }
 
 #ifdef GRINS_USE_GRVY_TIMERS
