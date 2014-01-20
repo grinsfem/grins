@@ -127,6 +127,13 @@ namespace GRINS
                                                           unsigned int qp,
                                                           const libMesh::Real rho ) const;
 
+    void compute_res_momentum_transient_and_derivs( AssemblyContext& context,
+                                                    unsigned int qp,
+                                                    const libMesh::Real rho,
+                                                    libMesh::RealGradient &res_M,
+                                                    libMesh::Real &d_res_Muvw_duvw
+                                                  ) const;
+
     /*! \todo Should we inline this? */
     libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u, 
                                      libMesh::Gradient& grad_v ) const;

@@ -273,4 +273,22 @@ namespace GRINS
     return rho*u_dot;
   }
 
+
+  void IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp,
+      const libMesh::Real rho,
+      libMesh::RealGradient &res_M,
+      libMesh::Real &d_res_Muvw_duvw
+    ) const
+  {
+    libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
+
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
+      u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+
+    res_M = rho*u_dot;
+    d_res_Muvw_duvw = rho;
+  }
+
 } // namespace GRINS
