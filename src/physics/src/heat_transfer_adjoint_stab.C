@@ -345,6 +345,9 @@ namespace GRINS
                                   )*JxW[qp];
             if (compute_jacobian)
               {
+                const Real fixed_deriv =
+                  context.get_fixed_solution_derivative();
+
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
                     KTT(i,j) += 
@@ -363,13 +366,10 @@ namespace GRINS
                         + _k*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
                               T_hessphi[i][qp](2,2)) 
-                      )*JxW[qp];
+                      )*fixed_deriv*JxW[qp];
                     KTu(i,j) +=
                       tau_E*RE_t*
-                      ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](0)
-                        + _k*(T_hessphi[i][qp](0,0) +
-                              T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                      ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](0)*fixed_deriv
                       )*JxW[qp];
                     KTv(i,j) +=
                       d_tau_E_dU(1)*u_phi[j][qp]*RE_t*
@@ -377,13 +377,10 @@ namespace GRINS
                         + _k*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
                               T_hessphi[i][qp](2,2)) 
-                      )*JxW[qp];
+                      )*fixed_deriv*JxW[qp];
                     KTv(i,j) +=
                       tau_E*RE_t*
-                      ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](1)
-                        + _k*(T_hessphi[i][qp](0,0) +
-                              T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                      ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](1)*fixed_deriv
                       )*JxW[qp];
                   }
                 if(this->_dim == 3)
@@ -396,13 +393,10 @@ namespace GRINS
                             + _k*(T_hessphi[i][qp](0,0) +
                                   T_hessphi[i][qp](1,1) +
                                   T_hessphi[i][qp](2,2)) 
-                          )*JxW[qp];
+                          )*fixed_deriv*JxW[qp];
                         (*KTw)(i,j) +=
                           tau_E*RE_t*
-                          ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](2)
-                            + _k*(T_hessphi[i][qp](0,0) +
-                                  T_hessphi[i][qp](1,1) +
-                                  T_hessphi[i][qp](2,2)) 
+                          ( _rho*_Cp*u_phi[j][qp]*T_gradphi[i][qp](2)*fixed_deriv
                           )*JxW[qp];
                       }
                   }
