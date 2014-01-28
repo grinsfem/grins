@@ -203,7 +203,7 @@ namespace GRINS
                     Kuv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(0)*test_func*JxW[qp];
                     Kvu(i,j) += -tau_M*residual(1)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
                     Kvu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(1)*test_func*JxW[qp];
-                    Kvu(i,j) += -tau_M*residual(1)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
+                    Kvv(i,j) += -tau_M*residual(1)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
                     Kvv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(1)*test_func*JxW[qp];
                   }
 
