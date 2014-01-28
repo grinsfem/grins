@@ -195,7 +195,6 @@ namespace GRINS
                 libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
                 // d_test_func_dT = 0
 
-                libmesh_not_implemented();
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
                     Kuu(i,j) += -tau_M*residual(0)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
