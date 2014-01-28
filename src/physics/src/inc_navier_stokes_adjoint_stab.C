@@ -57,13 +57,17 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
 
-      const std::vector<std::vector<libMesh::Real> >& u_phi =
+    const std::vector<std::vector<libMesh::RealGradient> >& p_gradphi =
+      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
@@ -74,10 +78,14 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kup = 
+      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.p_var()); // J_{up}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
       context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
       context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{uv}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = 
+      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.p_var()); // J_{vp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
       context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
@@ -86,6 +94,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> *Kwp = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kwu = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kwv = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
@@ -97,6 +106,8 @@ namespace GRINS
           (_flow_vars.u_var(), _flow_vars.w_var()); // J_{uw}
         Kvw = &context.get_elem_jacobian
           (_flow_vars.v_var(), _flow_vars.w_var()); // J_{vw}
+        Kwp = &context.get_elem_jacobian
+          (_flow_vars.w_var(), _flow_vars.p_var()); // J_{wp}
         Kwu = &context.get_elem_jacobian
           (_flow_vars.w_var(), _flow_vars.u_var()); // J_{wu}
         Kwv = &context.get_elem_jacobian
@@ -135,7 +146,7 @@ namespace GRINS
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
         libMesh::Real RC;
         libMesh::Tensor d_RC_dgradU,
-          d_RM_s_dU, d_RM_s_uvw_dhessuvw;
+          d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
         if (compute_jacobian)
           {
@@ -149,7 +160,7 @@ namespace GRINS
                 tau_C, d_tau_C_d_rho, d_tau_C_dU );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
               ( context, qp, this->_rho, this->_mu,
-                RM_s, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
+                RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
             this->_stab_helper.compute_res_continuity_and_derivs
               ( context, qp, RC, d_RC_dgradU );
@@ -183,6 +194,25 @@ namespace GRINS
               {
                 const Real fixed_deriv =
                   context.get_fixed_solution_derivative();
+                for (unsigned int j=0; j != n_p_dofs; j++)
+                  {
+                    Kup(i,j) += ( -tau_M*
+                                  ( d_RM_s_dgradp(0,0) *
+                                    p_gradphi[j][qp](0) +
+                                    d_RM_s_dgradp(0,1) *
+                                    p_gradphi[j][qp](1) +
+                                    d_RM_s_dgradp(0,2) *
+                                    p_gradphi[j][qp](2)
+                                  )*test_func)*fixed_deriv*JxW[qp];
+                    Kvp(i,j) += ( -tau_M*
+                                  ( d_RM_s_dgradp(1,0) *
+                                    p_gradphi[j][qp](0) +
+                                    d_RM_s_dgradp(1,1) *
+                                    p_gradphi[j][qp](1) +
+                                    d_RM_s_dgradp(1,2) *
+                                    p_gradphi[j][qp](2)
+                                  )*test_func)*fixed_deriv*JxW[qp];
+                  }
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kuu(i,j) += ( -d_tau_M_dU(0)*RM_s(0)*test_func
@@ -249,6 +279,17 @@ namespace GRINS
                   }
                 if(this->_dim == 3)
                   {
+                    for (unsigned int j=0; j != n_p_dofs; j++)
+                      {
+                        (*Kwp)(i,j) += ( -tau_M*
+                                         ( d_RM_s_dgradp(2,0) *
+                                           p_gradphi[j][qp](0) +
+                                           d_RM_s_dgradp(2,1) *
+                                           p_gradphi[j][qp](1) +
+                                           d_RM_s_dgradp(2,2) *
+                                           p_gradphi[j][qp](2)
+                                         )*test_func)*fixed_deriv*JxW[qp];
+                      }
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
                         (*Kuw)(i,j) += ( -d_tau_M_dU(2)*RM_s(0)*test_func
@@ -365,6 +406,8 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpp = 
+      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.p_var()); // J_{pp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
       context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
@@ -397,7 +440,7 @@ namespace GRINS
         libMesh::Real d_tau_M_d_rho;
         libMesh::Gradient d_tau_M_dU;
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
-        libMesh::Tensor d_RM_s_dU, d_RM_s_uvw_dhessuvw;
+        libMesh::Tensor d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
         if (compute_jacobian)
           {
@@ -407,7 +450,7 @@ namespace GRINS
                 this->_is_steady );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
               ( context, qp, this->_rho, this->_mu,
-                RM_s, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
+                RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
           }
         else
@@ -426,6 +469,15 @@ namespace GRINS
               {
                 const Real fixed_deriv =
                   context.get_fixed_solution_derivative();
+
+                const libMesh::TypeVector<libMesh::Number>
+                  p_dphiiT_d_RM_s_dgradp = 
+                  d_RM_s_dgradp.transpose() * p_dphi[i][qp];
+
+                for (unsigned int j=0; j != n_p_dofs; j++)
+                  {
+                    Kpp(i,j) += tau_M*(p_dphiiT_d_RM_s_dgradp*p_dphi[j][qp])*JxW[qp];
+                  }
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {

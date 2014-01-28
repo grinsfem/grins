@@ -118,6 +118,7 @@ namespace GRINS
                                                  const libMesh::Real rho,
                                                  const libMesh::Real mu,
                                                  libMesh::Gradient &res_M,
+                                                 libMesh::Tensor &d_res_M_dgradp,
                                                  libMesh::Tensor &d_res_M_dU,
                                                  libMesh::Gradient &d_res_Muvw_dgraduvw,
                                                  libMesh::Tensor &d_res_Muvw_dhessuvw

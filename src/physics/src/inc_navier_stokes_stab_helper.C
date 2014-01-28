@@ -202,6 +202,7 @@ namespace GRINS
     ( AssemblyContext& context,
       unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
       libMesh::Gradient &res_M,
+      libMesh::Tensor   &d_res_M_dgradp,
       libMesh::Tensor   &d_res_M_dU,
       libMesh::Gradient &d_res_Muvw_dgraduvw,
       libMesh::Tensor   &d_res_Muvw_dhessuvw
@@ -241,6 +242,7 @@ namespace GRINS
         d_res_M_dU(1,2) = rho * grad_v(2);
 
         d_res_Muvw_dgraduvw(2) = rho * U(2);
+        d_res_M_dgradp(2,2) = 1;
         d_res_Muvw_dhessuvw(2,2) = mu;
 
         d_res_M_dU(2,0) = rho * grad_w(0);
@@ -257,6 +259,9 @@ namespace GRINS
 
     d_res_Muvw_dgraduvw(0) = rho * U(0);
     d_res_Muvw_dgraduvw(1) = rho * U(1);
+
+    d_res_M_dgradp(0,0) = 1;
+    d_res_M_dgradp(1,1) = 1;
 
     d_res_Muvw_dhessuvw(0,0) = mu;
     d_res_Muvw_dhessuvw(1,1) = mu;
