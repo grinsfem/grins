@@ -278,17 +278,17 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &KpT = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _temp_vars.T_var()); // J_{pT}
+      context.get_elem_jacobian(_flow_vars.p_var(), _temp_vars.T_var()); // J_{pT}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
  
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{ww}
+          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{pw}
       }
 
     // Now we will build the element Jacobian and residual.
