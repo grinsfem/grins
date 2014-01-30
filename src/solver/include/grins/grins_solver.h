@@ -72,8 +72,9 @@ namespace GRINS
     double _absolute_step_tolerance;
     double _relative_residual_tolerance;
     double _absolute_residual_tolerance;
-    unsigned int _max_linear_iterations;
     double _initial_linear_tolerance;
+    unsigned int _max_linear_iterations;
+    bool _continue_after_backtrack_failure;
 
     // Screen display options
     bool _solver_quiet;

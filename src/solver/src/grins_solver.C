@@ -45,8 +45,9 @@ namespace GRINS
       _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
       _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-15 ) ),
       _absolute_residual_tolerance( input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 ) ),
-      _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
       _initial_linear_tolerance( input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 ) ),
+      _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
+      _continue_after_backtrack_failure( input("linear-nonlinear-solver/continue_after_backtrack_failure", false ) ),
       _solver_quiet( input("screen-options/solver_quiet", false ) ),
       _solver_verbose( input("screen-options/solver_verbose", false ) )
   {
@@ -89,6 +90,7 @@ namespace GRINS
     solver.relative_residual_tolerance = this->_relative_residual_tolerance;
     solver.absolute_residual_tolerance = this->_absolute_residual_tolerance;
     solver.max_linear_iterations       = this->_max_linear_iterations;
+    solver.continue_after_backtrack_failure = this->_continue_after_backtrack_failure;
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
 
     return;

@@ -97,7 +97,7 @@ namespace GRINS
   template<typename Chemistry>
   inline
   libMesh::Real CatalyticWallBase<Chemistry>::domega_dot_dws( const libMesh::Real rho_s, const libMesh::Real w_s,
-                                                          const libMesh::Real T, const libMesh::Real R ) const
+                                                              const libMesh::Real T, const libMesh::Real R ) const
   {
     return (1.0/w_s - rho_s/R)*(this->omega_dot( rho_s, T ));
   }
