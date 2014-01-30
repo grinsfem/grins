@@ -98,7 +98,8 @@ int main(int argc, char* argv[])
   sim_builder.attach_bc_factory(bc_factory);
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder );
+			   sim_builder,
+                           libmesh_init.comm() );
 
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");

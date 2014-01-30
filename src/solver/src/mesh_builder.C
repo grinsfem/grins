@@ -50,7 +50,9 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<libMesh::UnstructuredMesh> MeshBuilder::build(const GetPot& input)
+  std::tr1::shared_ptr<libMesh::UnstructuredMesh> MeshBuilder::build
+    (const GetPot& input,
+     const libMesh::Parallel::Communicator &comm)
   {
     // First, read all needed variables
     std::string mesh_option = input("mesh-options/mesh_option", "NULL");
@@ -88,11 +90,11 @@ namespace GRINS
     std::string mesh_class = input("mesh-options/mesh_class", "default");
 
     if (mesh_class == "parallel")
-      mesh = new libMesh::ParallelMesh();
+      mesh = new libMesh::ParallelMesh(comm);
     else if (mesh_class == "serial")
-      mesh = new libMesh::SerialMesh();
+      mesh = new libMesh::SerialMesh(comm);
     else if (mesh_class == "default")
-      mesh = new libMesh::Mesh();
+      mesh = new libMesh::Mesh(comm);
     else
       {
         std::cerr << " MeshBuilder::build:"

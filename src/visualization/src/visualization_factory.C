@@ -45,16 +45,18 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<Visualization> VisualizationFactory::build( const GetPot& input )
+  std::tr1::shared_ptr<Visualization> VisualizationFactory::build
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm )
   {
     bool transient = input("unsteady-solver/transient", false );
 
     Visualization* vis;
 
     if(transient) 
-      vis = new UnsteadyVisualization( input );
+      vis = new UnsteadyVisualization( input, comm );
     else
-      vis = new SteadyVisualization( input );
+      vis = new SteadyVisualization( input, comm );
 
     return std::tr1::shared_ptr<Visualization>( vis );
   }

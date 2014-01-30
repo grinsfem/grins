@@ -37,13 +37,14 @@ namespace GRINS
 {
 
   Simulation::Simulation( const GetPot& input,
-                          SimulationBuilder& sim_builder )
-    :  _mesh( sim_builder.build_mesh(input) ),
+                          SimulationBuilder& sim_builder,
+                          const libMesh::Parallel::Communicator &comm )
+    :  _mesh( sim_builder.build_mesh(input, comm) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
        _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
-       _vis( sim_builder.build_vis(input) ),
+       _vis( sim_builder.build_vis(input, comm) ),
        _postprocessing( sim_builder.build_postprocessing(input) ),
     _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
     _print_log_info( input("screen-options/print_log_info", false ) ),

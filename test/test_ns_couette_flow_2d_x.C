@@ -81,7 +81,8 @@ int main(int argc, char* argv[])
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder );
+			   sim_builder,
+                           libmesh_init.comm() );
 
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");

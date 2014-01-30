@@ -72,7 +72,8 @@ int main(int argc, char* argv[])
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder );
+			   sim_builder,
+                           libmesh_init.comm() );
 
   //FIXME: We need to move this to within the Simulation object somehow...
   std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );

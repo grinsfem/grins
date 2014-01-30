@@ -54,7 +54,8 @@ int main(int argc, char* argv[])
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder );
+			   sim_builder,
+                           libmesh_init.comm() );
 
   grins.run();
 
