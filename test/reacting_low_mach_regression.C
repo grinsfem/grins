@@ -105,7 +105,8 @@ int run( int argc, char* argv[], const GetPot& input )
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( input,
-			   sim_builder );
+			   sim_builder,
+                           libmesh_init.comm() );
 
   //FIXME: We need to move this to within the Simulation object somehow...
   std::string restart_file = input( "restart-options/restart_file", "none" );

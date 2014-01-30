@@ -45,7 +45,9 @@ namespace GRINS
   {
   public:
 
-    Visualization( const GetPot& input );
+    Visualization( const GetPot& input,
+                   const libMesh::Parallel::Communicator &comm
+                   LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
     virtual ~Visualization();
 
     void output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system );

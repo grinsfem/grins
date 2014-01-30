@@ -44,13 +44,19 @@ namespace GRINS
     SimulationBuilder();
     virtual ~SimulationBuilder();
 
-    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input );
+    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build_mesh
+      ( const GetPot& input,
+        const libMesh::Parallel::Communicator &comm
+        LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     GRINS::PhysicsList build_physics( const GetPot& input );
 
     std::tr1::shared_ptr<GRINS::Solver> build_solver( const GetPot& input );
 
-    std::tr1::shared_ptr<GRINS::Visualization> build_vis( const GetPot& input );
+    std::tr1::shared_ptr<GRINS::Visualization> build_vis
+      ( const GetPot& input,
+        const libMesh::Parallel::Communicator &comm
+        LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet_bcs();
 

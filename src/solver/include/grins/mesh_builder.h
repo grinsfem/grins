@@ -49,8 +49,11 @@ namespace GRINS
 
     void read_input_options( const GetPot& input );
 
-    //! Builds the libMesh::UnstructuredMesh subclass according to input options.
-    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build(const GetPot& input );
+    //! Builds the libMesh::Mesh according to input options.
+    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build
+      ( const GetPot& input,
+        const libMesh::Parallel::Communicator &comm
+        LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
   };
 
