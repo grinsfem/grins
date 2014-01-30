@@ -94,9 +94,11 @@ namespace GRINS
     this->_error_estimator_factory = error_estimator_factory;
   }
 
-  std::tr1::shared_ptr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh( const GetPot& input )
+  std::tr1::shared_ptr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm)
   {
-    return (this->_mesh_builder)->build(input);
+    return (this->_mesh_builder)->build(input, comm);
   }
 
   GRINS::PhysicsList SimulationBuilder::build_physics( const GetPot& input )
@@ -109,10 +111,12 @@ namespace GRINS
     return (this->_solver_factory)->build(input);
   }
 
-    std::tr1::shared_ptr<GRINS::Visualization> SimulationBuilder::build_vis( const GetPot& input )
-    {
-      return (this->_vis_factory)->build(input);
-    }
+  std::tr1::shared_ptr<GRINS::Visualization> SimulationBuilder::build_vis
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm)
+  {
+    return (this->_vis_factory)->build(input, comm);
+  }
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > SimulationBuilder::build_dirichlet_bcs()
   {

@@ -34,8 +34,10 @@
 namespace GRINS
 {
 
-  SteadyVisualization::SteadyVisualization(const GetPot& input)
-    : Visualization(input)
+  SteadyVisualization::SteadyVisualization
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm ) 
+    : Visualization(input, comm)
   {
     return;
   }

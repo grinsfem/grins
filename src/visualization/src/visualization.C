@@ -40,7 +40,8 @@
 namespace GRINS
 {
 
-  Visualization::Visualization( const GetPot& input )
+  Visualization::Visualization( const GetPot& input,
+                                const libMesh::Parallel::Communicator &comm )
     : _vis_output_file_prefix( input("vis-options/vis_output_file_prefix", "unknown" ) )
   {
     unsigned int num_formats = input.vector_variable_size("vis-options/output_format");
@@ -58,7 +59,7 @@ namespace GRINS
         else if (mesh_class == "default")
           {
             // Is our default Mesh distributable?
-            Mesh testdefault;
+            Mesh testdefault(comm);
             testdefault.delete_remote_elements();
             if (testdefault.is_serial())
 	      _output_format.push_back("ExodusII");

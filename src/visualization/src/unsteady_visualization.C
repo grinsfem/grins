@@ -35,8 +35,10 @@
 namespace GRINS
 {
 
-  UnsteadyVisualization::UnsteadyVisualization(const GetPot& input)
-    : Visualization(input)
+  UnsteadyVisualization::UnsteadyVisualization
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm )
+    : Visualization(input, comm)
   {
     return;
   }
