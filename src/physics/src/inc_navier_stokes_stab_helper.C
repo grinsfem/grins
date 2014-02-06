@@ -135,6 +135,32 @@ namespace GRINS
     return divU;
   }
 
+  void IncompressibleNavierStokesStabilizationHelper::compute_res_continuity_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp,
+      libMesh::Real   &res_C,
+      libMesh::Tensor &d_res_C_dgradU
+    ) const
+  {
+    libMesh::RealGradient grad_u, grad_v;
+
+    grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
+    grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
+
+    libMesh::Real divU = grad_u(0) + grad_v(1);
+    d_res_C_dgradU = 0;
+    d_res_C_dgradU(0,0) = 1;
+    d_res_C_dgradU(1,1) = 1;
+
+    if( context.get_system().get_mesh().mesh_dimension() == 3 )
+      {
+        divU += (context.fixed_interior_gradient(this->_flow_vars.w_var(), qp))(2);
+        d_res_C_dgradU(2,2) = 1;
+      }
+
+    res_C = divU;
+  }
+
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_steady( AssemblyContext& context,
                                                                                                     unsigned int qp, const libMesh::Real rho, const libMesh::Real mu ) const
   {
@@ -172,6 +198,76 @@ namespace GRINS
     return rhoUdotGradU + grad_p - mu*divGradU;
   }
 
+  void IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_steady_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
+      libMesh::Gradient &res_M,
+      libMesh::Tensor   &d_res_M_dgradp,
+      libMesh::Tensor   &d_res_M_dU,
+      libMesh::Gradient &d_res_Muvw_dgraduvw,
+      libMesh::Tensor   &d_res_Muvw_dhessuvw
+    ) const
+  {
+    libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u_var(), qp),
+                             context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
+      U(2) = context.fixed_interior_value(this->_flow_vars.w_var(), qp);
+
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p_var(), qp);
+
+    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
+    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
+
+    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_flow_vars.u_var(), qp);
+    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_flow_vars.v_var(), qp);
+
+    libMesh::RealGradient rhoUdotGradU;
+    libMesh::RealGradient divGradU;
+
+    if( context.get_system().get_mesh().mesh_dimension() < 3 )
+      {
+        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v );
+        divGradU  = this->div_GradU( hess_u, hess_v );
+      }
+    else
+      {
+        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w_var(), qp);
+        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w_var(), qp);
+
+        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v, grad_w );
+
+        divGradU  = this->div_GradU( hess_u, hess_v, hess_w );
+
+        d_res_M_dU(0,2) = rho * grad_u(2);
+        d_res_M_dU(1,2) = rho * grad_v(2);
+
+        d_res_Muvw_dgraduvw(2) = rho * U(2);
+        d_res_M_dgradp(2,2) = 1;
+        d_res_Muvw_dhessuvw(2,2) = mu;
+
+        d_res_M_dU(2,0) = rho * grad_w(0);
+        d_res_M_dU(2,1) = rho * grad_w(1);
+        d_res_M_dU(2,2) = rho * grad_w(2);
+      }
+
+    res_M = rhoUdotGradU + grad_p - mu*divGradU;
+
+    d_res_M_dU(0,0) = rho * grad_u(0);
+    d_res_M_dU(0,1) = rho * grad_u(1);
+    d_res_M_dU(1,0) = rho * grad_v(0);
+    d_res_M_dU(1,1) = rho * grad_v(1);
+
+    d_res_Muvw_dgraduvw(0) = rho * U(0);
+    d_res_Muvw_dgraduvw(1) = rho * U(1);
+
+    d_res_M_dgradp(0,0) = 1;
+    d_res_M_dgradp(1,1) = 1;
+
+    d_res_Muvw_dhessuvw(0,0) = mu;
+    d_res_Muvw_dhessuvw(1,1) = mu;
+  }
+
+
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
     libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
@@ -180,6 +276,24 @@ namespace GRINS
       u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
     return rho*u_dot;
+  }
+
+
+  void IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient_and_derivs
+    ( AssemblyContext& context,
+      unsigned int qp,
+      const libMesh::Real rho,
+      libMesh::RealGradient &res_M,
+      libMesh::Real &d_res_Muvw_duvw
+    ) const
+  {
+    libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
+
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
+      u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+
+    res_M = rho*u_dot;
+    d_res_Muvw_duvw = rho;
   }
 
 } // namespace GRINS
