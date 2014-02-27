@@ -299,6 +299,7 @@ include_HEADERS += $(top_srcdir)/src/solver/include/grins/steady_mesh_adaptive_s
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
+include_HEADERS += $(top_srcdir)/src/utilities/include/grins/grins_enums.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/physical_constants.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/input_utils.h
 include_HEADERS += $(top_srcdir)/src/utilities/include/grins/math_constants.h

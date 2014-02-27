@@ -30,6 +30,7 @@
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
+#include "grins/grins_enums.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -62,22 +63,22 @@ namespace GRINS
   {
     // Read FE info
     this->_V_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
 
     this->_P_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
 
     this->_T_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
 
     this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/V_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/V_order", "SECOND") );
 
     this->_P_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
 
     this->_T_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
 
     // Read variable naming info
     this->_u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );

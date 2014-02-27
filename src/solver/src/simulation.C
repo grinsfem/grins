@@ -26,6 +26,7 @@
 #include "grins/simulation.h"
 
 // GRINS
+#include "grins/grins_enums.h"
 #include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
@@ -168,13 +169,13 @@ namespace GRINS
 
         // Must have correct file type to restart
         if (restart_file.rfind(".xdr") < restart_file.size())
-          _equation_system->read(restart_file,libMeshEnums::DECODE,
+          _equation_system->read(restart_file,GRINSEnums::DECODE,
                                  //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
                                  EquationSystems::READ_DATA |
                                  EquationSystems::READ_ADDITIONAL_DATA);
       
         else if  (restart_file.rfind(".xda") < restart_file.size())
-          _equation_system->read(restart_file,libMeshEnums::READ,
+          _equation_system->read(restart_file,GRINSEnums::READ,
                                  //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
                                  EquationSystems::READ_DATA |
                                  EquationSystems::READ_ADDITIONAL_DATA);

@@ -21,50 +21,26 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
-#define GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
 
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/primitive_temp_variables.h"
-#include "grins/var_typedefs.h"
+#ifndef GRINS_ENUMS_H
+#define GRINS_ENUMS_H
 
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
-
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
+namespace libMeshEnums
 {
-  class FEMSystem;
 }
 
-namespace GRINS
+namespace libMesh
 {
-  class PrimitiveTempFEVariables : public PrimitiveTempVariables
-  {
-  public:
+namespace libMeshEnums
+{
+}
+}
 
-    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name );
-    ~PrimitiveTempFEVariables();
+namespace GRINSEnums
+{
+  using namespace libMesh;
+  using namespace ::libMeshEnums;
+  using namespace libMesh::libMeshEnums;
+} //namespace GRINS
 
-    virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _T_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _T_order;
-
-  private:
-
-    PrimitiveTempFEVariables();
-
-  };
-
-} // end namespace GRINS
-
-#endif // GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
+#endif //GRINS_ENUMS_H

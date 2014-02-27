@@ -26,6 +26,7 @@
 #include <iostream>
 
 // This class
+#include "grins/grins_enums.h"
 #include "grins/mesh_builder.h"
 
 // libMesh
@@ -118,8 +119,8 @@ namespace GRINS
 	    element_type = "EDGE3";
 	  }
       
-	libMeshEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
+	GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
       
 	libMesh::MeshTools::Generation::build_line(*mesh,
 						   mesh_nx1,
@@ -138,8 +139,8 @@ namespace GRINS
 	// Reset mesh dimension to 2.
 	mesh->set_mesh_dimension(2);
 
-	libMeshEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
+	GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_square(*mesh,
 						     mesh_nx1,
@@ -161,8 +162,8 @@ namespace GRINS
 	// Reset mesh dimension to 3.
 	mesh->set_mesh_dimension(3);
 
-	libMeshEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<libMeshEnums::ElemType>(element_type);
+	GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_cube(*mesh,
 						   mesh_nx1,

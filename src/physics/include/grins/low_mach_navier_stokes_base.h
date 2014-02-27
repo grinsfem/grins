@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/physics.h"
 #include "grins/assembly_context.h"
+#include "grins/grins_enums.h"
 
 //libMesh
 #include "libmesh/enum_order.h"
@@ -95,10 +96,10 @@ namespace GRINS
     std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name, _p0_var_name;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _V_FE_family, _P_FE_family, _T_FE_family;
+    GRINSEnums::FEFamily _V_FE_family, _P_FE_family, _T_FE_family;
 
     //! Element orders, read from input
-    libMeshEnums::Order _V_order, _P_order, _T_order;
+    GRINSEnums::Order _V_order, _P_order, _T_order;
 
     //! Viscosity object
     Viscosity _mu;

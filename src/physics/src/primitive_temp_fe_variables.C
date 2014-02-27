@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
+#include "grins/grins_enums.h"
 #include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
@@ -33,8 +34,8 @@ namespace GRINS
 {
   PrimitiveTempFEVariables::PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
     : PrimitiveTempVariables(input),
-      _T_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-      _T_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) )
+      _T_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+      _T_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) )
   {
     return;
   }

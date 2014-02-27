@@ -23,8 +23,11 @@
 
 
 // This class
-#include "grins/assembly_context.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
+
+// GRINS
+#include "grins/assembly_context.h"
+#include "grins/grins_enums.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -52,16 +55,16 @@ namespace GRINS
   void AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
   {
     this->_T_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
 
     this->_T_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
 
     this->_V_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
 
     this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
     // Read variable naming info
     this->_u_r_var_name = input("Physics/VariableNames/r_velocity", u_r_var_name_default );

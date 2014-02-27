@@ -30,6 +30,7 @@
 #include "grins/axisym_heat_transfer_bc_handling.h"
 #include "grins/constant_conductivity.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/grins_enums.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -66,16 +67,16 @@ namespace GRINS
   void AxisymmetricHeatTransfer<Conductivity>::read_input_options( const GetPot& input )
   {
     this->_T_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
 
     this->_T_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
 
     this->_V_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
 
     this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
+      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
     this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
     this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);

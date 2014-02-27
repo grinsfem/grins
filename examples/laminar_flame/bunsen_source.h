@@ -25,6 +25,7 @@
 #define GRINS_BUNSEN_SOURCE_H
 
 // GRINS
+#include "grins/grins_enums.h"
 #include "grins/physics.h"
 
 namespace GRINS
@@ -59,8 +60,9 @@ namespace Bunsen
 
     GRINS::VariableIndex _T_var;
     std::string _T_var_name;
-    libMeshEnums::FEFamily _T_FE_family;
-    libMeshEnums::Order _T_order;
+
+    GRINSEnums::FEFamily _T_FE_family;
+    GRINSEnums::Order _T_order;
 
   private:
 

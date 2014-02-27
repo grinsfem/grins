@@ -24,22 +24,23 @@
 // This class
 #include "grins/primitive_flow_fe_variables.h"
 
+// GRINS
+#include "grins/grins_enums.h"
+#include "grins/variable_name_defaults.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
 
-// GRINS
-#include "grins/variable_name_defaults.h"
-
 namespace GRINS
 {
   PrimitiveFlowFEVariables::PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name )
     :  PrimitiveFlowVariables(input),
-       _V_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-       _P_FE_family( libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+physics_name+"/P_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-       _V_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") ) ),
-       _P_order( libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+physics_name+"/P_order", "FIRST") ) )
+       _V_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _P_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/P_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _V_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") ) ),
+       _P_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/P_order", "FIRST") ) )
   {
     return;
   }
