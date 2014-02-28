@@ -31,16 +31,16 @@ namespace libMeshEnums
 
 namespace libMesh
 {
-namespace libMeshEnums
-{
-}
+//namespace libMeshEnums
+//{
+//}
 }
 
 namespace GRINSEnums
 {
   using namespace libMesh;
   using namespace ::libMeshEnums;
-  using namespace libMesh::libMeshEnums;
+//  using namespace libMesh::libMeshEnums;
 } //namespace GRINS
 
 #endif //GRINS_ENUMS_H
