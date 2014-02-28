@@ -26,6 +26,7 @@
 #include "grins/grins_unsteady_solver.h"
 
 // GRINS
+#include "grins/grins_enums.h"
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
 
@@ -57,10 +58,10 @@ namespace GRINS
       {
         const std::string current_norm = input("component_norm", std::string("L2"), i);
         // TODO: replace this with string_to_enum with newer libMesh
-        if (current_norm == "L2")
-          _component_norm.set_type(i, libMeshEnums::L2);
-        else if (current_norm == "H1")
-          _component_norm.set_type(i, libMeshEnums::H1);
+        if (current_norm == "GRINSEnums::L2")
+          _component_norm.set_type(i, L2);
+        else if (current_norm == "GRINSEnums::H1")
+          _component_norm.set_type(i, H1);
         else
           libmesh_not_implemented();
       }

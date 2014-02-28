@@ -26,6 +26,7 @@
 #include "grins/visualization.h"
 
 // GRINS
+#include "grins/grins_enums.h"
 #include "grins/multiphysics_sys.h"
 
 // libMesh
@@ -192,7 +193,7 @@ namespace GRINS
 	    std::string filename = filename_prefix+"."+(*format);
 	    const bool binary = ((*format).find("xdr") != std::string::npos);
 	    equation_system->write( filename,
-				    binary ? libMeshEnums::ENCODE : libMeshEnums::WRITE,
+				    binary ? GRINSEnums::ENCODE : GRINSEnums::WRITE,
 				    EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
 	  }
 	else if ((*format) == "mesh_only" )

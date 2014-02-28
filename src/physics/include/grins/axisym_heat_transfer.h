@@ -27,6 +27,7 @@
 
 //GRINS
 #include "grins_config.h"
+#include "grins/grins_enums.h"
 #include "grins/physics.h"
 
 // libMesh
@@ -108,10 +109,10 @@ namespace GRINS
     std::string _u_z_var_name;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+    GRINSEnums::FEFamily _T_FE_family, _V_FE_family;
 
     //! Temperature element order, read from input
-    libMeshEnums::Order _T_order, _V_order;
+    GRINSEnums::Order _T_order, _V_order;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

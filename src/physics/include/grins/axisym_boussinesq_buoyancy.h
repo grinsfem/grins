@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/grins_enums.h"
 #include "grins/physics.h"
 
 // libMesh
@@ -78,10 +79,10 @@ namespace GRINS
     unsigned int _dim;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _T_FE_family, _V_FE_family;
+    GRINSEnums::FEFamily _T_FE_family, _V_FE_family;
 
     //! Temperature element order, read from input
-    libMeshEnums::Order _T_order, _V_order;
+    GRINSEnums::Order _T_order, _V_order;
 
     // Indices for each variable;
     //! Index for r-velocity field

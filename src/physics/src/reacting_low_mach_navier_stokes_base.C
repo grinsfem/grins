@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/cantera_mixture.h"
+#include "grins/grins_enums.h"
 #include "grins/antioch_mixture.h"
 
 // libMesh
@@ -59,22 +60,22 @@ namespace GRINS
   void ReactingLowMachNavierStokesBase::read_input_options( const GetPot& input )
   {
     // Read FE family info
-    this->_species_FE_family = libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_FE_family", "LAGRANGE") );
+    this->_species_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_FE_family", "LAGRANGE") );
 
-    this->_V_FE_family = libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
+    this->_V_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
 
-    this->_P_FE_family = libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
+    this->_P_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
 
-    this->_T_FE_family = libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
+    this->_T_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
 
     // Read FE family info
-    this->_species_order = libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_order", "SECOND") );
+    this->_species_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_order", "SECOND") );
 
-    this->_V_order = libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/V_order", "SECOND") );
+    this->_V_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/V_order", "SECOND") );
 
-    this->_P_order = libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/P_order", "FIRST") );
+    this->_P_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/P_order", "FIRST") );
 
-    this->_T_order = libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_order", "SECOND") );
+    this->_T_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_order", "SECOND") );
 
     // Read variable naming info
     this->_n_species = input.vector_variable_size("Physics/Chemistry/species");

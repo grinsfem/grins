@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/grins_enums.h"
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
@@ -117,10 +118,10 @@ namespace GRINS
     std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name, _p0_var_name;
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _species_FE_family, _V_FE_family, _P_FE_family, _T_FE_family;
+    GRINSEnums::FEFamily _species_FE_family, _V_FE_family, _P_FE_family, _T_FE_family;
 
     //! Element orders, read from input
-    libMeshEnums::Order _species_order, _V_order, _P_order, _T_order;
+    GRINSEnums::Order _species_order, _V_order, _P_order, _T_order;
 
     //! Gravity vector
     libMesh::Point _g; 

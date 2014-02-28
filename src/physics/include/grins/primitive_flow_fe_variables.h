@@ -25,12 +25,13 @@
 #ifndef GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
 #define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
 
+// GRINS
+#include "grins/grins_enums.h"
+#include "grins/primitive_flow_variables.h"
+
 // libMesh
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
-
-// GRINS
-#include "grins/primitive_flow_variables.h"
 
 namespace GRINS
 {
@@ -47,10 +48,10 @@ namespace GRINS
   protected:
 
     //! Element type, read from input
-    libMeshEnums::FEFamily _V_FE_family, _P_FE_family;
+    GRINSEnums::FEFamily _V_FE_family, _P_FE_family;
 
     //! Element orders, read from input
-    libMeshEnums::Order _V_order, _P_order;
+    GRINSEnums::Order _V_order, _P_order;
 
   private:
 
