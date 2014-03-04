@@ -73,6 +73,7 @@ namespace GRINS
     double _relative_residual_tolerance;
     double _absolute_residual_tolerance;
     double _initial_linear_tolerance;
+    double _minimum_linear_tolerance;
     unsigned int _max_linear_iterations;
     bool _continue_after_backtrack_failure;
 
