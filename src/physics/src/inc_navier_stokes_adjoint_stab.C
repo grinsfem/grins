@@ -483,7 +483,7 @@ namespace GRINS
                   {
                     Kpu(i,j) += (
                                   d_tau_M_dU(0)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                  + tau_M*u_phi[i][qp]*
+                                  + tau_M*
                                   (
                                     d_RM_s_dU(0,0)*u_phi[j][qp]*p_dphi[i][qp](0) +
                                     d_RM_s_dU(1,0)*u_phi[j][qp]*p_dphi[i][qp](1) +
@@ -494,7 +494,7 @@ namespace GRINS
                                 )*JxW[qp];
                     Kpv(i,j) += (
                                   d_tau_M_dU(1)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                  + tau_M*u_phi[i][qp]*
+                                  + tau_M*
                                   (
                                     d_RM_s_dU(0,1)*u_phi[j][qp]*p_dphi[i][qp](0) +
                                     d_RM_s_dU(1,1)*u_phi[j][qp]*p_dphi[i][qp](1) +
@@ -511,7 +511,7 @@ namespace GRINS
                       {
                         (*Kpw)(i,j) += (
                                          d_tau_M_dU(2)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                         + tau_M*u_phi[i][qp]*
+                                         + tau_M*
                                          (
                                            d_RM_s_dU(0,2)*u_phi[j][qp]*p_dphi[i][qp](0) +
                                            d_RM_s_dU(1,2)*u_phi[j][qp]*p_dphi[i][qp](1) +
@@ -716,7 +716,7 @@ namespace GRINS
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kuu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                    Kuu(i,j) += tau_M*d_RM_t_uvw_duvw*test_func*JxW[qp];
+                    Kuu(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
                     Kuu(i,j) += tau_M*RM_t(0)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
                     Kuv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
@@ -726,7 +726,7 @@ namespace GRINS
                     Kvu(i,j) += tau_M*RM_t(1)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
                     Kvv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                    Kvv(i,j) += tau_M*d_RM_t_uvw_duvw*test_func*JxW[qp];
+                    Kvv(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
                     Kvv(i,j) += tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                   }
                 if(this->_dim == 3)
@@ -746,7 +746,7 @@ namespace GRINS
                         (*Kwv)(i,j) += tau_M*RM_t(2)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
                         (*Kww)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kww)(i,j) += tau_M*d_RM_t_uvw_duvw*test_func*JxW[qp];
+                        (*Kww)(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
                         (*Kww)(i,j) += tau_M*RM_t(2)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                       }
                   }
