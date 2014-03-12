@@ -77,6 +77,11 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   LibMeshInit libmesh_init(argc, argv);
  
+  libMesh::out << "Starting GRINS with command:\n";
+  for (unsigned int i=0; i != argc; ++i)
+    libMesh::out << argv[i] << ' ';
+  libMesh::out << std::endl;
+
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
