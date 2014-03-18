@@ -31,6 +31,7 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -48,9 +49,17 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenalty::read_input_options( const GetPot& /*input*/ )
+  void VelocityPenalty::read_input_options( const GetPot& input )
   {
-    return;
+    std::string penalty_function =
+      input("Physics/"+velocity_penalty+"/penalty_function",
+        std::string("0"));
+
+    if (penalty_function == "0")
+      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
+
+    this->normal_vector_function.reset
+      (new libMesh::ParsedFunction<Number>(penalty_function));
   }
 
   void VelocityPenalty::element_constraint( bool compute_jacobian,
@@ -117,7 +126,16 @@ namespace GRINS
 
         // Normal to constraint plain, scaled by constraint penalty
         // value
-        libMesh::NumberVectorValue U_N = 0;
+        libmesh_assert(normal_vector_function.get());
+
+        DenseVector<Number> normal_vector(3);
+
+        (*normal_vector_function)(u_qpoint[qp], context.time,
+                                  normal_vector);
+
+        libMesh::NumberVectorValue U_N(normal_vector(0),
+                                       normal_vector(1),
+                                       normal_vector(2));
 
         libMesh::Real jac = JxW[qp];
 
