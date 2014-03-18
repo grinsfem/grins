@@ -87,6 +87,15 @@ liddrivencavity_SCRIPTS = $(top_builddir)/examples/lid_driven_cavity/run.sh
 EXTRA_DIST += $(liddrivencavity_DATA)
 
 #=======================================================================
+# Velocity Penalty Example
+#=======================================================================
+velocitypenaltydir = $(prefix)/examples/velocity_penalty
+velocitypenalty_DATA = $(top_srcdir)/examples/velocity_penalty/velocity_penalty.in
+velocitypenalty_SCRIPTS = $(top_builddir)/examples/velocity_penalty/run.sh
+
+EXTRA_DIST += $(velocitypenalty_DATA)
+
+#=======================================================================
 # Convection Cell Example
 #=======================================================================
 convectioncelldir = $(prefix)/examples/convection_cell
