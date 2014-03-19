@@ -49,7 +49,7 @@ tau_factor = '1.0'
 
 [restart-options]
 
-#restart_file = 'lid_driven_cavity.xdr'
+#restart_file = 'velocity_penalty.xdr'
 
 []
 
@@ -92,7 +92,7 @@ require_residual_reduction = 'true'
 [vis-options]
 output_vis = true
 
-vis_output_file_prefix = 'lid_driven_cavity' 
+vis_output_file_prefix = 'velocity_penalty' 
 
 output_residual = 'false' 
 
@@ -101,7 +101,7 @@ output_format = 'ExodusII'
 # Options for print info to the screen
 [screen-options]
 
-system_name = 'LidDrivenCavity'
+system_name = 'VelocityPenaltyTest'
 
 print_equation_system_info = true
 print_mesh_info = true
