@@ -32,9 +32,7 @@ pin_value = '0.0'
 rho = '1.0'
 mu = '1.0e-3'
 
-[]
-
-[VelocityPenalty]
+[../VelocityPenalty]
 
 penalty_function = '{(abs(x-.5)<.1)*(abs(y-.5)<.4)*1e10}{0}{0}'
 
