@@ -62,6 +62,7 @@
 #include "grins/antioch_wilke_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
+#include "grins/velocity_penalty.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -148,6 +149,11 @@ namespace GRINS
       {
         physics_list[physics_to_add] = 
           PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization(physics_to_add,input) );
+      }
+    else if( physics_to_add == velocity_penalty )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new VelocityPenalty(physics_to_add,input));
       }
     else if( physics_to_add == heat_transfer )
       {
