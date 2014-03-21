@@ -570,8 +570,7 @@ WARN_LOGFILE           =
 INPUT                  = @abs_top_srcdir@/src/bc_handling          \
                          @abs_top_srcdir@/src/boundary_conditions  \
                          @abs_top_srcdir@/src/error_estimation     \
-                         @abs_top_srcdir@/src/kinetics             \
-                         @abs_top_srcdir@/src/mat_props            \
+                         @abs_top_srcdir@/src/ic_handling          \
                          @abs_top_srcdir@/src/physics              \
                          @abs_top_srcdir@/src/qoi                  \
                          @abs_top_srcdir@/src/solver               \
