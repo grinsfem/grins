@@ -227,7 +227,12 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Point bc_value = neumann_func->value( context, cache, qp );
-	const libMesh::Point jac_value = neumann_func->derivative( context, cache, qp );
+
+        libMesh::Point jac_value;
+        if(request_jacobian)
+          {
+            jac_value = neumann_func->derivative( context, cache, qp );
+          }
 
 	for (unsigned int i=0; i != n_var_dofs; i++)
 	  {
@@ -310,7 +315,11 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Real bc_value = neumann_func->normal_value( context, cache, qp );
-	const libMesh::Real jac_value = neumann_func->normal_derivative( context, cache, qp );
+        libMesh::Real jac_value = 0.0;
+        if(request_jacobian)
+          {
+            jac_value = neumann_func->normal_derivative( context, cache, qp );
+          }
 
 	for (unsigned int i=0; i != n_var_dofs; i++)
 	  {
@@ -395,7 +404,11 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Real bc_value = neumann_func->normal_value( context, cache, qp );
-	const libMesh::Real jac_value = neumann_func->normal_derivative( context, cache, qp );
+        libMesh::Real jac_value = 0.0;
+        if(request_jacobian)
+          {
+            jac_value = neumann_func->normal_derivative( context, cache, qp );
+          }
 
         const libMesh::Number r = var_qpoint[qp](0);
 
@@ -489,7 +502,11 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	const libMesh::Point bc_value = neumann_func->value( context, cache, qp );
-	const libMesh::Point jac_value = neumann_func->derivative( context, cache, qp );
+        libMesh::Point jac_value;
+        if (request_jacobian)
+          {
+            jac_value = neumann_func->derivative( context, cache, qp );
+          }
 
 	const libMesh::Number r = var_qpoint[qp](0);
 
