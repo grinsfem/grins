@@ -1,0 +1,120 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization VelocityPenalty'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+
+V_order = 'FIRST'
+P_order = 'FIRST'
+
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+bc_ids = '2 3 1 0'
+bc_types = 'prescribed_vel no_slip no_slip no_slip'
+
+bound_vel_2 = '1.0 0.0 0.0'
+
+pin_pressure = true
+pin_location = '0.0 0.00'
+pin_value = '0.0'
+
+rho = '1.0'
+mu = '1.0e-3'
+
+[../VelocityPenalty]
+
+penalty_function = '{(abs(x-.5)<.1)*(abs(y-.5)<.4)*1e10}{0}{0}'
+
+[]
+
+[Stabilization]
+
+tau_constant = '1'
+tau_factor = '1.0'
+
+[]
+
+[restart-options]
+
+#restart_file = 'velocity_penalty.xdr'
+
+[]
+
+
+
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+
+domain_x1_min = 0.0
+domain_x1_max = 1.0
+domain_x2_min = -1.0
+domain_x2_max = 0.0
+
+mesh_nx1 = '15' 
+mesh_nx2 = '15'
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = 'true' 
+theta = '1.0'
+n_timesteps = '25'
+deltat = '0.1'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  100 
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 0.0
+
+initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = true
+
+vis_output_file_prefix = 'velocity_penalty' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'VelocityPenaltyTest'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]
