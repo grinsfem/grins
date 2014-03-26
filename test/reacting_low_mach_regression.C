@@ -201,7 +201,7 @@ int run( int argc, char* argv[], const GetPot& input )
 
   int return_flag = 0;
 
-  double tol = 1.0e-8;
+  double tol = 1.5e-8;
   
   if( u_l2error > tol   || u_h1error > tol   ||
       v_l2error > tol   || v_h1error > tol   ||

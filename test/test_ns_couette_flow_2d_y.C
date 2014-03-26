@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  if( l2error > 1.0e-12 || h1error > 1.0e-12 )
+  if( l2error > 4.0e-9 || h1error > 4.0e-9 )
     {
       return_flag = 1;
 
