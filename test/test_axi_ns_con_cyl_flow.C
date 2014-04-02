@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
   
   int return_flag = 0;
 
-  if( l2error > 1.0e-10 || h1error > 4.0e-7 )
+  if( l2error > 2.0e-9 || h1error > 4.0e-7 )
     {
       return_flag = 1;
 
