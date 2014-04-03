@@ -96,6 +96,10 @@ int main(int argc, char* argv[])
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
  
+  // This is a tough problem to get to converge without PETSc
+  libmesh_example_assert
+    (libMesh::default_solver_package() != LASPACK_SOLVERS, "--enable-petsc");
+
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<AxiConCylBCFactory> bc_factory( new AxiConCylBCFactory );

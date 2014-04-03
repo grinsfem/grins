@@ -18,7 +18,7 @@ deltat = 0.1
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 10 
-max_linear_iterations = 2500
+max_linear_iterations = 25000
 
 initial_linear_tolerance = 1.0e-12
 
