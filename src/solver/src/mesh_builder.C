@@ -202,8 +202,10 @@ namespace GRINS
 
         MeshRefinement mesh_refinement(*mesh);
 
-        bool found_refinement = false;
+        dof_id_type found_refinements = 0;
         do {
+          found_refinements = 0;
+
           MeshBase::element_iterator elem_it =
                   mesh->active_local_elements_begin();
           MeshBase::element_iterator elem_end =
@@ -212,20 +214,27 @@ namespace GRINS
             {
               Elem *elem = *elem_it;
 
-              const unsigned int n_refinements =
+              const Real refinement_val =
                 refinement_function(elem->centroid());
+
+	      const unsigned int n_refinements = refinement_val > 0 ?
+                refinement_val : 0;
 
               if (elem->level() - uniformly_refine < n_refinements)
                 {
                   elem->set_refinement_flag(Elem::REFINE);
-                  found_refinement = true;
+                  found_refinements++;
                 }
             }
 
-          if (found_refinement)
-            mesh_refinement.refine_and_coarsen_elements();
+          if (found_refinements)
+            {
+	      std::cout << "Found " << found_refinements << 
+                " elements to locally refine" << std::endl;
+              mesh_refinement.refine_and_coarsen_elements();
+            }
 
-        } while(found_refinement);
+        } while(found_refinements);
 
       }
 
