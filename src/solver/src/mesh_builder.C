@@ -35,6 +35,7 @@
 #include "libmesh/mesh_generation.h"
 #include "libmesh/mesh_refinement.h"
 #include "libmesh/parallel_mesh.h"
+#include "libmesh/parsed_function.h"
 #include "libmesh/serial_mesh.h"
 
 
@@ -71,8 +72,6 @@ namespace GRINS
     int mesh_nx2 = input("mesh-options/mesh_nx2", -1);
     int mesh_nx3 = input("mesh-options/mesh_nx3", -1);
 
-    int uniformly_refine = input("mesh-options/uniformly_refine", 0);
-    
     std::string element_type = input("mesh-options/element_type", "NULL");
 
     // Make sure the user told us what to do
@@ -186,9 +185,57 @@ namespace GRINS
 	libmesh_error();
       }
 
+    int uniformly_refine = input("mesh-options/uniformly_refine", 0);
+    
     if( uniformly_refine > 0 )
       {
 	libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
+      }
+
+    std::string h_refinement_function_string =
+            input("mesh-options/locally_h_refine", std::string("0"));
+
+    if (h_refinement_function_string != "0")
+      { 
+        libMesh::ParsedFunction<Real>
+          h_refinement_function(h_refinement_function_string);
+
+        MeshRefinement mesh_refinement(*mesh);
+
+        dof_id_type found_refinements = 0;
+        do {
+          found_refinements = 0;
+
+          MeshBase::element_iterator elem_it =
+                  mesh->active_local_elements_begin();
+          MeshBase::element_iterator elem_end =
+                  mesh->active_local_elements_end();
+          for (; elem_it != elem_end; ++elem_it)
+            {
+              Elem *elem = *elem_it;
+
+              const Real refinement_val =
+                h_refinement_function(elem->centroid());
+
+	      const unsigned int n_refinements = refinement_val > 0 ?
+                refinement_val : 0;
+
+              if (elem->level() - uniformly_refine < n_refinements)
+                {
+                  elem->set_refinement_flag(Elem::REFINE);
+                  found_refinements++;
+                }
+            }
+
+          if (found_refinements)
+            {
+	      std::cout << "Found " << found_refinements << 
+                " elements to locally refine" << std::endl;
+              mesh_refinement.refine_and_coarsen_elements();
+            }
+
+        } while(found_refinements);
+
       }
 
     return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);

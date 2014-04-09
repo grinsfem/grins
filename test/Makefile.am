@@ -164,6 +164,7 @@ TESTS += test_thermally_driven_3d_flow.sh
 TESTS += test_vorticity_qoi.sh
 TESTS += low_mach_cavity_benchmark_regression.sh
 TESTS += backward_facing_step_regression.sh
+TESTS += locally_refine_regression.sh
 TESTS += coupled_stokes_ns.sh
 
 TESTS += reacting_low_mach_cantera_regression.sh
@@ -193,6 +194,7 @@ shellfiles_src += test_thermally_driven_3d_flow.sh
 shellfiles_src += test_vorticity_qoi.sh
 shellfiles_src += low_mach_cavity_benchmark_regression.sh
 shellfiles_src += backward_facing_step_regression.sh
+shellfiles_src += locally_refine_regression.sh
 shellfiles_src += coupled_stokes_ns.sh
 shellfiles_src += reacting_low_mach_cantera_regression.sh
 shellfiles_src += cantera_mixture_unit.sh
