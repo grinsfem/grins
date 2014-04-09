@@ -215,7 +215,7 @@ namespace GRINS
               const unsigned int n_refinements =
                 refinement_function(elem->centroid());
 
-              if (elem->level() - uniformly_refine > n_refinements)
+              if (elem->level() - uniformly_refine < n_refinements)
                 {
                   elem->set_refinement_flag(Elem::REFINE);
                   found_refinement = true;
