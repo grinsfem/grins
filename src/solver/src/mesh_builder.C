@@ -192,13 +192,13 @@ namespace GRINS
 	libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
       }
 
-    std::string refinement_function_string =
-            input("mesh-options/locally_refine", std::string("0"));
+    std::string h_refinement_function_string =
+            input("mesh-options/locally_h_refine", std::string("0"));
 
-    if (refinement_function_string != "0")
+    if (h_refinement_function_string != "0")
       { 
         libMesh::ParsedFunction<Real>
-          refinement_function(refinement_function_string);
+          h_refinement_function(h_refinement_function_string);
 
         MeshRefinement mesh_refinement(*mesh);
 
@@ -215,7 +215,7 @@ namespace GRINS
               Elem *elem = *elem_it;
 
               const Real refinement_val =
-                refinement_function(elem->centroid());
+                h_refinement_function(elem->centroid());
 
 	      const unsigned int n_refinements = refinement_val > 0 ?
                 refinement_val : 0;
