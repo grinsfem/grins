@@ -11,7 +11,7 @@ AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar 1.11 no-define color-tests parallel-tests])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-pax 1.11 no-define color-tests parallel-tests])
 AM_SILENT_RULES(yes)  # use silent rules where available - automake 1.11
 
 LT_INIT
