@@ -155,7 +155,7 @@ namespace GRINS
 
     std::time_t final_wall_time = std::time(NULL);
     std::cout << "==========================================================" << std::endl
-	      << "   Ending time steppping, t = " << context.system->time <<
+	      << "   Ending time stepping, t = " << context.system->time <<
                  ", runtime = " << (final_wall_time - first_wall_time) << 
                  std::endl
               << "==========================================================" << std::endl;
