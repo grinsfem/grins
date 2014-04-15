@@ -87,7 +87,12 @@ int main(int argc, char* argv[])
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.
-  const Real exact_qoi = 4.8158910676325055;
+
+  // Erroneous value from libMesh 0.9.2.2
+  // const Real exact_qoi = 4.8158910676325055;
+
+  // Value after libMesh 7acb6fc9 bugfix
+  const Real exact_qoi = 4.8654229502012685;
 
   const Real tol = 1.0e-11;
 
