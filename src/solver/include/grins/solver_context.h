@@ -27,12 +27,13 @@
 
 #include "boost/tr1/memory.hpp"
 
-// libMesh
-#include "libmesh/equation_systems.h"
-
 // GRINS
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
+
+// libMesh
+#include "libmesh/error_estimator.h"
+#include "libmesh/equation_systems.h"
 
 namespace GRINS
 {

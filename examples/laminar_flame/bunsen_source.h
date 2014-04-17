@@ -28,6 +28,10 @@
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
 
+// libMesh
+#include "libmesh/enum_fe_family.h"
+#include "libmesh/enum_order.h"
+
 namespace GRINS
 {
   class AssemblyContext;

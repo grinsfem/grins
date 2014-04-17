@@ -37,6 +37,7 @@
 
 //libMesh
 #include "libmesh/libmesh.h"
+#include "libmesh/point.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
