@@ -55,11 +55,19 @@ namespace GRINS
       input("Physics/"+velocity_penalty+"/penalty_function",
         std::string("0"));
 
-    if (penalty_function == "0")
-      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
-
     this->normal_vector_function.reset
       (new libMesh::ParsedFunction<Number>(penalty_function));
+
+    std::string base_function =
+      input("Physics/"+velocity_penalty+"/base_velocity",
+        std::string("0"));
+
+    if (penalty_function == "0" && base_function == "0")
+      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
+
+    this->base_velocity_function.reset
+      (new libMesh::ParsedFunction<Number>(base_function));
+
   }
 
   void VelocityPenalty::element_constraint( bool compute_jacobian,
@@ -124,25 +132,34 @@ namespace GRINS
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
 
-        // Normal to constraint plain, scaled by constraint penalty
+        // Velocity discrepancy (current velocity minus base velocity)
+        // normal to constraint plane, scaled by constraint penalty
         // value
         libmesh_assert(normal_vector_function.get());
+        libmesh_assert(base_velocity_function.get());
 
-        DenseVector<Number> normal_vector(3);
+        DenseVector<Number> output_vec(3);
 
         (*normal_vector_function)(u_qpoint[qp], context.time,
-                                  normal_vector);
+                                  output_vec);
 
-        libMesh::NumberVectorValue U_N(normal_vector(0),
-                                       normal_vector(1),
-                                       normal_vector(2));
+        libMesh::NumberVectorValue U_N(output_vec(0),
+                                       output_vec(1),
+                                       output_vec(2));
+
+        (*base_velocity_function)(u_qpoint[qp], context.time,
+                                  output_vec);
+
+        libMesh::NumberVectorValue U_B(output_vec(0),
+                                       output_vec(1),
+                                       output_vec(2));
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
             Fp(i) += jac *
-              ((U*U_N)*p_phi[i][qp]);
+              (((U-U_B)*U_N)*p_phi[i][qp]);
 
 	    if( compute_jacobian )
               {
