@@ -39,6 +39,7 @@
 #include "grins/postprocessed_quantities.h"
 
 // libMesh
+#include "libmesh/error_estimator.h"
 #include "libmesh/getpot.h"
 #include "libmesh/mesh.h"
 

@@ -32,7 +32,7 @@
 
 // libMesh
 #include "libmesh/libmesh.h"
-#include "libmesh/exact_error_estimator.h" //libMesh::Gradient
+#include "libmesh/vector_value.h" //libMesh::Gradient
 
 // GRINS
 #include "grins/cached_quantities_enum.h"
