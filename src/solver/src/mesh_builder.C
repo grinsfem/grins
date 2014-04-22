@@ -33,6 +33,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/mesh_generation.h"
+#include "libmesh/mesh_modification.h"
 #include "libmesh/mesh_refinement.h"
 #include "libmesh/parallel_mesh.h"
 #include "libmesh/parsed_function.h"
@@ -184,6 +185,20 @@ namespace GRINS
 		  << "] NOT supported " << std::endl;
 	libmesh_error();
       }
+
+
+    std::string redistribution_function_string =
+            input("mesh-options/redistribute", std::string("0"));
+
+    if (redistribution_function_string != "0")
+      {
+        libMesh::ParsedFunction<Real>
+          redistribution_function(redistribution_function_string);
+
+        MeshTools::Modification::transform
+          (*mesh, redistribution_function);
+      }
+
 
     int uniformly_refine = input("mesh-options/uniformly_refine", 0);
     
