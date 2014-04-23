@@ -197,8 +197,23 @@ namespace GRINS
 
         MeshTools::Modification::transform
           (*mesh, redistribution_function);
-      }
 
+        // Redistribution can create distortions *within* second-order
+        // elements, which can then be magnified by refinement.  Let's
+        // undistort everything by converting to first order and back
+        // if necessary.
+
+        // FIXME - this only works for meshes with uniform geometry
+        // order equal to FIRST or (full-order) SECOND.
+
+        const Elem *elem = *mesh->elements_begin();
+
+        if (elem->default_order() != FIRST)
+          {
+            mesh->all_first_order();
+            mesh->all_second_order();
+          }
+      }
 
     int uniformly_refine = input("mesh-options/uniformly_refine", 0);
     
