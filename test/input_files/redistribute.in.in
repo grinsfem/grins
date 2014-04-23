@@ -1,0 +1,106 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+P_order = 'FIRST'
+
+
+# Boundary ids:
+# 1 - Inlet
+# 2 - no slip walls
+# 3 - outlet
+
+bc_ids = '1 2'
+bc_types = 'parabolic_profile no_slip'
+
+parabolic_profile_coeffs_1 = '0.0 0.0 -40.0 0.0 40.0 0.0'
+parabolic_profile_var_1 = 'u'
+parabolic_profile_fix_1 = 'v'
+
+pin_pressure = 'false'
+
+rho = '1.0'
+mu = '1.0e-1'
+
+[]
+
+[Stabilization]
+
+tau_constant = '10'
+tau_factor = '0.05'
+
+[]
+
+[restart-options]
+
+#restart_file = 'restart.xdr'
+
+[]
+
+
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file' 
+mesh_filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
+redistribute = '{x+x*(x-30)/30}{y*2}{z}'
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = 'false' 
+theta = 1.0
+n_timesteps = 10
+deltat = 0.05
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  25 
+max_linear_iterations = 5000
+
+verify_analytic_jacobians = 0.0
+
+initial_linear_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'false'
+
+vis_output_file_prefix = 'redistributed_step' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'BackwardFacingStep'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
