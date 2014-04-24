@@ -33,6 +33,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/mesh_generation.h"
+#include "libmesh/mesh_modification.h"
 #include "libmesh/mesh_refinement.h"
 #include "libmesh/parallel_mesh.h"
 #include "libmesh/parsed_function.h"
@@ -183,6 +184,35 @@ namespace GRINS
 		  << " mesh-options/mesh_option [" << mesh_option
 		  << "] NOT supported " << std::endl;
 	libmesh_error();
+      }
+
+
+    std::string redistribution_function_string =
+            input("mesh-options/redistribute", std::string("0"));
+
+    if (redistribution_function_string != "0")
+      {
+        libMesh::ParsedFunction<Real>
+          redistribution_function(redistribution_function_string);
+
+        MeshTools::Modification::redistribute
+          (*mesh, redistribution_function);
+
+        // Redistribution can create distortions *within* second-order
+        // elements, which can then be magnified by refinement.  Let's
+        // undistort everything by converting to first order and back
+        // if necessary.
+
+        // FIXME - this only works for meshes with uniform geometry
+        // order equal to FIRST or (full-order) SECOND.
+
+        const Elem *elem = *mesh->elements_begin();
+
+        if (elem->default_order() != FIRST)
+          {
+            mesh->all_first_order();
+            mesh->all_second_order();
+          }
       }
 
     int uniformly_refine = input("mesh-options/uniformly_refine", 0);

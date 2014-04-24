@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.2,yes)
+AX_PATH_LIBMESH_NEW(1.0.0,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
@@ -338,8 +338,10 @@ AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh,             [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,                  [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/locally_refine_regression.sh,                        [chmod +x test/locally_refine_regression.sh])
+AC_CONFIG_FILES(test/redistribute_regression.sh,                          [chmod +x test/redistribute_regression.sh])
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/input_files/locally_refine.in)
+AC_CONFIG_FILES(test/input_files/redistribute.in)
 AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                                [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
 AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	                  [chmod +x test/cantera_chem_thermo_test.sh])
