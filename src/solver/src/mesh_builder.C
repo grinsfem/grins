@@ -195,7 +195,7 @@ namespace GRINS
         libMesh::ParsedFunction<Real>
           redistribution_function(redistribution_function_string);
 
-        MeshTools::Modification::transform
+        MeshTools::Modification::redistribute
           (*mesh, redistribution_function);
 
         // Redistribution can create distortions *within* second-order
