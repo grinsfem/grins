@@ -1,0 +1,119 @@
+# Mesh related options
+[mesh-options]
+mesh_class = serial
+mesh_option = create_2D_mesh
+element_type = QUAD9
+mesh_nx1 = 10
+mesh_nx2 = 10
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10 
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 1.0e-6
+
+initial_linear_tolerance = 1.0e-10
+
+# Visualization options
+[vis-options]
+output_vis_time_series = false 
+output_vis = false
+vis_output_file_prefix = 'dirichlet_nan'
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy HeatTransferSource'
+
+# Boundary ids:
+# j = bottom -> 0
+# j = top    -> 2
+# i = bottom -> 3
+# i = top    -> 1
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = 1.0
+mu = 1.0
+
+bc_ids = '2 3 1 0'
+bc_types = 'no_slip no_slip no_slip no_slip'
+
+pin_pressure = 'true'
+
+[../HeatTransfer]
+
+rho = 1.0
+Cp = 1.0
+
+bc_ids = '3 0 2 1'
+
+bc_types = 'parsed_dirichlet general_heat_flux adiabatic_wall isothermal_wall'
+bc_variables = 'T na na na'
+#bc_values = '{if(y>.5,10,-1^.5)} na na na'
+#bc_values = '{if(y>.8,10,NaN)} na na na'
+#bc_values = '{if(1>2,10,1)} na na na'
+#bc_values = '{NaN} na na na'
+bc_values = '{if(y>.5,10,NaN)} na na na'
+#bc_values = '{10} na na na'
+
+T_wall_1 = 1
+
+[../BoussinesqBuoyancy]
+
+rho_ref = 1.0
+T_ref = 1.0
+beta_T = 1.0
+
+g = '0 -9.8'
+
+[../SourceFunction]
+
+value = '0.0'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]
+
+[Materials]
+
+[./Conductivity]
+
+k = 1.0
+
+[]
+
+
+[ExactSolution]
+
+solution_file = 'test_data/thermally_driven_2d.xdr'
