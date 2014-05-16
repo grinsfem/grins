@@ -55,7 +55,7 @@ namespace GRINS
     double _target_tolerance;
     double _upper_tolerance;
     double _max_growth;
-    SystemNorm _component_norm;
+    libMesh::SystemNorm _component_norm;
   };
 
 } // end namespace GRINS

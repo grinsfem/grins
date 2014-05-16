@@ -142,7 +142,7 @@ namespace GRINS
     /* If we need to compute the thermodynamic pressure, we force this to be a first
        order scalar variable. */
     if( _enable_thermo_press_calc )
-      _p0_var = system->add_variable( _p0_var_name, FIRST, SCALAR);
+      _p0_var = system->add_variable( _p0_var_name, libMesh::FIRST, libMesh::SCALAR);
 
     return;
   }

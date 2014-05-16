@@ -59,7 +59,7 @@ namespace GRINS
     bool output_vis;
     bool output_residual;
 
-    std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
+    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
 

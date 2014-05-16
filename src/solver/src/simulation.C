@@ -129,7 +129,7 @@ namespace GRINS
     if( this->_print_qoi )
       {
         _multiphysics_system->assemble_qoi();
-        const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+        const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
       }
 
@@ -154,7 +154,7 @@ namespace GRINS
 
   libMesh::Number Simulation::get_qoi_value( unsigned int qoi_index ) const
   {
-    const CompositeQoI* qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+    const CompositeQoI* qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
     return qoi->get_qoi_value(qoi_index);
   }
 
@@ -170,15 +170,15 @@ namespace GRINS
         // Must have correct file type to restart
         if (restart_file.rfind(".xdr") < restart_file.size())
           _equation_system->read(restart_file,GRINSEnums::DECODE,
-                                 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
-                                 EquationSystems::READ_DATA |
-                                 EquationSystems::READ_ADDITIONAL_DATA);
+                                 //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+                                 libMesh::EquationSystems::READ_DATA |
+                                 libMesh::EquationSystems::READ_ADDITIONAL_DATA);
       
         else if  (restart_file.rfind(".xda") < restart_file.size())
           _equation_system->read(restart_file,GRINSEnums::READ,
-                                 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
-                                 EquationSystems::READ_DATA |
-                                 EquationSystems::READ_ADDITIONAL_DATA);
+                                 //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+                                 libMesh::EquationSystems::READ_DATA |
+                                 libMesh::EquationSystems::READ_ADDITIONAL_DATA);
 
         else
           {

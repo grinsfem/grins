@@ -120,12 +120,12 @@ namespace GRINS
       context.get_element_fe(_u_r_var)->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<Number> &Fr = context.get_elem_residual(_u_r_var); // R_{r}
-    libMesh::DenseSubVector<Number> &Fz = context.get_elem_residual(_u_z_var); // R_{z}
+    libMesh::DenseSubVector<libMesh::Number> &Fr = context.get_elem_residual(_u_r_var); // R_{r}
+    libMesh::DenseSubVector<libMesh::Number> &Fz = context.get_elem_residual(_u_z_var); // R_{z}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<Number> &KrT = context.get_elem_jacobian(_u_r_var, _T_var); // R_{r},{T}
-    libMesh::DenseSubMatrix<Number> &KzT = context.get_elem_jacobian(_u_z_var, _T_var); // R_{z},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KrT = context.get_elem_jacobian(_u_r_var, _T_var); // R_{r},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KzT = context.get_elem_jacobian(_u_z_var, _T_var); // R_{z},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its

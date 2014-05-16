@@ -56,7 +56,7 @@ namespace GRINS
     
     virtual ~ICHandlingBase();
 
-    void attach_initial_func( const libMesh::FunctionBase<Number>& initial_val );
+    void attach_initial_func( const libMesh::FunctionBase<libMesh::Number>& initial_val );
 
     virtual void read_ic_data( const GetPot& input, const std::string& id_str,
 			       const std::string& ic_str,
@@ -67,7 +67,7 @@ namespace GRINS
     /*! Override this method to, for example, cache a System variable
         number. */
     virtual void init_ic_data( const libMesh::FEMSystem& system,
-                               GRINS::CompositeFunction<Number>& all_ics );
+                               GRINS::CompositeFunction<libMesh::Number>& all_ics );
 
     // User will need to implement these functions for IC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
@@ -79,11 +79,11 @@ namespace GRINS
 				const std::string& ic_value_string, 
 				const GetPot& input );
 
-    libMesh::FunctionBase<Number>* get_ic_func() const;
+    libMesh::FunctionBase<libMesh::Number>* get_ic_func() const;
     
   protected:
 
-    libMesh::AutoPtr<libMesh::FunctionBase<Number> > _ic_func;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _ic_func;
 
     std::string _physics_name;
 
@@ -95,7 +95,7 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  libMesh::FunctionBase<Number>*
+  libMesh::FunctionBase<libMesh::Number>*
   ICHandlingBase::get_ic_func() const
   {
     return _ic_func.get();

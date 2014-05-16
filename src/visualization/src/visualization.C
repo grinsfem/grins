@@ -60,7 +60,7 @@ namespace GRINS
         else if (mesh_class == "default")
           {
             // Is our default Mesh distributable?
-            Mesh testdefault(comm);
+            libMesh::Mesh testdefault(comm);
             testdefault.delete_remote_elements();
             if (testdefault.is_serial())
 	      _output_format.push_back("ExodusII");
@@ -96,8 +96,10 @@ namespace GRINS
     return;
   }
 
-  void Visualization::output( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-			      const unsigned int time_step, const Real time )
+  void Visualization::output
+    ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      const unsigned int time_step,
+      const libMesh::Real time )
   {
     std::stringstream suffix;
 
@@ -118,9 +120,10 @@ namespace GRINS
     return;
   }
 
-  void Visualization::dump_visualization( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-					  const std::string& filename_prefix, 
-					  const Real time )
+  void Visualization::dump_visualization
+    ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      const std::string& filename_prefix, 
+      const libMesh::Real time )
   {
     libMesh::MeshBase& mesh = equation_system->get_mesh();
 
@@ -154,13 +157,13 @@ namespace GRINS
 	else if ((*format) == "gmv")
 	  {
 	    std::string filename = filename_prefix+".gmv";
-	    GMVIO(mesh).write_equation_systems( filename,
+            libMesh::GMVIO(mesh).write_equation_systems( filename,
 						*equation_system );
 	  }
 	else if ((*format) == "pvtu")
 	  {
 	    std::string filename = filename_prefix+".pvtu";
-	    VTKIO(mesh).write_equation_systems( filename,
+            libMesh::VTKIO(mesh).write_equation_systems( filename,
 						*equation_system );
 	  }
 	else if ((*format) == "ExodusII")
@@ -170,10 +173,8 @@ namespace GRINS
 	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
 	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
 	    // one timestep per file.
-	    ExodusII_IO(mesh).write_timestep( filename,
-					      *equation_system,
-					      1,
-					      time );
+            libMesh::ExodusII_IO(mesh).write_timestep
+              ( filename, *equation_system, 1, time );
 	  }
 	else if ((*format) == "Nemesis")
 	  {
@@ -182,10 +183,8 @@ namespace GRINS
 	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
 	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
 	    // one timestep per file.
-	    Nemesis_IO(mesh).write_timestep( filename,
-					     *equation_system,
-					     1,
-					     time );
+            libMesh::Nemesis_IO(mesh).write_timestep
+              ( filename, *equation_system, 1, time );
 	  }
 	else if ((*format).find("xda") != std::string::npos ||
 		 (*format).find("xdr") != std::string::npos)
@@ -194,7 +193,8 @@ namespace GRINS
 	    const bool binary = ((*format).find("xdr") != std::string::npos);
 	    equation_system->write( filename,
 				    binary ? GRINSEnums::ENCODE : GRINSEnums::WRITE,
-				    EquationSystems::WRITE_DATA | EquationSystems::WRITE_ADDITIONAL_DATA );
+				    libMesh::EquationSystems::WRITE_DATA |
+                                    libMesh::EquationSystems::WRITE_ADDITIONAL_DATA );
 	  }
 	else if ((*format) == "mesh_only" )
 	  {
