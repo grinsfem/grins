@@ -159,9 +159,10 @@ namespace GRINS
 
     std::string _physics_name;
 
-    enum BC_BASE{ PERIODIC = -4,
+    enum BC_BASE{ PERIODIC = -5,
                   CONSTANT_DIRICHLET,
                   PARSED_DIRICHLET,
+                  PARSED_FEM_DIRICHLET,
                   AXISYMMETRIC };
 
     //! Flag to cache whether or not there is an axisymmetric boundary present

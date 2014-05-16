@@ -31,6 +31,7 @@
 #include "boost/tr1/memory.hpp"
 
 // libMesh
+#include "libmesh/fem_function_base.h"
 #include "libmesh/function_base.h"
 
 // GRINS
@@ -61,15 +62,23 @@ namespace GRINS
     /*! There is only one Dirichlet bc functor for each container object */
     void set_func( std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func );
 
+    void set_func( std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> > func );
+
     std::vector<GRINS::VariableName> get_var_names() const;
     std::set<GRINS::BoundaryID> get_bc_ids() const;
-    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > get_func() const;
+
+    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    get_func() const;
+
+    std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
+    get_fem_func() const;
 
   private:
 
     std::vector<GRINS::VariableName> _var_names;
     std::set<GRINS::BoundaryID> _bc_ids;
     std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > _func;
+    std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> > _fem_func;
     
   };
 }

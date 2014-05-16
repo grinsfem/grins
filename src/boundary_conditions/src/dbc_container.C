@@ -69,6 +69,12 @@ namespace GRINS
     return _bc_ids;
   }
 
+  std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
+  DBCContainer::get_fem_func() const
+  {
+    return _fem_func;
+  }
+
   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > DBCContainer::get_func() const
   {
     return _func;
