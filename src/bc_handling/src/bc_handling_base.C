@@ -138,10 +138,10 @@ namespace GRINS
 	std::set<BoundaryID> bc_ids = (*it).get_bc_ids();
       
 	// Get Dirichlet bc functor
-	std::tr1::shared_ptr<libMesh::FunctionBase<Number> > func = (*it).get_func();
+	std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func = (*it).get_func();
 
         // Remap indices as necessary
-        GRINS::CompositeFunction<Number> remapped_func;
+        GRINS::CompositeFunction<libMesh::Number> remapped_func;
         remapped_func.attach_subfunction(*func, dbc_vars);
 
 	// Now create DirichletBoundary object and give it to libMesh
@@ -230,14 +230,16 @@ namespace GRINS
     return;
   }
 
-  void BCHandlingBase::set_dirichlet_bc_value( BoundaryID bc_id, Real value,
+  void BCHandlingBase::set_dirichlet_bc_value( BoundaryID bc_id,
+                                               libMesh::Real value,
 					       int component )
   {
     _dirichlet_values[bc_id](component) = value;
     return;
   }
 
-  Real BCHandlingBase::get_dirichlet_bc_value( BoundaryID bc_id, int component ) const
+  libMesh::Real BCHandlingBase::get_dirichlet_bc_value
+    ( BoundaryID bc_id, int component ) const
   {
     return (_dirichlet_values.find(bc_id)->second)(component);
   }
@@ -378,11 +380,11 @@ namespace GRINS
 
           dirichlet_bc.add_bc_id(bc_id);
 
-          Number bc_val_num = string_to_T<Number>(bc_value);
+          libMesh::Number bc_val_num = string_to_T<libMesh::Number>(bc_value);
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-              (new libMesh::ConstFunction<Number>(bc_val_num)));
+              (new libMesh::ConstFunction<libMesh::Number>(bc_val_num)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
@@ -398,7 +400,7 @@ namespace GRINS
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-              (new libMesh::ParsedFunction<Number>(bc_value)));
+              (new libMesh::ParsedFunction<libMesh::Number>(bc_value)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
