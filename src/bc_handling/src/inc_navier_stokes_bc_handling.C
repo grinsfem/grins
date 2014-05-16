@@ -186,7 +186,8 @@ namespace GRINS
 	  cont_fix.add_var_name( fix_var );
 	  cont_fix.add_bc_id( bc_id );
 
-	  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
+          std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+            func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
 	  cont_fix.set_func( func_fix );
 	  this->attach_dirichlet_bound_func( cont_fix );
 	}
@@ -241,7 +242,7 @@ namespace GRINS
 	  if(dim == 3)
 	    dbc_vars.push_back(w_var);
 	
-	  ZeroFunction<libMesh::Number> zero;
+          libMesh::ZeroFunction<libMesh::Number> zero;
 	
 	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
 						 dbc_vars, 
@@ -262,7 +263,8 @@ namespace GRINS
 	  // only affect performance at startup.
 	  {
 	    dbc_vars.push_back(u_var);
-	    ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,0) );
+            libMesh::ConstFunction<libMesh::Number>
+              vel_func( this->get_dirichlet_bc_value(bc_id,0) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 					       dbc_vars, 
@@ -274,7 +276,8 @@ namespace GRINS
 	
 	  {
 	    dbc_vars.push_back(v_var);
-	    ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,1) );
+            libMesh::ConstFunction<libMesh::Number>
+              vel_func( this->get_dirichlet_bc_value(bc_id,1) );
 	  
 	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 					       dbc_vars, 
@@ -286,7 +289,8 @@ namespace GRINS
 	  if( dim == 3 )
 	    {
 	      dbc_vars.push_back(w_var);
-	      ConstFunction<libMesh::Number> vel_func( this->get_dirichlet_bc_value(bc_id,2) );
+              libMesh::ConstFunction<libMesh::Number>
+                vel_func( this->get_dirichlet_bc_value(bc_id,2) );
 	    
 	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
 						 dbc_vars, 
@@ -312,7 +316,7 @@ namespace GRINS
 	  std::vector<VariableIndex> dbc_vars;
 	  dbc_vars.push_back(u_var);
 	
-	  ZeroFunction<Number> zero;
+          libMesh::ZeroFunction<libMesh::Number> zero;
 	
 	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids, 
 						  dbc_vars, 
