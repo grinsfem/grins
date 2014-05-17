@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 

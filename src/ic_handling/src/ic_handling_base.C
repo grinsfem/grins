@@ -61,7 +61,7 @@ namespace GRINS
   }
 
   void ICHandlingBase::attach_initial_func
-    ( const libMesh::FunctionBase<Number>& initial_val)
+    ( const libMesh::FunctionBase<libMesh::Number>& initial_val)
   {
     _ic_func = initial_val.clone();
   }
@@ -123,7 +123,7 @@ namespace GRINS
   }
 
   void ICHandlingBase::init_ic_data( const libMesh::FEMSystem& system,
-                                     GRINS::CompositeFunction<Number>& all_ics )
+                                     GRINS::CompositeFunction<libMesh::Number>& all_ics )
   {
     if (this->get_ic_func())
       {
@@ -177,15 +177,15 @@ namespace GRINS
       {
       case(PARSED):
 	{
-          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<Number> >
-            (new libMesh::ParsedFunction<Number>(ic_value_string));
+          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
+            (new libMesh::ParsedFunction<libMesh::Number>(ic_value_string));
 	}
 	break;
 
       case(CONSTANT):
 	{
-          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<Number> >
-            (new libMesh::ConstFunction<Number>
+          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
+            (new libMesh::ConstFunction<libMesh::Number>
               (string_to_T<libMesh::Number>(ic_value_string)));
 	}
 	break;

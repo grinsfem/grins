@@ -37,7 +37,7 @@ namespace GRINS
       timesteps_per_vis( 1 ),
       output_vis( false ),
       output_residual( false ),
-      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )
+      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >() )
   {
     return;
   }

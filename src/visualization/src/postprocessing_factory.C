@@ -36,9 +36,11 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<PostProcessedQuantities<Real> > PostprocessingFactory::build(const GetPot& input)
+  std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >
+  PostprocessingFactory::build(const GetPot& input)
   {
-    return std::tr1::shared_ptr<PostProcessedQuantities<Real> >( new PostProcessedQuantities<Real>(input) );
+    return std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >
+      ( new PostProcessedQuantities<libMesh::Real>(input) );
   }
 
 } // namespace GRINS

@@ -110,7 +110,7 @@ namespace GRINS
      */
     virtual void thread_join( std::vector<libMesh::Number>& qoi,
                               const std::vector<libMesh::Number>& other_qoi,
-                              const QoISet& qoi_indices );
+                              const libMesh::QoISet& qoi_indices );
 
     //! Basic output for computed QoI's.
     void output_qoi( std::ostream& out ) const;

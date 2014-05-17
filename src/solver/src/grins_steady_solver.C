@@ -53,7 +53,7 @@ namespace GRINS
   {
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
-    system->time_solver = AutoPtr<TimeSolver>(time_solver);
+    system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
     return;
   }
 

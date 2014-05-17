@@ -455,7 +455,7 @@ namespace GRINS
 	    {
 	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars[s]);
 
-	      ConstFunction<libMesh::Number> species_func( this->get_species_bc_value(bc_id,s) );
+              libMesh::ConstFunction<libMesh::Number> species_func( this->get_species_bc_value(bc_id,s) );
 
 	      libMesh::DirichletBoundary species_dbc( dbc_ids, 
 						      dbc_vars, 

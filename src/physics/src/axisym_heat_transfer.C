@@ -175,12 +175,12 @@ namespace GRINS
       context.get_element_fe(_u_r_var)->get_xyz();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<Number> &FT = context.get_elem_residual(_T_var); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_T_var); // R_{T}
 
-    libMesh::DenseSubMatrix<Number> &KTT = context.get_elem_jacobian(_T_var, _T_var); // R_{T},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KTT = context.get_elem_jacobian(_T_var, _T_var); // R_{T},{T}
 
-    libMesh::DenseSubMatrix<Number> &KTr = context.get_elem_jacobian(_T_var, _u_r_var); // R_{T},{r}
-    libMesh::DenseSubMatrix<Number> &KTz = context.get_elem_jacobian(_T_var, _u_z_var); // R_{T},{z}
+    libMesh::DenseSubMatrix<libMesh::Number> &KTr = context.get_elem_jacobian(_T_var, _u_r_var); // R_{T},{r}
+    libMesh::DenseSubMatrix<libMesh::Number> &KTz = context.get_elem_jacobian(_T_var, _u_z_var); // R_{T},{z}
 
 
     // Now we will build the element Jacobian and residual.
@@ -297,11 +297,11 @@ namespace GRINS
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW = 
       context.get_element_fe(_T_var)->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<Real> >& phi = 
+    const std::vector<std::vector<libMesh::Real> >& phi = 
       context.get_element_fe(_T_var)->get_phi();
 
     // The number of local degrees of freedom in each variable
@@ -312,9 +312,11 @@ namespace GRINS
       context.get_element_fe(_u_r_var)->get_xyz();
 
     // The subvectors and submatrices we need to fill:
-    DenseSubVector<Real> &F = context.get_elem_residual(_T_var);
+    libMesh::DenseSubVector<libMesh::Real> &F =
+      context.get_elem_residual(_T_var);
 
-    DenseSubMatrix<Real> &M = context.get_elem_jacobian(_T_var, _T_var);
+    libMesh::DenseSubMatrix<libMesh::Real> &M =
+      context.get_elem_jacobian(_T_var, _T_var);
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -327,7 +329,7 @@ namespace GRINS
 	// for us so we need to supply M(u_fixed)*u for the residual.
 	// u_fixed will be given by the fixed_interior_* functions
 	// while u will be given by the interior_* functions.
-	Real T_dot = context.interior_value(_T_var, qp);
+	libMesh::Real T_dot = context.interior_value(_T_var, qp);
 
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {

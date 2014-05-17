@@ -192,10 +192,10 @@ namespace GRINS
 
     if (redistribution_function_string != "0")
       {
-        libMesh::ParsedFunction<Real>
+        libMesh::ParsedFunction<libMesh::Real>
           redistribution_function(redistribution_function_string);
 
-        MeshTools::Modification::redistribute
+        libMesh::MeshTools::Modification::redistribute
           (*mesh, redistribution_function);
 
         // Redistribution can create distortions *within* second-order
@@ -206,9 +206,9 @@ namespace GRINS
         // FIXME - this only works for meshes with uniform geometry
         // order equal to FIRST or (full-order) SECOND.
 
-        const Elem *elem = *mesh->elements_begin();
+        const libMesh::Elem *elem = *mesh->elements_begin();
 
-        if (elem->default_order() != FIRST)
+        if (elem->default_order() != libMesh::FIRST)
           {
             mesh->all_first_order();
             mesh->all_second_order();
@@ -227,24 +227,24 @@ namespace GRINS
 
     if (h_refinement_function_string != "0")
       { 
-        libMesh::ParsedFunction<Real>
+        libMesh::ParsedFunction<libMesh::Real>
           h_refinement_function(h_refinement_function_string);
 
-        MeshRefinement mesh_refinement(*mesh);
+        libMesh::MeshRefinement mesh_refinement(*mesh);
 
-        dof_id_type found_refinements = 0;
+        libMesh::dof_id_type found_refinements = 0;
         do {
           found_refinements = 0;
 
-          MeshBase::element_iterator elem_it =
+          libMesh::MeshBase::element_iterator elem_it =
                   mesh->active_local_elements_begin();
-          MeshBase::element_iterator elem_end =
+          libMesh::MeshBase::element_iterator elem_end =
                   mesh->active_local_elements_end();
           for (; elem_it != elem_end; ++elem_it)
             {
-              Elem *elem = *elem_it;
+              libMesh::Elem *elem = *elem_it;
 
-              const Real refinement_val =
+              const libMesh::Real refinement_val =
                 h_refinement_function(elem->centroid());
 
 	      const unsigned int n_refinements = refinement_val > 0 ?
@@ -252,7 +252,7 @@ namespace GRINS
 
               if (elem->level() - uniformly_refine < n_refinements)
                 {
-                  elem->set_refinement_flag(Elem::REFINE);
+                  elem->set_refinement_flag(libMesh::Elem::REFINE);
                   found_refinements++;
                 }
             }

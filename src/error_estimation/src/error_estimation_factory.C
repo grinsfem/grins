@@ -59,7 +59,10 @@ namespace GRINS
         {
           error_estimator.reset( new libMesh::AdjointResidualErrorEstimator );
     
-          libMesh::AdjointResidualErrorEstimator* adjoint_error_estimator = libmesh_cast_ptr<libMesh::AdjointResidualErrorEstimator*>( error_estimator.get() );
+          libMesh::AdjointResidualErrorEstimator*
+            adjoint_error_estimator =
+              libMesh::libmesh_cast_ptr<libMesh::AdjointResidualErrorEstimator*>
+                ( error_estimator.get() );
           
           adjoint_error_estimator->qoi_set() = qoi_set;
 
@@ -70,10 +73,12 @@ namespace GRINS
           adjoint_error_estimator->dual_error_estimator().reset( p2 );   
       
           bool patch_reuse = input( "MeshAdaptivity/patch_reuse", false );
-          adjoint_error_estimator->primal_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
+          adjoint_error_estimator->primal_error_estimator()->error_norm.set_type
+            ( 0, libMesh::H1_SEMINORM );
           p1->set_patch_reuse( patch_reuse );
       
-          adjoint_error_estimator->dual_error_estimator()->error_norm.set_type( 0, H1_SEMINORM );
+          adjoint_error_estimator->dual_error_estimator()->error_norm.set_type
+            ( 0, libMesh::H1_SEMINORM );
           p2->set_patch_reuse( patch_reuse );
         }
         break;

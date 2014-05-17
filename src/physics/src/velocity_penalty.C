@@ -56,7 +56,7 @@ namespace GRINS
         std::string("0"));
 
     this->normal_vector_function.reset
-      (new libMesh::ParsedFunction<Number>(penalty_function));
+      (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
 
     std::string base_function =
       input("Physics/"+velocity_penalty+"/base_velocity",
@@ -66,7 +66,7 @@ namespace GRINS
       std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
 
     this->base_velocity_function.reset
-      (new libMesh::ParsedFunction<Number>(base_function));
+      (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
   }
 
@@ -138,7 +138,7 @@ namespace GRINS
         libmesh_assert(normal_vector_function.get());
         libmesh_assert(base_velocity_function.get());
 
-        DenseVector<Number> output_vec(3);
+        libMesh::DenseVector<libMesh::Number> output_vec(3);
 
         (*normal_vector_function)(u_qpoint[qp], context.time,
                                   output_vec);

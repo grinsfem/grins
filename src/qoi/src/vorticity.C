@@ -149,8 +149,8 @@ namespace GRINS
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C
 	/*! \todo Need to generalize this to the multiple QoI case */
-	libMesh::DenseSubVector<Number> &Qu = context.get_qoi_derivatives(qoi_index, _u_var);
-	libMesh::DenseSubVector<Number> &Qv = context.get_qoi_derivatives(qoi_index, _v_var);
+	libMesh::DenseSubVector<libMesh::Number> &Qu = context.get_qoi_derivatives(qoi_index, _u_var);
+	libMesh::DenseSubVector<libMesh::Number> &Qv = context.get_qoi_derivatives(qoi_index, _v_var);
 
 	// Integration loop
 	for( unsigned int qp = 0; qp != n_qpoints; qp++ )

@@ -48,10 +48,11 @@ namespace GRINS
     return;
   }
 
-  void UnsteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-					       MultiphysicsSystem* system,
-					       const unsigned int time_step,
-					       const Real time )
+  void UnsteadyVisualization::output_residual
+    ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      MultiphysicsSystem* system,
+      const unsigned int time_step,
+      const libMesh::Real time )
   {
     std::stringstream suffix;
     suffix << time_step;
@@ -66,11 +67,11 @@ namespace GRINS
     // the solution and the rhs vector stashed in the system. Once we're done,
     // we'll reset the time solver pointer back to the original guy.
   
-    libMesh::AutoPtr<TimeSolver> prev_time_solver(system->time_solver);
+    libMesh::AutoPtr<libMesh::TimeSolver> prev_time_solver(system->time_solver);
 
     libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
 
-    system->time_solver = AutoPtr<TimeSolver>(steady_solver);
+    system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(steady_solver);
 
     system->assembly( true /*residual*/, false /*jacobian*/ );
     system->rhs->close();

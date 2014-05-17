@@ -164,7 +164,8 @@ namespace GRINS
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
 
-	    DenseSubVector<Number>& dQ_dT = context.get_qoi_derivatives(qoi_index, _T_var);
+	    libMesh::DenseSubVector<libMesh::Number>& dQ_dT =
+              context.get_qoi_derivatives(qoi_index, _T_var);
 
 	    // Loop over quadrature points  
 	    for (unsigned int qp = 0; qp != n_qpoints; qp++)

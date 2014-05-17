@@ -77,7 +77,7 @@ namespace GRINS
         // Solve the forward problem
         context.system->solve();
 
-        libMesh::NumericVector<Number>& primal_solution = *(context.system->solution);
+        libMesh::NumericVector<libMesh::Number>& primal_solution = *(context.system->solution);
         if( context.output_vis )
           {
             context.postprocessing->update_quantities( *(context.equation_system) );
@@ -97,7 +97,7 @@ namespace GRINS
         // At the moment output data is overwritten every mesh refinement step
         if( context.output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
           {
-            libMesh::NumericVector<Number>& dual_solution = context.system->get_adjoint_solution(0);
+            libMesh::NumericVector<libMesh::Number>& dual_solution = context.system->get_adjoint_solution(0);
 
             // Swap primal and dual to write out dual solution
             primal_solution.swap( dual_solution );          
@@ -162,7 +162,7 @@ namespace GRINS
                           << "==========================================================" << std::endl;
 
                 context.system->assemble_qoi();
-                const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
+                const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
                 my_qoi->output_qoi( std::cout );
                 std::cout << std::endl;
               }

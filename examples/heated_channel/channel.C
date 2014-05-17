@@ -52,8 +52,9 @@ public:
 };
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& system_name, const std::string& unknown_name );
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -81,7 +82,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   // MeshBuilder for handling mesh construction
   GRINS::MeshBuilder mesh_builder;
@@ -114,14 +115,14 @@ int main(int argc, char* argv[])
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
-      Real T_init = libMesh_inputfile("Physics/LowMachNavierStokes/T0", 0.0);
-      Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
+      libMesh::Parameters &params = es->parameters;
+      libMesh::Real T_init = libMesh_inputfile("Physics/LowMachNavierStokes/T0", 0.0);
+      libMesh::Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
 
-      Real& dummy_T  = params.set<Real>("T_init");
+      libMesh::Real& dummy_T  = params.set<libMesh::Real>("T_init");
       dummy_T = T_init;
 
-      Real& dummy_p0 = params.set<Real>("p0_init");
+      libMesh::Real& dummy_p0 = params.set<libMesh::Real>("p0_init");
       dummy_p0 = p0_init;
 
       system.project_solution( initial_values, NULL, params );
@@ -145,16 +146,17 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point&p, const Parameters &params, 
-		     const std::string& , const std::string& unknown_name )
+libMesh::Real
+initial_values( const libMesh::Point&p, const libMesh::Parameters &params, 
+		const std::string& , const std::string& unknown_name )
 {
-  Real value = 0.0;
+  libMesh::Real value = 0.0;
 
   if( unknown_name == "T" )
-    value = params.get<Real>("T_init");
+    value = params.get<libMesh::Real>("T_init");
 
   else if( unknown_name == "p0" )
-    value = params.get<Real>("p0_init");
+    value = params.get<libMesh::Real>("p0_init");
   
   else if( unknown_name == "u" )
     value = 0.6*p(1)*(1.0-p(1));
@@ -171,7 +173,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ChannelBCFactory::build
   cont.add_var_name( "u" );
   cont.add_bc_id( 1 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ParabolicProfile( -0.6, 0.0, 0.0, 0.6, 0.0, 0.0 ) );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ParabolicProfile( -0.6, 0.0, 0.0, 0.6, 0.0, 0.0 ) );
     
   cont.set_func( vel_func );
 
@@ -180,7 +182,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ChannelBCFactory::build
   cont2.add_var_name( "v" );
   cont2.add_bc_id( 1 );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    vel_func2( new libMesh::ZeroFunction<libMesh::Number> );
 
   cont2.set_func( vel_func2 );
 

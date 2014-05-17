@@ -657,7 +657,7 @@ namespace GRINS
     const unsigned int n_p0_dofs = context.get_dof_indices(this->_p0_var).size();
 
     // Element Jacobian * quadrature weight for side integration.
-    //const std::vector<libMesh::libMesh::Real> &JxW_side = context.get_side_fe(this->_T_var)->get_JxW();
+    //const std::vector<libMesh::Real> &JxW_side = context.get_side_fe(this->_T_var)->get_JxW();
 
     //const std::vector<Point> &normals = context.get_side_fe(this->_T_var)->get_normals();
 

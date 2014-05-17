@@ -42,15 +42,17 @@
 #include "grvy.h"
 #endif
 
-Number exact_solution( const Point& p,
-		       const Parameters&,   // parameters, not needed
-		       const std::string&,  // sys_name, not needed
-		       const std::string&); // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters&,   // parameters, not needed
+		const std::string&,  // sys_name, not needed
+		const std::string&); // unk_name, not needed);
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters&,   // parameters, not needed
-			   const std::string&,  // sys_name, not needed
-			   const std::string&); // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& p,
+		  const libMesh::Parameters&,   // parameters, not needed
+		  const std::string&,  // sys_name, not needed
+		  const std::string&); // unk_name, not needed);
 
 class AxiConCylBCFactory : public GRINS::BoundaryConditionsFactory
 {
@@ -91,7 +93,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -114,10 +116,10 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(*es);
+  libMesh::ExactSolution exact_sol(*es);
 
   exact_sol.attach_exact_value(&exact_solution);
   exact_sol.attach_exact_deriv(&exact_derivative);
@@ -166,7 +168,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
   cont.add_bc_id( 0 );
   cont.add_bc_id( 2 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConcentricCylinderProfile );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ConcentricCylinderProfile );
     
   cont.set_func( vel_func );
 
@@ -176,7 +178,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
   cont2.add_bc_id( 0 );
   cont2.add_bc_id( 2 );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func2( new ZeroFunction<Number> );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    vel_func2( new libMesh::ZeroFunction<libMesh::Number> );
 
   cont2.set_func( vel_func2 );
 
@@ -189,10 +192,11 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
   return mymap;
 }
 
-Number exact_solution( const Point& p,
-		       const Parameters& /*params*/,   // parameters, not needed
-		       const std::string& /*sys_name*/,  // sys_name, not needed
-		       const std::string& var )  // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters& /*params*/,   // parameters, not needed
+		const std::string& /*sys_name*/,  // sys_name, not needed
+		const std::string& var )  // unk_name, not needed);
 {
   const double r = p(0);
   
@@ -200,7 +204,7 @@ Number exact_solution( const Point& p,
   const double r1 = 2.0;
   const double u0 = 2.0;
 
-  Number f = 0;
+  libMesh::Number f = 0;
   // Hardcoded to velocity in input file.
   if( var == "z_vel" ) f = u0*std::log( r1/r )/std::log( r1/r0 );
   else libmesh_assert(false);
@@ -208,10 +212,11 @@ Number exact_solution( const Point& p,
   return f;
 }
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters& /*params*/,   // parameters, not needed
-			   const std::string& /*sys_name*/,  // sys_name, not needed
-			   const std::string& var)  // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& p,
+		  const libMesh::Parameters& /*params*/,   // parameters, not needed
+		  const std::string& /*sys_name*/,  // sys_name, not needed
+		  const std::string& var)  // unk_name, not needed);
 {
   const double r = p(0);
 
@@ -219,7 +224,7 @@ Gradient exact_derivative( const Point& p,
   const double r1 = 2.0;
   const double u0 = 2.0;
 
-  Gradient g;
+  libMesh::Gradient g;
 
   // Hardcoded to velocity in input file.
   if( var == "z_vel" )

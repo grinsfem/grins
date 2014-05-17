@@ -157,7 +157,8 @@ namespace GRINS
 	  std::vector<VariableIndex> dbc_vars;
 	  dbc_vars.push_back(_temp_vars.T_var());
 	
-	  ConstFunction<Number> t_func(this->get_dirichlet_bc_value(bc_id));
+          libMesh::ConstFunction<libMesh::Number>
+            t_func(this->get_dirichlet_bc_value(bc_id));
 	
 	  libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );
 	

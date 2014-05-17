@@ -123,7 +123,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), PERFECT_GAS_DENSITY) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("rho", libMesh::FIRST),
+                             PERFECT_GAS_DENSITY) );
 
 	  _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
 	}
@@ -138,7 +140,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("rho", FIRST), MIXTURE_DENSITY) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("rho", libMesh::FIRST),
+                             MIXTURE_DENSITY) );
 
 	  _cache.add_quantity(Cache::MIXTURE_DENSITY);
 	}
@@ -161,7 +165,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("mu_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("mu_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, SPECIES_VISCOSITY) );
 	    }
@@ -182,7 +187,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("mu", FIRST), MIXTURE_VISCOSITY) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("mu", libMesh::FIRST),
+                             MIXTURE_VISCOSITY) );
 
 	  _cache.add_quantity(Cache::MIXTURE_VISCOSITY);
 	}
@@ -206,7 +213,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("k_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("k_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, SPECIES_THERMAL_CONDUCTIVITY) );
 	    }
@@ -224,7 +232,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("k", FIRST), MIXTURE_THERMAL_CONDUCTIVITY) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("k", libMesh::FIRST),
+                             MIXTURE_THERMAL_CONDUCTIVITY) );
 
 	  _cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
 	}
@@ -248,7 +258,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("cp_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("cp_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_P) );
 	    }
@@ -266,7 +277,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_P) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("cp", libMesh::FIRST),
+                             MIXTURE_SPECIFIC_HEAT_P) );
 
 	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
 	}
@@ -290,7 +303,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("cv_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("cv_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_V) );
 	    }
@@ -308,7 +322,9 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	  _quantity_var_map.insert( std::make_pair(output_system.add_variable("cp", FIRST), MIXTURE_SPECIFIC_HEAT_V) );
+	  _quantity_var_map.insert
+            ( std::make_pair(output_system.add_variable("cp", libMesh::FIRST),
+                             MIXTURE_SPECIFIC_HEAT_V) );
 
 	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_V);
 	}
@@ -326,7 +342,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("X_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("X_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, MOLE_FRACTIONS) );
 	    }
@@ -347,7 +364,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("h_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("h_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, SPECIES_ENTHALPY) );
 	    }
@@ -370,7 +388,8 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _species_names.size(); s++ )
 	    {
-	      VariableIndex var = output_system.add_variable("omega_"+_species_names[s], FIRST);
+	      VariableIndex var = output_system.add_variable
+                ("omega_"+_species_names[s], libMesh::FIRST);
 	      _species_var_map.insert( std::make_pair(var, s) );
 	      _quantity_var_map.insert( std::make_pair(var, OMEGA_DOT) );
 	    }
@@ -414,7 +433,7 @@ namespace GRINS
   NumericType PostProcessedQuantities<NumericType>::component( const libMesh::FEMContext& context, 
 							       unsigned int component,
 							       const libMesh::Point& p,
-							       Real /*time*/ )
+							       libMesh::Real /*time*/ )
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
@@ -649,7 +668,7 @@ namespace GRINS
 
   template<class NumericType>
   void PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext& context, const libMesh::Point& p,
-							 const Real time,
+							 const libMesh::Real time,
 							 libMesh::DenseVector<NumericType>& output )
   {
     for( unsigned int i = 0; i != output.size(); i++ )
@@ -662,7 +681,7 @@ namespace GRINS
   template<class NumericType>
   NumericType PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext&, 
 								const libMesh::Point&,
-								const Real )
+								const libMesh::Real )
   {
     libmesh_error();
     return 0.0; //dummy

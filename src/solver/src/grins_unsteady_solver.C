@@ -59,9 +59,9 @@ namespace GRINS
         const std::string current_norm = input("component_norm", std::string("L2"), i);
         // TODO: replace this with string_to_enum with newer libMesh
         if (current_norm == "GRINSEnums::L2")
-          _component_norm.set_type(i, L2);
+          _component_norm.set_type(i, libMesh::L2);
         else if (current_norm == "GRINSEnums::H1")
-          _component_norm.set_type(i, H1);
+          _component_norm.set_type(i, libMesh::H1);
         else
           libmesh_not_implemented();
       }
@@ -81,7 +81,7 @@ namespace GRINS
     if (_target_tolerance)
       {
         libMesh::TwostepTimeSolver *outer_solver = 
-          new TwostepTimeSolver(*system);
+          new libMesh::TwostepTimeSolver(*system);
 
         outer_solver->target_tolerance = _target_tolerance;
         outer_solver->upper_tolerance = _upper_tolerance;
@@ -110,7 +110,7 @@ namespace GRINS
 
     context.system->deltat = this->_deltat;
   
-    Real sim_time;
+    libMesh::Real sim_time;
 
     if( context.output_vis ) 
       {

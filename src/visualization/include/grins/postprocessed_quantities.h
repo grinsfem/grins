@@ -46,22 +46,26 @@ namespace GRINS
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context);
 
-    virtual AutoPtr<libMesh::FEMFunctionBase<NumericType> > clone() const
-    { return AutoPtr<libMesh::FEMFunctionBase<NumericType> >( new PostProcessedQuantities(*this) ); }
+    virtual libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> >
+    clone() const
+    {
+      return libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> >
+        ( new PostProcessedQuantities(*this) );
+    }
 
     virtual NumericType operator()( const libMesh::FEMContext& context, 
 				    const libMesh::Point& p,
-				    const Real time = 0. );
+				    const libMesh::Real time = 0. );
 
     virtual void operator()( const libMesh::FEMContext& context, 
 			     const libMesh::Point& p,
-			     const Real time,
+			     const libMesh::Real time,
 			     libMesh::DenseVector<NumericType>& output );
 
     virtual NumericType component( const libMesh::FEMContext& context, 
 				   unsigned int i,
 				   const libMesh::Point& p,
-				   Real time=0. );
+				   libMesh::Real time=0. );
 
     /* Methods for GRINS usage below */
     virtual void initialize( MultiphysicsSystem& system,

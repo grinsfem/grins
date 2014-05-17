@@ -54,8 +54,9 @@ public:
 };
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& system_name, const std::string& unknown_name );
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -83,7 +84,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -105,29 +106,29 @@ int main(int argc, char* argv[])
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
-      Real T_base = libMesh_inputfile("InitialConditions/T_base", 0.0);
-      Real T_top = libMesh_inputfile("InitialConditions/T_top", 0.0);
+      libMesh::Parameters &params = es->parameters;
+      libMesh::Real T_base = libMesh_inputfile("InitialConditions/T_base", 0.0);
+      libMesh::Real T_top = libMesh_inputfile("InitialConditions/T_top", 0.0);
 
-      Real u_theta = libMesh_inputfile("InitialConditions/u_theta", 0.0);
+      libMesh::Real u_theta = libMesh_inputfile("InitialConditions/u_theta", 0.0);
 
-      Real jet_width = libMesh_inputfile("InitialConditions/jet_width", 0.0);
+      libMesh::Real jet_width = libMesh_inputfile("InitialConditions/jet_width", 0.0);
 
-      Real w0 = libMesh_inputfile("InitialConditions/w0", 0.0);
+      libMesh::Real w0 = libMesh_inputfile("InitialConditions/w0", 0.0);
 
-      Real& dummy_Tb  = params.set<Real>("T_base");
+      libMesh::Real& dummy_Tb  = params.set<libMesh::Real>("T_base");
       dummy_Tb = T_base;
 
-      Real& dummy_Tt  = params.set<Real>("T_top");
+      libMesh::Real& dummy_Tt  = params.set<libMesh::Real>("T_top");
       dummy_Tt = T_top;
 
-      Real& dummy_u = params.set<Real>("u_theta");
+      libMesh::Real& dummy_u = params.set<libMesh::Real>("u_theta");
       dummy_u = u_theta;
 
-      Real& dummy_jw = params.set<Real>("jet_width");
+      libMesh::Real& dummy_jw = params.set<libMesh::Real>("jet_width");
       dummy_jw = jet_width;
       
-      Real& dummy_w0 = params.set<Real>("w0");
+      libMesh::Real& dummy_w0 = params.set<libMesh::Real>("w0");
       dummy_w0 = w0;
 
       std::cout << "==========================================================" << std::endl
@@ -159,12 +160,13 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& , const std::string& unknown_name )
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& , const std::string& unknown_name )
 {
-  Real x = p(0);
-  Real y = p(1);
-  Real z = p(2);
+  libMesh::Real x = p(0);
+  libMesh::Real y = p(1);
+  libMesh::Real z = p(2);
 
   std::string uvar = "u";
   std::string wvar = "w";
@@ -180,29 +182,29 @@ Real initial_values( const Point& p, const Parameters &params,
 
   if( unknown_name == "T" )
     {
-      const Real T_base = params.get<Real>("T_base");
-      const Real T_top = params.get<Real>("T_top");
+      const libMesh::Real T_base = params.get<libMesh::Real>("T_base");
+      const libMesh::Real T_top = params.get<libMesh::Real>("T_top");
       return (T_top - T_base)*z + T_base;
     }
 
-  Real r = std::sqrt( x*x + y*y );
+  libMesh::Real r = std::sqrt( x*x + y*y );
   
-  Real theta = 0.0;
+  libMesh::Real theta = 0.0;
       
   if( r > 1.0e-6)
     {
       if( x >= 0.0 )
 	theta = std::asin(y/r);
       else
-	theta = -std::asin(y/r) + pi;
+	theta = -std::asin(y/r) + libMesh::pi;
     }
 
-  Real u_theta = params.get<Real>("u_theta");
+  libMesh::Real u_theta = params.get<libMesh::Real>("u_theta");
 
-  Real rc = 0.2;
-  Real sigma = 0.2/4;
+  libMesh::Real rc = 0.2;
+  libMesh::Real sigma = 0.2/4;
 
-  Real vert_scaling = 0.0;
+  libMesh::Real vert_scaling = 0.0;
   
   if( z >= 0.1 || z <= 0.9 )
     vert_scaling = 1.0;
@@ -224,8 +226,8 @@ Real initial_values( const Point& p, const Parameters &params,
       return  vert_scaling*std::cos(theta)*u_theta*std::exp( -(r-rc)*(r-rc)/(2*sigma*sigma));
     }
 
-  const Real jet_width = params.get<Real>("jet_width");
-  const Real w0 = params.get<Real>("w0");
+  const libMesh::Real jet_width = params.get<libMesh::Real>("jet_width");
+  const libMesh::Real w0 = params.get<libMesh::Real>("w0");
 
   if( std::fabs(x) <= jet_width/2.0 && std::fabs(y) <= jet_width/2.0 )
     {
@@ -238,8 +240,8 @@ Real initial_values( const Point& p, const Parameters &params,
     {
       if( unknown_name == wvar )
 	{
-	  const Real A0 = jet_width*jet_width;
-	  const Real A1 = 1.0-A0;
+	  const libMesh::Real A0 = jet_width*jet_width;
+	  const libMesh::Real A1 = 1.0-A0;
 	  return -vert_scaling*w0*A0/A1;
 	}
     }
@@ -249,7 +251,8 @@ Real initial_values( const Point& p, const Parameters &params,
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > VortexBCFactory::build_dirichlet( )
 {
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new ZeroFunction<Number> );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    vel_func( new libMesh::ZeroFunction<libMesh::Number> );
 
   // No-flow at top.
   GRINS::DBCContainer cont3;

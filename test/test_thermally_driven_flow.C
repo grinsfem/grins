@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -119,14 +119,14 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   //es->write("foobar.xdr");
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(*es);
+  libMesh::ExactSolution exact_sol(*es);
   
-  EquationSystems es_ref( es->get_mesh() );
+  libMesh::EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
   std::string solution_file = std::string(argv[2]);

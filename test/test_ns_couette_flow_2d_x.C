@@ -39,15 +39,17 @@
 #include "grvy.h"
 #endif
 
-Number exact_solution( const Point& p,
-		       const Parameters&,   // parameters, not needed
-		       const std::string&,  // sys_name, not needed
-		       const std::string&); // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters&,   // parameters, not needed
+		const std::string&,  // sys_name, not needed
+		const std::string&); // unk_name, not needed);
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters&,   // parameters, not needed
-			   const std::string&,  // sys_name, not needed
-			   const std::string&); // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& p,
+		  const libMesh::Parameters&,   // parameters, not needed
+		  const std::string&,  // sys_name, not needed
+		  const std::string&); // unk_name, not needed);
 
 int main(int argc, char* argv[]) 
 {
@@ -76,7 +78,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -100,7 +102,7 @@ int main(int argc, char* argv[])
   std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(*es);
+  libMesh::ExactSolution exact_sol(*es);
 
   exact_sol.attach_exact_value(&exact_solution);
   exact_sol.attach_exact_deriv(&exact_derivative);
@@ -125,25 +127,27 @@ int main(int argc, char* argv[])
  return return_flag;
 }
 
-Number exact_solution( const Point& p,
-		       const Parameters& /*params*/,   // parameters, not needed
-		       const std::string&,  // sys_name, not needed
-		       const std::string&)  // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters& /*params*/,   // parameters, not needed
+		const std::string&,  // sys_name, not needed
+		const std::string&)  // unk_name, not needed);
 {
   const double y = p(1);
   
   // Hardcoded to velocity in input file.
-  Number f = 10.0*y;
+  libMesh::Number f = 10.0*y;
 
   return f;
 }
 
-Gradient exact_derivative( const Point& /*p*/,
-			   const Parameters& /*params*/,   // parameters, not needed
-			   const std::string&,  // sys_name, not needed
-			   const std::string&)  // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& /*p*/,
+		  const libMesh::Parameters& /*params*/,   // parameters, not needed
+		  const std::string&,  // sys_name, not needed
+		  const std::string&)  // unk_name, not needed);
 {
-  Gradient g;
+  libMesh::Gradient g;
 
   // Hardcoded to velocity in input file.
   g(0) = 0.0;

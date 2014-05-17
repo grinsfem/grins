@@ -50,7 +50,7 @@ namespace GRINS
   void SteadyVisualization::output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 					     MultiphysicsSystem* system,
 					     const unsigned int,
-					     const Real )
+					     const libMesh::Real )
   {
     std::string filename = this->_vis_output_file_prefix+"_residual";
 

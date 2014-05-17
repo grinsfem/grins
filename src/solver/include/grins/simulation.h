@@ -104,7 +104,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
 
-    std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
+    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > _postprocessing;
 
     // Screen display options
     bool _print_mesh_info;

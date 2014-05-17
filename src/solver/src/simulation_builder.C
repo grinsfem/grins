@@ -133,7 +133,8 @@ namespace GRINS
     return (this->_qoi_factory)->build(input);
   }
 
-  std::tr1::shared_ptr<PostProcessedQuantities<Real> > SimulationBuilder::build_postprocessing( const GetPot& input )
+  std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >
+  SimulationBuilder::build_postprocessing( const GetPot& input )
   {
     return (this->_postprocessing_factory)->build(input);
   }

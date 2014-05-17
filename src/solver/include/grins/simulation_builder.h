@@ -64,7 +64,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
 
-    std::tr1::shared_ptr<PostProcessedQuantities<Real> > build_postprocessing( const GetPot& input );
+    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
                                                                          const libMesh::QoISet& qoi_set );

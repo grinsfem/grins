@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   libMesh::out << "Starting GRINS with command:\n";
   for (unsigned int i=0; i != argc; ++i)

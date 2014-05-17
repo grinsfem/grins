@@ -345,7 +345,7 @@ namespace GRINS
                                   )*JxW[qp];
             if (compute_jacobian)
               {
-                const Real fixed_deriv =
+                const libMesh::Real fixed_deriv =
                   context.get_fixed_solution_derivative();
 
                 for (unsigned int j=0; j != n_T_dofs; ++j)

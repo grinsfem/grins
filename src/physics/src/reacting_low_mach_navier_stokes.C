@@ -233,7 +233,7 @@ namespace GRINS
     for (unsigned int i=0; i != n_p_dofs; i++)
       {
 	Fp(i) += termf*p_phi[i][qp];
-	libmesh_assert( !libmesh_isnan(Fp(i)) );
+        libmesh_assert( !libMesh::libmesh_isnan(Fp(i)) );
       }
 
     return;
@@ -307,7 +307,7 @@ namespace GRINS
 	    /*! \todo Need to add SCEBD term. */
 	    Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*jac;
 
-	    libmesh_assert( !libmesh_isnan(Fs(i)) );
+            libmesh_assert( !libMesh::libmesh_isnan(Fs(i)) );
 	  }
       }
 
@@ -409,7 +409,7 @@ namespace GRINS
 	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
 	  }
 
-	libmesh_assert( !libmesh_isnan(Fu(i)) );
+        libmesh_assert( !libMesh::libmesh_isnan(Fu(i)) );
 
 	Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]                 // convection term
 		   + p*u_gradphi[i][qp](1)                           // pressure term
@@ -419,7 +419,7 @@ namespace GRINS
 		   )*jac;
 
 	
-	libmesh_assert( !libmesh_isnan(Fv(i)) );
+        libmesh_assert( !libMesh::libmesh_isnan(Fv(i)) );
 
 	if (this->_dim == 3)
 	  {
@@ -430,7 +430,7 @@ namespace GRINS
 		       + rho*this->_g(2)*u_phi[i][qp]                 // hydrostatic term
 		       )*jac;
 
-	    libmesh_assert( !libmesh_isnan(Fw(i)) );
+            libmesh_assert( !libMesh::libmesh_isnan(Fw(i)) );
 	  }
       }
     return;
@@ -496,7 +496,7 @@ namespace GRINS
 	chem_term += h[s]*omega_dot[s];
       }
 
-    libmesh_assert( !libmesh_isnan(chem_term) );
+    libmesh_assert( !libMesh::libmesh_isnan(chem_term) );
 
     libMesh::Real jac = JxW[qp];
 
@@ -511,7 +511,7 @@ namespace GRINS
 	FT(i) += ( ( -rho*cp*U*grad_T - chem_term )*T_phi[i][qp] // convection term + chemistry term
 		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*jac;
 
-	libmesh_assert( !libmesh_isnan(FT(i)) );
+        libmesh_assert( !libMesh::libmesh_isnan(FT(i)) );
       }
 
     return;
