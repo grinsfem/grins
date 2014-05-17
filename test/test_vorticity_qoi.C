@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -85,12 +85,12 @@ int main(int argc, char* argv[])
   // Solve
   grins.run();
 
-  Number qoi = grins.get_qoi_value( 0 );
+  libMesh::Number qoi = grins.get_qoi_value( 0 );
 
   int return_flag = 0;
-  const Number exact_value = -0.5;
-  const Number rel_error = std::fabs( (qoi - exact_value )/exact_value );
-  const Number tol = 1.0e-15;
+  const libMesh::Number exact_value = -0.5;
+  const libMesh::Number rel_error = std::fabs( (qoi - exact_value )/exact_value );
+  const libMesh::Number tol = 1.0e-15;
   if( rel_error > tol )
     {
       std::cerr << "Computed voriticity QoI mismatch greater than tolerance." << std::endl

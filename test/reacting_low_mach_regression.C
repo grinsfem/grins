@@ -39,8 +39,9 @@
 #include "libmesh/exact_solution.h"
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& system_name, const std::string& unknown_name );
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& system_name, const std::string& unknown_name );
 
 int run( int argc, char* argv[], const GetPot& input );
 
@@ -100,7 +101,7 @@ int run( int argc, char* argv[], const GetPot& input )
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -118,12 +119,12 @@ int run( int argc, char* argv[], const GetPot& input )
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
+      libMesh::Parameters &params = es->parameters;
 
-      Real& w_N2 = params.set<Real>( "w_N2" );
+      libMesh::Real& w_N2 = params.set<libMesh::Real>( "w_N2" );
       w_N2 = input( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 0 );
       
-      Real& w_N = params.set<Real>( "w_N" );
+      libMesh::Real& w_N = params.set<libMesh::Real>( "w_N" );
       w_N = input( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 1 );
 
       system.project_solution( initial_values, NULL, params );
@@ -145,14 +146,15 @@ int run( int argc, char* argv[], const GetPot& input )
 #endif
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
+  std::tr1::shared_ptr<libMesh::EquationSystems>
+    es = grins.get_equation_system();
 
   //es->write("foobar.xdr");
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(*es);
+  libMesh::ExactSolution exact_sol(*es);
   
-  EquationSystems es_ref( es->get_mesh() );
+  libMesh::EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
   std::string solution_file = std::string(argv[2]);
@@ -234,23 +236,24 @@ int run( int argc, char* argv[], const GetPot& input )
   return return_flag;
 }
 
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& , const std::string& unknown_name )
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& , const std::string& unknown_name )
 {
-  Real value = 0.0;
+  libMesh::Real value = 0.0;
 
   if( unknown_name == "w_N2" )
-    value = params.get<Real>("w_N2");
+    value = params.get<libMesh::Real>("w_N2");
 
   else if( unknown_name == "w_N" )
-    value = params.get<Real>("w_N");
+    value = params.get<libMesh::Real>("w_N");
 
   else if( unknown_name == "T" )
     value = 300;
 
   else if( unknown_name == "u" )
     {
-      const Real y = p(1);
+      const libMesh::Real y = p(1);
       value = 1.0*(-y*y+1);
     }
 

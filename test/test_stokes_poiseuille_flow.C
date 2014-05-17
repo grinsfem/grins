@@ -40,15 +40,17 @@
 #include "grvy.h"
 #endif
 
-Number exact_solution( const Point& p,
-		       const Parameters&,   // parameters, not needed
-		       const std::string&,  // sys_name, not needed
-		       const std::string&); // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters&,   // parameters, not needed
+		const std::string&,  // sys_name, not needed
+		const std::string&); // unk_name, not needed);
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters&,   // parameters, not needed
-			   const std::string&,  // sys_name, not needed
-			   const std::string&); // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& p,
+		  const libMesh::Parameters&,   // parameters, not needed
+		  const std::string&,  // sys_name, not needed
+		  const std::string&); // unk_name, not needed);
 
 class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
 {
@@ -90,7 +92,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -113,10 +115,10 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<EquationSystems> es = grins.get_equation_system();
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  ExactSolution exact_sol(*es);
+  libMesh::ExactSolution exact_sol(*es);
 
   exact_sol.attach_exact_value(&exact_solution);
   exact_sol.attach_exact_deriv(&exact_derivative);
@@ -163,7 +165,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::bui
   cont.add_bc_id( 1 );
   cont.add_bc_id( 3 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<Number> > u_func( new GRINS::ParabolicProfile );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
 
   cont.set_func( u_func );
 
@@ -174,15 +176,16 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::bui
   return mymap;
 }
 
-Number exact_solution( const Point& p,
-		       const Parameters& /*params*/,   // parameters, not needed
-		       const std::string& /*sys_name*/,  // sys_name, not needed
-		       const std::string& var )  // unk_name, not needed);
+libMesh::Number
+exact_solution( const libMesh::Point& p,
+		const libMesh::Parameters& /*params*/,   // parameters, not needed
+		const std::string& /*sys_name*/,  // sys_name, not needed
+		const std::string& var )  // unk_name, not needed);
 {
   const double x = p(0);
   const double y = p(1);
 
-  Number f;
+  libMesh::Number f;
   // Hardcoded to velocity in input file.
   if( var == "u" ) f = 4*y*(1-y);
   if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
@@ -190,14 +193,15 @@ Number exact_solution( const Point& p,
   return f;
 }
 
-Gradient exact_derivative( const Point& p,
-			   const Parameters& /*params*/,   // parameters, not needed
-			   const std::string& /*sys_name*/,  // sys_name, not needed
-			   const std::string& var)  // unk_name, not needed);
+libMesh::Gradient
+exact_derivative( const libMesh::Point& p,
+		  const libMesh::Parameters& /*params*/,   // parameters, not needed
+		  const std::string& /*sys_name*/,  // sys_name, not needed
+		  const std::string& var)  // unk_name, not needed);
 {
   const double y = p(1);
 
-  Gradient g;
+  libMesh::Gradient g;
 
   // Hardcoded to velocity in input file.
   if( var == "u" )

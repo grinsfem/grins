@@ -83,7 +83,7 @@ protected:
 };
 
 // Function for getting initial temperature field
-libMesh::Real initial_values( const Point& p, const Parameters &params, 
+libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
 		     const std::string& system_name, const std::string& unknown_name );
 
 static libMesh::Point p_old = libMesh::Point( -1000000000.0, -1000000000.0, -1000000000.0 );
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
+      libMesh::Parameters &params = es->parameters;
 
       libMesh::Real& T_init = params.set<libMesh::Real>("T_init");
       T_init = libMesh_inputfile("InitialConditions/T0", 0.0);
@@ -202,12 +202,13 @@ int main(int argc, char* argv[])
 				     sim_builder );
       std::tr1::shared_ptr<libMesh::EquationSystems> restart_es = restart_sim.get_equation_system();
       libMesh::System& restart_system = restart_es->get_system(system_name);
-      GRINS::MultiphysicsSystem& restart_ms_system = libmesh_cast_ref<GRINS::MultiphysicsSystem&>( restart_system );
+      GRINS::MultiphysicsSystem& restart_ms_system = libMesh::libmesh_cast_ref<GRINS::MultiphysicsSystem&>( restart_system );
       */
 
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       libMesh::System& system = es->get_system(system_name);
-      GRINS::MultiphysicsSystem& ms_system = libmesh_cast_ref<GRINS::MultiphysicsSystem&>( system );
+      GRINS::MultiphysicsSystem& ms_system =
+        libMesh::libmesh_cast_ref<GRINS::MultiphysicsSystem&>( system );
 
       Bunsen::IgniteInitialGuess<libMesh::Real> ignite( libMesh_inputfile, ms_system, 
 					       ms_system );
@@ -241,7 +242,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-libMesh::Real initial_values( const Point& p, const Parameters &params, 
+libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
 		     const std::string& , const std::string& unknown_name )
 {
   libMesh::Real value = 0.0;
@@ -335,7 +336,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     const libMesh::Real factor = 1.0;
     const libMesh::Real r0 = 0.002;
 
-    std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
+    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+      vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     
     cont.set_func( vel_func );
   }
@@ -346,7 +348,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     cont2.add_bc_id( 1 );
     cont2.add_bc_id( 3 );
     
-    std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new ZeroFunction<Number> );
+    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+      vel_func( new libMesh::ZeroFunction<libMesh::Number> );
 
     cont2.set_func( vel_func );
   }
@@ -359,7 +362,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     const libMesh::Real factor = -1.0;
     const libMesh::Real r0 = 0.0025;
 
-    std::tr1::shared_ptr<libMesh::FunctionBase<Number> > vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
+    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+      vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     
     cont3.set_func( vel_func );
   }

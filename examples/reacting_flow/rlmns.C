@@ -38,8 +38,9 @@
 #include "libmesh/parallel.h"
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& system_name, const std::string& unknown_name );
+libMesh::Real 
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -85,12 +86,12 @@ int main(int argc, char* argv[])
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
+      libMesh::Parameters &params = es->parameters;
 
-      Real& w_N2 = params.set<Real>( "w_N2" );
+      libMesh::Real& w_N2 = params.set<libMesh::Real>( "w_N2" );
       w_N2 = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 0 );
       
-      Real& w_N = params.set<Real>( "w_N" );
+      libMesh::Real& w_N = params.set<libMesh::Real>( "w_N" );
       w_N = libMesh_inputfile( "Physics/ReactingLowMachNavierStokes/bound_species_3", 0.0, 1 );
 
       system.project_solution( initial_values, NULL, params );
@@ -114,16 +115,17 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-Real initial_values( const Point&, const Parameters &params, 
-		     const std::string& , const std::string& unknown_name )
+libMesh::Real
+initial_values( const libMesh::Point&, const libMesh::Parameters &params, 
+		const std::string& , const std::string& unknown_name )
 {
-  Real value = 0.0;
+  libMesh::Real value = 0.0;
 
   if( unknown_name == "w_N2" )
-    value = params.get<Real>("w_N2");
+    value = params.get<libMesh::Real>("w_N2");
 
   else if( unknown_name == "w_N" )
-    value = params.get<Real>("w_N");
+    value = params.get<libMesh::Real>("w_N");
 
   else if( unknown_name == "T" )
     value = 300;

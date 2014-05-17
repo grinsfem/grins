@@ -30,8 +30,9 @@
 #include "grins/simulation_builder.h" 
 
 // Function for getting initial temperature field
-Real initial_values( const Point& p, const Parameters &params, 
-		     const std::string& system_name, const std::string& unknown_name );
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+		const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
   GetPot libMesh_inputfile( libMesh_input_filename );
 
   // Initialize libMesh library.
-  LibMeshInit libmesh_init(argc, argv);
+  libMesh::LibMeshInit libmesh_init(argc, argv);
  
   GRINS::SimulationBuilder sim_builder;
 
@@ -68,14 +69,14 @@ int main(int argc, char* argv[])
       std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
-      Parameters &params = es->parameters;
-      Real T_init = libMesh_inputfile("Physics/LowMachNavierStokes/T0", 0.0);
-      Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
+      libMesh::Parameters &params = es->parameters;
+      libMesh::Real T_init = libMesh_inputfile("Physics/LowMachNavierStokes/T0", 0.0);
+      libMesh::Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
 
-      Real& dummy_T  = params.set<Real>("T_init");
+      libMesh::Real& dummy_T  = params.set<libMesh::Real>("T_init");
       dummy_T = T_init;
 
-      Real& dummy_p0 = params.set<Real>("p0_init");
+      libMesh::Real& dummy_p0 = params.set<libMesh::Real>("p0_init");
       dummy_p0 = p0_init;
 
       system.project_solution( initial_values, NULL, params );
@@ -83,22 +84,22 @@ int main(int argc, char* argv[])
 
   grins.run();
 
-  Real qoi = grins.get_qoi_value(0);
+  libMesh::Real qoi = grins.get_qoi_value(0);
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.
 
   // Erroneous value from libMesh 0.9.2.2
-  // const Real exact_qoi = 4.8158910676325055;
+  // const libMesh::Real exact_qoi = 4.8158910676325055;
 
   // Value after libMesh 7acb6fc9 bugfix
-  const Real exact_qoi = 4.8654229502012685;
+  const libMesh::Real exact_qoi = 4.8654229502012685;
 
-  const Real tol = 1.0e-11;
+  const libMesh::Real tol = 1.0e-11;
 
   int return_flag = 0;
 
-  Real rel_error = std::fabs( (qoi-exact_qoi)/exact_qoi );
+  libMesh::Real rel_error = std::fabs( (qoi-exact_qoi)/exact_qoi );
 
   if( rel_error > tol )
     {
@@ -114,16 +115,17 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-Real initial_values( const Point&, const Parameters &params, 
-		     const std::string& , const std::string& unknown_name )
+libMesh::Real
+initial_values( const libMesh::Point&, const libMesh::Parameters &params, 
+		const std::string& , const std::string& unknown_name )
 {
-  Real value = 0.0;
+  libMesh::Real value = 0.0;
 
   if( unknown_name == "T" )
-    value = params.get<Real>("T_init");
+    value = params.get<libMesh::Real>("T_init");
 
   else if( unknown_name == "p0" )
-    value = params.get<Real>("p0_init");
+    value = params.get<libMesh::Real>("p0_init");
 
   else
     value = 0.0;

@@ -53,20 +53,20 @@ int main( int argc, char* argv[] )
   index_sets[3][3] = 6;
   index_sets[3][4] = 7;
 
-  CompositeFunction<Real> composite_outer;
+  CompositeFunction<libMesh::Real> composite_outer;
   
   {
-    CompositeFunction<Real> composite_inner;
+    CompositeFunction<libMesh::Real> composite_inner;
     composite_inner.attach_subfunction
-      (ConstFunction<Real>(1), index_sets[0]);
+      (ConstFunction<libMesh::Real>(1), index_sets[0]);
     composite_inner.attach_subfunction
-      (ConstFunction<Real>(2), index_sets[1]);
+      (ConstFunction<libMesh::Real>(2), index_sets[1]);
     composite_outer.attach_subfunction
       (composite_inner, index_sets[3]);
 
-    DenseVector<Real> test_one(5);
+    libMesh::DenseVector<libMesh::Real> test_one(5);
 
-    composite_inner(Point(0), 0, test_one);
+    composite_inner(libMesh::Point(0), 0, test_one);
 
     if (test_one(0) != 2)
       return 1;
@@ -80,10 +80,10 @@ int main( int argc, char* argv[] )
       return 1;
   }
   composite_outer.attach_subfunction
-    (ConstFunction<Real>(3), index_sets[2]);
+    (ConstFunction<libMesh::Real>(3), index_sets[2]);
 
-  DenseVector<Real> test_two(8);
-  composite_outer(Point(0), 0, test_two);
+  libMesh::DenseVector<libMesh::Real> test_two(8);
+  composite_outer(libMesh::Point(0), 0, test_two);
 
   if (test_two(0) != 3)
     return 1;
