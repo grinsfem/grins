@@ -62,7 +62,7 @@ namespace GRINS
     /*! There is only one Dirichlet bc functor for each container object */
     void set_func( std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func );
 
-    void set_func( std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> > func );
+    void set_fem_func_string( const std::string& s );
 
     std::vector<GRINS::VariableName> get_var_names() const;
     std::set<GRINS::BoundaryID> get_bc_ids() const;
@@ -70,15 +70,15 @@ namespace GRINS
     std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
     get_func() const;
 
-    std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-    get_fem_func() const;
+    const std::string&
+    get_fem_func_string() const;
 
   private:
 
     std::vector<GRINS::VariableName> _var_names;
     std::set<GRINS::BoundaryID> _bc_ids;
     std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > _func;
-    std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> > _fem_func;
+    std::string _parsed_fem_func_string;
     
   };
 }

@@ -160,12 +160,17 @@ namespace GRINS
         else
           {
 	    // Get Dirichlet bc functor
-	    std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-              func = (*it).get_fem_func();
-            libmesh_assert(func.get());
+            const std::string& func_string = (*it).get_fem_func_string();
+
+            libmesh_assert_not_equal_to(func_string, "");
+
+	    // Need to belatedly create Dirichlet functor since we
+            // didn't have a System object handy until now.
+            libMesh::ParsedFEMFunction<libMesh::Number>
+              func(*system, func_string);
 
             GRINS::CompositeFEMFunction<libMesh::Number> remapped_func;
-            remapped_func.attach_subfunction(*func, dbc_vars);
+            remapped_func.attach_subfunction(func, dbc_vars);
 
 	    // Now create DirichletBoundary object and give it to libMesh
 	    // libMesh makes it own copy of the DirichletBoundary so we can
@@ -443,14 +448,7 @@ namespace GRINS
 
           dirichlet_bc.add_bc_id(bc_id);
 
-          // Need API refactoring first...
-          libmesh_not_implemented();
-
-/*
-          dirichlet_bc.set_func
-            (std::tr1::shared_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-              (new libMesh::ParsedFEMFunction<libMesh::Number>(bc_value)));
-*/
+          dirichlet_bc.set_fem_func_string (bc_value);
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
