@@ -156,7 +156,7 @@ namespace GRINS
           }
         }
         if (have_nonlinear_dirichlet_bc)
-          context.system->reinit();
+          context.system->get_equation_systems().reinit();
 
 	// GRVY timers contained in here (if enabled)
 	context.system->solve();
