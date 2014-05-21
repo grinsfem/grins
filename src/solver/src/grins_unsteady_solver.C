@@ -31,6 +31,8 @@
 #include "grins/multiphysics_sys.h"
 
 // libMesh
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/euler_solver.h"
 #include "libmesh/twostep_time_solver.h"
@@ -133,6 +135,28 @@ namespace GRINS
                      ", runtime = " << (latest_wall_time - first_wall_time) << 
                      std::endl
 		  << "==========================================================" << std::endl;
+
+        // If we have any solution-dependent Dirichlet boundaries, we
+        // need to update them with the current solution.
+        //
+        // FIXME: This needs to be much more efficient and intuitive.
+        bool have_nonlinear_dirichlet_bc = false;
+        {
+        const libMesh::DirichletBoundaries &db =
+          *context.system->get_dof_map().get_dirichlet_boundaries();
+        for (libMesh::DirichletBoundaries::const_iterator
+               it = db.begin(); it != db.end(); ++it)
+          {
+            const libMesh::DirichletBoundary* bdy = *it;
+            if (bdy->f_fem.get())
+              {
+                have_nonlinear_dirichlet_bc = true;
+                break;
+              }
+          }
+        }
+        if (have_nonlinear_dirichlet_bc)
+          context.system->get_equation_systems().reinit();
 
 	// GRVY timers contained in here (if enabled)
 	context.system->solve();

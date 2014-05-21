@@ -25,6 +25,7 @@
 // This class
 #include "grins/bc_handling_base.h"
 #include "grins/composite_function.h"
+#include "grins/composite_fem_function.h"
 
 // GRINS
 #include "grins/string_utils.h"
@@ -38,6 +39,7 @@
 #include "libmesh/dof_map.h"
 #include "libmesh/const_function.h"
 #include "libmesh/parsed_function.h"
+#include "libmesh/parsed_fem_function.h"
 
 namespace GRINS
 {
@@ -138,19 +140,47 @@ namespace GRINS
 	std::set<BoundaryID> bc_ids = (*it).get_bc_ids();
       
 	// Get Dirichlet bc functor
-	std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func = (*it).get_func();
+        std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+          func = (*it).get_func();
 
         // Remap indices as necessary
-        GRINS::CompositeFunction<libMesh::Number> remapped_func;
-        remapped_func.attach_subfunction(*func, dbc_vars);
+        if (func.get())
+          {
+            GRINS::CompositeFunction<libMesh::Number> remapped_func;
+            remapped_func.attach_subfunction(*func, dbc_vars);
 
-	// Now create DirichletBoundary object and give it to libMesh
-	// libMesh makes it own copy of the DirichletBoundary so we can
-	// let this one die.
-	libMesh::DirichletBoundary dbc( bc_ids, dbc_vars,
-                                        &remapped_func );
+	    // Now create DirichletBoundary object and give it to libMesh
+	    // libMesh makes it own copy of the DirichletBoundary so we can
+	    // let this one die.
+	    libMesh::DirichletBoundary dbc( bc_ids, dbc_vars,
+                                            remapped_func );
       
-	dof_map.add_dirichlet_boundary( dbc );
+	    dof_map.add_dirichlet_boundary( dbc );
+          }
+        else
+          {
+	    // Get Dirichlet bc functor
+            const std::string& func_string = (*it).get_fem_func_string();
+
+            libmesh_assert_not_equal_to(func_string, "");
+
+	    // Need to belatedly create Dirichlet functor since we
+            // didn't have a System object handy until now.
+            libMesh::ParsedFEMFunction<libMesh::Number>
+              func(*system, func_string);
+
+            GRINS::CompositeFEMFunction<libMesh::Number> remapped_func;
+            remapped_func.attach_subfunction(func, dbc_vars);
+
+	    // Now create DirichletBoundary object and give it to libMesh
+	    // libMesh makes it own copy of the DirichletBoundary so we can
+	    // let this one die.
+	    libMesh::DirichletBoundary dbc( bc_ids, dbc_vars,
+                                            *system,
+                                            remapped_func );
+      
+	    dof_map.add_dirichlet_boundary( dbc );
+          }
       }
 
     return;
@@ -263,6 +293,10 @@ namespace GRINS
     else if( bc_type_in == "parsed_dirichlet" )
       {
         bc_type_out = PARSED_DIRICHLET;
+      }
+    else if( bc_type_in == "parsed_fem_dirichlet" )
+      {
+        bc_type_out = PARSED_FEM_DIRICHLET;
       }
     else if( bc_type_in == "axisymmetric" )
       {
@@ -401,6 +435,20 @@ namespace GRINS
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
               (new libMesh::ParsedFunction<libMesh::Number>(bc_value)));
+
+          this->attach_dirichlet_bound_func(dirichlet_bc);
+	}
+	break;
+
+      case(PARSED_FEM_DIRICHLET):
+	{
+          DBCContainer dirichlet_bc;
+
+          dirichlet_bc.add_var_name(bc_vars);
+
+          dirichlet_bc.add_bc_id(bc_id);
+
+          dirichlet_bc.set_fem_func_string (bc_value);
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
 	}
