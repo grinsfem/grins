@@ -237,9 +237,9 @@ namespace GRINS
           found_refinements = 0;
 
           libMesh::MeshBase::element_iterator elem_it =
-                  mesh->active_local_elements_begin();
+                  mesh->active_elements_begin();
           libMesh::MeshBase::element_iterator elem_end =
-                  mesh->active_local_elements_end();
+                  mesh->active_elements_end();
           for (; elem_it != elem_end; ++elem_it)
             {
               libMesh::Elem *elem = *elem_it;
@@ -257,10 +257,12 @@ namespace GRINS
                 }
             }
 
+          comm.max(found_refinements);
+
           if (found_refinements)
             {
-	      std::cout << "Found " << found_refinements << 
-                " elements to locally refine" << std::endl;
+	      std::cout << "Found up to " << found_refinements << 
+                " elements to refine on each processor" << std::endl;
               mesh_refinement.refine_and_coarsen_elements();
             }
 
