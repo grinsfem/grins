@@ -32,6 +32,7 @@
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
 #include "libmesh/parsed_function.h"
+#include "libmesh/zero_function.h"
 
 namespace GRINS
 {
@@ -55,8 +56,12 @@ namespace GRINS
       input("Physics/"+velocity_penalty+"/penalty_function",
         std::string("0"));
 
-    this->normal_vector_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
+    if (penalty_function == "0")
+      this->normal_vector_function.reset
+        (new libMesh::ZeroFunction<libMesh::Number>());
+    else
+      this->normal_vector_function.reset
+        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
 
     std::string base_function =
       input("Physics/"+velocity_penalty+"/base_velocity",
@@ -65,8 +70,12 @@ namespace GRINS
     if (penalty_function == "0" && base_function == "0")
       std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
 
-    this->base_velocity_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(base_function));
+    if (base_function == "0")
+      this->base_velocity_function.reset
+        (new libMesh::ZeroFunction<libMesh::Number>());
+    else
+      this->base_velocity_function.reset
+        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
   }
 
