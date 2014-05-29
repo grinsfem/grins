@@ -235,6 +235,7 @@ namespace GRINS
         libMesh::dof_id_type found_refinements = 0;
         do {
           found_refinements = 0;
+          unsigned int max_level_refining = 0;
 
           libMesh::MeshBase::element_iterator elem_it =
                   mesh->active_elements_begin();
@@ -254,15 +255,19 @@ namespace GRINS
                 {
                   elem->set_refinement_flag(libMesh::Elem::REFINE);
                   found_refinements++;
+		  max_level_refining = std::max(max_level_refining,
+                                                elem->level());
                 }
             }
 
           comm.max(found_refinements);
+          comm.max(max_level_refining);
 
           if (found_refinements)
             {
 	      std::cout << "Found up to " << found_refinements << 
-                " elements to refine on each processor" << std::endl;
+                " elements to refine on each processor," << std::endl;
+	      std::cout << "with max level " << max_level_refining << std::endl;
               mesh_refinement.refine_and_coarsen_elements();
             }
 
