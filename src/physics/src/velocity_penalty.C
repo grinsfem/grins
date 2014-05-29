@@ -81,7 +81,7 @@ namespace GRINS
 
   void VelocityPenalty::element_constraint( bool compute_jacobian,
 					    AssemblyContext& context,
-					    CachedValues& cache )
+					    CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("VelocityPenalty::element_constraint");
