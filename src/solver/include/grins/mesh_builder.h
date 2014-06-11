@@ -62,7 +62,7 @@ namespace GRINS
         restart file. */
     void do_mesh_refinement_from_input( const GetPot& input,
                                         const libMesh::Parallel::Communicator &comm,
-                                        libMesh::UnstructuredMesh& mesh );
+                                        libMesh::UnstructuredMesh& mesh ) const;
 
   };
 

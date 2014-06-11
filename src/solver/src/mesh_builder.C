@@ -193,7 +193,7 @@ namespace GRINS
 
   void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
                                                    const libMesh::Parallel::Communicator &comm,
-                                                   libMesh::UnstructuredMesh& mesh )
+                                                   libMesh::UnstructuredMesh& mesh ) const
   {
     std::string redistribution_function_string =
             input("mesh-options/redistribute", std::string("0"));
