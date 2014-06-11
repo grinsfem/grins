@@ -283,6 +283,14 @@ namespace GRINS
                 " elements to refine on each processor," << std::endl;
 	      std::cout << "with max level " << max_level_refining << std::endl;
               mesh_refinement.refine_and_coarsen_elements();
+
+              if( input.have_variable("restart-options/restart_file") )
+                {
+                  std::cout << "Warning: it is known that locally_h_refine is broken when restarting." << std::endl
+                            << "         and multiple refinement passes are done. We are forcibly" << std::endl
+                            << "         limiting the refinement to one pass until this issue is resolved." << std::endl;
+                  break;
+                }
             }
 
         } while(found_refinements);
