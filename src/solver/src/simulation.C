@@ -106,6 +106,10 @@ namespace GRINS
         /* We do this here only if there's a restart file. Otherwise, this was done
            at mesh construction time */
         sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+
+        /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
+                 call reinit()? */
+        _equation_system->reinit();
       }
 
     return;
