@@ -93,14 +93,24 @@ namespace GRINS
       
         /* Note that we are effectively transfering ownership of the qoi pointer because
            it will be cloned in _multiphysics_system and all the calculations are done there. */
-        
         _multiphysics_system->attach_qoi( qois.get() );
       }
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
-    this->check_for_restart( input );
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->read_restart( input );
+
+        /* We do this here only if there's a restart file. Otherwise, this was done
+           at mesh construction time */
+        sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+
+        /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
+                 call reinit()? */
+        _equation_system->reinit();
+      }
 
     return;
   }
@@ -158,7 +168,7 @@ namespace GRINS
     return qoi->get_qoi_value(qoi_index);
   }
 
-  void Simulation::check_for_restart( const GetPot& input )
+  void Simulation::read_restart( const GetPot& input )
   {
     const std::string restart_file = input( "restart-options/restart_file", "none" );
 

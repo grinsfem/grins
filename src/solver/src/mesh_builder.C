@@ -186,7 +186,21 @@ namespace GRINS
 	libmesh_error();
       }
 
+    /* Only do the mesh refinement here if we don't have a restart file.
+       Otherwise, we need to wait until we've read in the restart file.
+       That is done in Simulation::check_for_restart */
+    if( !input.have_variable("restart-options/restart_file") )
+      {
+        this->do_mesh_refinement_from_input( input, comm, *mesh );
+      }
 
+    return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
+  }
+
+  void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
+                                                   const libMesh::Parallel::Communicator &comm,
+                                                   libMesh::UnstructuredMesh& mesh ) const
+  {
     std::string redistribution_function_string =
             input("mesh-options/redistribute", std::string("0"));
 
@@ -196,7 +210,7 @@ namespace GRINS
           redistribution_function(redistribution_function_string);
 
         libMesh::MeshTools::Modification::redistribute
-          (*mesh, redistribution_function);
+          (mesh, redistribution_function);
 
         // Redistribution can create distortions *within* second-order
         // elements, which can then be magnified by refinement.  Let's
@@ -206,12 +220,12 @@ namespace GRINS
         // FIXME - this only works for meshes with uniform geometry
         // order equal to FIRST or (full-order) SECOND.
 
-        const libMesh::Elem *elem = *mesh->elements_begin();
+        const libMesh::Elem *elem = *mesh.elements_begin();
 
         if (elem->default_order() != libMesh::FIRST)
           {
-            mesh->all_first_order();
-            mesh->all_second_order();
+            mesh.all_first_order();
+            mesh.all_second_order();
           }
       }
 
@@ -219,7 +233,7 @@ namespace GRINS
     
     if( uniformly_refine > 0 )
       {
-	libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
+        libMesh::MeshRefinement(mesh).uniformly_refine(uniformly_refine);
       }
 
     std::string h_refinement_function_string =
@@ -230,7 +244,7 @@ namespace GRINS
         libMesh::ParsedFunction<libMesh::Real>
           h_refinement_function(h_refinement_function_string);
 
-        libMesh::MeshRefinement mesh_refinement(*mesh);
+        libMesh::MeshRefinement mesh_refinement(mesh);
 
         libMesh::dof_id_type found_refinements = 0;
         do {
@@ -238,9 +252,9 @@ namespace GRINS
           unsigned int max_level_refining = 0;
 
           libMesh::MeshBase::element_iterator elem_it =
-                  mesh->active_elements_begin();
+                  mesh.active_elements_begin();
           libMesh::MeshBase::element_iterator elem_end =
-                  mesh->active_elements_end();
+                  mesh.active_elements_end();
           for (; elem_it != elem_end; ++elem_it)
             {
               libMesh::Elem *elem = *elem_it;
@@ -269,13 +283,21 @@ namespace GRINS
                 " elements to refine on each processor," << std::endl;
 	      std::cout << "with max level " << max_level_refining << std::endl;
               mesh_refinement.refine_and_coarsen_elements();
+
+              if( input.have_variable("restart-options/restart_file") )
+                {
+                  std::cout << "Warning: it is known that locally_h_refine is broken when restarting." << std::endl
+                            << "         and multiple refinement passes are done. We are forcibly" << std::endl
+                            << "         limiting the refinement to one pass until this issue is resolved." << std::endl;
+                  break;
+                }
             }
 
         } while(found_refinements);
 
       }
 
-    return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
+    return;
   }
 
 } // namespace GRINS

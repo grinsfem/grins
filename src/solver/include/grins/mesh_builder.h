@@ -55,6 +55,15 @@ namespace GRINS
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
+    //! Refine the mesh based on user input parameters
+    /*! There are several parameters that allow for the user to specify
+        mesh refinements. They are factored out here because where we
+        need to apply the refinements depends on the existence of a
+        restart file. */
+    void do_mesh_refinement_from_input( const GetPot& input,
+                                        const libMesh::Parallel::Communicator &comm,
+                                        libMesh::UnstructuredMesh& mesh ) const;
+
   };
 
 } // end namespace block

@@ -85,6 +85,8 @@ namespace GRINS
 
     void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
 
+    const MeshBuilder& mesh_builder() const;
+
   protected:
     
     std::tr1::shared_ptr<PhysicsFactory> _physics_factory;

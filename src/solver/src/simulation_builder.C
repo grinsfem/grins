@@ -145,4 +145,9 @@ namespace GRINS
      return (this->_error_estimator_factory)->build(input,qoi_set);
    }
 
+  const MeshBuilder& SimulationBuilder::mesh_builder() const
+  {
+    return *_mesh_builder;
+  }
+
 } //namespace GRINS
