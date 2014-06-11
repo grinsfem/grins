@@ -186,7 +186,13 @@ namespace GRINS
 	libmesh_error();
       }
 
-    this->do_mesh_refinement_from_input( input, comm, *mesh );
+    /* Only do the mesh refinement here if we don't have a restart file.
+       Otherwise, we need to wait until we've read in the restart file.
+       That is done in Simulation::check_for_restart */
+    if( !input.have_variable("restart-options/restart_file") )
+      {
+        this->do_mesh_refinement_from_input( input, comm, *mesh );
+      }
 
     return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }

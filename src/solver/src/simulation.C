@@ -99,7 +99,14 @@ namespace GRINS
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
+    if( input.have_variable("restart-options/restart_file") )
+      {
         this->read_restart( input );
+
+        /* We do this here only if there's a restart file. Otherwise, this was done
+           at mesh construction time */
+        sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+      }
 
     return;
   }
