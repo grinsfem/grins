@@ -210,14 +210,20 @@ exact_derivative( const libMesh::Point& p,
     {
       g(0) = 0.0;
       g(1) = 4*(1-y) - 4*y;
+
+#if LIBMESH_DIM > 2
       g(2) = 0.0;
+#endif
     }
 
   if( var == "p" )
     {
       g(0) = (80.0-120.0)/5.0;
       g(1) = 0.0;
+
+#if LIBMESH_DIM > 2
       g(2) = 0.0;
+#endif
     }
   return g;
 }
