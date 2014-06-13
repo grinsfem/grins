@@ -231,7 +231,12 @@ namespace GRINS
     if(this->_dim == 3)
       rhocpU(2) = rho_cp*context.fixed_interior_value(this->_w_var, qp);
 
-    return rhocpU*grad_T - this->_k.deriv(T)*(grad_T*grad_T) - this->_k(T)*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
+    libMesh::Real hess_term = hess_T(0,0) + hess_T(1,1);
+#if LIBMESH_DIM > 2
+    hess_term += hess_T(2,2);
+#endif
+
+    return rhocpU*grad_T - this->_k.deriv(T)*(grad_T*grad_T) - this->_k(T)*(hess_term);
   }
 
 
