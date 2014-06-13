@@ -32,7 +32,7 @@ namespace GRINS
   template<class NumericType>
   PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
     : libMesh::FEMFunctionBase<NumericType>(),
-      _prev_point(1.0e15,1.0e15,1.0e15) //Initialize to an absurd value
+      _prev_point(1.0e15,0.0,0.0) //Initialize to an absurd value
   {
     this->build_name_map();
 
