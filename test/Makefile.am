@@ -167,6 +167,7 @@ TESTS += test_vorticity_qoi.sh
 TESTS += low_mach_cavity_benchmark_regression.sh
 TESTS += backward_facing_step_regression.sh
 TESTS += locally_refine_regression.sh
+TESTS += penalty_poiseuille.sh
 TESTS += redistribute_regression.sh
 TESTS += coupled_stokes_ns.sh
 
@@ -200,6 +201,7 @@ shellfiles_src += test_vorticity_qoi.sh
 shellfiles_src += low_mach_cavity_benchmark_regression.sh
 shellfiles_src += backward_facing_step_regression.sh
 shellfiles_src += locally_refine_regression.sh
+shellfiles_src += penalty_poiseuille.sh
 shellfiles_src += redistribute_regression.sh
 shellfiles_src += coupled_stokes_ns.sh
 shellfiles_src += reacting_low_mach_cantera_regression.sh

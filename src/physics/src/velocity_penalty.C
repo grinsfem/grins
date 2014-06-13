@@ -106,24 +106,29 @@ namespace GRINS
     const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubMatrix<libMesh::Number> &Kup = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.p_var()); // R_{u},{p}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // R_{p},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // R_{v},{v}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.p_var()); // R_{v},{p}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // R_{p},{v}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number>* Kwp = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number>* Kpw = NULL;
-
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(_flow_vars.p_var()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     if( this->_dim == 3 )
       {
-        Kpw = &context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.w_var()); // R_{p},{w}
-        Kwp = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.p_var()); // R_{w},{p}
+        Kuw = &context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.w_var()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.w_var()); // R_{v},{w}
+
+        Kwu = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.u_var()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.v_var()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.w_var()); // R_{w},{w}
         Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
       }
 
@@ -132,8 +137,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         // Compute the solution & its gradient at the old Newton iterate.
-        libMesh::Number p, u, v;
-        p = context.interior_value(_flow_vars.p_var(), qp);
+        libMesh::Number u, v;
         u = context.interior_value(_flow_vars.u_var(), qp);
         v = context.interior_value(_flow_vars.v_var(), qp);
 
@@ -165,57 +169,46 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-        for (unsigned int i=0; i != n_p_dofs; i++)
+        for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fp(i) += jac *
-              (((U-U_B)*U_N)*p_phi[i][qp]);
+            Fu(i) += jac * 
+                     ((U-U_B)*U_N)*U_N(0)*u_phi[i][qp];
+
+            Fv(i) += jac *
+                     ((U-U_B)*U_N)*U_N(1)*u_phi[i][qp];
+            if( this->_dim == 3 )
+              {
+                (*Fw)(i) += jac *
+                            ((U-U_B)*U_N)*U_N(2)*u_phi[i][qp];
+              }
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += jac *
-                      ((u_phi[j][qp]*U_N(0))*p_phi[i][qp]);
-                    Kpv(i,j) += jac *
-                      ((u_phi[j][qp]*U_N(1))*p_phi[i][qp]);
+                    Kuu(i,j) += jac *
+                      (u_phi[j][qp]*U_N(0))*U_N(0)*u_phi[i][qp];
+                    Kuv(i,j) += jac *
+                      (u_phi[j][qp]*U_N(1))*U_N(0)*u_phi[i][qp];
+
+                    Kvu(i,j) += jac *
+                      (u_phi[j][qp]*U_N(0))*U_N(1)*u_phi[i][qp];
+                    Kvv(i,j) += jac *
+                      (u_phi[j][qp]*U_N(1))*U_N(1)*u_phi[i][qp];
 
                     if( this->_dim == 3 )
                       {
-                        (*Kpw)(i,j) += jac *
-                          ((u_phi[j][qp]*U_N(2))*p_phi[i][qp]);
-                      }
-                  }
-              }
-          }
+                        (*Kuw)(i,j) += jac *
+                          (u_phi[j][qp]*U_N(2))*U_N(0)*u_phi[i][qp];
+                        (*Kvw)(i,j) += jac *
+                          (u_phi[j][qp]*U_N(2))*U_N(1)*u_phi[i][qp];
 
-        if (true) // make this optional?
-          {
-            for (unsigned int i=0; i != n_u_dofs; i++)
-              {
-                Fu(i) += jac *
-                  ((u_phi[i][qp]*U_N(0))*p);
-                Fv(i) += jac *
-                  ((u_phi[i][qp]*U_N(1))*p);
-                if( this->_dim == 3 )
-                  {
-                    (*Fw)(i) += jac *
-                      ((u_phi[i][qp]*U_N(2))*p);
-                  }
-
-	        if( compute_jacobian )
-                  {
-                    for (unsigned int j=0; j != n_p_dofs; j++)
-                      {
-                        Kup(i,j) += jac *
-                          ((u_phi[i][qp]*U_N(0))*p_phi[j][qp]);
-                        Kvp(i,j) += jac *
-                          ((u_phi[i][qp]*U_N(1))*p_phi[j][qp]);
-
-                        if( this->_dim == 3 )
-                          {
-                            (*Kwp)(i,j) += jac *
-                              ((u_phi[i][qp]*U_N(2))*p_phi[j][qp]);
-                          }
+                        (*Kwu)(i,j) += jac *
+                          (u_phi[j][qp]*U_N(0))*U_N(2)*u_phi[i][qp];
+                        (*Kwv)(i,j) += jac *
+                          (u_phi[j][qp]*U_N(1))*U_N(2)*u_phi[i][qp];
+                        (*Kww)(i,j) += jac *
+                          (u_phi[j][qp]*U_N(2))*U_N(2)*u_phi[i][qp];
                       }
                   }
               }
