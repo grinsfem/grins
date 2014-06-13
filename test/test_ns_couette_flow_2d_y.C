@@ -159,7 +159,10 @@ exact_derivative( const libMesh::Point& /*p*/,
   // Hardcoded to velocity in input file.
   g(0) = 10.0;
   g(1) = 0.0;
+
+#if LIBMESH_DIM > 2
   g(2) = 0.0;
+#endif
 
   return g;
 }
