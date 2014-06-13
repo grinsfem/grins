@@ -129,9 +129,11 @@ namespace GRINS
 					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 ),
 					1 );
 
+#if LIBMESH_DIM > 2
 	  this->set_dirichlet_bc_value( bc_id, 
 					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 2 ),
 					2 );
+#endif
 	}
 	break;
       case(PARABOLIC_PROFILE):
