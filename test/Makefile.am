@@ -102,36 +102,6 @@ constant_catalycity_unit_SOURCES = $(top_srcdir)/test/constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = $(top_srcdir)/test/arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = $(top_srcdir)/test/power_law_catalycity_unit.C
 
-# List of source files for license stamping
-STAMPED_FILES = 
-STAMPED_FILES += $(test_ns_couette_flow_2d_x_SOURCES)
-STAMPED_FILES += $(test_ns_couette_flow_2d_y_SOURCES)
-STAMPED_FILES += $(test_stokes_poiseuille_flow_SOURCES)
-STAMPED_FILES += $(test_ns_poiseuille_flow_SOURCES)
-STAMPED_FILES += $(test_axi_ns_poiseuille_flow_SOURCES)
-STAMPED_FILES += $(test_axi_ns_con_cyl_flow_SOURCES)
-STAMPED_FILES += $(test_thermally_driven_flow_SOURCES)
-STAMPED_FILES += $(gaussian_profiles_SOURCES)
-STAMPED_FILES += $(vorticity_qoi_SOURCES)
-STAMPED_FILES += $(low_mach_cavity_benchmark_regression_SOURCES)
-STAMPED_FILES += $(grins_flow_regression_SOURCES)
-STAMPED_FILES += $(cantera_mixture_unit_SOURCES)
-STAMPED_FILES += $(cantera_chem_thermo_test_SOURCES)
-STAMPED_FILES += $(cantera_transport_regression_SOURCES)
-STAMPED_FILES += $(cantera_evaluator_regression_SOURCES)
-STAMPED_FILES += $(reacting_low_mach_regression_SOURCES)
-STAMPED_FILES += $(grins_kinetics_regression_SOURCES)
-STAMPED_FILES += $(catalytic_wall_unit_SOURCES)
-STAMPED_FILES += $(antioch_mixture_unit_SOURCES)
-STAMPED_FILES += $(antioch_kinetics_regression_SOURCES)
-STAMPED_FILES += $(antioch_evaluator_regression_SOURCES)
-STAMPED_FILES += $(antioch_wilke_evaluator_regression_SOURCES)
-STAMPED_FILES += $(composite_function_unit_SOURCES)
-STAMPED_FILES += $(gas_recombination_catalytic_wall_unit_SOURCES)
-STAMPED_FILES += $(gas_solid_catalytic_wall_unit_SOURCES)
-STAMPED_FILES += $(constant_catalycity_unit_SOURCES)
-STAMPED_FILES += $(arrhenius_catalycity_unit_SOURCES)
-STAMPED_FILES += $(power_law_catalycity_unit_SOURCES)
 
 #Define tests to actually be run
 TESTS =
