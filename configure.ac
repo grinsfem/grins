@@ -421,6 +421,35 @@ dnl-----------------------------------------------
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
 		 doxygen/grins.dox examples/Makefile])
 
+
+dnl-----------------------------------------------
+dnl Collect files for "header stamping" here
+dnl-----------------------------------------------
+
+# PB: Although the documentation says that ac_top_srcdir should be defined,
+#     it doesn't get activated until _AC_SRCDIRS gets called
+#     (used to be _AC_SRCPATHS), according to this thread:
+#     http://lists.gnu.org/archive/html/autoconf-patches/2003-02/msg00003.html
+#     My own hacking revealed that we could also do the following:
+#     TOP_SEARCH_DIR=$ac_pwd/$srcdir
+#     I'm not sure which will be more "future proof", but this is the alternative
+#     to using $(shell) calls in the Makefile.am which 1. requires
+#     GNU Make and 2. Causes automake to issue a warning
+_AC_SRCDIRS(.)
+TOP_SEARCH_DIR=$ac_abs_top_srcdir
+echo $TOP_SEARCH_DIR
+
+# We have to do this by subdirectory because otherwise distcheck
+# breaks as we start picking up files in the directories
+# that it uses.
+GRINS_STAMPED_FILES=$(find $TOP_SEARCH_DIR/src -name "*.h" | tr "\n" " ")
+GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/examples -name "*.h" | tr "\n" " ")
+GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/test -name "*.h" | tr "\n" " ")
+GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/src -name "*.C" | tr "\n" " ")
+GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/examples -name "*.C" | tr "\n" " ")
+GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/test -name "*.C" | tr "\n" " ")
+AC_SUBST(GRINS_STAMPED_FILES)
+
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()
 

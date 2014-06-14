@@ -193,14 +193,6 @@ bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.C
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
 
-
-all_sources  = $(cavity_SOURCES)
-all_sources += $(injection_SOURCES)
-all_sources += $(rayleigh_taylor_SOURCES)
-all_sources += $(vortex_SOURCES)
-all_sources += $(bunsen_SOURCES)
-
-
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
@@ -210,5 +202,5 @@ MOSTLYCLEANFILES = *.gcno
 #---------------------------------
 
 .license.stamp: $(top_srcdir)/LICENSE
-	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(all_sources)
+	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
 	echo 'updated source license headers' >$@
