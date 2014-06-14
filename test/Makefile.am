@@ -237,6 +237,17 @@ if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
+#---------------------------------
+# Embedded license header support
+#---------------------------------
+# PB: I'm leaving this here commented out in case the AC_SUBST solution
+#     dies at some point. The below requires GNU make and causes a
+#     an Automake warning (that can be suppressed with -Wno-portability)
+#     so I went for the more general solution instead, but the below
+#     works.
+#STAMPED_FILES  = $(shell find $(top_srcdir)/test -name '*.h')
+#STAMPED_FILES += $(shell find $(top_srcdir)/test -name '*.C')
+
 .license.stamp: $(top_srcdir)/LICENSE
 	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
 	echo 'updated source license headers' >$@
