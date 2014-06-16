@@ -75,33 +75,32 @@ if MASA_ENABLED
 endif
 
 # Sources for these tests
-test_ns_couette_flow_2d_x_SOURCES = $(top_srcdir)/test/test_ns_couette_flow_2d_x.C
-test_ns_couette_flow_2d_y_SOURCES = $(top_srcdir)/test/test_ns_couette_flow_2d_y.C
-test_stokes_poiseuille_flow_SOURCES = $(top_srcdir)/test/test_stokes_poiseuille_flow.C
-test_ns_poiseuille_flow_SOURCES = $(top_srcdir)/test/test_ns_poiseuille_flow.C
-test_axi_ns_poiseuille_flow_SOURCES = $(top_srcdir)/test/test_axi_ns_poiseuille_flow.C
-test_axi_ns_con_cyl_flow_SOURCES = $(top_srcdir)/test/test_axi_ns_con_cyl_flow.C
-test_thermally_driven_flow_SOURCES = $(top_srcdir)/test/test_thermally_driven_flow.C
-gaussian_profiles_SOURCES = $(top_srcdir)/test/gaussian_profiles.C
-vorticity_qoi_SOURCES = $(top_srcdir)/test/test_vorticity_qoi.C
-low_mach_cavity_benchmark_regression_SOURCES = $(top_srcdir)/test/low_mach_cavity_benchmark_regression.C
-grins_flow_regression_SOURCES = $(top_srcdir)/test/grins_flow_regression.C
-cantera_mixture_unit_SOURCES = $(top_srcdir)/test/cantera_mixture_unit.C
-cantera_chem_thermo_test_SOURCES = $(top_srcdir)/test/cantera_chem_thermo_test.C
-cantera_transport_regression_SOURCES = $(top_srcdir)/test/cantera_transport_regression.C
-cantera_evaluator_regression_SOURCES = $(top_srcdir)/test/cantera_evaluator_regression.C
-reacting_low_mach_regression_SOURCES = $(top_srcdir)/test/reacting_low_mach_regression.C
-antioch_mixture_unit_SOURCES = $(top_srcdir)/test/antioch_mixture_unit.C
-antioch_kinetics_regression_SOURCES = $(top_srcdir)/test/antioch_kinetics_regression.C
-antioch_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_evaluator_regression.C
-antioch_wilke_evaluator_regression_SOURCES = $(top_srcdir)/test/antioch_wilke_evaluator_regression.C
-composite_function_unit_SOURCES = $(top_srcdir)/test/composite_function_unit.C
-gas_recombination_catalytic_wall_unit_SOURCES = $(top_srcdir)/test/gas_recombination_catalytic_wall_unit.C
-gas_solid_catalytic_wall_unit_SOURCES = $(top_srcdir)/test/gas_solid_catalytic_wall_unit.C
-constant_catalycity_unit_SOURCES = $(top_srcdir)/test/constant_catalycity_unit.C
-arrhenius_catalycity_unit_SOURCES = $(top_srcdir)/test/arrhenius_catalycity_unit.C
-power_law_catalycity_unit_SOURCES = $(top_srcdir)/test/power_law_catalycity_unit.C
-
+test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
+test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
+test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
+test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
+test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
+test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
+test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
+gaussian_profiles_SOURCES = gaussian_profiles.C
+vorticity_qoi_SOURCES = test_vorticity_qoi.C
+low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C
+grins_flow_regression_SOURCES = grins_flow_regression.C
+cantera_mixture_unit_SOURCES = cantera_mixture_unit.C
+cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
+cantera_transport_regression_SOURCES = cantera_transport_regression.C
+cantera_evaluator_regression_SOURCES = cantera_evaluator_regression.C
+reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
+antioch_mixture_unit_SOURCES = antioch_mixture_unit.C
+antioch_kinetics_regression_SOURCES = antioch_kinetics_regression.C
+antioch_evaluator_regression_SOURCES = antioch_evaluator_regression.C
+antioch_wilke_evaluator_regression_SOURCES = antioch_wilke_evaluator_regression.C
+composite_function_unit_SOURCES = composite_function_unit.C
+gas_recombination_catalytic_wall_unit_SOURCES = gas_recombination_catalytic_wall_unit.C
+gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
+constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
+arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
+power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
 
 #Define tests to actually be run
 TESTS =
