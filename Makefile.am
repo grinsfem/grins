@@ -6,6 +6,8 @@ ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 SUBDIRS          = src test doxygen examples
 EXTRA_DIST       = README.md CHANGES LICENSE COPYING contrib
 
+AM_DISTCHECK_CONFIGURE_FLAGS = --with-libmesh=$(LIBMESH_PREFIX) --with-boost=$(BOOST_ROOT)
+
 aclocaldir = $(prefix)/share/aclocal
 aclocal_DATA = $(top_srcdir)/share/aclocal/*
 
