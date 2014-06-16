@@ -185,6 +185,9 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 
+CLEANFILES += penalty_poiseuille.exo
+CLEANFILES += penalty_poiseuille.xdr
+
 shellfiles_src =
 shellfiles_src += test_ns_couette_flow_2d_x.sh
 shellfiles_src += test_ns_couette_flow_2d_y.sh
