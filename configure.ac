@@ -437,7 +437,6 @@ dnl-----------------------------------------------
 #     GNU Make and 2. Causes automake to issue a warning
 _AC_SRCDIRS(.)
 TOP_SEARCH_DIR=$ac_abs_top_srcdir
-echo $TOP_SEARCH_DIR
 
 # We have to do this by subdirectory because otherwise distcheck
 # breaks as we start picking up files in the directories
