@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen examples
-EXTRA_DIST       = README.md CHANGES LICENSE COPYING docs contrib
+EXTRA_DIST       = README.md CHANGES LICENSE COPYING contrib
 
 aclocaldir = $(prefix)/share/aclocal
 aclocal_DATA = $(top_srcdir)/share/aclocal/*
