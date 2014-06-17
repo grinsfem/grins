@@ -11,7 +11,7 @@ AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CANONICAL_TARGET()
-AM_INIT_AUTOMAKE([dist-bzip2 tar-pax 1.11 no-define color-tests parallel-tests])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-pax 1.11 no-define color-tests parallel-tests subdir-objects])
 AM_SILENT_RULES(yes)  # use silent rules where available - automake 1.11
 
 LT_INIT
@@ -420,6 +420,29 @@ dnl Generate Makefiles
 dnl-----------------------------------------------
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
 		 doxygen/grins.dox examples/Makefile])
+
+
+dnl-----------------------------------------------
+dnl Collect files for "header stamping" here
+dnl-----------------------------------------------
+
+# PB: Although the documentation says that ac_top_srcdir should be defined,
+#     it doesn't get activated until _AC_SRCDIRS gets called
+#     (used to be _AC_SRCPATHS), according to this thread:
+#     http://lists.gnu.org/archive/html/autoconf-patches/2003-02/msg00003.html
+#     My own hacking revealed that we could also do the following:
+#     TOP_SEARCH_DIR=$ac_pwd/$srcdir
+#     I'm not sure which will be more "future proof", but this is the alternative
+#     to using $(shell) calls in the Makefile.am which 1. requires
+#     GNU Make and 2. Causes automake to issue a warning
+_AC_SRCDIRS(.)
+TOP_SEARCH_DIR=$ac_abs_top_srcdir
+
+# We have to do this by subdirectory because otherwise distcheck
+# breaks as we start picking up files in the directories
+# that it uses.
+GRINS_STAMPED_FILES=$(find $TOP_SEARCH_DIR/{src,examples,test} -name "*.h" -or -name "*.C" | tr "\n" " ")
+AC_SUBST(GRINS_STAMPED_FILES)
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()

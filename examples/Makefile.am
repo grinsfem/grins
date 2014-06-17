@@ -53,7 +53,7 @@ toyprobdir = $(prefix)/examples/toyprob
 toyprob_PROGRAMS = toy
 toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
 
-toy_SOURCES = $(top_srcdir)/examples/toyprob/toy.C
+toy_SOURCES = toyprob/toy.C
 toy_LDADD = $(LIBGRINS_LIBS)
 
 EXTRA_DIST += $(toyprob_DATA)
@@ -68,7 +68,7 @@ cavitybenchmark_SCRIPTS = $(top_builddir)/examples/cavity_benchmark/run.sh
 
 EXTRA_DIST += $(cavitybenchmark_DATA)
 
-cavity_SOURCES = $(top_srcdir)/examples/cavity_benchmark/cavity.C
+cavity_SOURCES = cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
 
 
@@ -115,7 +115,7 @@ massinjection_SCRIPTS = $(top_builddir)/examples/mass_injection/run.sh
 
 EXTRA_DIST += $(massinjection_DATA)
 
-injection_SOURCES = $(top_srcdir)/examples/mass_injection/injection.C
+injection_SOURCES = mass_injection/injection.C
 injection_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
@@ -128,7 +128,7 @@ rayleigh_SCRIPTS = $(top_builddir)/examples/rayleigh_taylor/run.sh
 
 EXTRA_DIST += $(rayleigh_DATA)
 
-rayleigh_SOURCES = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.C
+rayleigh_SOURCES = rayleigh_taylor/rayleigh.C
 rayleigh_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
@@ -151,7 +151,7 @@ rlmnsex_DATA  = $(top_srcdir)/examples/reacting_flow/rlmns.in
 rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/elements.xml
 rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/air_2sp.xml
 
-rlmns_SOURCES = $(top_srcdir)/examples/reacting_flow/rlmns.C
+rlmns_SOURCES = reacting_flow/rlmns.C
 rlmns_LDADD = $(LIBGRINS_LIBS)
 
 EXTRA_DIST += $(rlmnsex_DATA)
@@ -164,7 +164,7 @@ vortexex_PROGRAMS = vortex
 vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
 vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
 
-vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
+vortex_SOURCES = thermal_vortex/vortex.C
 
 vortex_LDADD = $(LIBGRINS_LIBS)
 
@@ -185,21 +185,13 @@ laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
 
 EXTRA_DIST += $(laminarflame_DATA)
 
-bunsen_SOURCES  = $(top_srcdir)/examples/laminar_flame/bunsen.C
-bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C
-bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/bunsen_source.C
-bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.C
+bunsen_SOURCES  = laminar_flame/bunsen.C
+bunsen_SOURCES += laminar_flame/constant_with_exp_layer.C
+bunsen_SOURCES += laminar_flame/bunsen_source.C
+bunsen_SOURCES += laminar_flame/ignite_initial_guess.C
 
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
-
-
-all_sources  = $(cavity_SOURCES)
-all_sources += $(injection_SOURCES)
-all_sources += $(rayleigh_taylor_SOURCES)
-all_sources += $(vortex_SOURCES)
-all_sources += $(bunsen_SOURCES)
-
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -208,7 +200,13 @@ MOSTLYCLEANFILES = *.gcno
 #---------------------------------
 # Embedded license header support
 #---------------------------------
+# PB: I'm leaving this here commented out in case the AC_SUBST solution
+#     dies at some point. The below requires GNU make and causes a
+#     an Automake warning (that can be suppressed with -Wno-portability)
+#     so I went for the more general solution instead, but the below
+#     works.
+#STAMPED_FILES  = $(shell find $(top_srcdir)/examples -name '*.h' -or -name '*.C')
 
 .license.stamp: $(top_srcdir)/LICENSE
-	$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(all_sources)
+	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
 	echo 'updated source license headers' >$@
