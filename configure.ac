@@ -441,12 +441,7 @@ TOP_SEARCH_DIR=$ac_abs_top_srcdir
 # We have to do this by subdirectory because otherwise distcheck
 # breaks as we start picking up files in the directories
 # that it uses.
-GRINS_STAMPED_FILES=$(find $TOP_SEARCH_DIR/src -name "*.h" | tr "\n" " ")
-GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/examples -name "*.h" | tr "\n" " ")
-GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/test -name "*.h" | tr "\n" " ")
-GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/src -name "*.C" | tr "\n" " ")
-GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/examples -name "*.C" | tr "\n" " ")
-GRINS_STAMPED_FILES+=$(find $TOP_SEARCH_DIR/test -name "*.C" | tr "\n" " ")
+GRINS_STAMPED_FILES=$(find $TOP_SEARCH_DIR/{src,examples,test} -name "*.h" -or -name "*.C" | tr "\n" " ")
 AC_SUBST(GRINS_STAMPED_FILES)
 
 # Must still call AC_OUTPUT() after generating all the files
