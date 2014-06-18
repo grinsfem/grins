@@ -104,8 +104,12 @@ namespace GRINS
         libmesh_error();
       }
 
+    std::cout << "Constructing " << mesh_class << " mesh" << std::endl;
+
     if(mesh_option=="read_mesh_from_file")
       {
+        std::cout << "Reading mesh from " << mesh_filename << std::endl;
+
 	// According to Roy Stogner, the only read format
 	// that won't properly reset the dimension is gmsh.
 	/*! \todo Need to a check a GMSH meshes */
@@ -122,6 +126,9 @@ namespace GRINS
 	GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
       
+        std::cout << "Building " << mesh_nx1 << ' ' << element_type <<
+                     " mesh" << std::endl;
+
 	libMesh::MeshTools::Generation::build_line(*mesh,
 						   mesh_nx1,
 						   domain_x1_min,
@@ -141,6 +148,10 @@ namespace GRINS
 
 	GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+
+        std::cout << "Building " << mesh_nx1 << 'x' << mesh_nx2 <<
+                     ' ' << element_type << " mesh" << std::endl;
+
 
 	libMesh::MeshTools::Generation::build_square(*mesh,
 						     mesh_nx1,
@@ -164,6 +175,10 @@ namespace GRINS
 
 	GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+
+	std::cout << "Building " << mesh_nx1 << 'x' << mesh_nx2 << 
+		     'x' << mesh_nx3 << ' ' << element_type << " mesh" <<
+                     std::endl;
 
 	libMesh::MeshTools::Generation::build_cube(*mesh,
 						   mesh_nx1,
@@ -192,6 +207,8 @@ namespace GRINS
 
     if (redistribution_function_string != "0")
       {
+	std::cout << "Redistributing mesh" << std::endl;
+
         libMesh::ParsedFunction<libMesh::Real>
           redistribution_function(redistribution_function_string);
 
@@ -219,6 +236,9 @@ namespace GRINS
     
     if( uniformly_refine > 0 )
       {
+	std::cout << "Uniformly refining mesh " << uniformly_refine <<
+                     " times" << std::endl;
+
 	libMesh::MeshRefinement(*mesh).uniformly_refine(uniformly_refine);
       }
 
@@ -227,6 +247,8 @@ namespace GRINS
 
     if (h_refinement_function_string != "0")
       { 
+	std::cout << "Locally refining mesh" << std::endl;
+
         libMesh::ParsedFunction<libMesh::Real>
           h_refinement_function(h_refinement_function_string);
 
