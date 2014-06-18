@@ -41,18 +41,18 @@
 namespace GRINS
 {
 
-  //! Physics class for Penalty-based Turbine
+  //! Physics class for spatially-averaged fan
   /*
-    This physics class imposes a penalty on any velocity component in
-    the direction of (and proportional to) a specified vector field.
+    This physics class imposes lift/drag forces on velocity as
+    affected by a region in which airfoils are moving.
    */
-  class PenaltyTurbine : public IncompressibleNavierStokesBase
+  class AveragedFan : public IncompressibleNavierStokesBase
   {
   public:
 
-    PenaltyTurbine( const std::string& physics_name, const GetPot& input );
+    AveragedFan( const std::string& physics_name, const GetPot& input );
 
-    ~PenaltyTurbine();
+    ~AveragedFan();
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -60,10 +60,10 @@ namespace GRINS
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Constraint part(s)
-    virtual void element_constraint( bool compute_jacobian,
-				     AssemblyContext& context,
-				     CachedValues& cache );
+    // Time derivative part(s)
+    virtual void element_time_derivative( bool compute_jacobian,
+				          AssemblyContext& context,
+				          CachedValues& cache );
 
   private:
 
@@ -71,7 +71,7 @@ namespace GRINS
 
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
 
-    PenaltyTurbine();
+    AveragedFan();
   };
 
 } // end namespace block

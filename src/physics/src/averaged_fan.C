@@ -23,7 +23,7 @@
 
 
 // This class
-#include "grins/penalty_turbine.h"
+#include "grins/averaged_fan.h"
 
 // GRINS
 #include "grins/generic_ic_handler.h"
@@ -37,7 +37,7 @@
 namespace GRINS
 {
 
-  PenaltyTurbine::PenaltyTurbine( const std::string& physics_name, const GetPot& input )
+  AveragedFan::AveragedFan( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase(physics_name, input)
   {
     this->read_input_options(input);
@@ -45,12 +45,12 @@ namespace GRINS
     return;
   }
 
-  PenaltyTurbine::~PenaltyTurbine()
+  AveragedFan::~AveragedFan()
   {
     return;
   }
 
-  void PenaltyTurbine::read_input_options( const GetPot& input )
+  void AveragedFan::read_input_options( const GetPot& input )
   {
     std::string penalty_function =
       input("Physics/"+velocity_penalty+"/penalty_function",
@@ -68,7 +68,7 @@ namespace GRINS
         std::string("0"));
 
     if (penalty_function == "0" && base_function == "0")
-      std::cout << "Warning! Zero PenaltyTurbine specified!" << std::endl;
+      std::cout << "Warning! Zero AveragedFan specified!" << std::endl;
 
     if (base_function == "0")
       this->base_velocity_function.reset
@@ -79,12 +79,12 @@ namespace GRINS
 
   }
 
-  void PenaltyTurbine::element_constraint( bool compute_jacobian,
-					    AssemblyContext& context,
-					    CachedValues& /* cache */ )
+  void AveragedFan::element_time_derivative( bool compute_jacobian,
+					        AssemblyContext& context,
+					        CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("PenaltyTurbine::element_constraint");
+    this->_timer->BeginTimer("AveragedFan::element_time_derivative");
 #endif
 
     // Element Jacobian * quadrature weights for interior integration
@@ -224,7 +224,7 @@ namespace GRINS
 
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("PenaltyTurbine::element_constraint");
+    this->_timer->EndTimer("AveragedFan::element_time_derivative");
 #endif
 
     return;
