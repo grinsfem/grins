@@ -22,8 +22,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_PENALTY_TURBINE_H
-#define GRINS_PENALTY_TURBINE_H
+#ifndef GRINS_AVERAGED_FAN_H
+#define GRINS_AVERAGED_FAN_H
 
 // GRINS
 #include "grins_config.h"
@@ -67,13 +67,35 @@ namespace GRINS
 
   private:
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
-
+    // Velocity of the moving fan blades as a function of x,y,z
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
+
+    // "Up" direction of fan airflow, as a function of x,y,z
+    // For most fans this will be a constant, the axis of rotation.
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > local_vertical_function;
+
+    // Coefficients of lift and drag as a function of angle "t" in
+    // radians.  Should be well defined on [-pi, pi].
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > lift_function;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > drag_function;
+
+    // The chord length of the fan wing cross-section.  For fan blades
+    // with constant cross-section this will be a constant.
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > chord_function;
+
+    // The area swept out by the local fan wing cross-section.  For
+    // cylindrical areas swept out by N fan blades, this is just
+    // pi*r^2*h/N
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > area_swept_function;
+
+    // The angle-of-attack between the fan wing chord line and the fan
+    // velocity vector, in radians.  For fan blades with no "twist"
+    // this will be a constant.
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > aoa_function;
 
     AveragedFan();
   };
 
 } // end namespace block
 
-#endif // GRINS_PENALTY_TURBINE_H
+#endif // GRINS_AVERAGED_FAN_H

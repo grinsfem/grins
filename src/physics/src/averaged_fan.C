@@ -52,23 +52,13 @@ namespace GRINS
 
   void AveragedFan::read_input_options( const GetPot& input )
   {
-    std::string penalty_function =
-      input("Physics/"+velocity_penalty+"/penalty_function",
-        std::string("0"));
-
-    if (penalty_function == "0")
-      this->normal_vector_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->normal_vector_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
-
     std::string base_function =
-      input("Physics/"+velocity_penalty+"/base_velocity",
+      input("Physics/"+averaged_fan+"/base_velocity",
         std::string("0"));
 
-    if (penalty_function == "0" && base_function == "0")
-      std::cout << "Warning! Zero AveragedFan specified!" << std::endl;
+    if (base_function == "0")
+      libmesh_error_msg("Error! Zero AveragedFan specified!" <<
+                        std::endl);
 
     if (base_function == "0")
       this->base_velocity_function.reset
@@ -77,6 +67,69 @@ namespace GRINS
       this->base_velocity_function.reset
         (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
+    std::string vertical_function =
+      input("Physics/"+averaged_fan+"/local_vertical",
+        std::string("0"));
+
+    if (vertical_function == "0")
+      libmesh_error_msg("Warning! Zero LocalVertical specified!" <<
+                        std::endl);
+
+    this->local_vertical_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(vertical_function));
+
+    std::string lift_function_string =
+      input("Physics/"+averaged_fan+"/lift",
+        std::string("0"));
+
+    if (lift_function_string == "0")
+      std::cout << "Warning! Zero lift function specified!" << std::endl;
+
+    this->lift_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(lift_function_string));
+
+    std::string drag_function_string =
+      input("Physics/"+averaged_fan+"/drag",
+        std::string("0"));
+
+    if (drag_function_string == "0")
+      std::cout << "Warning! Zero drag function specified!" << std::endl;
+
+    this->drag_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(drag_function_string));
+
+    std::string chord_function_string =
+      input("Physics/"+averaged_fan+"/chord_length",
+        std::string("0"));
+
+    if (chord_function_string == "0")
+      libmesh_error_msg("Warning! Zero chord function specified!" <<
+                        std::endl);
+
+    this->chord_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(chord_function_string));
+
+    std::string area_function_string =
+      input("Physics/"+averaged_fan+"/area_swept",
+        std::string("0"));
+
+    if (area_function_string == "0")
+      libmesh_error_msg("Warning! Zero area_swept_function specified!" <<
+                        std::endl);
+
+    this->area_swept_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(area_function_string));
+
+    std::string aoa_function_string =
+      input("Physics/"+averaged_fan+"/angle_of_attack",
+        std::string("00000"));
+
+    if (aoa_function_string == "00000")
+      libmesh_error_msg("Warning! No angle-of-attack specified!" <<
+                        std::endl);
+
+    this->aoa_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
   }
 
   void AveragedFan::element_time_derivative( bool compute_jacobian,
@@ -95,35 +148,36 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& u_phi = 
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-    const std::vector<std::vector<libMesh::Real> >& p_phi = 
-      context.get_element_fe(this->_flow_vars.p_var())->get_phi();
-
     const std::vector<libMesh::Point>& u_qpoint = 
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
-    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubMatrix<libMesh::Number> &Kup = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.p_var()); // R_{u},{p}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // R_{p},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // R_{v},{v}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.p_var()); // R_{v},{p}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // R_{p},{v}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number>* Kwp = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number>* Kpw = NULL;
-
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(_flow_vars.p_var()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     if( this->_dim == 3 )
       {
-        Kpw = &context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.w_var()); // R_{p},{w}
-        Kwp = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.p_var()); // R_{w},{p}
+        Kuw = &context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.w_var()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.w_var()); // R_{v},{w}
+
+        Kwu = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.u_var()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.v_var()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.w_var()); // R_{w},{w}
         Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
       }
 
@@ -132,8 +186,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         // Compute the solution & its gradient at the old Newton iterate.
-        libMesh::Number p, u, v;
-        p = context.interior_value(_flow_vars.p_var(), qp);
+        libMesh::Number u, v;
         u = context.interior_value(_flow_vars.u_var(), qp);
         v = context.interior_value(_flow_vars.v_var(), qp);
 
@@ -141,87 +194,93 @@ namespace GRINS
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
 
-        // Velocity discrepancy (current velocity minus base velocity)
-        // normal to constraint plane, scaled by constraint penalty
-        // value
-        libmesh_assert(normal_vector_function.get());
+        // Find base velocity of moving fan at this point
         libmesh_assert(base_velocity_function.get());
 
         libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-        (*normal_vector_function)(u_qpoint[qp], context.time,
-                                  output_vec);
-
-        libMesh::NumberVectorValue U_N(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
-
         (*base_velocity_function)(u_qpoint[qp], context.time,
                                   output_vec);
 
-        libMesh::NumberVectorValue U_B(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
+        const libMesh::NumberVectorValue U_B(output_vec(0),
+                                             output_vec(1),
+                                             output_vec(2));
 
-        libMesh::Real jac = JxW[qp];
+        // Normal in fan velocity direction
+        const libMesh::NumberVectorValue N_B = U_B.unit();
 
-        for (unsigned int i=0; i != n_p_dofs; i++)
+        (*local_vertical_function)(u_qpoint[qp], context.time,
+                                   output_vec);
+
+        // Normal in fan vertical direction
+        const libMesh::NumberVectorValue N_V(output_vec(0),
+                                             output_vec(1),
+                                             output_vec(2));
+
+        // Normal in radial direction
+        const libMesh::NumberVectorValue N_R = N_V.cross(N_B);
+
+        // Fan-wing-plane component of local relative velocity
+        const libMesh::NumberVectorValue U_P = U - (U*N_R)*N_R - U_B;
+
+        // Direction opposing drag
+        const libMesh::NumberVectorValue N_drag = -U_P.unit();
+
+        // Direction opposing lift
+        const libMesh::NumberVectorValue N_lift = N_drag.cross(N_R);
+
+        // "Forward" velocity
+        const libMesh::Number u_fwd = -(U_P * N_B);
+
+        // "Upward" velocity
+        const libMesh::Number u_up = U_P * N_V;
+
+        // Angle WRT fan velocity direction
+        const libMesh::Number part_angle = std::atan2(u_up, u_fwd);
+
+        // Angle WRT fan chord
+        const libMesh::Number angle = part_angle +
+          (*aoa_function)(u_qpoint[qp], context.time);
+
+        const libMesh::Number C_lift  = (*lift_function)(u_qpoint[qp], angle);
+        const libMesh::Number C_drag  = (*drag_function)(u_qpoint[qp], angle);
+
+        const libMesh::Number chord = (*chord_function)(u_qpoint[qp], context.time);
+        const libMesh::Number area  = (*area_swept_function)(u_qpoint[qp], context.time);
+
+        const libMesh::Number v_sq = U_P*U_P;
+
+        const libMesh::Number lift = C_lift / 2 * this->_rho * v_sq * chord / area;
+        const libMesh::Number drag = C_drag / 2 * this->_rho * v_sq * chord / area;
+
+        // Force 
+        const libMesh::NumberVectorValue F = lift * N_lift + drag * N_drag;
+
+        for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fp(i) += jac *
-              (((U-U_B)*U_N)*p_phi[i][qp]);
+            Fu(i) += F(0)*u_phi[i][qp]*JxW[qp];
+            Fv(i) += F(1)*u_phi[i][qp]*JxW[qp];
 
-	    if( compute_jacobian )
+            if (_dim == 3)
+              (*Fw)(i) += F(2)*u_phi[i][qp]*JxW[qp];
+
+            if (compute_jacobian)
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += jac *
-                      ((u_phi[j][qp]*U_N(0))*p_phi[i][qp]);
-                    Kpv(i,j) += jac *
-                      ((u_phi[j][qp]*U_N(1))*p_phi[i][qp]);
-
-                    if( this->_dim == 3 )
+                    Kuu(i,j) += 0*u_phi[i][qp]*JxW[qp];
+                    Kvv(i,j) += 0*u_phi[i][qp]*JxW[qp];
+                    if (_dim == 3)
                       {
-                        (*Kpw)(i,j) += jac *
-                          ((u_phi[j][qp]*U_N(2))*p_phi[i][qp]);
+                        (*Kww)(i,j) += 0*u_phi[i][qp]*JxW[qp];
                       }
-                  }
-              }
-          }
 
-        if (true) // make this optional?
-          {
-            for (unsigned int i=0; i != n_u_dofs; i++)
-              {
-                Fu(i) += jac *
-                  ((u_phi[i][qp]*U_N(0))*p);
-                Fv(i) += jac *
-                  ((u_phi[i][qp]*U_N(1))*p);
-                if( this->_dim == 3 )
-                  {
-                    (*Fw)(i) += jac *
-                      ((u_phi[i][qp]*U_N(2))*p);
-                  }
+                  } // End j dof loop
+              } // End compute_jacobian check
 
-	        if( compute_jacobian )
-                  {
-                    for (unsigned int j=0; j != n_p_dofs; j++)
-                      {
-                        Kup(i,j) += jac *
-                          ((u_phi[i][qp]*U_N(0))*p_phi[j][qp]);
-                        Kvp(i,j) += jac *
-                          ((u_phi[i][qp]*U_N(1))*p_phi[j][qp]);
+          } // End i dof loop
 
-                        if( this->_dim == 3 )
-                          {
-                            (*Kwp)(i,j) += jac *
-                              ((u_phi[i][qp]*U_N(2))*p_phi[j][qp]);
-                          }
-                      }
-                  }
-              }
-          }
       }
-
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AveragedFan::element_time_derivative");
