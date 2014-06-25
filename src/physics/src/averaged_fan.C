@@ -250,8 +250,9 @@ namespace GRINS
 
         const libMesh::Number v_sq = U_P*U_P;
 
-        const libMesh::Number lift = C_lift / 2 * this->_rho * v_sq * chord / area;
-        const libMesh::Number drag = C_drag / 2 * this->_rho * v_sq * chord / area;
+        const libMesh::Number LDfactor = 0.5 * this->_rho * v_sq * chord / area;
+        const libMesh::Number lift = C_lift * LDfactor;
+        const libMesh::Number drag = C_drag * LDfactor;
 
         // Force 
         const libMesh::NumberVectorValue F = lift * N_lift + drag * N_drag;
@@ -266,13 +267,54 @@ namespace GRINS
 
             if (compute_jacobian)
               {
+                // FIXME: Jacobians here are very inexact!
+                // Dropping all AoA dependence on U terms!
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += 0*u_phi[i][qp]*JxW[qp];
-                    Kvv(i,j) += 0*u_phi[i][qp]*JxW[qp];
+                    libMesh::Number UPNR = U_P*N_R;
+                    libMesh::Number
+                      dV2_du = 2 * u_phi[j][qp] *
+                               (U_P(0) - N_R(0)*UPNR);
+                    libMesh::Number
+                      dV2_dv = 2 * u_phi[j][qp] *
+                               (U_P(1) - N_R(1)*UPNR);
+
+                    const libMesh::Number
+                      LDderivfactor = 
+                        (N_lift*C_lift+N_drag*C_drag) *
+                        0.5 * this->_rho * chord / area;
+
+                    Kuu(i,j) += LDderivfactor(0) * dV2_du *
+                                u_phi[i][qp]*JxW[qp];
+
+                    Kuv(i,j) += LDderivfactor(0) * dV2_dv *
+                                u_phi[i][qp]*JxW[qp];
+
+                    Kvu(i,j) += LDderivfactor(1) * dV2_du *
+                                u_phi[i][qp]*JxW[qp];
+
+                    Kvv(i,j) += LDderivfactor(1) * dV2_dv *
+                                u_phi[i][qp]*JxW[qp];
+
                     if (_dim == 3)
                       {
-                        (*Kww)(i,j) += 0*u_phi[i][qp]*JxW[qp];
+                        dV2_dw = 2 * u_phi[j][qp] *
+                                 (U_P(2) - N_R(2)*UPNR);
+
+                        (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw *
+                                       u_phi[i][qp]*JxW[qp];
+
+                        (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw *
+                                       u_phi[i][qp]*JxW[qp];
+
+                        (*Kwu)(i,j) += LDderivfactor(2) * dV2_du *
+                                       u_phi[i][qp]*JxW[qp];
+
+                        (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv *
+                                       u_phi[i][qp]*JxW[qp];
+
+                        (*Kww)(i,j) += LDderivfactor(2) * dV2_dw *
+                                       u_phi[i][qp]*JxW[qp];
                       }
 
                   } // End j dof loop
