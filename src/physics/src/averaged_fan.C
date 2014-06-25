@@ -271,15 +271,15 @@ namespace GRINS
                 // Dropping all AoA dependence on U terms!
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    libMesh::Number UPNR = U_P*N_R;
-                    libMesh::Number
+                    const libMesh::Number UPNR = U_P*N_R;
+                    const libMesh::Number
                       dV2_du = 2 * u_phi[j][qp] *
                                (U_P(0) - N_R(0)*UPNR);
-                    libMesh::Number
+                    const libMesh::Number
                       dV2_dv = 2 * u_phi[j][qp] *
                                (U_P(1) - N_R(1)*UPNR);
 
-                    const libMesh::Number
+                    const libMesh::NumberVectorValue
                       LDderivfactor = 
                         (N_lift*C_lift+N_drag*C_drag) *
                         0.5 * this->_rho * chord / area;
@@ -298,8 +298,9 @@ namespace GRINS
 
                     if (_dim == 3)
                       {
-                        dV2_dw = 2 * u_phi[j][qp] *
-                                 (U_P(2) - N_R(2)*UPNR);
+                        const libMesh::Number
+                          dV2_dw = 2 * u_phi[j][qp] *
+                                   (U_P(2) - N_R(2)*UPNR);
 
                         (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw *
                                        u_phi[i][qp]*JxW[qp];
