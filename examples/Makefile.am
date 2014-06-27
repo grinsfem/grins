@@ -167,6 +167,16 @@ vortex_LDADD = $(LIBGRINS_LIBS)
 EXTRA_DIST += $(vortexex_DATA)
 
 #=======================================================================
+# Averaged Fan Example
+#=======================================================================
+simplefandir = $(prefix)/examples/simple_fan
+simplefan_DATA = $(top_srcdir)/examples/simple_fan/fan.in
+simplefan_SCRIPTS = $(top_builddir)/examples/simple_fan/run.sh
+
+EXTRA_DIST += $(simplefan_DATA)
+
+
+#=======================================================================
 # Laminar Flame Example
 #=======================================================================
 laminarflamedir = $(prefix)/examples/laminar_flame
