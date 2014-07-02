@@ -407,6 +407,7 @@ AC_CONFIG_FILES(examples/velocity_penalty/run.sh,	     [chmod +x examples/veloci
 AC_CONFIG_FILES(examples/convection_cell/run.sh,	     [chmod +x examples/convection_cell/run.sh])
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	             [chmod +x examples/mass_injection/run.sh])
 AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	     [chmod +x examples/rayleigh_taylor/run.sh])
+AC_CONFIG_FILES(examples/simple_fan/run.sh,	             [chmod +x examples/simple_fan/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
 
