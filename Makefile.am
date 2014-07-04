@@ -1,9 +1,14 @@
 include $(top_srcdir)/doxygen/aminclude.am
 
+BUILT_SOURCES   = .license.stamp
+
+CLEANFILES = .license.stamp
+
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
 
 SUBDIRS          = src test doxygen examples
+
 EXTRA_DIST       = README.md CHANGES LICENSE COPYING contrib
 
 AM_DISTCHECK_CONFIGURE_FLAGS = --with-libmesh=$(LIBMESH_PREFIX) --with-boost=$(BOOST_ROOT)
@@ -66,6 +71,21 @@ MAINTAINERCLEANFILES = aclocal.m4                               \
 
 MOSTLYCLEANFILES     = $(DX_CLEANFILES) \
                        docs/lcov
+
+
+#---------------------------------
+# Embedded license header support
+#---------------------------------
+# PB: I'm leaving this here commented out in case the AC_SUBST solution
+#     dies at some point. The below requires GNU make and causes a
+#     an Automake warning (that can be suppressed with -Wno-portability)
+#     so I went for the more general solution instead, but the below
+#     works.
+#STAMPED_FILES  = $(shell find $(top_srcdir)/src -name '*.h' -or -name '*.C')
+
+.license.stamp: $(top_srcdir)/LICENSE
+	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
+	echo 'updated source license headers' >$@
 
 # -------------------------------------------
 # Optional support for code coverage analysis
