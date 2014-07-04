@@ -1,6 +1,3 @@
-BUILT_SOURCES   = .license.stamp
-
-CLEANFILES = .license.stamp
 
 check_PROGRAMS =
 check_PROGRAMS += test_ns_couette_flow_2d_x
@@ -154,7 +151,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 
-CLEANFILES += penalty_poiseuille.exo
+CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
 
 shellfiles_src =
@@ -205,20 +202,6 @@ EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
-
-#---------------------------------
-# Embedded license header support
-#---------------------------------
-# PB: I'm leaving this here commented out in case the AC_SUBST solution
-#     dies at some point. The below requires GNU make and causes a
-#     an Automake warning (that can be suppressed with -Wno-portability)
-#     so I went for the more general solution instead, but the below
-#     works.
-#STAMPED_FILES  = $(shell find $(top_srcdir)/test -name '*.h' -or -name '*.C')
-
-.license.stamp: $(top_srcdir)/LICENSE
-	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
-	echo 'updated source license headers' >$@
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@
