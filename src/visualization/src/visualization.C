@@ -39,6 +39,10 @@
 #include "libmesh/tecplot_io.h"
 #include "libmesh/vtk_io.h"
 
+// POSIX
+#include <sys/stat.h>
+#include <sys/types.h>
+
 namespace GRINS
 {
 
@@ -135,6 +139,16 @@ namespace GRINS
 		  << " using 'unknown' as file prefix since it was not set " 
 		  << std::endl;
       }
+
+    // If we're asked to put files in a subdirectory, let's make sure
+    // it exists
+    if (!mesh.comm().rank())
+      for (std::size_t pos = this->_vis_output_file_prefix.find('/');
+           pos != std::string::npos;
+           pos = this->_vis_output_file_prefix.find('/',++pos))
+        if (mkdir(this->_vis_output_file_prefix.substr(0,pos).c_str(),
+                  0777) != 0 && errno != EEXIST)
+          libmesh_file_error(this->_vis_output_file_prefix.substr(0,pos));
   
     for( std::vector<std::string>::const_iterator format = _output_format.begin();
 	 format != _output_format.end();
