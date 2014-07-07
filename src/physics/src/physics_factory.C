@@ -50,6 +50,8 @@
 #include "grins/low_mach_navier_stokes_braack_stab.h"
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
 #include "grins/low_mach_navier_stokes_vms_stab.h"
+#include "grins/averaged_fan.h"
+#include "grins/velocity_penalty.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
@@ -63,7 +65,6 @@
 #include "grins/antioch_wilke_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
-#include "grins/velocity_penalty.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -155,6 +156,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+      }
+    else if( physics_to_add == averaged_fan )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new AveragedFan(physics_to_add,input));
       }
     else if( physics_to_add == heat_transfer )
       {
