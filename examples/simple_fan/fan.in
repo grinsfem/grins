@@ -27,6 +27,20 @@ pin_pressure = 'true'
 pin_location = '-0.5 -0.5 0.0'
 pin_value = '0.0'
 
+[../AveragedFan]
+
+# omega = 1 rad/s
+
+base_velocity = '{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(-sin(theta))}{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(cos(theta))}{0}'
+
+local_vertical = '{0}{0}{1}'
+
+lift = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,theta*9,sin(2*theta))'
+drag = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,0.005+theta*theta*81/25,1-0.8*cos(2*theta))'
+chord_length = '.2*sqrt(2)'
+area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)}'
+angle_of_attack = '{pi/4}'
+
 # Mesh related options
 [mesh-options]
 mesh_option = 'create_3D_mesh'
