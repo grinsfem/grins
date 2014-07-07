@@ -207,8 +207,11 @@ namespace GRINS
                                              output_vec(1),
                                              output_vec(2));
 
+        const libMesh::Number U_B_size = U_B.size();
+
         // Normal in fan velocity direction
-        const libMesh::NumberVectorValue N_B = U_B.unit();
+        const libMesh::NumberVectorValue N_B = U_B_size ?
+                libMesh::NumberVectorValue(U_B/U_B.size()) : U_B;
 
         (*local_vertical_function)(u_qpoint[qp], context.time,
                                    output_vec);
@@ -224,8 +227,11 @@ namespace GRINS
         // Fan-wing-plane component of local relative velocity
         const libMesh::NumberVectorValue U_P = U - (U*N_R)*N_R - U_B;
 
+        const libMesh::Number U_P_size = U_P.size();
+
         // Direction opposing drag
-        const libMesh::NumberVectorValue N_drag = -U_P.unit();
+        const libMesh::NumberVectorValue N_drag = U_P_size ?
+                libMesh::NumberVectorValue(-U_P/U_P_size) : U_P;
 
         // Direction opposing lift
         const libMesh::NumberVectorValue N_lift = N_drag.cross(N_R);
@@ -237,7 +243,8 @@ namespace GRINS
         const libMesh::Number u_up = U_P * N_V;
 
         // Angle WRT fan velocity direction
-        const libMesh::Number part_angle = std::atan2(u_up, u_fwd);
+        const libMesh::Number part_angle = (u_up || u_fwd) ?
+                std::atan2(u_up, u_fwd) : 0;
 
         // Angle WRT fan chord
         const libMesh::Number angle = part_angle +
