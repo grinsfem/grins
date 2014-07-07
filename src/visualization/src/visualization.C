@@ -40,6 +40,7 @@
 #include "libmesh/vtk_io.h"
 
 // POSIX
+#include <sys/errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
