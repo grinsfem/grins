@@ -38,7 +38,7 @@ local_vertical = '{0}{0}{1}'
 lift = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,theta*9,sin(2*theta))'
 drag = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,0.005+theta*theta*81/25,1-0.8*cos(2*theta))'
 chord_length = '.2*sqrt(2)'
-area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)}'
+area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
 # Mesh related options
@@ -62,7 +62,7 @@ domain_x3_mas = '1.0'
 [unsteady-solver]
 transient = 'true' 
 theta = '1.0'
-n_timesteps = '10000'
+n_timesteps = '200'
 deltat = '0.01'
 
 #Linear and nonlinear solver options
