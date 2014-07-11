@@ -221,8 +221,9 @@ namespace GRINS
                                              output_vec(1),
                                              output_vec(2));
 
-        // Normal in radial direction
-        const libMesh::NumberVectorValue N_R = N_V.cross(N_B);
+        // Normal in radial direction (or opposite radial direction,
+        // for fans turning clockwise!)
+        const libMesh::NumberVectorValue N_R = N_B.cross(N_V);
 
         // Fan-wing-plane component of local relative velocity
         const libMesh::NumberVectorValue U_P = U - (U*N_R)*N_R - U_B;
