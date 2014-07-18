@@ -58,6 +58,9 @@ namespace GRINS
 
   //! temperature
   const std::string T_var_name_default = "T";
+
+  //! fan speed
+  const std::string fan_speed_var_name_default = "fan_speed";
   
   //! Ex field
   const std::string Ex_var_name_default = "Ex";

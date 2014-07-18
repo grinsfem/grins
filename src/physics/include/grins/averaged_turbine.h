@@ -57,6 +57,16 @@ namespace GRINS
 
     ~AveragedTurbine();
 
+    //! Initialization of variables
+    /*!
+      Add turbine_speed variable to system; call base function to
+      initialize Navier-Stokes variables.
+     */
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    //! Sets turbine_speed and velocity variables to be time-evolving
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
     
@@ -68,9 +78,15 @@ namespace GRINS
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
+    VariableIndex fan_speed_var() const { return _fan_speed_var; }
+
   private:
 
-    // Velocity of the moving fan blades as a function of x,y,z
+    // ``Base'' velocity of the moving fan blades as a function of x,y,z
+    //
+    // This velocity will be scaled by the fan_speed variable
+    // during the simulation; values in base_velocity_function should
+    // therefore correspond to a fan speed of 1 radian per second.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
 
     // "Up" direction of fan airflow, as a function of x,y,z
@@ -79,8 +95,29 @@ namespace GRINS
 
     // Coefficients of lift and drag as a function of angle "t" in
     // radians.  Should be well defined on [-pi, pi].
+    //
+    // No, "t" is not time in these functions.
+    // Yes, I'm abusing FunctionBase.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > lift_function;
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > drag_function;
+
+    // Mechanical power output (*including* non-fluid friction
+    // losses!) from the turbine (measured in watts) as a function of
+    // angular velocity turbine speed "t" (measured in rad/s).
+    //
+    // Should probably be carefully defined for t<0 too to avoid
+    // potential unstable startup.
+    //
+    // Should theoretically be useable as power input (negative
+    // values) to model propeller fans instead of turbine fans.
+    //
+    // No, "t" is not time or angle of attack in this function.
+    // Yes, I'm really abusing FunctionBase.
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > power_function;
+
+    // Moment of inertia of the spinning component of the turbine
+    // (measured in kg-m^2)
+    libMesh::Number moment_of_inertia;
 
     // The chord length of the fan wing cross-section.  For fan blades
     // with constant cross-section this will be a constant.
@@ -95,6 +132,10 @@ namespace GRINS
     // velocity vector, in radians.  For fan blades with no "twist"
     // this will be a constant.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > aoa_function;
+
+    VariableIndex _fan_speed_var; /* Index for turbine speed scalar */
+
+    std::string _fan_speed_var_name;
 
     AveragedTurbine();
   };

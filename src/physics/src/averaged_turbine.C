@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/generic_ic_handler.h"
+#include "grins/variable_name_defaults.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -50,6 +51,23 @@ namespace GRINS
   {
     return;
   }
+
+  void AveragedTurbine::init_variables( libMesh::FEMSystem* system )
+  {
+    this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
+                                                libMesh::FIRST,
+                                                libMesh::SCALAR);
+
+    IncompressibleNavierStokesBase::init_variables(system);
+  }
+
+  void AveragedTurbine::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    system->time_evolving(this->fan_speed_var());
+
+    libmesh_not_implemented();
+  }
+
 
   void AveragedTurbine::read_input_options( const GetPot& input )
   {
@@ -131,6 +149,27 @@ namespace GRINS
 
     this->aoa_function.reset
       (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
+
+    std::string power_function_string =
+      input("Physics/"+averaged_turbine+"/power",
+        std::string("0"));
+
+    if (power_function_string == "0")
+      std::cout << "Warning! Zero power function specified!" << std::endl;
+
+    this->power_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(power_function_string));
+
+    moment_of_inertia = input("Physics/"+averaged_turbine+"/moment_of_inertia",
+                              libMesh::Number(0));
+
+    if (!moment_of_inertia)
+      libmesh_error_msg(
+        "Error! Zero AveragedTurbine moment of inertia specified!" <<
+        std::endl);
+
+    _fan_speed_var_name = input("Physics/VariableNames/fan_speed",
+                            fan_speed_var_name_default);
   }
 
   void AveragedTurbine::element_time_derivative( bool compute_jacobian,
