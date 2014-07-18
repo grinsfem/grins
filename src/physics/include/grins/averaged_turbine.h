@@ -119,6 +119,10 @@ namespace GRINS
     // (measured in kg-m^2)
     libMesh::Number moment_of_inertia;
 
+    // Initial speed of the spinning component of the turbine
+    // (measured in rad/s)
+    libMesh::Number initial_speed;
+
     // The chord length of the fan wing cross-section.  For fan blades
     // with constant cross-section this will be a constant.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > chord_function;

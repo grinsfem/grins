@@ -168,6 +168,9 @@ namespace GRINS
         "Error! Zero AveragedTurbine moment of inertia specified!" <<
         std::endl);
 
+    initial_speed = input("Physics/"+averaged_turbine+"/initial_speed",
+                          libMesh::Number(0));
+
     _fan_speed_var_name = input("Physics/VariableNames/fan_speed",
                             fan_speed_var_name_default);
   }
