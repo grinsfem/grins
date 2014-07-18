@@ -65,7 +65,7 @@ namespace GRINS
   {
     system->time_evolving(this->fan_speed_var());
 
-    libmesh_not_implemented();
+    IncompressibleNavierStokesBase::set_time_evolving_vars(system);
   }
 
 
