@@ -1,0 +1,108 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes AveragedFan'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+P_order = 'FIRST'
+
+rho = '1.77'
+mu = '1.846e-1'
+
+# Boundary ids:
+# imin,imax = 3, 1
+# jmin,jmax = 0, 3
+ bc_ids = '0 1 2 3'
+ bc_types = 'no_slip no_slip no_slip no_slip'
+
+pin_pressure = 'true'
+pin_location = '-0.5 -0.5'
+pin_value = '0.0'
+
+[../AveragedFan]
+
+# speed = 1 m/s
+
+base_velocity = '{(abs(x)<.3)*(abs(y)<.1)*-1}{0}{0}'
+
+local_vertical = '{0}{1}{0}'
+
+lift = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,theta*9,sin(2*theta))'
+drag = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,0.005+theta*theta*81/25,1-0.8*cos(2*theta))'
+chord_length = '.2*sqrt(2)'
+area_swept = '{.6*.2/4}' # 4 blade fan
+angle_of_attack = '{pi/4}'
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'create_2D_mesh'
+element_type = 'QUAD9'
+
+mesh_nx1 = '10'
+mesh_nx2 = '10'
+
+domain_x1_min = '-0.5'
+domain_x1_max = '0.5'
+domain_x2_min = '-0.5'
+domain_x2_max = '0.5'
+
+
+# Options for time solvers
+[unsteady-solver]
+transient = 'true' 
+theta = '1.0'
+n_timesteps = '10'
+deltat = '0.01'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = '7' 
+max_linear_iterations = '500'
+
+relative_residual_tolerance = '1.0e-10'
+
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'false'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+
+vis_output_file_prefix = 'output/fan' 
+
+output_residual = 'false'
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'SimpleFan'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
