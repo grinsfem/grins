@@ -81,8 +81,9 @@ namespace GRINS
 
   bool Physics::enabled_on_elem( const libMesh::Elem* elem )
   {
-    // Check if enabled_subdomains flag has been set
-    if( _enabled_subdomains.empty() ) 
+    // Check if enabled_subdomains flag has been set and if we're
+    // looking at a real element (rather than a nonlocal evaluation)
+    if( !elem || _enabled_subdomains.empty() ) 
       return true;
   
     // Check if current physics is enabled on elem
