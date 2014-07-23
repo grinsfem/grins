@@ -114,6 +114,11 @@ namespace GRINS
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context );
     
+    //! Contributions to \f$F(u)\f$ on SCALAR variables which have time varying components.
+    virtual bool nonlocal_time_derivative( bool request_jacobian,
+				           libMesh::DiffContext& context );
+    
+    //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool element_constraint( bool request_jacobian,
 				     libMesh::DiffContext& context );
@@ -122,9 +127,17 @@ namespace GRINS
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context );
     
+    //! Contributions to \f$F(u)\f$ on SCALAR variables which do not have time varying components.
+    virtual bool nonlocal_constraint( bool request_jacobian,
+				      libMesh::DiffContext& context );
+
     //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context );
+
+    //! Contributions to \f$M(u)\dot{u}\f$ on SCALAR variables
+    virtual bool nonlocal_mass_residual( bool request_jacobian,
+				         libMesh::DiffContext& context );
 
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
@@ -155,6 +168,15 @@ namespace GRINS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
 
+    // Useful typedef for refactoring
+    typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &, CachedValues &);
+    typedef void (GRINS::Physics::*CacheFuncType) (const AssemblyContext&, CachedValues &);
+
+    // Refactored residual evaluation implementation
+    bool _general_residual( bool request_jacobian,
+			    libMesh::DiffContext& context,
+                            ResFuncType resfunc,
+                            CacheFuncType cachefunc);
   };
 
   inline

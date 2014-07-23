@@ -145,6 +145,11 @@ namespace GRINS
                                        AssemblyContext& context,
                                        CachedValues& cache );
 
+    //! Time dependent part(s) of physics for scalar variables
+    virtual void nonlocal_time_derivative( bool compute_jacobian,
+                                           AssemblyContext& context,
+                                           CachedValues& cache );
+
     //! Constraint part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
@@ -155,10 +160,20 @@ namespace GRINS
                                   AssemblyContext& context,
                                   CachedValues& cache );
 
+    //! Constraint part(s) of physics for scalar variables
+    virtual void nonlocal_constraint( bool compute_jacobian,
+                                      AssemblyContext& context,
+                                      CachedValues& cache );
+
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
                                 CachedValues& cache );
+
+    //! Mass matrix part(s) for scalar variables.
+    virtual void nonlocal_mass_residual( bool compute_jacobian,
+                                         AssemblyContext& context,
+                                         CachedValues& cache );
 
     void init_bcs( libMesh::FEMSystem* system );
 
@@ -175,14 +190,23 @@ namespace GRINS
     virtual void compute_side_time_derivative_cache( const AssemblyContext& context,
                                                      CachedValues& cache );
 
+    virtual void compute_nonlocal_time_derivative_cache( const AssemblyContext& context,
+                                                         CachedValues& cache );
+
     virtual void compute_element_constraint_cache( const AssemblyContext& context,
                                                    CachedValues& cache );
 
     virtual void compute_side_constraint_cache( const AssemblyContext& context,
                                                 CachedValues& cache );
 
+    virtual void compute_nonlocal_constraint_cache( const AssemblyContext& context,
+                                                    CachedValues& cache );
+
     virtual void compute_mass_residual_cache( const AssemblyContext& context,
                                               CachedValues& cache );
+
+    virtual void compute_nonlocal_mass_residual_cache( const AssemblyContext& context,
+                                                       CachedValues& cache );
 
     virtual void compute_element_cache( const AssemblyContext& context, 
                                         const std::vector<libMesh::Point>& points,

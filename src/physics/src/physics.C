@@ -159,9 +159,15 @@ namespace GRINS
 
   void Physics::compute_side_time_derivative_cache( const AssemblyContext& /*context*/,
 						    CachedValues& /*cache*/ )
-   {
-     return;
-   }
+  {
+    return;
+  }
+
+  void Physics::compute_nonlocal_time_derivative_cache( const AssemblyContext& /*context*/,
+						        CachedValues& /*cache*/ )
+  {
+    return;
+  }
 
   void Physics::compute_element_constraint_cache( const AssemblyContext& /*context*/,
 						  CachedValues& /*cache*/ )
@@ -175,8 +181,20 @@ namespace GRINS
     return;
   }
 
+  void Physics::compute_nonlocal_constraint_cache( const AssemblyContext& /*context*/,
+					           CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
   void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
 					     CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
+  void Physics::compute_nonlocal_mass_residual_cache( const AssemblyContext& /*context*/,
+					              CachedValues& /*cache*/ )
   {
     return;
   }
@@ -202,6 +220,13 @@ namespace GRINS
     return;
   }
 
+  void Physics::nonlocal_time_derivative( bool /*compute_jacobian*/,
+				          AssemblyContext& /*context*/,
+				          CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
   void Physics::element_constraint( bool /*compute_jacobian*/,
 				    AssemblyContext& /*context*/,
 				    CachedValues& /*cache*/ )
@@ -216,9 +241,23 @@ namespace GRINS
     return;
   }   
 
+  void Physics::nonlocal_constraint( bool /*compute_jacobian*/,
+				     AssemblyContext& /*context*/,
+				     CachedValues& /*cache*/ )
+  {
+    return;
+  }   
+
   void Physics::mass_residual( bool /*compute_jacobian*/,
 			       AssemblyContext& /*context*/,
 			       CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
+  void Physics::nonlocal_mass_residual( bool /*compute_jacobian*/,
+			                AssemblyContext& /*context*/,
+			                CachedValues& /*cache*/ )
   {
     return;
   }
