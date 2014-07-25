@@ -53,11 +53,12 @@ int main( int argc, char* argv[] )
 
   std::vector<double> mass_fractions( 5, 0.2 );
 
-  const double M_N2 = 14.00800*2;
-  const double M_O2 = 16.0000*2;
-  const double M_N = 14.00800;
-  const double M_O = 16.0000;
-  const double M_NO = 30.00800;
+  // 1.0e-3 converts from kg/kmol -> kg/mol
+  const double M_N2 = 14.00800*2*1.0e-3;
+  const double M_O2 = 16.0000*2*1.0e-3;
+  const double M_N = 14.00800*1.0e-3;
+  const double M_O = 16.0000*1.0e-3;
+  const double M_NO = 30.00800*1.0e-3;
 
   double R_exact = Antioch::Constants::R_universal<double>()*( mass_fractions[0]/M_N2
                                                                + mass_fractions[1]/M_O2 

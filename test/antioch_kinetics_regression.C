@@ -95,11 +95,11 @@ int main( int argc, char* argv[] )
 
   // Now check against regression values
   std::vector<libMesh::Real> omega_dot_reg(n_species,0.0);
-  omega_dot_reg[0] =  4.3563269373325170e-01;
-  omega_dot_reg[1] = -3.6798048754802180e+00;
-  omega_dot_reg[2] =  2.9971144322942522e+00;
-  omega_dot_reg[3] = -1.8347122381073480e+00;
-  omega_dot_reg[4] =  2.0817699875600622e+00;
+  omega_dot_reg[0] =  4.3561014567820650e-01;
+  omega_dot_reg[1] = -3.6797207156306633e+00;
+  omega_dot_reg[2] =  2.9970582875850726e+00;
+  omega_dot_reg[3] = -1.8346634812051223e+00;
+  omega_dot_reg[4] =  2.0817157635725065e+00;
 
   for( unsigned int s = 0; s < n_species; s++ )
     {
