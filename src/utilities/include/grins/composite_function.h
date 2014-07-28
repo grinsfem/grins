@@ -95,8 +95,8 @@ public:
                            const libMesh::Real time,
                            libMesh::DenseVector<Output>& output)
     {
-      libmesh_assert_equal_to (output.size(),
-			       reverse_index_map.size());
+      libmesh_assert_greater_equal (output.size(),
+			            reverse_index_map.size());
 
       // Necessary in case we have output components not covered by
       // any subfunctions
