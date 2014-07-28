@@ -30,7 +30,10 @@ pin_value = '0.0'
 
 moment_of_inertia = 1
 
-initial_speed = 1
+ic_ids = 0
+ic_variables = fan_speed
+ic_types = constant
+ic_values = 1
 
 power = '0'
 
