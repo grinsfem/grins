@@ -78,6 +78,16 @@ namespace GRINS
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
+    // Mass residual of the turbine itself
+    virtual void nonlocal_mass_residual ( bool compute_jacobian,
+				          AssemblyContext& context,
+				          CachedValues& cache );
+
+    // External torque powering the fan or loading the turbine
+    virtual void nonlocal_time_derivative ( bool compute_jacobian,
+				            AssemblyContext& context,
+				            CachedValues& cache );
+
     VariableIndex fan_speed_var() const { return _fan_speed_var; }
 
   private:
@@ -101,19 +111,21 @@ namespace GRINS
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > lift_function;
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > drag_function;
 
-    // Mechanical power output (*including* non-fluid friction
-    // losses!) from the turbine (measured in watts) as a function of
-    // angular velocity turbine speed "t" (measured in rad/s).
+    // Mechanical driving torque function (*including* non-fluid
+    // friction losses!) on the turbine (signed, measured in
+    // Newton-meters) as a function of angular velocity turbine speed
+    // "t" (measured in rad/s).
     //
-    // Should probably be carefully defined for t<0 too to avoid
+    // Should probably be carefully defined for t>0 and t<0 to avoid
     // potential unstable startup.
     //
-    // Should theoretically be useable as power input (negative
-    // values) to model propeller fans instead of turbine fans.
+    // Should theoretically be useable as power input (same sign as t)
+    // to model propeller fans or output (opposite sign from t) to
+    // model turbine fans.
     //
     // No, "t" is not time or angle of attack in this function.
     // Yes, I'm really abusing FunctionBase.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > power_function;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > torque_function;
 
     // Moment of inertia of the spinning component of the turbine
     // (measured in kg-m^2)

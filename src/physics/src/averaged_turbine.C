@@ -44,6 +44,8 @@ namespace GRINS
   {
     this->read_input_options(input);
 
+    this->_ic_handler = new GenericICHandler( physics_name, input );
+
     return;
   }
 
@@ -150,15 +152,15 @@ namespace GRINS
     this->aoa_function.reset
       (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
 
-    std::string power_function_string =
-      input("Physics/"+averaged_turbine+"/power",
+    std::string torque_function_string =
+      input("Physics/"+averaged_turbine+"/torque",
         std::string("0"));
 
-    if (power_function_string == "0")
-      std::cout << "Warning! Zero power function specified!" << std::endl;
+    if (torque_function_string == "0")
+      std::cout << "Warning! Zero torque function specified!" << std::endl;
 
-    this->power_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(power_function_string));
+    this->torque_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(torque_function_string));
 
     moment_of_inertia = input("Physics/"+averaged_turbine+"/moment_of_inertia",
                               libMesh::Number(0));
@@ -203,15 +205,31 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // R_{v},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // R_{v},{v}
 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kus =
+            context.get_elem_jacobian(_flow_vars.u_var(), _fan_speed_var); // R_{u},{s}
+    libMesh::DenseSubMatrix<libMesh::Number> &Ksu =
+            context.get_elem_jacobian(_fan_speed_var, _flow_vars.u_var()); // R_{s},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvs =
+            context.get_elem_jacobian(_flow_vars.v_var(), _fan_speed_var); // R_{v},{s}
+    libMesh::DenseSubMatrix<libMesh::Number> &Ksv =
+            context.get_elem_jacobian(_fan_speed_var, _flow_vars.v_var()); // R_{s},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kss =
+            context.get_elem_jacobian(_fan_speed_var, _fan_speed_var); // R_{s},{s}
+
     libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
 
+    libMesh::DenseSubMatrix<libMesh::Number>* Ksw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kws = NULL;
+
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
+
+    libMesh::DenseSubVector<libMesh::Number> &Fs = context.get_elem_residual(_fan_speed_var); // R_{s}
 
     if( this->_dim == 3 )
       {
@@ -221,6 +239,10 @@ namespace GRINS
         Kwu = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.u_var()); // R_{w},{u}
         Kwv = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.v_var()); // R_{w},{v}
         Kww = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.w_var()); // R_{w},{w}
+
+        Ksw = &context.get_elem_jacobian(_fan_speed_var, _flow_vars.w_var()); // R_{s},{w}
+        Kws = &context.get_elem_jacobian(_flow_vars.w_var(), _fan_speed_var); // R_{w},{s}
+
         Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
       }
 
@@ -229,9 +251,12 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         // Compute the solution & its gradient at the old Newton iterate.
-        libMesh::Number u, v;
+        libMesh::Number u, v, s;
         u = context.interior_value(_flow_vars.u_var(), qp);
         v = context.interior_value(_flow_vars.v_var(), qp);
+        s = context.interior_value(_fan_speed_var, qp);
+
+std::cerr << "s = " << s << std::endl;
 
         libMesh::NumberVectorValue U(u,v);
         if (_dim == 3)
@@ -245,9 +270,11 @@ namespace GRINS
         (*base_velocity_function)(u_qpoint[qp], context.time,
                                   output_vec);
 
-        const libMesh::NumberVectorValue U_B(output_vec(0),
-                                             output_vec(1),
-                                             output_vec(2));
+        const libMesh::NumberVectorValue U_B_1(output_vec(0),
+                                               output_vec(1),
+                                               output_vec(2));
+
+        const libMesh::NumberVectorValue U_B = U_B_1 * s;
 
         const libMesh::Number U_B_size = U_B.size();
 
@@ -308,6 +335,51 @@ namespace GRINS
         // Force 
         const libMesh::NumberVectorValue F = lift * N_lift + drag * N_drag;
 
+        // Using this dot product to derive torque *depends* on s=1
+        // and U_B_1 corresponding to 1 rad/sec base velocity; this
+        // means that the length of U_B_1 is equal to radius.
+        Fs(0) += U_B_1 * F * JxW[qp];
+        if (compute_jacobian)
+          {
+            // FIXME: Jacobians here are very inexact!
+            // Dropping all AoA dependence on U terms!
+
+            const libMesh::Number
+              LDderivfactor = 
+                (N_lift*C_lift+N_drag*C_drag) *
+                U_B_1 * 0.5 * this->_rho * chord / area *
+                JxW[qp];
+
+            const libMesh::Number
+              dV2_ds = 2 * (U_P * U_B);
+
+            Kss(0,0) += LDderivfactor * dV2_ds;
+
+            for (unsigned int j=0; j != n_u_dofs; j++)
+              {
+                const libMesh::Number UPNR = U_P*N_R;
+                const libMesh::Number
+                  dV2_du = 2 * u_phi[j][qp] *
+                           (U_P(0) - N_R(0)*UPNR);
+                const libMesh::Number
+                  dV2_dv = 2 * u_phi[j][qp] *
+                           (U_P(1) - N_R(1)*UPNR);
+
+                Ksu(0,j) += LDderivfactor * dV2_du;
+                Ksv(0,j) += LDderivfactor * dV2_dv;
+
+                if (_dim == 3)
+                  {
+                    const libMesh::Number
+                      dV2_dw = 2 * u_phi[j][qp] *
+                               (U_P(2) - N_R(2)*UPNR);
+
+                    (*Ksw)(0,j) += LDderivfactor * dV2_dw;
+                  }
+
+              } // End j dof loop
+          }
+
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             Fu(i) += F(0)*u_phi[i][qp]*JxW[qp];
@@ -320,6 +392,21 @@ namespace GRINS
               {
                 // FIXME: Jacobians here are very inexact!
                 // Dropping all AoA dependence on U terms!
+
+                const libMesh::NumberVectorValue
+                  LDderivfactor = 
+                    (N_lift*C_lift+N_drag*C_drag) *
+                    0.5 * this->_rho * chord / area *
+                    u_phi[i][qp]*JxW[qp];
+
+                const libMesh::Number
+                  dV2_ds = 2 * (U_P * U_B);
+
+                Kus(i,0) += LDderivfactor(0) * dV2_ds;
+                Kvs(i,0) += LDderivfactor(1) * dV2_ds;
+                if (_dim == 3)
+                  (*Kws)(i,0) += LDderivfactor(2) * dV2_ds;
+
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     const libMesh::Number UPNR = U_P*N_R;
@@ -330,22 +417,10 @@ namespace GRINS
                       dV2_dv = 2 * u_phi[j][qp] *
                                (U_P(1) - N_R(1)*UPNR);
 
-                    const libMesh::NumberVectorValue
-                      LDderivfactor = 
-                        (N_lift*C_lift+N_drag*C_drag) *
-                        0.5 * this->_rho * chord / area;
-
-                    Kuu(i,j) += LDderivfactor(0) * dV2_du *
-                                u_phi[i][qp]*JxW[qp];
-
-                    Kuv(i,j) += LDderivfactor(0) * dV2_dv *
-                                u_phi[i][qp]*JxW[qp];
-
-                    Kvu(i,j) += LDderivfactor(1) * dV2_du *
-                                u_phi[i][qp]*JxW[qp];
-
-                    Kvv(i,j) += LDderivfactor(1) * dV2_dv *
-                                u_phi[i][qp]*JxW[qp];
+                    Kuu(i,j) += LDderivfactor(0) * dV2_du;
+                    Kuv(i,j) += LDderivfactor(0) * dV2_dv;
+                    Kvu(i,j) += LDderivfactor(1) * dV2_du;
+                    Kvv(i,j) += LDderivfactor(1) * dV2_dv;
 
                     if (_dim == 3)
                       {
@@ -353,20 +428,11 @@ namespace GRINS
                           dV2_dw = 2 * u_phi[j][qp] *
                                    (U_P(2) - N_R(2)*UPNR);
 
-                        (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
-
-                        (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
-
-                        (*Kwu)(i,j) += LDderivfactor(2) * dV2_du *
-                                       u_phi[i][qp]*JxW[qp];
-
-                        (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv *
-                                       u_phi[i][qp]*JxW[qp];
-
-                        (*Kww)(i,j) += LDderivfactor(2) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
+                        (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw;
+                        (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw;
+                        (*Kwu)(i,j) += LDderivfactor(2) * dV2_du;
+                        (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv;
+                        (*Kww)(i,j) += LDderivfactor(2) * dV2_dw;
                       }
 
                   } // End j dof loop
@@ -379,6 +445,75 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AveragedTurbine::element_time_derivative");
 #endif
+
+    return;
+  }
+
+
+
+  void AveragedTurbine::nonlocal_time_derivative(bool compute_jacobian,
+				                 AssemblyContext& context,
+				                 CachedValues& /* cache */ )
+  {
+    libMesh::DenseSubMatrix<libMesh::Number> &Kss =
+            context.get_elem_jacobian(_fan_speed_var, _fan_speed_var); // R_{s},{s}
+
+    libMesh::DenseSubVector<libMesh::Number> &Fs =
+            context.get_elem_residual(_fan_speed_var); // R_{s}
+
+    const std::vector<libMesh::dof_id_type>& dof_indices =
+      context.get_dof_indices(_fan_speed_var);
+
+    const libMesh::Number fan_speed =
+      context.get_system().current_solution(dof_indices[0]);
+
+    const libMesh::Number output_torque =
+      (*torque_function)(libMesh::Point(0), fan_speed);
+
+    Fs(0) += output_torque;
+
+    if (compute_jacobian && context.elem_solution_derivative)
+      {
+        // FIXME: we should replace this FEM with a hook to the AD fparser stuff
+        const libMesh::Number epsilon = 1e-6;
+        const libMesh::Number output_torque_deriv =
+          ((*torque_function)(libMesh::Point(0), fan_speed+epsilon) -
+           (*torque_function)(libMesh::Point(0), fan_speed-epsilon)) / (2*epsilon);
+
+        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
+
+        Kss(0,0) += output_torque_deriv;
+      }
+
+    return;
+  }
+
+
+
+  void AveragedTurbine::nonlocal_mass_residual( bool compute_jacobian,
+				                AssemblyContext& context,
+				                CachedValues& /* cache */ )
+  {
+    libMesh::DenseSubMatrix<libMesh::Number> &Kss =
+            context.get_elem_jacobian(_fan_speed_var, _fan_speed_var); // R_{s},{s}
+
+    libMesh::DenseSubVector<libMesh::Number> &Fs =
+            context.get_elem_residual(_fan_speed_var); // R_{s}
+
+    const std::vector<libMesh::dof_id_type>& dof_indices =
+      context.get_dof_indices(_fan_speed_var);
+
+    const libMesh::Number fan_speed =
+      context.get_system().current_solution(dof_indices[0]);
+
+    Fs(0) += moment_of_inertia * fan_speed;
+
+    if (compute_jacobian && context.elem_solution_derivative)
+      {
+        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
+
+        Kss(0,0) += moment_of_inertia;
+      }
 
     return;
   }
