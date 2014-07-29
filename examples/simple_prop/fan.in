@@ -2,7 +2,7 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes AveragedFan'
+enabled_physics = 'IncompressibleNavierStokes AveragedTurbine'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
