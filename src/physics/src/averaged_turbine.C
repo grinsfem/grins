@@ -256,8 +256,6 @@ namespace GRINS
         v = context.interior_value(_flow_vars.v_var(), qp);
         s = context.interior_value(_fan_speed_var, qp);
 
-std::cerr << "s = " << s << std::endl;
-
         libMesh::NumberVectorValue U(u,v);
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
