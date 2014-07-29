@@ -349,7 +349,7 @@ namespace GRINS
                 JxW[qp];
 
             const libMesh::Number
-              dV2_ds = 2 * (U_P * U_B);
+              dV2_ds = -2 * (U_P * U_B);
 
             Kss(0,0) += LDderivfactor * dV2_ds;
 
@@ -398,7 +398,7 @@ namespace GRINS
                     u_phi[i][qp]*JxW[qp];
 
                 const libMesh::Number
-                  dV2_ds = 2 * (U_P * U_B);
+                  dV2_ds = -2 * (U_P * U_B);
 
                 Kus(i,0) += LDderivfactor(0) * dV2_ds;
                 Kvs(i,0) += LDderivfactor(1) * dV2_ds;
@@ -498,11 +498,10 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fs =
             context.get_elem_residual(_fan_speed_var); // R_{s}
 
-    const std::vector<libMesh::dof_id_type>& dof_indices =
-      context.get_dof_indices(_fan_speed_var);
+    const libMesh::DenseSubVector<libMesh::Number> &Us =
+      context.get_elem_solution(_fan_speed_var);
 
-    const libMesh::Number fan_speed =
-      context.get_system().current_solution(dof_indices[0]);
+    const libMesh::Number& fan_speed = Us(0);
 
     Fs(0) += moment_of_inertia * fan_speed;
 
