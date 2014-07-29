@@ -35,7 +35,7 @@ ic_variables = fan_speed
 ic_types = constant
 ic_values = 1
 
-power = '0'
+torque = '0'
 
 base_velocity = '{(abs(x)<.3)*(abs(y)<.1)*-1}{0}{0}'
 
