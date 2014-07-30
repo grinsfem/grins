@@ -185,10 +185,12 @@ namespace GRINS
                 context.system->get_dof_map().SCALAR_dof_indices
                   (scalar_indices, v);
                 if (scalar_indices.size())
-                  std::cout << scalar_indices[0];
+                  std::cout <<
+                    context.system->current_solution(scalar_indices[0]);
                 for (unsigned int i=1; i < scalar_indices.size();
                      ++i)
-                  std::cout << ", " << scalar_indices[i];
+                  std::cout << ", " <<
+                    context.system->current_solution(scalar_indices[i]);
                 std::cout << '}' << std::endl;
               }
 
