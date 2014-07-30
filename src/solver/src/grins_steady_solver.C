@@ -32,6 +32,7 @@
 
 // libMesh
 #include "libmesh/auto_ptr.h"
+#include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
 
@@ -70,6 +71,24 @@ namespace GRINS
 
     // GRVY timers contained in here (if enabled)
     context.system->solve();
+
+    if ( context.print_scalars )
+      for (unsigned int v=0; v != context.system->n_vars(); ++v)
+        if (context.system->variable(v).type().family ==
+            libMesh::SCALAR)
+          {
+            std::cout << context.system->variable_name(v) <<
+                         " = {";
+            std::vector<libMesh::dof_id_type> scalar_indices;
+            context.system->get_dof_map().SCALAR_dof_indices
+              (scalar_indices, v);
+            if (scalar_indices.size())
+              std::cout << scalar_indices[0];
+            for (unsigned int i=1; i < scalar_indices.size();
+                 ++i)
+              std::cout << ", " << scalar_indices[i];
+            std::cout << '}' << std::endl;
+          }
 
     if( context.output_vis ) 
       {

@@ -112,6 +112,7 @@ namespace GRINS
     bool _print_log_info;
     bool _print_equation_system_info;
     bool _print_qoi;
+    bool _print_scalars;
 
     // Visualization options
     bool _output_vis;

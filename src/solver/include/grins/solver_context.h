@@ -59,6 +59,7 @@ namespace GRINS
     unsigned int timesteps_per_vis;
     bool output_vis;
     bool output_residual;
+    bool print_scalars;
 
     std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
