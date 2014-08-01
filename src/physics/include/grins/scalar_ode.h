@@ -66,6 +66,9 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
+
+    //! Prepare the context for evaluations
+    virtual void init_context( AssemblyContext& context );
     
     // residual and jacobian calculations
 
