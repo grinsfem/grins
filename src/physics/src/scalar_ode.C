@@ -134,11 +134,9 @@ namespace GRINS
     const std::vector<libMesh::dof_id_type>& dof_indices =
       context.get_dof_indices(_scalar_ode_var);
 
-    const libMesh::Number s =
-      context.get_system().current_solution(dof_indices[0]);
-
     const libMesh::Number time_deriv =
-      (*time_deriv_function)(context, libMesh::Point(0), s);
+      (*time_deriv_function)(context, libMesh::Point(0),
+                             context.get_time());
 
 std::cerr << "time_deriv = " << time_deriv << std::endl;
     Fs(0) += time_deriv;
@@ -155,12 +153,12 @@ std::cerr << "time_deriv = " << time_deriv << std::endl;
         Us(0) = s + this->_epsilon;
         libMesh::Number time_deriv_jacobian =
           (*time_deriv_function)(context, libMesh::Point(0),
-                                 context.get_system().time);
+                                 context.get_time());
 
         Us(0) = s - this->_epsilon;
         time_deriv_jacobian -=
           (*time_deriv_function)(context, libMesh::Point(0),
-                                 context.get_system().time);
+                                 context.get_time());
            
         Us(0) = s;
         time_deriv_jacobian /= (2*this->_epsilon);
@@ -189,7 +187,7 @@ std::cerr << "time_deriv = " << time_deriv << std::endl;
 
     const libMesh::Number mass_res =
       (*mass_residual_function)(context, libMesh::Point(0),
-                                context.get_system().time);
+                                context.get_time());
 
 std::cerr << "mass_res = " << mass_res << std::endl;
     Fs(0) += mass_res;
@@ -206,12 +204,12 @@ std::cerr << "mass_res = " << mass_res << std::endl;
         Us(0) = s + this->_epsilon;
         libMesh::Number mass_residual_jacobian =
           (*mass_residual_function)(context, libMesh::Point(0),
-                                    context.get_system().time);
+                                    context.get_time());
 
         Us(0) = s - this->_epsilon;
         mass_residual_jacobian -=
           (*mass_residual_function)(context, libMesh::Point(0),
-                                    context.get_system().time);
+                                    context.get_time());
            
         Us(0) = s;
         mass_residual_jacobian /= (2*this->_epsilon);
@@ -240,7 +238,7 @@ std::cerr << "mass_res = " << mass_res << std::endl;
 
     const libMesh::Number constraint =
       (*constraint_function)(context, libMesh::Point(0),
-                             context.get_system().time);
+                             context.get_time());
 
     Fs(0) += constraint;
 
@@ -256,12 +254,12 @@ std::cerr << "mass_res = " << mass_res << std::endl;
         Us(0) = s + this->_epsilon;
         libMesh::Number constraint_jacobian =
           (*constraint_function)(context, libMesh::Point(0),
-                                 context.get_system().time);
+                                 context.get_time());
 
         Us(0) = s - this->_epsilon;
         constraint_jacobian -=
           (*constraint_function)(context, libMesh::Point(0),
-                                 context.get_system().time);
+                                 context.get_time());
            
         Us(0) = s;
         constraint_jacobian /= (2*this->_epsilon);
