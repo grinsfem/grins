@@ -138,7 +138,6 @@ namespace GRINS
       (*time_deriv_function)(context, libMesh::Point(0),
                              context.get_time());
 
-std::cerr << "time_deriv = " << time_deriv << std::endl;
     Fs(0) += time_deriv;
 
     if (compute_jacobian && context.elem_solution_derivative)
@@ -189,7 +188,6 @@ std::cerr << "time_deriv = " << time_deriv << std::endl;
       (*mass_residual_function)(context, libMesh::Point(0),
                                 context.get_time());
 
-std::cerr << "mass_res = " << mass_res << std::endl;
     Fs(0) += mass_res;
 
     if (compute_jacobian && context.elem_solution_derivative)
