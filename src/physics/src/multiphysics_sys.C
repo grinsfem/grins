@@ -168,8 +168,11 @@ namespace GRINS
     return;
   }
 
-  bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
-						    libMesh::DiffContext& context )
+
+  bool MultiphysicsSystem::_general_residual( bool request_jacobian,
+					      libMesh::DiffContext& context,
+                                              ResFuncType resfunc,
+                                              CacheFuncType cachefunc)
   {
     AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
   
@@ -183,7 +186,8 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	(physics_iter->second)->compute_element_time_derivative_cache( c, cache );
+        // boost::shared_ptr gets confused by operator->*
+	((*(physics_iter->second)).*cachefunc)( c, cache );
       }
 
     // Loop over each physics and compute their contributions
@@ -194,158 +198,94 @@ namespace GRINS
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
-	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
-							     cache );
+	    ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
 	  }
       }
 
     // TODO: Need to think about the implications of this because there might be some
     // TODO: jacobian terms we don't want to compute for efficiency reasons
     return compute_jacobian;
+  }
+
+
+  bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
+						    libMesh::DiffContext& context )
+  {
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::element_time_derivative,
+       &GRINS::Physics::compute_element_time_derivative_cache);
   }
 
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
 						 libMesh::DiffContext& context )
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::side_time_derivative,
+       &GRINS::Physics::compute_side_time_derivative_cache);
+  }
 
-    bool compute_jacobian = true;
-    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
-
-    CachedValues cache;
-
-    // Now compute cache for this element
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->compute_side_time_derivative_cache( c, cache );
-      }
-
-    // Loop over each physics and compute their contributions
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    (physics_iter->second)->side_time_derivative( compute_jacobian, c,
-							  cache );
-	  }
-      }
-
-    // TODO: Need to think about the implications of this because there might be some
-    // TODO: jacobian terms we don't want to compute for efficiency reasons
-    return compute_jacobian;
+  bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,
+						     libMesh::DiffContext& context )
+  {
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::nonlocal_time_derivative,
+       &GRINS::Physics::compute_nonlocal_time_derivative_cache);
   }
 
   bool MultiphysicsSystem::element_constraint( bool request_jacobian,
 					       libMesh::DiffContext& context )
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
-
-    bool compute_jacobian = true;
-    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
-
-    CachedValues cache;
-
-    // Now compute cache for this element
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->compute_element_constraint_cache( c, cache );
-      }
-
-    // Loop over each physics and compute their contributions
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    (physics_iter->second)->element_constraint( compute_jacobian, c,
-							cache);
-	  }
-      }
-
-    // TODO: Need to think about the implications of this because there might be some
-    // TODO: jacobian terms we don't want to compute for efficiency reasons
-    return compute_jacobian;
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::element_constraint,
+       &GRINS::Physics::compute_element_constraint_cache);
   }
 
   bool MultiphysicsSystem::side_constraint( bool request_jacobian,
 					    libMesh::DiffContext& context )
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::side_constraint,
+       &GRINS::Physics::compute_side_constraint_cache);
+  }
 
-    bool compute_jacobian = true;
-    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
-
-    CachedValues cache;
-
-    // Now compute cache for this element
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->compute_side_constraint_cache( c, cache );
-      }
-
-    // Loop over each physics and compute their contributions
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    (physics_iter->second)->side_constraint( compute_jacobian, c,
-						     cache);
-	  }
-      }
-
-    // TODO: Need to think about the implications of this because there might be some
-    // TODO: jacobian terms we don't want to compute for efficiency reasons
-    return compute_jacobian;
+  bool MultiphysicsSystem::nonlocal_constraint( bool request_jacobian,
+					        libMesh::DiffContext& context )
+  {
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::nonlocal_constraint,
+       &GRINS::Physics::compute_nonlocal_constraint_cache);
   }
 
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
 					  libMesh::DiffContext& context )
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::mass_residual,
+       &GRINS::Physics::compute_mass_residual_cache);
+  }
 
-    bool compute_jacobian = true;
-    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
-
-    CachedValues cache;
-
-    // Now compute cache for this element
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->compute_mass_residual_cache( c, cache );
-      }
-
-    // Loop over each physics and compute their contributions
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    (physics_iter->second)->mass_residual( compute_jacobian, c,
-						   cache);
-	  }
-      }
-
-    // TODO: Need to think about the implications of this because there might be some
-    // TODO: jacobian terms we don't want to compute for efficiency reasons
-    return compute_jacobian;
+  bool MultiphysicsSystem::nonlocal_mass_residual( bool request_jacobian,
+					           libMesh::DiffContext& context )
+  {
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::nonlocal_mass_residual,
+       &GRINS::Physics::compute_nonlocal_mass_residual_cache);
   }
 
   std::tr1::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )

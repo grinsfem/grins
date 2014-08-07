@@ -333,8 +333,10 @@ AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
+AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
 AC_CONFIG_FILES(test/test_dirichlet_fem.sh,                               [chmod +x test/test_dirichlet_fem.sh])
 AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod +x test/test_dirichlet_nan.sh])
+AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])
 AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,                   [chmod +x test/test_axi_thermally_driven_flow.sh])
 AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,                         [chmod +x test/test_axi_ns_con_cyl_flow.sh])
 AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                               [chmod +x test/test_vorticity_qoi.sh])
@@ -409,6 +411,7 @@ AC_CONFIG_FILES(examples/convection_cell/run.sh,	     [chmod +x examples/convect
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	             [chmod +x examples/mass_injection/run.sh])
 AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	     [chmod +x examples/rayleigh_taylor/run.sh])
 AC_CONFIG_FILES(examples/simple_fan/run.sh,	             [chmod +x examples/simple_fan/run.sh])
+AC_CONFIG_FILES(examples/simple_prop/run.sh,	             [chmod +x examples/simple_prop/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
 

@@ -81,8 +81,9 @@ namespace GRINS
 
   bool Physics::enabled_on_elem( const libMesh::Elem* elem )
   {
-    // Check if enabled_subdomains flag has been set
-    if( _enabled_subdomains.empty() ) 
+    // Check if enabled_subdomains flag has been set and if we're
+    // looking at a real element (rather than a nonlocal evaluation)
+    if( !elem || _enabled_subdomains.empty() ) 
       return true;
   
     // Check if current physics is enabled on elem
@@ -159,9 +160,15 @@ namespace GRINS
 
   void Physics::compute_side_time_derivative_cache( const AssemblyContext& /*context*/,
 						    CachedValues& /*cache*/ )
-   {
-     return;
-   }
+  {
+    return;
+  }
+
+  void Physics::compute_nonlocal_time_derivative_cache( const AssemblyContext& /*context*/,
+						        CachedValues& /*cache*/ )
+  {
+    return;
+  }
 
   void Physics::compute_element_constraint_cache( const AssemblyContext& /*context*/,
 						  CachedValues& /*cache*/ )
@@ -175,8 +182,20 @@ namespace GRINS
     return;
   }
 
+  void Physics::compute_nonlocal_constraint_cache( const AssemblyContext& /*context*/,
+					           CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
   void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
 					     CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
+  void Physics::compute_nonlocal_mass_residual_cache( const AssemblyContext& /*context*/,
+					              CachedValues& /*cache*/ )
   {
     return;
   }
@@ -202,6 +221,13 @@ namespace GRINS
     return;
   }
 
+  void Physics::nonlocal_time_derivative( bool /*compute_jacobian*/,
+				          AssemblyContext& /*context*/,
+				          CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
   void Physics::element_constraint( bool /*compute_jacobian*/,
 				    AssemblyContext& /*context*/,
 				    CachedValues& /*cache*/ )
@@ -216,9 +242,23 @@ namespace GRINS
     return;
   }   
 
+  void Physics::nonlocal_constraint( bool /*compute_jacobian*/,
+				     AssemblyContext& /*context*/,
+				     CachedValues& /*cache*/ )
+  {
+    return;
+  }   
+
   void Physics::mass_residual( bool /*compute_jacobian*/,
 			       AssemblyContext& /*context*/,
 			       CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
+  void Physics::nonlocal_mass_residual( bool /*compute_jacobian*/,
+			                AssemblyContext& /*context*/,
+			                CachedValues& /*cache*/ )
   {
     return;
   }

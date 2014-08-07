@@ -51,6 +51,8 @@
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
 #include "grins/low_mach_navier_stokes_vms_stab.h"
 #include "grins/averaged_fan.h"
+#include "grins/averaged_turbine.h"
+#include "grins/scalar_ode.h"
 #include "grins/velocity_penalty.h"
 #include "grins/grins_physics_names.h"
 
@@ -161,6 +163,16 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new AveragedFan(physics_to_add,input));
+      }
+    else if( physics_to_add == averaged_turbine )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new AveragedTurbine(physics_to_add,input));
+      }
+    else if( physics_to_add == scalar_ode )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new ScalarODE(physics_to_add,input));
       }
     else if( physics_to_add == heat_transfer )
       {

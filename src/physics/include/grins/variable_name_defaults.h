@@ -58,6 +58,12 @@ namespace GRINS
 
   //! temperature
   const std::string T_var_name_default = "T";
+
+  //! fan speed
+  const std::string fan_speed_var_name_default = "fan_speed";
+  
+  //! arbitrary scalar ODE variable name
+  const std::string scalar_ode_var_name_default = "scalar_var";
   
   //! Ex field
   const std::string Ex_var_name_default = "Ex";
