@@ -101,6 +101,7 @@ system_name = 'SimpleFan'
 print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
+print_scalars = 'true'
 solver_verbose = 'true'
 solver_quiet = 'false'
 

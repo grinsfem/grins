@@ -336,7 +336,11 @@ namespace GRINS
         // Using this dot product to derive torque *depends* on s=1
         // and U_B_1 corresponding to 1 rad/sec base velocity; this
         // means that the length of U_B_1 is equal to radius.
-        Fs(0) += U_B_1 * F * JxW[qp];
+
+        // F is the force on the air, so *negative* F is the force on
+        // the turbine.
+        Fs(0) -= U_B_1 * F * JxW[qp];
+
         if (compute_jacobian)
           {
             // FIXME: Jacobians here are very inexact!
@@ -344,7 +348,7 @@ namespace GRINS
 
             const libMesh::Number
               LDderivfactor = 
-                (N_lift*C_lift+N_drag*C_drag) *
+                -(N_lift*C_lift+N_drag*C_drag) *
                 U_B_1 * 0.5 * this->_rho * chord / area *
                 JxW[qp];
 
