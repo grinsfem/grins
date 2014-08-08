@@ -370,7 +370,7 @@ namespace GRINS
 
             const libMesh::Number angle_derivfactor =
               v_sq ?
-              (N_lift * d_C_lift_d_angle +
+              -(N_lift * d_C_lift_d_angle +
                N_drag * d_C_drag_d_angle) *
               U_B_1 * LDfactor *
               JxW[qp] : 0;
