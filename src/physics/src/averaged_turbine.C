@@ -369,17 +369,20 @@ namespace GRINS
             Kss(0,0) += LDderivfactor * dV2_ds;
 
             const libMesh::Number angle_derivfactor =
+              v_sq ?
               (N_lift * d_C_lift_d_angle +
                N_drag * d_C_drag_d_angle) *
               U_B_1 * LDfactor *
-              JxW[qp];
+              JxW[qp] : 0;
 
-            Kss(0,0) += angle_derivfactor *
-              (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq;
+            if (v_sq)
+              Kss(0,0) += angle_derivfactor *
+                (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq;
 
-            const libMesh::NumberVectorValue
-              d_angle_dU = (u_fwd * N_V -
-                            u_up * N_B)/v_sq;
+            const libMesh::NumberVectorValue d_angle_dU = v_sq ?
+                (u_fwd * N_V -
+                 u_up * N_B)/v_sq :
+                libMesh::NumberVectorValue(0);
 
             for (unsigned int j=0; j != n_u_dofs; j++)
               {
@@ -393,14 +396,17 @@ namespace GRINS
                 Ksu(0,j) += LDderivfactor * dV2_du;
                 Ksv(0,j) += LDderivfactor * dV2_dv;
 
-                const libMesh::Number
-                  d_angle_du = d_angle_dU(0) * u_phi[j][qp];
+                if (v_sq)
+                  {
+                    const libMesh::Number
+                      d_angle_du = d_angle_dU(0) * u_phi[j][qp];
 
-                const libMesh::Number
-                  d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
+                    const libMesh::Number
+                      d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
 
-                Ksu(0,j) += angle_derivfactor * d_angle_du;
-                Ksv(0,j) += angle_derivfactor * d_angle_dv;
+                    Ksu(0,j) += angle_derivfactor * d_angle_du;
+                    Ksv(0,j) += angle_derivfactor * d_angle_dv;
+                  }
 
                 if (_dim == 3)
                   {
@@ -410,10 +416,13 @@ namespace GRINS
 
                     (*Ksw)(0,j) += LDderivfactor * dV2_dw;
 
-                    const libMesh::Number
-                      d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
+                    if (v_sq)
+                      {
+                        const libMesh::Number
+                          d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
 
-                    (*Ksw)(0,j) += angle_derivfactor * d_angle_dw;
+                        (*Ksw)(0,j) += angle_derivfactor * d_angle_dw;
+                      }
                   }
 
               } // End j dof loop
@@ -442,21 +451,27 @@ namespace GRINS
 
                 const libMesh::NumberVectorValue
                   angle_derivfactor =
+                    v_sq ?
                     (N_lift * d_C_lift_d_angle +
                      N_drag * d_C_drag_d_angle) *
-                    (LDfactor * u_phi[i][qp]*JxW[qp]);
+                    (LDfactor * u_phi[i][qp]*JxW[qp]) :
+                    libMesh::NumberVectorValue(0);
 
-                const libMesh::Number d_angle_ds =
-                  (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq;
+                const libMesh::Number d_angle_ds = v_sq ?
+                  (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq : 0;
 
-                Kus(i,0) += angle_derivfactor(0) * d_angle_ds;
-                Kvs(i,0) += angle_derivfactor(1) * d_angle_ds;
-                if (_dim == 3)
-                  (*Kws)(i,0) += angle_derivfactor(2) * d_angle_ds;
+                if (v_sq)
+                  {
+                    Kus(i,0) += angle_derivfactor(0) * d_angle_ds;
+                    Kvs(i,0) += angle_derivfactor(1) * d_angle_ds;
+                    if (_dim == 3)
+                      (*Kws)(i,0) += angle_derivfactor(2) * d_angle_ds;
+                  }
 
                 const libMesh::NumberVectorValue
-                  d_angle_dU = (u_fwd * N_V -
-                                u_up * N_B)/v_sq;
+                  d_angle_dU = v_sq ?
+                    (u_fwd * N_V - u_up * N_B)/v_sq :
+                    libMesh::NumberVectorValue(0);
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
@@ -472,16 +487,31 @@ namespace GRINS
                     Kvu(i,j) += LDderivfactor(1) * dV2_du;
                     Kvv(i,j) += LDderivfactor(1) * dV2_dv;
 
-                    const libMesh::Number
-                      d_angle_du = d_angle_dU(0) * u_phi[j][qp];
+                    if (v_sq)
+                      {
+                        const libMesh::Number
+                          d_angle_du = d_angle_dU(0) * u_phi[j][qp];
 
-                    const libMesh::Number
-                      d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
+                        const libMesh::Number
+                          d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
 
-                    Kuu(i,j) += angle_derivfactor(0) * d_angle_du;
-                    Kuv(i,j) += angle_derivfactor(0) * d_angle_dv;
-                    Kvu(i,j) += angle_derivfactor(1) * d_angle_du;
-                    Kvv(i,j) += angle_derivfactor(1) * d_angle_dv;
+                        Kuu(i,j) += angle_derivfactor(0) * d_angle_du;
+                        Kuv(i,j) += angle_derivfactor(0) * d_angle_dv;
+                        Kvu(i,j) += angle_derivfactor(1) * d_angle_du;
+                        Kvv(i,j) += angle_derivfactor(1) * d_angle_dv;
+
+                        if (_dim == 3)
+                          {
+                            const libMesh::Number
+                              d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
+
+                            (*Kuw)(i,j) += angle_derivfactor(0) * d_angle_dw;
+                            (*Kvw)(i,j) += angle_derivfactor(1) * d_angle_dw;
+                            (*Kwu)(i,j) += angle_derivfactor(2) * d_angle_du;
+                            (*Kwv)(i,j) += angle_derivfactor(2) * d_angle_dv;
+                            (*Kww)(i,j) += angle_derivfactor(2) * d_angle_dw;
+                          }
+                      }
 
                     if (_dim == 3)
                       {
@@ -489,20 +519,11 @@ namespace GRINS
                           dV2_dw = 2 * u_phi[j][qp] *
                                    (U_P(2) - N_R(2)*UPNR);
 
-                        const libMesh::Number
-                          d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
-
                         (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw;
                         (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw;
                         (*Kwu)(i,j) += LDderivfactor(2) * dV2_du;
                         (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv;
                         (*Kww)(i,j) += LDderivfactor(2) * dV2_dw;
-
-                        (*Kuw)(i,j) += angle_derivfactor(0) * d_angle_dw;
-                        (*Kvw)(i,j) += angle_derivfactor(1) * d_angle_dw;
-                        (*Kwu)(i,j) += angle_derivfactor(2) * d_angle_du;
-                        (*Kwv)(i,j) += angle_derivfactor(2) * d_angle_dv;
-                        (*Kww)(i,j) += angle_derivfactor(2) * d_angle_dw;
                       }
 
                   } // End j dof loop
