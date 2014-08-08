@@ -321,12 +321,30 @@ namespace GRINS
         const libMesh::Number C_lift  = (*lift_function)(u_qpoint[qp], angle);
         const libMesh::Number C_drag  = (*drag_function)(u_qpoint[qp], angle);
 
+        const libMesh::Number d_C_lift_d_angle = compute_jacobian ? 
+          ((*lift_function)(u_qpoint[qp], angle+libMesh::TOLERANCE) -
+           (*lift_function)(u_qpoint[qp], angle-libMesh::TOLERANCE)) / 
+          (2 * libMesh::TOLERANCE) :
+           0;
+        const libMesh::Number d_C_drag_d_angle = compute_jacobian ? 
+          ((*drag_function)(u_qpoint[qp], angle+libMesh::TOLERANCE) -
+           (*drag_function)(u_qpoint[qp], angle-libMesh::TOLERANCE)) / 
+          (2 * libMesh::TOLERANCE) :
+           0;
+
         const libMesh::Number chord = (*chord_function)(u_qpoint[qp], context.time);
         const libMesh::Number area  = (*area_swept_function)(u_qpoint[qp], context.time);
 
         const libMesh::Number v_sq = U_P*U_P;
 
-        const libMesh::Number LDfactor = 0.5 * this->_rho * v_sq * chord / area;
+        const libMesh::Number dV2_ds = compute_jacobian ?
+          -2 * (U_P * U_B) : 0;
+        const libMesh::Number UPNR = compute_jacobian ?
+          U_P*N_R : 0;
+
+        const libMesh::Number half_rho_chord_over_area =
+          0.5 * this->_rho * chord / area;
+        const libMesh::Number LDfactor = half_rho_chord_over_area * v_sq;
         const libMesh::Number lift = C_lift * LDfactor;
         const libMesh::Number drag = C_drag * LDfactor;
 
@@ -343,23 +361,28 @@ namespace GRINS
 
         if (compute_jacobian)
           {
-            // FIXME: Jacobians here are very inexact!
-            // Dropping all AoA dependence on U terms!
-
-            const libMesh::Number
-              LDderivfactor = 
+            const libMesh::Number LDderivfactor = 
                 -(N_lift*C_lift+N_drag*C_drag) *
-                U_B_1 * 0.5 * this->_rho * chord / area *
+                U_B_1 * half_rho_chord_over_area *
                 JxW[qp];
-
-            const libMesh::Number
-              dV2_ds = -2 * (U_P * U_B);
 
             Kss(0,0) += LDderivfactor * dV2_ds;
 
+            const libMesh::Number angle_derivfactor =
+              (N_lift * d_C_lift_d_angle +
+               N_drag * d_C_drag_d_angle) *
+              U_B_1 * LDfactor *
+              JxW[qp];
+
+            Kss(0,0) += angle_derivfactor *
+              (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq;
+
+            const libMesh::NumberVectorValue
+              d_angle_dU = (u_fwd * N_V -
+                            u_up * N_B)/v_sq;
+
             for (unsigned int j=0; j != n_u_dofs; j++)
               {
-                const libMesh::Number UPNR = U_P*N_R;
                 const libMesh::Number
                   dV2_du = 2 * u_phi[j][qp] *
                            (U_P(0) - N_R(0)*UPNR);
@@ -370,6 +393,15 @@ namespace GRINS
                 Ksu(0,j) += LDderivfactor * dV2_du;
                 Ksv(0,j) += LDderivfactor * dV2_dv;
 
+                const libMesh::Number
+                  d_angle_du = d_angle_dU(0) * u_phi[j][qp];
+
+                const libMesh::Number
+                  d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
+
+                Ksu(0,j) += angle_derivfactor * d_angle_du;
+                Ksv(0,j) += angle_derivfactor * d_angle_dv;
+
                 if (_dim == 3)
                   {
                     const libMesh::Number
@@ -377,6 +409,11 @@ namespace GRINS
                                (U_P(2) - N_R(2)*UPNR);
 
                     (*Ksw)(0,j) += LDderivfactor * dV2_dw;
+
+                    const libMesh::Number
+                      d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
+
+                    (*Ksw)(0,j) += angle_derivfactor * d_angle_dw;
                   }
 
               } // End j dof loop
@@ -392,26 +429,37 @@ namespace GRINS
 
             if (compute_jacobian)
               {
-                // FIXME: Jacobians here are very inexact!
-                // Dropping all AoA dependence on U terms!
-
                 const libMesh::NumberVectorValue
                   LDderivfactor = 
                     (N_lift*C_lift+N_drag*C_drag) *
-                    0.5 * this->_rho * chord / area *
-                    u_phi[i][qp]*JxW[qp];
-
-                const libMesh::Number
-                  dV2_ds = -2 * (U_P * U_B);
+                    (half_rho_chord_over_area *
+                     u_phi[i][qp]*JxW[qp]);
 
                 Kus(i,0) += LDderivfactor(0) * dV2_ds;
                 Kvs(i,0) += LDderivfactor(1) * dV2_ds;
                 if (_dim == 3)
                   (*Kws)(i,0) += LDderivfactor(2) * dV2_ds;
 
+                const libMesh::NumberVectorValue
+                  angle_derivfactor =
+                    (N_lift * d_C_lift_d_angle +
+                     N_drag * d_C_drag_d_angle) *
+                    (LDfactor * u_phi[i][qp]*JxW[qp]);
+
+                const libMesh::Number d_angle_ds =
+                  (u_up * (U_B_1*N_B) - u_fwd * (U_B_1*N_V))/v_sq;
+
+                Kus(i,0) += angle_derivfactor(0) * d_angle_ds;
+                Kvs(i,0) += angle_derivfactor(1) * d_angle_ds;
+                if (_dim == 3)
+                  (*Kws)(i,0) += angle_derivfactor(2) * d_angle_ds;
+
+                const libMesh::NumberVectorValue
+                  d_angle_dU = (u_fwd * N_V -
+                                u_up * N_B)/v_sq;
+
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    const libMesh::Number UPNR = U_P*N_R;
                     const libMesh::Number
                       dV2_du = 2 * u_phi[j][qp] *
                                (U_P(0) - N_R(0)*UPNR);
@@ -424,17 +472,37 @@ namespace GRINS
                     Kvu(i,j) += LDderivfactor(1) * dV2_du;
                     Kvv(i,j) += LDderivfactor(1) * dV2_dv;
 
+                    const libMesh::Number
+                      d_angle_du = d_angle_dU(0) * u_phi[j][qp];
+
+                    const libMesh::Number
+                      d_angle_dv = d_angle_dU(1) * u_phi[j][qp];
+
+                    Kuu(i,j) += angle_derivfactor(0) * d_angle_du;
+                    Kuv(i,j) += angle_derivfactor(0) * d_angle_dv;
+                    Kvu(i,j) += angle_derivfactor(1) * d_angle_du;
+                    Kvv(i,j) += angle_derivfactor(1) * d_angle_dv;
+
                     if (_dim == 3)
                       {
                         const libMesh::Number
                           dV2_dw = 2 * u_phi[j][qp] *
                                    (U_P(2) - N_R(2)*UPNR);
 
+                        const libMesh::Number
+                          d_angle_dw = d_angle_dU(2) * u_phi[j][qp];
+
                         (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw;
                         (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw;
                         (*Kwu)(i,j) += LDderivfactor(2) * dV2_du;
                         (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv;
                         (*Kww)(i,j) += LDderivfactor(2) * dV2_dw;
+
+                        (*Kuw)(i,j) += angle_derivfactor(0) * d_angle_dw;
+                        (*Kvw)(i,j) += angle_derivfactor(1) * d_angle_dw;
+                        (*Kwu)(i,j) += angle_derivfactor(2) * d_angle_du;
+                        (*Kwv)(i,j) += angle_derivfactor(2) * d_angle_dv;
+                        (*Kww)(i,j) += angle_derivfactor(2) * d_angle_dw;
                       }
 
                   } // End j dof loop
