@@ -96,15 +96,11 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& u_phi = 
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-    const std::vector<std::vector<libMesh::Real> >& p_phi = 
-      context.get_element_fe(this->_flow_vars.p_var())->get_phi();
-
     const std::vector<libMesh::Point>& u_qpoint = 
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
-    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
 
     // The subvectors and submatrices we need to fill:
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // R_{u},{u}
@@ -137,7 +133,7 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        // Compute the solution & its gradient at the old Newton iterate.
+        // Compute the solution at the old Newton iterate.
         libMesh::Number u, v;
         u = context.interior_value(_flow_vars.u_var(), qp);
         v = context.interior_value(_flow_vars.v_var(), qp);

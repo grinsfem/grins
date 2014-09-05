@@ -53,6 +53,7 @@
 #include "grins/averaged_fan.h"
 #include "grins/averaged_turbine.h"
 #include "grins/scalar_ode.h"
+#include "grins/velocity_drag.h"
 #include "grins/velocity_penalty.h"
 #include "grins/grins_physics_names.h"
 
@@ -153,6 +154,11 @@ namespace GRINS
       {
         physics_list[physics_to_add] = 
           PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization(physics_to_add,input) );
+      }
+    else if( physics_to_add == velocity_drag )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new VelocityDrag(physics_to_add,input));
       }
     else if( physics_to_add == velocity_penalty )
       {
