@@ -47,6 +47,10 @@ namespace GRINS
       _output_adjoint_sol( input("MeshAdaptivity/output_adjoint_sol", false) ),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
+      _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),
+      _edge_level_mismatch_limit( input("MeshAdaptivity/edge_level_mismatch_limit", 0 ) ),
+      _face_level_mismatch_limit( input("MeshAdaptivity/face_level_mismatch_limit", 1 ) ),
+      _enforce_mismatch_limit_prior_to_refinement( input("MeshAdaptivity/enforce_mismatch_limit_prior_to_refinement", false ) ),
       _do_adjoint_solve(false),
       _refinement_type(INVALID),
       _mesh_refinement(NULL)
@@ -72,6 +76,10 @@ namespace GRINS
     _mesh_refinement->refine_fraction() = _refine_fraction;
     _mesh_refinement->coarsen_fraction() = _coarsen_fraction;  
     _mesh_refinement->coarsen_threshold() = _coarsen_threshold;
+    _mesh_refinement->node_level_mismatch_limit() = _node_level_mismatch_limit;
+    _mesh_refinement->edge_level_mismatch_limit() = _edge_level_mismatch_limit;
+    _mesh_refinement->face_level_mismatch_limit() = _face_level_mismatch_limit;
+    _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_enforce_mismatch_limit_prior_to_refinement);
 
     return; 
   }
@@ -174,7 +182,7 @@ namespace GRINS
               << "==========================================================" << std::endl;
 
     // For now, we just check the norm
-    if( error_estimate <= _absolute_global_tolerance )
+    if( std::fabs(error_estimate) <= _absolute_global_tolerance )
       {
         converged = true;
       }

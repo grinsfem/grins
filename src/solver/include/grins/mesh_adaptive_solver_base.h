@@ -76,6 +76,11 @@ namespace GRINS
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
+    unsigned int _node_level_mismatch_limit;
+    unsigned int _edge_level_mismatch_limit;
+    unsigned int _face_level_mismatch_limit;
+    bool _enforce_mismatch_limit_prior_to_refinement;
+
     bool _do_adjoint_solve;
 
     RefinementFlaggingType _refinement_type;
