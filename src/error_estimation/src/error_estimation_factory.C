@@ -27,6 +27,7 @@
 
 // libMesh
 #include "libmesh/adjoint_residual_error_estimator.h"
+#include "libmesh/adjoint_refinement_estimator.h"
 #include "libmesh/getpot.h"
 #include "libmesh/patch_recovery_error_estimator.h"
 #include "libmesh/qoi_set.h"
@@ -97,6 +98,21 @@ namespace GRINS
         break;
 
       case(ADJOINT_REFINEMENT):
+        {
+          error_estimator.reset( new libMesh::AdjointRefinementEstimator );
+
+          libMesh::AdjointRefinementEstimator*
+            adjoint_error_estimator =
+              libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>
+                ( error_estimator.get() );
+
+          adjoint_error_estimator->qoi_set() = qoi_set;
+
+          adjoint_error_estimator->number_h_refinements = 1;
+          adjoint_error_estimator->number_p_refinements = 0;
+        }
+        break;
+
       case(WEIGHTED_PATCH_RECOVERY):
       case(UNIFORM_REFINEMENT):
         {

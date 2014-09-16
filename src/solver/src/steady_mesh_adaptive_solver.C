@@ -63,7 +63,7 @@ namespace GRINS
     libMesh::MeshBase& mesh = context.equation_system->get_mesh();
     this->build_mesh_refinement( mesh );
 
-    // This output cannot be toggled in the input file.
+    /*! \todo This output cannot be toggled in the input file, but it should be able to be. */
     std::cout << "==========================================================" << std::endl
               << "Performing " << this->_max_refinement_steps << " adaptive refinements" << std::endl
               << "==========================================================" << std::endl;
