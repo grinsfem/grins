@@ -148,7 +148,7 @@ namespace GRINS
   inline
   unsigned int AntiochChemistry::species_index( const std::string& species_name ) const
   {
-    return _antioch_gas->active_species_name_map().find(species_name)->second;
+    return _antioch_gas->species_name_map().find(species_name)->second;
   }
 
   inline
