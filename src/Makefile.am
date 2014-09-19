@@ -99,6 +99,7 @@ libgrins_la_SOURCES += physics/src/primitive_flow_variables.C
 libgrins_la_SOURCES += physics/src/primitive_flow_fe_variables.C
 libgrins_la_SOURCES += physics/src/primitive_temp_variables.C
 libgrins_la_SOURCES += physics/src/primitive_temp_fe_variables.C
+libgrins_la_SOURCES += physics/src/velocity_drag.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
 
 # src/properties files
@@ -258,6 +259,7 @@ include_HEADERS += physics/include/grins/primitive_flow_variables.h
 include_HEADERS += physics/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += physics/include/grins/primitive_temp_variables.h
 include_HEADERS += physics/include/grins/primitive_temp_fe_variables.h
+include_HEADERS += physics/include/grins/velocity_drag.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
 
 # src/properties headers

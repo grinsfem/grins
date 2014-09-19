@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/velocity_penalty.h"
+#include "grins/velocity_drag.h"
 
 // GRINS
 #include "grins/generic_ic_handler.h"
@@ -38,7 +38,7 @@
 namespace GRINS
 {
 
-  VelocityPenalty::VelocityPenalty( const std::string& physics_name, const GetPot& input )
+  VelocityDrag::VelocityDrag( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase(physics_name, input)
   {
     this->read_input_options(input);
@@ -46,46 +46,32 @@ namespace GRINS
     return;
   }
 
-  VelocityPenalty::~VelocityPenalty()
+  VelocityDrag::~VelocityDrag()
   {
     return;
   }
 
-  void VelocityPenalty::read_input_options( const GetPot& input )
+  void VelocityDrag::read_input_options( const GetPot& input )
   {
-    std::string penalty_function =
-      input("Physics/"+velocity_penalty+"/penalty_function",
+    _exponent = input("Physics/"+velocity_drag+"/exponent", libMesh::Real(2));
+
+    std::string coefficient_function =
+      input("Physics/"+velocity_penalty+"/coefficient",
         std::string("0"));
 
-    if (penalty_function == "0")
-      this->normal_vector_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->normal_vector_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
+    this->_coefficient.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(coefficient_function));
 
-    std::string base_function =
-      input("Physics/"+velocity_penalty+"/base_velocity",
-        std::string("0"));
-
-    if (penalty_function == "0" && base_function == "0")
-      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
-
-    if (base_function == "0")
-      this->base_velocity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->base_velocity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
-
+    if (coefficient_function == "0")
+      std::cout << "Warning! Zero VelocityDrag specified!" << std::endl;
   }
 
-  void VelocityPenalty::element_constraint( bool compute_jacobian,
-					    AssemblyContext& context,
-					    CachedValues& /* cache */ )
+  void VelocityDrag::element_time_derivative( bool compute_jacobian,
+					      AssemblyContext& context,
+					      CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenalty::element_constraint");
+    this->_timer->BeginTimer("VelocityDrag::element_time_derivative");
 #endif
 
     // Element Jacobian * quadrature weights for interior integration
@@ -142,70 +128,67 @@ namespace GRINS
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
 
-        // Velocity discrepancy (current velocity minus base velocity)
-        // normal to constraint plane, scaled by constraint penalty
-        // value
-        libmesh_assert(normal_vector_function.get());
-        libmesh_assert(base_velocity_function.get());
+        libMesh::Number Umag = U.size();
 
-        libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-        (*normal_vector_function)(u_qpoint[qp], context.time,
-                                  output_vec);
+        libMesh::Number coeff_val = (*_coefficient)(u_qpoint[qp], context.time);
 
-        libMesh::NumberVectorValue U_N(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
+        libMesh::Number F_coeff = std::pow(Umag, _exponent-1) * -coeff_val;
 
-        (*base_velocity_function)(u_qpoint[qp], context.time,
-                                  output_vec);
-
-        libMesh::NumberVectorValue U_B(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
+        libMesh::Number J_coeff = compute_jacobian ? 
+                                  std::pow(Umag, _exponent-2) *
+                                  -coeff_val * (_exponent-1) :
+                                  0;
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += jac * 
-                     ((U-U_B)*U_N)*U_N(0)*u_phi[i][qp];
+            Fu(i) += jac * F_coeff*U(0)*u_phi[i][qp];
+            Fv(i) += jac * F_coeff*U(1)*u_phi[i][qp];
 
-            Fv(i) += jac *
-                     ((U-U_B)*U_N)*U_N(1)*u_phi[i][qp];
             if( this->_dim == 3 )
-              {
-                (*Fw)(i) += jac *
-                            ((U-U_B)*U_N)*U_N(2)*u_phi[i][qp];
-              }
+              (*Fw)(i) += jac * F_coeff*U(2)*u_phi[i][qp];
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kuu(i,j) += jac *
-                      (u_phi[j][qp]*U_N(0))*U_N(0)*u_phi[i][qp];
+                      (F_coeff*u_phi[j][qp] +
+                       J_coeff*U(0)*U(0)*u_phi[j][qp]/Umag) *
+                      u_phi[i][qp];
                     Kuv(i,j) += jac *
-                      (u_phi[j][qp]*U_N(1))*U_N(0)*u_phi[i][qp];
+                      (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
+                      u_phi[i][qp];
 
                     Kvu(i,j) += jac *
-                      (u_phi[j][qp]*U_N(0))*U_N(1)*u_phi[i][qp];
+                      (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
+                      u_phi[i][qp];
                     Kvv(i,j) += jac *
-                      (u_phi[j][qp]*U_N(1))*U_N(1)*u_phi[i][qp];
+                      (F_coeff*u_phi[j][qp] +
+                       J_coeff*U(1)*U(1)*u_phi[j][qp]/Umag) *
+                      u_phi[i][qp];
 
                     if( this->_dim == 3 )
                       {
                         (*Kuw)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(0)*u_phi[i][qp];
+                          (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
+                          u_phi[i][qp];
                         (*Kvw)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(1)*u_phi[i][qp];
+                          (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
+                          u_phi[i][qp];
 
                         (*Kwu)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(0))*U_N(2)*u_phi[i][qp];
+                          (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
+                          u_phi[i][qp];
                         (*Kwv)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(1))*U_N(2)*u_phi[i][qp];
+                          (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
+                          u_phi[i][qp];
                         (*Kww)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(2)*u_phi[i][qp];
+                          (F_coeff*u_phi[j][qp] +
+                           J_coeff*U(2)*U(2)*u_phi[j][qp]/Umag) *
+                          u_phi[i][qp];
                       }
                   }
               }
@@ -214,7 +197,7 @@ namespace GRINS
 
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityPenalty::element_constraint");
+    this->_timer->EndTimer("VelocityDrag::element_time_derivative");
 #endif
 
     return;
