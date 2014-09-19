@@ -66,7 +66,7 @@ namespace GRINS
   {
     libmesh_assert_less(species_index, _antioch_gas->n_species());
 
-    /*
+#if ANTIOCH_MAJOR_VERSION < 1 && ANTIOCH_MINOR_VERSION < 3
     std::string name = "dummy";
 
     for( std::map<std::string,unsigned int>::const_iterator it = _antioch_gas->active_species_name_map().begin();
@@ -86,8 +86,9 @@ namespace GRINS
       }
 
     return name;
-      */
+#else
     return _antioch_gas->species_inverse_name_map().find(species_index)->second;
+#endif
   }
 
 }// end namespace GRINS
