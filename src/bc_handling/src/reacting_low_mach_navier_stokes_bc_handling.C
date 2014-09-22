@@ -117,274 +117,305 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_bc_types( const GRINS::BoundaryID bc_id, 
-							     const std::string& bc_id_string, 
-							     const int bc_type, 
-					                     const std::string& bc_vars, 
-							     const std::string& bc_value, 
-							     const GetPot& input )
+  void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_bc_types
+    ( const std::vector<GRINS::BoundaryID> bc_ids, 
+      const std::string& bc_id_string, 
+      const int bc_type, 
+      const std::string& bc_vars, 
+      const std::string& bc_value, 
+      const GetPot& input )
   {
     switch(bc_type)
       {
       case(ZERO_SPECIES_FLUX):
 	{
-	  this->set_neumann_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+	    this->set_neumann_bc_type( bc_ids[b], bc_type );
 	}
 	break;
 
       case(PRESCRIBED_SPECIES):
 	{
-	  this->set_species_bc_type( bc_id, bc_type );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-	  unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_string);
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+	      this->set_species_bc_type( bc_ids[b], bc_type );
 
-	  if( n_species_comps != _n_species )
-	    {
-	      std::cerr << "Error: The number of prescribed species values must match" << std::endl
-			<< "       the number of species in the simulation." << std::endl
-			<< "n_species       = " << _n_species << std::endl
-			<< "n_species_comps = " << n_species_comps << std::endl;
-	      libmesh_error();
-	    }
+	      unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_strings[b]);
+
+	      if( n_species_comps != _n_species )
+	        {
+	          std::cerr << "Error: The number of prescribed species values must match" << std::endl
+			    << "       the number of species in the simulation." << std::endl
+			    << "n_species       = " << _n_species << std::endl
+			    << "n_species_comps = " << n_species_comps << std::endl;
+	          libmesh_error();
+	        }
 	  
-	  std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
+	      std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
 
-	  for( unsigned int s = 0; s < n_species_comps; s++ )
-	    {
-	      species_mass_fracs[s] = input("Physics/"+_physics_name+"/bound_species_"+bc_id_string, -1.0, s );
+	      for( unsigned int s = 0; s < n_species_comps; s++ )
+	        {
+	          species_mass_fracs[s] = input("Physics/"+_physics_name+"/bound_species_"+bc_id_strings[b], -1.0, s );
 
-	      if( (species_mass_fracs[s] > 1.0) ||
-		  (species_mass_fracs[s] < 0.0)   )
-		{
-		  std::cerr << "Error: prescribed species mass fraction must be between 0.0 and 1.0" << std::endl
-			    << "w[" << s << "] = " << species_mass_fracs[s] << std::endl;
-		  libmesh_error();
-		}
+	          if( (species_mass_fracs[s] > 1.0) ||
+		      (species_mass_fracs[s] < 0.0)   )
+		    {
+		      std::cerr << "Error: prescribed species mass fraction must be between 0.0 and 1.0" << std::endl
+			        << "w[" << s << "] = " << species_mass_fracs[s] << std::endl;
+		      libmesh_error();
+		    }
+	        }
+
+	      this->set_species_bc_values( bc_ids[b], species_mass_fracs );
 	    }
-
-	  this->set_species_bc_values( bc_id, species_mass_fracs );
 	}
 	break;
 
       case(PRESCRIBED_MOLE_FRACTIONS):
 	{
-	  this->set_species_bc_type( bc_id, bc_type );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-	  unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_string);
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+	      this->set_species_bc_type( bc_ids[b], bc_type );
 
-	  if( n_species_comps != _n_species )
-	    {
-	      std::cerr << "Error: The number of prescribed species values must match" << std::endl
-			<< "       the number of species in the simulation." << std::endl
-			<< "n_species       = " << _n_species << std::endl
-			<< "n_species_comps = " << n_species_comps << std::endl;
-	      libmesh_error();
-	    }
+	      unsigned int n_species_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_species_"+bc_id_strings[b]);
+
+	      if( n_species_comps != _n_species )
+	        {
+	          std::cerr << "Error: The number of prescribed species values must match" << std::endl
+			    << "       the number of species in the simulation." << std::endl
+			    << "n_species       = " << _n_species << std::endl
+			    << "n_species_comps = " << n_species_comps << std::endl;
+	          libmesh_error();
+	        }
 	  
-	  std::vector<libMesh::Real> species_mole_fracs(n_species_comps);
+	      std::vector<libMesh::Real> species_mole_fracs(n_species_comps);
 
-	  for( unsigned int s = 0; s < n_species_comps; s++ )
-	    {
-	      species_mole_fracs[s] = input("Physics/"+_physics_name+"/bound_species_"+bc_id_string, -1.0, s );
+	      for( unsigned int s = 0; s < n_species_comps; s++ )
+	        {
+	          species_mole_fracs[s] = input("Physics/"+_physics_name+"/bound_species_"+bc_id_strings[b], -1.0, s );
 
-	      if( (species_mole_fracs[s] > 1.0) ||
-		  (species_mole_fracs[s] < 0.0)   )
-		{
-		  std::cerr << "Error: prescribed species mole fraction must be between 0.0 and 1.0" << std::endl
-			    << "w[" << s << "] = " << species_mole_fracs[s] << std::endl;
-		  libmesh_error();
-		}
+	          if( (species_mole_fracs[s] > 1.0) ||
+		      (species_mole_fracs[s] < 0.0)   )
+		    {
+		      std::cerr << "Error: prescribed species mole fraction must be between 0.0 and 1.0" << std::endl
+			        << "w[" << s << "] = " << species_mole_fracs[s] << std::endl;
+		      libmesh_error();
+		    }
+	        }
+
+              // Compute M
+              libMesh::Real M = 0.0;
+              for( unsigned int s = 0; s < n_species_comps; s++ )
+	        {
+                  M += species_mole_fracs[s]*_chemistry.M(s);
+                }
+
+              // Convert mole fractions to mass fractions
+              std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
+              for( unsigned int s = 0; s < n_species_comps; s++ )
+	        {
+                  species_mass_fracs[s] = species_mole_fracs[s]*_chemistry.M(s)/M;
+                }
+
+	      this->set_species_bc_values( bc_ids[b], species_mass_fracs );
 	    }
-
-          // Compute M
-          libMesh::Real M = 0.0;
-          for( unsigned int s = 0; s < n_species_comps; s++ )
-	    {
-              M += species_mole_fracs[s]*_chemistry.M(s);
-            }
-
-          // Convert mole fractions to mass fractions
-          std::vector<libMesh::Real> species_mass_fracs(n_species_comps);
-          for( unsigned int s = 0; s < n_species_comps; s++ )
-	    {
-              species_mass_fracs[s] = species_mole_fracs[s]*_chemistry.M(s)/M;
-            }
-
-	  this->set_species_bc_values( bc_id, species_mass_fracs );
 	}
 	break;
 
       case(GENERAL_SPECIES):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+	    this->set_dirichlet_bc_type( bc_ids[b], bc_type );
 	}
 	break;
 
       case(GAS_RECOMBINATION_CATALYTIC_WALL):
         {
-          this->set_neumann_bc_type( bc_id, bc_type );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-          // Parse catalytic reactions on this wall
-	  std::string reactions_string = "Physics/"+_physics_name+"/wall_catalytic_reactions_"+bc_id_string;
-	  if( !input.have_variable(reactions_string) )
-	    {
-	      std::cerr << "Error: Could not find list of catalytic reactions for boundary id " << bc_id 
-			<< std::endl;
-	      libmesh_error();
-	    }
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+              this->set_neumann_bc_type( bc_ids[b], bc_type );
 
-          const unsigned int n_reactions = input.vector_variable_size(reactions_string);
+              // Parse catalytic reactions on this wall
+	      std::string reactions_string = "Physics/"+_physics_name+"/wall_catalytic_reactions_"+bc_id_strings[b];
+	      if( !input.have_variable(reactions_string) )
+	        {
+	          std::cerr << "Error: Could not find list of catalytic reactions for boundary ids " << bc_id_string 
+			    << std::endl;
+	          libmesh_error();
+	        }
 
-          for( unsigned int r = 0; r < n_reactions; r++ )
-	    {
-              std::string reaction = input(reactions_string, "DIE!", r);
+              const unsigned int n_reactions = input.vector_variable_size(reactions_string);
 
-	      // First, split each reaction into reactants and products
-	      std::vector<std::string> partners;
-	      SplitString(reaction, "->", partners);
+              for( unsigned int r = 0; r < n_reactions; r++ )
+	        {
+                  std::string reaction = input(reactions_string, "DIE!", r);
 
-	      const std::string& reactant = partners[0];
-	      const std::string& product = partners[1];
+	          // First, split each reaction into reactants and products
+	          std::vector<std::string> partners;
+	          SplitString(reaction, "->", partners);
 
-	      /*! \todo We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc. */
-	      if( partners.size() == 2 )
-		{
-		  /* ------------- Grab the reactant and product species indices ------------- */
-		  const unsigned int r_species = _chemistry.species_index( reactant );
-		  const unsigned int p_species = _chemistry.species_index( product );
+	          const std::string& reactant = partners[0];
+	          const std::string& product = partners[1];
 
-                  /* ------------- Parse and construct the corresponding catalyticities ------------- */
+	          /*! \todo We currently can only handle reactions of the type R -> P, i.e not R1+R2 -> P, etc. */
+	          if( partners.size() == 2 )
+		    {
+		      /* ------------- Grab the reactant and product species indices ------------- */
+		      const unsigned int r_species = _chemistry.species_index( reactant );
+		      const unsigned int p_species = _chemistry.species_index( product );
 
-                  // These are temporary and will be cloned, so let them be destroyed when we're done
-                  boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                      /* ------------- Parse and construct the corresponding catalyticities ------------- */
 
-                  this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r );
+                      // These are temporary and will be cloned, so let them be destroyed when we're done
+                      boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
 
-                  /* ------------- Now cache the CatalyticWall functions to init later ------------- */
-                  libmesh_assert( gamma_r );
+                      this->build_catalycities( input, reactant, bc_id_strings[b], bc_ids[b], gamma_r );
 
-                  std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasRecombinationCatalyticWall<Chemistry>( _chemistry, *gamma_r, r_species, p_species ) );
+                      /* ------------- Now cache the CatalyticWall functions to init later ------------- */
+                      libmesh_assert( gamma_r );
 
-                  _catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
+                      std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasRecombinationCatalyticWall<Chemistry>( _chemistry, *gamma_r, r_species, p_species ) );
 
-                } // if( partners.size() == 2 )
-              else
-                {
-                  std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
-                            << "in a catalytic reaction." << std::endl
-                            << "Found " << partners.size() << " species." << std::endl;
-                  libmesh_error();
-                }
+                      _catalytic_walls.insert( std::make_pair(bc_ids[b], wall_ptr ) );
 
-            } // loop over reactions
+                    } // if( partners.size() == 2 )
+                  else
+                    {
+                      std::cerr << "Error: Can currently only handle 1 reactant and 1 product" << std::endl
+                                << "in a catalytic reaction." << std::endl
+                                << "Found " << partners.size() << " species." << std::endl;
+                      libmesh_error();
+                    }
+
+                } // loop over reactions
+            }
         }
         break;
 
-        case(GAS_SOLID_CATALYTIC_WALL):
-          {
-            this->set_neumann_bc_type( bc_id, bc_type );
+      case(GAS_SOLID_CATALYTIC_WALL):
+        {
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-            // Parse catalytic reactions on this wall
-            std::string reactions_string = "Physics/"+_physics_name+"/wall_gas_solid_reactions_"+bc_id_string;
-            if( !input.have_variable(reactions_string) )
-              {
-                std::cerr << "Error: Could not find list of gas-solid catalytic reactions for boundary id "
-                          << bc_id
-                          << std::endl;
-                libmesh_error();
-              }
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+              this->set_neumann_bc_type( bc_ids[b], bc_type );
 
-            const unsigned int n_reactions = input.vector_variable_size(reactions_string);
+              // Parse catalytic reactions on this wall
+              std::string reactions_string = "Physics/"+_physics_name+"/wall_gas_solid_reactions_"+bc_id_strings[b];
+              if( !input.have_variable(reactions_string) )
+                {
+                  std::cerr << "Error: Could not find list of gas-solid catalytic reactions for boundary id "
+                            << bc_ids[b]
+                            << std::endl;
+                  libmesh_error();
+                }
 
-            for( unsigned int r = 0; r < n_reactions; r++ )
-              {
-                std::string reaction = input(reactions_string, "DIE!", r);
+              const unsigned int n_reactions = input.vector_variable_size(reactions_string);
 
-                /* We are expecting reactions of the form
-                   X+Y(s)->Z  or
-                   Y(s)+X->X
-                So, first we'll split on the "->", then split the reactants up and
-                figure out which is the gas species and which is the solid species. */
+              for( unsigned int r = 0; r < n_reactions; r++ )
+                {
+                  std::string reaction = input(reactions_string, "DIE!", r);
 
-                std::vector<std::string> partners;
-                SplitString(reaction, "->", partners);
+                  /* We are expecting reactions of the form
+                     X+Y(s)->Z  or
+                     Y(s)+X->X
+                  So, first we'll split on the "->", then split the reactants up and
+                  figure out which is the gas species and which is the solid species. */
 
-                const std::string pre_split_reactants = partners[0];
-                const std::string& product = partners[1];
+                  std::vector<std::string> partners;
+                  SplitString(reaction, "->", partners);
 
-                std::vector<std::string> split_reactants;
-                SplitString(pre_split_reactants, "+", split_reactants);
+                  const std::string pre_split_reactants = partners[0];
+                  const std::string& product = partners[1];
 
-                // We can only handle two reactants currently
-                if( split_reactants.size() != 2 )
-                  {
-                    std::cerr << "Error: Currently, GasSolidCatalyticWall boundary condition only supports"
-                              << std::endl
-                              << "       reactions of the form X+Y(s)->Z or Y(s)+X->X. Found "
-                              << split_reactants.size() << " reactants." << std::endl;
-                    libmesh_error();
-                  }
+                  std::vector<std::string> split_reactants;
+                  SplitString(pre_split_reactants, "+", split_reactants);
 
-                std::string gas_reactant;
-                std::string solid_reactant;
-                // Check if the first reactant is the solid one
-                if( split_reactants[0].find("(s)") == split_reactants[0].npos )
-                  {
-                    // If not found, check the second entry
-                    if( split_reactants[1].find("(s)") == split_reactants[1].npos )
-                      {
-                        std::cerr << "Error: could not find solid reactant for GasSolidCatalyticWall" << std::endl
-                                  << "       boundary condition. Found reactants " << split_reactants[0]
-                                  << ", " << split_reactants[1] << std::endl;
-                        libmesh_error();
-                      }
-                    else
-                      {
-                        gas_reactant = split_reactants[0];
-                        solid_reactant = split_reactants[1].substr(0,split_reactants[1].find("(s)"));
-                      }
-                  }
-                // Found (s) in the first entry
-                else
-                  {
-                    // Check that there's not 2 solid reactants
-                    if( split_reactants[1].find("(s)") != split_reactants[1].npos )
-                      {
-                        std::cerr << "Error: can have only one solid reactant for GasSolidCatalyticWall" << std::endl
-                                  << "       boundary condition. Found reactants " << split_reactants[0]
-                                  << ", " << split_reactants[1] << std::endl;
-                        libmesh_error();
-                      }
+                  // We can only handle two reactants currently
+                  if( split_reactants.size() != 2 )
+                    {
+                      std::cerr << "Error: Currently, GasSolidCatalyticWall boundary condition only supports"
+                                << std::endl
+                                << "       reactions of the form X+Y(s)->Z or Y(s)+X->X. Found "
+                                << split_reactants.size() << " reactants." << std::endl;
+                      libmesh_error();
+                    }
 
-                    gas_reactant = split_reactants[1];
-                    solid_reactant = split_reactants[0].substr(0,split_reactants[0].find("(s)"));
-                  }
+                  std::string gas_reactant;
+                  std::string solid_reactant;
+                  // Check if the first reactant is the solid one
+                  if( split_reactants[0].find("(s)") == split_reactants[0].npos )
+                    {
+                      // If not found, check the second entry
+                      if( split_reactants[1].find("(s)") == split_reactants[1].npos )
+                        {
+                          std::cerr << "Error: could not find solid reactant for GasSolidCatalyticWall" << std::endl
+                                    << "       boundary condition. Found reactants " << split_reactants[0]
+                                    << ", " << split_reactants[1] << std::endl;
+                          libmesh_error();
+                        }
+                      else
+                        {
+                          gas_reactant = split_reactants[0];
+                          solid_reactant = split_reactants[1].substr(0,split_reactants[1].find("(s)"));
+                        }
+                    }
+                  // Found (s) in the first entry
+                  else
+                    {
+                      // Check that there's not 2 solid reactants
+                      if( split_reactants[1].find("(s)") != split_reactants[1].npos )
+                        {
+                          std::cerr << "Error: can have only one solid reactant for GasSolidCatalyticWall" << std::endl
+                                    << "       boundary condition. Found reactants " << split_reactants[0]
+                                    << ", " << split_reactants[1] << std::endl;
+                          libmesh_error();
+                        }
 
-                /* Now we have the gas reactant, the solid reactant, and the gas product strings.
-                   Next we grab the species indices, build the catalycity, then build the
-                   CatalyticWallBase object. */
-                const unsigned int rg_species = _chemistry.species_index( gas_reactant );
-                const unsigned int rs_species = _chemistry.species_index( solid_reactant );
-                const unsigned int p_species  = _chemistry.species_index( product );
+                      gas_reactant = split_reactants[1];
+                      solid_reactant = split_reactants[0].substr(0,split_reactants[0].find("(s)"));
+                    }
 
-                // This is temporary and will be cloned, so let it be destroyed when we're done
-                boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                  /* Now we have the gas reactant, the solid reactant, and the gas product strings.
+                     Next we grab the species indices, build the catalycity, then build the
+                     CatalyticWallBase object. */
+                  const unsigned int rg_species = _chemistry.species_index( gas_reactant );
+                  const unsigned int rs_species = _chemistry.species_index( solid_reactant );
+                  const unsigned int p_species  = _chemistry.species_index( product );
 
-                this->build_catalycities( input, gas_reactant, bc_id_string, bc_id, gamma_r );
+                  // This is temporary and will be cloned, so let it be destroyed when we're done
+                  boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
 
-                libmesh_assert( gamma_r );
+                  this->build_catalycities( input, gas_reactant, bc_id_strings[b], bc_ids[b], gamma_r );
 
-                std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasSolidCatalyticWall<Chemistry>( _chemistry, *gamma_r, rg_species, rs_species, p_species ) );
+                  libmesh_assert( gamma_r );
 
-                _catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
+                  std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasSolidCatalyticWall<Chemistry>( _chemistry, *gamma_r, rg_species, rs_species, p_species ) );
 
-              } // loop over reactions
-          }
-        break;
+                  _catalytic_walls.insert( std::make_pair(bc_ids[b], wall_ptr ) );
+
+                } // loop over reactions
+            }
+        }
+      break;
 
       default:
 	{
-	  LowMachNavierStokesBCHandling::init_bc_types( bc_id, bc_id_string, bc_type,
+	  LowMachNavierStokesBCHandling::init_bc_types( bc_ids, bc_id_string, bc_type,
                                                         bc_vars, bc_value, input );
 	}
 	break;

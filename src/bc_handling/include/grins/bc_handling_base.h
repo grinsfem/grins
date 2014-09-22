@@ -110,7 +110,7 @@ namespace GRINS
     // User will need to implement these functions for BC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+    virtual void init_bc_types( const std::vector<GRINS::BoundaryID> bc_ids, 
 				const std::string& bc_id_string, 
 				const int bc_type, 
 				const std::string& bc_vars, 

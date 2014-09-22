@@ -89,20 +89,22 @@ namespace GRINS
 
     for( int i = 0; i < num_ids; i++ )
       {
-	int bc_id = input(id_str, -1, i );
 	std::string bc_type_in = input(bc_str, "NULL", i );
 
 	int bc_type = this->string_to_int( bc_type_in );
 
-	std::stringstream ss;
-	ss << bc_id;
-	std::string bc_id_string = ss.str();
+        std::vector<std::string> bc_id_strings;
+        std::vector<GRINS::BoundaryID> bc_ids;
+	std::string bc_id_string = input(id_str, "NULL", i );
+        SplitString (bc_id_string, ":", bc_id_strings);
+        for (int b = 0; b != bc_id_strings.size(); ++b)
+	  bc_ids.push_back(std::atoi(bc_id_strings[b].c_str()));
 
         std::string bc_val = input(val_str, std::string(""), i );
 
         std::string bc_vars = input(var_str, std::string(""), i );
 
-	this->init_bc_types( bc_id, bc_id_string, bc_type, bc_vars, bc_val, input );
+        this->init_bc_types( bc_ids, bc_id_string, bc_type, bc_vars, bc_val, input );
       }
 
     return;
@@ -315,7 +317,7 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void BCHandlingBase::init_bc_types( const BoundaryID bc_id, 
+  void BCHandlingBase::init_bc_types( const std::vector<BoundaryID> bc_ids, 
 				      const std::string& bc_id_string, 
 				      const int bc_type, 
                                       const std::string& bc_vars,
@@ -326,84 +328,91 @@ namespace GRINS
       {
       case(PERIODIC):
 	{
-	  /* We assume the periodic boundary pair will be listed by the master bc id.
-	     Thus, if we have a periodic id and we don't see a list of bc ids with the
-	     under the current id, we assume it's the slave id. We'll do consistency 
-	     checks later. */
-	  _num_periodic_bcs += 1;
-	  int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_wall_"+bc_id_string );
-	  if( pbc_size == 0 ) break;
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-	  // We'd better have only 2 bc ids if this is the bc list
-	  if( pbc_size != 2 )
-	    {
-	      std::cerr << "==========================================================" 
-			<< "Error: Must specify exactly two boundary condition ids " << std::endl
-			<< "       for periodic boundary conditions. Found " << pbc_size << std::endl
-			<< "==========================================================" << std::endl;
-	      libmesh_error();
-	    }
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+	      /* We assume the periodic boundary pair will be listed by the master bc id.
+	         Thus, if we have a periodic id and we don't see a list of bc ids with the
+	         under the current id, we assume it's the slave id. We'll do consistency 
+	         checks later. */
+	      _num_periodic_bcs += 1;
+	      int pbc_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_wall_"+bc_id_strings[b] );
+	      if( pbc_size == 0 ) break;
+
+	      // We'd better have only 2 bc ids if this is the bc list
+	      if( pbc_size != 2 )
+	        {
+	          std::cerr << "==========================================================" 
+			    << "Error: Must specify exactly two boundary condition ids " << std::endl
+			    << "       for periodic boundary conditions. Found " << pbc_size << std::endl
+			    << "==========================================================" << std::endl;
+	          libmesh_error();
+	        }
 	
-	  int id0 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_string, -1, 0 );
-	  int id1 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_string, -1, 1 );
+	      int id0 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_strings[b], -1, 0 );
+	      int id1 = input( "Physics/"+_physics_name+"/periodic_wall_"+bc_id_strings[b], -1, 1 );
 
-	  if( id0 == -1 || id1 == -1 )
-	    {
-	      std::cerr << "==========================================================" 
-			<< "Error: Default bc id detected for periodic bc." << std::endl
-			<< "       Please explicitly set periodic bc ids." << std::endl
-			<< "       Detected ids " << id0 << ", " << id1 << std::endl
-			<< "       for bc id = " << bc_id << std::endl
-			<< "==========================================================" << std::endl;
-	      libmesh_error();
-	    }
+	      if( id0 == -1 || id1 == -1 )
+	        {
+	          std::cerr << "==========================================================" 
+			    << "Error: Default bc id detected for periodic bc." << std::endl
+			    << "       Please explicitly set periodic bc ids." << std::endl
+			    << "       Detected ids " << id0 << ", " << id1 << std::endl
+			    << "       for bc id = " << bc_ids[b] << std::endl
+			    << "==========================================================" << std::endl;
+	          libmesh_error();
+	        }
 
-	  PBCContainer pbc;
+	      PBCContainer pbc;
 	
-	  if( id0 == bc_id )
-	    {
-	      pbc.set_master_bcid( id0 );
-	      pbc.set_slave_bcid( id1 );
-	    }
-	  else if( id1 == bc_id )
-	    {
-	      pbc.set_master_bcid( id1 );
-	      pbc.set_slave_bcid( id0 );
-	    }
-	  else
-	    {
-	      // At least one of them had better be the master id
-	      std::cerr << "==========================================================" 
-			<< "Error: At least one of the bcs must be the master id." << std::endl
-			<< "       Detected master id = " << bc_id << std::endl
-			<< "       Found bc ids (" << id0 << "," << id1 << ")." << std::endl
-			<< "==========================================================" << std::endl;
-	      libmesh_error();
-	    }
+	      if( id0 == bc_ids[b] )
+	        {
+	          pbc.set_master_bcid( id0 );
+	          pbc.set_slave_bcid( id1 );
+	        }
+	      else if( id1 == bc_ids[b] )
+	        {
+	          pbc.set_master_bcid( id1 );
+	          pbc.set_slave_bcid( id0 );
+	        }
+	      else
+	        {
+	          // At least one of them had better be the master id
+	          std::cerr << "==========================================================" 
+			    << "Error: At least one of the bcs must be the master id." << std::endl
+			    << "       Detected master id = " << bc_ids[b] << std::endl
+			    << "       Found bc ids (" << id0 << "," << id1 << ")." << std::endl
+			    << "==========================================================" << std::endl;
+	          libmesh_error();
+	        }
 
-	  // Now populate offset vector
-	  {
-	    int offset_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_offset_"+bc_id_string );
-	    if( offset_size == 0 )
+	      // Now populate offset vector
 	      {
-		// User needs to set the offset vector for the periodic boundary
-		std::cerr << "==========================================================" 
-			  << "Error: Offset vector not found for bc id " << bc_id << std::endl
-			  << "==========================================================" << std::endl;
-		libmesh_error();
+	        int offset_size = input.vector_variable_size("Physics/"+_physics_name+"/periodic_offset_"+bc_id_strings[b] );
+	        if( offset_size == 0 )
+	          {
+		    // User needs to set the offset vector for the periodic boundary
+		    std::cerr << "==========================================================" 
+			      << "Error: Offset vector not found for bc id " << bc_ids[b] << std::endl
+			      << "==========================================================" << std::endl;
+		    libmesh_error();
+	          }
+	        libMesh::RealVectorValue offset_vector;
+	        for( int i = 0; i < offset_size; i++ )
+	          {
+		    offset_vector(i) = input("Physics/"+_physics_name+"/periodic_offset_"+bc_id_strings[b], 0.0, i );
+	          }
+
+	        pbc.set_offset_vector( offset_vector );
 	      }
-	    libMesh::RealVectorValue offset_vector;
-	    for( int i = 0; i < offset_size; i++ )
-	      {
-		offset_vector(i) = input("Physics/"+_physics_name+"/periodic_offset_"+bc_id_string, 0.0, i );
-	      }
 
-	    pbc.set_offset_vector( offset_vector );
-	  }
+	      // Now stash the container object for use later in initialization
+	      _periodic_bcs.push_back( pbc );
 
-	  // Now stash the container object for use later in initialization
-	  _periodic_bcs.push_back( pbc );
-
+	    }
 	}
 	break;
 
@@ -411,9 +420,13 @@ namespace GRINS
 	{
           DBCContainer dirichlet_bc;
 
-          dirichlet_bc.add_var_name(bc_vars);
+          std::vector<std::string> bc_var_names;
+          SplitString(bc_vars, ":", bc_var_names);
+          for (unsigned int i=0; i != bc_var_names.size(); ++i)
+            dirichlet_bc.add_var_name(bc_var_names[i]);
 
-          dirichlet_bc.add_bc_id(bc_id);
+          for (int b = 0; b != bc_ids.size(); ++b)
+            dirichlet_bc.add_bc_id(bc_ids[b]);
 
           libMesh::Number bc_val_num = string_to_T<libMesh::Number>(bc_value);
 
@@ -431,7 +444,8 @@ namespace GRINS
 
           dirichlet_bc.add_var_name(bc_vars);
 
-          dirichlet_bc.add_bc_id(bc_id);
+          for (int b = 0; b != bc_ids.size(); ++b)
+            dirichlet_bc.add_bc_id(bc_ids[b]);
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
@@ -447,7 +461,8 @@ namespace GRINS
 
           dirichlet_bc.add_var_name(bc_vars);
 
-          dirichlet_bc.add_bc_id(bc_id);
+          for (int b = 0; b != bc_ids.size(); ++b)
+            dirichlet_bc.add_bc_id(bc_ids[b]);
 
           dirichlet_bc.set_fem_func_string (bc_value);
 

@@ -26,6 +26,9 @@
 // This class
 #include "grins/axisym_heat_transfer_bc_handling.h"
 
+// GRINS
+#include "grins/string_utils.h"
+
 // libMesh
 #include "libmesh/const_function.h"
 #include "libmesh/fem_context.h"
@@ -94,7 +97,7 @@ namespace GRINS
     _T_var = system.variable_number( _T_var_name );
   }
 
-  void AxisymmetricHeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 
+  void AxisymmetricHeatTransferBCHandling::init_bc_types( const std::vector<BoundaryID> bc_ids, 
                                                           const std::string& bc_id_string, 
                                                           const int bc_type, 
 					                  const std::string& bc_vars, 
@@ -105,48 +108,65 @@ namespace GRINS
       {
       case(AXISYMMETRIC):
         {
-          this->set_neumann_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            this->set_neumann_bc_type( bc_ids[b], bc_type );
         }
         break;
       case(ISOTHERMAL_WALL):
         {
-          this->set_dirichlet_bc_type( bc_id, bc_type );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-          this->set_dirichlet_bc_value( bc_id, input("Physics/"+_physics_name+"/T_wall_"+bc_id_string, 0.0 ) );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+              this->set_dirichlet_bc_type( bc_ids[b], bc_type );
+
+              this->set_dirichlet_bc_value( bc_ids[b], input("Physics/"+_physics_name+"/T_wall_"+bc_id_strings[b], 0.0 ) );
+            }
         }
         break;
       
       case(ADIABATIC_WALL):
         {
-          this->set_neumann_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            this->set_neumann_bc_type( bc_ids[b], bc_type );
         }
         break;
       
       case(PRESCRIBED_HEAT_FLUX):
         {
-          this->set_neumann_bc_type( bc_id, bc_type );
-        
-          libMesh::RealGradient q_in;
-        
-          int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_string);
-        
-          for( int i = 0; i < num_q_components; i++ )
-            {
-              q_in(i) = input("Physics/"+_physics_name+"/q_wall_"+bc_id_string, 0.0, i );
-            }
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-          this->set_neumann_bc_value( bc_id, q_in );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+              this->set_neumann_bc_type( bc_ids[b], bc_type );
+        
+              libMesh::RealGradient q_in;
+        
+              int num_q_components = input.vector_variable_size("Physics/"+_physics_name+"/q_wall_"+bc_id_strings[b]);
+        
+              for( int i = 0; i < num_q_components; i++ )
+                {
+                  q_in(i) = input("Physics/"+_physics_name+"/q_wall_"+bc_id_strings[b], 0.0, i );
+                }
+
+              this->set_neumann_bc_value( bc_ids[b], q_in );
+            }
         }
         break;
       case(GENERAL_HEAT_FLUX):
         {
-          this->set_neumann_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            this->set_neumann_bc_type( bc_ids[b], bc_type );
         }
         break;
       default:
         {
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+	  BCHandlingBase::init_bc_types( bc_ids, bc_id_string, bc_type,
                                          bc_vars, bc_value, input );
         }
       }// End switch(bc_type)

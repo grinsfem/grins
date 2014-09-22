@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/parabolic_profile.h"
+#include "grins/string_utils.h"
 
 // libMesh
 #include "libmesh/zero_function.h"
@@ -90,7 +91,7 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
+  void IncompressibleNavierStokesBCHandling::init_bc_types( const std::vector<BoundaryID> bc_ids, 
 							    const std::string& bc_id_string, 
 							    const int bc_type, 
 					                    const std::string& bc_vars, 
@@ -101,117 +102,134 @@ namespace GRINS
       {
       case(NO_SLIP):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+	    this->set_dirichlet_bc_type( bc_ids[b], bc_type );
 	}
 	break;
       case(PRESCRIBED_VELOCITY):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
-	
-	  /* Force the user to specify 3 velocity components regardless of dimension.
-	     This should make it easier to keep things correct if we want to have 
-	     2D flow not be in the x-y plane. */
-	  int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
-	  if( n_vel_comps != 3 )
-	    {
-	      std::cerr << "Error: Must specify 3 velocity components when inputting"
-			<< std::endl
-			<< "       prescribed velocities. Found " << n_vel_comps
-			<< " velocity components."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	
-	  this->set_dirichlet_bc_value( bc_id, 
-					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 ),
-					0 );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
 
-	  this->set_dirichlet_bc_value( bc_id, 
-					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 ),
-					1 );
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+	      this->set_dirichlet_bc_type( bc_ids[b], bc_type );
+	
+	      /* Force the user to specify 3 velocity components regardless of dimension.
+	         This should make it easier to keep things correct if we want to have 
+	         2D flow not be in the x-y plane. */
+	      int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_strings[b]);
+	      if( n_vel_comps != 3 )
+	        {
+	          std::cerr << "Error: Must specify 3 velocity components when inputting"
+			    << std::endl
+			    << "       prescribed velocities. Found " << n_vel_comps
+			    << " velocity components."
+			    << std::endl;
+	          libmesh_error();
+	        }
+	
+	      this->set_dirichlet_bc_value( bc_ids[b], 
+					    input("Physics/"+_physics_name+"/bound_vel_"+bc_id_strings[b], 0.0, 0 ),
+					    0 );
+
+	      this->set_dirichlet_bc_value( bc_ids[b], 
+					    input("Physics/"+_physics_name+"/bound_vel_"+bc_id_strings[b], 0.0, 1 ),
+					    1 );
 
 #if LIBMESH_DIM > 2
-	  this->set_dirichlet_bc_value( bc_id, 
-					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 2 ),
-					2 );
+	      this->set_dirichlet_bc_value( bc_ids[b], 
+					    input("Physics/"+_physics_name+"/bound_vel_"+bc_id_strings[b], 0.0, 2 ),
+					    2 );
 #endif
+	    }
 	}
 	break;
       case(PARABOLIC_PROFILE):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+          std::vector<std::string> bc_id_strings;
+          SplitString (bc_id_string, ":", bc_id_strings);
+          libmesh_assert_equal_to(bc_id_strings.size(), bc_ids.size());
+
+          for (int b = 0; b != bc_ids.size(); ++b)
+            {
+	      this->set_dirichlet_bc_type( bc_ids[b], bc_type );
 	
-	  // Make sure all 6 components are there
-	  if( input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string) != 6 )
-	    {
-	      std::cerr << "Error: Must specify 6 components when inputting"
-			<< std::endl
-			<< "       coefficients for a parabolic profile. Found " 
-			<< input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_"+bc_id_string)
-			<< " components."
-			<< std::endl;
-	      libmesh_error();
-	    }
+	      // Make sure all 6 components are there
+	      if( input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b]) != 6 )
+	        {
+	          std::cerr << "Error: Must specify 6 components when inputting"
+			    << std::endl
+			    << "       coefficients for a parabolic profile. Found " 
+			    << input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_"+bc_id_strings[b])
+			    << " components."
+			    << std::endl;
+	          libmesh_error();
+	        }
 
-	  libMesh::Real a = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 0 );
-	  libMesh::Real b = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 1 );
-	  libMesh::Real c = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 2 );
-	  libMesh::Real d = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 3 );
-	  libMesh::Real e = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 4 );
-	  libMesh::Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
+	      libMesh::Real ca = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 0 );
+	      libMesh::Real cb = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 1 );
+	      libMesh::Real cc = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 2 );
+	      libMesh::Real cd = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 3 );
+	      libMesh::Real ce = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 4 );
+	      libMesh::Real cf = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_strings[b], 0.0, 5 );
 
-	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
+	      std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_strings[b], "DIE!" );
 	
-	  if( var == "DIE!" )
-	    {
-	      std::cerr << "Error: Mush specify a variable name to which apply parabolic profile through parabolic_profile_var input option." << std::endl;
-	      libmesh_error();
-	    }
+	      if( var == "DIE!" )
+	        {
+	          std::cerr << "Error: Mush specify a variable name to which apply parabolic profile through parabolic_profile_var input option." << std::endl;
+	          libmesh_error();
+	        }
 
-	  DBCContainer cont;
-	  cont.add_var_name( var );
-	  cont.add_bc_id( bc_id );
+	      DBCContainer cont;
+	      cont.add_var_name( var );
+	      cont.add_bc_id( bc_ids[b] );
 
-	  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func( new ParabolicProfile(a,b,c,d,e,f) );
-	  cont.set_func( func );
-	  this->attach_dirichlet_bound_func( cont );
+	      std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func( new ParabolicProfile(ca,cb,cc,cd,ce,cf) );
+	      cont.set_func( func );
+	      this->attach_dirichlet_bound_func( cont );
 	
-	  // Set specified components of Dirichlet data to zero
-	  std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
+	      // Set specified components of Dirichlet data to zero
+	      std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_strings[b], "DIE!" );
 
-	  if( fix_var == "DIE!" )
-	    {
-	      std::cerr << "Error: Mush specify a variable name to fix for parabolic profile through parabolic_profile_fix input option." << std::endl;
-	      libmesh_error();
+	      if( fix_var == "DIE!" )
+	        {
+	          std::cerr << "Error: Mush specify a variable name to fix for parabolic profile through parabolic_profile_fix input option." << std::endl;
+	          libmesh_error();
+	        }
+
+	      DBCContainer cont_fix;
+	      cont_fix.add_var_name( fix_var );
+	      cont_fix.add_bc_id( bc_ids[b] );
+
+              std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+                func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
+	      cont_fix.set_func( func_fix );
+	      this->attach_dirichlet_bound_func( cont_fix );
 	    }
-
-	  DBCContainer cont_fix;
-	  cont_fix.add_var_name( fix_var );
-	  cont_fix.add_bc_id( bc_id );
-
-          std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-            func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
-	  cont_fix.set_func( func_fix );
-	  this->attach_dirichlet_bound_func( cont_fix );
 	}
 	break;
 
       case(GENERAL_VELOCITY):
 	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+	    this->set_dirichlet_bc_type( bc_ids[b], bc_type );
 	}
 	break;
 
       case(AXISYMMETRIC):
         {
-	  this->set_dirichlet_bc_type( bc_id, bc_type );
+          for (int b = 0; b != bc_ids.size(); ++b)
+	    this->set_dirichlet_bc_type( bc_ids[b], bc_type );
 	}
 	break;
 
       default:
 	{
 	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+	  BCHandlingBase::init_bc_types( bc_ids, bc_id_string, bc_type,
                                          bc_vars, bc_value, input );
 	}
       } // End switch(bc_type)
