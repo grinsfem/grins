@@ -121,7 +121,7 @@ namespace GRINS
     return;
   }
 
-  void LowMachNavierStokesBCHandling::init_bc_types( const std::vector<BoundaryID> bc_ids, 
+  void LowMachNavierStokesBCHandling::init_bc_types( const std::vector<BoundaryID>& bc_ids,
 						     const std::string& bc_id_string, 
 						     const int bc_type, 
 					             const std::string& bc_vars, 

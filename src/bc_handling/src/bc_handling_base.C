@@ -317,7 +317,7 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void BCHandlingBase::init_bc_types( const std::vector<BoundaryID> bc_ids, 
+  void BCHandlingBase::init_bc_types( const std::vector<BoundaryID>& bc_ids,
 				      const std::string& bc_id_string, 
 				      const int bc_type, 
                                       const std::string& bc_vars,

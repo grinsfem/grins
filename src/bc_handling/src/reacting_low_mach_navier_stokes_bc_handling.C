@@ -118,7 +118,7 @@ namespace GRINS
 
   template<typename Chemistry>
   void ReactingLowMachNavierStokesBCHandling<Chemistry>::init_bc_types
-    ( const std::vector<GRINS::BoundaryID> bc_ids, 
+    ( const std::vector<GRINS::BoundaryID>& bc_ids,
       const std::string& bc_id_string, 
       const int bc_type, 
       const std::string& bc_vars, 

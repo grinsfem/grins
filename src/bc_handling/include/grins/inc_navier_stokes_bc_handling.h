@@ -45,7 +45,7 @@ namespace GRINS
 
     virtual void init_bc_data( const libMesh::FEMSystem& system );
     
-    virtual void init_bc_types( const std::vector<GRINS::BoundaryID> bc_ids, 
+    virtual void init_bc_types( const std::vector<GRINS::BoundaryID>& bc_ids,
 				const std::string& bc_id_string, 
 				const int bc_type, 
 				const std::string& bc_vars, 

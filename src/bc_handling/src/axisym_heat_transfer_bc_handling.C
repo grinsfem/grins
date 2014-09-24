@@ -97,7 +97,7 @@ namespace GRINS
     _T_var = system.variable_number( _T_var_name );
   }
 
-  void AxisymmetricHeatTransferBCHandling::init_bc_types( const std::vector<BoundaryID> bc_ids, 
+  void AxisymmetricHeatTransferBCHandling::init_bc_types( const std::vector<BoundaryID>& bc_ids,
                                                           const std::string& bc_id_string, 
                                                           const int bc_type, 
 					                  const std::string& bc_vars, 
