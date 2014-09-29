@@ -63,7 +63,13 @@ namespace GRINS
     this->print_solution_norms = input("screen-options/print_solution_norms", false );
     this->print_solutions = input("screen-options/print_solutions", false );
     this->print_residual_norms = input("screen-options/print_residual_norms", false );
-    this->print_residuals = input("screen-options/print_residual", false ); // backwards compat
+
+    // backwards compatibility with old config files.
+    /*! \todo Remove old print_residual nomenclature */
+    this->print_residuals = input("screen-options/print_residual", false );
+    if (this->print_residuals)
+      libmesh_deprecated();
+
     this->print_residuals = input("screen-options/print_residuals", this->print_residuals );
     this->print_jacobian_norms = input("screen-options/print_jacobian_norms", false );
     this->print_jacobians = input("screen-options/print_jacobians", false );
