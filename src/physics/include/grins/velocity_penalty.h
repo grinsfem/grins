@@ -66,6 +66,10 @@ namespace GRINS
 				     AssemblyContext& context,
 				     CachedValues& cache );
 
+    virtual void compute_element_cache( const AssemblyContext& context,
+					const std::vector<libMesh::Point>& points,
+					CachedValues& cache );
+
   private:
 
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;

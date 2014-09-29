@@ -220,4 +220,47 @@ namespace GRINS
     return;
   }
 
+  void VelocityPenalty::compute_element_cache
+    ( const AssemblyContext& context, 
+      const std::vector<libMesh::Point>& points,
+      CachedValues& cache )
+  {
+    if (cache.is_active(Cache::VELOCITY_PENALTY))
+      {
+	std::vector<libMesh::Gradient> penalty_vals;
+	penalty_vals.reserve( points.size() );
+	
+        libMesh::DenseVector<libMesh::Number> output_vec(3);
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+          {
+            (*normal_vector_function)(*point, context.time,
+                                      output_vec);
+            libMesh::Gradient penalty_vec
+              (output_vec(0), output_vec(1), output_vec(2));
+            penalty_vals.push_back(penalty_vec);
+          }
+        cache.set_gradient_values(Cache::VELOCITY_PENALTY, penalty_vals);
+      }
+    if (cache.is_active(Cache::VELOCITY_PENALTY_BASE))
+      {
+	std::vector<libMesh::Gradient> base_vals;
+	base_vals.reserve( points.size() );
+	
+        libMesh::DenseVector<libMesh::Number> output_vec(3);
+
+	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
+	     point != points.end(); point++ )
+          {
+            (*base_velocity_function)(*point, context.time,
+                                      output_vec);
+            libMesh::Gradient base_vec
+              (output_vec(0), output_vec(1), output_vec(2));
+            base_vals.push_back(base_vec);
+          }
+        cache.set_gradient_values(Cache::VELOCITY_PENALTY_BASE, base_vals);
+      }
+  }
+
 } // namespace GRINS
