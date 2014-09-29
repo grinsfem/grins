@@ -64,7 +64,10 @@ namespace GRINS
 			   DIFFUSION_COEFFS,
 			   SPECIES_ENTHALPY,
 			   SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY,
-			   OMEGA_DOT };
+			   OMEGA_DOT,
+                           VELOCITY_PENALTY,
+                           VELOCITY_PENALTY_BASE,
+                           };
   } // namespace Cache
 } // namespace GRINS
 

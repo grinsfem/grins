@@ -407,6 +407,66 @@ namespace GRINS
 	}
 	break;
 
+      case(VELOCITY_PENALTY):
+	{
+	  if( !multiphysics_system.has_physics(velocity_penalty) )
+	    {
+	      std::cerr << "Error: Must have " << velocity_penalty
+			<< " enabled to output penalty configuration."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  VariableIndex var_x = output_system.add_variable
+            ("vel_penalty_x", libMesh::FIRST);
+          // Abusing "species" map to hold component indices
+	  _species_var_map.insert( std::make_pair(var_x, 0) );
+	  _quantity_var_map.insert( std::make_pair(var_x, VELOCITY_PENALTY) );
+
+	  VariableIndex var_y = output_system.add_variable
+            ("vel_penalty_y", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_y, 1) );
+	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY) );
+
+	  VariableIndex var_z = output_system.add_variable
+            ("vel_penalty_z", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_z, 2) );
+	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY) );
+
+	  _cache.add_quantity(Cache::VELOCITY_PENALTY);
+	}
+	break;
+
+      case(VELOCITY_PENALTY_BASE):
+	{
+	  if( !multiphysics_system.has_physics(velocity_penalty) )
+	    {
+	      std::cerr << "Error: Must have " << velocity_penalty
+			<< " enabled to output penalty configuration."
+			<< std::endl;
+	      libmesh_error();
+	    }
+
+	  VariableIndex var_x = output_system.add_variable
+            ("vel_penalty_base_x", libMesh::FIRST);
+          // Abusing "species" map to hold component indices
+	  _species_var_map.insert( std::make_pair(var_x, 0) );
+	  _quantity_var_map.insert( std::make_pair(var_x, VELOCITY_PENALTY_BASE) );
+
+	  VariableIndex var_y = output_system.add_variable
+            ("vel_penalty_base_y", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_y, 1) );
+	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY_BASE) );
+
+	  VariableIndex var_z = output_system.add_variable
+            ("vel_penalty_base_z", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_z, 2) );
+	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY_BASE) );
+
+	  _cache.add_quantity(Cache::VELOCITY_PENALTY_BASE);
+	}
+	break;
+
       default:
 	{
 	  std::cerr << "Error: Invalid quantity " << component << std::endl;
@@ -596,6 +656,24 @@ namespace GRINS
 	}
 	break;
 
+      case(VELOCITY_PENALTY):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int direction = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_gradient_values(Cache::VELOCITY_PENALTY)[0](direction);
+	}
+	break;
+
+      case(VELOCITY_PENALTY_BASE):
+	{
+	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
+	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
+	  unsigned int direction = _species_var_map.find(component)->second;
+	  value = this->_cache.get_cached_gradient_values(Cache::VELOCITY_PENALTY_BASE)[0](direction);
+	}
+	break;
+
       default:
 	{
 	  std::cerr << "Error: Invalid quantity " << _quantity_var_map.find(component)->second << std::endl;
@@ -663,6 +741,9 @@ namespace GRINS
     _quantity_name_map["h_s"]            = SPECIES_ENTHALPY;
     
     _quantity_name_map["omega_dot"]      = OMEGA_DOT;
+
+    _quantity_name_map["velocity_penalty"]      = VELOCITY_PENALTY;
+    _quantity_name_map["velocity_penalty_base"] = VELOCITY_PENALTY_BASE;
 
     return;
   }

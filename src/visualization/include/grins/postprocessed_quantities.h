@@ -126,7 +126,10 @@ namespace GRINS
                        MIXTURE_SPECIFIC_HEAT_V,
                        MOLE_FRACTIONS,
                        SPECIES_ENTHALPY,
-                       OMEGA_DOT };
+                       OMEGA_DOT,
+                       VELOCITY_PENALTY,
+                       VELOCITY_PENALTY_BASE
+                       };
 
   };
 
