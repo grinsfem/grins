@@ -425,12 +425,12 @@ namespace GRINS
 
 	  VariableIndex var_y = output_system.add_variable
             ("vel_penalty_y", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_y, 0) );
+	  _species_var_map.insert( std::make_pair(var_y, 1) );
 	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY) );
 
 	  VariableIndex var_z = output_system.add_variable
             ("vel_penalty_z", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_z, 0) );
+	  _species_var_map.insert( std::make_pair(var_z, 2) );
 	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY) );
 
 	  _cache.add_quantity(Cache::VELOCITY_PENALTY);
@@ -447,15 +447,21 @@ namespace GRINS
 	      libmesh_error();
 	    }
 
-	  _quantity_var_map.insert (std::make_pair
-            (output_system.add_variable("vel_penalty_base_x", libMesh::FIRST),
-             VELOCITY_PENALTY_BASE) );
-	  _quantity_var_map.insert (std::make_pair
-            (output_system.add_variable("vel_penalty_base_y", libMesh::FIRST),
-             VELOCITY_PENALTY_BASE) );
-	  _quantity_var_map.insert (std::make_pair
-            (output_system.add_variable("vel_penalty_base_z", libMesh::FIRST),
-             VELOCITY_PENALTY_BASE) );
+	  VariableIndex var_x = output_system.add_variable
+            ("vel_penalty_base_x", libMesh::FIRST);
+          // Abusing "species" map to hold component indices
+	  _species_var_map.insert( std::make_pair(var_x, 0) );
+	  _quantity_var_map.insert( std::make_pair(var_x, VELOCITY_PENALTY_BASE) );
+
+	  VariableIndex var_y = output_system.add_variable
+            ("vel_penalty_base_y", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_y, 1) );
+	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY_BASE) );
+
+	  VariableIndex var_z = output_system.add_variable
+            ("vel_penalty_base_z", libMesh::FIRST);
+	  _species_var_map.insert( std::make_pair(var_z, 2) );
+	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY_BASE) );
 
 	  _cache.add_quantity(Cache::VELOCITY_PENALTY_BASE);
 	}
