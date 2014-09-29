@@ -160,23 +160,46 @@ namespace GRINS
         (*base_velocity_function)(u_qpoint[qp], context.time,
                                   output_vec);
 
-        libMesh::NumberVectorValue U_B(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
+        const libMesh::NumberVectorValue U_B(output_vec(0),
+                                             output_vec(1),
+                                             output_vec(2));
+
+        const libMesh::NumberVectorValue U_Rel = U-U_B;
+
+        // Old code
+        // const libMesh::NumberVectorValue F1 = (U_Rel*U_N)*U_N; //
+
+        // With correct sign and more natural normalization
+        const libMesh::Number U_N_mag = std::sqrt(U_N*U_N);
+
+        if (!U_N_mag)
+          continue;
+
+        const libMesh::NumberVectorValue U_N_unit = U_N/U_N_mag;
+
+        const libMesh::NumberVectorValue F1 =
+          -(U_Rel*U_N)*U_N_unit;
+
+        // With correction term to avoid doing work on flow
+        const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
+        const libMesh::NumberVectorValue F2 = U_Rel_mag_sq ? 
+          libMesh::NumberVectorValue(F1 - (U_Rel*F1)*U_Rel/U_Rel_mag_sq) :
+          U_Rel; // 0
+
+        // Which to use?
+        const libMesh::NumberVectorValue &F = F1;
+        // const libMesh::NumberVectorValue &F = F2;
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += jac * 
-                     ((U-U_B)*U_N)*U_N(0)*u_phi[i][qp];
+            Fu(i) += jac * F(0)*u_phi[i][qp];
 
-            Fv(i) += jac *
-                     ((U-U_B)*U_N)*U_N(1)*u_phi[i][qp];
+            Fv(i) += jac * F(1)*u_phi[i][qp];
             if( this->_dim == 3 )
               {
-                (*Fw)(i) += jac *
-                            ((U-U_B)*U_N)*U_N(2)*u_phi[i][qp];
+                (*Fw)(i) += jac * F(2)*u_phi[i][qp];
               }
 
 	    if( compute_jacobian )
@@ -184,28 +207,28 @@ namespace GRINS
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kuu(i,j) += jac *
-                      (u_phi[j][qp]*U_N(0))*U_N(0)*u_phi[i][qp];
+                      -(u_phi[j][qp]*U_N(0))*U_N_unit(0)*u_phi[i][qp];
                     Kuv(i,j) += jac *
-                      (u_phi[j][qp]*U_N(1))*U_N(0)*u_phi[i][qp];
+                      -(u_phi[j][qp]*U_N(1))*U_N_unit(0)*u_phi[i][qp];
 
                     Kvu(i,j) += jac *
-                      (u_phi[j][qp]*U_N(0))*U_N(1)*u_phi[i][qp];
+                      -(u_phi[j][qp]*U_N(0))*U_N_unit(1)*u_phi[i][qp];
                     Kvv(i,j) += jac *
-                      (u_phi[j][qp]*U_N(1))*U_N(1)*u_phi[i][qp];
+                      -(u_phi[j][qp]*U_N(1))*U_N_unit(1)*u_phi[i][qp];
 
                     if( this->_dim == 3 )
                       {
                         (*Kuw)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(0)*u_phi[i][qp];
+                          -(u_phi[j][qp]*U_N(2))*U_N_unit(0)*u_phi[i][qp];
                         (*Kvw)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(1)*u_phi[i][qp];
+                          -(u_phi[j][qp]*U_N(2))*U_N_unit(1)*u_phi[i][qp];
 
                         (*Kwu)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(0))*U_N(2)*u_phi[i][qp];
+                          -(u_phi[j][qp]*U_N(0))*U_N_unit(2)*u_phi[i][qp];
                         (*Kwv)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(1))*U_N(2)*u_phi[i][qp];
+                          -(u_phi[j][qp]*U_N(1))*U_N_unit(2)*u_phi[i][qp];
                         (*Kww)(i,j) += jac *
-                          (u_phi[j][qp]*U_N(2))*U_N(2)*u_phi[i][qp];
+                          -(u_phi[j][qp]*U_N(2))*U_N_unit(2)*u_phi[i][qp];
                       }
                   }
               }
