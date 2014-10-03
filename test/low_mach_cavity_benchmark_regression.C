@@ -55,8 +55,9 @@ int main(int argc, char* argv[])
   libMesh::LibMeshInit libmesh_init(argc, argv);
  
   // This is a tough problem to get to converge without PETSc
-  libmesh_example_assert
-    (libMesh::default_solver_package() != LASPACK_SOLVERS, "--enable-petsc");
+  libmesh_example_requires
+    (libMesh::default_solver_package() != libMesh::LASPACK_SOLVERS,
+     "--enable-petsc");
 
   GRINS::SimulationBuilder sim_builder;
 
