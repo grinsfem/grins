@@ -55,6 +55,7 @@
 #include "grins/scalar_ode.h"
 #include "grins/velocity_drag.h"
 #include "grins/velocity_penalty.h"
+#include "grins/velocity_penalty_adjoint_stab.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
@@ -164,6 +165,11 @@ namespace GRINS
       {
 	physics_list[physics_to_add] = 
 	  PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+      }
+    else if( physics_to_add == velocity_penalty_adjoint_stab )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
       }
     else if( physics_to_add == averaged_fan )
       {

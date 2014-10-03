@@ -23,17 +23,17 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_VELOCITY_PENALTY_H
-#define GRINS_VELOCITY_PENALTY_H
+#ifndef GRINS_VELOCITY_PENALTY_BASE_H
+#define GRINS_VELOCITY_PENALTY_BASE_H
 
 // GRINS
 #include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
-#include "grins/velocity_penalty_base.h"
+#include "grins/inc_navier_stokes_base.h"
 
 // libMesh
+#include "libmesh/function_base.h"
 #include "libmesh/getpot.h"
+#include "libmesh/tensor_value.h"
 
 // C++
 #include <string>
@@ -41,38 +41,32 @@
 namespace GRINS
 {
 
-  //! Physics class for Velocity Penalty
-  /*
-    This physics class imposes a penalty on any velocity component in
-    the direction of (and proportional to) a specified vector field.
-   */
-  class VelocityPenalty : public VelocityPenaltyBase
+  class VelocityPenaltyBase : public IncompressibleNavierStokesBase
   {
   public:
 
-    VelocityPenalty( const std::string& physics_name, const GetPot& input );
+    VelocityPenaltyBase( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityPenalty();
+    ~VelocityPenaltyBase();
 
-    virtual void init_context( AssemblyContext& context );
+    //! Read options from GetPot input file.
+    virtual void read_input_options( const GetPot& input );
 
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+    bool compute_force ( const libMesh::Point& point,
+                         const libMesh::Real time,
+                         const libMesh::NumberVectorValue& U,
+                         libMesh::NumberVectorValue& F,
+                         libMesh::NumberTensorValue *dFdU = NULL);
+   
+  protected:
 
-    // Constraint part(s)
-    virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
 
-    virtual void compute_element_cache( const AssemblyContext& context,
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
 
-  private:
-
-    VelocityPenalty();
+    VelocityPenaltyBase();
   };
 
 } // end namespace block
 
-#endif // GRINS_VELOCITY_PENALTY_H
+#endif // GRINS_VELOCITY_PENALTY_BASE_H

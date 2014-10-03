@@ -345,6 +345,7 @@ AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh,             [chmod
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,                  [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/locally_refine_regression.sh,                        [chmod +x test/locally_refine_regression.sh])
 AC_CONFIG_FILES(test/penalty_poiseuille.sh,                               [chmod +x test/penalty_poiseuille.sh])
+AC_CONFIG_FILES(test/penalty_poiseuille_stab.sh,                          [chmod +x test/penalty_poiseuille_stab.sh])
 AC_CONFIG_FILES(test/redistribute_regression.sh,                          [chmod +x test/redistribute_regression.sh])
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/input_files/locally_refine.in)

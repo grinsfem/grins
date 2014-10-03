@@ -26,23 +26,15 @@
 // This class
 #include "grins/velocity_penalty.h"
 
-// GRINS
-#include "grins/generic_ic_handler.h"
-
 // libMesh
 #include "libmesh/quadrature.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/zero_function.h"
 
 namespace GRINS
 {
 
   VelocityPenalty::VelocityPenalty( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name, input)
+    : VelocityPenaltyBase(physics_name, input)
   {
-    this->read_input_options(input);
-
     return;
   }
 
@@ -51,38 +43,17 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenalty::read_input_options( const GetPot& input )
+  void VelocityPenalty::init_context( AssemblyContext& context )
   {
-    std::string penalty_function =
-      input("Physics/"+velocity_penalty+"/penalty_function",
-        std::string("0"));
+    context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+    context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-    if (penalty_function == "0")
-      this->normal_vector_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->normal_vector_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
-
-    std::string base_function =
-      input("Physics/"+velocity_penalty+"/base_velocity",
-        std::string("0"));
-
-    if (penalty_function == "0" && base_function == "0")
-      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
-
-    if (base_function == "0")
-      this->base_velocity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->base_velocity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
-
+    return;
   }
 
-  void VelocityPenalty::element_constraint( bool compute_jacobian,
-					    AssemblyContext& context,
-					    CachedValues& /* cache */ )
+  void VelocityPenalty::element_time_derivative( bool compute_jacobian,
+					         AssemblyContext& context,
+					         CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("VelocityPenalty::element_constraint");
@@ -142,93 +113,46 @@ namespace GRINS
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
 
-        // Velocity discrepancy (current velocity minus base velocity)
-        // normal to constraint plane, scaled by constraint penalty
-        // value
-        libmesh_assert(normal_vector_function.get());
-        libmesh_assert(base_velocity_function.get());
 
-        libMesh::DenseVector<libMesh::Number> output_vec(3);
-
-        (*normal_vector_function)(u_qpoint[qp], context.time,
-                                  output_vec);
-
-        libMesh::NumberVectorValue U_N(output_vec(0),
-                                       output_vec(1),
-                                       output_vec(2));
-
-        (*base_velocity_function)(u_qpoint[qp], context.time,
-                                  output_vec);
-
-        const libMesh::NumberVectorValue U_B(output_vec(0),
-                                             output_vec(1),
-                                             output_vec(2));
-
-        const libMesh::NumberVectorValue U_Rel = U-U_B;
-
-        // Old code
-        // const libMesh::NumberVectorValue F1 = (U_Rel*U_N)*U_N; //
-
-        // With correct sign and more natural normalization
-        const libMesh::Number U_N_mag = std::sqrt(U_N*U_N);
-
-        if (!U_N_mag)
+        libMesh::NumberVectorValue F;
+        libMesh::NumberTensorValue dFdU;
+        libMesh::NumberTensorValue* dFdU_ptr =
+          compute_jacobian ? &dFdU : NULL;
+        if (!compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
           continue;
-
-        const libMesh::NumberVectorValue U_N_unit = U_N/U_N_mag;
-
-        const libMesh::NumberVectorValue F1 =
-          -(U_Rel*U_N)*U_N_unit;
-
-        // With correction term to avoid doing work on flow
-        const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
-        const libMesh::NumberVectorValue F2 = U_Rel_mag_sq ? 
-          libMesh::NumberVectorValue(F1 - (U_Rel*F1)*U_Rel/U_Rel_mag_sq) :
-          U_Rel; // 0
-
-        // Which to use?
-        const libMesh::NumberVectorValue &F = F1;
-        // const libMesh::NumberVectorValue &F = F2;
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += jac * F(0)*u_phi[i][qp];
+            libMesh::Number jac_i = jac * u_phi[i][qp];
 
-            Fv(i) += jac * F(1)*u_phi[i][qp];
+            Fu(i) += F(0)*jac_i;
+
+            Fv(i) += F(1)*jac_i;
             if( this->_dim == 3 )
               {
-                (*Fw)(i) += jac * F(2)*u_phi[i][qp];
+                (*Fw)(i) += F(2)*jac_i;
               }
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += jac *
-                      -(u_phi[j][qp]*U_N(0))*U_N_unit(0)*u_phi[i][qp];
-                    Kuv(i,j) += jac *
-                      -(u_phi[j][qp]*U_N(1))*U_N_unit(0)*u_phi[i][qp];
-
-                    Kvu(i,j) += jac *
-                      -(u_phi[j][qp]*U_N(0))*U_N_unit(1)*u_phi[i][qp];
-                    Kvv(i,j) += jac *
-                      -(u_phi[j][qp]*U_N(1))*U_N_unit(1)*u_phi[i][qp];
+                    libMesh::Number jac_ij = jac_i * u_phi[j][qp];
+                    Kuu(i,j) += jac_ij * dFdU(0,0);
+                    Kuv(i,j) += jac_ij * dFdU(0,1);
+                    Kvu(i,j) += jac_ij * dFdU(1,0);
+                    Kvv(i,j) += jac_ij * dFdU(1,1);
 
                     if( this->_dim == 3 )
                       {
-                        (*Kuw)(i,j) += jac *
-                          -(u_phi[j][qp]*U_N(2))*U_N_unit(0)*u_phi[i][qp];
-                        (*Kvw)(i,j) += jac *
-                          -(u_phi[j][qp]*U_N(2))*U_N_unit(1)*u_phi[i][qp];
+                        (*Kuw)(i,j) += jac_ij * dFdU(0,2);
+                        (*Kvw)(i,j) += jac_ij * dFdU(1,2);
 
-                        (*Kwu)(i,j) += jac *
-                          -(u_phi[j][qp]*U_N(0))*U_N_unit(2)*u_phi[i][qp];
-                        (*Kwv)(i,j) += jac *
-                          -(u_phi[j][qp]*U_N(1))*U_N_unit(2)*u_phi[i][qp];
-                        (*Kww)(i,j) += jac *
-                          -(u_phi[j][qp]*U_N(2))*U_N_unit(2)*u_phi[i][qp];
+                        (*Kwu)(i,j) += jac_ij * dFdU(2,0);
+                        (*Kwv)(i,j) += jac_ij * dFdU(2,1);
+                        (*Kww)(i,j) += jac_ij * dFdU(2,2);
                       }
                   }
               }

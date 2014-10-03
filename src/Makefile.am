@@ -101,6 +101,8 @@ libgrins_la_SOURCES += physics/src/primitive_temp_variables.C
 libgrins_la_SOURCES += physics/src/primitive_temp_fe_variables.C
 libgrins_la_SOURCES += physics/src/velocity_drag.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
+libgrins_la_SOURCES += physics/src/velocity_penalty_adjoint_stab.C
+libgrins_la_SOURCES += physics/src/velocity_penalty_base.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -261,6 +263,8 @@ include_HEADERS += physics/include/grins/primitive_temp_variables.h
 include_HEADERS += physics/include/grins/primitive_temp_fe_variables.h
 include_HEADERS += physics/include/grins/velocity_drag.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
+include_HEADERS += physics/include/grins/velocity_penalty_adjoint_stab.h
+include_HEADERS += physics/include/grins/velocity_penalty_base.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
