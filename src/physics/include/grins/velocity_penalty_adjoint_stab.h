@@ -23,56 +23,50 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_VELOCITY_PENALTY_H
-#define GRINS_VELOCITY_PENALTY_H
+#ifndef GRINS_VELOCITY_PENALTY_ADJOINT_STAB_H
+#define GRINS_VELOCITY_PENALTY_ADJOINT_STAB_H
 
 // GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
 #include "grins/velocity_penalty_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-
-// C++
-#include <string>
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 namespace GRINS
-{
-
-  //! Physics class for Velocity Penalty
-  /*
-    This physics class imposes a penalty on any velocity component in
-    the direction of (and proportional to) a specified vector field.
+{  
+  //! Adds Velocity penalty adjoint stabilization source term
+  /*!
+    This class implements the adjoint stabilization term for the VelocityPenalty
+    Physics. Intended to be used with
+    IncompressibleNavierStokesAdjointStabilization.
    */
-  class VelocityPenalty : public VelocityPenaltyBase
+  class VelocityPenaltyAdjointStabilization : public VelocityPenaltyBase
   {
   public:
+    
+    VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    VelocityPenalty( const std::string& physics_name, const GetPot& input );
-
-    ~VelocityPenalty();
+    ~VelocityPenaltyAdjointStabilization();
 
     virtual void init_context( AssemblyContext& context );
 
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
-
-    // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+					  AssemblyContext& context,
+					  CachedValues& cache );
 
-    virtual void compute_element_cache( const AssemblyContext& context,
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
+  protected:
+
+    libMesh::Number _rho, _mu;
+
+    IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
   private:
 
-    VelocityPenalty();
+    VelocityPenaltyAdjointStabilization();
+
   };
 
-} // end namespace block
-
-#endif // GRINS_VELOCITY_PENALTY_H
+} // end namespace GRINS
+#endif // GRINS_VELOCITY_PENALTY_ADJOINT_STAB_H
