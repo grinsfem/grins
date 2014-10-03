@@ -27,7 +27,9 @@ minimum_linear_tolerance = 1.0e-12
 relative_residual_tolerance = 1.0e-10
 relative_step_tolerance     = 1.0e-10
 
+# Currently broken when correction term is in place
 verify_analytic_jacobians = 1.e-6
+#use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
