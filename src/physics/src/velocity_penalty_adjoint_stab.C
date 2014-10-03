@@ -189,12 +189,16 @@ namespace GRINS
                   {
                     Kuu(i,j) += tau_M*F(0)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
                     Kuu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*F(0)*test_func*JxW[qp];
+                    Kuu(i,j) += tau_M*dFdU(0,0)*u_phi[j][qp]*test_func*JxW[qp];
                     Kuv(i,j) += tau_M*F(0)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
                     Kuv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*F(0)*test_func*JxW[qp];
+                    Kuv(i,j) += tau_M*dFdU(0,1)*u_phi[j][qp]*test_func*JxW[qp];
                     Kvu(i,j) += tau_M*F(1)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
                     Kvu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*F(1)*test_func*JxW[qp];
+                    Kvu(i,j) += tau_M*dFdU(1,0)*u_phi[j][qp]*test_func*JxW[qp];
                     Kvv(i,j) += tau_M*F(1)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
                     Kvv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*F(1)*test_func*JxW[qp];
+                    Kvv(i,j) += tau_M*dFdU(1,1)*u_phi[j][qp]*test_func*JxW[qp];
                   }
 
                 if (_dim == 3)
@@ -203,14 +207,19 @@ namespace GRINS
                       {
                         (*Kuw)(i,j) += tau_M*F(0)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
                         (*Kuw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*F(0)*test_func*JxW[qp];
+                        (*Kuw)(i,j) += tau_M*dFdU(0,2)*u_phi[j][qp]*test_func*JxW[qp];
                         (*Kvw)(i,j) += tau_M*F(1)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
                         (*Kvw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*F(1)*test_func*JxW[qp];
+                        (*Kvw)(i,j) += tau_M*dFdU(1,2)*u_phi[j][qp]*test_func*JxW[qp];
                         (*Kwu)(i,j) += tau_M*F(2)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
                         (*Kwu)(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*F(2)*test_func*JxW[qp];
+                        (*Kwu)(i,j) += tau_M*dFdU(2,0)*u_phi[j][qp]*test_func*JxW[qp];
                         (*Kwv)(i,j) += tau_M*F(2)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
                         (*Kwv)(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*F(2)*test_func*JxW[qp];
+                        (*Kwv)(i,j) += tau_M*dFdU(2,1)*u_phi[j][qp]*test_func*JxW[qp];
                         (*Kww)(i,j) += tau_M*F(2)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
                         (*Kww)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*F(2)*test_func*JxW[qp];
+                        (*Kww)(i,j) += tau_M*dFdU(2,2)*u_phi[j][qp]*test_func*JxW[qp];
                       }
                   }
 
@@ -319,13 +328,22 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
-                    Kpu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
-                    Kpv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
+                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
+                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
+                    for (unsigned int d=0; d != 3; ++d)
+                      {
+                        Kpu(i,j) += tau_M*dFdU(d,0)*u_phi[j][qp]*p_dphi[i][qp](d)*JxW[qp];
+                        Kpv(i,j) += tau_M*dFdU(d,1)*u_phi[j][qp]*p_dphi[i][qp](d)*JxW[qp];
+                      }
                   }
                 if( this->_dim == 3 )
                   for (unsigned int j=0; j != n_u_dofs; ++j)
                     {
-                      (*Kpw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
+                      (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*F*p_dphi[i][qp]*JxW[qp];
+                      for (unsigned int d=0; d != 3; ++d)
+                        {
+                          (*Kpw)(i,j) += tau_M*dFdU(d,2)*u_phi[j][qp]*p_dphi[i][qp](d)*JxW[qp];
+                        }
                     }
               }
           }
