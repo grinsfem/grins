@@ -79,21 +79,24 @@ namespace GRINS
 
     if( num_ids != num_ics )
       {
-	std::cerr << "Error: Must specify equal number of subdomain ids and initial condition types"
+	std::cerr << "Error: number of subdomain ids " << num_ids
+                  << "must equal number of initial condition types " << num_ics
 		  << std::endl;
 	libmesh_error();
       }
 
     if( num_ids != num_vars )
       {
-	std::cerr << "Error: Must specify equal number of subdomain ids and variable name lists"
+	std::cerr << "Error: number of subdomain ids " << num_ids
+                  << "must equal number of variable name lists " << num_vars
 		  << std::endl;
 	libmesh_error();
       }
 
     if( num_ids != num_values )
       {
-	std::cerr << "Error: Must specify equal number of subdomain ids and initial condition values"
+	std::cerr << "Error: number of subdomain ids " << num_ids
+                  << "must equal number of initial condition values " << num_values
 		  << std::endl;
 	libmesh_error();
       }
