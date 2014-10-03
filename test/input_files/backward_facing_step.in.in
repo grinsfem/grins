@@ -63,7 +63,7 @@ deltat = 0.05
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations =  25 
-max_linear_iterations = 2500
+max_linear_iterations = 25000
 
 verify_analytic_jacobians = 0.0
 
