@@ -28,8 +28,12 @@ relative_residual_tolerance = 1.0e-10
 relative_step_tolerance     = 1.0e-10
 
 # Currently broken when correction term is in place
-verify_analytic_jacobians = 1.e-6
 #use_numerical_jacobians_only = 'true'
+
+# quadratic scaling term gives discontinuous second derivatives and
+# kills our numerical jacobian convergence
+verify_analytic_jacobians = 1.e-5
+numerical_jacobian_h = 1.e-10
 
 # Visualization options
 [vis-options]
@@ -76,7 +80,9 @@ pin_location = '2.5 0.5'
 [../VelocityPenalty]
 
 penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
-#penalty_function = '{0}{0}{0}'
+
+#penalty_function = '{(abs(y-.5)>.25)*1e8}{0}{0}'
+#quadratic_scaling = true
 
 []
 
