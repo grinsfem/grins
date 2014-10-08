@@ -56,7 +56,7 @@ namespace GRINS
 					         CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenalty::element_constraint");
+    this->_timer->BeginTimer("VelocityPenalty::element_time_derivative");
 #endif
 
     // Element Jacobian * quadrature weights for interior integration
@@ -113,7 +113,6 @@ namespace GRINS
         if (_dim == 3)
           U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
 
-
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
@@ -121,11 +120,11 @@ namespace GRINS
         if (!compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
           continue;
 
-        libMesh::Real jac = JxW[qp];
+        const libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Number jac_i = jac * u_phi[i][qp];
+            const libMesh::Number jac_i = jac * u_phi[i][qp];
 
             Fu(i) += F(0)*jac_i;
 
@@ -139,7 +138,7 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    libMesh::Number jac_ij = jac_i * u_phi[j][qp];
+                    const libMesh::Number jac_ij = jac_i * u_phi[j][qp];
                     Kuu(i,j) += jac_ij * dFdU(0,0);
                     Kuv(i,j) += jac_ij * dFdU(0,1);
                     Kvu(i,j) += jac_ij * dFdU(1,0);
@@ -161,7 +160,7 @@ namespace GRINS
 
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityPenalty::element_constraint");
+    this->_timer->EndTimer("VelocityPenalty::element_time_derivative");
 #endif
 
     return;
