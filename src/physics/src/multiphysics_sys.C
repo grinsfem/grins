@@ -78,6 +78,10 @@ namespace GRINS
     this->print_element_jacobians = input("screen-options/print_element_jacobians", false );
 
     _use_numerical_jacobians_only = input("linear-nonlinear-solver/use_numerical_jacobians_only", false );
+
+    numerical_jacobian_h =
+      input("linear-nonlinear-solver/numerical_jacobian_h",
+            numerical_jacobian_h);
   }
 
   void MultiphysicsSystem::init_data()
