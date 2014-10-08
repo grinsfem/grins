@@ -34,7 +34,8 @@ namespace GRINS
 {
 
   VelocityPenaltyBase::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name, input)
+    : IncompressibleNavierStokesBase(physics_name, input),
+    _quadratic_scaling(false)
   {
     this->read_input_options(input);
 
@@ -73,6 +74,8 @@ namespace GRINS
       this->base_velocity_function.reset
         (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
+    _quadratic_scaling = 
+      input("Physics/"+velocity_penalty+"/quadratic_scaling", false);
   }
 
   bool VelocityPenaltyBase::compute_force
@@ -119,29 +122,49 @@ namespace GRINS
 
     F = -(U_Rel*U_N)*U_N_unit;
 
+    if (dFdU)
+      for (unsigned int i=0; i != 3; ++i)
+        for (unsigned int j=0; j != 3; ++j)
+          (*dFdU)(i,j) = -(U_N(j))*U_N_unit(i);
+
+    // With quadratic scaling
+    if (_quadratic_scaling)
+      {
+        const libMesh::Number U_Rel_mag = std::sqrt(U_Rel * U_Rel);
+
+        // Modify dFdU first so as to reuse the old value of F
+        if (dFdU)
+          {
+            // dU_Rel/dU = I
+            // d(U_Rel*U_Rel)/dU = 2*U_Rel
+            // d|U_Rel|/dU = U_Rel/|U_Rel|
+
+            const libMesh::NumberVectorValue U_Rel_unit = U_Rel/U_Rel_mag;
+
+            (*dFdU) *= U_Rel_mag;
+
+            if (U_Rel_mag)
+              for (unsigned int i=0; i != 3; ++i)
+                for (unsigned int j=0; j != 3; ++j)
+                  (*dFdU)(i,j) += F(i)*U_Rel_unit(j);
+          }
+
+        F *= U_Rel_mag;
+      }
+
     // With correction term to avoid doing work on flow
     bool do_correction = false;
     if (do_correction)
       {
+        if (dFdU)
+          libmesh_not_implemented();
+
         const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
         if (U_Rel_mag_sq)
           {
             F -= (U_Rel*F)*U_Rel/U_Rel_mag_sq;
           }
       }
-
-    if (dFdU)
-      {
-        for (unsigned int i=0; i != 3; ++i)
-          for (unsigned int j=0; j != 3; ++j)
-            (*dFdU)(i,j) = -(U_N(j))*U_N_unit(i);
-
-        if (do_correction)
-          {
-            libmesh_not_implemented();
-          }
-      }
-
     return true;
   }
 
