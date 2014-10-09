@@ -60,7 +60,12 @@ namespace GRINS
    
   protected:
 
+    // Make penalty force proportional to |u|(u*n) instead of just
+    // (u*n)
     bool _quadratic_scaling;
+
+    // Do not apply any force parallel to the velocity
+    bool _orthogonal_force;
 
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
 
