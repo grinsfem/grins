@@ -43,7 +43,8 @@ namespace GRINS
     std::istringstream converter(input);
     T returnval;
     converter >> returnval;
-    libmesh_assert(!converter.fail());
+    if (converter.fail())
+      libmesh_error();
     return returnval;
   }
 
