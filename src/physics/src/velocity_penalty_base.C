@@ -159,15 +159,20 @@ namespace GRINS
     // With correction term to avoid doing work on flow
     if (_orthogonal_force)
       {
-        const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
+        // With linear scaling, we get an undefined Jacobian for
+        // U_Rel=0
+        libmesh_assert(_quadratic_scaling);
 
+        const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
         if (U_Rel_mag_sq)
           {
+            const libMesh::Number RF = U_Rel * F;
+            const libMesh::Number RF_over_RR = RF / U_Rel_mag_sq;
+
             if (dFdU)
               {
-                const libMesh::Number RF = U_Rel * F;
-                const libMesh::Number RF_over_RR = RF / U_Rel_mag_sq;
-                const libMesh::NumberVectorValue RFp = dFdU->transpose() * U_Rel;
+                const libMesh::NumberVectorValue RFp =
+                  dFdU->transpose() * U_Rel + F;
                 const libMesh::NumberVectorValue QV =
                   (RFp-RF_over_RR*2*U_Rel)/U_Rel_mag_sq;
 
@@ -182,7 +187,7 @@ namespace GRINS
                   }
               }
 
-            F -= (U_Rel*F)*U_Rel/U_Rel_mag_sq;
+            F -= U_Rel*RF_over_RR;
           }
       }
     return true;
