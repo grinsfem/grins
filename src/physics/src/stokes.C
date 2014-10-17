@@ -346,16 +346,15 @@ namespace GRINS
       {
         // For the mass residual, we need to be a little careful.
         // The time integrator is handling the time-discretization
-        // for us so we need to supply M(u_fixed)*u for the residual.
-        // u_fixed will be given by the fixed_interior_* functions
-        // while u will be given by the interior_* functions.
-        libMesh::Real u_dot = context.interior_value(this->_flow_vars.u_var(), qp);
-        libMesh::Real v_dot = context.interior_value(this->_flow_vars.v_var(), qp);
+        // for us so we need to supply M(u_fixed)*u' for the residual.
+        // u_fixed will be given by the fixed_interior_value function
+        // while u' will be given by the interior_rate function.
+        libMesh::Real u_dot, v_dot, w_dot = 0.0;
+        context.interior_rate(this->_flow_vars.u_var(), qp, u_dot);
+        context.interior_rate(this->_flow_vars.v_var(), qp, v_dot);
 
-        libMesh::Real w_dot = 0.0;
-
-        if( this->_dim == 3 )
-          w_dot = context.interior_value(this->_flow_vars.w_var(), qp);
+        if( _dim == 3 )
+          context.interior_rate(this->_flow_vars.w_var(), qp, w_dot);
       
         for (unsigned int i = 0; i != n_u_dofs; ++i)
           {

@@ -497,10 +497,11 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real T_dot;
+        context.interior_rate(this->_T_var, qp, T_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
@@ -544,15 +545,15 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real u_dot = context.interior_value(this->_u_var, qp);
-	libMesh::Real v_dot = context.interior_value(this->_v_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real u_dot, v_dot, w_dot = 0.0;
+        context.interior_rate(this->_u_var, qp, u_dot);
+	context.interior_rate(this->_v_var, qp, v_dot);
 
-	libMesh::Real w_dot = 0.0;
 	if( this->_dim == 3 )
-	  w_dot = context.interior_value(this->_w_var, qp);
+	  context.interior_rate(this->_w_var, qp, w_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
       
@@ -617,10 +618,11 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u will be given by the interior_rate function.
+	libMesh::Real T_dot;
+        context.interior_rate(this->_T_var, qp, T_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
@@ -774,7 +776,8 @@ namespace GRINS
 	libMesh::Number gamma = cp/cv;
 	libMesh::Number one_over_gamma = 1.0/(gamma-1.0);
 
-	libMesh::Number p0_dot = context.interior_value(this->_p0_var, qp );
+	libMesh::Number p0_dot;
+        context.interior_rate(this->_p0_var, qp, p0_dot);
 
 	libMesh::Number p0 = context.fixed_interior_value(this->_p0_var, qp );
 

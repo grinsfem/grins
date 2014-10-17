@@ -190,7 +190,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(_scalar_ode_var)); // U_{s}
+            (context.get_elem_solution_rate(_scalar_ode_var)); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
