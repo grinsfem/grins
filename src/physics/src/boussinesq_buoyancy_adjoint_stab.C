@@ -341,24 +341,24 @@ namespace GRINS
         // for both at the same time.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += -tau_M*residual*p_dphi[i][qp]*JxW[qp];
+            Fp(i) += tau_M*residual*p_dphi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
-                    KpT(i,j) += -tau_M*d_residual_dT*T_phi[j][qp]*p_dphi[i][qp]*JxW[qp];
+                    KpT(i,j) += tau_M*d_residual_dT*T_phi[j][qp]*p_dphi[i][qp]*JxW[qp];
                   }
 
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
-                    Kpu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
-                    Kpv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
+                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
+                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
                   }
                 if( this->_dim == 3 )
                   for (unsigned int j=0; j != n_u_dofs; ++j)
                     {
-                      (*Kpw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
+                      (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
                     }
               }
           }
