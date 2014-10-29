@@ -507,7 +507,7 @@ namespace GRINS
 
 	for (unsigned int i = 0; i != n_p_dofs; ++i)
 	  {
-	    F_p(i) += T_dot/T*p_phi[i][qp]*JxW[qp];
+	    F_p(i) -= T_dot/T*p_phi[i][qp]*JxW[qp];
 	  } // End DoF loop i
 
       } // End quadrature loop qp
@@ -561,11 +561,11 @@ namespace GRINS
       
 	for (unsigned int i = 0; i != n_u_dofs; ++i)
 	  {
-	    F_u(i) += rho*u_dot*u_phi[i][qp]*JxW[qp];
-	    F_v(i) += rho*v_dot*u_phi[i][qp]*JxW[qp];
+	    F_u(i) -= rho*u_dot*u_phi[i][qp]*JxW[qp];
+	    F_v(i) -= rho*v_dot*u_phi[i][qp]*JxW[qp];
 
 	    if( this->_dim == 3 )
-	      F_w(i) += rho*w_dot*u_phi[i][qp]*JxW[qp];
+	      F_w(i) -= rho*w_dot*u_phi[i][qp]*JxW[qp];
 	  
 	    /*
 	      if( compute_jacobian )
@@ -632,7 +632,7 @@ namespace GRINS
       
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F_T(i) += rho*cp*T_dot*T_phi[i][qp]*JxW[qp];
+	    F_T(i) -= rho*cp*T_dot*T_phi[i][qp]*JxW[qp];
 	  } // End DoF loop i
 
       } // End quadrature loop qp
@@ -783,17 +783,17 @@ namespace GRINS
 
 	for (unsigned int i=0; i != n_p0_dofs; i++)
 	  {
-	    F_p0(i) += p0_dot*one_over_gamma*JxW[qp];
+	    F_p0(i) -= p0_dot*one_over_gamma*JxW[qp];
 	  }
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    F_T(i) -= p0_dot*T_phi[i][qp]*JxW[qp];
+	    F_T(i) += p0_dot*T_phi[i][qp]*JxW[qp];
 	  }
 
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    F_p(i) -= p0_dot/p0*p_phi[i][qp]*JxW[qp];
+	    F_p(i) += p0_dot/p0*p_phi[i][qp]*JxW[qp];
 	  }
 
       }

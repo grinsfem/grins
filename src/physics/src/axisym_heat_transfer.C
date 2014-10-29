@@ -217,7 +217,7 @@ namespace GRINS
 	      (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
 	       -k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
-	    if (compute_jacobian && context.get_elem_solution_derivative())
+	    if (compute_jacobian)
 	      {
 		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
@@ -226,7 +226,7 @@ namespace GRINS
 		    // TODO: precompute some terms like:
 		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-		    KTT(i,j) += JxW[qp]*r*
+		    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*
 		      (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
 		       -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
 		  } // end of the inner dof (j) loop
@@ -236,15 +236,15 @@ namespace GRINS
 		  for (unsigned int j=0; j != n_T_dofs; j++)
 		    {
 		      // TODO: precompute some terms like:
-		      KTT(i,j) -= JxW[qp]*r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
+		      KTT(i,j) -= JxW[qp] * context.get_elem_solution_derivative() *r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
 		    }
 		}
 
 		// Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
-		    KTr(i,j) += JxW[qp]*r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
-		    KTz(i,j) += JxW[qp]*r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
+		    KTr(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+		    KTz(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -335,14 +335,14 @@ namespace GRINS
 
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F(i) += JxW[qp]*r*(_rho*_Cp*T_dot*phi[i][qp] );
+	    F(i) -= JxW[qp]*r*(_rho*_Cp*T_dot*phi[i][qp] );
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
 		    // We're assuming rho, cp are constant w.r.t. T here.
-                    M(i,j) += JxW[qp]*r*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
+                    M(i,j) -= JxW[qp] * context.get_elem_solution_rate_derivative() *r*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
           

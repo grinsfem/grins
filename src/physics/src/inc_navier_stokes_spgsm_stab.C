@@ -263,18 +263,18 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+            Fp(i) -= tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
           }
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += tau_M*RM_t(0)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
+            Fu(i) -= tau_M*RM_t(0)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
 
-            Fv(i) += tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
+            Fv(i) -= tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
 
             if( this->_dim == 3 )
               {
-                (*Fw)(i) += tau_M*RM_t(2)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
+                (*Fw)(i) -= tau_M*RM_t(2)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
               }
           }
 

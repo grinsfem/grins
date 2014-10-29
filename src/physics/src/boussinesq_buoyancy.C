@@ -118,11 +118,14 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
-                    KuT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
-                    KvT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                    KuT(i,j) += context.get_elem_solution_derivative() *
+                      -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                    KvT(i,j) += context.get_elem_solution_derivative() *
+                      -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                     if (_dim == 3)
-                      (*KwT)(i,j) += -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                      (*KwT)(i,j) += context.get_elem_solution_derivative() *
+                        -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                   } // End j dof loop
               } // End compute_jacobian check

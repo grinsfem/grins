@@ -681,7 +681,7 @@ namespace GRINS
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+            Fp(i) -= tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {
@@ -690,19 +690,19 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                    Kpu(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](0)*JxW[qp];
+                    Kpu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                    Kpu(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](0)*JxW[qp];
 
-                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                    Kpv(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](1)*JxW[qp];
+                    Kpv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                    Kpv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](1)*JxW[qp];
                   }
 
                 if(this->_dim == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
-                        (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                        (*Kpw)(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](2)*JxW[qp];
+                        (*Kpw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                        (*Kpw)(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](2)*JxW[qp];
                       }
                   }
               }
@@ -716,13 +716,13 @@ namespace GRINS
 
             //libMesh::RealGradient zeroth_order_term = - this->_rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
-            Fu(i) += tau_M*RM_t(0)*test_func*JxW[qp];
+            Fu(i) -= tau_M*RM_t(0)*test_func*JxW[qp];
 
-            Fv(i) += tau_M*RM_t(1)*test_func*JxW[qp];
+            Fv(i) -= tau_M*RM_t(1)*test_func*JxW[qp];
 
             if(this->_dim == 3)
               {
-                (*Fw)(i) += tau_M*RM_t(2)*test_func*JxW[qp];
+                (*Fw)(i) -= tau_M*RM_t(2)*test_func*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -732,39 +732,39 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                    Kuu(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                    Kuu(i,j) += tau_M*RM_t(0)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kuu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                    Kuu(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
+                    Kuu(i,j) -= tau_M*RM_t(0)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kuv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                    Kuv(i,j) += tau_M*RM_t(0)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kuv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                    Kuv(i,j) -= tau_M*RM_t(0)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kvu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                    Kvu(i,j) += tau_M*RM_t(1)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kvu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                    Kvu(i,j) -= tau_M*RM_t(1)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kvv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                    Kvv(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                    Kvv(i,j) += tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kvv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                    Kvv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
+                    Kvv(i,j) -= tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                   }
                 if(this->_dim == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
-                        (*Kuw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                        (*Kuw)(i,j) += tau_M*RM_t(0)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kuw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                        (*Kuw)(i,j) -= tau_M*RM_t(0)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kvw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                        (*Kvw)(i,j) += tau_M*RM_t(1)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kvw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                        (*Kvw)(i,j) -= tau_M*RM_t(1)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kwu)(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kwu)(i,j) += tau_M*RM_t(2)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kwu)(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kwu)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kwv)(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kwv)(i,j) += tau_M*RM_t(2)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kwv)(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kwv)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kww)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kww)(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                        (*Kww)(i,j) += tau_M*RM_t(2)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kww)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kww)(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
+                        (*Kww)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                       }
                   }
               }

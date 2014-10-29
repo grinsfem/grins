@@ -320,7 +320,7 @@ namespace GRINS
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    Fp(i) -= tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+	    Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
 	  }
       }
 
@@ -386,15 +386,15 @@ namespace GRINS
       
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fu(i) += ( tau_C*RC_t*u_gradphi[i][qp](0)
+	    Fu(i) -= ( tau_C*RC_t*u_gradphi[i][qp](0)
 		       + tau_M*RM_t(0)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 
-	    Fv(i) += ( tau_C*RC_t*u_gradphi[i][qp](1)
+	    Fv(i) -= ( tau_C*RC_t*u_gradphi[i][qp](1)
 		       + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 
 	    if( this->_dim == 3 )
 	      {
-		Fw(i) += ( tau_C*RC_t*u_gradphi[i][qp](2)
+		Fw(i) -= ( tau_C*RC_t*u_gradphi[i][qp](2)
 			   + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 	      }
 	  }
@@ -453,7 +453,7 @@ namespace GRINS
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) += rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
+	    FT(i) -= rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
 	  }
 
       }

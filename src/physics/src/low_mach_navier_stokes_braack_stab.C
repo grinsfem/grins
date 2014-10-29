@@ -357,7 +357,7 @@ namespace GRINS
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    Fp(i) -= ( tau_M*RM_t*p_dphi[i][qp] 
+	    Fp(i) += ( tau_M*RM_t*p_dphi[i][qp] 
 		       +  tau_E*RE_t*(U*p_dphi[i][qp])/T
 		       )*JxW[qp];
 	  }
@@ -427,14 +427,14 @@ namespace GRINS
       
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fu(i) -= (  tau_C*RC_t*u_gradphi[i][qp](0)
+	    Fu(i) += (  tau_C*RC_t*u_gradphi[i][qp](0)
 			+ tau_M*RM_t(0)*rho*U*u_gradphi[i][qp]
 			+ mu*tau_M*RM_t(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
 					    + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1) 
 					    - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) ) 
 			)*JxW[qp];
 
-	    Fv(i) -= ( tau_C*RC_t*u_gradphi[i][qp](1)
+	    Fv(i) += ( tau_C*RC_t*u_gradphi[i][qp](1)
 		       + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp]
 		       + mu*tau_M*RM_t(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
 					   + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1) 
@@ -443,13 +443,13 @@ namespace GRINS
 
 	    if( this->_dim == 3 )
 	      {
-		Fw(i) += mu*tau_M*RM_t(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2) 
+		Fw(i) -= mu*tau_M*RM_t(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2) 
 					   - 2.0/3.0*u_hessphi[i][qp](2,0))*JxW[qp];
 
-		Fv(i) += mu*tau_M*RM_t(1)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](1,2)
+		Fv(i) -= mu*tau_M*RM_t(1)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](1,2)
 					   - 2.0/3.0*u_hessphi[i][qp](2,1))*JxW[qp];
 
-		Fw(i) += ( tau_C*RC_t*u_gradphi[i][qp](2)
+		Fw(i) -= ( tau_C*RC_t*u_gradphi[i][qp](2)
 			   + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp]
 			   + mu*tau_M*RM_t(2)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)
 					       + u_hessphi[i][qp](2,0) + u_hessphi[i][qp](2,1) + u_hessphi[i][qp](2,2)
@@ -517,7 +517,7 @@ namespace GRINS
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) -= ( rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
+	    FT(i) += ( rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
 		       + tau_E*RE_t*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
 		       )*JxW[qp];
 	  }

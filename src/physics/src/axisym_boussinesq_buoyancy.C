@@ -154,11 +154,13 @@ namespace GRINS
 
 	    if (compute_jacobian && context.get_elem_solution_derivative())
 	      {
-		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 		for (unsigned int j=0; j != n_T_dofs; j++)
 		  {
-		    KrT(i,j) += -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
-		    KzT(i,j) += -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp];
+		    const libMesh::Number val =
+                      -_rho_ref*_beta_T*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp]
+                      * context.get_elem_solution_derivative();
+		    KrT(i,j) += val*_g(0);
+		    KzT(i,j) += val*_g(1);
 		  } // End j dof loop
 	      } // End compute_jacobian check
 

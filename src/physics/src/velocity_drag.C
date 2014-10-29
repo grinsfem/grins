@@ -161,38 +161,38 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += jac *
+                    Kuu(i,j) += context.get_elem_solution_derivative() * jac *
                       (F_coeff*u_phi[j][qp] +
                        J_coeff*U(0)*U(0)*u_phi[j][qp]/Umag) *
                       u_phi[i][qp];
-                    Kuv(i,j) += jac *
+                    Kuv(i,j) += context.get_elem_solution_derivative() * jac *
                       (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
                       u_phi[i][qp];
 
-                    Kvu(i,j) += jac *
+                    Kvu(i,j) += context.get_elem_solution_derivative() * jac *
                       (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
                       u_phi[i][qp];
-                    Kvv(i,j) += jac *
+                    Kvv(i,j) += context.get_elem_solution_derivative() * jac *
                       (F_coeff*u_phi[j][qp] +
                        J_coeff*U(1)*U(1)*u_phi[j][qp]/Umag) *
                       u_phi[i][qp];
 
                     if( this->_dim == 3 )
                       {
-                        (*Kuw)(i,j) += jac *
+                        (*Kuw)(i,j) += context.get_elem_solution_derivative() * jac *
                           (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
                           u_phi[i][qp];
-                        (*Kvw)(i,j) += jac *
+                        (*Kvw)(i,j) += context.get_elem_solution_derivative() * jac *
                           (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
                           u_phi[i][qp];
 
-                        (*Kwu)(i,j) += jac *
+                        (*Kwu)(i,j) += context.get_elem_solution_derivative() * jac *
                           (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
                           u_phi[i][qp];
-                        (*Kwv)(i,j) += jac *
+                        (*Kwv)(i,j) += context.get_elem_solution_derivative() * jac *
                           (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
                           u_phi[i][qp];
-                        (*Kww)(i,j) += jac *
+                        (*Kww)(i,j) += context.get_elem_solution_derivative() * jac *
                           (F_coeff*u_phi[j][qp] +
                            J_coeff*U(2)*U(2)*u_phi[j][qp]/Umag) *
                           u_phi[i][qp];

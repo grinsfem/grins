@@ -178,15 +178,15 @@ namespace GRINS
                     //   vel_phi[i][qp]*vel_phi[j][qp],
                     //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
 
-                    Kuu(i,j) += JxW[qp] *
+                    Kuu(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
                       (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-                    Kvv(i,j) += JxW[qp] *
+                    Kvv(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
                       (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     if (this->_dim == 3)
                       {
-                        (*Kww)(i,j) += JxW[qp] *
+                        (*Kww)(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
                           (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
                       }
                   } // end of the inner dof (j) loop
@@ -194,10 +194,10 @@ namespace GRINS
                 // Matrix contributions for the up, vp and wp couplings
                 for (unsigned int j=0; j != n_p_dofs; j++)
                   {
-                    Kup(i,j) += JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
-                    Kvp(i,j) += JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
+                    Kup(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
+                    Kvp(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
                     if (this->_dim == 3)
-                      (*Kwp)(i,j) += JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
+                      (*Kwp)(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
                   } // end of the inner dof (j) loop
 
               } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -281,10 +281,10 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
-                    Kpv(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
+                    Kpu(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
+                    Kpv(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
                     if (this->_dim == 3)
-                      (*Kpw)(i,j) += JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
+                      (*Kpw)(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
                   } // end of the inner dof (j) loop
 
               } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -358,11 +358,11 @@ namespace GRINS
       
         for (unsigned int i = 0; i != n_u_dofs; ++i)
           {
-            F_u(i) += JxW[qp]*this->_rho*u_dot*u_phi[i][qp];
-            F_v(i) += JxW[qp]*this->_rho*v_dot*u_phi[i][qp];
+            F_u(i) -= JxW[qp]*this->_rho*u_dot*u_phi[i][qp];
+            F_v(i) -= JxW[qp]*this->_rho*v_dot*u_phi[i][qp];
 
             if( this->_dim == 3 )
-              (*F_w)(i) += JxW[qp]*this->_rho*w_dot*u_phi[i][qp];
+              (*F_w)(i) -= JxW[qp]*this->_rho*w_dot*u_phi[i][qp];
           
             if( compute_jacobian )
               {
@@ -370,14 +370,14 @@ namespace GRINS
                   {
                     // Assuming rho is constant w.r.t. u, v, w
                     // and T (if Boussinesq added).
-                    libMesh::Real value = JxW[qp]*this->_rho*u_phi[i][qp]*u_phi[j][qp];
+                    libMesh::Real value = context.get_elem_solution_derivative() * JxW[qp]*this->_rho*u_phi[i][qp]*u_phi[j][qp];
 
-                    M_uu(i,j) += value;
-                    M_vv(i,j) += value;
+                    M_uu(i,j) -= value;
+                    M_vv(i,j) -= value;
 
                     if( this->_dim == 3)
                       {
-                        (*M_ww)(i,j) += value;
+                        (*M_ww)(i,j) -= value;
                       }
 
                   } // End dof loop

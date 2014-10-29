@@ -241,7 +241,7 @@ namespace GRINS
                     //   u_phi[i][qp]*u_phi[j][qp],
                     //   (u_gradphi[i][qp]*u_gradphi[j][qp])
 
-                    Kuu(i,j) += jac *
+                    Kuu(i,j) += jac * context.get_elem_solution_derivative() *
                       (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -this->_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
                        -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
@@ -249,35 +249,35 @@ namespace GRINS
                     
                     if( this->_is_axisymmetric )
                       {
-                        Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac;
+                        Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac * context.get_elem_solution_derivative();
                       }
 
-                    Kuv(i,j) += jac *
+                    Kuv(i,j) += jac * context.get_elem_solution_derivative() *
                       (-this->_rho*u_phi[i][qp]*grad_u_y*u_phi[j][qp]);           // convection term
 
-                    Kvv(i,j) += jac *
+                    Kvv(i,j) += jac * context.get_elem_solution_derivative() *
                       (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -this->_rho*u_phi[i][qp]*grad_v_y*u_phi[j][qp]             // convection term
                        -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-                    Kvu(i,j) += jac *
+                    Kvu(i,j) += jac * context.get_elem_solution_derivative() *
                       (-this->_rho*u_phi[i][qp]*grad_v_x*u_phi[j][qp]);           // convection term
 
                     if (this->_dim == 3)
                       {
-                        (*Kuw)(i,j) += jac *
+                        (*Kuw)(i,j) += jac * context.get_elem_solution_derivative() *
                           (-this->_rho*u_phi[i][qp]*grad_u_z*u_phi[j][qp]);           // convection term
 
-                        (*Kvw)(i,j) += jac *
+                        (*Kvw)(i,j) += jac * context.get_elem_solution_derivative() *
                           (-this->_rho*u_phi[i][qp]*grad_v_z*u_phi[j][qp]);           // convection term
 
-                        (*Kww)(i,j) += jac *
+                        (*Kww)(i,j) += jac * context.get_elem_solution_derivative() *
                           (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                            -this->_rho*u_phi[i][qp]*grad_w_z*u_phi[j][qp]             // convection term
                            -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
-                        (*Kwu)(i,j) += jac *
+                        (*Kwu)(i,j) += jac * context.get_elem_solution_derivative() *
                           (-this->_rho*u_phi[i][qp]*grad_w_x*u_phi[j][qp]);           // convection term
-                        (*Kwv)(i,j) += jac *
+                        (*Kwv)(i,j) += jac * context.get_elem_solution_derivative() *
                           (-this->_rho*u_phi[i][qp]*grad_w_y*u_phi[j][qp]);           // convection term
                       }
                   } // end of the inner dof (j) loop
@@ -285,17 +285,17 @@ namespace GRINS
                 // Matrix contributions for the up, vp and wp couplings
                 for (unsigned int j=0; j != n_p_dofs; j++)
                   {
-                    Kup(i,j) += u_gradphi[i][qp](0)*p_phi[j][qp]*jac;
-                    Kvp(i,j) += u_gradphi[i][qp](1)*p_phi[j][qp]*jac;
+                    Kup(i,j) += u_gradphi[i][qp](0)*p_phi[j][qp]*jac * context.get_elem_solution_derivative();
+                    Kvp(i,j) += u_gradphi[i][qp](1)*p_phi[j][qp]*jac * context.get_elem_solution_derivative();
 
                     if (this->_dim == 3)
                       {
-                        (*Kwp)(i,j) += u_gradphi[i][qp](2)*p_phi[j][qp]*jac;
+                        (*Kwp)(i,j) += u_gradphi[i][qp](2)*p_phi[j][qp]*jac * context.get_elem_solution_derivative();
                       }
 
                     if( this->_is_axisymmetric )
                       {
-                        Kup(i,j) += u_phi[i][qp]*p_phi[j][qp]/r*jac;
+                        Kup(i,j) += u_phi[i][qp]*p_phi[j][qp]/r*jac * context.get_elem_solution_derivative();
                       }
 
                   } // end of the inner dof (j) loop
@@ -404,14 +404,14 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += p_phi[i][qp]*u_gradphi[j][qp](0)*jac;
-                    Kpv(i,j) += p_phi[i][qp]*u_gradphi[j][qp](1)*jac;
+                    Kpu(i,j) += p_phi[i][qp]*u_gradphi[j][qp](0)*jac * context.get_elem_solution_derivative();
+                    Kpv(i,j) += p_phi[i][qp]*u_gradphi[j][qp](1)*jac * context.get_elem_solution_derivative();
                     if (this->_dim == 3)
-                      (*Kpw)(i,j) += p_phi[i][qp]*u_gradphi[j][qp](2)*jac;
+                      (*Kpw)(i,j) += p_phi[i][qp]*u_gradphi[j][qp](2)*jac * context.get_elem_solution_derivative();
 
                     if( this->_is_axisymmetric )
                       {
-                        Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac;
+                        Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac * context.get_elem_solution_derivative();
                       }
                   } // end of the inner dof (j) loop
 
@@ -508,11 +508,11 @@ namespace GRINS
 
         for (unsigned int i = 0; i != n_u_dofs; ++i)
           {
-            F_u(i) += this->_rho*u_dot*u_phi[i][qp]*jac;
-            F_v(i) += this->_rho*v_dot*u_phi[i][qp]*jac;
+            F_u(i) -= this->_rho*u_dot*u_phi[i][qp]*jac;
+            F_v(i) -= this->_rho*v_dot*u_phi[i][qp]*jac;
 
             if( this->_dim == 3 )
-              (*F_w)(i) += this->_rho*w_dot*u_phi[i][qp]*jac;
+              (*F_w)(i) -= this->_rho*w_dot*u_phi[i][qp]*jac;
           
             if( compute_jacobian )
               {
@@ -520,14 +520,14 @@ namespace GRINS
                   {
                     // Assuming rho is constant w.r.t. u, v, w
                     // and T (if Boussinesq added).
-                    libMesh::Real value = this->_rho*u_phi[i][qp]*u_phi[j][qp]*jac;
+                    libMesh::Real value = this->_rho*u_phi[i][qp]*u_phi[j][qp]*jac * context.get_elem_solution_rate_derivative();
 
-                    M_uu(i,j) += value;
-                    M_vv(i,j) += value;
+                    M_uu(i,j) -= value;
+                    M_vv(i,j) -= value;
 
                     if( this->_dim == 3)
                       {
-                        (*M_ww)(i,j) += value;
+                        (*M_ww)(i,j) -= value;
                       }
 
                   } // End dof loop
