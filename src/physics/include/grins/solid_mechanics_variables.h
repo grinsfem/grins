@@ -66,6 +66,24 @@ namespace GRINS
 
   };
 
+  inline
+  VariableIndex SolidMechanicsVariables::u_var() const
+  {
+    return _u_var;
+  }
+
+  inline
+  VariableIndex SolidMechanicsVariables::v_var() const
+  {
+    return _v_var;
+  }
+
+  inline
+  VariableIndex SolidMechanicsVariables::w_var() const
+  {
+    return _w_var;
+  }
+
 } // end namespace GRINS
 
 #endif // GRINS_SOLID_MECHANICS_VARIABLES_H
