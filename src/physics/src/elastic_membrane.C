@@ -30,16 +30,18 @@
 #include "grins/assembly_context.h"
 
 // libMesh
-// libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
   template<typename ElasticityTensor>
   ElasticMembrane<ElasticityTensor>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : Physics(physics_name,input)
+    : Physics(physics_name,input),
+      _disp_vars(input,physics_name),
+      _C(input)
   {
     return;
   }
@@ -53,9 +55,6 @@ namespace GRINS
   template<typename ElasticityTensor>
   void ElasticMembrane<ElasticityTensor>::init_variables( libMesh::FEMSystem* system )
   {
-    // This will be the manifold dimension (2), not the spatial dimension (3).
-    this->_dim = system->get_mesh().mesh_dimension();
-
     // is_2D = false, is_3D = true
     _disp_vars.init(system,false,true);
 
@@ -73,7 +72,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_context( AssemblyContext& context )
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(_disp_vars.u_var())->get_JxW();
     context.get_element_fe(_disp_vars.u_var())->get_dphi();
@@ -140,17 +140,17 @@ namespace GRINS
 
         // Covariant metric tensor of reference configuration
         libMesh::TensorValue<libMesh::Real> a_cov( dxdxi[qp]*dxdxi[qp], dxdxi[qp]*dxdeta[qp], 0.0,
-                                                   dxeta[qp]*dxdxi[qp], dxdeta[qp]*dxdeta[qp] );
+                                                   dxdeta[qp]*dxdxi[qp], dxdeta[qp]*dxdeta[qp] );
 
         // Covariant metric tensor of current configuration
         libMesh::TensorValue<libMesh::Real> A_cov( (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi),
                                                    (dxdxi[qp] + dudxi)*(dxdeta[qp] + dudeta), 0.0,
-                                                   (dxeta[qp] + dudeta)*(dxdxi[qp] + dudxi),
+                                                   (dxdeta[qp] + dudeta)*(dxdxi[qp] + dudxi),
                                                    (dxdeta[qp] + dudeta)*(dxdeta[qp] + dudeta) );
 
         
         // Contravariant metric tensor of reference configuration
-        libMesh::TensorValue<libMesh::Real> a_contra( dxi*dxi, dxi*deta, 0.0
+        libMesh::TensorValue<libMesh::Real> a_contra( dxi*dxi, dxi*deta, 0.0,
                                                       deta*dxi, deta*deta ); 
 
         // Strain tensor
