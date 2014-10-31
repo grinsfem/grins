@@ -218,12 +218,25 @@ namespace GRINS
   libMesh::TensorValue<libMesh::Real> ElasticMembrane<ElasticityTensor>::compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                                         libMesh::TensorValue<libMesh::Real>& strain)
   {
-    libmesh_not_implemented();
-    /*
     libMesh::TensorValue<libMesh::Real> tau;
 
+    (this->C).set_deformation(a_contra);
+
+    for( unsigned int alpha = 0; alpha < 2; alpha++ )
+      {
+        for( unsigned int beta = 0; beta < 2; beta++ )
+          {
+            for( unsigned int gamma = 0; gamma < 2; gamma++ )
+              {
+                for( unsigned int delta = 0; delta < 2; delta++ )
+                  {
+                    tau(alpha,beta) += (this->C(alpha,beta,gamma,delta))*strain(gamma,delta)
+                  }
+              }
+          }
+      }
+
     return tau;
-    */
   }
 
 } // end namespace GRINS
