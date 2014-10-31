@@ -72,7 +72,7 @@ namespace GRINS
     libMesh::TensorValue<libMesh::Real> compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra,
                                                        libMesh::TensorValue<libMesh::Real>& strain );
 
-    ElasticityTensor C;
+    ElasticityTensor _C;
 
   };
 
