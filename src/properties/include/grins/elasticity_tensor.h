@@ -47,6 +47,12 @@ namespace GRINS
     libMesh::Real _C[3][3][3][3];
   };
 
+  inline
+  libMesh::Real ElasticityTensor::operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const
+  {
+    return _C[i][j][k][l];
+  }
+
 } // end namespace GRINS
 
 #endif // GRINS_ELASTICITY_TENSOR_H

@@ -37,9 +37,4 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real ElasticityTensor::operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const
-  {
-    return _C[i][j][k][l];
-  }
-
 }
