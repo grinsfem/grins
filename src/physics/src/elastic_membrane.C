@@ -220,7 +220,7 @@ namespace GRINS
   {
     libMesh::TensorValue<libMesh::Real> tau;
 
-    (this->C).set_deformation(a_contra);
+    (this->C).recompute_elasticity(a_contra);
 
     for( unsigned int alpha = 0; alpha < 2; alpha++ )
       {
