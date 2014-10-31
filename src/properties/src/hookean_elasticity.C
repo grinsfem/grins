@@ -31,7 +31,7 @@
 
 namespace GRINS
 {
-  HookeanElasiticty::HookeanElasiticty(const GetPot& input)
+  HookeanElasticity::HookeanElasticity(const GetPot& input)
     : ElasticityTensor(),
       _lambda(0.0),
       _mu(0.0)
@@ -47,12 +47,12 @@ namespace GRINS
     return;
   }
 
-  HookeanElasiticty::~HookeanElasiticty()
+  HookeanElasticity::~HookeanElasticity()
   {
     return;
   }
 
-  void HookeanElasiticty::read_input_options(const GetPot& input)
+  void HookeanElasticity::read_input_options(const GetPot& input)
   {
     // We'd better have either Lam\'{e} constants or E and nu
     if( ( !input.have_variable("Physics/HookeanElasticity/lambda") || 
@@ -83,7 +83,7 @@ namespace GRINS
     return;
   }
   
-  void HookeanElasiticty::recompute_elasticity( libMesh::TensorValue<libMesh::Real>& g )
+  void HookeanElasticity::recompute_elasticity( libMesh::TensorValue<libMesh::Real>& g )
   {
     for( unsigned int i = 0; i < 3; i++ )
       {

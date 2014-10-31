@@ -46,12 +46,12 @@ namespace GRINS
    * working with curvilinear coordinate systems, the user should call the
    * set_deformation method before calling operator().
    */
-  class HookeanElasiticty : public ElasticityTensor
+  class HookeanElasticity : public ElasticityTensor
   {
   public:
 
-    HookeanElasiticty( const GetPot& input );
-    virtual ~HookeanElasiticty();
+    HookeanElasticity( const GetPot& input );
+    virtual ~HookeanElasticity();
 
     //! Compute the elasiticity tensor given the deformation
     /*!
@@ -63,7 +63,7 @@ namespace GRINS
 
   private:
 
-    HookeanElasiticty();
+    HookeanElasticity();
 
     //! Parse properties from input
     void read_input_options(const GetPot& input);
