@@ -50,7 +50,7 @@ namespace GRINS
 
   void ElasticMembrane::init_variables( libMesh::FEMSystem* system )
   {
-    // Get libMesh to assign an index for each variable
+    // This will be the manifold dimension (2), not the spatial dimension (3).
     this->_dim = system->get_mesh().mesh_dimension();
 
     // is_2D = false, is_3D = true
