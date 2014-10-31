@@ -37,18 +37,21 @@
 
 namespace GRINS
 {
-  ElasticMembrane::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  template<typename ElasticityTensor>
+  ElasticMembrane<ElasticityTensor>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input)
   {
     return;
   }
   
-  ElasticMembrane::~ElasticMembrane()
+  template<typename ElasticityTensor>
+  ElasticMembrane<ElasticityTensor>::~ElasticMembrane()
   {
     return;
   }
 
-  void ElasticMembrane::init_variables( libMesh::FEMSystem* system )
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::init_variables( libMesh::FEMSystem* system )
   {
     // This will be the manifold dimension (2), not the spatial dimension (3).
     this->_dim = system->get_mesh().mesh_dimension();
@@ -59,7 +62,8 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembrane::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u_var());
@@ -88,7 +92,8 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembrane::element_time_derivative( bool compute_jacobian,
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::element_time_derivative( bool compute_jacobian,
                                                  AssemblyContext& context,
                                                  CachedValues& /*cache*/ )
   {
@@ -149,10 +154,10 @@ namespace GRINS
                                                       deta*dxi, deta*deta ); 
 
         // Strain tensor
-        libMesh::TensorValue<libMesh::Real> gamma = 0.5*(A_cov - a_cov);
+        libMesh::TensorValue<libMesh::Real> strain = 0.5*(A_cov - a_cov);
 
         // Compute stress tensor
-        libMesh::TensorValue<libMesh::Real> tau = this->compute_stress(a_contra);
+        libMesh::TensorValue<libMesh::Real> tau = this->compute_stress(a_contra,strain);
 
         libMesh::Real jac = JxW[qp];
 
@@ -179,7 +184,8 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembrane::side_time_derivative( bool compute_jacobian,
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::side_time_derivative( bool compute_jacobian,
                                               AssemblyContext& context,
                                               CachedValues& cache )
   {
@@ -199,7 +205,8 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembrane::mass_residual( bool compute_jacobian,
+  template<typename ElasticityTensor>
+  void ElasticMembrane<ElasticityTensor>::mass_residual( bool compute_jacobian,
                                        AssemblyContext& context,
                                        CachedValues& cache )
   {
@@ -207,7 +214,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::TensorValue<libMesh::Real> ElasticMembrane::compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra)
+  template<typename ElasticityTensor>
+  libMesh::TensorValue<libMesh::Real> ElasticMembrane<ElasticityTensor>::compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra,
+                                                                                        libMesh::TensorValue<libMesh::Real>& strain)
   {
     libmesh_not_implemented();
     /*
