@@ -26,12 +26,10 @@
 #define GRINS_HOOKEAN_ELASTICITY_H
 
 // libMesh
-#include "libmesh/exact_error_estimator.h" // TensorValue
+#include "libmesh/tensor_value.h"
 
-namespace libMesh
-{
-  class GetPot;
-}
+// Forward declaration
+class GetPot;
 
 namespace GRINS
 {
@@ -76,7 +74,7 @@ namespace GRINS
 
     //! Elasticity tensor
     /*! \todo Does this guarantee continuous memory? If not, we should use a datastructure that does */
-    libMesh::Real _C[3][3][3][3]
+    libMesh::Real _C[3][3][3][3];
 
   };
 
