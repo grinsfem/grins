@@ -58,7 +58,7 @@ namespace GRINS
     
   protected:
 
-    SolidMechanicsVariables _disp_vars;
+    SolidMechanicsFEVariables _disp_vars;
 
 
   private:
