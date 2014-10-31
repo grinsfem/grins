@@ -25,6 +25,10 @@
 #ifndef GRINS_ELASTIC_MEMBRANE_H
 #define GRINS_ELASTIC_MEMBRANE_H
 
+//GRINS
+#include "grins/physics.h"
+#include "grins/solid_mechanics_fe_variables.h"
+
 namespace GRINS
 {
   template<typename ElasticityTensor>
