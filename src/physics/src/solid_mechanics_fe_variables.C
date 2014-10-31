@@ -50,16 +50,16 @@ namespace GRINS
     return;
   }
 
-  void SolidMechanicsFEVariables::init( libMesh::FEMSystem* system )
+  void SolidMechanicsFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {
     _u_var = system->add_variable( _u_var_name, this->_order, _FE_family);
 
-    if ( system->get_mesh().mesh_dimension() >= 2 )
+    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D )
       {
         _v_var = system->add_variable( _v_var_name, this->_order, _FE_family);
       }
 
-    if ( system->get_mesh().mesh_dimension() == 3)
+    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
       {
         _w_var = system->add_variable( _w_var_name, this->_order, _FE_family);
       }

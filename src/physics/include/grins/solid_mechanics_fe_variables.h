@@ -43,7 +43,13 @@ namespace GRINS
     SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name );
     virtual ~SolidMechanicsFEVariables();
 
-    virtual void init( libMesh::FEMSystem* system );
+    //! Initialize System variables
+    /*!
+     *  Additional arguments specify whether the spatial mesh is really 2D or 3D.
+     * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
+     * space or 2D shell manifolds in 3D (is_3D = true).
+     */
+    virtual void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
 
   protected:
 

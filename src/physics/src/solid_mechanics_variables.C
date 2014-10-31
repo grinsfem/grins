@@ -47,18 +47,18 @@ namespace GRINS
     return;
   }
 
-  void SolidMechanicsVariables::init( libMesh::FEMSystem* system )
+  void SolidMechanicsVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {
     libmesh_assert( system->has_variable( _u_var_name ) );
     _u_var = system->variable_number( _u_var_name );
 
-    if ( system->get_mesh().mesh_dimension() >= 2 )
+    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D )
       {
         libmesh_assert( system->has_variable( _v_var_name ) );
         _v_var = system->variable_number( _v_var_name );
       }
 
-    if ( system->get_mesh().mesh_dimension() == 3 )
+    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
       {
         libmesh_assert( system->has_variable( _w_var_name ) );
         _w_var = system->variable_number( _w_var_name );
