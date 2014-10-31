@@ -25,11 +25,16 @@
 #ifndef GRINS_HOOKEAN_ELASTICITY_H
 #define GRINS_HOOKEAN_ELASTICITY_H
 
-// libMesh
-#include "libmesh/tensor_value.h"
+// GRINS
+#include "grins/elasticity_tensor.h"
 
-// Forward declaration
+// Forward declarations
 class GetPot;
+namespace libMesh
+{
+  template<typename T>
+  class TensorValue;
+}
 
 namespace GRINS
 {
@@ -41,12 +46,12 @@ namespace GRINS
    * working with curvilinear coordinate systems, the user should call the
    * set_deformation method before calling operator().
    */
-  class HookeanElasiticty
+  class HookeanElasiticty : public ElasticityTensor
   {
   public:
 
     HookeanElasiticty( const GetPot& input );
-    ~HookeanElasiticty();
+    virtual ~HookeanElasiticty();
 
     //! Compute the elasiticity tensor given the deformation
     /*!
@@ -55,9 +60,6 @@ namespace GRINS
      * needs to be called when Kronecker delta does not apply.
      */
     void recompute_elasticity( libMesh::TensorValue<libMesh::Real>& g );
-
-    //! Value of C_{ijkl}
-    libMesh::Real operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const;
 
   private:
 
@@ -71,10 +73,6 @@ namespace GRINS
 
     //! Lam\'{e} constant
     libMesh::Real _mu;
-
-    //! Elasticity tensor
-    /*! \todo Does this guarantee continuous memory? If not, we should use a datastructure that does */
-    libMesh::Real _C[3][3][3][3];
 
   };
 

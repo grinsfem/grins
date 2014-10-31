@@ -27,12 +27,13 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-
+#include "libmesh/tensor_value.h"
 
 namespace GRINS
 {
   HookeanElasiticty::HookeanElasiticty(const GetPot& input)
-    : _lambda(0.0),
+    : ElasticityTensor(),
+      _lambda(0.0),
       _mu(0.0)
   {
     this->read_input_options(input);
@@ -49,11 +50,6 @@ namespace GRINS
   HookeanElasiticty::~HookeanElasiticty()
   {
     return;
-  }
-
-  libMesh::Real HookeanElasiticty::operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const
-  {
-    return _C[i][j][k][l];
   }
 
   void HookeanElasiticty::read_input_options(const GetPot& input)
