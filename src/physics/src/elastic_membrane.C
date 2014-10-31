@@ -162,13 +162,13 @@ namespace GRINS
               {
                 for( unsigned int beta = 0; beta < 2; beta++ )
                   {
-                    Fu(i) += 0.5*tau(alpha,beta)*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
+                    Fu(i) -= 0.5*tau(alpha,beta)*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
                                                    (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) )*jac;
 
-                    Fv(i) += 0.5*tau(alpha,beta)*( (grad_y(beta) + grad_v(beta))*u_gradphi[i][qp](alpha) +
+                    Fv(i) -= 0.5*tau(alpha,beta)*( (grad_y(beta) + grad_v(beta))*u_gradphi[i][qp](alpha) +
                                                    (grad_y(alpha) + grad_v(alpha))*u_gradphi[i][qp](beta) )*jac;
 
-                    Fw(i) += 0.5*tau(alpha,beta)*( (grad_z(beta) + grad_w(beta))*u_gradphi[i][qp](alpha) +
+                    Fw(i) -= 0.5*tau(alpha,beta)*( (grad_z(beta) + grad_w(beta))*u_gradphi[i][qp](alpha) +
                                                    (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
                   }
               }
