@@ -177,6 +177,10 @@ namespace GRINS
                                                    (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
                   }
               }
+            if( compute_jacobian )
+              {
+                libmesh_not_implemented();
+              }
           }
 
       }
