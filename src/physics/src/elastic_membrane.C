@@ -94,8 +94,8 @@ namespace GRINS
 
   template<typename ElasticityTensor>
   void ElasticMembrane<ElasticityTensor>::element_time_derivative( bool compute_jacobian,
-                                                 AssemblyContext& context,
-                                                 CachedValues& /*cache*/ )
+                                                                   AssemblyContext& context,
+                                                                   CachedValues& /*cache*/ )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
     
@@ -190,19 +190,19 @@ namespace GRINS
 
   template<typename ElasticityTensor>
   void ElasticMembrane<ElasticityTensor>::side_time_derivative( bool compute_jacobian,
-                                              AssemblyContext& context,
-                                              CachedValues& cache )
+                                                                AssemblyContext& context,
+                                                                CachedValues& cache )
   {
     libmesh_not_implemented();
     /*
-    std::vector<BoundaryID> ids = context.side_boundary_ids();
+      std::vector<BoundaryID> ids = context.side_boundary_ids();
     
-    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-	 it != ids.end(); it++ )
+      for( std::vector<BoundaryID>::const_iterator it = ids.begin();
+      it != ids.end(); it++ )
       {
-	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
+      libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
         
-	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+      _bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       } 
     */
 
@@ -211,8 +211,8 @@ namespace GRINS
 
   template<typename ElasticityTensor>
   void ElasticMembrane<ElasticityTensor>::mass_residual( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache )
+                                                         AssemblyContext& context,
+                                                         CachedValues& cache )
   {
     libmesh_not_implemented();
     return;
