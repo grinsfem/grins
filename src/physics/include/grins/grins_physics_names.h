@@ -59,6 +59,7 @@ namespace GRINS
   const PhysicsName low_mach_navier_stokes_spgsm_stab = "LowMachNavierStokesSPGSMStabilization";
   const PhysicsName low_mach_navier_stokes_vms_stab = "LowMachNavierStokesVMSStabilization";
   const PhysicsName reacting_low_mach_navier_stokes = "ReactingLowMachNavierStokes";
+  const PhysicsName elastic_membrane = "ElasticMembrane";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H
