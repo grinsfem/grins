@@ -30,6 +30,7 @@ libgrins_la_SOURCES += bc_handling/src/axisym_heat_transfer_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/inc_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/low_mach_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
+libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
 
 # src/boundary_conditions files
 libgrins_la_SOURCES += boundary_conditions/src/boundary_conditions.C
@@ -194,6 +195,7 @@ include_HEADERS += bc_handling/include/grins/heat_transfer_bc_handling.h
 include_HEADERS += bc_handling/include/grins/inc_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
+include_HEADERS += bc_handling/include/grins/solid_mechanics_bc_handling.h
 
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
