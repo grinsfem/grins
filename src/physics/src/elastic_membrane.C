@@ -28,6 +28,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
+#include "grins/solid_mechanics_bc_handling.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -43,6 +44,8 @@ namespace GRINS
       _disp_vars(input,physics_name),
       _C(input)
   {
+    this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
+
     return;
   }
   
