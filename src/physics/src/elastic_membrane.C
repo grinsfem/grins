@@ -126,7 +126,7 @@ namespace GRINS
       {
         libMesh::Gradient grad_u = context.interior_gradient(_disp_vars.u_var(), qp);
         libMesh::Gradient grad_v = context.interior_gradient(_disp_vars.v_var(), qp);
-        libMesh::Gradient grad_w = context.interior_gradient(_disp_vars.v_var(), qp);
+        libMesh::Gradient grad_w = context.interior_gradient(_disp_vars.w_var(), qp);
 
         libMesh::RealGradient grad_x( dxdxi[qp](0), dxdeta[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
