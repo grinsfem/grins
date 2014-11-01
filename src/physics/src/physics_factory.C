@@ -56,6 +56,7 @@
 #include "grins/velocity_drag.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
+#include "grins/elastic_membrane.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
@@ -70,6 +71,8 @@
 #include "grins/antioch_wilke_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
+
+#include "grins/hookean_elasticity.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -507,6 +510,22 @@ namespace GRINS
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
         this->add_reacting_low_mach( input, physics_to_add, physics_list );
+      }
+    else if( physics_to_add == elastic_membrane )
+      {
+        std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "Hookean" );
+
+        if( elasticity_model == std::string("Hookean") )
+          {
+            physics_list[physics_to_add] =
+              PhysicsPtr(new ElasticMembrane<HookeanElasticity>(physics_to_add,input));
+          }
+        else
+          {
+            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
+                      << "       Valid selections are: Hookean" << std::endl;
+            libmesh_error();
+          }
       }
     else
       {
