@@ -49,7 +49,7 @@ namespace GRINS
      * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
      * space or 2D shell manifolds in 3D (is_3D = true).
      */
-    virtual void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
+    void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
 
   protected:
 
