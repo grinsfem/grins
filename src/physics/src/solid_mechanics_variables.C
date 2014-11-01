@@ -35,7 +35,12 @@
 namespace GRINS
 {
   SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
-    : _u_var_name( input("Physics/VariableNames/u_displacment", u_disp_name_default ) ),
+    : _have_v(false),
+      _have_w(false),
+      _u_var(2^30), // These are unsigned, so initialize to absurdly large value
+      _v_var(2^30),
+      _w_var(2^20),
+      _u_var_name( input("Physics/VariableNames/u_displacment", u_disp_name_default ) ),
       _v_var_name( input("Physics/VariableNames/v_displacment", v_disp_name_default ) ),
       _w_var_name( input("Physics/VariableNames/w_displacment", w_disp_name_default ) )
   {
@@ -52,15 +57,15 @@ namespace GRINS
     libmesh_assert( system->has_variable( _u_var_name ) );
     _u_var = system->variable_number( _u_var_name );
 
-    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D )
+    if ( system->has_variable( _v_var_name ) )
       {
-        libmesh_assert( system->has_variable( _v_var_name ) );
+        _have_v = true;
         _v_var = system->variable_number( _v_var_name );
       }
 
-    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
+    if ( system->has_variable( _w_var_name ) )
       {
-        libmesh_assert( system->has_variable( _w_var_name ) );
+        _have_w = true;
         _w_var = system->variable_number( _w_var_name );
       }
 

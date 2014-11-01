@@ -32,6 +32,9 @@ namespace libMesh
   class FEMSystem;
 }
 
+// libMesh
+#include "libmesh/libmesh_common.h"
+
 // GRINS
 #include "grins/var_typedefs.h"
 
@@ -52,6 +55,8 @@ namespace GRINS
      */
     void init( libMesh::FEMSystem* system );
 
+    bool have_v() const;
+    bool have_w() const;
 
     VariableIndex u_var() const;
     VariableIndex v_var() const;
@@ -62,6 +67,9 @@ namespace GRINS
     const std::string& w_var_name() const;
 
   protected:
+
+    bool _have_v;
+    bool _have_w;
 
     VariableIndex _u_var;
     VariableIndex _v_var;
@@ -80,13 +88,27 @@ namespace GRINS
   inline
   VariableIndex SolidMechanicsVariables::v_var() const
   {
+    libmesh_assert(_have_v);
     return _v_var;
   }
 
   inline
   VariableIndex SolidMechanicsVariables::w_var() const
   {
+    libmesh_assert(_have_w);
     return _w_var;
+  }
+
+  inline
+  bool SolidMechanicsVariables::have_v() const
+  {
+    return _have_v;
+  }
+
+  inline
+  bool SolidMechanicsVariables::have_w() const
+  {
+    return _have_w;
   }
 
   inline

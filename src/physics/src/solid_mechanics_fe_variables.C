@@ -56,11 +56,13 @@ namespace GRINS
 
     if ( system->get_mesh().mesh_dimension() >= 2 || is_2D )
       {
+        _have_v = true;
         _v_var = system->add_variable( _v_var_name, this->_order, _FE_family);
       }
 
     if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
       {
+        _have_w = true;
         _w_var = system->add_variable( _w_var_name, this->_order, _FE_family);
       }
 
