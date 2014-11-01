@@ -39,7 +39,7 @@ namespace GRINS
 
   SolidMechanicsFEVariables::SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name )
     :  SolidMechanicsVariables(input),
-       _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/U_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ),
        _order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) )
   {
     return;
