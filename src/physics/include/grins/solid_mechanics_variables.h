@@ -57,6 +57,10 @@ namespace GRINS
     VariableIndex v_var() const;
     VariableIndex w_var() const;
 
+    const std::string& u_var_name() const;
+    const std::string& v_var_name() const;
+    const std::string& w_var_name() const;
+
   protected:
 
     VariableIndex _u_var;
@@ -83,6 +87,24 @@ namespace GRINS
   VariableIndex SolidMechanicsVariables::w_var() const
   {
     return _w_var;
+  }
+
+  inline
+  const std::string& SolidMechanicsVariables::u_var_name() const
+  {
+    return _u_var_name;
+  }
+
+  inline
+  const std::string& SolidMechanicsVariables::v_var_name() const
+  {
+    return _v_var_name;
+  }
+
+  inline
+  const std::string& SolidMechanicsVariables::w_var_name() const
+  {
+    return _w_var_name;
   }
 
 } // end namespace GRINS
