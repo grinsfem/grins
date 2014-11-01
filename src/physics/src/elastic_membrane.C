@@ -193,7 +193,6 @@ namespace GRINS
                                                                 AssemblyContext& context,
                                                                 CachedValues& cache )
   {
-    libmesh_not_implemented();
     /*
       std::vector<BoundaryID> ids = context.side_boundary_ids();
     
