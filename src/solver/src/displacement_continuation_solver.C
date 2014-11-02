@@ -130,6 +130,12 @@ namespace GRINS
         this->increment_displacement(*(context.system), *(context.equation_system), disp);
 
         context.system->solve();
+
+        if( context.output_vis )
+          {
+            context.postprocessing->update_quantities( *(context.equation_system) );
+            context.vis->output( context.equation_system, s, disp );
+          }
       }
 
     return;
