@@ -51,6 +51,21 @@ namespace GRINS
   {
     stress.zero();
 
+    // Compute strain invariants
+    libMesh::Real I3 = (g_contra*G_cov).det();
+
+    libMesh::Real I1 = 0.0;
+    libMesh::Real I2 = 0.0;
+    for( unsigned int i = 0; i < dim; i++ )
+      {
+        for( unsigned int j = 0; j < dim; j++ )
+          {
+            I1 += g_contra(i,j)*G_cov(i,j);
+            I2 += I3*g_contra(i,j)*G_cov(i,j);
+          }
+      }
+
+    // Now compute stress
     for( unsigned int i = 0; i < dim; i++ )
       {
         for( unsigned int j = 0; j < dim; j++ )
@@ -59,10 +74,6 @@ namespace GRINS
               {
                 for( unsigned int l = 0; l < dim; l++ )
                   {
-                    libMesh::Real I1 = g_contra(k,l)*G_cov(k,l);
-                    libMesh::Real I3 = G.det()/g.det();
-                    libMesh::Real I2 = I3*G_contra(k,l)*g_cov(k,l);
-
                     stress(i,j) += 2.0*_W.dI1(I1,I2,I3)*g_contra(i,j)
                       + 2.0*_W.dI2(I1,I2,I3)*(I1*g_contra(i,j) - g_contra(i,k)*g_contra(j,l)*G_cov(k,l))
                       + 2.0*I3*G_contra(i,j);
