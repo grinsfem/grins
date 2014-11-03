@@ -40,6 +40,8 @@ namespace GRINS
     //! Value of C_{ijkl}
     libMesh::Real operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const;
 
+    libMesh::Real& operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l );
+
   protected:
 
     //! Elasticity tensor
@@ -49,6 +51,12 @@ namespace GRINS
 
   inline
   libMesh::Real ElasticityTensor::operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const
+  {
+    return _C[i][j][k][l];
+  }
+
+  inline
+  libMesh::Real& ElasticityTensor::operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l )
   {
     return _C[i][j][k][l];
   }
