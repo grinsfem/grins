@@ -73,6 +73,8 @@
 #include "grins/antioch_constant_transport_evaluator.h"
 
 #include "grins/hookes_law.h"
+#include "grins/hyperelasticity.h"
+#include "grins/mooney_rivlin.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -519,6 +521,11 @@ namespace GRINS
           {
             physics_list[physics_to_add] =
               PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input));
+          }
+        else if( elasticity_model == std::string("MooneyRivlin") )
+          {
+            physics_list[physics_to_add] =
+              PhysicsPtr(new ElasticMembrane<Hyperelasticity<MooneyRivlin> >(physics_to_add,input));
           }
         else
           {
