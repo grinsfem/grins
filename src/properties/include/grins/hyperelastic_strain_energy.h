@@ -46,19 +46,19 @@ namespace GRINS
   template<typename Function>
   libMesh::Real HyperelasticStrainEnergy<Function>::dI1( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
   {
-    return static_cast<Function*>(this)->dI1_imp(I1,I2,I3);
+    return static_cast<const Function*>(this)->dI1_imp(I1,I2,I3);
   }
 
   template<typename Function>
   libMesh::Real HyperelasticStrainEnergy<Function>::dI2( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
   {
-    return static_cast<Function*>(this)->dI2_imp(I1,I2,I3);
+    return static_cast<const Function*>(this)->dI2_imp(I1,I2,I3);
   }
 
   template<typename Function>
   libMesh::Real HyperelasticStrainEnergy<Function>::dI3( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
   {
-    return static_cast<Function*>(this)->dI3_imp(I1,I2,I3);
+    return static_cast<const Function*>(this)->dI3_imp(I1,I2,I3);
   }
 
 } // end namespace GRINS
