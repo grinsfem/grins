@@ -56,7 +56,7 @@ namespace GRINS
     _exponent = input("Physics/"+velocity_drag+"/exponent", libMesh::Real(2));
 
     std::string coefficient_function =
-      input("Physics/"+velocity_penalty+"/coefficient",
+      input("Physics/"+velocity_drag+"/coefficient",
         std::string("0"));
 
     this->_coefficient.reset
