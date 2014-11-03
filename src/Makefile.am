@@ -131,6 +131,7 @@ libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instanti
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
 libgrins_la_SOURCES += properties/src/hookes_law.C
 libgrins_la_SOURCES += properties/src/hyperelasticity.C
+libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 
 # src/qoi files
