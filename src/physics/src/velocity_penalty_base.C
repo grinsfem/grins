@@ -35,7 +35,8 @@ namespace GRINS
 
   VelocityPenaltyBase::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase(physics_name, input),
-    _quadratic_scaling(false)
+    _quadratic_scaling(false),
+    _orthogonal_force(false)
   {
     this->read_input_options(input);
 
@@ -76,6 +77,9 @@ namespace GRINS
 
     _quadratic_scaling = 
       input("Physics/"+velocity_penalty+"/quadratic_scaling", false);
+
+    _orthogonal_force = 
+      input("Physics/"+velocity_penalty+"/orthogonal_force", false);
   }
 
   bool VelocityPenaltyBase::compute_force
@@ -153,16 +157,37 @@ namespace GRINS
       }
 
     // With correction term to avoid doing work on flow
-    bool do_correction = false;
-    if (do_correction)
+    if (_orthogonal_force)
       {
-        if (dFdU)
-          libmesh_not_implemented();
+        // With linear scaling, we get an undefined Jacobian for
+        // U_Rel=0
+        libmesh_assert(_quadratic_scaling);
 
         const libMesh::Number U_Rel_mag_sq = U_Rel * U_Rel;
         if (U_Rel_mag_sq)
           {
-            F -= (U_Rel*F)*U_Rel/U_Rel_mag_sq;
+            const libMesh::Number RF = U_Rel * F;
+            const libMesh::Number RF_over_RR = RF / U_Rel_mag_sq;
+
+            if (dFdU)
+              {
+                const libMesh::NumberVectorValue RFp =
+                  dFdU->transpose() * U_Rel + F;
+                const libMesh::NumberVectorValue QV =
+                  (RFp-RF_over_RR*2*U_Rel)/U_Rel_mag_sq;
+
+                for (unsigned int i=0; i != 3; ++i)
+                  {
+                    (*dFdU)(i,i) -= RF_over_RR;
+
+                    for (unsigned int j=0; j != 3; ++j)
+                      {
+                        (*dFdU)(i,j) -= U_Rel(i)*QV(j);
+                      }
+                  }
+              }
+
+            F -= U_Rel*RF_over_RR;
           }
       }
     return true;
