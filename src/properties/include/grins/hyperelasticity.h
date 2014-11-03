@@ -25,6 +25,20 @@
 #ifndef GRINS_HYPERELASTICITY_H
 #define GRINS_HYPERELASTICITY_H
 
+// GRINS
+#include "grins/stress_strain_law.h"
+
+// libMesh
+#include "libmesh/libmesh_common.h"
+
+// Forward declarations
+class GetPot;
+namespace libMesh
+{
+  template <typename T>
+  class TensorValue;
+}
+
 namespace GRINS
 {
   template <typename StrainEnergy>

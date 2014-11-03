@@ -25,6 +25,9 @@
 // This class
 #include "grins/hyperelasticity.h"
 
+// libMesh
+#include "libmesh/tensor_value.h"
+
 namespace GRINS
 {
 
