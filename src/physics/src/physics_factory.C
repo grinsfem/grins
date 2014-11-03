@@ -158,18 +158,28 @@ namespace GRINS
       }
     else if( physics_to_add == velocity_drag )
       {
-	physics_list[physics_to_add] = 
+	physics_list[physics_to_add] =
 	  PhysicsPtr(new VelocityDrag(physics_to_add,input));
       }
     else if( physics_to_add == velocity_penalty )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+        physics_list[physics_to_add] =
+          PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+      }
+    else if( physics_to_add == velocity_penalty2 )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new VelocityPenalty(physics_to_add,input));
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
+        physics_list[physics_to_add] =
+          PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
+      }
+    else if( physics_to_add == velocity_penalty2_adjoint_stab )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
       }
     else if( physics_to_add == averaged_fan )
       {
