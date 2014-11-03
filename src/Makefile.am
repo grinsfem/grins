@@ -130,6 +130,8 @@ libgrins_la_SOURCES += properties/src/antioch_wilke_transport_mixture_instantiat
 libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
 libgrins_la_SOURCES += properties/src/hookes_law.C
+libgrins_la_SOURCES += properties/src/hyperelasticity.C
+libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
@@ -305,7 +307,9 @@ include_HEADERS += properties/include/grins/antioch_constant_transport_evaluator
 include_HEADERS += properties/include/grins/elasticity_tensor.h
 include_HEADERS += properties/include/grins/stress_strain_law.h
 include_HEADERS += properties/include/grins/hookes_law.h
-
+include_HEADERS += properties/include/grins/hyperelasticity.h
+include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
+include_HEADERS += properties/include/grins/mooney_rivlin.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h

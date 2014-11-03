@@ -25,5 +25,12 @@
 #include "elastic_membrane.C"
 
 #include "grins/hookes_law.h"
+#include "grins/hyperelasticity.h"
+#include "grins/mooney_rivlin.h"
 
+// Instantiate various hyperelasticity laws
+template class GRINS::Hyperelasticity<GRINS::MooneyRivlin>;
+
+// Instantiate different verisons of ElasticMembrane
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
+template class GRINS::ElasticMembrane<GRINS::Hyperelasticity<GRINS::MooneyRivlin> >;
