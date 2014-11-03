@@ -158,9 +158,9 @@ namespace GRINS
                                                       deta*dxi, deta*deta );
 
         // Contravariant metric tensor in current configuration is A_cov^{-1}
-        libMesh::Real det = A_cov(1,1)*A_cov(2,2) - A_cov(1,2)*A_cov(2,1);
-        libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(2,2)/det, -A_cov(1,2)/det, 0.0,
-                                                      -A_cov(2,1)/det,  A_cov(1,1)/det );
+        libMesh::Real det = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+        libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(1,1)/det, -A_cov(0,1)/det, 0.0,
+                                                      -A_cov(1,0)/det,  A_cov(0,0)/det );
 
         // Strain tensor
         libMesh::TensorValue<libMesh::Real> strain = 0.5*(A_cov - a_cov);
