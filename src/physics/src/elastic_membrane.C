@@ -38,25 +38,25 @@
 
 namespace GRINS
 {
-  template<typename ElasticityTensor>
-  ElasticMembrane<ElasticityTensor>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  template<typename StressStrainLaw>
+  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _disp_vars(input,physics_name),
-      _C(input)
+      _stress_strain_law(input)
   {
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 
     return;
   }
   
-  template<typename ElasticityTensor>
-  ElasticMembrane<ElasticityTensor>::~ElasticMembrane()
+  template<typename StressStrainLaw>
+  ElasticMembrane<StressStrainLaw>::~ElasticMembrane()
   {
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::init_variables( libMesh::FEMSystem* system )
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true
     _disp_vars.init(system,false,true);
@@ -64,8 +64,8 @@ namespace GRINS
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u_var());
@@ -75,8 +75,8 @@ namespace GRINS
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::init_context( AssemblyContext& context )
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(_disp_vars.u_var())->get_JxW();
     context.get_element_fe(_disp_vars.u_var())->get_dphi();
@@ -95,8 +95,8 @@ namespace GRINS
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::element_time_derivative( bool compute_jacobian,
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::element_time_derivative( bool compute_jacobian,
                                                                    AssemblyContext& context,
                                                                    CachedValues& /*cache*/ )
   {
@@ -125,6 +125,8 @@ namespace GRINS
     const std::vector<libMesh::Real>& detady  = context.get_element_fe(_disp_vars.u_var())->get_detady();
     const std::vector<libMesh::Real>& detadz  = context.get_element_fe(_disp_vars.u_var())->get_detadz();
 
+    const unsigned int dim = 2; // The manifold dimension is always 2 for this physics
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         libMesh::Gradient grad_u = context.interior_gradient(_disp_vars.u_var(), qp);
@@ -151,24 +153,29 @@ namespace GRINS
                                                    (dxdeta[qp] + dudeta)*(dxdxi[qp] + dudxi),
                                                    (dxdeta[qp] + dudeta)*(dxdeta[qp] + dudeta) );
 
-        
         // Contravariant metric tensor of reference configuration
         libMesh::TensorValue<libMesh::Real> a_contra( dxi*dxi, dxi*deta, 0.0,
-                                                      deta*dxi, deta*deta ); 
+                                                      deta*dxi, deta*deta );
+
+        // Contravariant metric tensor in current configuration is A_cov^{-1}
+        libMesh::Real det = A_cov(1,1)*A_cov(2,2) - A_cov(1,2)*A_cov(2,1);
+        libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(2,2)/det, -A_cov(1,2)/det, 0.0,
+                                                      -A_cov(2,1)/det,  A_cov(1,1)/det );
 
         // Strain tensor
         libMesh::TensorValue<libMesh::Real> strain = 0.5*(A_cov - a_cov);
 
         // Compute stress tensor
-        libMesh::TensorValue<libMesh::Real> tau = this->compute_stress(a_contra,strain);
+        libMesh::TensorValue<libMesh::Real> tau;
+        _stress_strain_law.compute_stress(a_contra,A_contra,A_cov,strain,dim,tau);
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-            for( unsigned int alpha = 0; alpha < 2; alpha++ )
+            for( unsigned int alpha = 0; alpha < dim; alpha++ )
               {
-                for( unsigned int beta = 0; beta < 2; beta++ )
+                for( unsigned int beta = 0; beta < dim; beta++ )
                   {
                     Fu(i) -= 0.5*tau(alpha,beta)*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
                                                    (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) )*jac;
@@ -191,8 +198,8 @@ namespace GRINS
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::side_time_derivative( bool compute_jacobian,
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::side_time_derivative( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& cache )
   {
@@ -211,38 +218,13 @@ namespace GRINS
     return;
   }
 
-  template<typename ElasticityTensor>
-  void ElasticMembrane<ElasticityTensor>::mass_residual( bool compute_jacobian,
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::mass_residual( bool compute_jacobian,
                                                          AssemblyContext& context,
                                                          CachedValues& cache )
   {
     libmesh_not_implemented();
     return;
-  }
-
-  template<typename ElasticityTensor>
-  libMesh::TensorValue<libMesh::Real> ElasticMembrane<ElasticityTensor>::compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra,
-                                                                                        libMesh::TensorValue<libMesh::Real>& strain)
-  {
-    libMesh::TensorValue<libMesh::Real> tau;
-
-    (this->_C).recompute_elasticity(a_contra);
-
-    for( unsigned int alpha = 0; alpha < 2; alpha++ )
-      {
-        for( unsigned int beta = 0; beta < 2; beta++ )
-          {
-            for( unsigned int gamma = 0; gamma < 2; gamma++ )
-              {
-                for( unsigned int delta = 0; delta < 2; delta++ )
-                  {
-                    tau(alpha,beta) += (this->_C(alpha,beta,gamma,delta))*strain(gamma,delta);
-                  }
-              }
-          }
-      }
-
-    return tau;
   }
 
 } // end namespace GRINS

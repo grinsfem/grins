@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/hookean_elasticity.h"
+#include "grins/hookes_law.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -31,51 +31,46 @@
 
 namespace GRINS
 {
-  HookeanElasticity::HookeanElasticity(const GetPot& input)
-    : ElasticityTensor(),
+  HookesLaw::HookesLaw(const GetPot& input)
+    : StressStrainLaw<HookesLaw>(),
+      _C(),
       _lambda(0.0),
       _mu(0.0)
   {
     this->read_input_options(input);
 
-    // Build initial elasicity tensor using Kronecker delta
-    libMesh::TensorValue<libMesh::Real> delta(1.0,0.0,0.0,
-                                              0.0,1.0,0.0,
-                                              0.0,0.0,1.0);
-    this->recompute_elasticity(delta);
-
     return;
   }
 
-  HookeanElasticity::~HookeanElasticity()
+  HookesLaw::~HookesLaw()
   {
     return;
   }
 
-  void HookeanElasticity::read_input_options(const GetPot& input)
+  void HookesLaw::read_input_options(const GetPot& input)
   {
     // We'd better have either Lam\'{e} constants or E and nu
-    if( ( !input.have_variable("Physics/HookeanElasticity/lambda") || 
-          !input.have_variable("Physics/HookeanElasticity/mu") ) &&
-        ( !input.have_variable("Physics/HookeanElasticity/E") || 
-          !input.have_variable("Physics/HookeanElasticity/nu") ) )
+    if( ( !input.have_variable("Physics/HookesLaw/lambda") || 
+          !input.have_variable("Physics/HookesLaw/mu") ) &&
+        ( !input.have_variable("Physics/HookesLaw/E") || 
+          !input.have_variable("Physics/HookesLaw/nu") ) )
       {
         std::cerr << "Error: Must specify either Lame constants lambda and mu or" << std::endl
                   << "       Young's modulus and Poisson's ratio." << std::endl;
         libmesh_error();
       }
 
-    if( input.have_variable("Physics/HookeanElasticity/lambda") )
-      _lambda = input("Physics/HookeanElasticity/lambda", 0.0 );
+    if( input.have_variable("Physics/HookesLaw/lambda") )
+      _lambda = input("Physics/HookesLaw/lambda", 0.0 );
     
-    if( input.have_variable("Physics/HookeanElasticity/mu") )
-      _mu = input("Physics/HookeanElasticity/mu", 0.0 );
+    if( input.have_variable("Physics/HookesLaw/mu") )
+      _mu = input("Physics/HookesLaw/mu", 0.0 );
         
-    if( input.have_variable("Physics/HookeanElasticity/E") && 
-        input.have_variable("Physics/HookeanElasticity/nu") )
+    if( input.have_variable("Physics/HookesLaw/E") && 
+        input.have_variable("Physics/HookesLaw/nu") )
       {
-        libMesh::Real E  = input("Physics/HookeanElasticity/E", 0.0);
-        libMesh::Real nu = input("Physics/HookeanElasticity/nu", 0.0);
+        libMesh::Real E  = input("Physics/HookesLaw/E", 0.0);
+        libMesh::Real nu = input("Physics/HookesLaw/nu", 0.0);
         _lambda = nu*E/( (1+nu)*(1-2*nu) );
         _mu = E/(2*(1+nu));
       }
@@ -83,17 +78,27 @@ namespace GRINS
     return;
   }
   
-  void HookeanElasticity::recompute_elasticity( libMesh::TensorValue<libMesh::Real>& g )
+  void HookesLaw::compute_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                      const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
+                                      const libMesh::TensorValue<libMesh::Real>& /*G_cov*/,
+                                      const libMesh::TensorValue<libMesh::Real>& strain,
+                                      unsigned int dim,
+                                      libMesh::TensorValue<libMesh::Real>& stress )
   {
-    for( unsigned int i = 0; i < 3; i++ )
+    stress.zero();
+
+    for( unsigned int i = 0; i < dim; i++ )
       {
-        for( unsigned int j = 0; j < 3; j++ )
+        for( unsigned int j = 0; j < dim; j++ )
           {
-            for( unsigned int k = 0; k < 3; k++ )
+            for( unsigned int k = 0; k < dim; k++ )
               {
-                for( unsigned int l = 0; l < 3; l++ )
+                for( unsigned int l = 0; l < dim; l++ )
                   {
-                    _C[i][j][k][l] = _lambda*g(i,j)*g(k,l) + _mu*(g(i,k)*g(j,l) + g(i,l)*g(j,k));
+                    _C(i,j,k,l) = _lambda*g_contra(i,j)*g_contra(k,l) +
+                                  _mu*(g_contra(i,k)*g_contra(j,l) + g_contra(i,l)*g_contra(j,k));
+
+                    stress(i,j) += _C(i,j,k,l)*strain(k,l);
                   }
               }
           }

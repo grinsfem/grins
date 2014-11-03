@@ -22,19 +22,15 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_HOOKEAN_ELASTICITY_H
-#define GRINS_HOOKEAN_ELASTICITY_H
+#ifndef GRINS_HOOKES_LAW_H
+#define GRINS_HOOKES_LAW_H
 
 // GRINS
+#include "grins/stress_strain_law.h"
 #include "grins/elasticity_tensor.h"
 
 // Forward declarations
 class GetPot;
-namespace libMesh
-{
-  template<typename T>
-  class TensorValue;
-}
 
 namespace GRINS
 {
@@ -46,27 +42,31 @@ namespace GRINS
    * working with curvilinear coordinate systems, the user should call the
    * set_deformation method before calling operator().
    */
-  class HookeanElasticity : public ElasticityTensor
+  class HookesLaw : public StressStrainLaw<HookesLaw>
   {
   public:
 
-    HookeanElasticity( const GetPot& input );
-    virtual ~HookeanElasticity();
+    HookesLaw( const GetPot& input );
+    virtual ~HookesLaw();
 
-    //! Compute the elasiticity tensor given the deformation
-    /*!
-     * This is needed for curvilinear coordinates, shell formulations, etc.
-     * By default, we initialize using the Kronecker delta so this only
-     * needs to be called when Kronecker delta does not apply.
-     */
-    void recompute_elasticity( libMesh::TensorValue<libMesh::Real>& g );
+    // So we can make implementation private
+    friend class StressStrainLaw<HookesLaw>;
 
   private:
 
-    HookeanElasticity();
+    HookesLaw();
 
     //! Parse properties from input
     void read_input_options(const GetPot& input);
+
+    void compute_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                             const libMesh::TensorValue<libMesh::Real>& G_contra,
+                             const libMesh::TensorValue<libMesh::Real>& G_cov,
+                             const libMesh::TensorValue<libMesh::Real>& strain,
+                             unsigned int dim,
+                             libMesh::TensorValue<libMesh::Real>& stress );
+
+    ElasticityTensor _C;
 
     //! Lam\'{e} constant
     libMesh::Real _lambda;
@@ -78,4 +78,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif // GRINS_HOOKEAN_ELASTICITY_H
+#endif // GRINS_HOOKES_LAW_H

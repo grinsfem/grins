@@ -24,6 +24,6 @@
 
 #include "elastic_membrane.C"
 
-#include "grins/hookean_elasticity.h"
+#include "grins/hookes_law.h"
 
-template class GRINS::ElasticMembrane<GRINS::HookeanElasticity>;
+template class GRINS::ElasticMembrane<GRINS::HookesLaw>;

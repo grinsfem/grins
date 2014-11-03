@@ -72,7 +72,7 @@
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
 
-#include "grins/hookean_elasticity.h"
+#include "grins/hookes_law.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -513,12 +513,12 @@ namespace GRINS
       }
     else if( physics_to_add == elastic_membrane )
       {
-        std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "Hookean" );
+        std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "HookesLaw" );
 
-        if( elasticity_model == std::string("Hookean") )
+        if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticMembrane<HookeanElasticity>(physics_to_add,input));
+              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input));
           }
         else
           {

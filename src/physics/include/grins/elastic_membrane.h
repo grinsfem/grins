@@ -31,7 +31,7 @@
 
 namespace GRINS
 {
-  template<typename ElasticityTensor>
+  template<typename StressStrainLaw>
   class ElasticMembrane : public Physics
   {
   public:
@@ -69,10 +69,7 @@ namespace GRINS
 
     ElasticMembrane();
 
-    libMesh::TensorValue<libMesh::Real> compute_stress(libMesh::TensorValue<libMesh::Real>& a_contra,
-                                                       libMesh::TensorValue<libMesh::Real>& strain );
-
-    ElasticityTensor _C;
+    StressStrainLaw _stress_strain_law;
 
   };
 
