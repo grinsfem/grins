@@ -129,7 +129,6 @@ libgrins_la_SOURCES += properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_wilke_transport_mixture_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
-libgrins_la_SOURCES += properties/src/elasticity_tensor.C
 libgrins_la_SOURCES += properties/src/hookean_elasticity.C
 
 # src/qoi files

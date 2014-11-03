@@ -34,8 +34,8 @@ namespace GRINS
   {
   public:
 
-    ElasticityTensor();
-    virtual ~ElasticityTensor();
+    ElasticityTensor(){};
+    virtual ~ElasticityTensor(){};
 
     //! Value of C_{ijkl}
     libMesh::Real operator()( unsigned int i, unsigned int j, unsigned int k, unsigned int l ) const;
