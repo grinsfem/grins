@@ -48,7 +48,7 @@ namespace GRINS
   void Hyperelasticity<StrainEnergy>::compute_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
                                                           const libMesh::TensorValue<libMesh::Real>& G_contra,
                                                           const libMesh::TensorValue<libMesh::Real>& G_cov,
-                                                          const libMesh::TensorValue<libMesh::Real>& strain,
+                                                          const libMesh::TensorValue<libMesh::Real>& /*strain*/,
                                                           unsigned int dim,
                                                           libMesh::TensorValue<libMesh::Real>& stress )
   {
