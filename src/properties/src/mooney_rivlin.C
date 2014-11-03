@@ -31,7 +31,7 @@
 namespace GRINS
 {
   MooneyRivlin::MooneyRivlin( const GetPot& input )
-    : HyperelasticStranEnergy<MooneyRivlin>(),
+    : HyperelasticStrainEnergy<MooneyRivlin>(),
       _C1( input("Physics/MooneyRivlin/C1", -1.0) ),
       _C2( input("Physics/MooneyRivlin/C2", -1.0) )
   {
