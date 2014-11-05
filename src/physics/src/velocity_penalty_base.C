@@ -49,8 +49,13 @@ namespace GRINS
 
   void VelocityPenaltyBase::read_input_options( const GetPot& input )
   {
+    std::string base_physics_name = "VelocityPenalty";
+    if (this->_physics_name == velocity_penalty2 ||
+        this->_physics_name == velocity_penalty2_adjoint_stab)
+      base_physics_name.push_back('2');
+
     std::string penalty_function =
-      input("Physics/"+velocity_penalty+"/penalty_function",
+      input("Physics/"+base_physics_name+"/penalty_function",
         std::string("0"));
 
     if (penalty_function == "0")
@@ -61,7 +66,7 @@ namespace GRINS
         (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
 
     std::string base_function =
-      input("Physics/"+velocity_penalty+"/base_velocity",
+      input("Physics/"+base_physics_name+"/base_velocity",
         std::string("0"));
 
     if (penalty_function == "0" && base_function == "0")
@@ -75,7 +80,7 @@ namespace GRINS
         (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
     _quadratic_scaling = 
-      input("Physics/"+velocity_penalty+"/quadratic_scaling", false);
+      input("Physics/"+base_physics_name+"/quadratic_scaling", false);
   }
 
   bool VelocityPenaltyBase::compute_force
