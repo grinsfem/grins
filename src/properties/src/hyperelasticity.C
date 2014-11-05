@@ -79,7 +79,7 @@ namespace GRINS
                   {
                     stress(i,j) += 2.0*_W.dI1(I1,I2,I3)*g_contra(i,j)
                       + 2.0*_W.dI2(I1,I2,I3)*(I1*g_contra(i,j) - g_contra(i,k)*g_contra(j,l)*G_cov(k,l))
-                      + 2.0*I3*G_contra(i,j);
+                      + 2.0*_W.dI3(I1,I2,I3)*G_contra(i,j);
                   }
               }
           }
