@@ -39,10 +39,13 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
+                                                     bool lambda_sq_coupled, bool lambda_sq_var )
     : Physics(physics_name,input),
       _disp_vars(input,physics_name),
-      _stress_strain_law(input)
+      _stress_strain_law(input),
+      _lambda_sq_coupled(lambda_sq_coupled),
+      _lambda_sq_var(lambda_sq_var)
   {
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 
@@ -126,6 +129,7 @@ namespace GRINS
     const std::vector<libMesh::Real>& detadz  = context.get_element_fe(_disp_vars.u_var())->get_detadz();
 
     const unsigned int dim = 2; // The manifold dimension is always 2 for this physics
+    unsigned int stress_dim = 2; // If the lateral contraction couples, this will be set to 3
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -162,13 +166,34 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(1,1)/det_A, -A_cov(0,1)/det_A, 0.0,
                                                       -A_cov(1,0)/det_A,  A_cov(0,0)/det_A );
 
+        if( _lambda_sq_coupled )
+          {
+            stress_dim = 3;
+
+            a_cov(2,2)    = 1.0;
+            a_contra(2,2) = 1.0;
+
+            libMesh::Real det_a = a_cov.det();
+
+            // If the material is incompressible, lambda^2 is known
+            libMesh::Real lambda_sq = det_a/det_A;
+
+            // If the material is compressible, then lambda_sq is an independent variable
+            if( _lambda_sq_var )
+              {
+                libmesh_not_implemented();
+              }
+
+            A_cov(2,2) = lambda_sq;
+            A_contra(2,2) = 1.0/lambda_sq;
+          }
 
         // Strain tensor
         libMesh::TensorValue<libMesh::Real> strain = 0.5*(A_cov - a_cov);
 
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(a_contra,A_contra,A_cov,strain,dim,tau);
+        _stress_strain_law.compute_stress(a_contra,A_contra,A_cov,strain,stress_dim,tau);
 
         libMesh::Real jac = JxW[qp];
 

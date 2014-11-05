@@ -36,7 +36,8 @@ namespace GRINS
   {
   public:
 
-    ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
+                     bool lambda_sq_coupled, bool lambda_sq_var );
     virtual ~ElasticMembrane();
 
     //! Initialize variables for this physics.
@@ -70,6 +71,9 @@ namespace GRINS
     ElasticMembrane();
 
     StressStrainLaw _stress_strain_law;
+
+    bool _lambda_sq_coupled;
+    bool _lambda_sq_var;
 
   };
 

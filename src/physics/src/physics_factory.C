@@ -520,12 +520,12 @@ namespace GRINS
         if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input));
+              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input,false,false));
           }
         else if( elasticity_model == std::string("MooneyRivlin") )
           {
             physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticMembrane<Hyperelasticity<MooneyRivlin> >(physics_to_add,input));
+              PhysicsPtr(new ElasticMembrane<Hyperelasticity<MooneyRivlin> >(physics_to_add,input,true,false));
           }
         else
           {
