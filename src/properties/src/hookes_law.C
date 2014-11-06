@@ -78,11 +78,11 @@ namespace GRINS
     return;
   }
   
-  void HookesLaw::compute_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
-                                      const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
-                                      const libMesh::TensorValue<libMesh::Real>& /*G_cov*/,
-                                      const libMesh::TensorValue<libMesh::Real>& strain,
-                                      unsigned int dim,
+  void HookesLaw::compute_stress_imp( unsigned int dim,
+                                      const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                      const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                      const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                      const libMesh::TensorValue<libMesh::Real>& G_cov,
                                       libMesh::TensorValue<libMesh::Real>& stress )
   {
     stress.zero();
@@ -95,10 +95,12 @@ namespace GRINS
               {
                 for( unsigned int l = 0; l < dim; l++ )
                   {
+                    libMesh::Real strain_kl = G_cov(k,l) - g_cov(k,l);
+
                     _C(i,j,k,l) = _lambda*g_contra(i,j)*g_contra(k,l) +
                                   _mu*(g_contra(i,k)*g_contra(j,l) + g_contra(i,l)*g_contra(j,k));
 
-                    stress(i,j) += _C(i,j,k,l)*strain(k,l);
+                    stress(i,j) += _C(i,j,k,l)*strain_kl;
                   }
               }
           }

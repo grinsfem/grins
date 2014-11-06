@@ -53,11 +53,11 @@ namespace GRINS
 
   private:
 
-    void compute_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
+    void compute_stress_imp( unsigned int dim,
+                             const libMesh::TensorValue<libMesh::Real>& g_contra,
+                             const libMesh::TensorValue<libMesh::Real>& g_cov,
                              const libMesh::TensorValue<libMesh::Real>& G_contra,
                              const libMesh::TensorValue<libMesh::Real>& G_cov,
-                             const libMesh::TensorValue<libMesh::Real>& strain,
-                             unsigned int dim,
                              libMesh::TensorValue<libMesh::Real>& stress );
 
     StrainEnergy _W;

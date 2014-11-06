@@ -129,7 +129,6 @@ namespace GRINS
     const std::vector<libMesh::Real>& detadz  = context.get_element_fe(_disp_vars.u_var())->get_detadz();
 
     const unsigned int dim = 2; // The manifold dimension is always 2 for this physics
-    unsigned int stress_dim = 2; // If the lateral contraction couples, this will be set to 3
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -168,8 +167,6 @@ namespace GRINS
 
         if( _lambda_sq_coupled )
           {
-            stress_dim = 3;
-
             a_cov(2,2)    = 1.0;
             a_contra(2,2) = 1.0;
 
@@ -188,12 +185,9 @@ namespace GRINS
             A_contra(2,2) = 1.0/lambda_sq;
           }
 
-        // Strain tensor
-        libMesh::TensorValue<libMesh::Real> strain = 0.5*(A_cov - a_cov);
-
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(a_contra,A_contra,A_cov,strain,stress_dim,tau);
+        _stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
 
         libMesh::Real jac = JxW[qp];
 

@@ -46,24 +46,24 @@ namespace GRINS
     StressStrainLaw(){};
     virtual ~StressStrainLaw(){};
 
-    void compute_stress( const libMesh::TensorValue<libMesh::Real>& g_contra,
+    void compute_stress( unsigned int dim,
+                         const libMesh::TensorValue<libMesh::Real>& g_contra,
+                         const libMesh::TensorValue<libMesh::Real>& g_cov,
                          const libMesh::TensorValue<libMesh::Real>& G_contra,
                          const libMesh::TensorValue<libMesh::Real>& G_cov,
-                         const libMesh::TensorValue<libMesh::Real>& strain,
-                         unsigned int dim,
                          libMesh::TensorValue<libMesh::Real>& stress );
   };
 
   template <typename Law>
   inline
-  void StressStrainLaw<Law>::compute_stress( const libMesh::TensorValue<libMesh::Real>& g_contra,
+  void StressStrainLaw<Law>::compute_stress( unsigned int dim,
+                                             const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                             const libMesh::TensorValue<libMesh::Real>& g_cov,
                                              const libMesh::TensorValue<libMesh::Real>& G_contra,
                                              const libMesh::TensorValue<libMesh::Real>& G_cov,
-                                             const libMesh::TensorValue<libMesh::Real>& strain,
-                                             unsigned int dim,
                                              libMesh::TensorValue<libMesh::Real>& stress )
   {
-    static_cast<Law*>(this)->compute_stress_imp(g_contra,G_contra,G_cov,strain,dim,stress);
+    static_cast<Law*>(this)->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
     return;
   }
 
