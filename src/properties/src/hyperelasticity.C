@@ -64,9 +64,11 @@ namespace GRINS
         for( unsigned int j = 0; j < dim; j++ )
           {
             I1 += g_contra(i,j)*G_cov(i,j);
-            I2 += I3*g_contra(i,j)*G_cov(i,j);
+            I2 += G_contra(i,j)*g_cov(i,j);
           }
       }
+
+    I2 *= I3;
 
     // Now compute stress
     for( unsigned int i = 0; i < dim; i++ )
