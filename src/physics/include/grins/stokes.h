@@ -39,13 +39,16 @@ namespace GRINS
     This physics class implements the classical Stokes equations.
    */
   template<class Viscosity>  
-  class Stokes : public IncompressibleNavierStokesBase
+  class Stokes : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 
     Stokes(const std::string& physics_name, const GetPot& input);
 
     ~Stokes();
+
+    //! Read options from GetPot input file.
+    virtual void read_input_options( const GetPot& input );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

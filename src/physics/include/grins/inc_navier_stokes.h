@@ -41,7 +41,7 @@ namespace GRINS
     to specify a constant or spatially varying viscosity in the input file
    */
   template<class Viscosity>
-  class IncompressibleNavierStokes : public IncompressibleNavierStokesBase
+  class IncompressibleNavierStokes : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 
