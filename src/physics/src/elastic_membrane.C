@@ -225,9 +225,9 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::side_time_derivative( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& cache )
+  void ElasticMembrane<StressStrainLaw>::side_time_derivative( bool /*compute_jacobian*/,
+                                                               AssemblyContext& /*context*/,
+                                                               CachedValues& /*cache*/ )
   {
     /*
       std::vector<BoundaryID> ids = context.side_boundary_ids();
@@ -245,9 +245,9 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::mass_residual( bool compute_jacobian,
-                                                         AssemblyContext& context,
-                                                         CachedValues& cache )
+  void ElasticMembrane<StressStrainLaw>::mass_residual( bool /*compute_jacobian*/,
+                                                        AssemblyContext& /*context*/,
+                                                        CachedValues& /*cache*/ )
   {
     libmesh_not_implemented();
     return;
