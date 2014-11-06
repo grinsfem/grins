@@ -138,8 +138,17 @@ namespace GRINS
   {
     if( physics_to_add == incompressible_navier_stokes )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new IncompressibleNavierStokes(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }          
       }
     else if( physics_to_add == stokes )
       {
@@ -633,6 +642,16 @@ namespace GRINS
 	      << "Conductivity model  = " << conductivity << std::endl
 	      << "Viscosity model     = " << viscosity << std::endl
 	      << "Specific heat model = " << specific_heat << std::endl
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
+  void PhysicsFactory::visc_error( const std::string& physics,				  
+				   const std::string& viscosity ) const
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Viscosity model     = " << viscosity << std::endl	      
 	      << "================================================================" << std::endl;
     libmesh_error();
   }

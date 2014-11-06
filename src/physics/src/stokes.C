@@ -38,10 +38,10 @@
 namespace GRINS
 {
 
-  Stokes::Stokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name,input),
-      _p_pinning(input,physics_name),
-      _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
+  template<class Mu>
+  Stokes<Mu>::Stokes(const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+      _p_pinning(input,physics_name)      
   {
     // This is deleted in the base class
     this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
@@ -50,12 +50,25 @@ namespace GRINS
     return;
   }
 
-  Stokes::~Stokes()
+  template<class Mu>
+  Stokes<Mu>::~Stokes()
   {
     return;
   }
 
-  void Stokes::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void Stokes<Mu>::read_input_options( const GetPot& input )
+  {
+    // Other quantities read in base class
+
+    // Read pressure pinning information
+    this->_pin_pressure = input("Physics/"+stokes+"/pin_pressure", false );
+  
+    return;
+  }
+
+  template<class Mu>
+  void Stokes<Mu>::element_time_derivative( bool compute_jacobian,
                                         AssemblyContext& context,
                                         CachedValues& /*cache*/ )
   {
@@ -148,16 +161,16 @@ namespace GRINS
           {
             Fu(i) += JxW[qp] *
               ( p*u_gradphi[i][qp](0)              // pressure term
-                -_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
+                -this->_mu()*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
             Fv(i) += JxW[qp] *
               ( p*u_gradphi[i][qp](1)              // pressure term
-                -_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+                -this->_mu()*(u_gradphi[i][qp]*grad_v) ); // diffusion term
             if (_dim == 3)
               {
                 (*Fw)(i) += JxW[qp] *
                   ( p*u_gradphi[i][qp](2)              // pressure term
-                    -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
+                    -this->_mu()*(u_gradphi[i][qp]*grad_w) ); // diffusion term
               }
 
             if (compute_jacobian)
@@ -170,15 +183,15 @@ namespace GRINS
                     //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
 
                     Kuu(i,j) += JxW[qp] *
-                      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                      (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     Kvv(i,j) += JxW[qp] *
-                      (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                      (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     if (_dim == 3)
                       {
                         (*Kww)(i,j) += JxW[qp] *
-                          (-_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                          (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
                       }
                   } // end of the inner dof (j) loop
 
@@ -203,7 +216,8 @@ namespace GRINS
     return;
   }
 
-  void Stokes::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void Stokes<Mu>::element_constraint( bool compute_jacobian,
                                    AssemblyContext& context,
                                    CachedValues& /*cache*/ )
   {
@@ -297,7 +311,8 @@ namespace GRINS
     return;
   }
 
-  void Stokes::mass_residual( bool compute_jacobian,
+  template<class Mu>
+  void Stokes<Mu>::mass_residual( bool compute_jacobian,
                               AssemblyContext& context,
                               CachedValues& /*cache*/)
   {

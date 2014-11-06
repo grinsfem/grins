@@ -37,10 +37,10 @@
 namespace GRINS
 {
 
-  IncompressibleNavierStokes::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name,input),
-      _p_pinning(input,physics_name),
-      _pin_pressure( input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false ) )
+  template<class Mu>
+  IncompressibleNavierStokes<Mu>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+      _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
 
@@ -57,12 +57,25 @@ namespace GRINS
     return;
   }
 
-  IncompressibleNavierStokes::~IncompressibleNavierStokes()
+  template<class Mu>
+  IncompressibleNavierStokes<Mu>::~IncompressibleNavierStokes()
   {
     return;
   }
 
-  void IncompressibleNavierStokes::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::read_input_options( const GetPot& input )
+  {
+    // Other quantities read in base class
+
+    // Read pressure pinning information
+    this->_pin_pressure = input("Physics/"+inc_navier_stokes+"/pin_pressure", false );
+  
+    return;
+  }
+
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::element_time_derivative( bool compute_jacobian,
                                                             AssemblyContext& context,
                                                             CachedValues& /*cache*/ )
   {
@@ -192,25 +205,25 @@ namespace GRINS
             Fu(i) += jac *
               (-_rho*u_phi[i][qp]*(U*grad_u)        // convection term
                +p*u_gradphi[i][qp](0)              // pressure term
-               -_mu*(u_gradphi[i][qp]*grad_u) ); // diffusion term
+               -this->_mu()*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
             /*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
             if( _is_axisymmetric )
               {
-                Fu(i) += u_phi[i][qp]*( p/r - _mu*U(0)/(r*r) )*jac;
+                Fu(i) += u_phi[i][qp]*( p/r - this->_mu()*U(0)/(r*r) )*jac;
               }
 
             Fv(i) += jac *
               (-_rho*u_phi[i][qp]*(U*grad_v)        // convection term
                +p*u_gradphi[i][qp](1)              // pressure term
-               -_mu*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+               -this->_mu()*(u_gradphi[i][qp]*grad_v) ); // diffusion term
 
             if (_dim == 3)
               {
                 (*Fw)(i) += jac *
                   (-_rho*u_phi[i][qp]*(U*grad_w)        // convection term
                    +p*u_gradphi[i][qp](2)              // pressure term
-                   -_mu*(u_gradphi[i][qp]*grad_w) ); // diffusion term
+                   -this->_mu()*(u_gradphi[i][qp]*grad_w) ); // diffusion term
               }
 
             if (compute_jacobian)
@@ -225,12 +238,12 @@ namespace GRINS
                     Kuu(i,j) += jac *
                       (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
-                       -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                       -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     
                     if( _is_axisymmetric )
                       {
-                        Kuu(i,j) -= u_phi[i][qp]*_mu*u_phi[j][qp]/(r*r)*jac;
+                        Kuu(i,j) -= u_phi[i][qp]*this->_mu()*u_phi[j][qp]/(r*r)*jac;
                       }
 
                     Kuv(i,j) += jac *
@@ -239,7 +252,7 @@ namespace GRINS
                     Kvv(i,j) += jac *
                       (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -_rho*u_phi[i][qp]*grad_v_y*u_phi[j][qp]             // convection term
-                       -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                       -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     Kvu(i,j) += jac *
                       (-_rho*u_phi[i][qp]*grad_v_x*u_phi[j][qp]);           // convection term
@@ -255,7 +268,7 @@ namespace GRINS
                         (*Kww)(i,j) += jac *
                           (-_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                            -_rho*u_phi[i][qp]*grad_w_z*u_phi[j][qp]             // convection term
-                           -_mu*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                           -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
                         (*Kwu)(i,j) += jac *
                           (-_rho*u_phi[i][qp]*grad_w_x*u_phi[j][qp]);           // convection term
                         (*Kwv)(i,j) += jac *
@@ -295,7 +308,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokes::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::element_constraint( bool compute_jacobian,
                                                        AssemblyContext& context,
                                                        CachedValues& /*cache*/ )
   {
@@ -411,7 +425,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokes::side_constraint( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::side_constraint( bool compute_jacobian,
                                                     AssemblyContext& context,
                                                     CachedValues& /* cache */)
   {
@@ -424,7 +439,8 @@ namespace GRINS
     return;
   }
   
-  void IncompressibleNavierStokes::mass_residual( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::mass_residual( bool compute_jacobian,
                                                   AssemblyContext& context,
                                                   CachedValues& /*cache*/ )
   {
@@ -518,3 +534,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+template class GRINS::IncompressibleNavierStokes<GRINS::ConstantViscosity>;

@@ -36,7 +36,11 @@ namespace GRINS
   //! Physics class for Incompressible Navier-Stokes
   /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
+    This is a templated class, the class Viscosity can be instantiated as a specific type
+    (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
+    to specify a constant or spatially varying viscosity in the input file
    */
+  template<class Viscosity>
   class IncompressibleNavierStokes : public IncompressibleNavierStokesBase
   {
   public:

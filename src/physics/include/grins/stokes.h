@@ -38,6 +38,7 @@ namespace GRINS
   /*!
     This physics class implements the classical Stokes equations.
    */
+  template<class Viscosity>  
   class Stokes : public IncompressibleNavierStokesBase
   {
   public:

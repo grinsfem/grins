@@ -30,14 +30,17 @@
 #include "grins/physics.h"
 #include "grins/primitive_flow_fe_variables.h"
 
-
 namespace GRINS
 {
 
   //! Physics class for Incompressible Navier-Stokes
   /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
+    This is a templated class, the class Viscosity can be instantiated as a specific type
+    (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
+    to specify a constant or spatially varying viscosity in the input file
    */
+  template<class Viscosity>
   class IncompressibleNavierStokesBase : public Physics
   {
   public:
@@ -56,7 +59,7 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context );    
 
   protected:
 
@@ -68,7 +71,10 @@ namespace GRINS
 
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
-    libMesh::Number _rho, _mu;
+    libMesh::Number _rho;
+
+    //! Viscosity object
+    Viscosity _mu;
     
   private:
     IncompressibleNavierStokesBase();
