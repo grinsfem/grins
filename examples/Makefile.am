@@ -205,6 +205,16 @@ bunsen_SOURCES += laminar_flame/ignite_initial_guess.C
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
 
+
+#=======================================================================
+# Elastic Sheet Example
+#=======================================================================
+elasticsheetdir = $(prefix)/examples/elastic_sheet
+elasticsheet_DATA = $(top_srcdir)/examples/elastic_sheet/sheet.in
+elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
+
+EXTRA_DIST += $(elasticsheet_DATA)
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno

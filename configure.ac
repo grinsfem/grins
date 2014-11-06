@@ -416,6 +416,7 @@ AC_CONFIG_FILES(examples/simple_fan/run.sh,	             [chmod +x examples/simp
 AC_CONFIG_FILES(examples/simple_prop/run.sh,	             [chmod +x examples/simple_prop/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
+AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/elastic_sheet/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
