@@ -131,6 +131,7 @@ libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instanti
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
 libgrins_la_SOURCES += properties/src/hookes_law.C
 libgrins_la_SOURCES += properties/src/hyperelasticity.C
+libgrins_la_SOURCES += properties/src/incompressible_plane_stress_hyperelasticity.C
 libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 
@@ -309,6 +310,7 @@ include_HEADERS += properties/include/grins/elasticity_tensor.h
 include_HEADERS += properties/include/grins/stress_strain_law.h
 include_HEADERS += properties/include/grins/hookes_law.h
 include_HEADERS += properties/include/grins/hyperelasticity.h
+include_HEADERS += properties/include/grins/incompressible_plane_stress_hyperelasticity.h
 include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
 include_HEADERS += properties/include/grins/mooney_rivlin.h
 

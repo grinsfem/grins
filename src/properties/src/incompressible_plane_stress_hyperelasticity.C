@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -42,7 +42,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   template <typename StrainEnergy>
   void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_imp( unsigned int /*dim*/,
                                                                                    const libMesh::TensorValue<libMesh::Real>& a_contra,

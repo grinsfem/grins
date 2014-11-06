@@ -25,8 +25,8 @@
 #include "elastic_membrane.C"
 
 #include "grins/hookes_law.h"
-#include "grins/hyperelasticity.h"
+#include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
-template class GRINS::ElasticMembrane<GRINS::Hyperelasticity<GRINS::MooneyRivlin> >;
+template class GRINS::ElasticMembrane<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;

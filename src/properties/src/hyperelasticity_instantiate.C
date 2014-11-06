@@ -22,10 +22,10 @@
 //
 //-----------------------------------------------------------------------el-
 
-#include "hyperelasticity.C"
+#include "incompressible_plane_stress_hyperelasticity.C"
 
-#include "grins/hyperelasticity.h"
+#include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
 // Instantiate various hyperelasticity laws
-template class GRINS::Hyperelasticity<GRINS::MooneyRivlin>;
+template class GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin>;
