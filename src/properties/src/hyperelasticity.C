@@ -70,6 +70,10 @@ namespace GRINS
 
     I2 *= I3;
 
+    libMesh::Real dWdI1 = _W.dI1(I1,I2,I3);
+    libMesh::Real dWdI2 = _W.dI2(I1,I2,I3);
+    libMesh::Real dWdI3 = _W.dI3(I1,I2,I3);
+
     // Now compute stress
     for( unsigned int i = 0; i < dim; i++ )
       {
@@ -79,9 +83,9 @@ namespace GRINS
               {
                 for( unsigned int l = 0; l < dim; l++ )
                   {
-                    stress(i,j) += 2.0*_W.dI1(I1,I2,I3)*g_contra(i,j)
-                      + 2.0*_W.dI2(I1,I2,I3)*(I1*g_contra(i,j) - g_contra(i,k)*g_contra(j,l)*G_cov(k,l))
-                      + 2.0*_W.dI3(I1,I2,I3)*G_contra(i,j);
+                    stress(i,j) += 2.0*dWdI1*g_contra(i,j)
+                      + 2.0*dWdI2*(I1*g_contra(i,j) - g_contra(i,k)*g_contra(j,l)*G_cov(k,l))
+                      + 2.0*dWdI3*G_contra(i,j);
                   }
               }
           }
