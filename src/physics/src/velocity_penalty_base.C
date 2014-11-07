@@ -26,6 +26,9 @@
 // This class
 #include "grins/velocity_penalty_base.h"
 
+// GRINS
+#include "grins/constant_viscosity.h"
+
 // libMesh
 #include "libmesh/parsed_function.h"
 #include "libmesh/zero_function.h"

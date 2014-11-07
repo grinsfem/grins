@@ -124,7 +124,7 @@ namespace GRINS
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
           compute_jacobian ? &dFdU : NULL;
-        if (!compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
           continue;
 
         const libMesh::Real jac = JxW[qp];
@@ -189,7 +189,7 @@ namespace GRINS
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
           {
-            (*normal_vector_function)(*point, context.time,
+            (*this->normal_vector_function)(*point, context.time,
                                       output_vec);
             libMesh::Gradient penalty_vec
               (output_vec(0), output_vec(1), output_vec(2));
@@ -207,7 +207,7 @@ namespace GRINS
 	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
 	     point != points.end(); point++ )
           {
-            (*base_velocity_function)(*point, context.time,
+            (*this->base_velocity_function)(*point, context.time,
                                       output_vec);
             libMesh::Gradient base_vec
               (output_vec(0), output_vec(1), output_vec(2));
