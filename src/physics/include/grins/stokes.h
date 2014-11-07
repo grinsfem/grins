@@ -46,10 +46,7 @@ namespace GRINS
     Stokes(const std::string& physics_name, const GetPot& input);
 
     ~Stokes();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
+    
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 

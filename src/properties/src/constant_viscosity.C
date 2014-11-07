@@ -40,7 +40,7 @@ namespace GRINS
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
-        libmesh_warning("No Materials/Viscosity/mu specified!");
+        libmesh_warning("No Materials/Viscosity/mu specified!\n");
 
 	// Try and get the viscosity from other specifications
 	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);

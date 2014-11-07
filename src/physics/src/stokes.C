@@ -42,7 +42,8 @@ namespace GRINS
   template<class Mu>
   Stokes<Mu>::Stokes(const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,input),
-      _p_pinning(input,physics_name)      
+      _p_pinning(input,physics_name),   
+      _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
   {
     // This is deleted in the base class
     this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
@@ -56,18 +57,7 @@ namespace GRINS
   {
     return;
   }
-
-  template<class Mu>
-  void Stokes<Mu>::read_input_options( const GetPot& input )
-  {
-    // Other quantities read in base class
-
-    // Read pressure pinning information
-    this->_pin_pressure = input("Physics/"+stokes+"/pin_pressure", false );
   
-    return;
-  }
-
   template<class Mu>
   void Stokes<Mu>::element_time_derivative( bool compute_jacobian,
                                         AssemblyContext& context,
