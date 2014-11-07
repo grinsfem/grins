@@ -95,7 +95,7 @@ namespace GRINS
               {
                 for( unsigned int l = 0; l < dim; l++ )
                   {
-                    libMesh::Real strain_kl = G_cov(k,l) - g_cov(k,l);
+                    libMesh::Real strain_kl = 0.5*(G_cov(k,l) - g_cov(k,l));
 
                     _C(i,j,k,l) = _lambda*g_contra(i,j)*g_contra(k,l) +
                                   _mu*(g_contra(i,k)*g_contra(j,l) + g_contra(i,l)*g_contra(j,k));
