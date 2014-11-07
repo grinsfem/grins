@@ -53,6 +53,10 @@ namespace GRINS
 					  AssemblyContext& context,
 					  CachedValues& cache );
 
+    virtual void side_time_derivative( bool compute_jacobian,
+				       AssemblyContext& context,
+				       CachedValues& cache );
+
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
 				     AssemblyContext& context,
