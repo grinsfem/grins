@@ -193,6 +193,9 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if( this->_is_axisymmetric )
           {
             jac *= r;
@@ -206,25 +209,25 @@ namespace GRINS
             Fu(i) += jac *
               (-this->_rho*u_phi[i][qp]*(U*grad_u)        // convection term
                +p*u_gradphi[i][qp](0)              // pressure term
-               -this->_mu()*(u_gradphi[i][qp]*grad_u) ); // diffusion term
+               -_mu_qp*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
             /*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
             if( this->_is_axisymmetric )
               {
-                Fu(i) += u_phi[i][qp]*( p/r - this->_mu()*U(0)/(r*r) )*jac;
+                Fu(i) += u_phi[i][qp]*( p/r - _mu_qp*U(0)/(r*r) )*jac;
               }
 
             Fv(i) += jac *
               (-this->_rho*u_phi[i][qp]*(U*grad_v)        // convection term
                +p*u_gradphi[i][qp](1)              // pressure term
-               -this->_mu()*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+               -_mu_qp*(u_gradphi[i][qp]*grad_v) ); // diffusion term
 
             if (this->_dim == 3)
               {
                 (*Fw)(i) += jac *
                   (-this->_rho*u_phi[i][qp]*(U*grad_w)        // convection term
                    +p*u_gradphi[i][qp](2)              // pressure term
-                   -this->_mu()*(u_gradphi[i][qp]*grad_w) ); // diffusion term
+                   -_mu_qp*(u_gradphi[i][qp]*grad_w) ); // diffusion term
               }
 
             if (compute_jacobian)
@@ -239,12 +242,12 @@ namespace GRINS
                     Kuu(i,j) += jac *
                       (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -this->_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
-                       -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                       -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     
                     if( this->_is_axisymmetric )
                       {
-                        Kuu(i,j) -= u_phi[i][qp]*this->_mu()*u_phi[j][qp]/(r*r)*jac;
+                        Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac;
                       }
 
                     Kuv(i,j) += jac *
@@ -253,7 +256,7 @@ namespace GRINS
                     Kvv(i,j) += jac *
                       (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                        -this->_rho*u_phi[i][qp]*grad_v_y*u_phi[j][qp]             // convection term
-                       -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                       -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     Kvu(i,j) += jac *
                       (-this->_rho*u_phi[i][qp]*grad_v_x*u_phi[j][qp]);           // convection term
@@ -269,7 +272,7 @@ namespace GRINS
                         (*Kww)(i,j) += jac *
                           (-this->_rho*u_phi[i][qp]*(U*u_gradphi[j][qp])       // convection term
                            -this->_rho*u_phi[i][qp]*grad_w_z*u_phi[j][qp]             // convection term
-                           -this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                           -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
                         (*Kwu)(i,j) += jac *
                           (-this->_rho*u_phi[i][qp]*grad_w_x*u_phi[j][qp]);           // convection term
                         (*Kwv)(i,j) += jac *
