@@ -37,6 +37,7 @@ namespace libMesh
 
 namespace GRINS
 {
+  class ElasticityTensor;
 
   template <typename Law>
   class StressStrainLaw
@@ -52,6 +53,14 @@ namespace GRINS
                          const libMesh::TensorValue<libMesh::Real>& G_contra,
                          const libMesh::TensorValue<libMesh::Real>& G_cov,
                          libMesh::TensorValue<libMesh::Real>& stress );
+
+    void compute_stress_and_elasticity( unsigned int dim,
+                                        const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                        const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                        const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                        const libMesh::TensorValue<libMesh::Real>& G_cov,
+                                        libMesh::TensorValue<libMesh::Real>& stress,
+                                        ElasticityTensor& C );
   };
 
   template <typename Law>
@@ -64,6 +73,20 @@ namespace GRINS
                                              libMesh::TensorValue<libMesh::Real>& stress )
   {
     static_cast<Law*>(this)->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
+    return;
+  }
+
+  template <typename Law>
+  inline
+  void StressStrainLaw<Law>::compute_stress_and_elasticity( unsigned int dim,
+                                                            const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                                            const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                                            const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                                            const libMesh::TensorValue<libMesh::Real>& G_cov,
+                                                            libMesh::TensorValue<libMesh::Real>& stress,
+                                                            ElasticityTensor& C )
+  {
+    static_cast<Law*>(this)->compute_stress_and_elasticity_imp(dim,g_contra,g_cov,G_contra,G_cov,stress,C);
     return;
   }
 

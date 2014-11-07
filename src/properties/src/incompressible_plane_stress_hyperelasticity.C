@@ -93,4 +93,17 @@ namespace GRINS
     return;
   }
 
+  template <typename StrainEnergy>
+  void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_and_elasticity_imp( unsigned int /*dim*/,
+                                                                                                  const libMesh::TensorValue<libMesh::Real>& a_contra,
+                                                                                                  const libMesh::TensorValue<libMesh::Real>& a_cov,
+                                                                                                  const libMesh::TensorValue<libMesh::Real>& A_contra,
+                                                                                                  const libMesh::TensorValue<libMesh::Real>& A_cov,
+                                                                                                  libMesh::TensorValue<libMesh::Real>& stress,
+                                                                                                  ElasticityTensor& C)
+  {
+    libmesh_not_implemented();
+    return;
+  }
+
 } // end namespace GRINS

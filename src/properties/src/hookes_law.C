@@ -109,4 +109,19 @@ namespace GRINS
     return;
   }
 
+  void HookesLaw::compute_stress_and_elasticity_imp( unsigned int dim,
+                                                     const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                                     const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                                     const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                                     const libMesh::TensorValue<libMesh::Real>& G_cov,
+                                                     libMesh::TensorValue<libMesh::Real>& stress,
+                                                     ElasticityTensor& C)
+  {
+    this->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
+
+    C = _C;
+
+    return;
+  }
+
 } // end namespace GRINS
