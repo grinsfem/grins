@@ -81,7 +81,7 @@ namespace GRINS
   void HookesLaw::compute_stress_imp( unsigned int dim,
                                       const libMesh::TensorValue<libMesh::Real>& g_contra,
                                       const libMesh::TensorValue<libMesh::Real>& g_cov,
-                                      const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                      const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
                                       const libMesh::TensorValue<libMesh::Real>& G_cov,
                                       libMesh::TensorValue<libMesh::Real>& stress )
   {
