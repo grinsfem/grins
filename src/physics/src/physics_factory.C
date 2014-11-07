@@ -152,43 +152,115 @@ namespace GRINS
       }
     else if( physics_to_add == stokes )
       {
-	physics_list[physics_to_add] =
-	  PhysicsPtr(new Stokes(physics_to_add,input));
-      }
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] =
+	      PhysicsPtr(new Stokes<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }      
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ConstantViscosity>(physics_to_add,input) );
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }  
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
-        physics_list[physics_to_add] = 
-          PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ConstantViscosity>(physics_to_add,input) );
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }  
       }
     else if( physics_to_add == velocity_drag )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new VelocityDrag(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDrag<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == velocity_penalty )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenalty<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == averaged_fan )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new AveragedFan(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFan<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == averaged_turbine )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new AveragedTurbine(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == scalar_ode )
       {

@@ -31,7 +31,8 @@
 namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
-  class IncompressibleNavierStokesSPGSMStabilization : public IncompressibleNavierStokesStabilizationBase
+  template<class Viscosity>
+  class IncompressibleNavierStokesSPGSMStabilization : public IncompressibleNavierStokesStabilizationBase<Viscosity>
   {
 
   public:

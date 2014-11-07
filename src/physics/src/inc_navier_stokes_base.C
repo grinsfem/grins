@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -37,31 +38,34 @@
 
 namespace GRINS
 {
-
-  IncompressibleNavierStokesBase::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
+  template<class Mu>
+  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input, incompressible_navier_stokes),
-      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
-      _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) )
+      _mu(input),
+      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) )      
   {
     return;
   }
 
-  IncompressibleNavierStokesBase::~IncompressibleNavierStokesBase()
+  template<class Mu>
+  IncompressibleNavierStokesBase<Mu>::~IncompressibleNavierStokesBase()
   {
     return;
-  }
+  }  
 
-  void IncompressibleNavierStokesBase::init_variables( libMesh::FEMSystem* system )
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();
 
-    _flow_vars.init(system);
+    this->_flow_vars.init(system);
 
     return;
   }
 
-  void IncompressibleNavierStokesBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -76,7 +80,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesBase::init_context( AssemblyContext& context )
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -98,3 +103,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+template class GRINS::IncompressibleNavierStokesBase<GRINS::ConstantViscosity>;

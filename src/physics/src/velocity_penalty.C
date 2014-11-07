@@ -26,24 +26,30 @@
 // This class
 #include "grins/velocity_penalty.h"
 
+// GRINS
+#include "grins/constant_viscosity.h"
+
 // libMesh
 #include "libmesh/quadrature.h"
 
 namespace GRINS
 {
 
-  VelocityPenalty::VelocityPenalty( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase(physics_name, input)
+  template<class Mu>
+  VelocityPenalty<Mu>::VelocityPenalty( const std::string& physics_name, const GetPot& input )
+    : VelocityPenaltyBase<Mu>(physics_name, input)
   {
     return;
   }
 
-  VelocityPenalty::~VelocityPenalty()
+  template<class Mu>
+  VelocityPenalty<Mu>::~VelocityPenalty()
   {
     return;
   }
 
-  void VelocityPenalty::init_context( AssemblyContext& context )
+  template<class Mu>
+  void VelocityPenalty<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
     context.get_element_fe(this->_flow_vars.u_var())->get_phi();
@@ -51,7 +57,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenalty::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void VelocityPenalty<Mu>::element_time_derivative( bool compute_jacobian,
 					         AssemblyContext& context,
 					         CachedValues& /* cache */ )
   {
@@ -71,13 +78,13 @@ namespace GRINS
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // R_{u},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // R_{u},{v}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // R_{v},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // R_{v},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // R_{v},{v}
 
     libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
@@ -85,19 +92,19 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     if( this->_dim == 3 )
       {
-        Kuw = &context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.w_var()); // R_{u},{w}
-        Kvw = &context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.w_var()); // R_{v},{w}
+        Kuw = &context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.w_var()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.w_var()); // R_{v},{w}
 
-        Kwu = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.u_var()); // R_{w},{u}
-        Kwv = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.v_var()); // R_{w},{v}
-        Kww = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.w_var()); // R_{w},{w}
-        Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
+        Kwu = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.u_var()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.v_var()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.w_var()); // R_{w},{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -106,12 +113,12 @@ namespace GRINS
       {
         // Compute the solution at the old Newton iterate.
         libMesh::Number u, v;
-        u = context.interior_value(_flow_vars.u_var(), qp);
-        v = context.interior_value(_flow_vars.v_var(), qp);
+        u = context.interior_value(this->_flow_vars.u_var(), qp);
+        v = context.interior_value(this->_flow_vars.v_var(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (_dim == 3)
-          U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
+        if (this->_dim == 3)
+          U(2) = context.interior_value(this->_flow_vars.w_var(), qp); // w
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
@@ -166,7 +173,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenalty::compute_element_cache
+  template<class Mu>
+  void VelocityPenalty<Mu>::compute_element_cache
     ( const AssemblyContext& context, 
       const std::vector<libMesh::Point>& points,
       CachedValues& cache )
@@ -210,3 +218,5 @@ namespace GRINS
   }
 
 } // namespace GRINS
+// Instantiate
+template class GRINS::VelocityPenalty<GRINS::ConstantViscosity>;

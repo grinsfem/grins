@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
 
 //libMesh
 #include "libmesh/quadrature.h"
@@ -34,21 +35,24 @@
 namespace GRINS
 {
 
-  IncompressibleNavierStokesSPGSMStabilization::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name, 
+  template<class Mu>
+  IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name, 
                                                                                               const GetPot& input )
-    : IncompressibleNavierStokesStabilizationBase(physics_name,input)
+    : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  IncompressibleNavierStokesSPGSMStabilization::~IncompressibleNavierStokesSPGSMStabilization()
+  template<class Mu>
+  IncompressibleNavierStokesSPGSMStabilization<Mu>::~IncompressibleNavierStokesSPGSMStabilization()
   {
     return;
   }
-
-  void IncompressibleNavierStokesSPGSMStabilization::element_time_derivative( bool compute_jacobian,
+  
+  template<class Mu>
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                               AssemblyContext& context,
                                                                               CachedValues& /*cache*/ )
   {
@@ -98,24 +102,24 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
       
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, _rho, _mu );
+        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
         libMesh::Real RC = this->_stab_helper.compute_res_continuity( context, qp );
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             Fu(i) += ( - tau_C*RC*u_gradphi[i][qp](0)
-                       - tau_M*RM_s(0)*_rho*U*u_gradphi[i][qp]  )*JxW[qp];
+                       - tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]  )*JxW[qp];
 
             Fv(i) += ( - tau_C*RC*u_gradphi[i][qp](1)
-                       - tau_M*RM_s(1)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
+                       - tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
 
             if( this->_dim == 3 )
               {
                 (*Fw)(i) += ( - tau_C*RC*u_gradphi[i][qp](2)
-                              - tau_M*RM_s(2)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
+                              - tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
               }
           }
 
@@ -133,7 +137,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesSPGSMStabilization::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                          AssemblyContext& context,
                                                                          CachedValues& /*cache*/ )
   {
@@ -170,9 +175,9 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, _rho, _mu );
+        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
 
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
@@ -193,7 +198,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesSPGSMStabilization::mass_residual( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
                                                                     AssemblyContext& context,
                                                                     CachedValues& /*cache*/ )
   {
@@ -240,9 +246,9 @@ namespace GRINS
             U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
       
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), false );
 
-        libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, _rho );
+        libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
 
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
@@ -251,13 +257,13 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += tau_M*RM_t(0)*_rho*U*u_gradphi[i][qp]*JxW[qp];
+            Fu(i) += tau_M*RM_t(0)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
 
-            Fv(i) += tau_M*RM_t(1)*_rho*U*u_gradphi[i][qp]*JxW[qp];
+            Fv(i) += tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
 
             if( this->_dim == 3 )
               {
-                (*Fw)(i) += tau_M*RM_t(2)*_rho*U*u_gradphi[i][qp]*JxW[qp];
+                (*Fw)(i) += tau_M*RM_t(2)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
               }
           }
 
@@ -276,3 +282,6 @@ namespace GRINS
   }
 
 } // end namespace GRINS
+
+// Instantiate
+template class GRINS::IncompressibleNavierStokesSPGSMStabilization<GRINS::ConstantViscosity>;

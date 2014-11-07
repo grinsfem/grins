@@ -29,6 +29,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -37,8 +38,9 @@
 namespace GRINS
 {
 
-  VelocityPenaltyAdjointStabilization::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase(physics_name,input),
+  template<class Mu>
+  VelocityPenaltyAdjointStabilization<Mu>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
+    : VelocityPenaltyBase<Mu>(physics_name,input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
       _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
       _stab_helper( input )
@@ -46,12 +48,14 @@ namespace GRINS
     return;
   }
 
-  VelocityPenaltyAdjointStabilization::~VelocityPenaltyAdjointStabilization()
+  template<class Mu>
+  VelocityPenaltyAdjointStabilization<Mu>::~VelocityPenaltyAdjointStabilization()
   {
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::init_context( AssemblyContext& context )
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -63,7 +67,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                      AssemblyContext& context,
                                                                      CachedValues& /*cache*/ )
   {
@@ -235,7 +240,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
@@ -357,3 +363,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+template class GRINS::VelocityPenaltyAdjointStabilization<GRINS::ConstantViscosity>;

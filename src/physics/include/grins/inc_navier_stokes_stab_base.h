@@ -32,7 +32,8 @@
 //! GRINS namespace
 namespace GRINS
 {
-  class IncompressibleNavierStokesStabilizationBase : public IncompressibleNavierStokesBase
+  template<class Viscosity>
+  class IncompressibleNavierStokesStabilizationBase : public IncompressibleNavierStokesBase<Viscosity>
   {
 
   public:
