@@ -57,6 +57,7 @@
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
+#include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
@@ -533,6 +534,11 @@ namespace GRINS
                       << "       Valid selections are: Hookean" << std::endl;
             libmesh_error();
           }
+      }
+    else if( physics_to_add == elastic_membrane_constant_pressure )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ElasticMembraneConstantPressure(physics_to_add,input));
       }
     else
       {
