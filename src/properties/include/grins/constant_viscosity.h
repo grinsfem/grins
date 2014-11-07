@@ -26,6 +26,9 @@
 #ifndef GRINS_CONSTANT_VISCOSITY_H
 #define GRINS_CONSTANT_VISCOSITY_H
 
+//GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -42,6 +45,8 @@ namespace GRINS
 
     libMesh::Real operator()() const;
 
+    libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
+
     libMesh::Real operator()( const libMesh::Real T ) const;
 
     libMesh::Real deriv( const libMesh::Real T ) const;
@@ -57,6 +62,12 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
   inline
   libMesh::Real ConstantViscosity::operator()() const
+  {
+    return _mu;
+  }
+
+  inline
+    libMesh::Real ConstantViscosity::operator()(AssemblyContext& context, unsigned int qp) const
   {
     return _mu;
   }
