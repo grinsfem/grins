@@ -29,6 +29,7 @@
 #include "grins_config.h"
 #include "grins/assembly_context.h"
 #include "grins/solid_mechanics_bc_handling.h"
+#include "grins/generic_ic_handler.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -56,6 +57,8 @@ namespace GRINS
       }
 
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
+
+    this->_ic_handler = new GenericICHandler(physics_name, input);
 
     return;
   }
