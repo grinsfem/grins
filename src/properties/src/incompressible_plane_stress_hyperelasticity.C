@@ -59,15 +59,8 @@ namespace GRINS
     libMesh::Real I1, I2;
     this->compute_I1_I2(a_contra,a_cov,A_contra,A_cov,lambda_sq,A_over_a,I1,I2);
 
-    libMesh::Real dWdI1 = _W.dI1(I1,I2,1.0); // We're incompressible
-    libMesh::Real dWdI2 = _W.dI2(I1,I2,1.0);
-
-    // Notation used in Green/Adkins
-    // Comes from enforcing plane stress
-    libMesh::Real p = -2.0*lambda_sq*( dWdI1 + dWdI2*(I1-lambda_sq) );
-
-    libMesh::Real a_term = 2.0*(dWdI1 + dWdI2*lambda_sq);
-    libMesh::Real A_term = 2.0*dWdI2*A_over_a + p;
+    libMesh::Real a_term, A_term;
+    this->compute_stress_terms( lambda_sq, A_over_a, I1, I2, a_term, A_term );
 
     // Now compute stress
     stress.zero();
@@ -116,6 +109,24 @@ namespace GRINS
 
     I1 += lambda_sq;
     I2 += A_over_a;
+
+    return;
+  }
+
+  template <typename StrainEnergy>
+  void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_terms( libMesh::Real lambda_sq, libMesh::Real A_over_a,
+                                                                                     libMesh::Real I1, libMesh::Real I2,
+                                                                                     libMesh::Real& a_term, libMesh::Real& A_term ) const
+  {
+    libMesh::Real dWdI1 = _W.dI1(I1,I2,1.0); // We're incompressible
+    libMesh::Real dWdI2 = _W.dI2(I1,I2,1.0);
+
+    // Notation used in Green/Adkins
+    // Comes from enforcing plane stress
+    libMesh::Real p = -2.0*lambda_sq*( dWdI1 + dWdI2*(I1-lambda_sq) );
+
+    a_term = 2.0*(dWdI1 + dWdI2*lambda_sq);
+    A_term = 2.0*dWdI2*A_over_a + p;
 
     return;
   }

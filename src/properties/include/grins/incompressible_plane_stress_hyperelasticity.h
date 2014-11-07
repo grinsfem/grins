@@ -75,6 +75,10 @@ namespace GRINS
                         libMesh::Real lambda_sq, libMesh::Real A_over_a,
                         libMesh::Real& I1, libMesh::Real& I2) const;
 
+    void compute_stress_terms( libMesh::Real lambda_sq, libMesh::Real A_over_a,
+                               libMesh::Real I1, libMesh::Real I2,
+                               libMesh::Real& a_term, libMesh::Real& A_term ) const;
+
     StrainEnergy _W;
 
   };
