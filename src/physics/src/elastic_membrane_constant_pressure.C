@@ -94,7 +94,7 @@ namespace GRINS
 
         libMesh::RealGradient A_3 = A_1.cross(A_2);
 
-        libMesh::RealGradient traction = _pressure/sqrt_a*A_3;
+        libMesh::RealGradient traction = _pressure/sqrt_a*(A_3.unit());
 
         libMesh::Real jac = JxW[qp];
 
