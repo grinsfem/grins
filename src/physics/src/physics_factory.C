@@ -138,7 +138,7 @@ namespace GRINS
   {
     if( physics_to_add == incompressible_navier_stokes )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 	
 	if( viscosity == "constant" )
 	  {
@@ -152,7 +152,7 @@ namespace GRINS
       }
     else if( physics_to_add == stokes )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 	
 	if( viscosity == "constant" )
 	  {
@@ -166,7 +166,7 @@ namespace GRINS
       }      
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {
@@ -180,7 +180,7 @@ namespace GRINS
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 	
 	if( viscosity == "constant" )
 	  {
@@ -194,7 +194,7 @@ namespace GRINS
       }
     else if( physics_to_add == velocity_drag )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {
@@ -208,7 +208,7 @@ namespace GRINS
       }
     else if( physics_to_add == velocity_penalty )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {
@@ -222,7 +222,7 @@ namespace GRINS
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {
@@ -236,7 +236,7 @@ namespace GRINS
       }
     else if( physics_to_add == averaged_fan )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {
@@ -250,7 +250,7 @@ namespace GRINS
       }
     else if( physics_to_add == averaged_turbine )
       {
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
 	if( viscosity == "constant" )
 	  {

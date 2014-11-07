@@ -26,6 +26,9 @@
 // This class
 #include "grins/constant_viscosity.h"
 
+//GRINS
+#include "grins/grins_physics_names.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -33,12 +36,15 @@ namespace GRINS
 {
 
   ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 0.0 ) )
+    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
-        std::cerr << "Error: Must specify viscosity value for constant viscosity model!" << std::endl;
-        libmesh_error();
+        libmesh_warning("No Materials/Viscosity/mu specified!");
+
+	// Try and get the viscosity from other specifications
+	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
+	
       }
 
     return;
