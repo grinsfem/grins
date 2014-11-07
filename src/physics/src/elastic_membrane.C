@@ -41,8 +41,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
                                                      bool lambda_sq_coupled, bool lambda_sq_var )
-    : Physics(physics_name,input),
-      _disp_vars(input,physics_name),
+    : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
       _lambda_sq_coupled(lambda_sq_coupled),
       _lambda_sq_var(lambda_sq_var)
@@ -55,46 +54,6 @@ namespace GRINS
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::~ElasticMembrane()
   {
-    return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
-
-    return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u_var());
-    system->time_evolving(_disp_vars.v_var());
-    system->time_evolving(_disp_vars.w_var());
-
-    return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::init_context( AssemblyContext& context )
-  {
-    context.get_element_fe(_disp_vars.u_var())->get_JxW();
-    context.get_element_fe(_disp_vars.u_var())->get_dphi();
-
-    // Need for constructing metric tensors
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
-    context.get_element_fe(_disp_vars.u_var())->get_detadx();
-    context.get_element_fe(_disp_vars.u_var())->get_detady();
-    context.get_element_fe(_disp_vars.u_var())->get_detadz();
-    
-
     return;
   }
 

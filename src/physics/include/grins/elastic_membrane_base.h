@@ -22,47 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_MEMBRANE_H
-#define GRINS_ELASTIC_MEMBRANE_H
+#ifndef GRINS_ELASTIC_MEMBRANE_BASE_H
+#define GRINS_ELASTIC_MEMBRANE_BASE_H
 
 //GRINS
-#include "grins/elastic_membrane_base.h"
+#include "grins/physics.h"
+#include "grins/solid_mechanics_fe_variables.h"
 
 namespace GRINS
 {
-  template<typename StressStrainLaw>
-  class ElasticMembrane : public ElasticMembraneBase
+  class ElasticMembraneBase : public Physics
   {
   public:
 
-    ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                     bool lambda_sq_coupled, bool lambda_sq_var );
-    virtual ~ElasticMembrane();
+    ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~ElasticMembraneBase();
 
-    //! Time dependent part(s) of physics for element interiors
-    virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+    //! Initialize variables for this physics.
+    virtual void init_variables( libMesh::FEMSystem* system );
 
-    virtual void side_time_derivative( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-    virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext& context );
+
+  protected:
+
+    SolidMechanicsFEVariables _disp_vars;
+
 
   private:
 
-    ElasticMembrane();
-
-    StressStrainLaw _stress_strain_law;
-
-    bool _lambda_sq_coupled;
-    bool _lambda_sq_var;
+    ElasticMembraneBase();
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_ELASTIC_MEMBRANE_H
+#endif // GRINS_ELASTIC_MEMBRANE_BASE_H
