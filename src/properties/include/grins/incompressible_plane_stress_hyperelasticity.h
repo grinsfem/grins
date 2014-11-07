@@ -61,10 +61,10 @@ namespace GRINS
                              libMesh::TensorValue<libMesh::Real>& stress );
 
     void compute_stress_and_elasticity_imp( unsigned int dim,
-                                            const libMesh::TensorValue<libMesh::Real>& g_contra,
-                                            const libMesh::TensorValue<libMesh::Real>& g_cov,
-                                            const libMesh::TensorValue<libMesh::Real>& G_contra,
-                                            const libMesh::TensorValue<libMesh::Real>& G_cov,
+                                            const libMesh::TensorValue<libMesh::Real>& a_contra,
+                                            const libMesh::TensorValue<libMesh::Real>& a_cov,
+                                            const libMesh::TensorValue<libMesh::Real>& A_contra,
+                                            const libMesh::TensorValue<libMesh::Real>& A_cov,
                                             libMesh::TensorValue<libMesh::Real>& stress,
                                             ElasticityTensor& C );
 
