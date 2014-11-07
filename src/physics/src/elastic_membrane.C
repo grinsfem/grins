@@ -30,6 +30,7 @@
 #include "grins/assembly_context.h"
 #include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/elasticity_tensor.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -158,7 +159,8 @@ namespace GRINS
 
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
+        ElasticityTensor C;
+        _stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
         libMesh::Real jac = JxW[qp];
 
@@ -178,10 +180,44 @@ namespace GRINS
                                                        (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
                   }
               }
-            if( compute_jacobian )
+          }
+
+        if( compute_jacobian )
+          {
+            libmesh_not_implemented();
+            /*
+            for (unsigned int i=0; i != n_u_dofs; i++)
               {
-                libmesh_not_implemented();
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    for( unsigned int alpha = 0; alpha < dim; alpha++ )
+                      {
+                        for( unsigned int beta = 0; beta < dim; beta++ )
+                          {
+                            for( unsigned int alpha = 0; alpha < dim; alpha++ )
+                              {
+                                for( unsigned int beta = 0; beta < dim; beta++ )
+                                  {
+                                    Kuu(i,j) -= 0.5*_h0*jac*( tau(alpha,beta)*( u_gradphi[j][qp](beta)*u_gradphi[i][qp](alpha) + u_gradphi[j][qp](alpha)*u_gradphi[i][qp](beta) )
+                                                              + C(alpha,beta,lambda,mu)* *( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
+                                                                                            (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) ) );
+                                    Kuv(i,j) -= ;
+                                    Kuw(i,j) -= ;
+
+                                    Kvu(i,j) -= ;
+                                    Kvv(i,j) -= ;
+                                    Kvw(i,j) -= ;
+
+                                    Kwu(i,j) -= ;
+                                    Kwv(i,j) -= ;
+                                    Kww(i,j) -= ;
+                                  }
+                              }
+                          }
+                      }
+                  }
               }
+            */
           }
 
       }
