@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/generic_ic_handler.h"
 #include "grins/variable_name_defaults.h"
+#include "grins/constant_viscosity.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -39,8 +40,9 @@
 namespace GRINS
 {
 
-  AveragedTurbine::AveragedTurbine( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name, input)
+  template<class Mu>
+  AveragedTurbine<Mu>::AveragedTurbine( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu>(physics_name, input)
   {
     this->read_input_options(input);
 
@@ -49,29 +51,32 @@ namespace GRINS
     return;
   }
 
-  AveragedTurbine::~AveragedTurbine()
+  template<class Mu>  
+  AveragedTurbine<Mu>::~AveragedTurbine()
   {
     return;
   }
 
-  void AveragedTurbine::init_variables( libMesh::FEMSystem* system )
+  template<class Mu> 
+  void AveragedTurbine<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
                                                 libMesh::FIRST,
                                                 libMesh::SCALAR);
 
-    IncompressibleNavierStokesBase::init_variables(system);
+    IncompressibleNavierStokesBase<Mu>::init_variables(system);
   }
 
-  void AveragedTurbine::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class Mu> 
+  void AveragedTurbine<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     system->time_evolving(this->fan_speed_var());
 
-    IncompressibleNavierStokesBase::set_time_evolving_vars(system);
+    IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars(system);
   }
 
-
-  void AveragedTurbine::read_input_options( const GetPot& input )
+  template<class Mu>
+  void AveragedTurbine<Mu>::read_input_options( const GetPot& input )
   {
     std::string base_function =
       input("Physics/"+averaged_turbine+"/base_velocity",
@@ -177,7 +182,8 @@ namespace GRINS
                             fan_speed_var_name_default);
   }
 
-  void AveragedTurbine::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void AveragedTurbine<Mu>::element_time_derivative( bool compute_jacobian,
 					        AssemblyContext& context,
 					        CachedValues& /* cache */ )
   {
@@ -197,22 +203,22 @@ namespace GRINS
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // R_{u},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // R_{u},{v}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // R_{v},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // R_{v},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // R_{v},{v}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kus =
-            context.get_elem_jacobian(_flow_vars.u_var(), _fan_speed_var); // R_{u},{s}
+            context.get_elem_jacobian(this->_flow_vars.u_var(), _fan_speed_var); // R_{u},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksu =
-            context.get_elem_jacobian(_fan_speed_var, _flow_vars.u_var()); // R_{s},{u}
+            context.get_elem_jacobian(_fan_speed_var, this->_flow_vars.u_var()); // R_{s},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvs =
-            context.get_elem_jacobian(_flow_vars.v_var(), _fan_speed_var); // R_{v},{s}
+            context.get_elem_jacobian(this->_flow_vars.v_var(), _fan_speed_var); // R_{v},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksv =
-            context.get_elem_jacobian(_fan_speed_var, _flow_vars.v_var()); // R_{s},{v}
+            context.get_elem_jacobian(_fan_speed_var, this->_flow_vars.v_var()); // R_{s},{v}
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
             context.get_elem_jacobian(_fan_speed_var, _fan_speed_var); // R_{s},{s}
 
@@ -225,25 +231,25 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number>* Ksw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kws = NULL;
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     libMesh::DenseSubVector<libMesh::Number> &Fs = context.get_elem_residual(_fan_speed_var); // R_{s}
 
     if( this->_dim == 3 )
       {
-        Kuw = &context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.w_var()); // R_{u},{w}
-        Kvw = &context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.w_var()); // R_{v},{w}
+        Kuw = &context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.w_var()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.w_var()); // R_{v},{w}
 
-        Kwu = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.u_var()); // R_{w},{u}
-        Kwv = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.v_var()); // R_{w},{v}
-        Kww = &context.get_elem_jacobian(_flow_vars.w_var(), _flow_vars.w_var()); // R_{w},{w}
+        Kwu = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.u_var()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.v_var()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.w_var()); // R_{w},{w}
 
-        Ksw = &context.get_elem_jacobian(_fan_speed_var, _flow_vars.w_var()); // R_{s},{w}
-        Kws = &context.get_elem_jacobian(_flow_vars.w_var(), _fan_speed_var); // R_{w},{s}
+        Ksw = &context.get_elem_jacobian(_fan_speed_var, this->_flow_vars.w_var()); // R_{s},{w}
+        Kws = &context.get_elem_jacobian(this->_flow_vars.w_var(), _fan_speed_var); // R_{w},{s}
 
-        Fw  = &context.get_elem_residual(_flow_vars.w_var()); // R_{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -252,13 +258,13 @@ namespace GRINS
       {
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number u, v, s;
-        u = context.interior_value(_flow_vars.u_var(), qp);
-        v = context.interior_value(_flow_vars.v_var(), qp);
+        u = context.interior_value(this->_flow_vars.u_var(), qp);
+        v = context.interior_value(this->_flow_vars.v_var(), qp);
         s = context.interior_value(_fan_speed_var, qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (_dim == 3)
-          U(2) = context.interior_value(_flow_vars.w_var(), qp); // w
+        if (this->_dim == 3)
+          U(2) = context.interior_value(this->_flow_vars.w_var(), qp); // w
 
         // Find base velocity of moving fan at this point
         libmesh_assert(base_velocity_function.get());
@@ -370,7 +376,7 @@ namespace GRINS
                 Ksu(0,j) += LDderivfactor * dV2_du;
                 Ksv(0,j) += LDderivfactor * dV2_dv;
 
-                if (_dim == 3)
+                if (this->_dim == 3)
                   {
                     const libMesh::Number
                       dV2_dw = 2 * u_phi[j][qp] *
@@ -387,7 +393,7 @@ namespace GRINS
             Fu(i) += F(0)*u_phi[i][qp]*JxW[qp];
             Fv(i) += F(1)*u_phi[i][qp]*JxW[qp];
 
-            if (_dim == 3)
+            if (this->_dim == 3)
               (*Fw)(i) += F(2)*u_phi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
@@ -406,7 +412,7 @@ namespace GRINS
 
                 Kus(i,0) += LDderivfactor(0) * dV2_ds;
                 Kvs(i,0) += LDderivfactor(1) * dV2_ds;
-                if (_dim == 3)
+                if (this->_dim == 3)
                   (*Kws)(i,0) += LDderivfactor(2) * dV2_ds;
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
@@ -424,7 +430,7 @@ namespace GRINS
                     Kvu(i,j) += LDderivfactor(1) * dV2_du;
                     Kvv(i,j) += LDderivfactor(1) * dV2_dv;
 
-                    if (_dim == 3)
+                    if (this->_dim == 3)
                       {
                         const libMesh::Number
                           dV2_dw = 2 * u_phi[j][qp] *
@@ -452,8 +458,8 @@ namespace GRINS
   }
 
 
-
-  void AveragedTurbine::nonlocal_time_derivative(bool compute_jacobian,
+  template<class Mu>
+  void AveragedTurbine<Mu>::nonlocal_time_derivative(bool compute_jacobian,
 				                 AssemblyContext& context,
 				                 CachedValues& /* cache */ )
   {
@@ -491,8 +497,8 @@ namespace GRINS
   }
 
 
-
-  void AveragedTurbine::nonlocal_mass_residual( bool compute_jacobian,
+  template<class Mu>
+  void AveragedTurbine<Mu>::nonlocal_mass_residual( bool compute_jacobian,
 				                AssemblyContext& context,
 				                CachedValues& /* cache */ )
   {
@@ -520,3 +526,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+template class GRINS::AveragedTurbine<GRINS::ConstantViscosity>;

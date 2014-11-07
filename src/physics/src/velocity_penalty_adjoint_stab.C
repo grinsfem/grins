@@ -29,6 +29,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -37,8 +38,9 @@
 namespace GRINS
 {
 
-  VelocityPenaltyAdjointStabilization::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase(physics_name,input),
+  template<class Mu>
+  VelocityPenaltyAdjointStabilization<Mu>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
+    : VelocityPenaltyBase<Mu>(physics_name,input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
       _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
       _stab_helper( input )
@@ -46,12 +48,14 @@ namespace GRINS
     return;
   }
 
-  VelocityPenaltyAdjointStabilization::~VelocityPenaltyAdjointStabilization()
+  template<class Mu>
+  VelocityPenaltyAdjointStabilization<Mu>::~VelocityPenaltyAdjointStabilization()
   {
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::init_context( AssemblyContext& context )
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -63,7 +67,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                      AssemblyContext& context,
                                                                      CachedValues& /*cache*/ )
   {
@@ -72,11 +77,11 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
 
     const std::vector<libMesh::Point>& u_qpoint = 
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
@@ -91,18 +96,18 @@ namespace GRINS
       context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
 
     // Get residuals and jacobians
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{uu}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{uv}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // J_{vu}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // J_{vv}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
 
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
@@ -114,15 +119,15 @@ namespace GRINS
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
         Kuw = &context.get_elem_jacobian
-          (_flow_vars.u_var(), _flow_vars.w_var()); // J_{uw}
+          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
         Kvw = &context.get_elem_jacobian
-          (_flow_vars.v_var(), _flow_vars.w_var()); // J_{vw}
+          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
         Kwu = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.u_var()); // J_{wu}
+          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
         Kwv = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.v_var()); // J_{wv}
+          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
         Kww = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.w_var()); // J_{ww}
+          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
       }
 
     // Now we will build the element Jacobian and residual.
@@ -165,7 +170,7 @@ namespace GRINS
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
           compute_jacobian ? &dFdU : NULL;
-        if (!compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
           continue;
 
         for (unsigned int i=0; i != n_u_dofs; i++)
@@ -176,7 +181,7 @@ namespace GRINS
 
             Fv(i) += tau_M*F(1)*test_func*JxW[qp];
 
-            if (_dim == 3)
+            if (this->_dim == 3)
               {
                 (*Fw)(i) += tau_M*F(2)*test_func*JxW[qp];
               }
@@ -201,7 +206,7 @@ namespace GRINS
                     Kvv(i,j) += tau_M*dFdU(1,1)*u_phi[j][qp]*test_func*JxW[qp];
                   }
 
-                if (_dim == 3)
+                if (this->_dim == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; ++j)
                       {
@@ -235,7 +240,8 @@ namespace GRINS
     return;
   }
 
-  void VelocityPenaltyAdjointStabilization::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void VelocityPenaltyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
@@ -244,12 +250,12 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
 
     const std::vector<libMesh::Point>& u_qpoint = 
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
@@ -263,15 +269,15 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.u_var()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.v_var()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
  
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{pw}
+          (this->_flow_vars.p_var(), this->_flow_vars.w_var()); // J_{pw}
       }
 
     // Now we will build the element Jacobian and residual.
@@ -314,7 +320,7 @@ namespace GRINS
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
           compute_jacobian ? &dFdU : NULL;
-        if (!compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
           continue;
 
         // First, an i-loop over the velocity degrees of freedom.
@@ -357,3 +363,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+template class GRINS::VelocityPenaltyAdjointStabilization<GRINS::ConstantViscosity>;
