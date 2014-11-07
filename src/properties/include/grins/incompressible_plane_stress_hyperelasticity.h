@@ -68,6 +68,13 @@ namespace GRINS
                                             libMesh::TensorValue<libMesh::Real>& stress,
                                             ElasticityTensor& C );
 
+    void compute_I1_I2( const libMesh::TensorValue<libMesh::Real>& a_contra,
+                        const libMesh::TensorValue<libMesh::Real>& a_cov,
+                        const libMesh::TensorValue<libMesh::Real>& A_contra,
+                        const libMesh::TensorValue<libMesh::Real>& A_cov,
+                        libMesh::Real lambda_sq, libMesh::Real A_over_a,
+                        libMesh::Real& I1, libMesh::Real& I2) const;
+
     StrainEnergy _W;
 
   };

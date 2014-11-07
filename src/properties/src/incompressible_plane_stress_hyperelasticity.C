@@ -56,19 +56,8 @@ namespace GRINS
 
     libMesh::Real A_over_a = 1.0/lambda_sq; // We're incompressible
 
-    libMesh::Real I1 = 0.0;
-    libMesh::Real I2 = 0.0;
-    for( unsigned int alpha = 0; alpha < 2; alpha++ )
-      {
-        for( unsigned int beta = 0; beta < 2; beta++ )
-          {
-            I1 += a_contra(alpha,beta)*A_cov(alpha,beta);
-            I2 += a_cov(alpha,beta)*A_contra(alpha,beta);
-          }
-      }
-
-    I1 += lambda_sq;
-    I2 += A_over_a;
+    libMesh::Real I1, I2;
+    this->compute_I1_I2(a_contra,a_cov,A_contra,A_cov,lambda_sq,A_over_a,I1,I2);
 
     libMesh::Real dWdI1 = _W.dI1(I1,I2,1.0); // We're incompressible
     libMesh::Real dWdI2 = _W.dI2(I1,I2,1.0);
@@ -103,6 +92,31 @@ namespace GRINS
                                                                                                   ElasticityTensor& C)
   {
     libmesh_not_implemented();
+    return;
+  }
+
+  template <typename StrainEnergy>
+  void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_I1_I2( const libMesh::TensorValue<libMesh::Real>& a_contra,
+                                                                              const libMesh::TensorValue<libMesh::Real>& a_cov,
+                                                                              const libMesh::TensorValue<libMesh::Real>& A_contra,
+                                                                              const libMesh::TensorValue<libMesh::Real>& A_cov,
+                                                                              libMesh::Real lambda_sq, libMesh::Real A_over_a,
+                                                                              libMesh::Real& I1, libMesh::Real& I2 ) const
+  {
+    I1 = 0.0;
+    I2 = 0.0;
+    for( unsigned int alpha = 0; alpha < 2; alpha++ )
+      {
+        for( unsigned int beta = 0; beta < 2; beta++ )
+          {
+            I1 += a_contra(alpha,beta)*A_cov(alpha,beta);
+            I2 += a_cov(alpha,beta)*A_contra(alpha,beta);
+          }
+      }
+
+    I1 += lambda_sq;
+    I2 += A_over_a;
+
     return;
   }
 
