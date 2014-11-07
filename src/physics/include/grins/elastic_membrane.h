@@ -58,6 +58,8 @@ namespace GRINS
 
     StressStrainLaw _stress_strain_law;
 
+    libMesh::Real _h0;
+
     bool _lambda_sq_coupled;
     bool _lambda_sq_var;
 

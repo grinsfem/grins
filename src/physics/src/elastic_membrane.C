@@ -43,9 +43,18 @@ namespace GRINS
                                                      bool lambda_sq_coupled, bool lambda_sq_var )
     : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
+      _h0( input("Physics/"+physics_name+"/h0", 1.0 ) ),
       _lambda_sq_coupled(lambda_sq_coupled),
       _lambda_sq_var(lambda_sq_var)
   {
+    // Force the user to set h0
+    if( !input.have_variable("Physics/"+physics_name+"/h0") )
+      {
+        std::cerr << "Error: Must specify initial thickness for "+physics_name << std::endl
+                  << "       Input the option Physics/"+physics_name+"/h0" << std::endl;
+        libmesh_error();
+      }
+
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 
     return;
@@ -156,14 +165,14 @@ namespace GRINS
               {
                 for( unsigned int beta = 0; beta < dim; beta++ )
                   {
-                    Fu(i) -= 0.5*tau(alpha,beta)*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
-                                                   (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fu(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
+                                                       (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) )*jac;
 
-                    Fv(i) -= 0.5*tau(alpha,beta)*( (grad_y(beta) + grad_v(beta))*u_gradphi[i][qp](alpha) +
-                                                   (grad_y(alpha) + grad_v(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi[i][qp](alpha) +
+                                                       (grad_y(alpha) + grad_v(alpha))*u_gradphi[i][qp](beta) )*jac;
 
-                    Fw(i) -= 0.5*tau(alpha,beta)*( (grad_z(beta) + grad_w(beta))*u_gradphi[i][qp](alpha) +
-                                                   (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fw(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi[i][qp](alpha) +
+                                                       (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
                   }
               }
             if( compute_jacobian )

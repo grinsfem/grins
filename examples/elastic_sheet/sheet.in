@@ -7,6 +7,8 @@ enabled_physics = 'ElasticMembrane'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticMembrane]
 
+h0 = '0.05'
+
 FE_family = 'LAGRANGE'
 order = 'FIRST'
 
