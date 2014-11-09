@@ -55,6 +55,27 @@ namespace GRINS
   }  
 
   template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::read_input_options( const GetPot& input )
+  {
+   std::string viscosity_function =
+      input("Physics/"+incompressible_navier_stokes+"/viscosityfunction",
+        std::string("0"));     
+  
+   if (viscosity_function == "0")
+      libmesh_error_msg("Error! Zero Viscosity Function specified!" <<
+                        std::endl);
+
+   if (viscosity_function == "0")
+      this->viscosity_function.reset
+        (new libMesh::ZeroFunction<libMesh::Number>());
+    else
+      this->viscosity_function.reset
+        (new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
+
+    return;
+  }
+
+  template<class Mu>
   void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();
@@ -106,3 +127,4 @@ namespace GRINS
 
 // Instantiate
 template class GRINS::IncompressibleNavierStokesBase<GRINS::ConstantViscosity>;
+template class GRINS::IncompressibleNavierStokesBase<GRINS::ParsedViscosity>;
