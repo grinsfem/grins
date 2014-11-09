@@ -145,6 +145,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
