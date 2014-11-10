@@ -159,8 +159,9 @@ namespace GRINS
 
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
-        ElasticityTensor C;
-        _stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
+        _stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
+        //ElasticityTensor C;
+        //_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
         libMesh::Real jac = JxW[qp];
 
