@@ -58,7 +58,7 @@ namespace GRINS
   void IncompressibleNavierStokesBase<Mu>::read_input_options( const GetPot& input )
   {
    std::string viscosity_function =
-      input("Physics/"+incompressible_navier_stokes+"/viscosityfunction",
+      input("Materials/"+viscosity+"/mu",
         std::string("0"));     
   
    if (viscosity_function == "0")
