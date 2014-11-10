@@ -25,16 +25,14 @@
 namespace GRINS
 {
 
-  ParsedViscosity::ParsedViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
+  ParsedViscosity::ParsedViscosity( const GetPot& input )    
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
-
-	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
+	std::cerr<<"No viscosity has been specified."<<std::endl;
 	
+	libmesh_error();
+		
       }
 
     return;

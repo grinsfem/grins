@@ -23,14 +23,18 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_CONSTANT_VISCOSITY_H
-#define GRINS_CONSTANT_VISCOSITY_H
+#ifndef GRINS_PARSED_VISCOSITY_H
+#define GRINS_PARSED_VISCOSITY_H
 
 //GRINS
 #include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/function_base.h"
 
 class GetPot;
 
@@ -54,25 +58,25 @@ namespace GRINS
   private:
 
     ParsedViscosity();
-
-    libMesh::Real _mu;
-
+    
     // User specified parsed function
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
 
   };
 
-  /* ------------------------- Inline Functions -------------------------*/
-  inline
-  libMesh::Real ParsedViscosity::operator()() const
-  {
-    return _mu;
-  }
-
+  /* ------------------------- Inline Functions -------------------------*/  
   inline
     libMesh::Real ParsedViscosity::operator()(AssemblyContext& context, unsigned int qp) const
   {
-    return _mu;
+    // FIXME: We should be getting the variable index to get the qps from the context
+    // not hardcode it to be 0
+    const std::vector<libMesh::Point>& x = context.get_element_fe(0)->get_xyz();
+
+    const libMesh::Point& x_qp = x[qp];
+
+    libMesh::Number _mu_value = (*mu)(x_qp,context.time);
+
+    return _mu_value;
   }
 
   inline

@@ -31,6 +31,8 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -540,4 +542,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::IncompressibleNavierStokes<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokes);

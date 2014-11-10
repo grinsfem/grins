@@ -29,6 +29,9 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/grins_physics_names.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -53,28 +56,7 @@ namespace GRINS
   {
     return;
   }  
-
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::read_input_options( const GetPot& input )
-  {
-   std::string viscosity_function =
-      input("Materials/"+viscosity+"/mu",
-        std::string("0"));     
   
-   if (viscosity_function == "0")
-      libmesh_error_msg("Error! Zero Viscosity Function specified!" <<
-                        std::endl);
-
-   if (viscosity_function == "0")
-      this->viscosity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->viscosity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-    return;
-  }
-
   template<class Mu>
   void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
@@ -126,5 +108,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::IncompressibleNavierStokesBase<GRINS::ConstantViscosity>;
-template class GRINS::IncompressibleNavierStokesBase<GRINS::ParsedViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesBase);

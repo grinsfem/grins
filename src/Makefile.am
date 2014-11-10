@@ -109,6 +109,7 @@ libgrins_la_SOURCES += properties/src/constant_conductivity.C
 libgrins_la_SOURCES += properties/src/constant_prandtl_conductivity.C
 libgrins_la_SOURCES += properties/src/constant_specific_heat.C
 libgrins_la_SOURCES += properties/src/constant_viscosity.C
+libgrins_la_SOURCES += properties/src/parsed_viscosity.C
 libgrins_la_SOURCES += properties/src/constant_source_func.C
 libgrins_la_SOURCES += properties/src/cantera_mixture.C
 libgrins_la_SOURCES += properties/src/cantera_thermo.C
