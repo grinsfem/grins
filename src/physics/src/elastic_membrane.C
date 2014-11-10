@@ -122,6 +122,8 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> a_cov( dxdxi[qp]*dxdxi[qp], dxdxi[qp]*dxdeta[qp], 0.0,
                                                    dxdeta[qp]*dxdxi[qp], dxdeta[qp]*dxdeta[qp] );
 
+        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+
         // Covariant metric tensor of current configuration
         libMesh::TensorValue<libMesh::Real> A_cov( (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi),
                                                    (dxdxi[qp] + dudxi)*(dxdeta[qp] + dudeta), 0.0,
@@ -141,8 +143,6 @@ namespace GRINS
           {
             a_cov(2,2)    = 1.0;
             a_contra(2,2) = 1.0;
-
-            libMesh::Real det_a = a_cov.det();
 
             // If the material is incompressible, lambda^2 is known
             libMesh::Real lambda_sq = det_a/det_A;
