@@ -58,7 +58,7 @@ namespace GRINS
     libMesh::Real _mu;
 
     // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > viscosityfunction;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
 
   };
 
