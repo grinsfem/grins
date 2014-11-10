@@ -76,19 +76,29 @@ namespace GRINS
                                                                    CachedValues& /*cache*/ )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
-    
+
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(_disp_vars.u_var())->get_JxW();
 
-    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(_disp_vars.u_var())->get_dphi();
-
+    // Residuals that we're populating
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
     libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
+    // All shape function gradients are w.r.t. master element coordinates
+    const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
+      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+
+    const std::vector<std::vector<libMesh::Real> >& dphi_deta =
+      context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+
+    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+
+    // Need these to build up the covariant and contravariant metric tensors
     const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
     const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
 
@@ -104,9 +114,15 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::Gradient grad_u = context.interior_gradient(_disp_vars.u_var(), qp);
-        libMesh::Gradient grad_v = context.interior_gradient(_disp_vars.v_var(), qp);
-        libMesh::Gradient grad_w = context.interior_gradient(_disp_vars.w_var(), qp);
+        // Gradients are w.r.t. master element coordinates
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        for( unsigned int d = 0; d < n_u_dofs; d++ )
+          {
+            libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
+            grad_u += u_coeffs(d)*u_gradphi;
+            grad_v += v_coeffs(d)*u_gradphi;
+            grad_w += w_coeffs(d)*u_gradphi;
+          }
 
         libMesh::RealGradient grad_x( dxdxi[qp](0), dxdeta[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
@@ -167,18 +183,20 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
+            libMesh::RealGradient u_gradphi( dphi_dxi[i][qp], dphi_deta[i][qp] );
+
             for( unsigned int alpha = 0; alpha < dim; alpha++ )
               {
                 for( unsigned int beta = 0; beta < dim; beta++ )
                   {
-                    Fu(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
-                                                       (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fu(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) +
+                                                       (grad_x(alpha) + grad_u(alpha))*u_gradphi(beta) )*jac;
 
-                    Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi[i][qp](alpha) +
-                                                       (grad_y(alpha) + grad_v(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
+                                                       (grad_y(alpha) + grad_v(alpha))*u_gradphi(beta) )*jac;
 
-                    Fw(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi[i][qp](alpha) +
-                                                       (grad_z(alpha) + grad_w(alpha))*u_gradphi[i][qp](beta) )*jac;
+                    Fw(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
+                                                       (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) )*jac;
                   }
               }
           }

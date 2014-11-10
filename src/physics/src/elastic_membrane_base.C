@@ -69,7 +69,8 @@ namespace GRINS
   {
     context.get_element_fe(_disp_vars.u_var())->get_JxW();
     context.get_element_fe(_disp_vars.u_var())->get_phi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphi();
+    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+    context.get_element_fe(_disp_vars.u_var())->get_dphideta();
 
     // Need for constructing metric tensors
     context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();

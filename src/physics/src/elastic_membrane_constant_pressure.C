@@ -68,13 +68,25 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(_disp_vars.u_var())->get_phi();
 
-    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
-
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
     libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
+
     unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    // All shape function gradients are w.r.t. master element coordinates
+    const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
+      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+
+    const std::vector<std::vector<libMesh::Real> >& dphi_deta =
+      context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+
+    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+
+    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
+    const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -82,9 +94,15 @@ namespace GRINS
         libMesh::Real sqrt_a = sqrt( dxdxi[qp]*dxdxi[qp]*dxdeta[qp]*dxdeta[qp]
                                      - dxdxi[qp]*dxdeta[qp]*dxdeta[qp]*dxdxi[qp] );
 
-        libMesh::Gradient grad_u = context.interior_gradient(_disp_vars.u_var(), qp);
-        libMesh::Gradient grad_v = context.interior_gradient(_disp_vars.v_var(), qp);
-        libMesh::Gradient grad_w = context.interior_gradient(_disp_vars.w_var(), qp);
+        // Gradients are w.r.t. master element coordinates
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        for( unsigned int d = 0; d < n_u_dofs; d++ )
+          {
+            libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
+            grad_u += u_coeffs(d)*u_gradphi;
+            grad_v += v_coeffs(d)*u_gradphi;
+            grad_w += w_coeffs(d)*u_gradphi;
+          }
 
         libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
         libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
