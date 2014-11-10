@@ -46,15 +46,9 @@ namespace GRINS
 
     ParsedViscosity( const GetPot& input );
     ~ParsedViscosity();
-
-    libMesh::Real operator()() const;
-
+    
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-
-    libMesh::Real operator()( const libMesh::Real T ) const;
-
-    libMesh::Real deriv( const libMesh::Real T ) const;
-
+    
   private:
 
     ParsedViscosity();
@@ -77,19 +71,7 @@ namespace GRINS
     libMesh::Number _mu_value = (*mu)(x_qp,context.time);
 
     return _mu_value;
-  }
-
-  inline
-  libMesh::Real ParsedViscosity::operator()( const libMesh::Real /*T*/ ) const
-  {
-    return (*this)();
-  }
-
-  inline
-  libMesh::Real ParsedViscosity::deriv( const libMesh::Real /*T*/ ) const
-  {
-    return 0.0;
-  }
+  }    
 
 } // end namespace GRINS
 
