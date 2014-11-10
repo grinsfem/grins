@@ -94,7 +94,13 @@ namespace GRINS
 
         libMesh::RealGradient A_3 = A_1.cross(A_2);
 
-        libMesh::RealGradient traction = _pressure/sqrt_a*(A_3.unit());
+        /* The formula here is actually
+           P*\sqrt{\frac{A}{a}}*A_3, where A_3 is a unit vector
+           But, |A_3| = \sqrt{A} so the normalizing part kills
+           the \sqrt{A} in the numerator, so we can leave it out
+           and *not* normalize A_3.
+         */
+        libMesh::RealGradient traction = _pressure/sqrt_a*A_3;
 
         libMesh::Real jac = JxW[qp];
 
