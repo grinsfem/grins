@@ -140,4 +140,10 @@ namespace GRINS
     return;
   }
 
+  void ElasticMembraneConstantPressure::reset_pressure( libMesh::Real pressure_in )
+  {
+    _pressure = pressure_in;
+    return;
+  }
+
 } // end namespace GRINS

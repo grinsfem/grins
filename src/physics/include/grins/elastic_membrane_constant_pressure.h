@@ -41,6 +41,8 @@ namespace GRINS
                                           AssemblyContext& context,
                                           CachedValues& cache );
 
+    void reset_pressure( libMesh::Real pressure_in );
+
   private:
 
     ElasticMembraneConstantPressure();
