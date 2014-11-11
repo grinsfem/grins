@@ -1,0 +1,6 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+
+$GRINS_RUN @prefix@/examples/inflating_sheet/sheet @prefix@/examples/inflating_sheet/sheet.in $GRINS_SOLVER_OPTIONS
