@@ -330,6 +330,7 @@ AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,                        [chmod
 AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,                        [chmod +x test/test_ns_couette_flow_2d_y.sh])
 AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod +x test/test_ns_poiseuille_flow.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
