@@ -28,6 +28,7 @@ verify_analytic_jacobians = 1.e-6
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
+viscosity = 'parsed'
 mu = 1.0
 
 # Visualization options

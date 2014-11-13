@@ -165,6 +165,11 @@ namespace GRINS
 	    physics_list[physics_to_add] =
 	      PhysicsPtr(new Stokes<ConstantViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new Stokes<ParsedViscosity>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -178,6 +183,11 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ConstantViscosity>(physics_to_add,input) );
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -193,6 +203,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ConstantViscosity>(physics_to_add,input) );
 	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ParsedViscosity>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -206,6 +221,11 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityDrag<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -221,6 +241,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityPenalty<ConstantViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenalty<ParsedViscosity>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -234,6 +259,11 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -249,6 +279,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new AveragedFan<ConstantViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFan<ParsedViscosity>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -262,6 +297,11 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new AveragedTurbine<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
 	  }
 	else
 	  {

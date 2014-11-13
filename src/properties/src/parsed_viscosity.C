@@ -21,22 +21,35 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
 
-  ParsedViscosity::ParsedViscosity( const GetPot& input )    
-  {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-	std::cerr<<"No viscosity has been specified."<<std::endl;
-	
-	libmesh_error();
-		
-      }
+   ParsedViscosity::ParsedViscosity( const GetPot& input )    
+    {
+      if( !input.have_variable("Materials/Viscosity/mu") )
+       {
+         std::cerr<<"No viscosity has been specified."<<std::endl;
+      
+         libmesh_error();
+       }
+      else
+       {
+         std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
 
-    return;
-  }
+         mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
+
+         if (viscosity_function == "0")
+            {
+              std::cerr << "Warning! Zero VelocityDrag specified!" << std::endl;
+
+              libmesh_error();
+            }
+       }
+
+      return;
+      }
 
   ParsedViscosity::~ParsedViscosity()
   {
