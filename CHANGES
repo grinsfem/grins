@@ -1,4 +1,6 @@
 Version 0.4.0
+https://github.com/grinsfem/grins/releases/tag/v0.4.0
+
   * Moved to GitHub between 0.3.0 and 0.4.0
   * GRINS is now released under LGPL 2.1.
   * Requiring libMesh 1.0.0 prerelease version.
