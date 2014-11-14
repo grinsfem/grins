@@ -1,9 +1,35 @@
-Version 0.4.0 (In progress)
-
+Version 0.4.0
+  * Moved to GitHub between 0.3.0 and 0.4.0
+  * GRINS is now released under LGPL 2.1.
+  * Requiring libMesh 1.0.0 prerelease version.
+  * New Physics classes:
+    - HeatConduction
+    - ReactingLowMachNavierStokes
+    - AveragedFan
+    - AveragedTurbine
+    - ScalarODE
+    - VelocityDrag
+    - VelocityPenalty
+    - BoussinesqBuoyancyAdjointStabilization
+    - BoussinesqBuoyancySPGSMStabilization
   * Added infrastructure for caching values at quadrature points and
     a list of libMesh::Points.
   * Added more modularized postprocessing support.
   * Simulation is now subclassable.
+  * CatalyticWall boundary conditions (for ReactingLowMachNavierStokes)
+  * Several new examples for new Physics capabilities
+  * Better handling of axisymmetric cases
+  * Interface to Antioch thermochemistry library (0.2.0 or greater required).
+  * Limited interface to the Cantera chemistry library
+  * Added MeshAdaptive solvers (with contributions from Timo Van Opstal)
+  * ICHandler objects introduced, in analogy with the BCHandler objects
+  * Using AssemblyContext (subclass of FEMContext) in Physics
+  * Encapsulated variable handling in various *Variables classes
+  * CompositeQoI object to handle multiple QoIs
+  * SerialMesh vs. ParallelMesh now runtime selectable
+  * Support for ParsedFunction boundary and initial conditions
+  * Support libMesh when compiled with LIBMESH_DIM == 2
+  * Forward compatibility updates for Automake
 
 Version 0.3.0
 https://svn.ices.utexas.edu/repos/pecos/grins/code/tags/0.3.0

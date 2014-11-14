@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
   libMesh::LibMeshInit libmesh_init(argc, argv);
  
   libMesh::out << "Starting GRINS with command:\n";
-  for (unsigned int i=0; i != argc; ++i)
+  for (int i=0; i != argc; ++i)
     libMesh::out << argv[i] << ' ';
   libMesh::out << std::endl;
 
