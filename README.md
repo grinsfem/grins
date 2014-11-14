@@ -16,7 +16,7 @@ Engineering and Sciences ([ICES](https://www.ices.utexas.edu))
 at [The University of Texas at Austin](https://www.utexas.edu).
 
 We encourage pull requests for new features, bug fixes, etc. For questions regarding development,
-we have a grins-devel Google group setup. For user related questions, please use the grins-users
+we have a [grins-devel](https://groups.google.com/forum/#!forum/grins-devel) Google group setup. For user related questions, please use the [grins-users](https://groups.google.com/forum/#!forum/grins-users)
 group.
 
 Dependencies
