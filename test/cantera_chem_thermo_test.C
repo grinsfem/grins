@@ -35,9 +35,9 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+#ifdef GRINS_HAVE_CANTERA
 int main(int argc, char* argv[])
 {
-#ifdef GRINS_HAVE_CANTERA
   // Check command line count.
   if( argc < 2 )
     {
@@ -190,10 +190,12 @@ int main(int argc, char* argv[])
 	    << "h = " << h[0] << ", " << h[1] << ", " << h[2]
 	    << ", " << h[3] << ", " << h[4] << std::endl;
   */
-
-#else //GRINS_HAVE_CANTERA
-  // automake expects 77 for a skipped test
-  int return_flag = 77;
-#endif
   return return_flag;
 }
+#else //GRINS_HAVE_CANTERA
+int main()
+{
+  // automake expects 77 for a skipped test
+  return 77;
+}
+#endif
