@@ -76,7 +76,7 @@ namespace GRINS
     return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
+  void QoIFactory::add_qoi( const GetPot& /*input*/, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
   {
     QoIBase* qoi = NULL;
 

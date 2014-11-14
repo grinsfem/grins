@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+libMesh::Real initial_values( const libMesh::Point& /*p*/, const libMesh::Parameters &/*params*/,
 		     const std::string& , const std::string& unknown_name )
 {
   libMesh::Real value = 0.0;

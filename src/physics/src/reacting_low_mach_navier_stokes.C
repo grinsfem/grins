@@ -104,6 +104,11 @@ namespace GRINS
   {
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
+    if( compute_jacobian )
+      {
+        libmesh_not_implemented();
+      }
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	this->assemble_mass_time_deriv(context, qp, cache);

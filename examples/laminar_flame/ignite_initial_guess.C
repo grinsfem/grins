@@ -72,7 +72,7 @@ namespace Bunsen
   }
 
   template<class NumericType>
-  void IgniteInitialGuess<NumericType>::init_context( const libMesh::FEMContext& context )
+  void IgniteInitialGuess<NumericType>::init_context( const libMesh::FEMContext& /*context*/ )
   {
     /*
     for( typename std::map<GRINS::VariableIndex,GRINS::VariableIndex>::const_iterator it = _var_map.begin();

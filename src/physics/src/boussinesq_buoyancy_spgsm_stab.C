@@ -68,8 +68,10 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(_flow_vars.u_var())->get_JxW();
 
+    /*
     const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+    */
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
@@ -107,9 +109,9 @@ namespace GRINS
 
         libMesh::Real tau_M = this->_flow_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
 
-        libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
+        //libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, this->_is_steady );
 
-        libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, _k );
+        //libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_steady( context, qp, _rho, _Cp, _k );
 
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number T;
@@ -219,8 +221,8 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancySPGSMStabilization::mass_residual( bool compute_jacobian,
-                                                            AssemblyContext& context,
+  void BoussinesqBuoyancySPGSMStabilization::mass_residual( bool /*compute_jacobian*/,
+                                                            AssemblyContext& /*context*/,
                                                             CachedValues& /*cache*/ )
   {
     /*
