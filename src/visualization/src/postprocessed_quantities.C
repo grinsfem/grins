@@ -100,9 +100,9 @@ namespace GRINS
 
     unsigned int new_index = _quantity_name_map.size();
 
-    _quantity_name_index_map.insert( std::pair<std::string,unsigned int>( name, new_index ) );
+    _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
 
-    _quantity_index_type_map.insert( std::pair<unsigned int,QuantityType>( new_index, type ) );
+    _quantity_index_type_map.insert( std::make_pair( new_index, type ) );
 
     return new_index;
   }
