@@ -84,6 +84,20 @@ namespace GRINS
   }
 
   template<class NumericType>
+  unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name, QuantityType type )
+  {
+    // Check if this quantity has already been registered
+
+    unsigned int new_index = _quantity_name_map.size();
+
+    _quantity_name_index_map.insert( std::pair<std::string,unsigned int>( name, new_index ) );
+
+    _quantity_index_type_map.insert( std::pair<unsigned int,QuantityType>( new_index, type ) );
+
+    return new_index;
+  }
+
+  template<class NumericType>
   void PostProcessedQuantities<NumericType>::initialize( MultiphysicsSystem& system,
 							 libMesh::EquationSystems& equation_systems )
   {
