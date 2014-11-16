@@ -131,6 +131,19 @@ namespace GRINS
 
       }
     
+    if( !_quantity_name_index_map.empty() )
+      {
+        libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
+
+        for( std::map<std::string, unsigned int>::const_iterator it = _quantity_name_index_map.begin();
+             it != _quantity_name_index_map.end();
+             ++it )
+          {
+            unsigned int var = output_system.add_variable( it->first, libMesh::FIRST );
+            _quantity_index_var_map.insert( std::make_pair(it->second,var) );
+          }
+      }
+
     return;
   }
 
