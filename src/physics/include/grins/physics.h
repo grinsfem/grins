@@ -64,6 +64,9 @@ namespace GRINS
   class AssemblyContext;
 
   template <typename Scalar>
+  class PostProcessedQuantities;
+
+  template <typename Scalar>
   class CompositeFunction;
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
@@ -128,6 +131,14 @@ namespace GRINS
       time evolving variables.
     */
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+    //! Register name of postprocessed quantity with PostProcessedQuantities
+    /*!
+      Each Physics class will need to cache an unsigned int corresponding to each
+      postprocessed quantity. This will be used in computing the values and putting
+      them in the CachedVariables object.
+     */
+    virtual void register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );

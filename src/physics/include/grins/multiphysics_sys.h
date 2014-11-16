@@ -52,6 +52,10 @@ namespace libMesh
 
 namespace GRINS
 {
+  // Forward Declarations
+  template <typename Scalar>
+  class PostProcessedQuantities;
+
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
     MultiphysicsSystem (through libMesh::FEMSystem) solves the following equation:
@@ -96,6 +100,9 @@ namespace GRINS
 
     //! System initialization. Calls each physics implementation of init_variables()
     virtual void init_data();
+
+    //! Each Physics will register their postprocessed quantities with this call
+    void register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();

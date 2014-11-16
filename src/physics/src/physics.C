@@ -152,6 +152,11 @@ namespace GRINS
     return;
   }
 
+  void Physics::register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ )
+  {
+    return;
+  }
+
   void Physics::compute_element_time_derivative_cache( const AssemblyContext&,
 						       CachedValues& )
   {

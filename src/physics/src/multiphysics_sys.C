@@ -171,6 +171,18 @@ namespace GRINS
     return ap;
   }
 
+  void MultiphysicsSystem::register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+        (physics_iter->second)->register_postprocessing_vars( postprocessing );
+      }
+
+    return;
+  }
+
   void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
   {
     AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
