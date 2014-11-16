@@ -104,6 +104,8 @@ namespace GRINS
 
     _quantity_index_type_map.insert( std::make_pair( new_index, type ) );
 
+    _cache.add_quantity(new_index);
+
     return new_index;
   }
 
