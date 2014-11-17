@@ -219,6 +219,56 @@ namespace GRINS
       }
   }
 
+  template<class Mu>
+  void VelocityPenalty<Mu>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                            const AssemblyContext& context,
+                                                            const libMesh::Point& point,
+                                                            libMesh::Real& value )
+  {
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    libMesh::DenseVector<libMesh::Number> output_vec(3);
+
+    if( quantity_index == this->_velocity_penalty_x )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_velocity_penalty_y )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_z )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_x )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_y )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_z )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
+
+    return;
+  }
+
 } // namespace GRINS
 // Instantiate
 INSTANTIATE_INC_NS_SUBCLASS(VelocityPenalty);

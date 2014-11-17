@@ -69,7 +69,19 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   private:
+
+    unsigned int _velocity_penalty_x;
+    unsigned int _velocity_penalty_y;
+    unsigned int _velocity_penalty_z;
+    unsigned int _velocity_penalty_base_x;
+    unsigned int _velocity_penalty_base_y;
+    unsigned int _velocity_penalty_base_z;
 
     VelocityPenalty();
   };
