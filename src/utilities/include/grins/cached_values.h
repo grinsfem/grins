@@ -74,6 +74,8 @@ namespace GRINS
 
     const std::vector<std::vector<libMesh::Gradient> >& get_cached_vector_gradient_values( unsigned int quantity ) const;
 
+    unsigned int size() const;
+
   protected:
     
     std::set<unsigned int> _cache_list;
@@ -84,6 +86,12 @@ namespace GRINS
     std::map<unsigned int,std::vector<std::vector<libMesh::Gradient> >  > _cached_vector_gradient_values;
     
   };
+
+  inline
+  unsigned int CachedValues::size() const
+  {
+    return _cache_list.size();
+  }
 
 } // namespace GRINS
 
