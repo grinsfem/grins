@@ -98,7 +98,7 @@ namespace GRINS
           }
       }
 
-    unsigned int new_index = _quantity_name_map.size();
+    unsigned int new_index = _quantity_name_index_map.size();
 
     _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
 
