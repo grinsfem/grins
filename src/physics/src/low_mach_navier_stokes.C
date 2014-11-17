@@ -26,6 +26,9 @@
 // This class
 #include "grins/low_mach_navier_stokes.h"
 
+// C++
+#include <limits>
+
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
@@ -44,7 +47,8 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
-      _p_pinning(input,physics_name)
+      _p_pinning(input,physics_name),
+      _rho_index(2^30) // Initialize to absurd value
   {
     this->read_input_options(input);
 
@@ -846,6 +850,25 @@ namespace GRINS
 	  }
 
 	cache.set_values( Cache::PERFECT_GAS_DENSITY, rho_values );
+      }
+
+    return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                      const AssemblyContext& context,
+                                                                      const libMesh::Point& point,
+                                                                      libMesh::Real& value )
+  {
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    if( quantity_index == this->_rho_index )
+      {
+        libMesh::Real T = this->T(point,context);
+        libMesh::Real p0 = this->get_p0_steady(context,point);
+
+        value = this->rho( T, p0 );
       }
 
     return;

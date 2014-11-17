@@ -77,12 +77,20 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   protected:
 
     //! Enable pressure pinning
     bool _pin_pressure;
     
     PressurePinning _p_pinning;
+
+    //! Cache index for density post-processing
+    unsigned int _rho_index;
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian, 
