@@ -96,7 +96,7 @@ namespace GRINS
 
     std::map<std::string, unsigned int> _quantity_name_index_map;
     std::map<unsigned int, QuantityType> _quantity_index_type_map;
-    std::map<unsigned int, VariableIndex> _quantity_index_var_map;
+    std::map<VariableIndex, unsigned int> _quantity_index_var_map;
 
     std::vector<unsigned int> _quantities;
     std::map<std::string, unsigned int> _quantity_name_map;

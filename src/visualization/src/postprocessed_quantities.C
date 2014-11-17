@@ -143,7 +143,7 @@ namespace GRINS
              ++it )
           {
             unsigned int var = output_system.add_variable( it->first, libMesh::FIRST );
-            _quantity_index_var_map.insert( std::make_pair(it->second,var) );
+            _quantity_index_var_map.insert( std::make_pair(var,it->second) );
           }
       }
 
