@@ -44,12 +44,13 @@ namespace GRINS
     PostProcessedQuantities( const GetPot& input );
     virtual ~PostProcessedQuantities();
 
-    enum QuantityType{ SCALAR,
-                       VECTOR_OF_SCALARS,
-                       GRADIENT,
-                       VECTOR_OF_GRADIENTS };
-
-    unsigned int register_quantity( std::string name, QuantityType type );
+    //! Register quantity to be postprocessed
+    /*!
+      This method returns an index that will correspond to the name provided.
+      Note that this assumes all quantities are scalar. Thus, if there's
+      a gradient quantity, each component will need to be separately registered.
+     */
+    unsigned int register_quantity( std::string name );
 
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context);
@@ -95,7 +96,6 @@ namespace GRINS
     virtual NumericType compute_quantities( const unsigned int component ) const;
 
     std::map<std::string, unsigned int> _quantity_name_index_map;
-    std::map<unsigned int, QuantityType> _quantity_index_type_map;
     std::map<VariableIndex, unsigned int> _quantity_index_var_map;
 
     std::vector<unsigned int> _quantities;

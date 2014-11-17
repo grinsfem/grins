@@ -84,7 +84,7 @@ namespace GRINS
   }
 
   template<class NumericType>
-  unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name, QuantityType type )
+  unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name )
   {
     // Check if this quantity has already been registered
     for( std::map<std::string, unsigned int>::const_iterator it = _quantity_name_index_map.begin();
@@ -101,8 +101,6 @@ namespace GRINS
     unsigned int new_index = _quantity_name_index_map.size();
 
     _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
-
-    _quantity_index_type_map.insert( std::make_pair( new_index, type ) );
 
     _cache.add_quantity(new_index);
 
