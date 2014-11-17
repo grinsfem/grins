@@ -750,6 +750,24 @@ namespace GRINS
 	side_fe->get_xyz();
       }
 
+    for( typename std::map<VariableIndex,unsigned int>::const_iterator it = _quantity_index_var_map.begin();
+         it != _quantity_index_var_map.end(); it++ )
+      {
+        libMesh::FEBase* elem_fe = NULL;
+        context.get_element_fe( it->first, elem_fe );
+        elem_fe->get_phi();
+        elem_fe->get_dphi();
+        elem_fe->get_JxW();
+        elem_fe->get_xyz();
+
+        libMesh::FEBase* side_fe = NULL;
+        context.get_side_fe( it->first, side_fe );
+        side_fe->get_phi();
+        side_fe->get_dphi();
+        side_fe->get_JxW();
+        side_fe->get_xyz();
+      }
+
     // Create the context we'll be using to compute MultiphysicsSystem quantities
     _multiphysics_context.reset( new AssemblyContext( *_multiphysics_sys ) );
     _multiphysics_sys->init_context(*_multiphysics_context);
