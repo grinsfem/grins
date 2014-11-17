@@ -117,7 +117,7 @@ namespace GRINS
     if( !_quantities.empty() )
       {
 	// Need to cache the MultiphysicsSystem
-	_multiphysics_sys = &system;
+        _multiphysics_sys = &system;
  
 	libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
 
@@ -133,6 +133,9 @@ namespace GRINS
     
     if( !_quantity_name_index_map.empty() )
       {
+        // Need to cache the MultiphysicsSystem
+        _multiphysics_sys = &system;
+
         libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
 
         for( std::map<std::string, unsigned int>::const_iterator it = _quantity_name_index_map.begin();
