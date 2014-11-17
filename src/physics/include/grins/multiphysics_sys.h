@@ -102,7 +102,8 @@ namespace GRINS
     virtual void init_data();
 
     //! Each Physics will register their postprocessed quantities with this call
-    void register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing );
+    void register_postprocessing_vars( const GetPot& input,
+                                       PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();

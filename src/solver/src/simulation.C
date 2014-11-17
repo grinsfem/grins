@@ -68,7 +68,7 @@ namespace GRINS
 
     _multiphysics_system->read_input_options( input );
 
-    _multiphysics_system->register_postprocessing_vars( *(_postprocessing) );
+    _multiphysics_system->register_postprocessing_vars( input, *(_postprocessing) );
 
     // This *must* be done before equation_system->init
     this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );

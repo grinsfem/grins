@@ -152,7 +152,8 @@ namespace GRINS
     return;
   }
 
-  void Physics::register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ )
+  void Physics::register_postprocessing_vars( const GetPot& /*input*/,
+                                              PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ )
   {
     return;
   }

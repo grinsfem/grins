@@ -138,7 +138,8 @@ namespace GRINS
       postprocessed quantity. This will be used in computing the values and putting
       them in the CachedVariables object.
      */
-    virtual void register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing );
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );

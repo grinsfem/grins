@@ -171,13 +171,14 @@ namespace GRINS
     return ap;
   }
 
-  void MultiphysicsSystem::register_postprocessing_vars( PostProcessedQuantities<libMesh::Real>& postprocessing )
+  void MultiphysicsSystem::register_postprocessing_vars( const GetPot& input,
+                                                         PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-        (physics_iter->second)->register_postprocessing_vars( postprocessing );
+        (physics_iter->second)->register_postprocessing_vars( input, postprocessing );
       }
 
     return;
