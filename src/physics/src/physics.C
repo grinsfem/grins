@@ -269,6 +269,14 @@ namespace GRINS
     return;
   }
 
+  void Physics::compute_postprocessed_quantity( unsigned int /*quantity_index*/,
+                                                const AssemblyContext& /*context*/,
+                                                const libMesh::Point& /*point*/,
+                                                libMesh::Real& /*value*/ )
+  {
+    return;
+  }
+
 #ifdef GRINS_USE_GRVY_TIMERS
   void Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {

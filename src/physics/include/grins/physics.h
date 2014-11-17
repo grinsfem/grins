@@ -224,6 +224,11 @@ namespace GRINS
                                         const std::vector<libMesh::Point>& points,
                                         CachedValues& cache );
 
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
     BCHandlingBase* get_bc_handler(); 
 
     ICHandlingBase* get_ic_handler(); 

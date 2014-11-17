@@ -158,6 +158,11 @@ namespace GRINS
 				const std::vector<libMesh::Point>& points,
 				CachedValues& cache ) const;
 
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
