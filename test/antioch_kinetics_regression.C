@@ -64,11 +64,9 @@ int main( int argc, char* argv[] )
 
   std::vector<libMesh::Real> Y(n_species,0.2);
 
-  libMesh::Real R_mix = antioch_mixture.R_mix(Y);
-
   std::vector<libMesh::Real> omega_dot(n_species,0.0);
 
-  antioch_kinetics.omega_dot( T_cache, rho, R_mix, Y, omega_dot );
+  antioch_kinetics.omega_dot( T_cache, rho, Y, omega_dot );
 
   for( unsigned int i = 0; i < n_species; i++ )
     {

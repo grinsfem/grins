@@ -62,12 +62,21 @@ namespace GRINS
   {
     const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-    const libMesh::Real R_mix = cache.get_cached_values(Cache::MIXTURE_GAS_CONSTANT)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
+    this->omega_dot( T, rho, Y, omega_dot );
+
+    return;
+  }
+
+  template<typename Thermo>
+  void AntiochEvaluator<Thermo>::omega_dot( const libMesh::Real& T, libMesh::Real rho,
+                                            const std::vector<libMesh::Real> mass_fractions,
+                                            std::vector<libMesh::Real>& omega_dot )
+  {
     this->check_and_reset_temp_cache(T);
 
-    _kinetics->omega_dot( *(_temp_cache.get()), rho, R_mix, Y, omega_dot );
+    _kinetics->omega_dot( *(_temp_cache.get()), rho, mass_fractions, omega_dot );
 
     return;
   }
