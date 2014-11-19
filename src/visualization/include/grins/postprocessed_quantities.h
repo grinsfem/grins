@@ -44,14 +44,6 @@ namespace GRINS
     PostProcessedQuantities( const GetPot& input );
     virtual ~PostProcessedQuantities();
 
-    //! Register quantity to be postprocessed
-    /*!
-      This method returns an index that will correspond to the name provided.
-      Note that this assumes all quantities are scalar. Thus, if there's
-      a gradient quantity, each component will need to be separately registered.
-     */
-    unsigned int register_quantity( std::string name );
-
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context);
 
@@ -77,6 +69,15 @@ namespace GRINS
 				   libMesh::Real time=0. );
 
     /* Methods for GRINS usage below */
+
+    //! Register quantity to be postprocessed
+    /*!
+      This method returns an index that will correspond to the name provided.
+      Note that this assumes all quantities are scalar. Thus, if there's
+      a gradient quantity, each component will need to be separately registered.
+     */
+    unsigned int register_quantity( std::string name );
+
     virtual void initialize( MultiphysicsSystem& system,
 			     libMesh::EquationSystems& equation_systems );
 
