@@ -73,6 +73,11 @@ namespace GRINS
 					const std::vector<libMesh::Point>& points,
 					CachedValues& cache );
 
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
     const Mixture& gas_mixture() const;
 
     virtual libMesh::Real cp_mix( const libMesh::Real T,

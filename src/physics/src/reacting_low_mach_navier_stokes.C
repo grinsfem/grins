@@ -31,6 +31,7 @@
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -963,6 +964,107 @@ namespace GRINS
     return;
   }
   
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                                       const AssemblyContext& context,
+                                                                                       const libMesh::Point& point,
+                                                                                       libMesh::Real& value )
+  {
+    Evaluator gas_evaluator( this->_gas_mixture );
+
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    if( quantity_index == this->_rho_index )
+      {
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        libMesh::Real p0 = this->get_p0_steady(context,point);
+        this->mass_fractions( point, context, Y );
+
+        value = this->rho( T, p0, gas_evaluator.R_mix(Y) );
+      }
+    else if( quantity_index == this->_mu_index )
+      {
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
+
+        value = gas_evaluator.mu( T, Y );
+      }
+    else if( quantity_index == this->_k_index )
+      {
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
+
+        value = gas_evaluator.k( T, Y );
+      }
+    else if( quantity_index == this->_cp_index )
+      {
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
+
+        value = gas_evaluator.cp( T, Y );
+      }
+    else if( !this->_h_s_index.empty() )
+      {
+        libmesh_assert_equal_to( _h_s_index.size(), this->n_species() );
+
+        for( unsigned int s = 0; s < this->n_species(); s++ )
+          {
+            if( quantity_index == this->_h_s_index[s] )
+              {
+                libMesh::Real T = this->T(point,context);
+                value = gas_evaluator.h_s( T, s );
+              }
+          }
+      }
+    else if( !this->_mole_fractions_index.empty() )
+      {
+        libmesh_assert_equal_to( _mole_fractions_index.size(), this->n_species() );
+
+        for( unsigned int s = 0; s < this->n_species(); s++ )
+          {
+            if( quantity_index == this->_mole_fractions_index[s] )
+              {
+                std::vector<libMesh::Real> Y( this->_n_species );
+                this->mass_fractions( point, context, Y );
+
+                libMesh::Real M = gas_evaluator.M_mix(Y);
+
+                value = gas_evaluator.X( s, M, Y[s] );
+              }
+          }
+      }
+    else if( !this->_omega_dot_index.empty() )
+      {
+        libmesh_assert_equal_to( _omega_dot_index.size(), this->n_species() );
+
+        for( unsigned int s = 0; s < this->n_species(); s++ )
+          {
+            if( quantity_index == this->_omega_dot_index[s] )
+              {
+                std::vector<libMesh::Real> Y( this->n_species() );
+                this->mass_fractions( point, context, Y );
+
+                libMesh::Real T = this->T(point,context);
+
+                libMesh::Real p0 = this->get_p0_steady(context,point);
+
+                libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
+
+                std::vector<libMesh::Real> omega_dot( this->n_species() );
+                gas_evaluator.omega_dot( T, rho, Y, omega_dot );
+
+                value = omega_dot[s];
+              }
+          }
+      }
+
+    return;
+  }
+
   template<typename Mixture, typename Evaluator>
   libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::cp_mix( const libMesh::Real T,
                                                                         const std::vector<libMesh::Real>& Y )
