@@ -76,12 +76,23 @@ namespace GRINS
 
   private:
 
-    unsigned int _velocity_penalty_x;
-    unsigned int _velocity_penalty_y;
-    unsigned int _velocity_penalty_z;
-    unsigned int _velocity_penalty_base_x;
-    unsigned int _velocity_penalty_base_y;
-    unsigned int _velocity_penalty_base_z;
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_x_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_y_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_z_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_x_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_y_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_z_index;
 
     VelocityPenalty();
   };
