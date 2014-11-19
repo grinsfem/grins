@@ -39,6 +39,7 @@ namespace GRINS
   const PhysicsName incompressible_navier_stokes_spgsm_stab = 
     "IncompressibleNavierStokesSPGSMStabilization";
   const PhysicsName velocity_drag = "VelocityDrag";
+  const PhysicsName velocity_drag_adjoint_stab = "VelocityDragAdjointStabilization";
   const PhysicsName velocity_penalty = "VelocityPenalty";
   const PhysicsName velocity_penalty2 = "VelocityPenalty2";
   const PhysicsName velocity_penalty_adjoint_stab  = "VelocityPenaltyAdjointStabilization";
