@@ -33,46 +33,46 @@ class GetPot;
 
 namespace GRINS
 {
-class MooneyRivlin : public HyperelasticStrainEnergy<MooneyRivlin>
-{
-public:
-MooneyRivlin( const GetPot& input );
-virtual ~MooneyRivlin();
+  class MooneyRivlin : public HyperelasticStrainEnergy<MooneyRivlin>
+  {
+  public:
+    MooneyRivlin( const GetPot& input );
 
+    virtual ~MooneyRivlin();
 
-// So we can make implementation private
-friend class  HyperelasticStrainEnergy<MooneyRivlin>;
+    // So we can make implementation private
+    friend class  HyperelasticStrainEnergy<MooneyRivlin>;
 
-private:
+  private:
 
-MooneyRivlin();
+    MooneyRivlin();
 
-libMesh::Real dI1_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
-libMesh::Real dI2_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
-libMesh::Real dI3_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
+    libMesh::Real dI1_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
+    libMesh::Real dI2_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
+    libMesh::Real dI3_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
 
-libMesh::Real _C1;
-libMesh::Real _C2;
+    libMesh::Real _C1;
+    libMesh::Real _C2;
 
-};
+  };
 
-inline
-libMesh::Real MooneyRivlin::dI1_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
-{
-return _C1;
-}
+  inline
+  libMesh::Real MooneyRivlin::dI1_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  {
+    return _C1;
+  }
 
-inline
-libMesh::Real MooneyRivlin::dI2_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
-{
-return _C2;
-}
+  inline
+  libMesh::Real MooneyRivlin::dI2_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  {
+    return _C2;
+  }
 
-inline
-libMesh::Real MooneyRivlin::dI3_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
-{
-return 0.0;
-}
+  inline
+  libMesh::Real MooneyRivlin::dI3_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  {
+    return 0.0;
+  }
 
 
 } // end namespace GRINS
