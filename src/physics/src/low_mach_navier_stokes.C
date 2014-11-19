@@ -37,6 +37,7 @@
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -73,6 +74,37 @@ namespace GRINS
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", false );
   
+    return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::register_postprocessing_vars( const GetPot& input,
+                                                                    PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+low_mach_navier_stokes+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("rho") )
+              {
+                this->_rho_index = postprocessing.register_quantity( name );
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+low_mach_navier_stokes << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: rho" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
