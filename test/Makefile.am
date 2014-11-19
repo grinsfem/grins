@@ -217,5 +217,8 @@ if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
+# If we have tests fail, libmesh_error() may leave output
+CLEANFILES += traceout*.txt temp_print_trace.*
+
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@
