@@ -206,13 +206,6 @@ namespace GRINS
     return;
   }
 
-  void Physics::compute_element_cache( const AssemblyContext&,
-				       const std::vector<libMesh::Point>&,
-				       CachedValues& )
-  {
-    return;
-  }
-
   void Physics::element_time_derivative( bool /*compute_jacobian*/,
 					 AssemblyContext& /*context*/,
 					 CachedValues& /*cache*/ )

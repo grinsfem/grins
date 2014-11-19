@@ -828,32 +828,6 @@ namespace GRINS
 
     return;
   }
-  
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const AssemblyContext& context, 
-							     const std::vector<libMesh::Point>& points,
-							     CachedValues& cache )
-  {
-    if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
-      {
-	std::vector<libMesh::Real> rho_values;
-	rho_values.reserve( points.size() );
-	
-	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
-	     point != points.end(); point++ )
-	  {
-	    libMesh::Real T = this->T(*point,context);
-	    libMesh::Real p0 = this->get_p0_steady(context,*point);
-
-	    rho_values.push_back(this->rho( T, p0 ) );
-	  }
-
-	cache.set_values( Cache::PERFECT_GAS_DENSITY, rho_values );
-      }
-
-    return;
-  }
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_postprocessed_quantity( unsigned int quantity_index,

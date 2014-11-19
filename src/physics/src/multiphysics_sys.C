@@ -340,19 +340,6 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const AssemblyContext& context,
-						  const std::vector<libMesh::Point>& points,
-						  CachedValues& cache ) const
-  {
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->compute_element_cache( context, points, cache );
-      }
-    return;
-  }
-
   void MultiphysicsSystem::compute_postprocessed_quantity( unsigned int quantity_index,
                                                            const AssemblyContext& context,
                                                            const libMesh::Point& point,

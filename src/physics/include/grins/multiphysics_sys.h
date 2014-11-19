@@ -154,10 +154,6 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
-    void compute_element_cache( const AssemblyContext& context,
-				const std::vector<libMesh::Point>& points,
-				CachedValues& cache ) const;
-
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
