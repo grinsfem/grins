@@ -79,6 +79,72 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
+                                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+reacting_low_mach_navier_stokes+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("rho") )
+              {
+                this->_rho_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("mu") )
+              {
+                this->_mu_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("k") )
+              {
+                this->_k_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("cp") )
+              {
+                this->_cp_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("mole_fractions") )
+              {
+                _mole_fractions_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_mole_fractions_index[s] = postprocessing.register_quantity( name );
+                  }
+              }
+            else if( name == std::string("omega_dot") )
+              {
+                _omega_dot_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_omega_dot_index[s] = postprocessing.register_quantity( name );
+                  }
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+reacting_low_mach_navier_stokes << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: rho" << std::endl
+                          << "                              mu" << std::endl
+                          << "                              k" << std::endl
+                          << "                              cp" << std::endl
+                          << "                              mole_fractions" << std::endl
+                          << "                              omega_dot" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
+    return;
+  }
+
+  template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
