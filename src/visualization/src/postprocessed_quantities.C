@@ -47,15 +47,10 @@ namespace GRINS
   unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name )
   {
     // Check if this quantity has already been registered
-    for( std::map<std::string, unsigned int>::const_iterator it = _quantity_name_index_map.begin();
-         it != _quantity_name_index_map.end();
-         ++it )
+    if( _quantity_name_index_map.find(name) != _quantity_name_index_map.end() )
       {
-        if( name == it->first )
-          {
-            std::cerr << "Error: trying to add existing quantity: " << name << std::endl;
-            libmesh_error();
-          }
+        std::cerr << "Error: trying to add existing quantity: " << name << std::endl;
+        libmesh_error();
       }
 
     unsigned int new_index = _quantity_name_index_map.size();
