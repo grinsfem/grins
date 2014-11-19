@@ -64,7 +64,7 @@ namespace GRINS
   void VelocityPenalty<Mu>::register_postprocessing_vars( const GetPot& input,
                                                           PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+this->_physics_name+"/output_vars";
+    std::string section = "Physics/"+velocity_penalty+"/output_vars";
 
     if( input.have_variable(section) )
       {
