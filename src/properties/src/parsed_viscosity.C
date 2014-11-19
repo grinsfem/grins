@@ -42,7 +42,7 @@ namespace GRINS
 
          if (viscosity_function == "0")
             {
-              std::cerr << "Warning! Zero Conductivity specified!" << std::endl;
+              std::cerr << "Warning! Zero Viscosity specified!" << std::endl;
 
               libmesh_error();
             }
