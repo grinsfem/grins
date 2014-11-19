@@ -90,6 +90,14 @@ namespace GRINS
 
                 _velocity_penalty_base_z_index = postprocessing.register_quantity( std::string("vel_penalty_base_z") );
               }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+this->_physics_name << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: velocity_penalty" << std::endl
+                          << "                              velocity_penalty_base" << std::endl;
+                libmesh_error();
+              }
           }
       }
 
