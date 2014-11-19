@@ -28,6 +28,8 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 //libMesh
 #include "libmesh/quadrature.h"
@@ -101,11 +103,14 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
-      
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
+	
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+	
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
+        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
         libMesh::Real RC = this->_stab_helper.compute_res_continuity( context, qp );
 
         for (unsigned int i=0; i != n_u_dofs; i++)
@@ -175,9 +180,12 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
 
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
+
+        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
 
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
@@ -241,12 +249,15 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if( this->_dim == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
       
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), false );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
 
         libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
 
@@ -284,4 +295,4 @@ namespace GRINS
 } // end namespace GRINS
 
 // Instantiate
-template class GRINS::IncompressibleNavierStokesSPGSMStabilization<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesSPGSMStabilization);

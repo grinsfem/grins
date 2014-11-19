@@ -29,6 +29,8 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 //libMesh
 #include "libmesh/quadrature.h"
@@ -153,10 +155,13 @@ namespace GRINS
         libMesh::Tensor d_RC_dgradU,
           d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu(),
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 this->_is_steady );
             this->_stab_helper.compute_tau_continuity_and_derivs
@@ -164,7 +169,7 @@ namespace GRINS
                 g,
                 tau_C, d_tau_C_d_rho, d_tau_C_dU );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
-              ( context, qp, this->_rho, this->_mu(),
+              ( context, qp, this->_rho, _mu_qp,
                 RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
             this->_stab_helper.compute_res_continuity_and_derivs
@@ -172,16 +177,16 @@ namespace GRINS
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
             tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
-            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
             RC = this->_stab_helper.compute_res_continuity( context, qp );
           }
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu()*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+              _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
             //libMesh::RealGradient zeroth_order_term = - this->_rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
@@ -447,22 +452,25 @@ namespace GRINS
         libMesh::Gradient d_tau_M_dU;
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
         libMesh::Tensor d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
+	
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);	
 
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu(),
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 this->_is_steady );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
-              ( context, qp, this->_rho, this->_mu(),
+              ( context, qp, this->_rho, _mu_qp,
                 RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), this->_is_steady );
-            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu() );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
           }
 
         // Now a loop over the pressure degrees of freedom.  This
@@ -649,10 +657,13 @@ namespace GRINS
 
         libMesh::Real d_RM_t_uvw_duvw;
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu(),
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 false );
             this->_stab_helper.compute_res_momentum_transient_and_derivs
@@ -661,7 +672,7 @@ namespace GRINS
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu(), false );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
             RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
           }
 
@@ -700,7 +711,7 @@ namespace GRINS
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu()*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+              _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
             //libMesh::RealGradient zeroth_order_term = - this->_rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
@@ -770,4 +781,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::IncompressibleNavierStokesAdjointStabilization<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesAdjointStabilization);

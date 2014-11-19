@@ -48,6 +48,8 @@ namespace GRINS
     IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input);
 
     ~IncompressibleNavierStokesBase();
+    
+    //virtual void read_input_options( const GetPot& input);
 
     //! Initialization of Navier-Stokes variables
     /*!

@@ -30,7 +30,9 @@
 #include "grins_config.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
 #include "grins/assembly_context.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -145,6 +147,9 @@ namespace GRINS
         if (this->_dim == 3)
           Uvec(2) = w;
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         // First, an i-loop over the velocity degrees of freedom.
         // We know that n_u_dofs == n_v_dofs so we can compute contributions
         // for both at the same time.
@@ -152,16 +157,16 @@ namespace GRINS
           {
             Fu(i) += JxW[qp] *
               ( p*u_gradphi[i][qp](0)              // pressure term
-                -this->_mu()*(u_gradphi[i][qp]*grad_u) ); // diffusion term
+                -_mu_qp*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
             Fv(i) += JxW[qp] *
               ( p*u_gradphi[i][qp](1)              // pressure term
-                -this->_mu()*(u_gradphi[i][qp]*grad_v) ); // diffusion term
+                -_mu_qp*(u_gradphi[i][qp]*grad_v) ); // diffusion term
             if (this->_dim == 3)
               {
                 (*Fw)(i) += JxW[qp] *
                   ( p*u_gradphi[i][qp](2)              // pressure term
-                    -this->_mu()*(u_gradphi[i][qp]*grad_w) ); // diffusion term
+                    -_mu_qp*(u_gradphi[i][qp]*grad_w) ); // diffusion term
               }
 
             if (compute_jacobian)
@@ -174,15 +179,15 @@ namespace GRINS
                     //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
 
                     Kuu(i,j) += JxW[qp] *
-                      (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                      (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     Kvv(i,j) += JxW[qp] *
-                      (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                      (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
                     if (this->_dim == 3)
                       {
                         (*Kww)(i,j) += JxW[qp] *
-                          (-this->_mu()*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
+                          (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
                       }
                   } // end of the inner dof (j) loop
 
@@ -387,4 +392,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::Stokes<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(Stokes);

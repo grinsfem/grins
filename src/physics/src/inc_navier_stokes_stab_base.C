@@ -29,6 +29,8 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 namespace GRINS
 {
@@ -77,4 +79,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::IncompressibleNavierStokesStabilizationBase<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesStabilizationBase);
