@@ -57,6 +57,7 @@ pin_pressure = true
 pin_location = '0.0 0.01'
 pin_value = '0.0'
 
+output_vars = 'rho'
 []
 
 
@@ -159,8 +160,6 @@ vis_output_file_prefix = 'cavity'
 output_residual = 'false' 
 
 output_format = 'ExodusII'
-
-output_vars = 'rho'
 
 # Options for print info to the screen
 [screen-options]
