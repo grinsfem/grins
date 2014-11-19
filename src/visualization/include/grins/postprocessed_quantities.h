@@ -83,65 +83,17 @@ namespace GRINS
 
     virtual void update_quantities( libMesh::EquationSystems& equation_systems );
 
-    unsigned int n_quantities() const
-    {return _quantities.size();}
-
   protected:
-
-    virtual void build_name_map();
-
-    virtual void init_quantities( const MultiphysicsSystem& multiphysics_system,
-				  libMesh::System& output_system,
-				  const unsigned int component );
-
-    virtual NumericType compute_quantities( const unsigned int component ) const;
 
     std::map<std::string, unsigned int> _quantity_name_index_map;
     std::map<VariableIndex, unsigned int> _quantity_index_var_map;
-
-    std::vector<unsigned int> _quantities;
-    std::map<std::string, unsigned int> _quantity_name_map;
-    std::map<VariableIndex,unsigned int> _quantity_var_map;
     
     MultiphysicsSystem* _multiphysics_sys;
     std::tr1::shared_ptr<AssemblyContext> _multiphysics_context;
 
-    CachedValues _cache;
-
-    libMesh::Point _prev_point;
-
-    //! Place to cache species names for species-dependent quantities.
-    std::vector<std::string> _species_names;
-
-    //! Cache the map between species-components variable indices and species number
-    std::map<VariableIndex, unsigned int> _species_var_map;
-
   private:
 
     PostProcessedQuantities();
-
-    /* Perfect gas ==> LowMachNavierStokes
-     * Species/Mixture ==> ReactingLowMachNavierStokes */
-    enum QuantityList{ PERFECT_GAS_DENSITY = 0,
-                       MIXTURE_DENSITY,
-                       PERFECT_GAS_VISCOSITY,
-                       SPECIES_VISCOSITY,
-                       MIXTURE_VISCOSITY,
-                       PERFECT_GAS_THERMAL_CONDUCTIVITY,
-                       SPECIES_THERMAL_CONDUCTIVITY,
-                       MIXTURE_THERMAL_CONDUCTIVITY,
-                       PERFECT_GAS_SPECIFIC_HEAT_P,
-                       SPECIES_SPECIFIC_HEAT_P,
-                       MIXTURE_SPECIFIC_HEAT_P,
-                       PERFECT_GAS_SPECIFIC_HEAT_V,
-                       SPECIES_SPECIFIC_HEAT_V,
-                       MIXTURE_SPECIFIC_HEAT_V,
-                       MOLE_FRACTIONS,
-                       SPECIES_ENTHALPY,
-                       OMEGA_DOT,
-                       VELOCITY_PENALTY,
-                       VELOCITY_PENALTY_BASE
-                       };
 
   };
 
