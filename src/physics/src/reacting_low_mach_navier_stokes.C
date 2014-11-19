@@ -110,21 +110,32 @@ namespace GRINS
               }
             else if( name == std::string("mole_fractions") )
               {
-                _mole_fractions_index.resize(this->n_species());
+                this->_mole_fractions_index.resize(this->n_species());
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
                   {
-                    this->_mole_fractions_index[s] = postprocessing.register_quantity( name );
+                    this->_mole_fractions_index[s] = postprocessing.register_quantity( "X_"+this->_gas_mixture.species_name(s) );
+                  }
+              }
+            else if( name == std::string("h_s") )
+              {
+                this->_h_s_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_h_s_index[s] = postprocessing.register_quantity( "h_"+this->_gas_mixture.species_name(s) );
                   }
               }
             else if( name == std::string("omega_dot") )
               {
-                _omega_dot_index.resize(this->n_species());
+                this->_omega_dot_index.resize(this->n_species());
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
                   {
-                    this->_omega_dot_index[s] = postprocessing.register_quantity( name );
+                    this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture.species_name(s) );
                   }
+
+                std::cout << "omega_dot size = " << _omega_dot_index.size() << std::endl;
               }
             else
               {
@@ -822,60 +833,71 @@ namespace GRINS
 
         value = gas_evaluator.cp( T, Y );
       }
-    else if( !this->_h_s_index.empty() )
+    // Now check for species dependent stuff
+    else
       {
-        libmesh_assert_equal_to( _h_s_index.size(), this->n_species() );
-
-        for( unsigned int s = 0; s < this->n_species(); s++ )
+        if( !this->_h_s_index.empty() )
           {
-            if( quantity_index == this->_h_s_index[s] )
+            libmesh_assert_equal_to( _h_s_index.size(), this->n_species() );
+
+            for( unsigned int s = 0; s < this->n_species(); s++ )
               {
-                libMesh::Real T = this->T(point,context);
-                value = gas_evaluator.h_s( T, s );
+                if( quantity_index == this->_h_s_index[s] )
+                  {
+                    libMesh::Real T = this->T(point,context);
+
+                    value = gas_evaluator.h_s( T, s );
+                    return;
+                  }
               }
           }
-      }
-    else if( !this->_mole_fractions_index.empty() )
-      {
-        libmesh_assert_equal_to( _mole_fractions_index.size(), this->n_species() );
 
-        for( unsigned int s = 0; s < this->n_species(); s++ )
+        if( !this->_mole_fractions_index.empty() )
           {
-            if( quantity_index == this->_mole_fractions_index[s] )
+            libmesh_assert_equal_to( _mole_fractions_index.size(), this->n_species() );
+
+            for( unsigned int s = 0; s < this->n_species(); s++ )
               {
-                std::vector<libMesh::Real> Y( this->_n_species );
-                this->mass_fractions( point, context, Y );
+                if( quantity_index == this->_mole_fractions_index[s] )
+                  {
+                    std::vector<libMesh::Real> Y( this->_n_species );
+                    this->mass_fractions( point, context, Y );
 
-                libMesh::Real M = gas_evaluator.M_mix(Y);
+                    libMesh::Real M = gas_evaluator.M_mix(Y);
 
-                value = gas_evaluator.X( s, M, Y[s] );
+                    value = gas_evaluator.X( s, M, Y[s] );
+                    return;
+                  }
               }
           }
-      }
-    else if( !this->_omega_dot_index.empty() )
-      {
-        libmesh_assert_equal_to( _omega_dot_index.size(), this->n_species() );
 
-        for( unsigned int s = 0; s < this->n_species(); s++ )
+        if( !this->_omega_dot_index.empty() )
           {
-            if( quantity_index == this->_omega_dot_index[s] )
+            libmesh_assert_equal_to( _omega_dot_index.size(), this->n_species() );
+
+            for( unsigned int s = 0; s < this->n_species(); s++ )
               {
-                std::vector<libMesh::Real> Y( this->n_species() );
-                this->mass_fractions( point, context, Y );
+                if( quantity_index == this->_omega_dot_index[s] )
+                  {
+                    std::vector<libMesh::Real> Y( this->n_species() );
+                    this->mass_fractions( point, context, Y );
 
-                libMesh::Real T = this->T(point,context);
+                    libMesh::Real T = this->T(point,context);
 
-                libMesh::Real p0 = this->get_p0_steady(context,point);
+                    libMesh::Real p0 = this->get_p0_steady(context,point);
 
-                libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
+                    libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
 
-                std::vector<libMesh::Real> omega_dot( this->n_species() );
-                gas_evaluator.omega_dot( T, rho, Y, omega_dot );
+                    std::vector<libMesh::Real> omega_dot( this->n_species() );
+                    gas_evaluator.omega_dot( T, rho, Y, omega_dot );
 
-                value = omega_dot[s];
+                    value = omega_dot[s];
+                    return;
+                  }
               }
           }
-      }
+
+      } // if/else quantity_index
 
     return;
   }
