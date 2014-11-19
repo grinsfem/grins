@@ -67,6 +67,8 @@ namespace GRINS
 
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
 
+  private:
+
     VelocityPenaltyBase();
   };
 
