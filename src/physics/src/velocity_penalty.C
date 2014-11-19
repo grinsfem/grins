@@ -30,6 +30,7 @@
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -55,6 +56,42 @@ namespace GRINS
   {
     context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
     context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+
+    return;
+  }
+
+  template<class Mu>
+  void VelocityPenalty<Mu>::register_postprocessing_vars( const GetPot& input,
+                                                          PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+this->_physics_name+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("velocity_penalty") )
+              {
+                _velocity_penalty_x_index = postprocessing.register_quantity( std::string("vel_penalty_x") );
+
+                _velocity_penalty_y_index = postprocessing.register_quantity( std::string("vel_penalty_y") );
+
+                _velocity_penalty_z_index = postprocessing.register_quantity( std::string("vel_penalty_z") );
+              }
+            else if( name == std::string("velocity_penalty_base") )
+              {
+                _velocity_penalty_base_x_index = postprocessing.register_quantity( std::string("vel_penalty_base_x") );
+
+                _velocity_penalty_base_y_index = postprocessing.register_quantity( std::string("vel_penalty_base_y") );
+
+                _velocity_penalty_base_z_index = postprocessing.register_quantity( std::string("vel_penalty_base_z") );
+              }
+          }
+      }
 
     return;
   }

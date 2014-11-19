@@ -57,6 +57,10 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context );
 
+    //! Register postprocessing variables for VelocityPenalty
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
