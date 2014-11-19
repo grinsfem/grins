@@ -31,7 +31,7 @@
 namespace GRINS
 {
   template<class NumericType>
-  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
+  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& /*input*/ )
     : libMesh::FEMFunctionBase<NumericType>()
   {
     return;
