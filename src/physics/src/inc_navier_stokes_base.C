@@ -45,8 +45,8 @@ namespace GRINS
   IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input, incompressible_navier_stokes),
-      _mu(input),
-      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) )      
+      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
+      _mu(input)
   {
     return;
   }
