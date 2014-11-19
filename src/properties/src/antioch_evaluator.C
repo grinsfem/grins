@@ -143,6 +143,20 @@ namespace GRINS
   }
 
   template<>
+  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::h_s( const libMesh::Real& T, unsigned int species )
+  {
+    this->check_and_reset_temp_cache(T);
+
+    return _thermo->h( *(_temp_cache.get()), species );;
+  }
+
+  template<>
+  libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::h_s( const libMesh::Real& T, unsigned int species )
+  {
+    return _thermo->h_tot( species, T ) + _chem.h_stat_mech_ref_correction(species);
+  }
+
+  template<>
   libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::cv( const CachedValues& cache,
                                                                                        unsigned int qp )
   {
@@ -159,9 +173,7 @@ namespace GRINS
   {
     const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
-    this->check_and_reset_temp_cache(T);
-
-    return _thermo->h( *(_temp_cache.get()), species );
+    return this->h_s( T, species );
   }
 
   template<>
@@ -171,7 +183,7 @@ namespace GRINS
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
-    return _thermo->h_tot( species, T ) + _chem.h_stat_mech_ref_correction(species);
+    return this->h_s(T, species);
   }
 
   template<>

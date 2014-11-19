@@ -82,6 +82,8 @@ namespace GRINS
 
     void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
 
+    libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
+
     libMesh::Real cp( const libMesh::Real& T,
                       const std::vector<libMesh::Real>& Y );
 
