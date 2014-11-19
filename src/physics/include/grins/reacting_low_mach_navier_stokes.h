@@ -113,6 +113,30 @@ namespace GRINS
     
     PressurePinning _p_pinning;
 
+    //! Index from registering this quantity
+    unsigned int _rho_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _species_viscosity;
+
+    //! Index from registering this quantity
+    unsigned int _mu_index;
+
+    //! Index from registering this quantity
+    unsigned int _k_index;
+
+    //! Index from registering this quantity
+    unsigned int _cp_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _mole_fractions_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _h_s_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _omega_dot_index;
+
   private:
 
     ReactingLowMachNavierStokes();
