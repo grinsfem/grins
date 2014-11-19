@@ -35,10 +35,10 @@
 
 namespace GRINS
 {
-PressureContinuationSolver::PressureContinuationSolver( const GetPot& input )
-  : SteadySolver(input)
-{
-if( !input.have_variable("SolverOptions/PressureContinuation/final_pressure") )
+  PressureContinuationSolver::PressureContinuationSolver( const GetPot& input )
+    : SteadySolver(input)
+  {
+    if( !input.have_variable("SolverOptions/PressureContinuation/final_pressure") )
       {
         std::cerr << "Error: Did not find final_pressure value for PressureContinuationSolver" << std::endl
                   << "       Must specify SolverOptions/PressureContinuation/final_pressure" << std::endl;
@@ -46,7 +46,7 @@ if( !input.have_variable("SolverOptions/PressureContinuation/final_pressure") )
       }
     libMesh::Real final_pressure_value = input("SolverOptions/PressureContinuation/final_pressure", 0.0);
 
-libMesh::Real initial_pressure_value = input("SolverOptions/PressureContinuation/initial_pressure", 0.0);
+    libMesh::Real initial_pressure_value = input("SolverOptions/PressureContinuation/initial_pressure", 0.0);
 
 
 
@@ -60,22 +60,22 @@ libMesh::Real initial_pressure_value = input("SolverOptions/PressureContinuation
 
     _pressure_values.resize(n_increments);
 
-libMesh::Real increment = (final_pressure_value - initial_pressure_value)/n_increments;
+    libMesh::Real increment = (final_pressure_value - initial_pressure_value)/n_increments;
 
     for( unsigned int i = 0; i < n_increments; i++ )
       {
         _pressure_values[i] = (i+1)*increment + initial_pressure_value;
       }
 
-return;
-}
+    return;
+  }
 
-PressureContinuationSolver::~PressureContinuationSolver()
-{
-return;
-}
+  PressureContinuationSolver::~PressureContinuationSolver()
+  {
+    return;
+  }
 
-void PressureContinuationSolver::solve( SolverContext& context )
+  void PressureContinuationSolver::solve( SolverContext& context )
   {
     for( unsigned int s = 0; s < _pressure_values.size(); s++ )
       {
@@ -100,15 +100,16 @@ void PressureContinuationSolver::solve( SolverContext& context )
     return;
   }
 
-void PressureContinuationSolver::increment_pressure( GRINS::MultiphysicsSystem& system,
+  void PressureContinuationSolver::increment_pressure( GRINS::MultiphysicsSystem& system,
                                                        libMesh::Real pressure )
-{
-// Get Physics class and cast
-std::tr1::shared_ptr<GRINS::Physics> raw_physics = system.get_physics(elastic_membrane_constant_pressure);
-ElasticMembraneConstantPressure& physics = libMesh::cast_ref<ElasticMembraneConstantPressure&>( *(raw_physics.get()) );
+  {
+    // Get Physics class and cast
+    std::tr1::shared_ptr<GRINS::Physics> raw_physics = system.get_physics(elastic_membrane_constant_pressure);
+    ElasticMembraneConstantPressure& physics = libMesh::cast_ref<ElasticMembraneConstantPressure&>( *(raw_physics.get()) );
 
-physics.reset_pressure(pressure);
+    physics.reset_pressure(pressure);
 
-return;
-}
+    return;
+  }
+
 } // end namespace GRINS
