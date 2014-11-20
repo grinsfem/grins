@@ -32,7 +32,8 @@
 //! GRINS namespace
 namespace GRINS
 {
-  class HeatTransferStabilizationBase : public HeatTransferBase
+  template<class Conductivity>
+  class HeatTransferStabilizationBase : public HeatTransferBase<Conductivity>
   {
 
   public:
@@ -49,6 +50,8 @@ namespace GRINS
   protected:
 
     HeatTransferStabilizationHelper _stab_helper;
+    
+    Conductivity _k;
 
   private:
 

@@ -315,18 +315,60 @@ namespace GRINS
       }
     else if( physics_to_add == heat_transfer )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatTransfer(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransfer<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransfer<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }
       }
     else if( physics_to_add == heat_transfer_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatTransferAdjointStabilization(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferAdjointStabilization<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferAdjointStabilization<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }		
       }
     else if( physics_to_add == heat_transfer_spgsm_stab )
       {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new HeatTransferSPGSMStabilization(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferSPGSMStabilization<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferSPGSMStabilization<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }        
       }
     else if( physics_to_add == heat_transfer_source )
       {
@@ -381,8 +423,22 @@ namespace GRINS
       }
     else if( physics_to_add == "HeatConduction" )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatConduction(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatConduction<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatConduction<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }	
       }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
@@ -773,5 +829,16 @@ namespace GRINS
 	      << "================================================================" << std::endl;
     libmesh_error();
   }
+
+  void PhysicsFactory::conductivity_error( const std::string& physics,				  
+				   const std::string& conductivity ) const
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Conductivity model     = " << conductivity << std::endl	      
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
 
 } // namespace GRINS

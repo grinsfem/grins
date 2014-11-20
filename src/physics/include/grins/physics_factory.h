@@ -89,6 +89,9 @@ namespace GRINS
     void visc_error( const std::string& physics, 
 		     const std::string& viscosity ) const;
 
+    void conductivity_error( const std::string& physics, 
+			     const std::string& conductivity ) const;
+
     void add_reacting_low_mach( const GetPot& input,
                                 const std::string& physics_to_add,
                                 GRINS::PhysicsList& physics_list );

@@ -23,75 +23,56 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_CONSTANT_CONDUCTIVITY_H
-#define GRINS_CONSTANT_CONDUCTIVITY_H
+#ifndef GRINS_PARSED_CONDUCTIVITY_H
+#define GRINS_PARSED_CONDUCTIVITY_H
 
 //GRINS
 #include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/function_base.h"
 
 class GetPot;
 
 namespace GRINS
 {
-  class ConstantConductivity
+  class ParsedConductivity
   {
   public:
 
-    ConstantConductivity( const GetPot& input );
-    ~ConstantConductivity();
-
-    libMesh::Real operator()() const;
-
+    ParsedConductivity( const GetPot& input );
+    ~ParsedConductivity();
+    
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-
-    libMesh::Real operator()( const libMesh::Real T ) const;
-
-    libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
-
-    libMesh::Real deriv( const libMesh::Real T ) const;
-
+    
   private:
 
-    ConstantConductivity();
+     ParsedConductivity();
     
-    libMesh::Real _k;
+    // User specified parsed function
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > k;
 
   };
-  
-  /* ------------------------- Inline Functions -------------------------*/
-  inline
-  libMesh::Real ConstantConductivity::operator()() const
-  {
-    return _k;
-  }
 
+  /* ------------------------- Inline Functions -------------------------*/  
   inline
-  libMesh::Real ConstantConductivity::operator()( AssemblyContext& context, unsigned int qp ) const
+    libMesh::Real ParsedConductivity::operator()(AssemblyContext& context, unsigned int qp) const
   {
-    return _k;
-  }
+    // FIXME: We should be getting the variable index to get the qps from the context
+    // not hardcode it to be 0
+    const std::vector<libMesh::Point>& x = context.get_element_fe(0)->get_xyz();
 
-  inline
-  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*T*/ ) const
-  {
-    return (*this)();
-  }
+    const libMesh::Point& x_qp = x[qp];
 
-  inline
-  libMesh::Real ConstantConductivity::operator()( const libMesh::Real /*mu*/, const libMesh::Real /*cp*/ ) const
-  {
-    return (*this)();
-  }
+    libMesh::Number _k_value = (*k)(x_qp,context.time);
 
-  inline
-  libMesh::Real ConstantConductivity::deriv( const libMesh::Real /*T*/ ) const
-  {
-    return 0.0;
-  }
-  
+    return _k_value;
+  }    
+
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_CONDUCTIVITY_H
+#endif // GRINS_PARSED_CONDUCTIVITY_H
