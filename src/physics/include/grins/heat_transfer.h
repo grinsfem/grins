@@ -36,7 +36,8 @@ namespace GRINS
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
-  class HeatTransfer : public HeatTransferBase
+  template<class Conductivity>
+  class HeatTransfer : public HeatTransferBase<Conductivity>
   {
   public:
 

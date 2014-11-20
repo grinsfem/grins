@@ -26,6 +26,9 @@
 // This class
 #include "grins/constant_conductivity.h"
 
+//GRINS
+#include "grins/grins_physics_names.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -37,8 +40,10 @@ namespace GRINS
   {
     if( !input.have_variable("Materials/Conductivity/k") )
       {
-        std::cerr << "Error: Must specify conducitivity value for constant conductivity model!" << std::endl;
-        libmesh_error();
+        libmesh_warning("No Materials/Conductivity/k specified!\n");
+
+	// Try and get the conductivity from other specifications
+	_k = input("Physics/"+incompressible_navier_stokes+"/k", 1.0);
       }
     return;
   }

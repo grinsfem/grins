@@ -38,13 +38,14 @@
 
 namespace GRINS
 {
-
-  HeatConduction::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  
+  template<class K>
+  HeatConduction<K>::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _temp_vars(input,heat_conduction),
       _rho(  input("Physics/"+heat_conduction+"/rho", 1.0) ), /*! \todo same as Incompressible NS */
       _Cp( input("Physics/"+heat_conduction+"/Cp", 1.0) ),
-      _k( input("Physics/"+heat_conduction+"/k", 1.0) )
+      _k(input)
   {
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
@@ -53,12 +54,14 @@ namespace GRINS
     return;
   }
 
-  HeatConduction::~HeatConduction()
+  template<class K>
+  HeatConduction<K>::~HeatConduction()
   {
     return;
   }
 
-  void HeatConduction::init_variables( libMesh::FEMSystem* system )
+  template<class K>
+  void HeatConduction<K>::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -68,7 +71,8 @@ namespace GRINS
     return;
   }
 
-  void HeatConduction::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class K>
+  void HeatConduction<K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T_var());
@@ -76,7 +80,8 @@ namespace GRINS
     return;
   }
 
-  void HeatConduction::init_context( AssemblyContext& context )
+  template<class K>
+  void HeatConduction<K>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -94,7 +99,8 @@ namespace GRINS
     return;
   }
 
-  void HeatConduction::element_time_derivative( bool compute_jacobian,
+  template<class K>
+  void HeatConduction<K>::element_time_derivative( bool compute_jacobian,
 						AssemblyContext& context,
 						CachedValues& /*cache*/ )
   {
@@ -141,12 +147,15 @@ namespace GRINS
 	grad_T = context.interior_gradient(_temp_vars.T_var(), qp);
 
 	const libMesh::Real f = this->forcing( q_points[qp] );
+
+	// Compute the conductivity at this qp
+	libMesh::Real _k_qp = this->_k(context, qp);
 	
 	// First, an i-loop over the  degrees of freedom.
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
 	    FT(i) += JxW[qp] *
-	      (-_k*(T_gradphi[i][qp]*grad_T) + f);  // diffusion term
+	      (-_k_qp*(T_gradphi[i][qp]*grad_T) + f);  // diffusion term
 
 	    if (compute_jacobian)
 	      {
@@ -156,7 +165,7 @@ namespace GRINS
 		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
 		    KTT(i,j) += JxW[qp] *
-		      ( -_k*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
+		      ( -_k_qp*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -167,7 +176,8 @@ namespace GRINS
     return;
   }
 
-  void HeatConduction::mass_residual( bool compute_jacobian,
+  template<class K>
+  void HeatConduction<K>::mass_residual( bool compute_jacobian,
 				      AssemblyContext& context,
 				      CachedValues& /*cache*/ )
   {
@@ -193,7 +203,7 @@ namespace GRINS
       context.get_elem_jacobian(_temp_vars.T_var(), _temp_vars.T_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
-
+    
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
 	// For the mass residual, we need to be a little careful.
@@ -222,9 +232,10 @@ namespace GRINS
 
     return;
   }
-
+  
+  template<class K>
   inline
-  libMesh::Real HeatConduction::forcing( const libMesh::Point& p )
+  libMesh::Real HeatConduction<K>::forcing( const libMesh::Point& p )
   {
     const libMesh::Real x = p(0);
     const libMesh::Real y = p(1);
@@ -237,3 +248,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_HEAT_TRANSFER_SUBCLASS(HeatConduction);
