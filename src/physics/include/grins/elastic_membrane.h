@@ -27,6 +27,7 @@
 
 //GRINS
 #include "grins/elastic_membrane_base.h"
+#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
@@ -55,6 +56,11 @@ namespace GRINS
   private:
 
     ElasticMembrane();
+
+    // This is straight up copied from libMesh. Should make this a friend or public.
+    libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
+                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                           const libMesh::Point p );
 
     StressStrainLaw _stress_strain_law;
 

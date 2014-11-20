@@ -37,6 +37,7 @@
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
 #include "libmesh/fem_system.h"
+#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -271,6 +272,38 @@ namespace GRINS
   {
     libmesh_not_implemented();
     return;
+  }
+
+  template<typename StressStrainLaw>
+  libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > ElasticMembrane<StressStrainLaw>::build_new_fe( const libMesh::Elem& elem, 
+                                                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                                                           const libMesh::Point p )
+  {
+    using namespace libMesh;
+    FEType fe_type = fe->get_fe_type();
+
+    // If we don't have an Elem to evaluate on, then the only functions
+    // we can sensibly evaluate are the scalar dofs which are the same
+    // everywhere.
+    libmesh_assert(&elem || fe_type.family == SCALAR);
+
+    unsigned int elem_dim = &elem ? elem.dim() : 0;
+
+    AutoPtr<FEGenericBase<libMesh::Real> >
+      fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
+
+    // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h
+    // Build a vector of point co-ordinates to send to reinit
+    Point master_point = &elem ?
+      FEInterface::inverse_map(elem_dim, fe_type, &elem, p) :
+      Point(0);
+
+    std::vector<Point> coor(1, master_point);
+
+    // Reinitialize the element and compute the shape function values at coor
+    fe_new->reinit (&elem, &coor);
+
+    return fe_new;
   }
 
 } // end namespace GRINS
