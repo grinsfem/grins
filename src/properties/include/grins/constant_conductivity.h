@@ -69,7 +69,7 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real ConstantConductivity::operator()( AssemblyContext& context, unsigned int qp ) const
+  libMesh::Real ConstantConductivity::operator()( AssemblyContext& /*context*/, unsigned int /*qp*/ ) const
   {
     return _k;
   }
