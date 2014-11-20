@@ -37,7 +37,8 @@ namespace GRINS
   public:
 
     ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                     bool lambda_sq_coupled, bool lambda_sq_var );
+                     bool lambda_sq_var );
+
     virtual ~ElasticMembrane();
 
     //! Register postprocessing variables for ElasticMembrane
@@ -76,7 +77,6 @@ namespace GRINS
 
     libMesh::Real _h0;
 
-    bool _lambda_sq_coupled;
     bool _lambda_sq_var;
 
     //! Index from registering this quantity. Each component will have it's own index.

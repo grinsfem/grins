@@ -44,11 +44,10 @@ namespace GRINS
 {
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                                                     bool lambda_sq_coupled, bool lambda_sq_var )
+                                                     bool lambda_sq_var )
     : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
       _h0( input("Physics/"+physics_name+"/h0", 1.0 ) ),
-      _lambda_sq_coupled(lambda_sq_coupled),
       _lambda_sq_var(lambda_sq_var)
   {
     // Force the user to set h0
@@ -208,23 +207,21 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(1,1)/det_A, -A_cov(0,1)/det_A, 0.0,
                                                       -A_cov(1,0)/det_A,  A_cov(0,0)/det_A );
 
-        if( _lambda_sq_coupled )
+        a_cov(2,2)    = 1.0;
+        a_contra(2,2) = 1.0;
+
+        // If the material is incompressible, lambda^2 is known
+        libMesh::Real lambda_sq = det_a/det_A;
+
+        // If the material is compressible, then lambda_sq is an independent variable
+        if( _lambda_sq_var )
           {
-            a_cov(2,2)    = 1.0;
-            a_contra(2,2) = 1.0;
-
-            // If the material is incompressible, lambda^2 is known
-            libMesh::Real lambda_sq = det_a/det_A;
-
-            // If the material is compressible, then lambda_sq is an independent variable
-            if( _lambda_sq_var )
-              {
-                libmesh_not_implemented();
-              }
-
-            A_cov(2,2) = lambda_sq;
-            A_contra(2,2) = 1.0/lambda_sq;
+            libmesh_not_implemented();
           }
+
+        A_cov(2,2) = lambda_sq;
+        A_contra(2,2) = 1.0/lambda_sq;
+
 
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
@@ -439,25 +436,22 @@ namespace GRINS
 
         libMesh::Real I3 = det_A/det_a;
 
-        if( _lambda_sq_coupled )
+        a_cov(2,2)    = 1.0;
+        a_contra(2,2) = 1.0;
+
+        // If the material is incompressible, lambda^2 is known
+        libMesh::Real lambda_sq = det_a/det_A;
+
+        // If the material is compressible, then lambda_sq is an independent variable
+        if( _lambda_sq_var )
           {
-            a_cov(2,2)    = 1.0;
-            a_contra(2,2) = 1.0;
-
-            // If the material is incompressible, lambda^2 is known
-            libMesh::Real lambda_sq = det_a/det_A;
-
-            // If the material is compressible, then lambda_sq is an independent variable
-            if( _lambda_sq_var )
-              {
-                libmesh_not_implemented();
-              }
-
-            A_cov(2,2) = lambda_sq;
-            A_contra(2,2) = 1.0/lambda_sq;
-
-            I3 *= lambda_sq;
+            libmesh_not_implemented();
           }
+
+        A_cov(2,2) = lambda_sq;
+        A_contra(2,2) = 1.0/lambda_sq;
+
+        I3 *= lambda_sq;
 
         libMesh::TensorValue<libMesh::Real> tau;
         _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
