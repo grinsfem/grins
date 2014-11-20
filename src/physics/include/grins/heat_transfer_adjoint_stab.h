@@ -32,7 +32,8 @@
 namespace GRINS
 {
   //! Adds VMS-based stabilization to LowMachNavierStokes physics class
-  class HeatTransferAdjointStabilization : public HeatTransferStabilizationBase
+  template<class Conductivity>
+  class HeatTransferAdjointStabilization : public HeatTransferStabilizationBase<Conductivity>
   {
 
   public:

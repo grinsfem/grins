@@ -28,39 +28,46 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_conductivity.h"
+#include "grins/parsed_conductivity.h"
+#include "grins/heat_transfer_macros.h"
 
 namespace GRINS
 {
-
-  HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
+  template<class K>
+  HeatTransferStabilizationBase<K>::HeatTransferStabilizationBase( const std::string& physics_name, 
                                                                 const GetPot& input )
-    : HeatTransferBase(physics_name,input),
-      _stab_helper( input )
+    : HeatTransferBase<K>(physics_name,input),
+      _stab_helper(input),
+      _k(input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  HeatTransferStabilizationBase::~HeatTransferStabilizationBase()
+  template<class K>
+  HeatTransferStabilizationBase<K>::~HeatTransferStabilizationBase()
   {
     return;
   }
 
-  void HeatTransferStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  template<class K>
+  void HeatTransferStabilizationBase<K>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    HeatTransferBase::init_variables(system);
+    HeatTransferBase<K>::init_variables(system);
 
     _stab_helper.init(*system);
 
     return;
   }
 
-  void HeatTransferStabilizationBase::init_context( AssemblyContext& context )
+  template<class K>
+  void HeatTransferStabilizationBase<K>::init_context( AssemblyContext& context )
   {
     // First call base class
-    HeatTransferBase::init_context(context);
+    HeatTransferBase<K>::init_context(context);
 
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
@@ -69,3 +76,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_HEAT_TRANSFER_SUBCLASS(HeatTransferStabilizationBase);
