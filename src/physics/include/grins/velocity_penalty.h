@@ -57,6 +57,10 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context );
 
+    //! Register postprocessing variables for VelocityPenalty
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
@@ -65,11 +69,30 @@ namespace GRINS
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
-    virtual void compute_element_cache( const AssemblyContext& context,
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
 
   private:
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_x_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_y_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_z_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_x_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_y_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_base_z_index;
 
     VelocityPenalty();
   };

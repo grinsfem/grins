@@ -152,6 +152,12 @@ namespace GRINS
     return;
   }
 
+  void Physics::register_postprocessing_vars( const GetPot& /*input*/,
+                                              PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ )
+  {
+    return;
+  }
+
   void Physics::compute_element_time_derivative_cache( const AssemblyContext&,
 						       CachedValues& )
   {
@@ -196,13 +202,6 @@ namespace GRINS
 
   void Physics::compute_nonlocal_mass_residual_cache( const AssemblyContext& /*context*/,
 					              CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_element_cache( const AssemblyContext&,
-				       const std::vector<libMesh::Point>&,
-				       CachedValues& )
   {
     return;
   }
@@ -259,6 +258,14 @@ namespace GRINS
   void Physics::nonlocal_mass_residual( bool /*compute_jacobian*/,
 			                AssemblyContext& /*context*/,
 			                CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
+  void Physics::compute_postprocessed_quantity( unsigned int /*quantity_index*/,
+                                                const AssemblyContext& /*context*/,
+                                                const libMesh::Point& /*point*/,
+                                                libMesh::Real& /*value*/ )
   {
     return;
   }

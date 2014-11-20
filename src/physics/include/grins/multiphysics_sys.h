@@ -52,6 +52,10 @@ namespace libMesh
 
 namespace GRINS
 {
+  // Forward Declarations
+  template <typename Scalar>
+  class PostProcessedQuantities;
+
   //! Interface with libMesh for solving Multiphysics problems.
   /*!
     MultiphysicsSystem (through libMesh::FEMSystem) solves the following equation:
@@ -96,6 +100,10 @@ namespace GRINS
 
     //! System initialization. Calls each physics implementation of init_variables()
     virtual void init_data();
+
+    //! Each Physics will register their postprocessed quantities with this call
+    void register_postprocessing_vars( const GetPot& input,
+                                       PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
@@ -146,9 +154,10 @@ namespace GRINS
 
     std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
-    void compute_element_cache( const AssemblyContext& context,
-				const std::vector<libMesh::Point>& points,
-				CachedValues& cache ) const;
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
 
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

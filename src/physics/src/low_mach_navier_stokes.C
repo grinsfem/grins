@@ -26,6 +26,9 @@
 // This class
 #include "grins/low_mach_navier_stokes.h"
 
+// C++
+#include <limits>
+
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
@@ -34,6 +37,7 @@
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -44,7 +48,8 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
-      _p_pinning(input,physics_name)
+      _p_pinning(input,physics_name),
+      _rho_index(2^30) // Initialize to absurd value
   {
     this->read_input_options(input);
 
@@ -69,6 +74,37 @@ namespace GRINS
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", false );
   
+    return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::register_postprocessing_vars( const GetPot& input,
+                                                                    PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+low_mach_navier_stokes+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("rho") )
+              {
+                this->_rho_index = postprocessing.register_quantity( name );
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+low_mach_navier_stokes << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: rho" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
@@ -824,28 +860,21 @@ namespace GRINS
 
     return;
   }
-  
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_cache( const AssemblyContext& context, 
-							     const std::vector<libMesh::Point>& points,
-							     CachedValues& cache )
+  void LowMachNavierStokes<Mu,SH,TC>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                      const AssemblyContext& context,
+                                                                      const libMesh::Point& point,
+                                                                      libMesh::Real& value )
   {
-    if( cache.is_active(Cache::PERFECT_GAS_DENSITY) )
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    if( quantity_index == this->_rho_index )
       {
-	std::vector<libMesh::Real> rho_values;
-	rho_values.reserve( points.size() );
-	
-	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
-	     point != points.end(); point++ )
-	  {
-	    libMesh::Real T = this->T(*point,context);
-	    libMesh::Real p0 = this->get_p0_steady(context,*point);
+        libMesh::Real T = this->T(point,context);
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-	    rho_values.push_back(this->rho( T, p0 ) );
-	  }
-
-	cache.set_values( Cache::PERFECT_GAS_DENSITY, rho_values );
+        value = this->rho( T, p0 );
       }
 
     return;

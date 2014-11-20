@@ -31,6 +31,7 @@
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -74,6 +75,83 @@ namespace GRINS
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+reacting_low_mach_navier_stokes+"/pin_pressure", false );
   
+    return;
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
+                                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+reacting_low_mach_navier_stokes+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("rho") )
+              {
+                this->_rho_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("mu") )
+              {
+                this->_mu_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("k") )
+              {
+                this->_k_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("cp") )
+              {
+                this->_cp_index = postprocessing.register_quantity( name );
+              }
+            else if( name == std::string("mole_fractions") )
+              {
+                this->_mole_fractions_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_mole_fractions_index[s] = postprocessing.register_quantity( "X_"+this->_gas_mixture.species_name(s) );
+                  }
+              }
+            else if( name == std::string("h_s") )
+              {
+                this->_h_s_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_h_s_index[s] = postprocessing.register_quantity( "h_"+this->_gas_mixture.species_name(s) );
+                  }
+              }
+            else if( name == std::string("omega_dot") )
+              {
+                this->_omega_dot_index.resize(this->n_species());
+
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  {
+                    this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture.species_name(s) );
+                  }
+
+                std::cout << "omega_dot size = " << _omega_dot_index.size() << std::endl;
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+reacting_low_mach_navier_stokes << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: rho" << std::endl
+                          << "                              mu" << std::endl
+                          << "                              k" << std::endl
+                          << "                              cp" << std::endl
+                          << "                              mole_fractions" << std::endl
+                          << "                              omega_dot" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
@@ -713,256 +791,117 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_cache( const AssemblyContext& context, 
-                                                                              const std::vector<libMesh::Point>& points,
-                                                                              CachedValues& cache )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                                       const AssemblyContext& context,
+                                                                                       const libMesh::Point& point,
+                                                                                       libMesh::Real& value )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 
-    if( cache.is_active(Cache::MIXTURE_DENSITY) )
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    if( quantity_index == this->_rho_index )
       {
-	std::vector<libMesh::Real> rho_values;
-	rho_values.reserve( points.size() );
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        libMesh::Real p0 = this->get_p0_steady(context,point);
+        this->mass_fractions( point, context, Y );
 
-	std::vector<libMesh::Real> mass_fracs( this->_n_species );
-	
-	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
-	     point != points.end(); point++ )
-	  {
-	    libMesh::Real T = this->T(*point,context);
-	    libMesh::Real p0 = this->get_p0_steady(context,*point);
-	    this->mass_fractions( *point, context, mass_fracs );
-
-	    rho_values.push_back(this->rho( T, p0, gas_evaluator.R_mix(mass_fracs) ) );
-	  }
-
-	cache.set_values( Cache::MIXTURE_DENSITY, rho_values );
+        value = this->rho( T, p0, gas_evaluator.R_mix(Y) );
       }
-
-    if( cache.is_active(Cache::SPECIES_VISCOSITY) )
+    else if( quantity_index == this->_mu_index )
       {
-	libmesh_not_implemented();
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
+
+        value = gas_evaluator.mu( T, Y );
       }
-
-    if( cache.is_active(Cache::MIXTURE_VISCOSITY) )
+    else if( quantity_index == this->_k_index )
       {
-	std::vector<libMesh::Real> mu_values;
-	mu_values.reserve( points.size() );
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
 
-        std::vector<libMesh::Real> T;
-        T.resize( points.size() );
+        value = gas_evaluator.k( T, Y );
+      }
+    else if( quantity_index == this->_cp_index )
+      {
+        std::vector<libMesh::Real> Y( this->_n_species );
+        libMesh::Real T = this->T(point,context);
+        this->mass_fractions( point, context, Y );
 
-	std::vector<std::vector<libMesh::Real> >  mass_fracs;
-	mass_fracs.resize( points.size() );
+        value = gas_evaluator.cp( T, Y );
+      }
+    // Now check for species dependent stuff
+    else
+      {
+        if( !this->_h_s_index.empty() )
+          {
+            libmesh_assert_equal_to( _h_s_index.size(), this->n_species() );
 
-        for( unsigned int i = 0; i < points.size(); i++ )
-	  {
-            mass_fracs[i].resize( this->_n_species );
-	  }
+            for( unsigned int s = 0; s < this->n_species(); s++ )
+              {
+                if( quantity_index == this->_h_s_index[s] )
+                  {
+                    libMesh::Real T = this->T(point,context);
 
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    T[p] = this->T(points[p],context);
-
-            this->mass_fractions( points[p], context, mass_fracs[p] );
+                    value = gas_evaluator.h_s( T, s );
+                    return;
+                  }
+              }
           }
-        
-        cache.set_values( Cache::TEMPERATURE, T );
-        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
 
-        for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-            mu_values.push_back( gas_evaluator.mu( cache, p ) );
-	  }
+        if( !this->_mole_fractions_index.empty() )
+          {
+            libmesh_assert_equal_to( _mole_fractions_index.size(), this->n_species() );
 
-	cache.set_values( Cache::MIXTURE_VISCOSITY, mu_values );
-      }
+            for( unsigned int s = 0; s < this->n_species(); s++ )
+              {
+                if( quantity_index == this->_mole_fractions_index[s] )
+                  {
+                    std::vector<libMesh::Real> Y( this->_n_species );
+                    this->mass_fractions( point, context, Y );
 
-    if( cache.is_active(Cache::SPECIES_THERMAL_CONDUCTIVITY) )
-      {
-	libmesh_not_implemented();
-      }
+                    libMesh::Real M = gas_evaluator.M_mix(Y);
 
-    if( cache.is_active(Cache::MIXTURE_THERMAL_CONDUCTIVITY) )
-      {
-	std::vector<libMesh::Real> k_values;
-	k_values.reserve( points.size() );
-
-        std::vector<libMesh::Real> T;
-        T.resize( points.size() );
-
-	std::vector<std::vector<libMesh::Real> >  mass_fracs;
-	mass_fracs.resize( points.size() );
-
-        for( unsigned int i = 0; i < points.size(); i++ )
-	  {
-            mass_fracs[i].resize( this->_n_species );
-	  }
-
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    T[p] = this->T(points[p],context);
-
-            this->mass_fractions( points[p], context, mass_fracs[p] );
+                    value = gas_evaluator.X( s, M, Y[s] );
+                    return;
+                  }
+              }
           }
-        
-        cache.set_values( Cache::TEMPERATURE, T );
-        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
 
-        for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    k_values.push_back( gas_evaluator.k( cache, p ) );
-	  }
+        if( !this->_omega_dot_index.empty() )
+          {
+            libmesh_assert_equal_to( _omega_dot_index.size(), this->n_species() );
 
-	cache.set_values( Cache::MIXTURE_THERMAL_CONDUCTIVITY, k_values );
-      }
+            for( unsigned int s = 0; s < this->n_species(); s++ )
+              {
+                if( quantity_index == this->_omega_dot_index[s] )
+                  {
+                    std::vector<libMesh::Real> Y( this->n_species() );
+                    this->mass_fractions( point, context, Y );
 
-    if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_P) )
-      {
-	libmesh_not_implemented();
-      }
+                    libMesh::Real T = this->T(point,context);
 
-    if( cache.is_active(Cache::MIXTURE_SPECIFIC_HEAT_P) )
-      {
-	std::vector<libMesh::Real> cp_values;
-	cp_values.reserve( points.size() );
+                    libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        std::vector<libMesh::Real> T;
-        T.resize( points.size() );
+                    libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
 
-	std::vector<std::vector<libMesh::Real> >  mass_fracs;
-	mass_fracs.resize( points.size() );
+                    std::vector<libMesh::Real> omega_dot( this->n_species() );
+                    gas_evaluator.omega_dot( T, rho, Y, omega_dot );
 
-        for( unsigned int i = 0; i < points.size(); i++ )
-	  {
-            mass_fracs[i].resize( this->_n_species );
-	  }
-
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    T[p] = this->T(points[p],context);
-
-            this->mass_fractions( points[p], context, mass_fracs[p] );
+                    value = omega_dot[s];
+                    return;
+                  }
+              }
           }
-        
-        cache.set_values( Cache::TEMPERATURE, T );
-        cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fracs );
 
-        for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    cp_values.push_back( gas_evaluator.cp( cache, p ) );
-	  }
-
-	cache.set_values( Cache::MIXTURE_SPECIFIC_HEAT_P, cp_values );
-      }
-
-    if( cache.is_active(Cache::SPECIES_SPECIFIC_HEAT_V) )
-      {
-	libmesh_not_implemented();
-      }
-
-    if( cache.is_active(Cache::MIXTURE_SPECIFIC_HEAT_V) )
-      {
-	libmesh_not_implemented();
-      }
-
-    if( cache.is_active(Cache::MOLE_FRACTIONS) )
-      {
-	std::vector<std::vector<libMesh::Real> > mole_fractions;
-	mole_fractions.resize( points.size() );
-
-	for( unsigned int i = 0; i < points.size(); i++ )
-	  {
-	    mole_fractions[i].resize( this->_n_species );
-	  }
-
-	std::vector<libMesh::Real> mass_fracs( this->_n_species );
-
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    this->mass_fractions( points[p], context, mass_fracs );
-
-	    libMesh::Real M = gas_evaluator.M_mix(mass_fracs);
-
-	    gas_evaluator.X(M,mass_fracs,mole_fractions[p]);
-	  }
-
-	cache.set_vector_values(Cache::MOLE_FRACTIONS, mole_fractions );
-      }
-
-    if( cache.is_active(Cache::SPECIES_ENTHALPY) )
-      {
-	{
-	  std::vector<libMesh::Real> T;
-	  T.resize( points.size() );
-
-	  for( unsigned int p = 0; p < points.size(); p++ )
-	    {
-	      T[p] = this->T(points[p],context);
-	    }
-
-	  cache.set_values( Cache::TEMPERATURE, T );
-	}
-
-	std::vector<std::vector<libMesh::Real> > h;
-	h.resize( points.size() );
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    h[p].resize(this->_n_species);
-	    gas_evaluator.h_s(cache, p, h[p]);
-	  }
-
-	cache.set_vector_values( Cache::SPECIES_ENTHALPY, h );
-      }
-
-    if( cache.is_active(Cache::OMEGA_DOT) )
-      {
-	{
-	  std::vector<libMesh::Real> T, R, rho, p0;
-	  T.resize( points.size() );
-	  R.resize( points.size() );
-          rho.resize( points.size() );
-          p0.resize( points.size() );
-
-	  std::vector<std::vector<libMesh::Real> > Y;
-	  Y.resize( points.size() );
-
-	  for( unsigned int p = 0; p < points.size(); p++ )
-	    {
-	      T[p] = this->T(points[p],context);
-
-	      Y[p].resize(this->_n_species);
-	      this->mass_fractions( points[p], context, Y[p] );
-
-              R[p] = gas_evaluator.R_mix( Y[p] );
-
-              p0[p] = this->get_p0_steady(context, points[p] );
-
-              rho[p] = this->rho( T[p], p0[p], R[p] );
-	    }
-
-	  cache.set_values( Cache::TEMPERATURE, T );
-	  cache.set_values( Cache::MIXTURE_GAS_CONSTANT, R);
-          cache.set_values(Cache::MIXTURE_DENSITY, rho);
-          cache.set_values(Cache::THERMO_PRESSURE, p0);
-	  cache.set_vector_values( Cache::MASS_FRACTIONS, Y );
-	}
-
-	std::vector<std::vector<libMesh::Real> > omega_dot;
-	omega_dot.resize( points.size() );
-
-	for( unsigned int p = 0; p < points.size(); p++ )
-	  {
-	    omega_dot[p].resize(this->_n_species);
-	    gas_evaluator.omega_dot( cache, p, omega_dot[p] );
-	  }
-
-	cache.set_vector_values(Cache::OMEGA_DOT, omega_dot );
-      }
+      } // if/else quantity_index
 
     return;
   }
-  
+
   template<typename Mixture, typename Evaluator>
   libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::cp_mix( const libMesh::Real T,
                                                                         const std::vector<libMesh::Real>& Y )

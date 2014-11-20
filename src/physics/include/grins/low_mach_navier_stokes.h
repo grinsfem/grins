@@ -49,6 +49,10 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
+    //! Register postprocessing variables for LowMachNavierStokes
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     // Context initialization
     virtual void init_context( AssemblyContext& context );
 
@@ -73,9 +77,10 @@ namespace GRINS
     virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
 							CachedValues& cache );
 
-    virtual void compute_element_cache( const AssemblyContext& context,
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
 
   protected:
 
@@ -83,6 +88,9 @@ namespace GRINS
     bool _pin_pressure;
     
     PressurePinning _p_pinning;
+
+    //! Cache index for density post-processing
+    unsigned int _rho_index;
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian, 

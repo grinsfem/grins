@@ -30,6 +30,7 @@
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -55,6 +56,50 @@ namespace GRINS
   {
     context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
     context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+
+    return;
+  }
+
+  template<class Mu>
+  void VelocityPenalty<Mu>::register_postprocessing_vars( const GetPot& input,
+                                                          PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+velocity_penalty+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("velocity_penalty") )
+              {
+                _velocity_penalty_x_index = postprocessing.register_quantity( std::string("vel_penalty_x") );
+
+                _velocity_penalty_y_index = postprocessing.register_quantity( std::string("vel_penalty_y") );
+
+                _velocity_penalty_z_index = postprocessing.register_quantity( std::string("vel_penalty_z") );
+              }
+            else if( name == std::string("velocity_penalty_base") )
+              {
+                _velocity_penalty_base_x_index = postprocessing.register_quantity( std::string("vel_penalty_base_x") );
+
+                _velocity_penalty_base_y_index = postprocessing.register_quantity( std::string("vel_penalty_base_y") );
+
+                _velocity_penalty_base_z_index = postprocessing.register_quantity( std::string("vel_penalty_base_z") );
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+this->_physics_name << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: velocity_penalty" << std::endl
+                          << "                              velocity_penalty_base" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
 
     return;
   }
@@ -176,47 +221,53 @@ namespace GRINS
   }
 
   template<class Mu>
-  void VelocityPenalty<Mu>::compute_element_cache
-    ( const AssemblyContext& context, 
-      const std::vector<libMesh::Point>& points,
-      CachedValues& cache )
+  void VelocityPenalty<Mu>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                            const AssemblyContext& context,
+                                                            const libMesh::Point& point,
+                                                            libMesh::Real& value )
   {
-    if (cache.is_active(Cache::VELOCITY_PENALTY))
-      {
-	std::vector<libMesh::Gradient> penalty_vals;
-	penalty_vals.reserve( points.size() );
-	
-        libMesh::DenseVector<libMesh::Number> output_vec(3);
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
 
-	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
-	     point != points.end(); point++ )
-          {
-            (*this->normal_vector_function)(*point, context.time,
-                                      output_vec);
-            libMesh::Gradient penalty_vec
-              (output_vec(0), output_vec(1), output_vec(2));
-            penalty_vals.push_back(penalty_vec);
-          }
-        cache.set_gradient_values(Cache::VELOCITY_PENALTY, penalty_vals);
-      }
-    if (cache.is_active(Cache::VELOCITY_PENALTY_BASE))
-      {
-	std::vector<libMesh::Gradient> base_vals;
-	base_vals.reserve( points.size() );
-	
-        libMesh::DenseVector<libMesh::Number> output_vec(3);
+    libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-	for( std::vector<libMesh::Point>::const_iterator point = points.begin();
-	     point != points.end(); point++ )
-          {
-            (*this->base_velocity_function)(*point, context.time,
-                                      output_vec);
-            libMesh::Gradient base_vec
-              (output_vec(0), output_vec(1), output_vec(2));
-            base_vals.push_back(base_vec);
-          }
-        cache.set_gradient_values(Cache::VELOCITY_PENALTY_BASE, base_vals);
+    if( quantity_index == this->_velocity_penalty_x_index )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
       }
+    else if( quantity_index == this->_velocity_penalty_y_index )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_z_index )
+      {
+        (*this->normal_vector_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_x_index )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_y_index )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_base_z_index )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
+
+    return;
   }
 
 } // namespace GRINS

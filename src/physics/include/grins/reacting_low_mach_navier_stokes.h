@@ -42,6 +42,10 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
+    //! Register postprocessing variables for ReactingLowMachNavierStokes
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     // Context initialization
     virtual void init_context( AssemblyContext& context );
 
@@ -69,9 +73,10 @@ namespace GRINS
     virtual void compute_side_time_derivative_cache( const AssemblyContext& context, 
 						     CachedValues& cache );
 
-    virtual void compute_element_cache( const AssemblyContext& context,
-					const std::vector<libMesh::Point>& points,
-					CachedValues& cache );
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
 
     const Mixture& gas_mixture() const;
 
@@ -112,6 +117,30 @@ namespace GRINS
     bool _pin_pressure;
     
     PressurePinning _p_pinning;
+
+    //! Index from registering this quantity
+    unsigned int _rho_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _species_viscosity;
+
+    //! Index from registering this quantity
+    unsigned int _mu_index;
+
+    //! Index from registering this quantity
+    unsigned int _k_index;
+
+    //! Index from registering this quantity
+    unsigned int _cp_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _mole_fractions_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _h_s_index;
+
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _omega_dot_index;
 
   private:
 

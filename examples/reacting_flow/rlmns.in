@@ -7,13 +7,15 @@ enabled_physics = 'ReactingLowMachNavierStokes'
 
 species   = 'N2 N'
 chem_file = 'air_2sp.xml'
-mixture   = 'air2sp'
 
-[../Transport]
+[../Antioch]
 
-viscosity = '1.0e-4'
-thermal_conductivity = '.04'
-Lewis_number = '1.4'
+mixing_model = 'wilke'
+viscosity_model = 'blottner'
+conductivity_model = 'eucken'
+diffusivity_model = 'constant_lewis'
+
+Le = '1.4'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
@@ -34,9 +36,7 @@ p0 = '10' #[Pa]
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
 
-chemistry_library      = 'cantera'
-transport_library      = 'grins_constant'
-thermodynamics_library = 'cantera'
+thermochemistry_library = 'antioch'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -67,6 +67,8 @@ bound_species_3 = '0.99 0.01'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
+
+output_vars = 'rho k mu cp h_s mole_fractions omega_dot'
 
 []
 
@@ -111,8 +113,6 @@ vis_output_file_prefix = 'output'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
-
-output_vars = 'rho_mix mole_fractions omega_dot'
 
 # Options for print info to the screen
 [screen-options]

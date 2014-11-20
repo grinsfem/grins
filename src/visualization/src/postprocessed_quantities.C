@@ -31,49 +31,9 @@
 namespace GRINS
 {
   template<class NumericType>
-  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
-    : libMesh::FEMFunctionBase<NumericType>(),
-      _prev_point(1.0e15,0.0,0.0) //Initialize to an absurd value
+  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& /*input*/ )
+    : libMesh::FEMFunctionBase<NumericType>()
   {
-    this->build_name_map();
-
-    /* Parse the quantities requested for postprocessing and cache the 
-       corresponding enum value */
-    unsigned int n_quantities = input.vector_variable_size( "vis-options/output_vars" );
-    std::vector<std::string> names(n_quantities);
-    _quantities.resize(n_quantities);
-
-    for( unsigned int n = 0; n < n_quantities; n++ )
-      {
-	names[n] = input("vis-options/output_vars", "DIE!", n);
-	
-	typename std::map<std::string, unsigned int>::const_iterator name_it = 
-	  _quantity_name_map.find(names[n]);
-	
-	if( name_it != _quantity_name_map.end() )
-	  {
-	    _quantities[n] = name_it->second;
-	  }
-	else
-	  {
-	    std::cerr << "Error: Invalid name " << names[n] << " for PostProcessedQuantity." 
-		      << std::endl;
-	    libmesh_error();
-	  }
-
-	// Need to cache species names if needed.
-	if( names[n] == std::string("mole_fractions") )
-	  {
-	    unsigned int species_size = input.vector_variable_size( "Physics/Chemistry/species" );
-	    _species_names.resize(species_size);
-	    
-	    for( unsigned int s = 0; s < species_size; s++ )
-	      {
-		_species_names[s] = input("Physics/Chemistry/species","DIE!",s);
-	      }
-	  }
-      }
-
     return;
   }
 
@@ -84,395 +44,42 @@ namespace GRINS
   }
 
   template<class NumericType>
+  unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name )
+  {
+    // Check if this quantity has already been registered
+    if( _quantity_name_index_map.find(name) != _quantity_name_index_map.end() )
+      {
+        std::cerr << "Error: trying to add existing quantity: " << name << std::endl;
+        libmesh_error();
+      }
+
+    unsigned int new_index = _quantity_name_index_map.size();
+
+    _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
+
+    return new_index;
+  }
+
+  template<class NumericType>
   void PostProcessedQuantities<NumericType>::initialize( MultiphysicsSystem& system,
 							 libMesh::EquationSystems& equation_systems )
   {
     // Only need to initialize if the user requested any output quantities.
-    if( !_quantities.empty() )
+    if( !_quantity_name_index_map.empty() )
       {
-	// Need to cache the MultiphysicsSystem
-	_multiphysics_sys = &system;
- 
-	libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
+        // Need to cache the MultiphysicsSystem
+        _multiphysics_sys = &system;
 
-	// Do sanity check for each of the variables and add variables to the output system as well as
-	// cache needed VariableIndex for each of the variables needed from the MultiphysicsSystem
-	for( typename std::vector<unsigned int>::const_iterator it = _quantities.begin();
-	     it != _quantities.end(); it++ )
-	  {
-	    this->init_quantities(system,output_system,*it);
-	  }
+        libMesh::System& output_system = equation_systems.add_system<libMesh::System>("interior_output");
 
+        for( std::map<std::string, unsigned int>::const_iterator it = _quantity_name_index_map.begin();
+             it != _quantity_name_index_map.end();
+             ++it )
+          {
+            unsigned int var = output_system.add_variable( it->first, libMesh::FIRST );
+            _quantity_index_var_map.insert( std::make_pair(var,it->second) );
+          }
       }
-    
-    return;
-  }
-
-  template<class NumericType>
-  void PostProcessedQuantities<NumericType>::init_quantities( const MultiphysicsSystem& multiphysics_system,
-							      libMesh::System& output_system,
-							      const unsigned int component )
-  {
-    switch( component )
-      {
-      case(PERFECT_GAS_DENSITY):
-	{
-	  if( !multiphysics_system.has_physics(low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< low_mach_navier_stokes 
-			<< " enable for perfect gas density calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("rho", libMesh::FIRST),
-                             PERFECT_GAS_DENSITY) );
-
-	  _cache.add_quantity(Cache::PERFECT_GAS_DENSITY);
-	}
-	break;
-	    
-      case(MIXTURE_DENSITY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mixture gas density calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("rho", libMesh::FIRST),
-                             MIXTURE_DENSITY) );
-
-	  _cache.add_quantity(Cache::MIXTURE_DENSITY);
-	}
-	break;
-	    
-      case(PERFECT_GAS_VISCOSITY):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-      case(SPECIES_VISCOSITY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for species viscosity calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("mu_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, SPECIES_VISCOSITY) );
-	    }
-	  // We need T, p0, and mass fractions too
-	  _cache.add_quantity(Cache::TEMPERATURE);
-	  _cache.add_quantity(Cache::THERMO_PRESSURE);
-	  _cache.add_quantity(Cache::MASS_FRACTIONS);
-	  _cache.add_quantity(Cache::SPECIES_VISCOSITY);
-	}
-	break;
-
-      case(MIXTURE_VISCOSITY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mixture viscosity calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("mu", libMesh::FIRST),
-                             MIXTURE_VISCOSITY) );
-
-	  _cache.add_quantity(Cache::MIXTURE_VISCOSITY);
-	}
-	break;
-
-      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_THERMAL_CONDUCTIVITY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for species thermal conductivity calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("k_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, SPECIES_THERMAL_CONDUCTIVITY) );
-	    }
-
-	  _cache.add_quantity(Cache::SPECIES_THERMAL_CONDUCTIVITY);
-	}
-	break;
-
-      case(MIXTURE_THERMAL_CONDUCTIVITY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mixture thermal conductivity calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("k", libMesh::FIRST),
-                             MIXTURE_THERMAL_CONDUCTIVITY) );
-
-	  _cache.add_quantity(Cache::MIXTURE_THERMAL_CONDUCTIVITY);
-	}
-	break;
-
-      case(PERFECT_GAS_SPECIFIC_HEAT_P):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_SPECIFIC_HEAT_P):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for species cp calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("cp_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_P) );
-	    }
-
-	  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_P);
-	}
-	break;
-
-      case(MIXTURE_SPECIFIC_HEAT_P):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mixture cp calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("cp", libMesh::FIRST),
-                             MIXTURE_SPECIFIC_HEAT_P) );
-
-	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_P);
-	}
-	break;
-
-      case(PERFECT_GAS_SPECIFIC_HEAT_V):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_SPECIFIC_HEAT_V):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for species cv calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("cv_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, SPECIES_SPECIFIC_HEAT_V) );
-	    }
-
-	  _cache.add_quantity(Cache::SPECIES_SPECIFIC_HEAT_V);
-	}
-	break;
-
-      case(MIXTURE_SPECIFIC_HEAT_V):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mixture cv calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-	  _quantity_var_map.insert
-            ( std::make_pair(output_system.add_variable("cp", libMesh::FIRST),
-                             MIXTURE_SPECIFIC_HEAT_V) );
-
-	  _cache.add_quantity(Cache::MIXTURE_SPECIFIC_HEAT_V);
-	}
-	break;
-
-      case(MOLE_FRACTIONS):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for mole fraction calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("X_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, MOLE_FRACTIONS) );
-	    }
-
-	  _cache.add_quantity(Cache::MOLE_FRACTIONS);
-	}
-	break;
-		
-      case(SPECIES_ENTHALPY):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for omega_dot calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("h_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, SPECIES_ENTHALPY) );
-	    }
-
-	  // We need T too
-	  _cache.add_quantity(Cache::TEMPERATURE);
-	  _cache.add_quantity(Cache::SPECIES_ENTHALPY);
-	}
-	break;
-
-      case(OMEGA_DOT):
-	{
-	  if( !multiphysics_system.has_physics(reacting_low_mach_navier_stokes) )
-	    {
-	      std::cerr << "Error: Must have "<< reacting_low_mach_navier_stokes 
-			<< " enable for omega_dot calculation."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  for( unsigned int s = 0; s < _species_names.size(); s++ )
-	    {
-	      VariableIndex var = output_system.add_variable
-                ("omega_"+_species_names[s], libMesh::FIRST);
-	      _species_var_map.insert( std::make_pair(var, s) );
-	      _quantity_var_map.insert( std::make_pair(var, OMEGA_DOT) );
-	    }
-
-	  // We need T, p0, and mass fractions too
-	  _cache.add_quantity(Cache::TEMPERATURE);
-	  _cache.add_quantity(Cache::THERMO_PRESSURE);
-	  _cache.add_quantity(Cache::MASS_FRACTIONS);
-	  _cache.add_quantity(Cache::MIXTURE_DENSITY);
-	  _cache.add_quantity(Cache::MIXTURE_GAS_CONSTANT);
-	  _cache.add_quantity(Cache::MOLAR_DENSITIES);
-	  _cache.add_quantity(Cache::SPECIES_NORMALIZED_ENTHALPY_MINUS_NORMALIZED_ENTROPY);
-	  _cache.add_quantity(Cache::OMEGA_DOT);
-	}
-	break;
-
-      case(VELOCITY_PENALTY):
-	{
-	  if( !multiphysics_system.has_physics(velocity_penalty) )
-	    {
-	      std::cerr << "Error: Must have " << velocity_penalty
-			<< " enabled to output penalty configuration."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  VariableIndex var_x = output_system.add_variable
-            ("vel_penalty_x", libMesh::FIRST);
-          // Abusing "species" map to hold component indices
-	  _species_var_map.insert( std::make_pair(var_x, 0) );
-	  _quantity_var_map.insert( std::make_pair(var_x, VELOCITY_PENALTY) );
-
-	  VariableIndex var_y = output_system.add_variable
-            ("vel_penalty_y", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_y, 1) );
-	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY) );
-
-	  VariableIndex var_z = output_system.add_variable
-            ("vel_penalty_z", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_z, 2) );
-	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY) );
-
-	  _cache.add_quantity(Cache::VELOCITY_PENALTY);
-	}
-	break;
-
-      case(VELOCITY_PENALTY_BASE):
-	{
-	  if( !multiphysics_system.has_physics(velocity_penalty) )
-	    {
-	      std::cerr << "Error: Must have " << velocity_penalty
-			<< " enabled to output penalty configuration."
-			<< std::endl;
-	      libmesh_error();
-	    }
-
-	  VariableIndex var_x = output_system.add_variable
-            ("vel_penalty_base_x", libMesh::FIRST);
-          // Abusing "species" map to hold component indices
-	  _species_var_map.insert( std::make_pair(var_x, 0) );
-	  _quantity_var_map.insert( std::make_pair(var_x, VELOCITY_PENALTY_BASE) );
-
-	  VariableIndex var_y = output_system.add_variable
-            ("vel_penalty_base_y", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_y, 1) );
-	  _quantity_var_map.insert( std::make_pair(var_y, VELOCITY_PENALTY_BASE) );
-
-	  VariableIndex var_z = output_system.add_variable
-            ("vel_penalty_base_z", libMesh::FIRST);
-	  _species_var_map.insert( std::make_pair(var_z, 2) );
-	  _quantity_var_map.insert( std::make_pair(var_z, VELOCITY_PENALTY_BASE) );
-
-	  _cache.add_quantity(Cache::VELOCITY_PENALTY_BASE);
-	}
-	break;
-
-      default:
-	{
-	  std::cerr << "Error: Invalid quantity " << component << std::endl;
-	  libmesh_error();
-	}
-      } // end switch
 
     return;
   }
@@ -481,11 +88,12 @@ namespace GRINS
   void PostProcessedQuantities<NumericType>::update_quantities( libMesh::EquationSystems& equation_systems )
   {
     // Only do the projection if the user actually added any quantities to compute.
-    if( !_quantities.empty() )
+    if( !_quantity_name_index_map.empty() )
       {
-	libMesh::System& output_system = equation_systems.get_system<libMesh::System>("interior_output");
-	output_system.project_solution(this);
+        libMesh::System& output_system = equation_systems.get_system<libMesh::System>("interior_output");
+        output_system.project_solution(this);
       }
+
     return;
   }
   
@@ -504,247 +112,43 @@ namespace GRINS
 	_multiphysics_context->elem_fe_reinit();
       }
 
-    /* Optimization since we expect this function to be called many times with
-       the same point. _prev_point initialized to something absurd so this should 
-       always be false the first time. */
-    if( _prev_point != p )
-      {
-	_prev_point = p;
-	std::vector<libMesh::Point> point_vec(1,p);
-	this->_cache.clear();
-	_multiphysics_sys->compute_element_cache( *(this->_multiphysics_context), point_vec, this->_cache );
-      }
+    libMesh::Real value = 0.0;
 
-    return this->compute_quantities( component );
-  }
+    unsigned int quantity_index = _quantity_index_var_map.find(component)->second;
 
-  template<class NumericType>
-  NumericType PostProcessedQuantities<NumericType>::compute_quantities( const unsigned int component ) const
-  {
-
-    NumericType value = 0.0;
-
-    switch( _quantity_var_map.find(component)->second )
-      {
-
-      case(PERFECT_GAS_DENSITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::PERFECT_GAS_DENSITY)[0];
-	}
-	break;
-	    
-      case(MIXTURE_DENSITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::MIXTURE_DENSITY)[0];
-	}
-	break;
-	    
-      case(PERFECT_GAS_VISCOSITY):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_VISCOSITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_VISCOSITY)[0][species];
-	}
-	break;
-
-      case(MIXTURE_VISCOSITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[0];
-	}
-	break;
-
-      case(PERFECT_GAS_THERMAL_CONDUCTIVITY):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_THERMAL_CONDUCTIVITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_THERMAL_CONDUCTIVITY)[0][species];
-	}
-	break;
-
-      case(MIXTURE_THERMAL_CONDUCTIVITY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY)[0];
-	}
-	break;
-
-      case(PERFECT_GAS_SPECIFIC_HEAT_P):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_SPECIFIC_HEAT_P):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_SPECIFIC_HEAT_P)[0][species];
-	}
-	break;
-
-      case(MIXTURE_SPECIFIC_HEAT_P):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[0];
-	}
-	break;
-
-      case(PERFECT_GAS_SPECIFIC_HEAT_V):
-	{
-	  libmesh_not_implemented();
-	}
-	break;
-
-      case(SPECIES_SPECIFIC_HEAT_V):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_SPECIFIC_HEAT_V)[0][species];
-	}
-	break;
-
-      case(MIXTURE_SPECIFIC_HEAT_V):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  value = this->_cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_V)[0];
-	}
-	break;
-
-      case(MOLE_FRACTIONS):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::MOLE_FRACTIONS)[0][species];
-	}
-	break;
-
-      case(SPECIES_ENTHALPY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[0][species];
-	}
-	break;
-
-      case(OMEGA_DOT):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int species = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_vector_values(Cache::OMEGA_DOT)[0][species];
-	}
-	break;
-
-      case(VELOCITY_PENALTY):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int direction = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_gradient_values(Cache::VELOCITY_PENALTY)[0](direction);
-	}
-	break;
-
-      case(VELOCITY_PENALTY_BASE):
-	{
-	  // Since we only use 1 libMesh::Point, value will always be 0 index of returned vector
-	  libmesh_assert( _species_var_map.find(component) != _species_var_map.end() );
-	  unsigned int direction = _species_var_map.find(component)->second;
-	  value = this->_cache.get_cached_gradient_values(Cache::VELOCITY_PENALTY_BASE)[0](direction);
-	}
-	break;
-
-      default:
-	{
-	  std::cerr << "Error: Invalid quantity " << _quantity_var_map.find(component)->second << std::endl;
-	  libmesh_error();
-	}
-
-      } // end switch
+    _multiphysics_sys->compute_postprocessed_quantity( quantity_index,
+                                                       *(this->_multiphysics_context),
+                                                       p, value );
 
     return value;
   }
-    
+
   template<class NumericType>
   void PostProcessedQuantities<NumericType>::init_context( const libMesh::FEMContext& context )
   {
     // Make sure we prepare shape functions for our output variables.
     /*! \todo I believe this is redundant because it's done in the project_vector call. Double check. */
-    for( typename std::map<VariableIndex,unsigned int>::const_iterator it = _quantity_var_map.begin();
-	 it != _quantity_var_map.end(); it++ )
+    for( typename std::map<VariableIndex,unsigned int>::const_iterator it = _quantity_index_var_map.begin();
+         it != _quantity_index_var_map.end(); it++ )
       {
-	libMesh::FEBase* elem_fe = NULL;
-	context.get_element_fe( it->first, elem_fe );
-	elem_fe->get_phi();
-	elem_fe->get_dphi();
-	elem_fe->get_JxW();
-	elem_fe->get_xyz();
+        libMesh::FEBase* elem_fe = NULL;
+        context.get_element_fe( it->first, elem_fe );
+        elem_fe->get_phi();
+        elem_fe->get_dphi();
+        elem_fe->get_JxW();
+        elem_fe->get_xyz();
 
-	libMesh::FEBase* side_fe = NULL;
-	context.get_side_fe( it->first, side_fe );
-	side_fe->get_phi();
-	side_fe->get_dphi();
-	side_fe->get_JxW();
-	side_fe->get_xyz();
+        libMesh::FEBase* side_fe = NULL;
+        context.get_side_fe( it->first, side_fe );
+        side_fe->get_phi();
+        side_fe->get_dphi();
+        side_fe->get_JxW();
+        side_fe->get_xyz();
       }
 
     // Create the context we'll be using to compute MultiphysicsSystem quantities
     _multiphysics_context.reset( new AssemblyContext( *_multiphysics_sys ) );
     _multiphysics_sys->init_context(*_multiphysics_context);
-    return;
-  }
-
-  template<class NumericType>
-  void PostProcessedQuantities<NumericType>::build_name_map()
-  {
-    _quantity_name_map["rho"]            = PERFECT_GAS_DENSITY;
-    _quantity_name_map["rho_mix"]        = MIXTURE_DENSITY;
-
-    _quantity_name_map["mu"]             = PERFECT_GAS_VISCOSITY;
-    _quantity_name_map["mu_s"]           = SPECIES_VISCOSITY;
-    _quantity_name_map["mu_mix"]         = MIXTURE_VISCOSITY;
-
-    _quantity_name_map["k"]              = PERFECT_GAS_THERMAL_CONDUCTIVITY;
-    _quantity_name_map["k_s"]            = SPECIES_THERMAL_CONDUCTIVITY;
-    _quantity_name_map["k_mix"]          = MIXTURE_THERMAL_CONDUCTIVITY;
-
-    _quantity_name_map["cp"]             = PERFECT_GAS_SPECIFIC_HEAT_P;
-    _quantity_name_map["cp_s"]           = SPECIES_SPECIFIC_HEAT_P;
-    _quantity_name_map["cp_mix"]         = MIXTURE_SPECIFIC_HEAT_P;
-
-    _quantity_name_map["cv"]             = PERFECT_GAS_SPECIFIC_HEAT_V;
-    _quantity_name_map["cv_s"]           = SPECIES_SPECIFIC_HEAT_V;
-    _quantity_name_map["cv_mix"]         = MIXTURE_SPECIFIC_HEAT_V;
-
-    _quantity_name_map["mole_fractions"] = MOLE_FRACTIONS;
-
-    _quantity_name_map["h_s"]            = SPECIES_ENTHALPY;
-    
-    _quantity_name_map["omega_dot"]      = OMEGA_DOT;
-
-    _quantity_name_map["velocity_penalty"]      = VELOCITY_PENALTY;
-    _quantity_name_map["velocity_penalty_base"] = VELOCITY_PENALTY_BASE;
-
     return;
   }
 
