@@ -67,7 +67,7 @@ namespace GRINS
   }
 
   inline
-    libMesh::Real ConstantViscosity::operator()(AssemblyContext& context, unsigned int qp) const
+  libMesh::Real ConstantViscosity::operator()(AssemblyContext& /*context*/, unsigned int /*qp*/) const
   {
     return _mu;
   }
