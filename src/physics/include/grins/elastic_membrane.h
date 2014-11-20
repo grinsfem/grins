@@ -40,6 +40,10 @@ namespace GRINS
                      bool lambda_sq_coupled, bool lambda_sq_var );
     virtual ~ElasticMembrane();
 
+    //! Register postprocessing variables for ElasticMembrane
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context,

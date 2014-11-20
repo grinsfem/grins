@@ -31,6 +31,7 @@
 #include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/elasticity_tensor.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -68,6 +69,57 @@ namespace GRINS
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::~ElasticMembrane()
   {
+    return;
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
+                                                                       PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+elastic_membrane+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("stress") )
+              {
+                // sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
+                // sigma_zz = 0 by assumption of this Physics
+                _stress_indices.resize(3);
+
+                this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
+
+                this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
+
+                this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
+              }
+            else if( name == std::string("strain") )
+              {
+                // eps_xx, eps_xy, eps_yy, eps_yx = eps_xy
+                _strain_indices.resize(3);
+
+                this->_strain_indices[0] = postprocessing.register_quantity("strain_xx");
+
+                this->_strain_indices[1] = postprocessing.register_quantity("strain_xy");
+
+                this->_strain_indices[2] = postprocessing.register_quantity("strain_yy");
+              }
+            else
+              {
+                std::cerr << "Error: Invalue output_vars value for "+elastic_membrane << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: stress" << std::endl
+                          << "                              strain" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
