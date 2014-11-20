@@ -154,14 +154,6 @@ namespace GRINS
     const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
     const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
 
-    const std::vector<libMesh::Real>& dxidx  = context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    const std::vector<libMesh::Real>& dxidy  = context.get_element_fe(_disp_vars.u_var())->get_dxidy();
-    const std::vector<libMesh::Real>& dxidz  = context.get_element_fe(_disp_vars.u_var())->get_dxidz();
-
-    const std::vector<libMesh::Real>& detadx  = context.get_element_fe(_disp_vars.u_var())->get_detadx();
-    const std::vector<libMesh::Real>& detady  = context.get_element_fe(_disp_vars.u_var())->get_detady();
-    const std::vector<libMesh::Real>& detadz  = context.get_element_fe(_disp_vars.u_var())->get_detadz();
-
     const unsigned int dim = 2; // The manifold dimension is always 2 for this physics
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -180,48 +172,14 @@ namespace GRINS
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
 
-        libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
-        libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
         
-        libMesh::RealGradient dxi( dxidx[qp], dxidy[qp], dxidz[qp] );
-        libMesh::RealGradient deta( detadx[qp], detady[qp], detadz[qp] );
+        libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+        libMesh::Real lambda_sq = 0;
 
-        // Covariant metric tensor of reference configuration
-        libMesh::TensorValue<libMesh::Real> a_cov( dxdxi[qp]*dxdxi[qp], dxdxi[qp]*dxdeta[qp], 0.0,
-                                                   dxdeta[qp]*dxdxi[qp], dxdeta[qp]*dxdeta[qp] );
-
-        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-
-        // Covariant metric tensor of current configuration
-        libMesh::TensorValue<libMesh::Real> A_cov( (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi),
-                                                   (dxdxi[qp] + dudxi)*(dxdeta[qp] + dudeta), 0.0,
-                                                   (dxdeta[qp] + dudeta)*(dxdxi[qp] + dudxi),
-                                                   (dxdeta[qp] + dudeta)*(dxdeta[qp] + dudeta) );
-
-        // Contravariant metric tensor of reference configuration
-        libMesh::TensorValue<libMesh::Real> a_contra( dxi*dxi, dxi*deta, 0.0,
-                                                      deta*dxi, deta*deta );
-
-        // Contravariant metric tensor in current configuration is A_cov^{-1}
-        libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
-        libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(1,1)/det_A, -A_cov(0,1)/det_A, 0.0,
-                                                      -A_cov(1,0)/det_A,  A_cov(0,0)/det_A );
-
-        a_cov(2,2)    = 1.0;
-        a_contra(2,2) = 1.0;
-
-        // If the material is incompressible, lambda^2 is known
-        libMesh::Real lambda_sq = det_a/det_A;
-
-        // If the material is compressible, then lambda_sq is an independent variable
-        if( _lambda_sq_var )
-          {
-            libmesh_not_implemented();
-          }
-
-        A_cov(2,2) = lambda_sq;
-        A_contra(2,2) = 1.0/lambda_sq;
-
+        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())),
+                                      grad_u, grad_v, grad_w,
+                                      a_cov, a_contra, A_cov, A_contra,
+                                      lambda_sq );
 
         // Compute stress tensor
         libMesh::TensorValue<libMesh::Real> tau;
@@ -362,14 +320,6 @@ namespace GRINS
         const std::vector<libMesh::RealGradient>& dxdxi  = fe_new->get_dxyzdxi();
         const std::vector<libMesh::RealGradient>& dxdeta = fe_new->get_dxyzdeta();
 
-        const std::vector<libMesh::Real>& dxidx  = fe_new->get_dxidx();
-        const std::vector<libMesh::Real>& dxidy  = fe_new->get_dxidy();
-        const std::vector<libMesh::Real>& dxidz  = fe_new->get_dxidz();
-
-        const std::vector<libMesh::Real>& detadx  = fe_new->get_detadx();
-        const std::vector<libMesh::Real>& detady  = fe_new->get_detady();
-        const std::vector<libMesh::Real>& detadz  = fe_new->get_detadz();
-
         // Gradients are w.r.t. master element coordinates
         libMesh::Gradient grad_u, grad_v, grad_w;
         for( unsigned int d = 0; d < n_u_dofs; d++ )
@@ -384,23 +334,11 @@ namespace GRINS
         libMesh::RealGradient grad_y( dxdxi[0](1), dxdeta[0](1) );
         libMesh::RealGradient grad_z( dxdxi[0](2), dxdeta[0](2) );
 
-        libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
-        libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
+        libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+        libMesh::Real lambda_sq = 0;
 
-        libMesh::RealGradient dxi( dxidx[0], dxidy[0], dxidz[0] );
-        libMesh::RealGradient deta( detadx[0], detady[0], detadz[0] );
-
-        // Covariant metric tensor of reference configuration
-        libMesh::TensorValue<libMesh::Real> a_cov( dxdxi[0]*dxdxi[0], dxdxi[0]*dxdeta[0], 0.0,
-                                                   dxdeta[0]*dxdxi[0], dxdeta[0]*dxdeta[0] );
-
-        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-
-        // Covariant metric tensor of current configuration
-        libMesh::TensorValue<libMesh::Real> A_cov( (dxdxi[0] + dudxi)*(dxdxi[0] + dudxi),
-                                                   (dxdxi[0] + dudxi)*(dxdeta[0] + dudeta), 0.0,
-                                                   (dxdeta[0] + dudeta)*(dxdxi[0] + dudxi),
-                                                   (dxdeta[0] + dudeta)*(dxdeta[0] + dudeta) );
+        this->compute_metric_tensors(0, *fe_new, grad_u, grad_v, grad_w,
+                                     a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
         // We have everything we need for strain now, so check if we are computing strain
         if( is_strain )
@@ -425,33 +363,10 @@ namespace GRINS
             return;
           }
 
-        // Contravariant metric tensor of reference configuration
-        libMesh::TensorValue<libMesh::Real> a_contra( dxi*dxi, dxi*deta, 0.0,
-                                                      deta*dxi, deta*deta );
-
-        // Contravariant metric tensor in current configuration is A_cov^{-1}
+        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
         libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
-        libMesh::TensorValue<libMesh::Real> A_contra(  A_cov(1,1)/det_A, -A_cov(0,1)/det_A, 0.0,
-                                                      -A_cov(1,0)/det_A,  A_cov(0,0)/det_A );
 
-        libMesh::Real I3 = det_A/det_a;
-
-        a_cov(2,2)    = 1.0;
-        a_contra(2,2) = 1.0;
-
-        // If the material is incompressible, lambda^2 is known
-        libMesh::Real lambda_sq = det_a/det_A;
-
-        // If the material is compressible, then lambda_sq is an independent variable
-        if( _lambda_sq_var )
-          {
-            libmesh_not_implemented();
-          }
-
-        A_cov(2,2) = lambda_sq;
-        A_contra(2,2) = 1.0/lambda_sq;
-
-        I3 *= lambda_sq;
+        libMesh::Real I3 = lambda_sq*det_A/det_a;
 
         libMesh::TensorValue<libMesh::Real> tau;
         _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
