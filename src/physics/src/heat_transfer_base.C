@@ -38,26 +38,28 @@
 
 namespace GRINS
 {
-
-  HeatTransferBase::HeatTransferBase( const std::string& physics_name, const GetPot& input )
+  template<class K>
+  HeatTransferBase<K>::HeatTransferBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
       _rho( input("Physics/"+heat_transfer+"/rho", 1.0) ),
       _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
-      _k( input("Physics/"+heat_transfer+"/k", 1.0) )
+      _k(input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  HeatTransferBase::~HeatTransferBase()
+  template<class K>
+  HeatTransferBase<K>::~HeatTransferBase()
   {
     return;
   }
 
-  void HeatTransferBase::init_variables( libMesh::FEMSystem* system )
+  template<class K>
+  void HeatTransferBase<K>::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -68,7 +70,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class K>
+  void HeatTransferBase<K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T_var());
@@ -76,7 +79,8 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferBase::init_context( AssemblyContext& context )
+  template<class K>
+  void HeatTransferBase<K>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -95,3 +99,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_HEAT_TRANSFER_SUBCLASS(HeatTransferBase);

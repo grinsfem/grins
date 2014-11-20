@@ -331,6 +331,7 @@ AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,                        [chmod
 AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod +x test/test_ns_poiseuille_flow.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh, [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
@@ -373,7 +374,6 @@ AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
-
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)

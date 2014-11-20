@@ -23,67 +23,56 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_CONSTANT_VISCOSITY_H
-#define GRINS_CONSTANT_VISCOSITY_H
+#ifndef GRINS_PARSED_CONDUCTIVITY_H
+#define GRINS_PARSED_CONDUCTIVITY_H
 
 //GRINS
 #include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/function_base.h"
 
 class GetPot;
 
 namespace GRINS
 {
-  class ConstantViscosity
+  class ParsedConductivity
   {
   public:
 
-    ConstantViscosity( const GetPot& input );
-    ~ConstantViscosity();
-
-    libMesh::Real operator()() const;
-
+    ParsedConductivity( const GetPot& input );
+    ~ParsedConductivity();
+    
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-
-    libMesh::Real operator()( const libMesh::Real T ) const;
-
-    libMesh::Real deriv( const libMesh::Real T ) const;
-
+    
   private:
 
-    ConstantViscosity();
-
-    libMesh::Real _mu;
+     ParsedConductivity();
+    
+    // User specified parsed function
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > k;
 
   };
 
-  /* ------------------------- Inline Functions -------------------------*/
+  /* ------------------------- Inline Functions -------------------------*/  
   inline
-  libMesh::Real ConstantViscosity::operator()() const
+    libMesh::Real ParsedConductivity::operator()(AssemblyContext& context, unsigned int qp) const
   {
-    return _mu;
-  }
+    // FIXME: We should be getting the variable index to get the qps from the context
+    // not hardcode it to be 0
+    const std::vector<libMesh::Point>& x = context.get_element_fe(0)->get_xyz();
 
-  inline
-  libMesh::Real ConstantViscosity::operator()(AssemblyContext& /*context*/, unsigned int /*qp*/) const
-  {
-    return _mu;
-  }
+    const libMesh::Point& x_qp = x[qp];
 
-  inline
-  libMesh::Real ConstantViscosity::operator()( const libMesh::Real /*T*/ ) const
-  {
-    return (*this)();
-  }
+    libMesh::Number _k_value = (*k)(x_qp,context.time);
 
-  inline
-  libMesh::Real ConstantViscosity::deriv( const libMesh::Real /*T*/ ) const
-  {
-    return 0.0;
-  }
+    return _k_value;
+  }    
 
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_VISCOSITY_H
+#endif // GRINS_PARSED_CONDUCTIVITY_H
