@@ -73,6 +73,17 @@ namespace GRINS
                                                                            const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                            const libMesh::Point p );
 
+    void compute_metric_tensors( unsigned int qp,
+                                 const libMesh::FEBase& elem,
+                                 const libMesh::Gradient& grad_u,
+                                 const libMesh::Gradient& grad_v,
+                                 const libMesh::Gradient& grad_w,
+                                 libMesh::TensorValue<libMesh::Real>& a_cov,
+                                 libMesh::TensorValue<libMesh::Real>& a_contra,
+                                 libMesh::TensorValue<libMesh::Real>& A_cov,
+                                 libMesh::TensorValue<libMesh::Real>& A_contra,
+                                 libMesh::Real& lambda_sq);
+
     StressStrainLaw _stress_strain_law;
 
     libMesh::Real _h0;

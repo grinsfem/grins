@@ -514,4 +514,86 @@ namespace GRINS
     return fe_new;
   }
 
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
+                                                                 const libMesh::FEBase& elem,
+                                                                 const libMesh::Gradient& grad_u,
+                                                                 const libMesh::Gradient& grad_v,
+                                                                 const libMesh::Gradient& grad_w,
+                                                                 libMesh::TensorValue<libMesh::Real>& a_cov,
+                                                                 libMesh::TensorValue<libMesh::Real>& a_contra,
+                                                                 libMesh::TensorValue<libMesh::Real>& A_cov,
+                                                                 libMesh::TensorValue<libMesh::Real>& A_contra,
+                                                                 libMesh::Real& lambda_sq )
+  {
+    const std::vector<libMesh::RealGradient>& dxdxi  = elem.get_dxyzdxi();
+    const std::vector<libMesh::RealGradient>& dxdeta = elem.get_dxyzdeta();
+
+    const std::vector<libMesh::Real>& dxidx  = elem.get_dxidx();
+    const std::vector<libMesh::Real>& dxidy  = elem.get_dxidy();
+    const std::vector<libMesh::Real>& dxidz  = elem.get_dxidz();
+
+    const std::vector<libMesh::Real>& detadx  = elem.get_detadx();
+    const std::vector<libMesh::Real>& detady  = elem.get_detady();
+    const std::vector<libMesh::Real>& detadz  = elem.get_detadz();
+
+    libMesh::RealGradient dxi( dxidx[qp], dxidy[qp], dxidz[qp] );
+    libMesh::RealGradient deta( detadx[qp], detady[qp], detadz[qp] );
+
+    libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
+    libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
+
+    // Covariant metric tensor of reference configuration
+    a_cov.zero();
+    a_cov(0,0) = dxdxi[qp]*dxdxi[qp];
+    a_cov(0,1) = dxdxi[qp]*dxdeta[qp];
+    a_cov(1,0) = dxdeta[qp]*dxdxi[qp];
+    a_cov(1,1) = dxdeta[qp]*dxdeta[qp];
+
+    libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+
+    // Covariant metric tensor of current configuration
+    A_cov.zero();
+    A_cov(0,0) = (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi);
+    A_cov(0,1) = (dxdxi[qp] + dudxi)*(dxdeta[qp] + dudeta);
+    A_cov(1,0) = (dxdeta[qp] + dudeta)*(dxdxi[qp] + dudxi);
+    A_cov(1,1) = (dxdeta[qp] + dudeta)*(dxdeta[qp] + dudeta);
+
+    // Contravariant metric tensor of reference configuration
+    a_contra.zero();
+    a_contra(0,0) = dxi*dxi;
+    a_contra(0,1) = dxi*deta;
+    a_contra(1,0) = deta*dxi;
+    a_contra(1,1) = deta*deta;
+
+    // Contravariant metric tensor in current configuration is A_cov^{-1}
+    libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+
+    A_contra.zero();
+    A_contra(0,0) =  A_cov(1,1)/det_A;
+    A_contra(0,1) = -A_cov(0,1)/det_A;
+    A_contra(1,0) = -A_cov(1,0)/det_A;
+    A_contra(1,1) =  A_cov(0,0)/det_A;
+
+    a_cov(2,2)    = 1.0;
+    a_contra(2,2) = 1.0;
+
+
+    // If the material is compressible, then lambda_sq is an independent variable
+    if( _lambda_sq_var )
+      {
+        libmesh_not_implemented();
+      }
+    else
+      {
+        // If the material is incompressible, lambda^2 is known
+        lambda_sq = det_a/det_A;
+      }
+
+    A_cov(2,2) = lambda_sq;
+    A_contra(2,2) = 1.0/lambda_sq;
+
+    return;
+  }
+
 } // end namespace GRINS
