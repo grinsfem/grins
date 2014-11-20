@@ -374,6 +374,7 @@ AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
@@ -416,6 +417,8 @@ AC_CONFIG_FILES(examples/simple_fan/run.sh,	             [chmod +x examples/simp
 AC_CONFIG_FILES(examples/simple_prop/run.sh,	             [chmod +x examples/simple_prop/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
+AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/elastic_sheet/run.sh])
+AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/inflating_sheet/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files

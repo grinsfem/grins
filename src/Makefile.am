@@ -30,6 +30,7 @@ libgrins_la_SOURCES += bc_handling/src/axisym_heat_transfer_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/inc_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/low_mach_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
+libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
 
 # src/boundary_conditions files
 libgrins_la_SOURCES += boundary_conditions/src/boundary_conditions.C
@@ -103,6 +104,12 @@ libgrins_la_SOURCES += physics/src/velocity_drag.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_base.C
+libgrins_la_SOURCES += physics/src/solid_mechanics_variables.C
+libgrins_la_SOURCES += physics/src/solid_mechanics_fe_variables.C
+libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
+libgrins_la_SOURCES += physics/src/elastic_membrane.C
+libgrins_la_SOURCES += physics/src/elastic_membrane_constant_pressure.C
+libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -124,6 +131,11 @@ libgrins_la_SOURCES += properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_wilke_transport_mixture_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
+libgrins_la_SOURCES += properties/src/hookes_law.C
+libgrins_la_SOURCES += properties/src/hyperelasticity.C
+libgrins_la_SOURCES += properties/src/incompressible_plane_stress_hyperelasticity.C
+libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
+libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
@@ -143,6 +155,7 @@ libgrins_la_SOURCES += solver/src/simulation_builder.C
 libgrins_la_SOURCES += solver/src/solver_context.C
 libgrins_la_SOURCES += solver/src/mesh_adaptive_solver_base.C
 libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
+libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -188,6 +201,7 @@ include_HEADERS += bc_handling/include/grins/heat_transfer_bc_handling.h
 include_HEADERS += bc_handling/include/grins/inc_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
+include_HEADERS += bc_handling/include/grins/solid_mechanics_bc_handling.h
 
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
@@ -268,6 +282,11 @@ include_HEADERS += physics/include/grins/velocity_drag.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
 include_HEADERS += physics/include/grins/velocity_penalty_adjoint_stab.h
 include_HEADERS += physics/include/grins/velocity_penalty_base.h
+include_HEADERS += physics/include/grins/solid_mechanics_variables.h
+include_HEADERS += physics/include/grins/solid_mechanics_fe_variables.h
+include_HEADERS += physics/include/grins/elastic_membrane_base.h
+include_HEADERS += physics/include/grins/elastic_membrane.h
+include_HEADERS += physics/include/grins/elastic_membrane_constant_pressure.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
@@ -291,7 +310,13 @@ include_HEADERS += properties/include/grins/antioch_wilke_transport_mixture.h
 include_HEADERS += properties/include/grins/antioch_wilke_transport_evaluator.h
 include_HEADERS += properties/include/grins/antioch_constant_transport_mixture.h
 include_HEADERS += properties/include/grins/antioch_constant_transport_evaluator.h
-
+include_HEADERS += properties/include/grins/elasticity_tensor.h
+include_HEADERS += properties/include/grins/stress_strain_law.h
+include_HEADERS += properties/include/grins/hookes_law.h
+include_HEADERS += properties/include/grins/hyperelasticity.h
+include_HEADERS += properties/include/grins/incompressible_plane_stress_hyperelasticity.h
+include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
+include_HEADERS += properties/include/grins/mooney_rivlin.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
@@ -312,7 +337,7 @@ include_HEADERS += solver/include/grins/simulation_builder.h
 include_HEADERS += solver/include/grins/solver_context.h
 include_HEADERS += solver/include/grins/mesh_adaptive_solver_base.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
-
+include_HEADERS += solver/include/grins/displacement_continuation_solver.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h

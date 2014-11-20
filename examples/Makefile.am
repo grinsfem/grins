@@ -205,6 +205,35 @@ bunsen_SOURCES += laminar_flame/ignite_initial_guess.C
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
 
+
+#=======================================================================
+# Elastic Sheet Example
+#=======================================================================
+elasticsheetdir = $(prefix)/examples/elastic_sheet
+elasticsheet_DATA = $(top_srcdir)/examples/elastic_sheet/sheet.in
+elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
+
+EXTRA_DIST += $(elasticsheet_DATA)
+
+#=======================================================================
+# Inflating Sheet Example
+#=======================================================================
+inflatingsheetdir = $(prefix)/examples/inflating_sheet
+inflatingsheet_PROGRAMS = sheet
+inflatingsheet_DATA  = $(top_srcdir)/examples/inflating_sheet/sheet.in
+inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/sheet_coarse.e
+inflatingsheet_SCRIPTS = $(top_builddir)/examples/inflating_sheet/run.sh
+
+EXTRA_DIST += $(inflatingsheet_DATA)
+
+sheet_SOURCES  = inflating_sheet/inflating_sheet.C
+sheet_SOURCES += inflating_sheet/inflating_sheet_solver_factory.C
+sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
+
+sheet_LDADD = $(LIBGRINS_LIBS)
+sheet_CPPFLAGS = -I$(top_srcdir)/examples/inflating_sheet $(AM_CPPFLAGS)
+
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno

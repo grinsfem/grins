@@ -28,6 +28,7 @@ check_PROGRAMS += gas_solid_catalytic_wall_unit
 check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
 check_PROGRAMS += power_law_catalycity_unit
+check_PROGRAMS += elastic_sheet_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -102,6 +103,7 @@ gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
 constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
+elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 
 #Define tests to actually be run
 TESTS =
@@ -160,6 +162,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_cata
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
+TESTS += elastic_mooney_rivlin_sheet_regression.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr

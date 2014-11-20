@@ -23,65 +23,32 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/solver_factory.h"
+#include "inflating_sheet_solver_factory.h"
 
-// GRINS
-#include "grins/grins_steady_solver.h"
-#include "grins/grins_unsteady_solver.h"
-#include "grins/steady_mesh_adaptive_solver.h"
-#include "grins/displacement_continuation_solver.h"
+// Inflating Sheet Example
+#include "pressure_continuation_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  SolverFactory::SolverFactory()
+  std::tr1::shared_ptr<Solver> InflatingSheetSolverFactory::build(const GetPot& input)
   {
-    return;
-  }
-
-  SolverFactory::~SolverFactory()
-  {
-    return;
-  }
-
-  std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
-  {
-    bool mesh_adaptive = input("MeshAdaptivity/mesh_adaptive", false );
-
-    bool transient = input("unsteady-solver/transient", false );
-
+    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
+    
     std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
 
-    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
-
-    if( solver_type == std::string("displacement_continuation") )
+    if( solver_type == std::string("pressure_continuation") )
       {
-        solver.reset( new DisplacementContinuationSolver(input) );
-      }
-    else if(transient && !mesh_adaptive)
-      {
-        solver.reset( new UnsteadySolver(input) );
-      }
-    else if( !transient && !mesh_adaptive )
-      {
-        solver.reset( new SteadySolver(input) );
-      }
-    else if( !transient && mesh_adaptive )
-      {
-        solver.reset( new SteadyMeshAdaptiveSolver(input) );
-      }
-    else if( transient && mesh_adaptive )
-      {
-        libmesh_not_implemented();
+        solver.reset( new PressureContinuationSolver(input) );
       }
     else
       {
-        std::cerr << "Invalid solver options!" << std::endl;
+        solver = SolverFactory::build(input);
       }
 
     return solver;
   }
 
-} // namespace GRINS
+} // end namespace GRINS
