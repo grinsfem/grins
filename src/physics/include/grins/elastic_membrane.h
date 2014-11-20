@@ -53,6 +53,12 @@ namespace GRINS
                                 AssemblyContext& context,
                                 CachedValues& cache );
 
+    //! Compute the registered postprocessed quantities
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   private:
 
     ElasticMembrane();
@@ -68,6 +74,12 @@ namespace GRINS
 
     bool _lambda_sq_coupled;
     bool _lambda_sq_var;
+
+    //! Index from registering this quantity. Each component will have it's own index.
+    std::vector<unsigned int> _stress_indices;
+
+    //! Index from registering this quantity. Each component will have it's own index.
+    std::vector<unsigned int> _strain_indices;
 
   };
 
