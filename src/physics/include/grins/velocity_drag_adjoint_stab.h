@@ -23,18 +23,12 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_VELOCITY_DRAG_H
-#define GRINS_VELOCITY_DRAG_H
+#ifndef GRINS_VELOCITY_DRAG_ADJOINT_STAB_H
+#define GRINS_VELOCITY_DRAG_ADJOINT_STAB_H
 
 // GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
-#include "grins/inc_navier_stokes_base.h"
 #include "grins/velocity_drag_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 // C++
 #include <string>
@@ -49,29 +43,38 @@ namespace GRINS
     vector field.
    */
   template<class Viscosity>
-  class VelocityDrag : public VelocityDragBase<Viscosity>
+  class VelocityDragAdjointStabilization : public VelocityDragBase<Viscosity>
   {
   public:
 
-    VelocityDrag( const std::string& physics_name, const GetPot& input );
+    VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityDrag();
-
-    virtual void init_context( AssemblyContext& context );
+    ~VelocityDragAdjointStabilization();
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Constraint part(s)
+    virtual void init_context( AssemblyContext& context );
+
     virtual void element_time_derivative( bool compute_jacobian,
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
+  protected:
+
+    libMesh::Number _rho, _mu;
+
+    IncompressibleNavierStokesStabilizationHelper _stab_helper;
+
   private:
 
-    VelocityDrag();
+    VelocityDragAdjointStabilization();
   };
 
 } // end namespace block
 
-#endif // GRINS_VELOCITY_DRAG_H
+#endif // GRINS_VELOCITY_DRAG_ADJOINT_STAB_H

@@ -25,22 +25,21 @@
 
 // This class
 #include "grins_config.h"
-#include "grins/velocity_penalty_adjoint_stab.h"
+#include "grins/averaged_fan_adjoint_stab.h"
 
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
-#include "libmesh/getpot.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
 {
 
   template<class Mu>
-  VelocityPenaltyAdjointStabilization<Mu>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase<Mu>(physics_name,input),
+  AveragedFanAdjointStabilization<Mu>::AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input )
+    : AveragedFanBase<Mu>(physics_name, input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
       _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
       _stab_helper( input )
@@ -49,13 +48,13 @@ namespace GRINS
   }
 
   template<class Mu>
-  VelocityPenaltyAdjointStabilization<Mu>::~VelocityPenaltyAdjointStabilization()
+  AveragedFanAdjointStabilization<Mu>::~AveragedFanAdjointStabilization()
   {
     return;
   }
 
   template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
+  void AveragedFanAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -68,26 +67,22 @@ namespace GRINS
   }
 
   template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                     AssemblyContext& context,
-                                                                     CachedValues& /*cache*/ )
+  void AveragedFanAdjointStabilization<Mu>::element_time_derivative
+    ( bool compute_jacobian,
+      AssemblyContext& context,
+      CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenaltyAdjointStabilization::element_time_derivative");
+    this->_timer->BeginTimer("AveragedFanAdjointStabilization::element_time_derivative");
 #endif
 
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
 
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+    // Element Jacobian * quadrature weights for interior integration
+    const std::vector<libMesh::Real> &JxW = fe->get_JxW();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
-
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+    // The shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi = fe->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
@@ -95,50 +90,39 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
       context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
 
-    // Get residuals and jacobians
+    const std::vector<libMesh::Point>& u_qpoint = fe->get_xyz();
+
+    // The number of local degrees of freedom in each variable
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+
+    // The subvectors and submatrices we need to fill:
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // R_{v},{v}
+
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
+
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
-
-    libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number> *Kwu = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number> *Kwv = NULL;
-    libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
-
-    if(this->_dim == 3)
+    if( this->_dim == 3 )
       {
-        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
-        Kuw = &context.get_elem_jacobian
-          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
-        Kvw = &context.get_elem_jacobian
-          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
-        Kwu = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
-        Kwv = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
-        Kww = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
+        Kuw = &context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.w_var()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.w_var()); // R_{v},{w}
+
+        Kwu = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.u_var()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.v_var()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.w_var()); // R_{w},{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
       }
 
-    // Now we will build the element Jacobian and residual.
-    // Constructing the residual requires the solution and its
-    // gradient from the previous timestep.  This must be
-    // calculated at each quadrature point by summing the
-    // solution degree-of-freedom values by the appropriate
-    // weight functions.
     unsigned int n_qpoints = context.get_element_qrule().n_points();
-
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -231,22 +215,22 @@ namespace GRINS
               } // End compute_jacobian check
 
           } // End i dof loop
-      } // End quadrature loop
+      }
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancyAdjointStabilization::element_time_derivative");
+    this->_timer->EndTimer("AveragedFanAdjointStabilization::element_time_derivative");
 #endif
 
     return;
   }
 
   template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
+  void AveragedFanAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenaltyAdjointStabilization::element_constraint");
+    this->_timer->BeginTimer("AveragedFanAdjointStabilization::element_constraint");
 #endif
 
     // The number of local degrees of freedom in each variable.
@@ -356,13 +340,14 @@ namespace GRINS
       } // End quadrature loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityPenaltyAdjointStabilization::element_constraint");
+    this->_timer->EndTimer("AveragedFanAdjointStabilization::element_constraint");
 #endif
 
     return;
   }
 
+
 } // namespace GRINS
 
 // Instantiate
-INSTANTIATE_INC_NS_SUBCLASS(VelocityPenaltyAdjointStabilization);
+INSTANTIATE_INC_NS_SUBCLASS(AveragedFanAdjointStabilization);

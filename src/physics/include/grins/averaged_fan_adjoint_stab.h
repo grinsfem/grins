@@ -23,18 +23,12 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_VELOCITY_DRAG_H
-#define GRINS_VELOCITY_DRAG_H
+#ifndef GRINS_AVERAGED_FAN_ADJOINT_STAB_H
+#define GRINS_AVERAGED_FAN_ADJOINT_STAB_H
 
 // GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
-#include "grins/inc_navier_stokes_base.h"
-#include "grins/velocity_drag_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/averaged_fan_base.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 // C++
 #include <string>
@@ -42,36 +36,44 @@
 namespace GRINS
 {
 
-  //! Physics class for Velocity Drag
+  //! Physics class for spatially-averaged fan
   /*
-    This physics class imposes a force against the direction of (and
-    proportional to an exponent of the magnitude of) a specified
-    vector field.
+    This physics class imposes lift/drag forces on velocity as
+    affected by a region in which airfoils are moving.
    */
   template<class Viscosity>
-  class VelocityDrag : public VelocityDragBase<Viscosity>
+  class AveragedFanAdjointStabilization : public AveragedFanBase<Viscosity>
   {
   public:
 
-    VelocityDrag( const std::string& physics_name, const GetPot& input );
+    AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityDrag();
-
-    virtual void init_context( AssemblyContext& context );
+    ~AveragedFanAdjointStabilization();
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Constraint part(s)
+    virtual void init_context( AssemblyContext& context );
+
     virtual void element_time_derivative( bool compute_jacobian,
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
+  protected:
+
+    libMesh::Number _rho, _mu;
+
+    IncompressibleNavierStokesStabilizationHelper _stab_helper;
+
   private:
 
-    VelocityDrag();
+    AveragedFanAdjointStabilization();
   };
 
 } // end namespace block
 
-#endif // GRINS_VELOCITY_DRAG_H
+#endif // GRINS_AVERAGED_FAN_ADJOINT_STAB_H

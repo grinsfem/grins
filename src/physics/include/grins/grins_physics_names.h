@@ -39,9 +39,11 @@ namespace GRINS
   const PhysicsName incompressible_navier_stokes_spgsm_stab = 
     "IncompressibleNavierStokesSPGSMStabilization";
   const PhysicsName velocity_drag = "VelocityDrag";
+  const PhysicsName velocity_drag_adjoint_stab = "VelocityDragAdjointStabilization";
   const PhysicsName velocity_penalty = "VelocityPenalty";
   const PhysicsName velocity_penalty_adjoint_stab = "VelocityPenaltyAdjointStabilization";
   const PhysicsName averaged_fan = "AveragedFan";
+  const PhysicsName averaged_fan_adjoint_stab = "AveragedFanAdjointStabilization";
   const PhysicsName averaged_turbine = "AveragedTurbine";
   const PhysicsName scalar_ode = "ScalarODE";
   const PhysicsName heat_conduction = "HeatConduction";
