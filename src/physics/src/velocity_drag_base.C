@@ -27,7 +27,7 @@
 #include "grins/velocity_drag_base.h"
 
 // GRINS
-#include "grins/constant_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/parsed_function.h"
@@ -112,4 +112,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-template class GRINS::VelocityDragBase<GRINS::ConstantViscosity>;
+INSTANTIATE_INC_NS_SUBCLASS(VelocityDragBase);

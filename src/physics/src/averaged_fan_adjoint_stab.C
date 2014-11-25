@@ -25,7 +25,7 @@
 
 // This class
 #include "grins_config.h"
-#include "grins/velocity_drag_adjoint_stab.h"
+#include "grins/averaged_fan_adjoint_stab.h"
 
 // GRINS
 #include "grins/assembly_context.h"
@@ -38,8 +38,8 @@ namespace GRINS
 {
 
   template<class Mu>
-  VelocityDragAdjointStabilization<Mu>::VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input )
-    : VelocityDragBase<Mu>(physics_name, input),
+  AveragedFanAdjointStabilization<Mu>::AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input )
+    : AveragedFanBase<Mu>(physics_name, input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
       _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
       _stab_helper( input )
@@ -48,13 +48,13 @@ namespace GRINS
   }
 
   template<class Mu>
-  VelocityDragAdjointStabilization<Mu>::~VelocityDragAdjointStabilization()
+  AveragedFanAdjointStabilization<Mu>::~AveragedFanAdjointStabilization()
   {
     return;
   }
 
   template<class Mu>
-  void VelocityDragAdjointStabilization<Mu>::init_context( AssemblyContext& context )
+  void AveragedFanAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -67,13 +67,13 @@ namespace GRINS
   }
 
   template<class Mu>
-  void VelocityDragAdjointStabilization<Mu>::element_time_derivative
+  void AveragedFanAdjointStabilization<Mu>::element_time_derivative
     ( bool compute_jacobian,
       AssemblyContext& context,
       CachedValues& /* cache */ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityDragAdjointStabilization::element_time_derivative");
+    this->_timer->BeginTimer("AveragedFanAdjointStabilization::element_time_derivative");
 #endif
 
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
@@ -218,19 +218,19 @@ namespace GRINS
       }
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityDragAdjointStabilization::element_time_derivative");
+    this->_timer->EndTimer("AveragedFanAdjointStabilization::element_time_derivative");
 #endif
 
     return;
   }
 
   template<class Mu>
-  void VelocityDragAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
+  void AveragedFanAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityDragAdjointStabilization::element_constraint");
+    this->_timer->BeginTimer("AveragedFanAdjointStabilization::element_constraint");
 #endif
 
     // The number of local degrees of freedom in each variable.
@@ -340,7 +340,7 @@ namespace GRINS
       } // End quadrature loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityDragAdjointStabilization::element_constraint");
+    this->_timer->EndTimer("AveragedFanAdjointStabilization::element_constraint");
 #endif
 
     return;
@@ -350,4 +350,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-INSTANTIATE_INC_NS_SUBCLASS(VelocityDragAdjointStabilization);
+INSTANTIATE_INC_NS_SUBCLASS(AveragedFanAdjointStabilization);

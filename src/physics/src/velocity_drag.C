@@ -28,8 +28,6 @@
 
 // GRINS
 #include "grins/generic_ic_handler.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
