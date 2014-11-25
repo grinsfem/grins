@@ -54,6 +54,7 @@
 #include "grins/averaged_turbine.h"
 #include "grins/scalar_ode.h"
 #include "grins/velocity_drag.h"
+#include "grins/velocity_drag_adjoint_stab.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
@@ -232,6 +233,20 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }
+    else if( physics_to_add == velocity_drag_adjoint_stab )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDragAdjointStabilization<ConstantViscosity>(physics_to_add,input));
 	  }
 	else
 	  {
