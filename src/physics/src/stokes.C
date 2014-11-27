@@ -353,7 +353,7 @@ namespace GRINS
         context.interior_rate(this->_flow_vars.u_var(), qp, u_dot);
         context.interior_rate(this->_flow_vars.v_var(), qp, v_dot);
 
-        if( _dim == 3 )
+        if( this->_dim == 3 )
           context.interior_rate(this->_flow_vars.w_var(), qp, w_dot);
       
         for (unsigned int i = 0; i != n_u_dofs; ++i)
