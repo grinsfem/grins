@@ -23,18 +23,12 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_AVERAGED_TURBINE_H
-#define GRINS_AVERAGED_TURBINE_H
+#ifndef GRINS_AVERAGED_TURBINE_ADJOINT_STAB_H
+#define GRINS_AVERAGED_TURBINE_ADJOINT_STAB_H
 
 // GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
-#include "grins/inc_navier_stokes_base.h"
 #include "grins/averaged_turbine_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/inc_navier_stokes_stab_helper.h"
 
 // C++
 #include <string>
@@ -49,39 +43,38 @@ namespace GRINS
     sink.
    */
   template<class Viscosity>
-  class AveragedTurbine : public AveragedTurbineBase<Viscosity>
+  class AveragedTurbineAdjointStabilization : public AveragedTurbineBase<Viscosity>
   {
   public:
 
-    AveragedTurbine( const std::string& physics_name, const GetPot& input );
+    AveragedTurbineAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbine();
-
-    virtual void init_context( AssemblyContext& context );
+    ~AveragedTurbineAdjointStabilization();
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Constraint part(s)
+    virtual void init_context( AssemblyContext& context );
+
     virtual void element_time_derivative( bool compute_jacobian,
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
-    // Mass residual of the turbine itself
-    virtual void nonlocal_mass_residual ( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
-    // External torque powering the fan or loading the turbine
-    virtual void nonlocal_time_derivative ( bool compute_jacobian,
-				            AssemblyContext& context,
-				            CachedValues& cache );
+  protected:
+
+    libMesh::Number _rho, _mu;
+
+    IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
   private:
 
-    AveragedTurbine();
+    AveragedTurbineAdjointStabilization();
   };
 
 } // end namespace block
 
-#endif // GRINS_AVERAGED_TURBINE_H
+#endif // GRINS_AVERAGED_TURBINE_ADJOINT_STAB_H

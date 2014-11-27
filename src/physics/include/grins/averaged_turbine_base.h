@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_AVERAGED_FAN_BASE_H
-#define GRINS_AVERAGED_FAN_BASE_H
+#ifndef GRINS_AVERAGED_TURBINE_BASE_H
+#define GRINS_AVERAGED_TURBINE_BASE_H
 
 // GRINS
 #include "grins_config.h"
@@ -42,13 +42,23 @@ namespace GRINS
 {
 
   template<class Viscosity>
-  class AveragedFanBase : public IncompressibleNavierStokesBase<Viscosity>
+  class AveragedTurbineBase : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 
-    AveragedFanBase( const std::string& physics_name, const GetPot& input );
+    AveragedTurbineBase( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFanBase();
+    ~AveragedTurbineBase();
+
+    //! Initialization of variables
+    /*!
+      Add turbine_speed variable to system; call base function to
+      initialize Navier-Stokes variables.
+     */
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    //! Sets turbine_speed and velocity variables to be time-evolving
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
@@ -56,14 +66,23 @@ namespace GRINS
     bool compute_force ( const libMesh::Point& point,
                          const libMesh::Real time,
                          const libMesh::NumberVectorValue& U,
+                         libMesh::Number s,
+                         libMesh::NumberVectorValue& U_B_1,
                          libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
+                         libMesh::NumberTensorValue *dFdU = NULL,
+                         libMesh::NumberVectorValue *dFds = NULL);
  
+    VariableIndex fan_speed_var() const { return _fan_speed_var; }
+
   protected:
 
-    // Velocity of the moving fan blades as a function of x,y,z
+    // ``Base'' velocity of the moving fan blades as a function of x,y,z
+    //
+    // This velocity will be scaled by the fan_speed variable
+    // during the simulation; values in base_velocity_function should
+    // therefore correspond to a fan speed of 1 radian per second.
     // Iff there are no fan blades moving past a location, the
-    // velocity there is specified as zero.
+    // base velocity there is specified as zero.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
 
     // "Up" direction of fan airflow, as a function of x,y,z
@@ -77,6 +96,30 @@ namespace GRINS
     // Yes, I'm abusing FunctionBase.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > lift_function;
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > drag_function;
+
+    // Mechanical driving torque function (*including* non-fluid
+    // friction losses!) on the turbine (signed, measured in
+    // Newton-meters) as a function of angular velocity turbine speed
+    // "t" (measured in rad/s).
+    //
+    // Should probably be carefully defined for t>0 and t<0 to avoid
+    // potential unstable startup.
+    //
+    // Should theoretically be useable as power input (same sign as t)
+    // to model propeller fans or output (opposite sign from t) to
+    // model turbine fans.
+    //
+    // No, "t" is not time or angle of attack in this function.
+    // Yes, I'm really abusing FunctionBase.
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > torque_function;
+
+    // Moment of inertia of the spinning component of the turbine
+    // (measured in kg-m^2)
+    libMesh::Number moment_of_inertia;
+
+    // Initial speed of the spinning component of the turbine
+    // (measured in rad/s)
+    libMesh::Number initial_speed;
 
     // The chord length of the fan wing cross-section.  For fan blades
     // with constant cross-section this will be a constant.
@@ -92,11 +135,15 @@ namespace GRINS
     // this will be a constant.
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > aoa_function;
 
+    VariableIndex _fan_speed_var; /* Index for turbine speed scalar */
+
+    std::string _fan_speed_var_name;
+
   private:
 
-    AveragedFanBase();
+    AveragedTurbineBase();
   };
 
 } // end namespace block
 
-#endif // GRINS_AVERAGED_FAN_BASE_H
+#endif // GRINS_AVERAGED_TURBINE_BASE_H
