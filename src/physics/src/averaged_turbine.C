@@ -358,7 +358,7 @@ namespace GRINS
               LDderivfactor = 
                 -(N_lift*C_lift+N_drag*C_drag) *
                 U_B_1 * 0.5 * this->_rho * chord / area *
-                JxW[qp];
+                JxW[qp] * context.get_elem_solution_derivative();
 
             const libMesh::Number
               dV2_ds = -2 * (U_P * U_B);
@@ -407,7 +407,7 @@ namespace GRINS
                   LDderivfactor = 
                     (N_lift*C_lift+N_drag*C_drag) *
                     0.5 * this->_rho * chord / area *
-                    u_phi[i][qp]*JxW[qp];
+                    u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                 const libMesh::Number
                   dV2_ds = -2 * (U_P * U_B);
@@ -482,7 +482,7 @@ namespace GRINS
 
     Fs(0) += output_torque;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
         // FIXME: we should replace this FEM with a hook to the AD fparser stuff
         const libMesh::Number epsilon = 1e-6;
@@ -490,9 +490,7 @@ namespace GRINS
           ((*torque_function)(libMesh::Point(0), fan_speed+epsilon) -
            (*torque_function)(libMesh::Point(0), fan_speed-epsilon)) / (2*epsilon);
 
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += output_torque_deriv;
+        Kss(0,0) += output_torque_deriv * context.get_elem_solution_derivative();
       }
 
     return;
@@ -511,17 +509,15 @@ namespace GRINS
             context.get_elem_residual(_fan_speed_var); // R_{s}
 
     const libMesh::DenseSubVector<libMesh::Number> &Us =
-      context.get_elem_solution(_fan_speed_var);
+      context.get_elem_solution_rate(_fan_speed_var);
 
     const libMesh::Number& fan_speed = Us(0);
 
-    Fs(0) += moment_of_inertia * fan_speed;
+    Fs(0) -= moment_of_inertia * fan_speed;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += moment_of_inertia;
+        Kss(0,0) -= moment_of_inertia * context.get_elem_solution_rate_derivative();
       }
 
     return;

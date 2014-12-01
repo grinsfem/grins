@@ -351,7 +351,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
-            FT(i) += tau_E*RE_t*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
+            FT(i) -= tau_E*RE_t*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                                   + _k_qp*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
                                   )*JxW[qp];
             if (compute_jacobian)
@@ -361,7 +361,7 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
-                    KTT(i,j) += 
+                    KTT(i,j) -= 
                       (tau_E*d_RE_t_dT)*T_phi[j][qp]*
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
@@ -371,25 +371,25 @@ namespace GRINS
                   }
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
-                    KTu(i,j) +=
+                    KTu(i,j) -=
                       d_tau_E_dU(0)*u_phi[j][qp]*RE_t*
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
                               T_hessphi[i][qp](2,2)) 
                       )*fixed_deriv*JxW[qp];
-                    KTu(i,j) +=
+                    KTu(i,j) -=
                       tau_E*RE_t*
                       ( this->_rho*this->_Cp*u_phi[j][qp]*T_gradphi[i][qp](0)*fixed_deriv
                       )*JxW[qp];
-                    KTv(i,j) +=
+                    KTv(i,j) -=
                       d_tau_E_dU(1)*u_phi[j][qp]*RE_t*
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
                               T_hessphi[i][qp](2,2)) 
                       )*fixed_deriv*JxW[qp];
-                    KTv(i,j) +=
+                    KTv(i,j) -=
                       tau_E*RE_t*
                       ( this->_rho*this->_Cp*u_phi[j][qp]*T_gradphi[i][qp](1)*fixed_deriv
                       )*JxW[qp];
@@ -398,14 +398,14 @@ namespace GRINS
                   {
                     for (unsigned int j=0; j != n_u_dofs; ++j)
                       {
-                        (*KTw)(i,j) +=
+                        (*KTw)(i,j) -=
                           d_tau_E_dU(2)*u_phi[j][qp]*RE_t*
                           ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                             + _k_qp*(T_hessphi[i][qp](0,0) +
                                   T_hessphi[i][qp](1,1) +
                                   T_hessphi[i][qp](2,2)) 
                           )*fixed_deriv*JxW[qp];
-                        (*KTw)(i,j) +=
+                        (*KTw)(i,j) -=
                           tau_E*RE_t*
                           ( this->_rho*this->_Cp*u_phi[j][qp]*T_gradphi[i][qp](2)*fixed_deriv
                           )*JxW[qp];

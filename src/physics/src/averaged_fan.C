@@ -301,16 +301,16 @@ namespace GRINS
                         0.5 * this->_rho * chord / area;
 
                     Kuu(i,j) += LDderivfactor(0) * dV2_du *
-                                u_phi[i][qp]*JxW[qp];
+                                u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                     Kuv(i,j) += LDderivfactor(0) * dV2_dv *
-                                u_phi[i][qp]*JxW[qp];
+                                u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                     Kvu(i,j) += LDderivfactor(1) * dV2_du *
-                                u_phi[i][qp]*JxW[qp];
+                                u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                     Kvv(i,j) += LDderivfactor(1) * dV2_dv *
-                                u_phi[i][qp]*JxW[qp];
+                                u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                     if (this->_dim == 3)
                       {
@@ -319,19 +319,19 @@ namespace GRINS
                                    (U_P(2) - N_R(2)*UPNR);
 
                         (*Kuw)(i,j) += LDderivfactor(0) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
+                                       u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                         (*Kvw)(i,j) += LDderivfactor(1) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
+                                       u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                         (*Kwu)(i,j) += LDderivfactor(2) * dV2_du *
-                                       u_phi[i][qp]*JxW[qp];
+                                       u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                         (*Kwv)(i,j) += LDderivfactor(2) * dV2_dv *
-                                       u_phi[i][qp]*JxW[qp];
+                                       u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
 
                         (*Kww)(i,j) += LDderivfactor(2) * dV2_dw *
-                                       u_phi[i][qp]*JxW[qp];
+                                       u_phi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
                       }
 
                   } // End j dof loop
