@@ -68,7 +68,7 @@ namespace GRINS
 
     ElasticMembrane();
 
-    // This is straight up copied from libMesh. Should make this a friend or public.
+    /*! \todo This is straight up copied from libMesh. Should make this a friend or public. */
     libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
                                                                            const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                            const libMesh::Point p );
