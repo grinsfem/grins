@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPALART_ALLMARAS_H
-#define GRINS_SPALART_ALLMARAS_H
+#ifndef GRINS_TURBULENCE_MODELS_BASE_H
+#define GRINS_TURBULENCE_MODELS_BASE_H
 
 //GRINS
 #include "grins/physics.h"
@@ -33,50 +33,41 @@
 namespace GRINS
 {
 
-  //! Physics class for Incompressible Navier-Stokes
+  //! Physics class for Turbulence Models
   /*!
-    This physics class implements the classical Incompressible Navier-Stokes equations.
+    This physics class implements the various turbulence models that can be used alongside 
+    NS to model turbulent flows.
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
    */
   template<class Viscosity>
-  class SpalartAllmaras : public TurbulenceModels<Viscosity>
+  class TurbulenceModelsBase : public Physics
   {
   public:
 
-    SpalartAllmaras(const std::string& physics_name, const GetPot& input);
+    Base(const std::string& physics_name, const GetPot& input);
 
-    ~SpalartAllmaras();
-        
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
+    ~TurbulenceModelsBase();
+    
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
 
   protected:
 
-    //! Spalart Allmaras model constants
-    libMesh::Number _cb1, _sigma, _cb2, _cw1;
-
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
-
-    // This should be declared in TurbulentViscosity
-    TurbulenceFEVariables _turbulence_vars;
- 
-    //! Viscosity object
-    Viscosity _mu;
     
+    //! Material parameters, read from input
+    /** \todo Create objects to allow for function specification */
+    libMesh::Number _rho;
+        
   private:
-    SpalartAllmaras();
+    TurbulenceModelsBase();
 
   };
 
 } //End namespace block
 
-#endif // GRINS_SPALART_ALLMARAS_H
+#endif // GRINS_TURBULENCE_MODELS_BASE_H
