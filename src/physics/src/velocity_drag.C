@@ -147,9 +147,11 @@ namespace GRINS
 
 	    if( compute_jacobian )
               {
+                const libMesh::Number jac_i_deriv = jac_i *
+                  context.get_elem_solution_derivative();
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    const libMesh::Number jac_ij = jac_i * u_phi[j][qp];
+                    const libMesh::Number jac_ij = jac_i_deriv * u_phi[j][qp];
                     Kuu(i,j) += jac_ij * dFdU(0,0);
                     Kuv(i,j) += jac_ij * dFdU(0,1);
                     Kvu(i,j) += jac_ij * dFdU(1,0);

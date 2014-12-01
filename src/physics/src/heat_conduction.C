@@ -164,7 +164,7 @@ namespace GRINS
 		    // TODO: precompute some terms like:
 		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-		    KTT(i,j) += JxW[qp] *
+		    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
 		      ( -_k_qp*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
 		  } // end of the inner dof (j) loop
 
@@ -208,21 +208,24 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-        libMesh::Real T_dot = context.interior_value(_temp_vars.T_var(), qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+        libMesh::Real T_dot;
+        context.interior_rate(_temp_vars.T_var(), qp, T_dot);
 
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F(i) += JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
+	    F(i) -= JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
 		    // We're assuming rho, cp are constant w.r.t. T here.
-                    M(i,j) += JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
+                    M(i,j) -=
+                      context.get_elem_solution_rate_derivative()
+                        * JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
           

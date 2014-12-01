@@ -177,11 +177,14 @@ namespace GRINS
 
         if (compute_jacobian)
           {
-            Kss(0,0) -= U_B_1 * dFds * jac;
+            libMesh::Real jac_deriv =
+              jac * context.get_elem_solution_derivative();
+
+            Kss(0,0) -= U_B_1 * dFds * jac_deriv;
 
             for (unsigned int j=0; j != n_u_dofs; j++)
               {
-                libMesh::Real jac_j = JxW[qp] * u_phi[j][qp];
+                libMesh::Real jac_j = jac_deriv * u_phi[j][qp];
 
                 for (unsigned int d=0; d != 3; ++d)
                   {
@@ -210,14 +213,20 @@ namespace GRINS
 
 	    if( compute_jacobian )
               {
-                Kus(i,0) += dFds(0) * jac_i;
-                Kvs(i,0) += dFds(1) * jac_i;
+                // FIXME: Jacobians here are very inexact!
+                // Dropping all AoA dependence on U terms!
+
+                libMesh::Real jac_deriv =
+                  jac_i * context.get_elem_solution_derivative();
+
+                Kus(i,0) += dFds(0) * jac_deriv;
+                Kvs(i,0) += dFds(1) * jac_deriv;
                 if( this->_dim == 3 )
-                  (*Kws)(i,0) += dFds(2) * jac_i;
+                  (*Kws)(i,0) += dFds(2) * jac_deriv;
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    const libMesh::Number jac_ij = jac_i * u_phi[j][qp];
+                    const libMesh::Number jac_ij = jac_deriv * u_phi[j][qp];
                     Kuu(i,j) += jac_ij * dFdU(0,0);
                     Kuv(i,j) += jac_ij * dFdU(0,1);
                     Kvu(i,j) += jac_ij * dFdU(1,0);
@@ -268,7 +277,7 @@ namespace GRINS
 
     Fs(0) += output_torque;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
         // FIXME: we should replace this FEM with a hook to the AD fparser stuff
         const libMesh::Number epsilon = 1e-6;
@@ -276,9 +285,7 @@ namespace GRINS
           ((*this->torque_function)(libMesh::Point(0), fan_speed+epsilon) -
            (*this->torque_function)(libMesh::Point(0), fan_speed-epsilon)) / (2*epsilon);
 
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += output_torque_deriv;
+        Kss(0,0) += output_torque_deriv * context.get_elem_solution_derivative();
       }
 
     return;
@@ -302,13 +309,11 @@ namespace GRINS
 
     const libMesh::Number& fan_speed = Us(0);
 
-    Fs(0) += this->moment_of_inertia * fan_speed;
+    Fs(0) -= this->moment_of_inertia * fan_speed;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += this->moment_of_inertia;
+        Kss(0,0) -= this->moment_of_inertia * context.get_elem_solution_rate_derivative();
       }
 
     return;
