@@ -57,10 +57,16 @@ namespace GRINS
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
 
+    // The source function \tilde{S}
+    Real _source_fn( libMesh::Number nu, Real wall_distance);
+
   protected:
 
     //! Spalart Allmaras model constants
     libMesh::Number _cb1, _sigma, _cb2, _cw1;
+
+    //! Constants specific to the calculation of the source function
+    libMesh::Number _kappa, _cv1;
 
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */

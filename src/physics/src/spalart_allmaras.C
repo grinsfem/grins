@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/spalart_allmaras.h" // Add the header file later
+#include "grins/spalart_allmaras.h"
 
 // GRINS
 #include "grins/assembly_context.h"
@@ -33,7 +33,7 @@
 
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
-#include "grins/turbulence_viscosity.h" // Add a turbulence viscosity implementation of the Viscosity class
+#include "grins/turbulence_viscosity.h" 
 
 #include "grins/turbulence_models_macro.h"
 
@@ -224,6 +224,23 @@ namespace GRINS
     return;
   }
     
+  template<class Mu>
+  Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, Real wall_distance)
+  {
+    // Step 1
+    Real _kai = nu/(this->constant_viscosity);
+    
+    // Step 2
+    Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(_cv1, 3.0));
+
+    // Step 3
+    Real _fv2 = 1 - (_kai/(1 + _kai*_fv1));
+
+    // Step 4
+    Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0)) ;
+  }
+
+
 } // namespace GRINS
 
 // Instantiate
