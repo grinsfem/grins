@@ -60,13 +60,22 @@ namespace GRINS
     // The source function \tilde{S}
     Real _source_fn( libMesh::Number nu, Real wall_distance);
 
+    // The vorticity function
+    Real _vorticity( FlowVars, qp);
+
+    // The destruction function f_w(nu)
+    Real _destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde);
+
   protected:
 
     //! Spalart Allmaras model constants
     libMesh::Number _cb1, _sigma, _cb2, _cw1;
 
     //! Constants specific to the calculation of the source function
-    libMesh::Number _kappa, _cv1;
+    libMesh::Number _kappa, _cv1, _cv2, _cv3;
+
+    //! Constants specific to the calculation of the destruction function
+    libMesh::Number _r_lin, _c_w2, _c_w3;
 
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
