@@ -48,7 +48,9 @@ namespace GRINS
     ~ParsedViscosity();
     
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-    
+
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+
   private:
 
     ParsedViscosity();
@@ -71,7 +73,13 @@ namespace GRINS
     libMesh::Number _mu_value = (*mu)(x_qp,context.time);
 
     return _mu_value;
-  }    
+  }
+
+  inline
+  libMesh::Real ParsedViscosity::operator()( const libMesh::Point& p, const libMesh::Real time )
+  {
+    return (*mu)(p,time);
+  }
 
 } // end namespace GRINS
 
