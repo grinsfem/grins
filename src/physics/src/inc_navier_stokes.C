@@ -581,7 +581,7 @@ namespace GRINS
 
     if( quantity_index == this->_mu_index )
       {
-        this->_mu(point);
+        value = this->_mu(point);
       }
 
     return;
