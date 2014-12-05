@@ -74,13 +74,22 @@ namespace GRINS
 				AssemblyContext& context,
 				CachedValues& cache );
 
+    //! Compute value of postprocessed quantities at libMesh::Point.
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   protected:
 
     PressurePinning _p_pinning;
 
     //! Enable pressure pinning
     bool _pin_pressure;
- 
+
+    //! Index from registering this quantity
+    unsigned int _mu_index;
+
   private:
     IncompressibleNavierStokes();
 

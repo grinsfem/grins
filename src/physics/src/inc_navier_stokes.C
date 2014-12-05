@@ -539,6 +539,22 @@ namespace GRINS
     return;
   }
 
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                       const AssemblyContext& context,
+                                                                       const libMesh::Point& point,
+                                                                       libMesh::Real& value )
+  {
+    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+    if( quantity_index == this->_mu_index )
+      {
+        this->_mu(point);
+      }
+
+    return;
+  }
+
 } // namespace GRINS
 
 // Instantiate
