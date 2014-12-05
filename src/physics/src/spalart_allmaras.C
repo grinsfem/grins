@@ -238,9 +238,48 @@ namespace GRINS
 
     // Step 4
     Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0)) ;
+
+    // Step 5, the absolute value of the vorticity
+    Real _S = fabs(_vorticity(FlowVars, qp));
+
+    // Step 6
+    Real _S_tilde = 0.0;
+    if(_S_bar >= -_cv2*_S)
+      {
+	_S_tilde = _S + _S_bar;
+      }
+    else
+      {
+	_S_tilde = _S + (_S*(pow(_cv2,2.0)*_S + _cv3*_S_bar))/((_cv3 - (2*_cv2))*_S - _S_bar);
+      }
+    
+    return _S_tilde;
   }
 
+  template<class Mu>
+  Real SpalartAllmaras<Mu>::_destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde)
+  {
+    // Step 1
+    Real _r = 0.0;
+    
+    if(nu/(_S_tilde*pow(_kappa,2.0)*pow(wall_distance,2.0)) < _r_lin)
+      {
+	_r = nu/(_S_tilde*pow(_kappa,2.0)*pow(wall_distance,2.0));
+      }
+    else
+      {
+	_r = _r_lin;
+      }
 
+    // Step 2
+    Real _g = _r + _c_w2*(pow(_r,6.0) - _r);
+
+    // Step 3
+    Real _fw = _g*pow((1 + pow(_c_w3,6.0))/(pow(_g,6.0) + pow(_c_w3,6.0)), 1.0/6.0);
+    
+    return _fw;
+  }
+  
 } // namespace GRINS
 
 // Instantiate
