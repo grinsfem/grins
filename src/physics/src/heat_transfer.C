@@ -297,6 +297,20 @@ namespace GRINS
     return;
   }
 
+  template<class K>
+  void HeatTransfer<K>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                        const AssemblyContext& context,
+                                                        const libMesh::Point& point,
+                                                        libMesh::Real& value )
+  {
+    if( quantity_index == this->_k_index )
+      {
+        value = this->_k(point, context.get_time());
+      }
+
+    return;
+  }
+
 } // namespace GRINS
 
 // Instantiate

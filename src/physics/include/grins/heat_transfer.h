@@ -65,9 +65,18 @@ namespace GRINS
 				AssemblyContext& context,
 				CachedValues& cache );
 
+    //! Compute value of postprocessed quantities at libMesh::Point.
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   private:
 
     HeatTransfer();
+
+    //! Index from registering this postprocessed quantity
+    unsigned int _k_index;
 
   };
 
