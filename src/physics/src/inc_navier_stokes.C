@@ -577,8 +577,6 @@ namespace GRINS
                                                                        const libMesh::Point& point,
                                                                        libMesh::Real& value )
   {
-    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
-
     if( quantity_index == this->_mu_index )
       {
         value = this->_mu(point, context.get_time());
