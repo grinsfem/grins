@@ -581,7 +581,7 @@ namespace GRINS
 
     if( quantity_index == this->_mu_index )
       {
-        value = this->_mu(point);
+        value = this->_mu(point, context.get_time());
       }
 
     return;

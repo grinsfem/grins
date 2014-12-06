@@ -47,7 +47,7 @@ namespace GRINS
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
-    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
 
     libMesh::Real operator()( const libMesh::Real T ) const;
 
