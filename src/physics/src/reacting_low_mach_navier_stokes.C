@@ -798,8 +798,6 @@ namespace GRINS
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 
-    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
-
     if( quantity_index == this->_rho_index )
       {
         std::vector<libMesh::Real> Y( this->_n_species );
