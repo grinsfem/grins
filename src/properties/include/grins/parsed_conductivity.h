@@ -48,7 +48,9 @@ namespace GRINS
     ~ParsedConductivity();
     
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-    
+
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
+
   private:
 
      ParsedConductivity();
@@ -71,7 +73,13 @@ namespace GRINS
     libMesh::Number _k_value = (*k)(x_qp,context.time);
 
     return _k_value;
-  }    
+  }
+
+  inline
+  libMesh::Real ParsedConductivity::operator()( const libMesh::Point& p, const libMesh::Real time )
+  {
+    return (*k)(p,time);
+  }
 
 } // end namespace GRINS
 
