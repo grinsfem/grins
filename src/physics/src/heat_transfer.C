@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
+#include "grins/postprocessed_quantities.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -68,6 +69,37 @@ namespace GRINS
   template<class K>
   void HeatTransfer<K>::read_input_options( const GetPot& /*input*/ )
   {
+    return;
+  }
+
+  template<class K>
+  void HeatTransfer<K>::register_postprocessing_vars( const GetPot& input,
+                                                      PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+heat_transfer+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("k") )
+              {
+                this->_k_index = postprocessing.register_quantity( name );
+              }
+            else
+              {
+                std::cerr << "Error: Invalid output_vars value for "+heat_transfer << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: k" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
@@ -294,6 +326,20 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("HeatTransfer::mass_residual");
 #endif
+
+    return;
+  }
+
+  template<class K>
+  void HeatTransfer<K>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                        const AssemblyContext& context,
+                                                        const libMesh::Point& point,
+                                                        libMesh::Real& value )
+  {
+    if( quantity_index == this->_k_index )
+      {
+        value = this->_k(point, context.get_time());
+      }
 
     return;
   }

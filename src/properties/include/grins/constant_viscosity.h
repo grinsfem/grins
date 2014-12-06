@@ -47,6 +47,8 @@ namespace GRINS
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
+
     libMesh::Real operator()( const libMesh::Real T ) const;
 
     libMesh::Real deriv( const libMesh::Real T ) const;
@@ -68,6 +70,13 @@ namespace GRINS
 
   inline
   libMesh::Real ConstantViscosity::operator()(AssemblyContext& /*context*/, unsigned int /*qp*/) const
+  {
+    return _mu;
+  }
+
+  inline
+  libMesh::Real ConstantViscosity::operator()( const libMesh::Point& /*p*/,
+                                               const libMesh::Real /*time*/ )
   {
     return _mu;
   }

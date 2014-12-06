@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/postprocessed_quantities.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
@@ -73,7 +74,38 @@ namespace GRINS
 
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false );
-  
+
+    return;
+  }
+
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::register_postprocessing_vars( const GetPot& input,
+                                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+incompressible_navier_stokes+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("mu") )
+              {
+                this->_mu_index = postprocessing.register_quantity( name );
+              }
+            else
+              {
+                std::cerr << "Error: Invalid output_vars value for "+incompressible_navier_stokes << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: mu" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
     return;
   }
 
@@ -534,6 +566,20 @@ namespace GRINS
               } // End Jacobian check
           } // End dof loop
       } // End quadrature loop
+
+    return;
+  }
+
+  template<class Mu>
+  void IncompressibleNavierStokes<Mu>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                                       const AssemblyContext& context,
+                                                                       const libMesh::Point& point,
+                                                                       libMesh::Real& value )
+  {
+    if( quantity_index == this->_mu_index )
+      {
+        value = this->_mu(point, context.get_time());
+      }
 
     return;
   }
