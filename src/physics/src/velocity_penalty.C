@@ -226,8 +226,6 @@ namespace GRINS
                                                             const libMesh::Point& point,
                                                             libMesh::Real& value )
   {
-    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
-
     libMesh::DenseVector<libMesh::Number> output_vec(3);
 
     if( quantity_index == this->_velocity_penalty_x_index )

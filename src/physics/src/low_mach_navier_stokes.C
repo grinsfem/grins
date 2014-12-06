@@ -26,9 +26,6 @@
 // This class
 #include "grins/low_mach_navier_stokes.h"
 
-// C++
-#include <limits>
-
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
@@ -870,8 +867,6 @@ namespace GRINS
                                                                       const libMesh::Point& point,
                                                                       libMesh::Real& value )
   {
-    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
-
     if( quantity_index == this->_rho_index )
       {
         libMesh::Real T = this->T(point,context);
