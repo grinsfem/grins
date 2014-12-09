@@ -234,12 +234,13 @@ namespace GRINS
   }
 
   template <typename StrainEnergy>
-  libMesh::Real IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
-                                                                                               const libMesh::TensorValue<libMesh::Real>& g_cov,
-                                                                                               const libMesh::TensorValue<libMesh::Real>& G_contra,
-                                                                                               const libMesh::TensorValue<libMesh::Real>& G_cov )
+  libMesh::Real IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& /*g_contra*/,
+                                                                                               const libMesh::TensorValue<libMesh::Real>& /*g_cov*/,
+                                                                                               const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
+                                                                                               const libMesh::TensorValue<libMesh::Real>& /*G_cov*/ )
   {
-    libmesh_not_implemented();
+    std::cerr << "Error: compute_33_stress shouldn't be called for incompressible materials." << std::endl;
+    libmesh_error();
     return 0.0;
   }
 
