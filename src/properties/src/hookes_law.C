@@ -126,11 +126,25 @@ namespace GRINS
 
   libMesh::Real HookesLaw::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
                                                   const libMesh::TensorValue<libMesh::Real>& g_cov,
-                                                  const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                                  const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
                                                   const libMesh::TensorValue<libMesh::Real>& G_cov )
   {
-    libmesh_not_implemented();
-    return 0.0;
+    libMesh::Real sigma_33 = 0.0;
+
+    for( unsigned int k = 0; k < 3; k++ )
+      {
+        for( unsigned int l = 0; l < 3; l++ )
+          {
+            libMesh::Real strain_kl = 0.5*(G_cov(k,l) - g_cov(k,l));
+
+            libMesh::Real C = _lambda*g_contra(2,2)*g_contra(k,l) +
+              _mu*(g_contra(2,k)*g_contra(2,l) + g_contra(2,l)*g_contra(2,k));
+
+            sigma_33 += C*strain_kl;
+          }
+      }
+
+    return sigma_33;
   }
 
 } // end namespace GRINS
