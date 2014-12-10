@@ -30,6 +30,9 @@
 #include "grins/physics.h"
 #include "grins/turbulence_fe_variables.h"
 
+//Utils
+#include "utilities/distance_function.h"
+
 namespace GRINS
 {
 
@@ -52,6 +55,9 @@ namespace GRINS
     
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
+
+    // A distance function to get distances from boundaries to qps
+    DistanceFunction distance_function;
 
   protected:
 
