@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //
-// Fully Implicit Navier-Stokes (FIN-S)
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2002-2012 Benjamin S. Kirk, Roy H. Stogner,
-//                         Todd A. Oliver, Paul T. Bauman
+// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2010-2013 The PECOS Development Team                        
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the Version 2.1 GNU Lesser General
@@ -20,10 +20,6 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id: distance_function.h 38624 2013-04-11 16:11:59Z benkirk $
-//
-//--------------------------------------------------------------------------
 
 #ifndef GRINS_DISTANCE_FUNCTION_H
 #define GRINS_DISTANCE_FUNCTION_H
@@ -39,9 +35,6 @@
 #include "libmesh/dense_matrix.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
-
-// FIN-S
-#include "fins_config.h"
 
 // Forward Declarations
 namespace libMesh {
