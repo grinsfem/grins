@@ -1,7 +1,7 @@
-// $Id: distance_function.C 38624 2013-04-11 16:11:59Z benkirk $
-
-// Fully Implicit Navier-Stokes
-// Copyright (C) 2002-2009 Benjamin S. Kirk, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2010-2013 The PECOS Development Team                        
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License
