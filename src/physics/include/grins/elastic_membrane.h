@@ -41,6 +41,8 @@ namespace GRINS
 
     virtual ~ElasticMembrane();
 
+    virtual void init_variables( libMesh::FEMSystem* system );
+
     //! Register postprocessing variables for ElasticMembrane
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
@@ -53,6 +55,10 @@ namespace GRINS
     virtual void side_time_derivative( bool compute_jacobian,
                                        AssemblyContext& context,
                                        CachedValues& cache );
+
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
@@ -91,7 +97,10 @@ namespace GRINS
 
     bool _is_compressible;
 
-    //! Index from registering this quantity. Each component will have it's own index.
+    //! Variable index for lambda_sq variable
+    VariableIndex _lambda_sq_var;
+
+    //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;
 
     //! Index from registering this quantity. Each component will have it's own index.

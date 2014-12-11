@@ -72,6 +72,22 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
+  {
+    // First call base class
+    ElasticMembraneBase::init_variables(system);
+
+    // Now build lambda_sq variable if we need it
+    if(_is_compressible)
+      {
+        /*! \todo Might want to make Order/FEType inputable */
+        _lambda_sq_var = system->add_variable( "lambda_sq", GRINSEnums::FIRST, GRINSEnums::LAGRANGE);
+      }
+
+    return;
+  }
+
+  template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                        PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
@@ -248,6 +264,71 @@ namespace GRINS
           }
 
       }
+
+    return;
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::element_constraint( bool compute_jacobian,
+                                                             AssemblyContext& context,
+                                                             CachedValues& /*cache*/ )
+  {
+    // Only compute the constraint is tracking lambda_sq as an independent variable
+    if( _is_compressible )
+      {
+        unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+        const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+
+        const std::vector<libMesh::Real> &JxW = context.get_element_fe(this->_lambda_sq_var)->get_JxW();
+
+        libMesh::DenseSubVector<libMesh::Number>& Fl = context.get_elem_residual(this->_lambda_sq_var);
+
+        const std::vector<std::vector<libMesh::Real> >& phi =
+          context.get_element_fe(this->_lambda_sq_var)->get_phi();
+
+        const unsigned int n_lambda_sq_dofs = context.get_dof_indices(this->_lambda_sq_var).size();
+
+        const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+        const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+
+        // All shape function gradients are w.r.t. master element coordinates
+        const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
+          context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+
+        const std::vector<std::vector<libMesh::Real> >& dphi_deta =
+          context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+
+        for (unsigned int qp=0; qp != n_qpoints; qp++)
+          {
+            libMesh::Real jac = JxW[qp];
+
+            libMesh::Gradient grad_u, grad_v, grad_w;
+            for( unsigned int d = 0; d < n_u_dofs; d++ )
+              {
+                libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
+                grad_u += u_coeffs(d)*u_gradphi;
+                grad_v += v_coeffs(d)*u_gradphi;
+                grad_w += w_coeffs(d)*u_gradphi;
+              }
+
+            libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+            libMesh::Real lambda_sq = 0;
+
+            this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
+                                          grad_u, grad_v, grad_w,
+                                          a_cov, a_contra, A_cov, A_contra,
+                                          lambda_sq );
+
+            libMesh::Real stress_33 = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+
+            for (unsigned int i=0; i != n_lambda_sq_dofs; i++)
+              {
+                Fl(i) += stress_33*phi[i][qp]*jac;
+              }
+          }
+      } // is_compressible
 
     return;
   }
@@ -499,7 +580,7 @@ namespace GRINS
     // If the material is compressible, then lambda_sq is an independent variable
     if( _is_compressible )
       {
-        libmesh_not_implemented();
+        lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
       }
     else
       {
