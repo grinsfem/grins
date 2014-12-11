@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/math_constants.h"
 #include "grins/assembly_context.h"
 #include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
@@ -105,13 +106,26 @@ namespace GRINS
               {
                 // sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
                 // sigma_zz = 0 by assumption of this Physics
-                _stress_indices.resize(3);
+                _stress_indices.resize(7);
 
                 this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
 
                 this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
 
                 this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
+
+                this->_stress_indices[3] = postprocessing.register_quantity("sigma_max");
+
+                this->_stress_indices[4] = postprocessing.register_quantity("sigma_1");
+
+                this->_stress_indices[5] = postprocessing.register_quantity("sigma_2");
+
+                this->_stress_indices[6] = postprocessing.register_quantity("sigma_3");
+              }
+            else if( name == std::string( "stress_zz" ) )
+              {
+                // This is mostly for sanity checking the plane stress condition
+                this->_stress_zz_index = postprocessing.register_quantity("stress_zz");
               }
             else if( name == std::string("strain") )
               {
@@ -372,7 +386,12 @@ namespace GRINS
 
     bool is_stress = ( _stress_indices[0] == quantity_index ||
                        _stress_indices[1] == quantity_index ||
-                       _stress_indices[2] == quantity_index   );
+                       _stress_indices[2] == quantity_index ||
+                       _stress_indices[3] == quantity_index ||
+                       _stress_indices[4] == quantity_index ||
+                       _stress_indices[5] == quantity_index ||
+                       _stress_indices[6] == quantity_index ||
+                       _stress_zz_index == quantity_index   );
 
     bool is_strain = ( _strain_indices[0] == quantity_index ||
                        _strain_indices[1] == quantity_index ||
@@ -445,34 +464,88 @@ namespace GRINS
             return;
           }
 
-        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-        libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+        if( is_stress )
+          {
+            libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+            libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
 
-        libMesh::Real I3 = lambda_sq*det_A/det_a;
+            libMesh::Real I3 = lambda_sq*det_A/det_a;
 
-        libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
+            libMesh::TensorValue<libMesh::Real> tau;
+            _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
 
-        if( _stress_indices[0] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(0,0)/std::sqrt(I3);
-          }
-        else if( _stress_indices[1] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(0,1)/std::sqrt(I3);
-          }
-        else if( _stress_indices[2] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(1,1)/std::sqrt(I3);
-          }
-        else
-          {
-            //Wat?!
-            libmesh_error();
-          }
+            if( _stress_indices[0] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,0)/std::sqrt(I3);
+              }
+            else if( _stress_indices[1] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,1)/std::sqrt(I3);
+              }
+            else if( _stress_indices[2] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(1,1)/std::sqrt(I3);
+              }
+            else if( _stress_indices[3] == quantity_index )
+              {
+                value = 0.5*(tau(0,0) + tau(1,1)) + std::sqrt(0.25*(tau(0,0)-tau(1,1))*(tau(0,0)-tau(1,1))
+                                                              + tau(0,1)*tau(0,1) );
+              }
+            else if( _stress_indices[4] == quantity_index ||
+                     _stress_indices[5] == quantity_index ||
+                     _stress_indices[6] == quantity_index   )
+              {
+                if(_is_compressible)
+                  {
+                    tau(2,2) = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+                  }
+
+                libMesh::Real stress_I1 = tau(0,0) + tau(1,1) + tau(2,2);
+                libMesh::Real stress_I2 = 0.5*(stress_I1*stress_I1 - (tau(0,0)*tau(0,0) + tau(1,1)*tau(1,1)
+                                                                      + tau(2,2)*tau(2,2) + tau(0,1)*tau(0,1)
+                                                                      + tau(1,0)*tau(1,0)) );
+
+                libMesh::Real stress_I3 = tau(2,2)*( tau(0,0)*tau(1,1) - tau(1,0)*tau(0,1) );
+
+                /* Formulae for principal stresses from:
+                   http://en.wikiversity.org/wiki/Principal_stresses */
+
+                // I_2^2 - 3*I_2
+                libMesh::Real C1 = (stress_I1*stress_I1 - 3*stress_I2);
+
+                // 2*I_1^3 - 9*I_1*_I2 + 27*I_3
+                libMesh::Real C2 = (2*stress_I1*stress_I1*stress_I1 - 9*stress_I1*stress_I2 + 27*stress_I3)/54;
+
+                libMesh::Real theta = std::acos( C2/(2*std::sqrt(C1*C1*C1)) )/3.0;
+
+                if( _stress_indices[4] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta))/3.0;
+                  }
+
+                if( _stress_indices[5] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta+Constants::two_pi/3.0))/3.0;
+                  }
+
+                if( _stress_indices[6] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta+2.0*Constants::two_pi/3.0))/3.0;
+                  }
+              }
+            else if( _stress_zz_index == quantity_index )
+              {
+                value = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+              }
+            else
+              {
+                //Wat?!
+                libmesh_error();
+              }
+          } // is_stress
 
       }
 

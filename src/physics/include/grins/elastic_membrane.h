@@ -103,7 +103,10 @@ namespace GRINS
     //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;
 
-    //! Index from registering this quantity. Each component will have it's own index.
+    //! Index from registering sigma_zz for postprocessing. Mainly for sanity checking.
+    unsigned int _stress_zz_index;
+
+    //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _strain_indices;
 
   };
