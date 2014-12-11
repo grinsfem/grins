@@ -37,7 +37,7 @@ namespace GRINS
   public:
 
     ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                     bool lambda_sq_var );
+                     bool is_compressible );
 
     virtual ~ElasticMembrane();
 
@@ -88,7 +88,7 @@ namespace GRINS
 
     libMesh::Real _h0;
 
-    bool _lambda_sq_var;
+    bool _is_compressible;
 
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

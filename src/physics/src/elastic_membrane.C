@@ -44,11 +44,11 @@ namespace GRINS
 {
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                                                     bool lambda_sq_var )
+                                                     bool is_compressible )
     : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
       _h0( input("Physics/"+physics_name+"/h0", 1.0 ) ),
-      _lambda_sq_var(lambda_sq_var)
+      _is_compressible(is_compressible)
   {
     // Force the user to set h0
     if( !input.have_variable("Physics/"+physics_name+"/h0") )
@@ -495,7 +495,7 @@ namespace GRINS
 
 
     // If the material is compressible, then lambda_sq is an independent variable
-    if( _lambda_sq_var )
+    if( _is_compressible )
       {
         libmesh_not_implemented();
       }
