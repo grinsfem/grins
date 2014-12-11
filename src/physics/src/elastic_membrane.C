@@ -172,11 +172,11 @@ namespace GRINS
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
 
-        
+
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
 
-        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())),
+        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
                                       grad_u, grad_v, grad_w,
                                       a_cov, a_contra, A_cov, A_contra,
                                       lambda_sq );
@@ -337,7 +337,8 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
 
-        this->compute_metric_tensors(0, *fe_new, grad_u, grad_v, grad_w,
+        // We're only computing one point at a time, so qp = 0 always
+        this->compute_metric_tensors(0, *fe_new, context, grad_u, grad_v, grad_w,
                                      a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
         // We have everything we need for strain now, so check if we are computing strain
@@ -432,6 +433,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                  const libMesh::FEBase& elem,
+                                                                 const AssemblyContext& context,
                                                                  const libMesh::Gradient& grad_u,
                                                                  const libMesh::Gradient& grad_v,
                                                                  const libMesh::Gradient& grad_w,

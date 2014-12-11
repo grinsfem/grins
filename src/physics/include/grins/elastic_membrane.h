@@ -75,6 +75,7 @@ namespace GRINS
 
     void compute_metric_tensors( unsigned int qp,
                                  const libMesh::FEBase& elem,
+                                 const AssemblyContext& context,
                                  const libMesh::Gradient& grad_u,
                                  const libMesh::Gradient& grad_v,
                                  const libMesh::Gradient& grad_w,
