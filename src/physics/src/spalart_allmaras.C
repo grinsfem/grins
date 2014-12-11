@@ -165,6 +165,12 @@ namespace GRINS
     // weight functions.
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
+    // Auto pointer to distance fcn evaluated at quad points
+    AutoPtr< DenseVector<Real> > distance_qp;
+
+    // Need to get elem_in
+    distance_qp = this->distance_function->interpolate(elem_in, context.get_element_qrule().get_points());
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         // Compute the solution & its gradient at the old Newton iterate.

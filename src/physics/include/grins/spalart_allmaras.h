@@ -30,6 +30,9 @@
 #include "grins/physics.h"
 #include "grins/turbulence_fe_variables.h"
 
+//Utils
+#include "utilities/distance_function.h"
+
 namespace GRINS
 {
 
@@ -66,6 +69,9 @@ namespace GRINS
     // The destruction function f_w(nu)
     Real _destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde);
 
+    // A distance function to get distances from boundaries to qps
+    DistanceFunction distance_function;
+
   protected:
 
     //! Spalart Allmaras model constants
@@ -81,7 +87,7 @@ namespace GRINS
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
 
-    // This should be declared in TurbulentViscosity
+    // These are defined for each physics
     TurbulenceFEVariables _turbulence_vars;
  
     //! Viscosity object
