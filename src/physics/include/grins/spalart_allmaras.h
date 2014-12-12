@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
+#include "primitive_flow_fe_variables.h"
 #include "grins/turbulence_fe_variables.h"
 
 //Utils
@@ -44,7 +45,7 @@ namespace GRINS
     to specify a constant or spatially varying viscosity in the input file
    */
   template<class Viscosity>
-  class SpalartAllmaras : public TurbulenceModels<Viscosity>
+  class SpalartAllmaras : public TurbulenceModelsBase<Viscosity>
   {
   public:
 
@@ -60,11 +61,14 @@ namespace GRINS
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
 
+    // The physical viscosity
+    Viscosity _mu;
+    
     // The source function \tilde{S}
     Real _source_fn( libMesh::Number nu, Real wall_distance);
 
     // The vorticity function
-    Real _vorticity( FlowVars, qp);
+    Real _vorticity(AssemblyContext& context, unsigned int qp);
 
     // The destruction function f_w(nu)
     Real _destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde);
@@ -86,6 +90,9 @@ namespace GRINS
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
+
+    // The flow variables
+    PrimitiveFlowFEVariables _flow_vars;
 
     // These are defined for each physics
     TurbulenceFEVariables _turbulence_vars;

@@ -39,6 +39,7 @@
 
 // libMesh
 #include "libmesh/quadrature.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {
@@ -124,6 +125,10 @@ namespace GRINS
     this->_timer->BeginTimer("SpalartAllmaras::element_time_derivative");
 #endif
 
+    // Get a pointer to the current element, we need this for computing the distance to wall for the
+    // quadrature points
+    Elem &elem_pointer = context.get_elem();
+
     // The number of local degrees of freedom in each variable.
     const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
         
@@ -168,8 +173,8 @@ namespace GRINS
     // Auto pointer to distance fcn evaluated at quad points
     AutoPtr< DenseVector<Real> > distance_qp;
 
-    // Need to get elem_in
-    distance_qp = this->distance_function->interpolate(elem_in, context.get_element_qrule().get_points());
+    // Fill the vector of distances to quadrature points
+    distance_qp = this->distance_function->interpolate(elem_pointer, context.get_element_qrule().get_points());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -189,8 +194,8 @@ namespace GRINS
 	const libMesh::Number z = (this->_dim==3)?u_qpoint[qp](2):0;
 
         libMesh::Real jac = JxW[qp];
-
-	// Compute the viscosity at this qp
+	
+	// The physical viscosity
 	libMesh::Real _mu_qp = this->_mu(context, qp);
    
         // First, an i-loop over the viscosity degrees of freedom.        
@@ -198,7 +203,7 @@ namespace GRINS
           {
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
             Fnu(i) += jac *
-              (-this->_cb1*this->_source_fn(nu)*nu*nu_phi[i][qp]  // source term
+              (-this->_cb1*this->_source_fn(nu, _mu_qp, distance_qp[qp])*nu*nu_phi[i][qp]  // source term
 	       + (1./_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*phi[i][qp] + this->_cb2*grad_nu*grad_nu*phi[i][qp])  // diffusion term 
                - this->_cw1*this->_destruction_fn(nu)*pow(nu/x, 2.)*phi[i][qp]) // destruction term                          
 	      // Compute the jacobian if not using numerical jacobians  
@@ -231,10 +236,10 @@ namespace GRINS
   }
     
   template<class Mu>
-  Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, Real wall_distance)
+  Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, libMesh::Real mu, Real wall_distance)
   {
     // Step 1
-    Real _kai = nu/(this->constant_viscosity);
+    Real _kai = nu/mu;
     
     // Step 2
     Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(_cv1, 3.0));
@@ -285,6 +290,8 @@ namespace GRINS
     
     return _fw;
   }
+  
+
   
 } // namespace GRINS
 
