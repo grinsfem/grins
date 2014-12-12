@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/assembly_context.h"
+#include "grins/parameter_user.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -44,12 +45,12 @@ class GetPot;
 namespace GRINS
 {
   template<class Viscosity>
-    class TurbulentViscosity
+    class SpalartAllmarasViscosity : public ParameterUser
   {
   public:
 
-    TurbulentViscosity( const GetPot& input );
-    ~TurbulentViscosity();
+    SpalartAllmarasViscosity( const GetPot& input );
+    ~SpalartAllmarasViscosity();
     
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
@@ -60,17 +61,14 @@ namespace GRINS
     
   private:
 
-    TurbulentViscosity();
-    
-    // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
-
+    SpalartAllmarasViscosity();
+       
   };
 
   /* ------------------------- Inline Functions -------------------------*/  
   inline
     template<class Mu>
-    libMesh::Real TurbulentViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
+    libMesh::Real SpalartAllmarasViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
   {
     // FIXME: We should be getting the variable index to get the qps from the context
     // not hardcode it to be 0
