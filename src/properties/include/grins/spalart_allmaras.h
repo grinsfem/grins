@@ -63,12 +63,12 @@ namespace GRINS
 
     // The physical viscosity
     Viscosity _mu;
-    
-    // The source function \tilde{S}
-    Real _source_fn( libMesh::Number nu, Real wall_distance);
 
     // The vorticity function
     Real _vorticity(AssemblyContext& context, unsigned int qp);
+    
+    // The source function \tilde{S}
+    Real _source_fn( libMesh::Number nu, Real wall_distance, Real _vorticity_value);
 
     // The destruction function f_w(nu)
     Real _destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde);

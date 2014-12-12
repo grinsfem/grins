@@ -197,15 +197,24 @@ namespace GRINS
 	
 	// The physical viscosity
 	libMesh::Real _mu_qp = this->_mu(context, qp);
+
+	// The vorticity value
+	libMesh::Real _vorticity_value_qp = this->_vorticity(context, qp);
    
         // First, an i-loop over the viscosity degrees of freedom.        
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
+	    //The source term
+	    Real _S_tilde = this->_source_fn(nu, _mu_qp, distance_qp[qp], _vorticity_value_qp);
+
+	    // The wall destruction term
+	    Real _fw = this->_destruction_fn(nu, distance_qp[qp], _S_tilde);
+
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
             Fnu(i) += jac *
-              (-this->_cb1*this->_source_fn(nu, _mu_qp, distance_qp[qp])*nu*nu_phi[i][qp]  // source term
-	       + (1./_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*phi[i][qp] + this->_cb2*grad_nu*grad_nu*phi[i][qp])  // diffusion term 
-               - this->_cw1*this->_destruction_fn(nu)*pow(nu/x, 2.)*phi[i][qp]) // destruction term                          
+              (-this->_cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
+	       + (1./this->_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*phi[i][qp] + this->_cb2*grad_nu*grad_nu*phi[i][qp])  // diffusion term 
+               - this->_cw1*_fw*pow(nu/x, 2.)*phi[i][qp]); // destruction term                          
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)
 		{
@@ -217,7 +226,7 @@ namespace GRINS
 		      //   (u_gradphi[i][qp]*u_gradphi[j][qp])
 		      
 		      Knunu(i,j) += jac *
-			(      // source term
+			( 0.0     // source term
 			 // diffusion term
 			       ); // destruction term
                                                               
@@ -234,34 +243,57 @@ namespace GRINS
 
     return;
   }
-    
+  
   template<class Mu>
-  Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, libMesh::Real mu, Real wall_distance)
+  Real SpalartAllmaras<Mu>::_vorticity(AssemblyContext& context, unsigned int qp)
+  {
+    libMesh::Gradient grad_u, grad_v;
+    grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
+    grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
+
+    Real _vorticity_value;
+    _vorticity_value = fabs(grad_v(0) - grad_u(1));
+
+    if(this->_dim == 3)
+      {
+	libMesh::Gradient grad_w;
+	grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
+	
+	Real _vorticity_component_0 = grad_w(1) - grad_v(2);
+	Real _vorticity_component_1 = grad_u(2) - grad_v(0);
+
+	_vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
+	
+	return _vorticity_value;
+  }
+  
+  template<class Mu>
+    Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, libMesh::Real mu, Real wall_distance, Real _vorticity_value)
   {
     // Step 1
     Real _kai = nu/mu;
     
     // Step 2
-    Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(_cv1, 3.0));
+    Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(this->_cv1, 3.0));
 
     // Step 3
     Real _fv2 = 1 - (_kai/(1 + _kai*_fv1));
 
     // Step 4
-    Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0)) ;
+    Real _S_bar = nu/(pow(this->_kappa, 2.0) * pow(wall_distance, 2.0)) ;
 
     // Step 5, the absolute value of the vorticity
-    Real _S = fabs(_vorticity(FlowVars, qp));
+    Real _S = _vorticity_value;
 
     // Step 6
     Real _S_tilde = 0.0;
-    if(_S_bar >= -_cv2*_S)
+    if(_S_bar >= -this->_cv2*_S)
       {
 	_S_tilde = _S + _S_bar;
       }
     else
       {
-	_S_tilde = _S + (_S*(pow(_cv2,2.0)*_S + _cv3*_S_bar))/((_cv3 - (2*_cv2))*_S - _S_bar);
+	_S_tilde = _S + (_S*(pow(this->_cv2,2.0)*_S + this->_cv3*_S_bar))/((this->_cv3 - (2*this->_cv2))*_S - _S_bar);
       }
     
     return _S_tilde;
@@ -273,20 +305,20 @@ namespace GRINS
     // Step 1
     Real _r = 0.0;
     
-    if(nu/(_S_tilde*pow(_kappa,2.0)*pow(wall_distance,2.0)) < _r_lin)
+    if(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)) < this->_r_lin)
       {
-	_r = nu/(_S_tilde*pow(_kappa,2.0)*pow(wall_distance,2.0));
+	_r = nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0));
       }
     else
       {
-	_r = _r_lin;
+	_r = this->_r_lin;
       }
 
     // Step 2
-    Real _g = _r + _c_w2*(pow(_r,6.0) - _r);
+    Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
 
     // Step 3
-    Real _fw = _g*pow((1 + pow(_c_w3,6.0))/(pow(_g,6.0) + pow(_c_w3,6.0)), 1.0/6.0);
+    Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
     
     return _fw;
   }
