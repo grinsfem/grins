@@ -57,6 +57,7 @@
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
+#include "grins/elastic_cable.h"
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/grins_physics_names.h"
 
@@ -541,6 +542,23 @@ namespace GRINS
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ElasticMembraneConstantPressure(physics_to_add,input));
+      }
+    else if( physics_to_add == elastic_cable )
+      {
+        std::string elasticity_model = input("Physics/"+elastic_cable+"/elasticity_model", "HookesLaw" );
+
+        if( elasticity_model == std::string("HookesLaw") )
+          {
+            physics_list[physics_to_add] =
+              // We need to track \lambda as an indendent variable
+              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,true));
+          }
+        else
+          {
+            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
+                      << "       Valid selections are: Hookean" << std::endl;
+            libmesh_error();
+          }
       }
     else
       {
