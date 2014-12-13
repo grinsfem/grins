@@ -7,7 +7,7 @@ enabled_physics = 'ElasticCable'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticCable]
 
-h0 = '0.05'
+A0 = '1.0'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
@@ -49,7 +49,7 @@ element_type = 'EDGE2'
 domain_x1_min = '0.0'
 domain_x1_max = '8.0'
 
-mesh_nx1 = '50'
+mesh_nx1 = '10'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

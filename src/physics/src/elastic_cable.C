@@ -55,7 +55,7 @@ namespace GRINS
     // Force the user to set h0
     if( !input.have_variable("Physics/"+physics_name+"/A0") )
 	{
-		std::cerr << "Error: Must specify initial thickness for "+physics_name << std::endl
+		std::cerr << "Error: Must specify initial area for "+physics_name << std::endl
 				  << "       Input the option Physics/"+physics_name+"/A0" << std::endl;
 		libmesh_error();
 	}
