@@ -418,6 +418,7 @@ AC_CONFIG_FILES(examples/simple_prop/run.sh,	             [chmod +x examples/sim
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
 AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/elastic_sheet/run.sh])
+AC_CONFIG_FILES(examples/cable_displacement/run.sh,               [chmod +x examples/cable_displacement/run.sh])
 AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/inflating_sheet/run.sh])
 
 dnl-----------------------------------------------
