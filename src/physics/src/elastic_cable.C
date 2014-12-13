@@ -204,7 +204,7 @@ namespace GRINS
 			libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 			libMesh::Real lambda_sq = 0;
 
-			this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())),
+			this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
 										  grad_u,
 										  a_cov, a_contra, A_cov, A_contra,
 										  lambda_sq );
@@ -326,7 +326,7 @@ namespace GRINS
 		libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 		libMesh::Real lambda_sq = 0;
 
-		this->compute_metric_tensors(0, *fe_new, grad_u,
+		this->compute_metric_tensors(0, *fe_new, context, grad_u,
 									 a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
 		// We have everything we need for strain now, so check if we are computing strain
@@ -421,6 +421,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   void ElasticCable<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                  const libMesh::FEBase& elem,
+																 const AssemblyContext& context,
                                                                  const libMesh::Gradient& grad_u,
                                                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                                                  libMesh::TensorValue<libMesh::Real>& a_contra,
@@ -483,16 +484,18 @@ namespace GRINS
     a_contra(2,2) = 1.0;
 
 
+    //lambda_sq = det_a/det_A;//a_cov(0,0)/A_cov(0,0);
     // If the material is compressible, then lambda_sq is an independent variable
     if( _lambda_sq_var )
       {
-        libmesh_not_implemented();
+    	lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
       }
     else
       {
         // If the material is incompressible, lambda^2 is known
         lambda_sq = a_cov(0,0)/A_cov(0,0);//det_a/det_A;
       }
+
 
     A_cov(1,1)    = lambda_sq;
     A_cov(2,2)    = lambda_sq;
