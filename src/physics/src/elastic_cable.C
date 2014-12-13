@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-//
-// GRINS - General Reacting Incompressible Navier-Stokes
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -32,48 +32,7 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/elasticity_tensor.h"
 #include "grins/postprocessed_quantities.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/boundary_info.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/fe_interface.h"
-
-//-----------------------------------------------------------------------bl-
-//--------------------------------------------------------------------------
-//
-// GRINS - General Reacting Incompressible Navier-Stokes
-//
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
-// Copyright (C) 2010-2013 The PECOS Development Team
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2.1 GNU Lesser General
-// Public License as published by the Free Software Foundation.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor,
-// Boston, MA  02110-1301  USA
-//
-//-----------------------------------------------------------------------el-
-
-// This class
-#include "grins/elastic_membrane.h"
-
-// GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/solid_mechanics_bc_handling.h"
-#include "grins/generic_ic_handler.h"
-#include "grins/elasticity_tensor.h"
-#include "grins/postprocessed_quantities.h"
+#include "grins/physics.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -85,20 +44,21 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
+  ElasticCable<StressStrainLaw>::ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
                                                      bool lambda_sq_var )
-    : ElasticCableBase(physics_name,input),
+    : Physics(physics_name,input),
+	  _disp_vars(input,physics_name),
       _stress_strain_law(input),
       _A0( input("Physics/"+physics_name+"/A0", 1.0 ) ),
       _lambda_sq_var(lambda_sq_var)
   {
     // Force the user to set h0
     if( !input.have_variable("Physics/"+physics_name+"/A0") )
-      {
-        std::cerr << "Error: Must specify initial thickness for "+physics_name << std::endl
-                  << "       Input the option Physics/"+physics_name+"/A0" << std::endl;
-        libmesh_error();
-      }
+	{
+		std::cerr << "Error: Must specify initial thickness for "+physics_name << std::endl
+				  << "       Input the option Physics/"+physics_name+"/A0" << std::endl;
+		libmesh_error();
+	}
 
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 
@@ -108,8 +68,42 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::~ElasticCable()
+  ElasticCable<StressStrainLaw>::~ElasticCable()
   {
+    return;
+  }
+
+
+  template<typename StressStrainLaw>
+  void ElasticCable<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
+  {
+    // is_2D = false, is_3D = true
+    _disp_vars.init(system,false,true);
+
+    return;
+  }
+
+
+  template<typename StressStrainLaw>
+  void ElasticCable<StressStrainLaw>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    // Tell the system to march temperature forward in time
+    system->time_evolving(_disp_vars.u_var());
+
+    return;
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticCable<StressStrainLaw>::init_context( AssemblyContext& context )
+  {
+    context.get_element_fe(_disp_vars.u_var())->get_JxW();
+    context.get_element_fe(_disp_vars.u_var())->get_phi();
+    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+
+    // Need for constructing metric tensors
+    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
+    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
+
     return;
   }
 
@@ -117,6 +111,49 @@ namespace GRINS
   void ElasticCable<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                        PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
+	std::string section = "Physics/"+elastic_cable+"/output_vars";
+
+	if( input.have_variable(section) )
+	{
+		unsigned int n_vars = input.vector_variable_size(section);
+
+		for( unsigned int v = 0; v < n_vars; v++ )
+		{
+			std::string name = input(section,"DIE!",v);
+
+			if( name == std::string("stress") )
+			{
+				// sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
+				// sigma_zz = 0 by assumption of this Physics
+				_stress_indices.resize(3);
+
+				this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
+
+				this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
+
+				this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
+			}
+			else if( name == std::string("strain") )
+			{
+				// eps_xx, eps_xy, eps_yy, eps_yx = eps_xy
+				_strain_indices.resize(3);
+
+				this->_strain_indices[0] = postprocessing.register_quantity("strain_xx");
+
+				this->_strain_indices[1] = postprocessing.register_quantity("strain_xy");
+
+				this->_strain_indices[2] = postprocessing.register_quantity("strain_yy");
+			}
+			else
+			{
+				std::cerr << "Error: Invalue output_vars value for "+elastic_cable << std::endl
+						  << "       Found " << name << std::endl
+						  << "       Acceptable values are: stress" << std::endl
+						  << "                              strain" << std::endl;
+				libmesh_error();
+			}
+		}
+	}
     return;
   }
 
@@ -132,8 +169,6 @@ namespace GRINS
 
 	    // Residuals that we're populating
 	    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
-	    //libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
-	    //libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
 	    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -141,18 +176,13 @@ namespace GRINS
 	    const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
 	      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
 
-	    //const std::vector<std::vector<libMesh::Real> >& dphi_deta =
-	    //  context.get_element_fe(_disp_vars.u_var())->get_dphideta();
 
 	    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
-	    //const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
-	    //const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
 	    // Need these to build up the covariant and contravariant metric tensors
 	    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-	    //const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
 
-	    const unsigned int dim = 1; // The manifold dimension is always 2 for this physics
+	    const unsigned int dim = 1; // The cable dimension is always 1 for this physics
 
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 		{
@@ -175,7 +205,7 @@ namespace GRINS
 			libMesh::Real lambda_sq = 0;
 
 			this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())),
-										  grad_u, /*grad_v, grad_w,*/
+										  grad_u,
 										  a_cov, a_contra, A_cov, A_contra,
 										  lambda_sq );
 
@@ -195,7 +225,7 @@ namespace GRINS
 				{
 					for( unsigned int beta = 0; beta < dim; beta++ )
 					{
-						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha)*jac;// +
+						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;// +
 														   //(grad_x(alpha) + grad_u(alpha))*u_gradphi(beta) )*jac;
 
 						//Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
@@ -238,7 +268,7 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::mass_residual( bool /*compute_jacobian*/,
+  void ElasticCable<StressStrainLaw>::mass_residual( bool /*compute_jacobian*/,
                                                         AssemblyContext& /*context*/,
                                                         CachedValues& /*cache*/ )
   {
@@ -252,7 +282,108 @@ namespace GRINS
                                                                          const libMesh::Point& point,
                                                                          libMesh::Real& value )
   {
-    return;
+	value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+
+	bool is_stress = ( _stress_indices[0] == quantity_index ||
+					   _stress_indices[1] == quantity_index ||
+					   _stress_indices[2] == quantity_index   );
+
+	bool is_strain = ( _strain_indices[0] == quantity_index ||
+					   _strain_indices[1] == quantity_index ||
+					   _strain_indices[2] == quantity_index   );
+
+	if( is_stress || is_strain )
+	  {
+		const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+
+		const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+
+		// Build new FE for the current point. We need this to build tensors at point.
+		libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =
+		  this->build_new_fe( context.get_elem(), context.get_element_fe(_disp_vars.u_var()),
+							  point );
+
+		const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
+		  fe_new->get_dphidxi();
+
+		// Need these to build up the covariant and contravariant metric tensors
+		const std::vector<libMesh::RealGradient>& dxdxi  = fe_new->get_dxyzdxi();
+
+		// Gradients are w.r.t. master element coordinates
+		libMesh::Gradient grad_u, grad_v, grad_w;
+		for( unsigned int d = 0; d < n_u_dofs; d++ )
+		  {
+			libMesh::RealGradient u_gradphi( dphi_dxi[d][0] );//, dphi_deta[d][0] );
+			grad_u += u_coeffs(d)*u_gradphi;
+			//grad_v += v_coeffs(d)*u_gradphi;
+			//grad_w += w_coeffs(d)*u_gradphi;
+		  }
+
+		//libMesh::RealGradient grad_x( dxdxi[0](0), dxdeta[0](0) );
+		//libMesh::RealGradient grad_y( dxdxi[0](1), dxdeta[0](1) );
+		//libMesh::RealGradient grad_z( dxdxi[0](2), dxdeta[0](2) );
+
+		libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+		libMesh::Real lambda_sq = 0;
+
+		this->compute_metric_tensors(0, *fe_new, grad_u,
+									 a_cov, a_contra, A_cov, A_contra, lambda_sq );
+
+		// We have everything we need for strain now, so check if we are computing strain
+		if( is_strain )
+		  {
+			if( _strain_indices[0] == quantity_index )
+			  {
+				value = 0.5*(A_cov(0,0) - a_cov(0,0));
+			  }
+			else if( _strain_indices[1] == quantity_index )
+			  {
+				value = 0.5*(A_cov(0,1) - a_cov(0,1));
+			  }
+			else if( _strain_indices[2] == quantity_index )
+			  {
+				value = 0.5*(A_cov(1,1) - a_cov(1,1));
+			  }
+			else
+			  {
+				//Wat?!
+				libmesh_error();
+			  }
+			return;
+		  }
+
+		libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+		libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+
+		libMesh::Real I3 = lambda_sq*det_A/det_a;
+
+		libMesh::TensorValue<libMesh::Real> tau;
+		_stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
+
+		if( _stress_indices[0] == quantity_index )
+		  {
+			// Need to convert to Cauchy stress
+			value = tau(0,0)/std::sqrt(I3);
+		  }
+		else if( _stress_indices[1] == quantity_index )
+		  {
+			// Need to convert to Cauchy stress
+			value = tau(0,1)/std::sqrt(I3);
+		  }
+		else if( _stress_indices[2] == quantity_index )
+		  {
+			// Need to convert to Cauchy stress
+			value = tau(1,1)/std::sqrt(I3);
+		  }
+		else
+		  {
+			//Wat?!
+			libmesh_error();
+		  }
+
+	  }
+
+	return;
   }
 
   template<typename StressStrainLaw>
@@ -288,11 +419,9 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
+  void ElasticCable<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                  const libMesh::FEBase& elem,
                                                                  const libMesh::Gradient& grad_u,
-                                                                 //const libMesh::Gradient& grad_v,
-                                                                 //const libMesh::Gradient& grad_w,
                                                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                                                  libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                  libMesh::TensorValue<libMesh::Real>& A_cov,

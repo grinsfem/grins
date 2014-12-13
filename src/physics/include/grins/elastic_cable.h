@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-//
-// GRINS - General Reacting Incompressible Navier-Stokes
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -27,13 +27,16 @@
 
 
 //GRINS
-#include "grins/elastic_cable_base.h"
+#include "grins/physics.h"
+#include "grins/solid_mechanics_fe_variables.h"
+
+//LIBMESH
 #include "libmesh/fe_base.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCable : public ElasticCableBase
+  class ElasticCable : public Physics
   {
   public:
 
@@ -42,7 +45,15 @@ namespace GRINS
 
     virtual ~ElasticCable();
 
-    //! Register postprocessing variables for ElasticMembrane
+    //! Initialize variables for this physics.
+	virtual void init_variables( libMesh::FEMSystem* system );
+
+	virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+	//! Initialize context for added physics variables
+	virtual void init_context( AssemblyContext& context );
+
+    //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
 
@@ -64,6 +75,9 @@ namespace GRINS
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
+  protected:
+
+    SolidMechanicsFEVariables _disp_vars;
 
   private:
 
@@ -77,8 +91,6 @@ namespace GRINS
     void compute_metric_tensors( unsigned int qp,
                                  const libMesh::FEBase& elem,
                                  const libMesh::Gradient& grad_u,
-                                 const libMesh::Gradient& grad_v,
-                                 const libMesh::Gradient& grad_w,
                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                  libMesh::TensorValue<libMesh::Real>& a_contra,
                                  libMesh::TensorValue<libMesh::Real>& A_cov,
@@ -87,7 +99,7 @@ namespace GRINS
 
     StressStrainLaw _stress_strain_law;
 
-    libMesh::Real _h0;
+    libMesh::Real _A0;
 
     bool _lambda_sq_var;
 

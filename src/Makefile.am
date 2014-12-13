@@ -109,6 +109,7 @@ libgrins_la_SOURCES += physics/src/solid_mechanics_fe_variables.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
 libgrins_la_SOURCES += physics/src/elastic_membrane.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_constant_pressure.C
+libgrins_la_SOURCES += physics/src/elastic_cable.C
 libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
 
 # src/properties files
@@ -286,6 +287,7 @@ include_HEADERS += physics/include/grins/solid_mechanics_variables.h
 include_HEADERS += physics/include/grins/solid_mechanics_fe_variables.h
 include_HEADERS += physics/include/grins/elastic_membrane_base.h
 include_HEADERS += physics/include/grins/elastic_membrane.h
+include_HEADERS += physics/include/grins/elastic_cable.h
 include_HEADERS += physics/include/grins/elastic_membrane_constant_pressure.h
 
 # src/properties headers
