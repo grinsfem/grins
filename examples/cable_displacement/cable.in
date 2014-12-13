@@ -7,7 +7,7 @@ enabled_physics = 'ElasticCable'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticCable]
 
-A0 = '1.0'
+A0 = '0.5'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
@@ -20,7 +20,7 @@ elasticity_model = 'HookesLaw'
 bc_ids = '0 1'
 bc_types = 'pinned constant_displacement'
 
-displacement_1 = '0.1 0.0 0.0'
+#displacement_1 = '0.1 0.0 0.0'
 
 [../HookesLaw]                                                                                                                                                                                                                               
 
@@ -66,7 +66,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = 'sheet' 
+vis_output_file_prefix = 'cable' 
 
 output_residual = 'false' 
 
