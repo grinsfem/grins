@@ -238,3 +238,12 @@ MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
 
+#=======================================================================
+# Elastic Cable Example
+#=======================================================================
+cabledispdir = $(prefix)/examples/cable_displacement
+cabledisp_DATA = $(top_srcdir)/examples/cable_displacement/cable.in
+cabledisp_SCRIPTS = $(top_builddir)/examples/cable_displacement/run.sh
+
+EXTRA_DIST += $(cabledisp_DATA)
+
