@@ -233,11 +233,6 @@ sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
 sheet_LDADD = $(LIBGRINS_LIBS)
 sheet_CPPFLAGS = -I$(top_srcdir)/examples/inflating_sheet $(AM_CPPFLAGS)
 
-
-MAINTAINERCLEANFILES = Makefile.in
-
-MOSTLYCLEANFILES = *.gcno
-
 #=======================================================================
 # Elastic Cable Example
 #=======================================================================
@@ -246,4 +241,27 @@ cabledisp_DATA = $(top_srcdir)/examples/cable_displacement/cable.in
 cabledisp_SCRIPTS = $(top_builddir)/examples/cable_displacement/run.sh
 
 EXTRA_DIST += $(cabledisp_DATA)
+
+#=======================================================================
+# Suspended Cable Example
+#=======================================================================
+suspendedcabledir = $(prefix)/examples/suspended_cable
+suspendedcable_PROGRAMS = cable
+suspendedcable_DATA  = $(top_srcdir)/examples/suspended_cable/cable.in
+#suspendedcable_DATA += $(top_srcdir)/examples/suspended_cable/sheet_coarse.e
+suspendedcable_SCRIPTS = $(top_builddir)/examples/suspended_cable/run.sh
+
+EXTRA_DIST += $(suspendedcable_DATA)
+
+cable_SOURCES  = suspended_cable/suspended_cable.C
+cable_SOURCES += suspended_cable/suspended_cable_solver_factory.C
+cable_SOURCES += suspended_cable/gravity_continuation_solver.C
+
+cable_LDADD = $(LIBGRINS_LIBS)
+cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
+
+
+MAINTAINERCLEANFILES = Makefile.in
+
+MOSTLYCLEANFILES = *.gcno
 

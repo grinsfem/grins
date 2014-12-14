@@ -62,6 +62,7 @@ namespace GRINS
   const PhysicsName elastic_membrane = "ElasticMembrane";
   const PhysicsName elastic_cable = "ElasticCable";
   const PhysicsName elastic_membrane_constant_pressure = "ElasticMembraneConstantPressure";
+  const PhysicsName elastic_cable_constant_gravity = "ElasticCableConstantGravity";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H

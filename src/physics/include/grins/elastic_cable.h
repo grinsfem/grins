@@ -92,6 +92,7 @@ namespace GRINS
                                  const libMesh::FEBase& elem,
 								 const AssemblyContext& context,
                                  const libMesh::Gradient& grad_u,
+								 const libMesh::Gradient& grad_v,
 								 const libMesh::Gradient& grad_w,
                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                  libMesh::TensorValue<libMesh::Real>& a_contra,
