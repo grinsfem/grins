@@ -1,0 +1,97 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'ElasticCable
+                   ElasticCableConstantGravity'
+
+# Options for Incompressible Navier-Stokes physics
+[./ElasticCable]
+
+A0 = '0.00929'
+
+FE_family = 'LAGRANGE'
+order = 'FIRST'
+
+elasticity_model = 'HookesLaw'
+
+# Boundary ids:
+# j = left -> 0
+# j = right-> 1
+bc_ids = '0 1'
+bc_types = 'pinned pinned'
+
+ic_ids = '1'
+ic_types = 'parsed'
+ic_variables = 'w'
+ic_values = '0.3*sin(pi*x)'
+
+[../ElasticCableConstantGravity]
+
+A0 = '0.00929'
+pho0='1.587'
+gravity = -9.81
+
+[../HookesLaw]                                                                                                                                                                                                                               
+
+nu = '0.45'
+E = '1.0e4'
+
+[]
+
+[SolverOptions]
+
+solver_type = 'gravity_continuation'
+
+[./GravityContinuation]
+initial_gravity = '-0.0981'
+final_gravity = '-9.81'
+n_increments = '50'
+
+[]
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'create_1D_mesh'
+#element_type = 'EDGE2'
+                                                                                                                                                                                                                                           
+domain_x1_min = '0.0'
+domain_x1_max = '1.0'
+
+mesh_nx1 = '10'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  '50' 
+max_linear_iterations = '2500'
+
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+
+vis_output_file_prefix = 'cable' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'StretchedElasticCable'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+print_element_residuals = 'false'
+[]

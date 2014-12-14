@@ -59,6 +59,7 @@
 #include "grins/elastic_membrane.h"
 #include "grins/elastic_cable.h"
 #include "grins/elastic_membrane_constant_pressure.h"
+#include "grins/elastic_cable_constant_gravity.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
@@ -559,6 +560,11 @@ namespace GRINS
                       << "       Valid selections are: Hookean" << std::endl;
             libmesh_error();
           }
+      }
+    else if( physics_to_add == elastic_cable_constant_gravity )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ElasticCableConstantGravity(physics_to_add,input));
       }
     else
       {
