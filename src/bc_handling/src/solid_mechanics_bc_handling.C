@@ -64,6 +64,15 @@ namespace GRINS
     else if( bc_type == "constant_displacement" )
       bc_type_out = CONSTANT_DISPLACEMENT;
 
+    else if( bc_type == "roller_x" )
+      bc_type_out = ROLLER_X;
+
+    else if( bc_type == "roller_y" )
+      bc_type_out = ROLLER_Y;
+
+    else if( bc_type == "roller_z" )
+      bc_type_out = ROLLER_Z;
+
     else
       {
         // Call base class to detect any physics-common boundary conditions
@@ -125,6 +134,14 @@ namespace GRINS
                                             input("Physics/"+_physics_name+"/displacement_"+bc_id_string, 0.0, i ),
                                             i );
             }
+        }
+        break;
+
+      case(ROLLER_X):
+      case(ROLLER_Y):
+      case(ROLLER_Z):
+        {
+          this->set_dirichlet_bc_type( bc_id, bc_type );
         }
         break;
 
@@ -237,6 +254,72 @@ namespace GRINS
 
               dof_map.add_dirichlet_boundary( disp_dbc );
             }
+        }
+        break;
+
+        // Roller is free to move in the x-direction, so pin y and z-directions
+      case(ROLLER_X):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+
+          if( _disp_vars.have_v() )
+            dbc_vars.push_back(v_var);
+
+          if( _disp_vars.have_w() )
+            dbc_vars.push_back(w_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Roller is free to move in the y-direction, so pin x and z-directions
+      case(ROLLER_Y):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(u_var);
+
+          if( _disp_vars.have_w() )
+            dbc_vars.push_back(w_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Roller is free to move in the z-direction, so pin x and y-directions
+      case(ROLLER_Z):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(u_var);
+          dbc_vars.push_back(v_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
         }
         break;
 

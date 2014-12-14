@@ -66,7 +66,11 @@ namespace GRINS
     SolidMechanicsBCHandling();
 
     enum SOLIDS_BC_TYPES{PINNED=1,
-                         CONSTANT_DISPLACEMENT};
+                         CONSTANT_DISPLACEMENT,
+                         ROLLER_X,
+                         ROLLER_Y,
+                         ROLLER_Z,
+                         CONSTANT_TRACTION};
 
   };
 
