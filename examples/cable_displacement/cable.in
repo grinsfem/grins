@@ -20,7 +20,7 @@ elasticity_model = 'HookesLaw'
 bc_ids = '0 1'
 bc_types = 'pinned constant_displacement'
 
-#displacement_1 = '0.1 0.0 0.0'
+displacement_1 = '0.1 0.0 0.0'
 
 [../HookesLaw]                                                                                                                                                                                                                               
 
@@ -44,7 +44,7 @@ n_increments = '50'
 # Mesh related options
 [mesh-options]
 mesh_option = 'create_1D_mesh'
-element_type = 'EDGE2'
+#element_type = 'EDGE2'
                                                                                                                                                                                                                                            
 domain_x1_min = '0.0'
 domain_x1_max = '8.0'

@@ -169,43 +169,51 @@ namespace GRINS
 
 	    // Residuals that we're populating
 	    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
+	    //libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
+	    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
 	    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
 	    // All shape function gradients are w.r.t. master element coordinates
-	    const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
-	      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+	    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
 
 
 	    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+	    //const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+	    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
 	    // Need these to build up the covariant and contravariant metric tensors
 	    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
 
 	    const unsigned int dim = 1; // The cable dimension is always 1 for this physics
 
+
 	    for (unsigned int qp=0; qp != n_qpoints; qp++)
 		{
 			// Gradients are w.r.t. master element coordinates
-			libMesh::Gradient grad_u;//, grad_v, grad_w;
+			libMesh::Gradient grad_u, grad_w;//grad_v, grad_w;
+
 			for( unsigned int d = 0; d < n_u_dofs; d++ )
 			{
 				libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );//, dphi_deta[d][qp] );
 				grad_u += u_coeffs(d)*u_gradphi;
 				//grad_v += v_coeffs(d)*u_gradphi;
-				//grad_w += w_coeffs(d)*u_gradphi;
+				grad_w += w_coeffs(d)*u_gradphi;
 			}
 
+
+
 			libMesh::RealGradient grad_x( dxdxi[qp](0) );//, dxdeta[qp](0) );
-			//libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
-			//libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
+			//libMesh::RealGradient grad_y( dxdxi[qp](1) );//, dxdeta[qp](1) );
+			libMesh::RealGradient grad_z( dxdxi[qp](2) );//, dxdeta[qp](2) );
+
 
 
 			libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 			libMesh::Real lambda_sq = 0;
 
 			this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
-										  grad_u,
+										  grad_u, grad_w,
 										  a_cov, a_contra, A_cov, A_contra,
 										  lambda_sq );
 
@@ -228,10 +236,10 @@ namespace GRINS
 						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;// +
 														   //(grad_x(alpha) + grad_u(alpha))*u_gradphi(beta) )*jac;
 
-						//Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
+						//Fv(i) -= 0.5*tau(alpha,beta)*_A0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;//+
 						//								   (grad_y(alpha) + grad_v(alpha))*u_gradphi(beta) )*jac;
 
-						//Fw(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
+						Fw(i) -= 0.5*tau(alpha,beta)*_A0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;// +
 						//								   (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) )*jac;
 					}
 				}
@@ -297,37 +305,35 @@ namespace GRINS
 		const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
 		const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+		//const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+		const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
 		// Build new FE for the current point. We need this to build tensors at point.
-		libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =
-		  this->build_new_fe( context.get_elem(), context.get_element_fe(_disp_vars.u_var()),
-							  point );
+		libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( context.get_elem(), context.get_element_fe(_disp_vars.u_var()), point );
 
-		const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
-		  fe_new->get_dphidxi();
+		const std::vector<std::vector<libMesh::Real> >& dphi_dxi =  fe_new->get_dphidxi();
 
 		// Need these to build up the covariant and contravariant metric tensors
 		const std::vector<libMesh::RealGradient>& dxdxi  = fe_new->get_dxyzdxi();
 
 		// Gradients are w.r.t. master element coordinates
-		libMesh::Gradient grad_u, grad_v, grad_w;
+		libMesh::Gradient grad_u, grad_w;
 		for( unsigned int d = 0; d < n_u_dofs; d++ )
 		  {
 			libMesh::RealGradient u_gradphi( dphi_dxi[d][0] );//, dphi_deta[d][0] );
 			grad_u += u_coeffs(d)*u_gradphi;
 			//grad_v += v_coeffs(d)*u_gradphi;
-			//grad_w += w_coeffs(d)*u_gradphi;
+			grad_w += w_coeffs(d)*u_gradphi;
 		  }
 
-		//libMesh::RealGradient grad_x( dxdxi[0](0), dxdeta[0](0) );
-		//libMesh::RealGradient grad_y( dxdxi[0](1), dxdeta[0](1) );
-		//libMesh::RealGradient grad_z( dxdxi[0](2), dxdeta[0](2) );
+		libMesh::RealGradient grad_x( dxdxi[0](0) );//, dxdeta[0](0) );
+		//libMesh::RealGradient grad_y( dxdxi[0](1) );//, dxdeta[0](1) );
+		libMesh::RealGradient grad_z( dxdxi[0](2) );//, dxdeta[0](2) );
 
 		libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 		libMesh::Real lambda_sq = 0;
 
-		this->compute_metric_tensors(0, *fe_new, context, grad_u,
-									 a_cov, a_contra, A_cov, A_contra, lambda_sq );
+		this->compute_metric_tensors(0, *fe_new, context, grad_u, grad_w, a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
 		// We have everything we need for strain now, so check if we are computing strain
 		if( is_strain )
@@ -423,6 +429,7 @@ namespace GRINS
                                                                  const libMesh::FEBase& elem,
 																 const AssemblyContext& context,
                                                                  const libMesh::Gradient& grad_u,
+																 const libMesh::Gradient& grad_w,
                                                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                                                  libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                  libMesh::TensorValue<libMesh::Real>& A_cov,
@@ -443,7 +450,7 @@ namespace GRINS
     libMesh::RealGradient dxi( dxidx[qp], dxidy[qp], dxidz[qp] );
     //libMesh::RealGradient deta( detadx[qp], detady[qp], detadz[qp] );
 
-    libMesh::RealGradient dudxi( grad_u(0) );//, grad_v(0), grad_w(0) );
+    libMesh::RealGradient dudxi( grad_u(0), grad_w(0) );//, grad_v(0), grad_w(0) );
     //libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
 
     // Covariant metric tensor of reference configuration
