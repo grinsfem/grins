@@ -57,6 +57,12 @@ namespace GRINS
 					  GRINS::BoundaryID bc_id,
 					  GRINS::BCType bc_type ) const;
 
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
+					 const GRINS::CachedValues& cache,
+					 const bool request_jacobian,
+					 const GRINS::BoundaryID bc_id,
+					 const GRINS::BCType bc_type ) const;
+
   protected:
 
     SolidMechanicsVariables _disp_vars;

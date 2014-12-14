@@ -73,6 +73,9 @@ namespace GRINS
     else if( bc_type == "roller_z" )
       bc_type_out = ROLLER_Z;
 
+    else if( bc_type == "constant_traction" )
+      bc_type_out = CONSTANT_TRACTION;
+
     else
       {
         // Call base class to detect any physics-common boundary conditions
@@ -142,6 +145,30 @@ namespace GRINS
       case(ROLLER_Z):
         {
           this->set_dirichlet_bc_type( bc_id, bc_type );
+        }
+        break;
+
+      case(CONSTANT_TRACTION):
+        {
+          this->set_neumann_bc_type( bc_id, bc_type );
+
+          libMesh::Gradient t_in;
+
+          int num_t_components = input.vector_variable_size("Physics/"+_physics_name+"/traction_"+bc_id_string);
+
+          if( num_t_components < 3 )
+            {
+              std::cerr << "Error: Expecting 3 components when specifying traction!" << std::endl
+                        << "       Found " << num_t_components << " components." << std::endl;
+              libmesh_error();
+            }
+
+          for( int i = 0; i < num_t_components; i++ )
+            {
+              t_in(i) = input("Physics/"+_physics_name+"/traction_"+bc_id_string, 0.0, i );
+            }
+
+          this->set_neumann_bc_value( bc_id, t_in );
         }
         break;
 
@@ -330,6 +357,40 @@ namespace GRINS
         }
 
       }// end switch
+
+    return;
+  }
+
+  void SolidMechanicsBCHandling::user_apply_neumann_bcs( AssemblyContext& context,
+                                                         const GRINS::CachedValues& /*cache*/,
+                                                         const bool /*request_jacobian*/,
+                                                         const BoundaryID bc_id,
+                                                         const BCType bc_type ) const
+  {
+    switch( bc_type )
+      {
+      case(CONSTANT_TRACTION):
+        {
+          const libMesh::Point& traction = this->get_neumann_bc_value(bc_id);
+
+          _bound_conds.apply_neumann_normal( context, _disp_vars.u_var(), 1.0, traction(0) );
+
+          if( _disp_vars.have_v() )
+            _bound_conds.apply_neumann_normal( context, _disp_vars.v_var(), 1.0, traction(1) );
+
+          if( _disp_vars.have_w() )
+            _bound_conds.apply_neumann_normal( context, _disp_vars.w_var(), 1.0, traction(2) );
+        }
+        break;
+
+      default:
+        {
+          std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
+                    << std::endl;
+          libmesh_error();
+        }
+
+      } // switch( bc_type )
 
     return;
   }
