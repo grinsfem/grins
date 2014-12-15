@@ -47,6 +47,8 @@ namespace GRINS
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
+
     libMesh::Real operator()( const libMesh::Real T ) const;
 
     libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
@@ -70,6 +72,13 @@ namespace GRINS
 
   inline
   libMesh::Real ConstantConductivity::operator()( AssemblyContext& /*context*/, unsigned int /*qp*/ ) const
+  {
+    return _k;
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Point& /*p*/,
+                                                  const libMesh::Real /*time*/ )
   {
     return _k;
   }

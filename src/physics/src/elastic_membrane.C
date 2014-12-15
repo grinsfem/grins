@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/math_constants.h"
 #include "grins/assembly_context.h"
 #include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
@@ -44,11 +45,11 @@ namespace GRINS
 {
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                                                     bool lambda_sq_var )
+                                                     bool is_compressible )
     : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
       _h0( input("Physics/"+physics_name+"/h0", 1.0 ) ),
-      _lambda_sq_var(lambda_sq_var)
+      _is_compressible(is_compressible)
   {
     // Force the user to set h0
     if( !input.have_variable("Physics/"+physics_name+"/h0") )
@@ -72,6 +73,22 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
+  {
+    // First call base class
+    ElasticMembraneBase::init_variables(system);
+
+    // Now build lambda_sq variable if we need it
+    if(_is_compressible)
+      {
+        /*! \todo Might want to make Order/FEType inputable */
+        _lambda_sq_var = system->add_variable( "lambda_sq", GRINSEnums::FIRST, GRINSEnums::LAGRANGE);
+      }
+
+    return;
+  }
+
+  template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                        PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
@@ -89,13 +106,26 @@ namespace GRINS
               {
                 // sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
                 // sigma_zz = 0 by assumption of this Physics
-                _stress_indices.resize(3);
+                _stress_indices.resize(7);
 
                 this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
 
                 this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
 
                 this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
+
+                this->_stress_indices[3] = postprocessing.register_quantity("sigma_max");
+
+                this->_stress_indices[4] = postprocessing.register_quantity("sigma_1");
+
+                this->_stress_indices[5] = postprocessing.register_quantity("sigma_2");
+
+                this->_stress_indices[6] = postprocessing.register_quantity("sigma_3");
+              }
+            else if( name == std::string( "stress_zz" ) )
+              {
+                // This is mostly for sanity checking the plane stress condition
+                this->_stress_zz_index = postprocessing.register_quantity("stress_zz");
               }
             else if( name == std::string("strain") )
               {
@@ -172,11 +202,11 @@ namespace GRINS
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
 
-        
+
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
 
-        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())),
+        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
                                       grad_u, grad_v, grad_w,
                                       a_cov, a_contra, A_cov, A_contra,
                                       lambda_sq );
@@ -253,6 +283,71 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::element_constraint( bool compute_jacobian,
+                                                             AssemblyContext& context,
+                                                             CachedValues& /*cache*/ )
+  {
+    // Only compute the constraint is tracking lambda_sq as an independent variable
+    if( _is_compressible )
+      {
+        unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+        const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+
+        const std::vector<libMesh::Real> &JxW = context.get_element_fe(this->_lambda_sq_var)->get_JxW();
+
+        libMesh::DenseSubVector<libMesh::Number>& Fl = context.get_elem_residual(this->_lambda_sq_var);
+
+        const std::vector<std::vector<libMesh::Real> >& phi =
+          context.get_element_fe(this->_lambda_sq_var)->get_phi();
+
+        const unsigned int n_lambda_sq_dofs = context.get_dof_indices(this->_lambda_sq_var).size();
+
+        const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
+        const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
+        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+
+        // All shape function gradients are w.r.t. master element coordinates
+        const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
+          context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+
+        const std::vector<std::vector<libMesh::Real> >& dphi_deta =
+          context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+
+        for (unsigned int qp=0; qp != n_qpoints; qp++)
+          {
+            libMesh::Real jac = JxW[qp];
+
+            libMesh::Gradient grad_u, grad_v, grad_w;
+            for( unsigned int d = 0; d < n_u_dofs; d++ )
+              {
+                libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
+                grad_u += u_coeffs(d)*u_gradphi;
+                grad_v += v_coeffs(d)*u_gradphi;
+                grad_w += w_coeffs(d)*u_gradphi;
+              }
+
+            libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+            libMesh::Real lambda_sq = 0;
+
+            this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
+                                          grad_u, grad_v, grad_w,
+                                          a_cov, a_contra, A_cov, A_contra,
+                                          lambda_sq );
+
+            libMesh::Real stress_33 = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+
+            for (unsigned int i=0; i != n_lambda_sq_dofs; i++)
+              {
+                Fl(i) += stress_33*phi[i][qp]*jac;
+              }
+          }
+      } // is_compressible
+
+    return;
+  }
+
+  template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::side_time_derivative( bool /*compute_jacobian*/,
                                                                AssemblyContext& /*context*/,
                                                                CachedValues& /*cache*/ )
@@ -291,7 +386,12 @@ namespace GRINS
 
     bool is_stress = ( _stress_indices[0] == quantity_index ||
                        _stress_indices[1] == quantity_index ||
-                       _stress_indices[2] == quantity_index   );
+                       _stress_indices[2] == quantity_index ||
+                       _stress_indices[3] == quantity_index ||
+                       _stress_indices[4] == quantity_index ||
+                       _stress_indices[5] == quantity_index ||
+                       _stress_indices[6] == quantity_index ||
+                       _stress_zz_index == quantity_index   );
 
     bool is_strain = ( _strain_indices[0] == quantity_index ||
                        _strain_indices[1] == quantity_index ||
@@ -337,7 +437,8 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
 
-        this->compute_metric_tensors(0, *fe_new, grad_u, grad_v, grad_w,
+        // We're only computing one point at a time, so qp = 0 always
+        this->compute_metric_tensors(0, *fe_new, context, grad_u, grad_v, grad_w,
                                      a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
         // We have everything we need for strain now, so check if we are computing strain
@@ -363,34 +464,88 @@ namespace GRINS
             return;
           }
 
-        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-        libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+        if( is_stress )
+          {
+            libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+            libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
 
-        libMesh::Real I3 = lambda_sq*det_A/det_a;
+            libMesh::Real I3 = lambda_sq*det_A/det_a;
 
-        libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
+            libMesh::TensorValue<libMesh::Real> tau;
+            _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
 
-        if( _stress_indices[0] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(0,0)/std::sqrt(I3);
-          }
-        else if( _stress_indices[1] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(0,1)/std::sqrt(I3);
-          }
-        else if( _stress_indices[2] == quantity_index )
-          {
-            // Need to convert to Cauchy stress
-            value = tau(1,1)/std::sqrt(I3);
-          }
-        else
-          {
-            //Wat?!
-            libmesh_error();
-          }
+            if( _stress_indices[0] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,0)/std::sqrt(I3);
+              }
+            else if( _stress_indices[1] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,1)/std::sqrt(I3);
+              }
+            else if( _stress_indices[2] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(1,1)/std::sqrt(I3);
+              }
+            else if( _stress_indices[3] == quantity_index )
+              {
+                value = 0.5*(tau(0,0) + tau(1,1)) + std::sqrt(0.25*(tau(0,0)-tau(1,1))*(tau(0,0)-tau(1,1))
+                                                              + tau(0,1)*tau(0,1) );
+              }
+            else if( _stress_indices[4] == quantity_index ||
+                     _stress_indices[5] == quantity_index ||
+                     _stress_indices[6] == quantity_index   )
+              {
+                if(_is_compressible)
+                  {
+                    tau(2,2) = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+                  }
+
+                libMesh::Real stress_I1 = tau(0,0) + tau(1,1) + tau(2,2);
+                libMesh::Real stress_I2 = 0.5*(stress_I1*stress_I1 - (tau(0,0)*tau(0,0) + tau(1,1)*tau(1,1)
+                                                                      + tau(2,2)*tau(2,2) + tau(0,1)*tau(0,1)
+                                                                      + tau(1,0)*tau(1,0)) );
+
+                libMesh::Real stress_I3 = tau(2,2)*( tau(0,0)*tau(1,1) - tau(1,0)*tau(0,1) );
+
+                /* Formulae for principal stresses from:
+                   http://en.wikiversity.org/wiki/Principal_stresses */
+
+                // I_2^2 - 3*I_2
+                libMesh::Real C1 = (stress_I1*stress_I1 - 3*stress_I2);
+
+                // 2*I_1^3 - 9*I_1*_I2 + 27*I_3
+                libMesh::Real C2 = (2*stress_I1*stress_I1*stress_I1 - 9*stress_I1*stress_I2 + 27*stress_I3)/54;
+
+                libMesh::Real theta = std::acos( C2/(2*std::sqrt(C1*C1*C1)) )/3.0;
+
+                if( _stress_indices[4] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta))/3.0;
+                  }
+
+                if( _stress_indices[5] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta+Constants::two_pi/3.0))/3.0;
+                  }
+
+                if( _stress_indices[6] == quantity_index )
+                  {
+                    value = (stress_I1 + 2.0*std::sqrt(C1)*std::cos(theta+2.0*Constants::two_pi/3.0))/3.0;
+                  }
+              }
+            else if( _stress_zz_index == quantity_index )
+              {
+                value = _stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
+              }
+            else
+              {
+                //Wat?!
+                libmesh_error();
+              }
+          } // is_stress
 
       }
 
@@ -432,6 +587,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                  const libMesh::FEBase& elem,
+                                                                 const AssemblyContext& context,
                                                                  const libMesh::Gradient& grad_u,
                                                                  const libMesh::Gradient& grad_v,
                                                                  const libMesh::Gradient& grad_w,
@@ -495,9 +651,9 @@ namespace GRINS
 
 
     // If the material is compressible, then lambda_sq is an independent variable
-    if( _lambda_sq_var )
+    if( _is_compressible )
       {
-        libmesh_not_implemented();
+        lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
       }
     else
       {
