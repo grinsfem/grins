@@ -31,7 +31,7 @@
 #include "grins/turbulence_fe_variables.h"
 
 //Utils
-#include "utilities/distance_function.h"
+#include "grins/distance_function.h"
 
 namespace GRINS
 {
@@ -49,7 +49,7 @@ namespace GRINS
   {
   public:
 
-    Base(const std::string& physics_name, const GetPot& input);
+    TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
     ~TurbulenceModelsBase();
     

@@ -30,9 +30,10 @@
 #include "grins/physics.h"
 #include "primitive_flow_fe_variables.h"
 #include "grins/turbulence_fe_variables.h"
+#include "grins/turbulence_models_base.h"
 
 //Utils
-#include "utilities/distance_function.h"
+#include "grins/distance_function.h"
 
 namespace GRINS
 {
@@ -61,20 +62,20 @@ namespace GRINS
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
 
-    // The physical viscosity
-    Viscosity _mu;
-
+    // Element time derivative
+    virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
+    
     // The vorticity function
-    Real _vorticity(AssemblyContext& context, unsigned int qp);
+    libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp);
     
     // The source function \tilde{S}
-    Real _source_fn( libMesh::Number nu, Real wall_distance, Real _vorticity_value);
+    libMesh::Real _source_fn( libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value);
 
     // The destruction function f_w(nu)
-    Real _destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde);
+    libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde);
 
     // A distance function to get distances from boundaries to qps
-    DistanceFunction distance_function;
+    libMesh::AutoPtr<DistanceFunction> distance_function;
 
   protected:
 

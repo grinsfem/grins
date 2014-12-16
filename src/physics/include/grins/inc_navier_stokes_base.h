@@ -29,7 +29,6 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/primitive_flow_fe_variables.h"
-#include "grins/turbulence_fe_variables.h"
 
 namespace GRINS
 {
@@ -71,9 +70,7 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-
-    TurbulenceFEVariables _turbulence_vars;
-
+    
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
