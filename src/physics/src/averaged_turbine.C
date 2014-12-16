@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/generic_ic_handler.h"
+#include "grins/variable_name_defaults.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh

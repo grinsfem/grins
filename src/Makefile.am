@@ -110,6 +110,7 @@ libgrins_la_SOURCES += physics/src/velocity_drag_base.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_base.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras.C
 libgrins_la_SOURCES += physics/src/solid_mechanics_variables.C
 libgrins_la_SOURCES += physics/src/solid_mechanics_fe_variables.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
@@ -177,6 +178,7 @@ libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 libgrins_la_SOURCES += utilities/src/grins_version.C
 libgrins_la_SOURCES += utilities/src/input_utils.C
 libgrins_la_SOURCES += utilities/src/cached_values.C
+libgrins_la_SOURCES += utilities/src/distance_function.C
 
 # src/visualization files
 libgrins_la_SOURCES += visualization/src/steady_visualization.C
@@ -308,6 +310,7 @@ include_HEADERS += physics/include/grins/velocity_drag_base.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
 include_HEADERS += physics/include/grins/velocity_penalty_adjoint_stab.h
 include_HEADERS += physics/include/grins/velocity_penalty_base.h
+include_HEADERS += physics/include/grins/spalart_allmaras.h
 include_HEADERS += physics/include/grins/solid_mechanics_variables.h
 include_HEADERS += physics/include/grins/solid_mechanics_fe_variables.h
 include_HEADERS += physics/include/grins/elastic_membrane_base.h
@@ -328,6 +331,7 @@ include_HEADERS += properties/include/grins/constant_prandtl_conductivity.h
 include_HEADERS += properties/include/grins/constant_specific_heat.h
 include_HEADERS += properties/include/grins/constant_viscosity.h
 include_HEADERS += properties/include/grins/parsed_viscosity.h
+include_HEADERS += properties/include/grins/spalart_allmaras_viscosity.h
 include_HEADERS += properties/include/grins/constant_source_func.h
 include_HEADERS += properties/include/grins/cantera_mixture.h
 include_HEADERS += properties/include/grins/cantera_thermo.h
@@ -384,6 +388,7 @@ include_HEADERS += utilities/include/grins/math_constants.h
 include_HEADERS += utilities/include/grins/cached_values.h
 include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
+include_HEADERS += utilities/include/grins/distance_function.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h

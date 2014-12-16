@@ -30,12 +30,11 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
+#include "grins/turbulence_models_macro.h"
 
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
-#include "grins/turbulence_viscosity.h" 
-
-#include "grins/turbulence_models_macro.h"
+#include "grins/spalart_allmaras_viscosity.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -46,12 +45,14 @@ namespace GRINS
 
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input), // Define class variables
-      _turbulence_vars(input, spalartallmaras),
+    : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
+      _flow_vars(input,incompressible_navier_stokes),
+      _turbulence_vars(input, spalart_allmaras),
+      distance_function.reset(new DistanceFunction(*es,*bm)),
       _cb1(0.1355),
       _sigma(2./3.),
       _cb2(0.622),
-      _kappa(0.41)
+      _kappa(0.41)      
   {    
     // This is deleted in the base class
     this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
@@ -88,18 +89,18 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_turbulence_vars._nu_var())->get_JxW();
-    context.get_element_fe(_turbulence_vars._nu_var())->get_phi();
-    context.get_element_fe(_turbulence_vars._nu_var())->get_dphi();
-    context.get_element_fe(_turbulence_vars._nu_var())->get_xyz();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_JxW();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_phi();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_dphi();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_xyz();
 
-    context.get_element_fe(_turbulence_vars._nu_var())->get_phi();
-    context.get_element_fe(_turbulence_vars._nu_var())->get_xyz();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_phi();
+    context.get_element_fe(_turbulence_vars.nu_var())->get_xyz();
 
-    context.get_side_fe(_turbulence_vars._nu_var())->get_JxW();
-    context.get_side_fe(_turbulence_vars._nu_var())->get_phi();
-    context.get_side_fe(_turbulence_vars._nu_var())->get_dphi();
-    context.get_side_fe(_turbulence_vars._nu_var())->get_xyz();
+    context.get_side_fe(_turbulence_vars.nu_var())->get_JxW();
+    context.get_side_fe(_turbulence_vars.nu_var())->get_phi();
+    context.get_side_fe(_turbulence_vars.nu_var())->get_dphi();
+    context.get_side_fe(_turbulence_vars.nu_var())->get_xyz();
 
     return;
   }
@@ -111,7 +112,7 @@ namespace GRINS
 
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
-    system->time_evolving(_turbulene_vars._nu_var());
+    system->time_evolving(this->_turbulence_vars.nu_var());
     
     return;
   }
@@ -127,7 +128,7 @@ namespace GRINS
 
     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points
-    Elem &elem_pointer = context.get_elem();
+    libMesh::Elem &elem_pointer = context.get_elem();
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
@@ -171,10 +172,10 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // Auto pointer to distance fcn evaluated at quad points
-    AutoPtr< DenseVector<Real> > distance_qp;
+    libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> > distance_qp;
 
     // Fill the vector of distances to quadrature points
-    distance_qp = this->distance_function->interpolate(elem_pointer, context.get_element_qrule().get_points());
+    distance_qp = this->distance_function.interpolate(&elem_pointer, context.get_element_qrule().get_points());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -189,9 +190,9 @@ namespace GRINS
         const libMesh::Number  grad_nu_y = grad_nu(1);
         const libMesh::Number  grad_nu_z = (this->_dim == 3)?grad_nu(2):0;
         
-        const libMesh::Number x = u_qpoint[qp](0);
-	const libMesh::Number y = u_qpoint[qp](1);
-	const libMesh::Number z = (this->_dim==3)?u_qpoint[qp](2):0;
+        //const libMesh::Number x = u_qpoint[qp](0);
+	//const libMesh::Number y = u_qpoint[qp](1);
+	//const libMesh::Number z = (this->_dim==3)?u_qpoint[qp](2):0;
 
         libMesh::Real jac = JxW[qp];
 	
@@ -205,30 +206,30 @@ namespace GRINS
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
 	    //The source term
-	    Real _S_tilde = this->_source_fn(nu, _mu_qp, distance_qp[qp], _vorticity_value_qp);
+	    libMesh::Real _S_tilde = this->_source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
 
 	    // The wall destruction term
-	    Real _fw = this->_destruction_fn(nu, distance_qp[qp], _S_tilde);
+	    libMesh::Real _fw = this->_destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
 
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
             Fnu(i) += jac *
               (-this->_cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
-	       + (1./this->_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*phi[i][qp] + this->_cb2*grad_nu*grad_nu*phi[i][qp])  // diffusion term 
-               - this->_cw1*_fw*pow(nu/x, 2.)*phi[i][qp]); // destruction term                          
+	       + (1./this->_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_cb2*grad_nu*grad_nu*nu_phi[i][qp])  // diffusion term 
+               - this->_cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term                          
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)
 		{
-		  for (unsigned int j=0; j != n_u_dofs; j++)
+		  for (unsigned int j=0; j != n_nu_dofs; j++)
 		    {
 		      // TODO: precompute some terms like:
 		      //   (Uvec*u_gradphi[j][qp]),
 		      //   u_phi[i][qp]*u_phi[j][qp],
 		      //   (u_gradphi[i][qp]*u_gradphi[j][qp])
 		      
-		      Knunu(i,j) += jac *
-			( 0.0     // source term
-			 // diffusion term
-			       ); // destruction term
+		      // Knunu(i,j) += jac *
+		      // 	( 0.0     // source term
+		      // 	 // diffusion term
+		      // 	       ); // destruction term
                                                               
 		    } // end of the inner dof (j) loop                                
 
@@ -245,13 +246,13 @@ namespace GRINS
   }
   
   template<class Mu>
-  Real SpalartAllmaras<Mu>::_vorticity(AssemblyContext& context, unsigned int qp)
+  libMesh::Real SpalartAllmaras<Mu>::_vorticity(AssemblyContext& context, unsigned int qp)
   {
     libMesh::Gradient grad_u, grad_v;
     grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
     grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
 
-    Real _vorticity_value;
+    libMesh::Real _vorticity_value;
     _vorticity_value = fabs(grad_v(0) - grad_u(1));
 
     if(this->_dim == 3)
@@ -259,34 +260,34 @@ namespace GRINS
 	libMesh::Gradient grad_w;
 	grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
 	
-	Real _vorticity_component_0 = grad_w(1) - grad_v(2);
-	Real _vorticity_component_1 = grad_u(2) - grad_v(0);
+	libMesh::Real _vorticity_component_0 = grad_w(1) - grad_v(2);
+	libMesh::Real _vorticity_component_1 = grad_u(2) - grad_v(0);
 
 	_vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
-	
+      }
 	return _vorticity_value;
   }
   
   template<class Mu>
-    Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, libMesh::Real mu, Real wall_distance, Real _vorticity_value)
+    libMesh::Real SpalartAllmaras<Mu>::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value)
   {
     // Step 1
-    Real _kai = nu/mu;
+    libMesh::Real _kai = nu/mu;
     
     // Step 2
-    Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(this->_cv1, 3.0));
+    libMesh::Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(this->_cv1, 3.0));
 
     // Step 3
-    Real _fv2 = 1 - (_kai/(1 + _kai*_fv1));
+    libMesh::Real _fv2 = 1 - (_kai/(1 + _kai*_fv1));
 
     // Step 4
-    Real _S_bar = nu/(pow(this->_kappa, 2.0) * pow(wall_distance, 2.0)) ;
+    libMesh::Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0)) ;
 
     // Step 5, the absolute value of the vorticity
-    Real _S = _vorticity_value;
+    libMesh::Real _S = _vorticity_value;
 
     // Step 6
-    Real _S_tilde = 0.0;
+    libMesh::Real _S_tilde = 0.0;
     if(_S_bar >= -this->_cv2*_S)
       {
 	_S_tilde = _S + _S_bar;
@@ -300,10 +301,10 @@ namespace GRINS
   }
 
   template<class Mu>
-  Real SpalartAllmaras<Mu>::_destruction_fn(libMesh::Number nu, Real wall_distance, Real _S_tilde)
+  libMesh::Real SpalartAllmaras<Mu>::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde)
   {
     // Step 1
-    Real _r = 0.0;
+    libMesh::Real _r = 0.0;
     
     if(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)) < this->_r_lin)
       {
@@ -315,10 +316,10 @@ namespace GRINS
       }
 
     // Step 2
-    Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
+    libMesh::Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
 
     // Step 3
-    Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
+    libMesh::Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
     
     return _fw;
   }

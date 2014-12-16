@@ -39,6 +39,7 @@
 
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
+#include "grins/turbulence_fe_variables.h"
 
 class GetPot;
 
@@ -54,10 +55,15 @@ namespace GRINS
     
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+
   protected:
     
     //! Viscosity object (so we have access to the physical viscosity)
     Viscosity _mu;
+
+    // These are defined for each physics
+    TurbulenceFEVariables _turbulence_vars;
     
   private:
 
@@ -66,21 +72,21 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/  
-  inline
+  //inline
     template<class Mu>
     libMesh::Real SpalartAllmarasViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
-  {
-    // FIXME: We should be getting the variable index to get the qps from the context
-    // not hardcode it to be 0
-    const std::vector<libMesh::Point>& x = context.get_element_fe(0)->get_xyz();
-
-    const libMesh::Point& x_qp = x[qp];
-
+  {    
     // Compute the value of the total viscosity and return it
-    libMesh::Number _mu_value = context.interior_value(_turb_vars.turb_var(),x_qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
+    libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
     
     return _mu_value;
   }    
+    
+  template<class Mu>
+  libMesh::Real SpalartAllmarasViscosity<Mu>::operator()( const libMesh::Point& p, const libMesh::Real time )
+    {
+      return _mu(p,time);
+    }
 
 } // end namespace GRINS
 

@@ -49,14 +49,14 @@ namespace GRINS {
 
 // This class provides the functionality to compute the distance to
 // the nearest no slip wall boundary.
-class DistanceFunction : public System::Initialization
+  class DistanceFunction : public libMesh::System
 {
 public:
 
   /**
    * Constructor
    */
-  DistanceFunction (EquationSystems &es_in, const UnstructuredMesh &bm_in);
+  DistanceFunction (libMesh::EquationSystems &es_in, const libMesh::UnstructuredMesh &bm_in);
 
   /**
    * Destructor
@@ -71,7 +71,7 @@ public:
   /**
    * Compute distance from input node to boundary_mesh
    */
-  Real node_to_boundary (const Node* node);
+  libMesh::Real node_to_boundary (const libMesh::Node* node);
 
   /**
    * Initialize "distance_function" equation system by computing
@@ -82,7 +82,7 @@ public:
   /**
    * Interpolate distance function to points qpts (in reference space) for element *elem
    */
-  AutoPtr< DenseVector<Real> > interpolate (const Elem* elem, const std::vector<Point>& qts) const;
+  libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> > interpolate (const libMesh::Elem* elem, const std::vector<libMesh::Point>& qts) const;
 
 
 
@@ -91,12 +91,12 @@ private:
   /**
    * Pointer to EquationSystems object
    */
-  EquationSystems &_equation_systems;
+  libMesh::EquationSystems &_equation_systems;
 
   /**
    * Pointer to boundary mesh object
    */
-  const UnstructuredMesh &_boundary_mesh;
+  const libMesh::UnstructuredMesh &_boundary_mesh;
 
   /**
    * Finite element to use for interpolation of distance.
@@ -106,7 +106,7 @@ private:
    * Currently type is hardcoded to first order, Lagrange
    * (see constructor), but this could be easily changed.
    */
-  AutoPtr<FEBase> _dist_fe;
+  libMesh::AutoPtr<libMesh::FEBase> _dist_fe;
 
 };
 
@@ -128,10 +128,10 @@ public:
    * Finite-differenced Jacobian approximation.
    */
   template <class f>
-  void operator()(const DenseVector<Real> &U,
-		  const DenseVector<Real> & F0,
+  void operator()(const libMesh::DenseVector<libMesh::Real> &U,
+		  const libMesh::DenseVector<libMesh::Real> & F0,
 		  f &F,
-		  DenseMatrix<Real> &dFdU)
+		  libMesh::DenseMatrix<libMesh::Real> &dFdU)
   {
 
     Up = U;
@@ -149,12 +149,12 @@ public:
 	//F.set_perturbed_component(j);
 
 	// define the pertubation for this component
-	const Real
+	const libMesh::Real
 	  pert  = 4.e-8*(std::max (std::abs(U(j)), 1.e-3)); // U can be 0, pertubation cannot
 
 	Up(j) += pert;
 
-	const Real                     // note this difference may not strictly be pert
+	const libMesh::Real                     // note this difference may not strictly be pert
 	  invpert = 1./(Up(j) - U(j)); // due to truncation error in the preceeding sum.
 
 	// evaluate F at the perturbed state
@@ -171,7 +171,7 @@ public:
 private:
 
   // work vectors
-  DenseVector<Real>    Up, Fp, Um, Fm;
+  libMesh::DenseVector<libMesh::Real>    Up, Fp, Um, Fm;
 };
 
 
@@ -189,11 +189,11 @@ class ComputeDistanceResidual
 public:
 
   // ctor
-  ComputeDistanceResidual(const Elem* belem, const Point* point) :
+  ComputeDistanceResidual(const libMesh::Elem* belem, const libMesh::Point* point) :
     _belem(*belem),
     _dim(_belem.dim()+1),
     _p(*point),
-    _fe (FEBase::build(_belem.dim(), FEType(FIRST, LAGRANGE))),
+    _fe (libMesh::FEBase::build(_belem.dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE))),
     fe  (_fe.get())
   {
     // only supporting QUAD4 this way for now
@@ -204,27 +204,27 @@ public:
   ~ComputeDistanceResidual(){}
 
   // Calculate the residual
-  void operator()(const DenseVector<Real> &U,
-		        DenseVector<Real> &F)
+  void operator()(const libMesh::DenseVector<libMesh::Real> &U,
+		        libMesh::DenseVector<libMesh::Real> &F)
   {
 
     libmesh_assert(U.size()==_dim-1);
     libmesh_assert(F.size()==_dim-1);
 
-    DenseVector<Real> xx(_dim);
+    libMesh::DenseVector<libMesh::Real> xx(_dim);
     xx.zero();
 
-    DenseMatrix<Real> xx_U(_dim, _dim-1);
+    libMesh::DenseMatrix<libMesh::Real> xx_U(_dim, _dim-1);
     xx_U.zero();
 
-    std::vector<Point> xi(1);
+    std::vector<libMesh::Point> xi(1);
 
     xi[0](0) = U(0);
     xi[0](1) = U(1);
 
     // grab basis functions (evaluated at qpts)
-    const std::vector<std::vector<Real> > &basis = fe->get_phi();
-    const std::vector<std::vector<RealGradient> > &dbasis = fe->get_dphi();
+    const std::vector<std::vector<libMesh::Real> > &basis = fe->get_phi();
+    const std::vector<std::vector<libMesh::RealGradient> > &dbasis = fe->get_dphi();
 
     // reinitialize finite element data at xi
     fe->reinit(&_belem, &xi);
@@ -252,15 +252,15 @@ public:
 private:
 
   // Reference to boundary element
-  const Elem& _belem;
+  const libMesh::Elem& _belem;
   const unsigned int _dim;
-  const Point& _p;
+  const libMesh::Point& _p;
 
-  AutoPtr<FEBase> _fe;
-  FEBase *fe;
+  libMesh::AutoPtr<libMesh::FEBase> _fe;
+  libMesh::FEBase *fe;
 
   // work vectors
-  DenseVector<Real>    Up, Fp, Um, Fm;
+  libMesh::DenseVector<libMesh::Real>    Up, Fp, Um, Fm;
 };
 
 } // end namespace FINS
