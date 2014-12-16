@@ -145,7 +145,7 @@ namespace GRINS {
 // Constructor
 //
 //DistanceFunction::DistanceFunction (EquationSystems& equation_systems, const UnstructuredMesh& boundary_mesh)
-DistanceFunction::DistanceFunction (EquationSystems &es_in, const UnstructuredMesh &bm_in) :
+DistanceFunction::DistanceFunction (libMesh::EquationSystems &es_in, const libMesh::UnstructuredMesh &bm_in) :
   _equation_systems (es_in),
   _boundary_mesh    (bm_in),
   _dist_fe          (libMesh::FEBase::build(_equation_systems.get_mesh().mesh_dimension(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)))
@@ -154,10 +154,10 @@ DistanceFunction::DistanceFunction (EquationSystems &es_in, const UnstructuredMe
   libmesh_assert(libMesh::initialized());
 
   // Add distance function system
-  _equation_systems.add_system<System>("distance_function");
+  _equation_systems.add_system<libMesh::System>("distance_function");
 
   // Get reference to distance function system we just added
-  libMesh::System& sys = _equation_systems.get_system<System>("distance_function");
+  libMesh::System& sys = _equation_systems.get_system<libMesh::System>("distance_function");
 
   // Add distance function variable
   sys.add_variable("distance", libMesh::FIRST);
@@ -181,13 +181,13 @@ void DistanceFunction::initialize ()
 //---------------------------------------------------
 // Compute distance from input node to boundary_mesh
 //
-libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
+libMesh::Real DistanceFunction::node_to_boundary (const libMesh::Node* node)
 {
   // Ensure that node is not NULL
   libmesh_assert( node != NULL );
 
   // Initialize distance to infinity
-  Real distance = std::numeric_limits<Real>::infinity();
+  libMesh::Real distance = std::numeric_limits<libMesh::Real>::infinity();
 
   // Get dimension
   const unsigned int dim = _equation_systems.get_mesh().mesh_dimension();
@@ -223,9 +223,9 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 
     for (unsigned int bnode=0; bnode<belem->n_nodes(); ++bnode)
       {
-	const Point& pbndry = belem->point(bnode);
+	const libMesh::Point& pbndry = belem->point(bnode);
 
-	Real dnode = 0.0;
+	libMesh::Real dnode = 0.0;
 	for (unsigned int idim=0; idim<dim; ++idim)
 	  dnode += (xnode[idim] - pbndry(idim))*(xnode[idim] - pbndry(idim));
 
@@ -241,25 +241,25 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
   } // end element loop
 
   // grab the elements around the minimum
-  std::set<const Elem*> near_min_elems;
+  std::set<const libMesh::Elem*> near_min_elems;
   elem_containing_min->find_point_neighbors (near_min_elems);
 
   // insert the element itself into the set... we must check it also
   near_min_elems.insert(elem_containing_min);
 
-  std::set<const Elem*>::iterator nm_el;
+  std::set<const libMesh::Elem*>::iterator nm_el;
 
   // loop over the near_min_elems
   for (nm_el=near_min_elems.begin(); nm_el!=near_min_elems.end(); ++nm_el)
     {
 
-      const Elem* belem = *nm_el; //*el;
+      const libMesh::Elem* belem = *nm_el; //*el;
 
       // Ensure that elem defined by edge/face is linear
       libmesh_assert( belem->default_order() == FIRST );
 
       // Initialize distance to this edge/face to infinity
-      Real dedge = std::numeric_limits<Real>::infinity();
+      libMesh::Real dedge = std::numeric_limits<libMesh::Real>::infinity();
 
       if ( dim==2 )
 	{ // 2d
@@ -275,8 +275,8 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	  libmesh_assert( belem->type() == EDGE2 );
 
 	  // Points defining the edge
-	  const Point& p0 = belem->point(0);
-	  const Point& p1 = belem->point(1);
+	  const libMesh::Point& p0 = belem->point(0);
+	  const libMesh::Point& p1 = belem->point(1);
 
 	  Line line;
 	  line.p0 = p0;
@@ -307,15 +307,15 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	      //
 	      // Done in terms of the reference coordinates of the boundary element.
 	      //
-	      const Point& p0 = belem->point(0);
-	      const Point& p1 = belem->point(1);
-	      const Point& p2 = belem->point(2);
+	      const libMesh::Point& p0 = belem->point(0);
+	      const libMesh::Point& p1 = belem->point(1);
+	      const libMesh::Point& p2 = belem->point(2);
 
-	      const Real x_xi = (p1(0) - p0(0)), x_et = (p2(0) - p0(0));
-	      const Real y_xi = (p1(1) - p0(1)), y_et = (p2(1) - p0(1));
-	      const Real z_xi = (p1(2) - p0(2)), z_et = (p2(2) - p0(2));
+	      const libMesh::Real x_xi = (p1(0) - p0(0)), x_et = (p2(0) - p0(0));
+	      const libMesh::Real y_xi = (p1(1) - p0(1)), y_et = (p2(1) - p0(1));
+	      const libMesh::Real z_xi = (p1(2) - p0(2)), z_et = (p2(2) - p0(2));
 
-	      Real A[2][2], b[2];
+	      libMesh::Real A[2][2], b[2];
 
 	      A[0][0] = x_xi*x_xi + y_xi*y_xi + z_xi*z_xi;
 	      A[0][1] = x_xi*x_et + y_xi*y_et + z_xi*z_et;
@@ -325,11 +325,11 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	      b[0] = (xnode[0] - p0(0))*x_xi + (xnode[1] - p0(1))*y_xi + (xnode[2] - p0(2))*z_xi;
 	      b[1] = (xnode[0] - p0(0))*x_et + (xnode[1] - p0(1))*y_et + (xnode[2] - p0(2))*z_et;
 
-	      const Real detA = A[0][0]*A[1][1] - A[1][0]*A[0][1];
+	      const libMesh::Real detA = A[0][0]*A[1][1] - A[1][0]*A[0][1];
 	      libmesh_assert( fabs(detA) > 0.0 ); // assert that A is not singular
 
-	      const Real xi = ( A[1][1]*b[0] - A[0][1]*b[1])/detA;
-	      const Real et = (-A[1][0]*b[0] + A[0][0]*b[1])/detA;
+	      const libMesh::Real xi = ( A[1][1]*b[0] - A[0][1]*b[1])/detA;
+	      const libMesh::Real et = (-A[1][0]*b[0] + A[0][0]*b[1])/detA;
 
 
 	      // If projection of node onto plane defined by boundary face
@@ -339,7 +339,7 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	      //
 	      if ( (xi<0.0) || (et<0.0) || (et>1.0-xi) ) {
 
-		Real dtmp = std::numeric_limits<Real>::infinity();
+		libMesh::Real dtmp = std::numeric_limits<libMesh::Real>::infinity();
 
 		// for each edge of boundary face, find distance from
 		// input node to the segment defined by that edge
@@ -365,7 +365,7 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	      } else { // projection is inside face, so we're good to go
 
 		// Map from reference to physical space
-		Real xint[3];
+		libMesh::Real xint[3];
 		for ( unsigned int ii=0; ii<3; ii++ ) {
 		  xint[ii] = p0(ii)*(1.0 - xi - et) + p1(ii)*xi + p2(ii)*et;
 		}
@@ -384,8 +384,8 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 	    {
 	      //std::cout << "WARNING: this functionality is not well-tested.  Sorry." << std::endl;
 
-	      Real RTOL = 1e-10;
-	      Real ATOL = 1e-20;
+	      libMesh::Real RTOL = 1e-10;
+	      libMesh::Real ATOL = 1e-20;
 	      const unsigned int ITER_MAX=1000;
 	      unsigned int iter=0;
 
@@ -393,18 +393,18 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 
 	      ComputeDistanceJacobian jac;
 
-	      DenseVector<Real> X(2); X(0) = X(1) = 0.0;
-	      DenseVector<Real> dX(2);
-	      Real det;
+	      libMesh::DenseVector<libMesh::Real> X(2); X(0) = X(1) = 0.0;
+	      libMesh::DenseVector<libMesh::Real> dX(2);
+	      libMesh::Real det;
 
-	      DenseVector<Real> R(2);
-	      DenseMatrix<Real> dRdX(2,2);
-	      DenseMatrix<Real> dRdXinv(2,2);
+	      libMesh::DenseVector<libMesh::Real> R(2);
+	      libMesh::DenseMatrix<libMesh::Real> dRdX(2,2);
+	      libMesh::DenseMatrix<libMesh::Real> dRdXinv(2,2);
 
 	      // evaluate residual... maybe we don't have to iterate
 	      res(X,R);
 
-	      Real R0 = R.l2_norm();
+	      libMesh::Real R0 = R.l2_norm();
 
 	      // iterate
 	      while ( (R.l2_norm() > ATOL) && (R.l2_norm()/R0 > RTOL) && (iter<ITER_MAX) )
@@ -467,7 +467,7 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 		  // converged to point outside the face... so min must
 		  // be on edge, and luckily the edges are linear
 
-		  Real dtmp = std::numeric_limits<Real>::infinity();
+		  libMesh::Real dtmp = std::numeric_limits<libMesh::Real>::infinity();
 
 		  // for each edge of boundary face, find distance from
 		  // input node to the segment defined by that edge
@@ -496,20 +496,20 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 		  // physical space and use it to evaluate the distance
 
 		  // assuming first order lagrange basis here
-		  AutoPtr<FEBase> fe( FEBase::build(2, FEType(FIRST, LAGRANGE)) );
+		  libMesh::AutoPtr<libMesh::FEBase> fe( libMesh::FEBase::build(2, libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)) );
 
-		  std::vector<Point> xi(1);
+		  std::vector<libMesh::Point> xi(1);
 		  xi[0](0) = X(0);
 		  xi[0](1) = X(1);
 
 		  // grab basis functions (evaluated at qpts)
-		  const std::vector<std::vector<Real> > &basis = fe->get_phi();
+		  const std::vector<std::vector<libMesh::Real> > &basis = fe->get_phi();
 
 		  // reinitialize finite element data at xi
 		  fe->reinit(belem, &xi);
 
 		  // interpolate location
-		  DenseVector<Real> xx(3);
+		  libMesh::DenseVector<libMesh::Real> xx(3);
 		  xx.zero();
 
 		  for (unsigned int inode=0; inode<belem->n_nodes(); ++inode)
@@ -553,29 +553,29 @@ libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 void DistanceFunction::compute ()
 {
   // Get mesh
-  const MeshBase& mesh = _equation_systems.get_mesh();
+  const libMesh::MeshBase& mesh = _equation_systems.get_mesh();
 
   // Get reference to system and system number
-  System& system = _equation_systems.get_system<System>("distance_function");
+  libMesh::System& system = _equation_systems.get_system<libMesh::System>("distance_function");
   const unsigned int sys_num = system.number();
 
   // The boundary mesh needs to all be on this processor for us to
   // calculate a correct distance function.  Since we don't need it to
   // be serial afterwards, we use a temporary serializer.
   {
-  MeshSerializer serialize(const_cast<UnstructuredMesh&>(_boundary_mesh));
+  libMesh::MeshSerializer serialize(const_cast<libMesh::UnstructuredMesh&>(_boundary_mesh));
 
   // Loop over nodes in mesh
-  MeshBase::const_node_iterator node_it  = mesh.local_nodes_begin();
-  const MeshBase::const_node_iterator node_end = mesh.local_nodes_end();
+  libMesh::MeshBase::const_node_iterator node_it  = mesh.local_nodes_begin();
+  const libMesh::MeshBase::const_node_iterator node_end = mesh.local_nodes_end();
 
   for ( ; node_it != node_end; ++node_it) {
 
     // Grab node
-    const Node* node = *node_it;
+    const libMesh::Node* node = *node_it;
 
     // Compute distance to nearest point in boundary_mesh
-    const Real distance = DistanceFunction::node_to_boundary (node);
+    const libMesh::Real distance = DistanceFunction::node_to_boundary (node);
 
     // Stuff data into appropriate place in the system solution
     const unsigned int dof = node->dof_number(sys_num,0,0);
@@ -595,14 +595,14 @@ void DistanceFunction::compute ()
 //---------------------------------------------------
 // Interpolate nodal data
 //
-AutoPtr< DenseVector<Real> >
-DistanceFunction::interpolate (const Elem* elem, const std::vector<Point>& qpts) const
+libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> >
+DistanceFunction::interpolate (const libMesh::Elem* elem, const std::vector<libMesh::Point>& qpts) const
 {
   libmesh_assert( elem != NULL );    // can't interpolate in NULL elem
   libmesh_assert( qpts.size() > 0 ); // can't interpolate if no points requested
 
   // grab basis functions (evaluated at qpts)
-  const std::vector<std::vector<Real> > &phi = _dist_fe->get_phi();
+  const std::vector<std::vector<libMesh::Real> > &phi = _dist_fe->get_phi();
 
   // reinitialize finite element data at qpts
   _dist_fe->reinit(elem, &qpts);
@@ -614,17 +614,17 @@ DistanceFunction::interpolate (const Elem* elem, const std::vector<Point>& qpts)
   const unsigned int n_pts = qpts.size();
 
   // instantiate auto_ptr to dense vector to hold results
-  AutoPtr< DenseVector<Real> > ap( new DenseVector<Real>(qpts.size()) );
+  libMesh::AutoPtr< DenseVector<libMesh::Real> > ap( new libMesh::DenseVector<libMesh::Real>(qpts.size()) );
   (*ap).zero();
 
   // pull off distance function at nodes on this element
-  System& sys = _equation_systems.get_system<System>("distance_function");
-  const DofMap& dof_map = sys.get_dof_map();
+  libMesh::System& sys = _equation_systems.get_system<libMesh::System>("distance_function");
+  const libMesh::DofMap& dof_map = sys.get_dof_map();
 
   std::vector<unsigned int> dof_ind;
   dof_map.dof_indices(elem, dof_ind);
 
-  DenseVector<Real> nodal_dist;
+  libMesh::DenseVector<libMesh::Real> nodal_dist;
   nodal_dist.resize(n_dofs);
   //dof_map.extract_local_vector( *(sys.solution), dof_ind, nodal_dist);
   dof_map.extract_local_vector( *(sys.current_local_solution), dof_ind, nodal_dist);
