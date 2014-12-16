@@ -39,6 +39,7 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/elem.h"
+#include "libmesh/unstructured_mesh.h"
 
 namespace GRINS
 {
@@ -47,8 +48,7 @@ namespace GRINS
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
       _flow_vars(input,incompressible_navier_stokes),
-      _turbulence_vars(input, spalart_allmaras),
-      distance_function.reset(new DistanceFunction(*es,*bm)),
+      _turbulence_vars(input, spalart_allmaras),      
       _cb1(0.1355),
       _sigma(2./3.),
       _cb2(0.622),
@@ -76,6 +76,8 @@ namespace GRINS
   template<class Mu>
   void SpalartAllmaras<Mu>::init_variables( libMesh::FEMSystem* system )
   {
+    this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
+
     this->_dim = system->get_mesh().mesh_dimension();
     
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
@@ -175,7 +177,7 @@ namespace GRINS
     libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> > distance_qp;
 
     // Fill the vector of distances to quadrature points
-    distance_qp = this->distance_function.interpolate(&elem_pointer, context.get_element_qrule().get_points());
+    distance_qp = this->distance_function->interpolate(&elem_pointer, context.get_element_qrule().get_points());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {

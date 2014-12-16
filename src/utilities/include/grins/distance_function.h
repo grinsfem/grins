@@ -263,6 +263,6 @@ private:
   libMesh::DenseVector<libMesh::Real>    Up, Fp, Um, Fm;
 };
 
-} // end namespace FINS
+} // end namespace GRINS
 
 #endif // __distance_function_h__
