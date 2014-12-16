@@ -65,6 +65,9 @@ namespace GRINS
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
+
+    //! Viscosity object
+    Viscosity _mu;
         
   private:
     TurbulenceModelsBase();

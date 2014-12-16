@@ -41,7 +41,7 @@
 #include "libmesh/point.h"
 
 // local
-#include "utils/distance_function.h"
+#include "grins/distance_function.h"
 
 
 // anonymous namespace for implementation details -
@@ -135,7 +135,7 @@ namespace
 
 
 
-namespace FINS {
+namespace GRINS {
 
 //***************************************************
 // DistanceFunction class functions
@@ -148,7 +148,7 @@ namespace FINS {
 DistanceFunction::DistanceFunction (EquationSystems &es_in, const UnstructuredMesh &bm_in) :
   _equation_systems (es_in),
   _boundary_mesh    (bm_in),
-  _dist_fe          (FEBase::build(_equation_systems.get_mesh().mesh_dimension(), FEType(FIRST, LAGRANGE)))
+  _dist_fe          (libMesh::FEBase::build(_equation_systems.get_mesh().mesh_dimension(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)))
 {
   // Ensure that libmesh is ready to roll
   libmesh_assert(libMesh::initialized());
@@ -157,10 +157,10 @@ DistanceFunction::DistanceFunction (EquationSystems &es_in, const UnstructuredMe
   _equation_systems.add_system<System>("distance_function");
 
   // Get reference to distance function system we just added
-  System& sys = _equation_systems.get_system<System>("distance_function");
+  libMesh::System& sys = _equation_systems.get_system<System>("distance_function");
 
   // Add distance function variable
-  sys.add_variable("distance", FIRST);
+  sys.add_variable("distance", libMesh::FIRST);
 
   // Attach initialization function
   sys.attach_init_object(*this);
@@ -181,7 +181,7 @@ void DistanceFunction::initialize ()
 //---------------------------------------------------
 // Compute distance from input node to boundary_mesh
 //
-Real DistanceFunction::node_to_boundary (const Node* node)
+libMesh::Real DistanceFunction::node_to_boundary (const Node* node)
 {
   // Ensure that node is not NULL
   libmesh_assert( node != NULL );
@@ -194,7 +194,7 @@ Real DistanceFunction::node_to_boundary (const Node* node)
   libmesh_assert( (dim==2) || (dim==3) );
 
   // Get coordinates of node
-  std::vector<Real> xnode(dim);
+  std::vector<libMesh::Real> xnode(dim);
   for( unsigned int ii=0; ii<dim; ii++ ) xnode[ii] = (*node)(ii);
 
   // This function will work on a distributed interior mesh, but won't
@@ -205,8 +205,8 @@ Real DistanceFunction::node_to_boundary (const Node* node)
   // nodes.  This will give us an idea of what elements to check more
   // closely.
 
-  MeshBase::const_element_iterator       el     = _boundary_mesh.active_elements_begin();
-  const MeshBase::const_element_iterator end_el = _boundary_mesh.active_elements_end();
+  libMesh::MeshBase::const_element_iterator       el     = _boundary_mesh.active_elements_begin();
+  const libMesh::MeshBase::const_element_iterator end_el = _boundary_mesh.active_elements_end();
 
   if (el==end_el)
     {
@@ -214,12 +214,12 @@ Real DistanceFunction::node_to_boundary (const Node* node)
       return distance;
     }
 
-  const Elem* elem_containing_min = NULL;
-  Real dmin = std::numeric_limits<Real>::infinity();
+  const libMesh::Elem* elem_containing_min = NULL;
+  libMesh::Real dmin = std::numeric_limits<Real>::infinity();
 
   for ( ; el != end_el; ++el) {
 
-    const Elem* belem = *el;
+    const libMesh::Elem* belem = *el;
 
     for (unsigned int bnode=0; bnode<belem->n_nodes(); ++bnode)
       {
@@ -639,4 +639,4 @@ DistanceFunction::interpolate (const Elem* elem, const std::vector<Point>& qpts)
 }
 
 
-} // end namespace FINS
+} // end namespace GRINS

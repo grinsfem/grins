@@ -96,10 +96,7 @@ namespace GRINS
     PrimitiveFlowFEVariables _flow_vars;
 
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;
- 
-    //! Viscosity object
-    Viscosity _mu;
+    TurbulenceFEVariables _turbulence_vars;    
     
   private:
     SpalartAllmaras();
