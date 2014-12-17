@@ -52,7 +52,7 @@ namespace GRINS
   }
 
   template<class Mu>
-  TurbulenceModelsBase<Mu>::TurbulenceModelsBase~()
+  TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
   {
     return;
   }  
