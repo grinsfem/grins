@@ -52,10 +52,7 @@ namespace GRINS
     TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
     ~TurbulenceModelsBase();
-    
-    // Context initialization
-    virtual void init_context( AssemblyContext& context );    
-    
+       
   protected:
 
     //! Physical dimension of problem
