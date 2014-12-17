@@ -1,15 +1,16 @@
 //-----------------------------------------------------------------------bl-
-//
-// GRINS - General Reacting Incompressible Navier-Stokes
+//--------------------------------------------------------------------------
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
-// Copyright (C) 2010-2013 The PECOS Development Team                        
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
+// This library is free software; you can redistribute it and/or
 // modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // Lesser General Public License for more details.
