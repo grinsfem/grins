@@ -145,7 +145,7 @@ namespace GRINS {
 // Constructor
 //
 //DistanceFunction::DistanceFunction (EquationSystems& equation_systems, const UnstructuredMesh& boundary_mesh)
-DistanceFunction::DistanceFunction (libMesh::EquationSystems &es_in, const libMesh::UnstructuredMesh &bm_in) :
+  DistanceFunction::DistanceFunction (libMesh::EquationSystems &es_in, const libMesh::UnstructuredMesh &bm_in):
   _equation_systems (es_in),
   _boundary_mesh    (bm_in),
   _dist_fe          (libMesh::FEBase::build(_equation_systems.get_mesh().mesh_dimension(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)))
@@ -163,7 +163,7 @@ DistanceFunction::DistanceFunction (libMesh::EquationSystems &es_in, const libMe
   sys.add_variable("distance", libMesh::FIRST);
 
   // Attach initialization function
-  sys.attach_init_object(*this);
+  //sys.attach_init_object(*this);
 
 }
 

@@ -49,7 +49,7 @@ namespace GRINS {
 
 // This class provides the functionality to compute the distance to
 // the nearest no slip wall boundary.
-  class DistanceFunction : public libMesh::System
+  class DistanceFunction
 {
 public:
 
