@@ -258,11 +258,11 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::side_time_derivative( bool /*compute_jacobian*/,
-                                                               AssemblyContext& /*context*/,
-                                                               CachedValues& /*cache*/ )
+  void ElasticCable<StressStrainLaw>::side_time_derivative( bool compute_jacobian,
+                                                               AssemblyContext& context,
+                                                               CachedValues& cache )
   {
-    /*
+
       std::vector<BoundaryID> ids = context.side_boundary_ids();
 
       for( std::vector<BoundaryID>::const_iterator it = ids.begin();
@@ -272,7 +272,6 @@ namespace GRINS
 
       _bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
-    */
 
     return;
   }

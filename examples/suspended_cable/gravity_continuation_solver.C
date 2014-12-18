@@ -40,7 +40,7 @@ namespace GRINS
   {
     if( !input.have_variable("SolverOptions/GravityContinuation/final_gravity") )
       {
-        std::cerr << "Error: Did not find final_pressure value for GravityContinuationSolver" << std::endl
+        std::cerr << "Error: Did not find final_gravity value for GravityContinuationSolver" << std::endl
                   << "       Must specify SolverOptions/GravityContinuation/final_gravity" << std::endl;
         libmesh_error();
       }
@@ -56,7 +56,7 @@ namespace GRINS
                   << "       Must specify SolverOptions/GravityContinuation/n_increments" << std::endl;
         libmesh_error();
       }
-    unsigned int n_increments = input("SolverOptions/PressureContinuation/n_increments", 1);
+    unsigned int n_increments = input("SolverOptions/GravityContinuation/n_increments", 1);
 
     _gravity_values.resize(n_increments);
 
