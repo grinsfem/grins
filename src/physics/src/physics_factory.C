@@ -51,9 +51,12 @@
 #include "grins/low_mach_navier_stokes_spgsm_stab.h"
 #include "grins/low_mach_navier_stokes_vms_stab.h"
 #include "grins/averaged_fan.h"
+#include "grins/averaged_fan_adjoint_stab.h"
 #include "grins/averaged_turbine.h"
+#include "grins/averaged_turbine_adjoint_stab.h"
 #include "grins/scalar_ode.h"
 #include "grins/velocity_drag.h"
+#include "grins/velocity_drag_adjoint_stab.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
@@ -238,6 +241,20 @@ namespace GRINS
 	    this->visc_error(physics_to_add, viscosity);
 	  }
       }
+    else if( physics_to_add == velocity_drag_adjoint_stab )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDragAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }
     else if( physics_to_add == velocity_penalty )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
@@ -295,6 +312,25 @@ namespace GRINS
 	    this->visc_error(physics_to_add, viscosity);
 	  }
       }
+    else if( physics_to_add == averaged_fan_adjoint_stab )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFanAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFanAdjointStabilization<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }
     else if( physics_to_add == averaged_turbine )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
@@ -308,6 +344,25 @@ namespace GRINS
 	  {
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }
+    else if( physics_to_add == averaged_turbine_adjoint_stab )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbineAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbineAdjointStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
 	else
 	  {

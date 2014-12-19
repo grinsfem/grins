@@ -31,9 +31,9 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_values.h"
 #include "grins/inc_navier_stokes_base.h"
+#include "grins/averaged_turbine_base.h"
 
 // libMesh
-#include "libmesh/fem_system.h"
 #include "libmesh/getpot.h"
 
 // C++
@@ -41,7 +41,6 @@
 
 namespace GRINS
 {
-
   //! Physics class for spatially-averaged turbine
   /*
     This physics class imposes lift/drag forces on velocity as
@@ -49,8 +48,8 @@ namespace GRINS
     may also be accelerated or decelerated by external power source or
     sink.
    */
-  template<class Viscosity> 
-  class AveragedTurbine : public IncompressibleNavierStokesBase<Viscosity>
+  template<class Viscosity>
+  class AveragedTurbine : public AveragedTurbineBase<Viscosity>
   {
   public:
 
@@ -58,23 +57,12 @@ namespace GRINS
 
     ~AveragedTurbine();
 
-    //! Initialization of variables
-    /*!
-      Add turbine_speed variable to system; call base function to
-      initialize Navier-Stokes variables.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_context( AssemblyContext& context );
 
-    //! Sets turbine_speed and velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-    
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    // Time derivative part(s)
+    // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
 				          AssemblyContext& context,
 				          CachedValues& cache );
@@ -89,70 +77,7 @@ namespace GRINS
 				            AssemblyContext& context,
 				            CachedValues& cache );
 
-    VariableIndex fan_speed_var() const { return _fan_speed_var; }
-
   private:
-
-    // ``Base'' velocity of the moving fan blades as a function of x,y,z
-    //
-    // This velocity will be scaled by the fan_speed variable
-    // during the simulation; values in base_velocity_function should
-    // therefore correspond to a fan speed of 1 radian per second.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
-
-    // "Up" direction of fan airflow, as a function of x,y,z
-    // For most fans this will be a constant, the axis of rotation.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > local_vertical_function;
-
-    // Coefficients of lift and drag as a function of angle "t" in
-    // radians.  Should be well defined on [-pi, pi].
-    //
-    // No, "t" is not time in these functions.
-    // Yes, I'm abusing FunctionBase.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > lift_function;
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > drag_function;
-
-    // Mechanical driving torque function (*including* non-fluid
-    // friction losses!) on the turbine (signed, measured in
-    // Newton-meters) as a function of angular velocity turbine speed
-    // "t" (measured in rad/s).
-    //
-    // Should probably be carefully defined for t>0 and t<0 to avoid
-    // potential unstable startup.
-    //
-    // Should theoretically be useable as power input (same sign as t)
-    // to model propeller fans or output (opposite sign from t) to
-    // model turbine fans.
-    //
-    // No, "t" is not time or angle of attack in this function.
-    // Yes, I'm really abusing FunctionBase.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > torque_function;
-
-    // Moment of inertia of the spinning component of the turbine
-    // (measured in kg-m^2)
-    libMesh::Number moment_of_inertia;
-
-    // Initial speed of the spinning component of the turbine
-    // (measured in rad/s)
-    libMesh::Number initial_speed;
-
-    // The chord length of the fan wing cross-section.  For fan blades
-    // with constant cross-section this will be a constant.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > chord_function;
-
-    // The area swept out by the local fan wing cross-section.  For
-    // cylindrical areas swept out by N fan blades, this is just
-    // pi*r^2*h/N
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > area_swept_function;
-
-    // The angle-of-attack between the fan wing chord line and the fan
-    // velocity vector, in radians.  For fan blades with no "twist"
-    // this will be a constant.
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > aoa_function;
-
-    VariableIndex _fan_speed_var; /* Index for turbine speed scalar */
-
-    std::string _fan_speed_var_name;
 
     AveragedTurbine();
   };
