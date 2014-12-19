@@ -408,7 +408,7 @@ namespace GRINS
 
 	libMesh::Number rho = this->rho( T, p0 );
 	libMesh::Number d_rho = this->d_rho_dT( T, p0 );
-	libMesh::Number d_mu = 0.0; //TODO: make fix
+	libMesh::Number d_mu = this->_mu.deriv(T); //TODO: check
 	
 	libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_u_var, this->_u_var); // R_{u},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_u_var, this->_v_var); // R_{u},{v}
@@ -586,7 +586,7 @@ namespace GRINS
 					 		-d_rho_Uphi_i_Tphi_j*U*grad_u
 				  			//-d_rho*T_phi[j][qp]*U*grad_u*u_phi[i][qp]
 				  			-d_mu*T_phi[j][qp]*grad_u*u_gradphi[i][qp]
-				  			-d_mu*T_phi[j][qp]*grad_u*u_gradphi[i][qp] //TODO transpose
+				  			-d_mu*T_phi[j][qp]*grad_u(0)*u_gradphi[i][qp](0) //TODO verify transpose
 				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](0)
 				  			+d_rho_Uphi_i_Tphi_j*this->_g(0)
 				  			//+d_rho*T_phi[j][qp]*this->_g(0)*u_phi[i][qp]
@@ -596,7 +596,7 @@ namespace GRINS
 				 		 	-d_rho_Uphi_i_Tphi_j*U*grad_v
 				  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
 				  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp]
-				  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp] //TODO transpose
+				  			-d_mu*T_phi[j][qp]*grad_v(1)*u_gradphi[i][qp](1) //TODO verify transpose
 				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](1)
 				  			+d_rho_Uphi_i_Tphi_j*this->_g(1)
 				  			//+d_rho*T_phi[j][qp]*this->_g(1)*u_phi[i][qp]
@@ -605,14 +605,14 @@ namespace GRINS
 				  		if (this->_dim == 3)
 				  			{
 				  				(*KwT)(i,j) += JxW[qp]*(
-				  								-d_rho_Uphi_i_Tphi_j*U*grad_w
-									  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
-									  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp]
-									  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp] //TODO transpose
-									  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
-				  								+d_rho_Uphi_i_Tphi_j*this->_g(2)
-									  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
-									  							);	      			
+		  								-d_rho_Uphi_i_Tphi_j*U*grad_w
+							  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w*u_gradphi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w(2)*u_gradphi[i][qp](2) //TODO verify transpose
+							  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
+		  								+d_rho_Uphi_i_Tphi_j*this->_g(2)
+							  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
+				  							);	      			
 				  			
 				  			} // end if _dim==3	      				 
 					} // end T_dofs loop
@@ -686,9 +686,9 @@ namespace GRINS
 		  }
 
 		libMesh::Number k = this->_k(T);
-		libMesh::Number dk_dT = 0.0; //TODO: make fix
+		libMesh::Number dk_dT = this->_k.deriv(T);
 		libMesh::Number cp = this->_cp(T);
-		libMesh::Number d_cp = 0.0; //TODO: make fix
+		libMesh::Number d_cp = this->_cp.deriv(T);
 		libMesh::Number rho = this->rho( T, p0 );
 		libMesh::Number d_rho = this->d_rho_dT( T, p0 );
 
@@ -710,18 +710,18 @@ namespace GRINS
 					 		libMesh::Number rho_cp_Tphi_i_Uphi_j = rho*cp*T_phi[i][qp]*u_phi[j][qp];
 					 		
 					 		KTu(i,j) += JxW[qp]*
-					 						-rho_cp_Tphi_i_Uphi_j*grad_T(0);
-					 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
+			 						-rho_cp_Tphi_i_Uphi_j*grad_T(0);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
 
 					 		KTv(i,j) += JxW[qp]*
-					 						-rho_cp_Tphi_i_Uphi_j*grad_T(1);
-					 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
-					 				
+			 						-rho_cp_Tphi_i_Uphi_j*grad_T(1);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
+			 				
 					 		if (this->_dim == 3)
 					 			{
 					 				(*KTw)(i,j) += JxW[qp]*
-					 								-rho_cp_Tphi_i_Uphi_j*grad_T(2);
-					 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
+			 								-rho_cp_Tphi_i_Uphi_j*grad_T(2);
+			 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
 					 			}		 	
 				 	
 				 		} // end u_dofs loop (j)
@@ -729,10 +729,13 @@ namespace GRINS
 				 	
 				 	for (unsigned int j=0; j!=n_T_dofs; j++) {
 					 	KTT(i,j) += JxW[qp]* (
-							 			-rho*cp*U*T_gradphi[j][qp]*T_phi[i][qp]
-							 			-d_rho*T_phi[j][qp]*cp*U*grad_T*T_phi[i][qp]
+							 			-rho*(
+							 				cp*U*T_phi[i][qp]*T_gradphi[j][qp]
+							 				+ U*grad_T*T_phi[i][qp]*d_cp*T_phi[j][qp]
+							 				 )
+							 			-cp*U*grad_T*T_phi[i][qp]*d_rho*T_phi[j][qp]
 							 			-k*T_gradphi[i][qp]*T_gradphi[j][qp]
-							 			-dk_dT*T_phi[j][qp]*grad_T*T_gradphi[i][qp]		 	
+							 			-grad_T*T_gradphi[i][qp]*dk_dT*T_phi[j][qp]	 	
 					 						);
 				 	} // end T_dofs loop (j)
 			 

@@ -1,0 +1,192 @@
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'LowMachNavierStokes'
+
+# Options for Incompressible Navier-Stokes physics
+[./LowMachNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+T_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+T_order = 'SECOND'
+P_order = 'FIRST'
+
+# Thermodynamic pressure
+p0 = '101325' #[Pa]
+
+# Reference temperature
+T0 = '10' #[K]
+
+# Gas constant
+R = '287.0' #[J/kg-K]
+
+# Gravity vector
+g = '0 -9.8 0' #[m/s^2]
+
+# Ratio of wall temp differences
+epsilon = '0.6'
+
+conductivity_model = 'constant'
+viscosity_model = 'constant'
+specific_heat_model = 'constant'
+
+# Boundary ids:
+# k = bottom -> 0
+# k = top    -> 5
+# j = bottom -> 1
+# j = top    -> 3
+# i = bottom -> 4
+# i = top    -> 2
+
+vel_bc_ids = '0 1 2 3 4 5'
+vel_bc_types = 'no_slip no_slip no_slip parabolic_profile no_slip no_slip'
+
+parabolic_profile_var_3 = 'v'
+parabolic_profile_fix_3 = 'u'
+
+# c = -U0/y0^2, f = U0
+# y0 = 1.0 
+parabolic_profile_coeffs_3 = '0.0 0.0 -1 0.0 0.0 1'
+
+bc_ids = '4 2 0 5 1 3'
+bc_types = 'adiabatic_wall adiabatic_wall isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall'
+
+
+T_wall_0 = 10
+T_wall_5 = 500
+
+enable_thermo_press_calc = 'false'
+
+pin_pressure = true
+pin_location = '0.0 0.01'
+pin_value = '0.0'
+
+output_vars = 'rho'
+[]
+
+
+[QoI]
+
+enabled_qois = 'average_nusselt_number'
+
+[./NusseltNumber]
+
+thermal_conductivity = '0.041801' #[W/m-K]
+
+bc_ids = '3'
+
+Pr_over_TwomuT = '20.025542438'
+
+scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierStokes/epsilon} }'
+
+[]
+
+
+[Stabilization]
+
+tau_constant = '10'
+tau_factor = '0.05'
+
+[]
+
+[restart-options]
+
+#restart_file = 'restart.xdr'
+
+[]
+
+[Materials]
+
+[./Viscosity]
+
+mu = '2.95456e-5' #[kg/m-s]
+
+[../Conductivity]
+
+k = '.041801' #[W/m-K]
+
+[../SpecificHeat]
+
+cp = '1004.5' #[J/kg-K]
+
+[]
+
+
+
+# Mesh related options
+[mesh-options]
+mesh_option = create_3D_mesh
+element_type = HEX27
+
+mesh_nx1 = 10
+mesh_nx2 = 10
+mesh_nx3 = 10
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+[MeshAdaptivity]
+mesh_adaptive = 'true'
+absolute_global_tolerance = '1.0e-2'
+estimator_type = 'adjoint_residual'
+
+plot_cell_errors = 'false'
+
+max_refinement_steps = '5'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 100 
+max_linear_iterations = 2500
+
+verify_analytic_jacobians = 5.0e-6
+
+initial_linear_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'false'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+
+vis_output_file_prefix = 'cavity' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'LowMachNavierStokes'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+
+print_qoi = 'true'
+echo_qoi = 'true'
+
+print_element_jacobians = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]
