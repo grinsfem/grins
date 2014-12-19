@@ -20,6 +20,7 @@
 
 //GRINS
 #include "grins/grins_physics_names.h"
+#include "grins/turbulent_viscosity_macro.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -49,3 +50,5 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+INSTANTIATE_TURBULENT_VISCOSITY_SUBCLASS(SpalartAllmarasViscosity);
