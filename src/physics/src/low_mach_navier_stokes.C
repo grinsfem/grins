@@ -202,7 +202,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool /*compute_jacobian*/, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian, 
 								AssemblyContext& context,
 								CachedValues& cache )
   {
@@ -216,11 +216,44 @@ namespace GRINS
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.get_element_fe(this->_p_var)->get_phi();
+      
+      
+      
+    // The velocity shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+      
+    // The velocity shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
+      context.get_element_fe(this->_u_var)->get_dphi();
+      
+    // The temperature shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& T_phi =
+      context.get_element_fe(this->_T_var)->get_phi();
+      
+    // The temperature shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
+      context.get_element_fe(this->_T_var)->get_dphi();
+      
+      
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_p_var); // R_{p}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
+    
+     // The number of local degrees of freedom in each variable.
+    const unsigned int n_t_dofs = context.get_dof_indices(this->_T_var).size();    
+    
+     // The number of local degrees of freedom in each variable.
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
 
+    // Check number of dofs is same for _u_var, v_var and w_var.
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
+    if (this->_dim == 3)
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
+    
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
 	libMesh::Number u, v, T;
@@ -244,26 +277,74 @@ namespace GRINS
 	    libMesh::Gradient grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
 	    divU += grad_w(2);
           }
+          
+          
+    libMesh::DenseSubMatrix<libMesh::Number> &KPu = context.get_elem_jacobian(this->_p_var, this->_u_var); 
+    libMesh::DenseSubMatrix<libMesh::Number> &KPv = context.get_elem_jacobian(this->_p_var, this->_v_var);
+    libMesh::DenseSubMatrix<libMesh::Number> &KPT = context.get_elem_jacobian(this->_p_var, this->_T_var);
+    
+    libMesh::DenseSubMatrix<libMesh::Number>* KPw = NULL;
+
+    if( this->_dim == 3 )
+      {
+        KPw = &context.get_elem_jacobian(this->_p_var, this->_w_var);
+      }
 
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
 	    Fp(i) += (-U*grad_T/T + divU)*p_phi[i][qp]*JxW[qp];
-	  }
-      }
+	    
+	    
+	    if (compute_jacobian) 
+	    	{
+	        
+	    		for (unsigned int j=0; j!=n_u_dofs; j++)
+	    			{
+		    			KPu(i,j) += JxW[qp]*( 
+		    						+u_gradphi[j][qp](0)*p_phi[i][qp]
+		    						-u_phi[j][qp]*p_phi[i][qp]*grad_T(0)/T
+		    						);
+		    						
+		    			KPv(i,j) += JxW[qp]*( 
+		    						+u_gradphi[j][qp](1)*p_phi[i][qp]
+		    						-u_phi[j][qp]*p_phi[i][qp]*grad_T(1)/T
+		    						);	    			
+		    			
+		    			if (this->_dim == 3)
+		    				{
+							(*KPw)(i,j) += JxW[qp]*( 
+										+u_gradphi[j][qp](2)*p_phi[i][qp]
+										-u_phi[j][qp]*p_phi[i][qp]*grad_T(2)/T
+										);
+		    				}	
+
+	    			}
+	    		
+	    		for (unsigned int j=0; j!=n_t_dofs; j++) 
+	    			{
+		    			KPT(i,j) += JxW[qp]*(
+		    					-T_gradphi[j][qp]*U*p_phi[i][qp]/T
+		    					+U*grad_T*T_phi[j][qp])/(T*T);
+	    			} 		 			
+	    } // end if compute_jacobian
+	  } // end p_dofs loop
+      } // end qp loop
 
     return;
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian, 
 								    AssemblyContext& context,
 								    CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
-
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
+        
     // Check number of dofs is same for _u_var, v_var and w_var.
     libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
     if (this->_dim == 3)
@@ -276,6 +357,10 @@ namespace GRINS
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_u_var)->get_phi();
+    const std::vector<std::vector<libMesh::Real> >& p_phi =
+      context.get_element_fe(this->_p_var)->get_phi();
+      const std::vector<std::vector<libMesh::Real> >& T_phi =
+      context.get_element_fe(this->_T_var)->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
@@ -322,7 +407,40 @@ namespace GRINS
 	  divU += grad_w(2);
 
 	libMesh::Number rho = this->rho( T, p0 );
-      
+	libMesh::Number d_rho = this->d_rho_dT( T, p0 );
+	libMesh::Number d_mu = this->_mu.deriv(T); //TODO: check
+	
+	libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_u_var, this->_u_var); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_u_var, this->_v_var); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
+
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_v_var, this->_u_var); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_v_var, this->_v_var); // R_{v},{v}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
+
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
+
+    libMesh::DenseSubMatrix<libMesh::Number> &Kup = context.get_elem_jacobian(this->_u_var, this->_p_var); // R_{u},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = context.get_elem_jacobian(this->_v_var, this->_p_var); // R_{v},{p}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwp = NULL;
+
+    libMesh::DenseSubMatrix<libMesh::Number> &KuT = context.get_elem_jacobian(this->_u_var, this->_T_var); // R_{u},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &KvT = context.get_elem_jacobian(this->_v_var, this->_T_var); // R_{v},{p}
+    libMesh::DenseSubMatrix<libMesh::Number>* KwT = NULL;
+
+    if( this->_dim == 3 )
+      {
+	Kuw = &context.get_elem_jacobian(this->_u_var, this->_w_var); // R_{u},{w}
+	Kvw = &context.get_elem_jacobian(this->_v_var, this->_w_var); // R_{v},{w}
+	Kwu = &context.get_elem_jacobian(this->_w_var, this->_u_var); // R_{w},{u};
+	Kwv = &context.get_elem_jacobian(this->_w_var, this->_v_var); // R_{w},{v};
+	Kww = &context.get_elem_jacobian(this->_w_var, this->_w_var); // R_{w},{w}
+	Kwp = &context.get_elem_jacobian(this->_w_var, this->_p_var); // R_{w},{p}
+	KwT = &context.get_elem_jacobian(this->_w_var, this->_T_var); // R_{w},{p}
+      }
+            
 	// Now a loop over the pressure degrees of freedom.  This
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_u_dofs; i++)
@@ -350,79 +468,181 @@ namespace GRINS
 			   )*JxW[qp];
 	      }
 
-	    /*
 	      if (compute_jacobian && context.get_elem_solution_derivative())
-	      {
+	      	{
               libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
               for (unsigned int j=0; j != n_u_dofs; j++)
-	      {
-	      // TODO: precompute some terms like:
-	      //   (Uvec*vel_gblgradphivec[j][qp]),
-	      //   vel_phi[i][qp]*vel_phi[j][qp],
-	      //   (vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])
+	      		{				  
+				  //precompute repeated terms
+				  //TODO naming convention
+				  libMesh::Number rho_U_Uphi_i_UgradPhi_j = rho*U*u_phi[i][qp]*u_gradphi[j][qp];
+				  libMesh::Number UgradPhi_i_UgradPhi_j = u_gradphi[i][qp]*u_gradphi[j][qp];
+				  libMesh::Number rho_Uphi_i_Uphi_j = rho*u_phi[i][qp]*u_phi[j][qp];				  
+				  
+				  
+				  Kuu(i,j) += JxW[qp]*(
+				  				-rho_U_Uphi_i_UgradPhi_j
+				  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
+				  				-rho_Uphi_i_Uphi_j*grad_u(0)
+				  				//-rho*u_phi[i][qp]*grad_u(0)*u_phi[j][qp]
+				  				-this->_mu(T)*(
+				  					UgradPhi_i_UgradPhi_j
+				  					//u_gradphi[i][qp]*u_gradphi[j][qp]
+				  					+ u_gradphi[i][qp](0)*u_gradphi[j][qp](0) // transpose
+				  					- 2.0/3.0*u_gradphi[i][qp](0)*u_gradphi[j][qp](0)
+				  								));
+				  Kvv(i,j) += JxW[qp]*(
+				  				-rho_U_Uphi_i_UgradPhi_j
+				  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
+				  				-rho_Uphi_i_Uphi_j*grad_v(1)
+				  				//-rho*u_phi[i][qp]*grad_v(1)*u_phi[j][qp]
+				  				-this->_mu(T)*(
+				  					UgradPhi_i_UgradPhi_j
+				  					//u_gradphi[i][qp]*u_gradphi[j][qp]
+				  					+ u_gradphi[i][qp](1)*u_gradphi[j][qp](1) // transpose
+				  					- 2.0/3.0*u_gradphi[i][qp](1)*u_gradphi[j][qp](1)
+				  								));
+				  								
+				  Kuv(i,j) += JxW[qp]*(
+				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
+				  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
+				  				-rho_Uphi_i_Uphi_j*grad_u(1)
+				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(1));
+				  						);
+				  				
+				  Kvu(i,j) += JxW[qp]*(
+				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
+				  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
+				  				-rho_Uphi_i_Uphi_j*grad_v(0)
+				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(0));
+				  						);
+				  				
+				  
+					  								
+				  if (this->_dim == 3)
+				  	{
+				  		(*Kuw)(i,j) += JxW[qp]*(
+						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](2)
+						  				-this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](0)
+						  				-rho_Uphi_i_Uphi_j*grad_u(2)
+						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(2)
+						  					);
+				  				
+				  		(*Kvw)(i,j) += JxW[qp]*(
+						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
+						  				-this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
+						  				-rho_Uphi_i_Uphi_j*grad_v(2)
+						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(2)
+						  						);
+				  				
+				  		(*Kwu)(i,j) += JxW[qp]*(
+						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](0)
+						  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](2)
+						  				-rho_Uphi_i_Uphi_j*grad_w(0)
+						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(0)
+						  						);
+				  				
+				  		(*Kwv)(i,j) += JxW[qp]*(
+						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
+						  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
+						  				-rho_Uphi_i_Uphi_j*grad_w(1)
+						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(1)
+						  						);
+				  										
+					 	(*Kww)(i,j) += JxW[qp]*(
+					 					-rho_U_Uphi_i_UgradPhi_j
+						  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
+						  				-rho_Uphi_i_Uphi_j*grad_w(2)
+						  				//-rho*u_phi[i][qp]*grad_w(2)*u_phi[j][qp]
+						  				-this->_mu(T)*(
+						  					UgradPhi_i_UgradPhi_j
+						  					//u_gradphi[i][qp]*u_gradphi[j][qp]
+						  					+ u_gradphi[i][qp](2)*u_gradphi[j][qp](2) // transpose
+						  					- 2.0/3.0*u_gradphi[i][qp](2)*u_gradphi[j][qp](2)
+				  								));
+				  								
+				  								
+						(*KwT)(i,j) += JxW[qp]*(
+							  			-d_rho*U*grad_w*u_phi[i][qp]
+							  			-d_mu*grad_w*u_gradphi[i][qp]
+							  			-d_mu*grad_w*u_gradphi[i][qp] // transpose
+							  			+2.0/3.0*d_mu*divU*u_gradphi[i][qp](2)
+							  			+d_rho*this->_g(2)*u_phi[i][qp]
+				  						);
+				  						
+					} // end if _dim==3
+	      		} // end of the inner dof (j) loop
 
-	      Kuu(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*(Uvec*vel_gblgradphivec[j][qp])       // convection term
-	      -_rho*vel_phi[i][qp]*graduvec_x*vel_phi[j][qp]             // convection term
-	      -_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
-	      Kuv(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*graduvec_y*vel_phi[j][qp]);           // convection term
+				for (unsigned int j=0; j!=n_T_dofs; j++)
+					{
+						
+						//precompute repeated term
+						//TODO naming convention?
+						libMesh:: Number d_rho_Uphi_i_Tphi_j = d_rho*u_phi[i][qp]*T_phi[j][qp];
+						
+						// Analytical Jacobains
+					 	KuT(i,j) += JxW[qp]*(
+					 		-d_rho_Uphi_i_Tphi_j*U*grad_u
+				  			//-d_rho*T_phi[j][qp]*U*grad_u*u_phi[i][qp]
+				  			-d_mu*T_phi[j][qp]*grad_u*u_gradphi[i][qp]
+				  			-d_mu*T_phi[j][qp]*grad_u(0)*u_gradphi[i][qp](0) //TODO verify transpose
+				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](0)
+				  			+d_rho_Uphi_i_Tphi_j*this->_g(0)
+				  			//+d_rho*T_phi[j][qp]*this->_g(0)*u_phi[i][qp]
+				  							);
+				  				
+				 		 KvT(i,j) += JxW[qp]*(
+				 		 	-d_rho_Uphi_i_Tphi_j*U*grad_v
+				  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
+				  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp]
+				  			-d_mu*T_phi[j][qp]*grad_v(1)*u_gradphi[i][qp](1) //TODO verify transpose
+				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](1)
+				  			+d_rho_Uphi_i_Tphi_j*this->_g(1)
+				  			//+d_rho*T_phi[j][qp]*this->_g(1)*u_phi[i][qp]
+				  							);
+				  							
+				  		if (this->_dim == 3)
+				  			{
+				  				(*KwT)(i,j) += JxW[qp]*(
+		  								-d_rho_Uphi_i_Tphi_j*U*grad_w
+							  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w*u_gradphi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w(2)*u_gradphi[i][qp](2) //TODO verify transpose
+							  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
+		  								+d_rho_Uphi_i_Tphi_j*this->_g(2)
+							  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
+				  							);	      			
+				  			
+				  			} // end if _dim==3	      				 
+					} // end T_dofs loop
 
-	      Kvv(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*(Uvec*vel_gblgradphivec[j][qp])       // convection term
-	      -_rho*vel_phi[i][qp]*gradvvec_y*vel_phi[j][qp]             // convection term
-	      -_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
-	      Kvu(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*gradvvec_x*vel_phi[j][qp]);           // convection term
+              	// Matrix contributions for the up, vp and wp couplings
+              	for (unsigned int j=0; j != n_p_dofs; j++)
+	      		{
+				  Kup(i,j) += JxW[qp]*p_phi[j][qp]*u_gradphi[i][qp](0);
+				  Kvp(i,j) += JxW[qp]*p_phi[j][qp]*u_gradphi[i][qp](1);
+				  if (this->_dim == 3)
+				  	(*Kwp)(i,j) += JxW[qp]*p_phi[j][qp]*u_gradphi[i][qp](2);
+	      		} // end of the inner dof (j) loop
 
-	      if (_dim == 3)
-	      {
-	      Kuw(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*graduvec_z*vel_phi[j][qp]);           // convection term
-
-	      Kvw(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*gradvvec_z*vel_phi[j][qp]);           // convection term
-
-	      Kww(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*(Uvec*vel_gblgradphivec[j][qp])       // convection term
-	      -_rho*vel_phi[i][qp]*gradwvec_z*vel_phi[j][qp]             // convection term
-	      -_mu*(vel_gblgradphivec[i][qp]*vel_gblgradphivec[j][qp])); // diffusion term
-	      Kwu(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*gradwvec_x*vel_phi[j][qp]);           // convection term
-	      Kwv(i,j) += JxW[qp] *
-	      (-_rho*vel_phi[i][qp]*gradwvec_y*vel_phi[j][qp]);           // convection term
-	      }
-	      } // end of the inner dof (j) loop
-
-              // Matrix contributions for the up, vp and wp couplings
-              for (unsigned int j=0; j != n_p_dofs; j++)
-	      {
-	      Kup(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](0)*p_phi[j][qp];
-	      Kvp(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](1)*p_phi[j][qp];
-	      if (_dim == 3)
-	      Kwp(i,j) += JxW[qp]*vel_gblgradphivec[i][qp](2)*p_phi[j][qp];
-	      } // end of the inner dof (j) loop
-
-	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+	      	} // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
 	      } // end of the outer dof (i) loop
-	      } // end of the quadrature point (qp) loop
-	    */
-	  } // End of DoF loop i
-      } // End quadrature loop qp
+	} // end of the quadrature point (qp) loop
 
     return;
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool compute_jacobian,
 								  AssemblyContext& context,
 								  CachedValues& cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
-
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+    
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_T_var)->get_JxW();
@@ -430,7 +650,9 @@ namespace GRINS
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
       context.get_element_fe(this->_T_var)->get_phi();
-
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+      
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.get_element_fe(this->_T_var)->get_dphi();
@@ -440,32 +662,86 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v, T, p0;
-	u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-	v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-	T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-	p0 = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
+		libMesh::Number u, v, T, p0;
+		u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+		v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+		T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+		p0 = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
 
-	libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
+		libMesh::Gradient grad_T = cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
-	libMesh::NumberVectorValue U(u,v);
-	if (this->_dim == 3)
-	  U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
+		libMesh::NumberVectorValue U(u,v);
+		if (this->_dim == 3)
+		  U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
+		  
+		libMesh::DenseSubMatrix<libMesh::Number> &KTu = context.get_elem_jacobian(this->_T_var, this->_u_var); // R_{u},{u}
+		libMesh::DenseSubMatrix<libMesh::Number> &KTv = context.get_elem_jacobian(this->_T_var, this->_v_var); // R_{u},{u}
+			libMesh::DenseSubMatrix<libMesh::Number>* KTw = NULL;
+		  
+		libMesh::DenseSubMatrix<libMesh::Number> &KTT = context.get_elem_jacobian(this->_T_var, this->_T_var); // R_{u},{u}
+			
+		if( this->_dim == 3 )
+		  {
+		    KTw = &context.get_elem_jacobian(this->_T_var, this->_w_var); // R_{u},{w}
+		  }
 
-	libMesh::Number k = this->_k(T);
-	libMesh::Number cp = this->_cp(T);
+		libMesh::Number k = this->_k(T);
+		libMesh::Number dk_dT = this->_k.deriv(T);
+		libMesh::Number cp = this->_cp(T);
+		libMesh::Number d_cp = this->_cp.deriv(T);
+		libMesh::Number rho = this->rho( T, p0 );
+		libMesh::Number d_rho = this->d_rho_dT( T, p0 );
 
-	libMesh::Number rho = this->rho( T, p0 );
+		// Now a loop over the pressure degrees of freedom.  This
+		// computes the contributions of the continuity equation.
+		for (unsigned int i=0; i != n_T_dofs; i++)
+		  {
+			FT(i) += ( -rho*cp*U*grad_T*T_phi[i][qp] // convection term
+				   - k*grad_T*T_gradphi[i][qp]            // diffusion term
+				   )*JxW[qp]; 
+				   
+				   
+			 if(compute_jacobian) 
+			 	{
+				 	for (unsigned int j=0; j!=n_u_dofs; j++)
+				 		{
+					 		//pre-compute repeated term
+					 		//TODO naming convention?
+					 		libMesh::Number rho_cp_Tphi_i_Uphi_j = rho*cp*T_phi[i][qp]*u_phi[j][qp];
+					 		
+					 		KTu(i,j) += JxW[qp]*
+			 						-rho_cp_Tphi_i_Uphi_j*grad_T(0);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) += ( -rho*cp*U*grad_T*T_phi[i][qp] // convection term
-		       - k*grad_T*T_gradphi[i][qp]            // diffusion term
-		       )*JxW[qp]; 
-	  }
-      }
+					 		KTv(i,j) += JxW[qp]*
+			 						-rho_cp_Tphi_i_Uphi_j*grad_T(1);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
+			 				
+					 		if (this->_dim == 3)
+					 			{
+					 				(*KTw)(i,j) += JxW[qp]*
+			 								-rho_cp_Tphi_i_Uphi_j*grad_T(2);
+			 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
+					 			}		 	
+				 	
+				 		} // end u_dofs loop (j)
+				 	
+				 	
+				 	for (unsigned int j=0; j!=n_T_dofs; j++) {
+					 	KTT(i,j) += JxW[qp]* (
+							 			-rho*(
+							 				cp*U*T_phi[i][qp]*T_gradphi[j][qp]
+							 				+ U*grad_T*T_phi[i][qp]*d_cp*T_phi[j][qp]
+							 				 )
+							 			-cp*U*grad_T*T_phi[i][qp]*d_rho*T_phi[j][qp]
+							 			-k*T_gradphi[i][qp]*T_gradphi[j][qp]
+							 			-grad_T*T_gradphi[i][qp]*dk_dT*T_phi[j][qp]	 	
+					 						);
+				 	} // end T_dofs loop (j)
+			 
+			 	} // end if compute_jacobian
+		  } // end outer T_dofs loop (i)
+      } //end qp loop
 
     return;
   }
@@ -494,16 +770,17 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real T_dot;
+        context.interior_rate(this->_T_var, qp, T_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
 	for (unsigned int i = 0; i != n_p_dofs; ++i)
 	  {
-	    F_p(i) += T_dot/T*p_phi[i][qp]*JxW[qp];
+	    F_p(i) -= T_dot/T*p_phi[i][qp]*JxW[qp];
 	  } // End DoF loop i
 
       } // End quadrature loop qp
@@ -541,15 +818,15 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real u_dot = context.interior_value(this->_u_var, qp);
-	libMesh::Real v_dot = context.interior_value(this->_v_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real u_dot, v_dot, w_dot = 0.0;
+        context.interior_rate(this->_u_var, qp, u_dot);
+	context.interior_rate(this->_v_var, qp, v_dot);
 
-	libMesh::Real w_dot = 0.0;
 	if( this->_dim == 3 )
-	  w_dot = context.interior_value(this->_w_var, qp);
+	  context.interior_rate(this->_w_var, qp, w_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
       
@@ -557,11 +834,11 @@ namespace GRINS
       
 	for (unsigned int i = 0; i != n_u_dofs; ++i)
 	  {
-	    F_u(i) += rho*u_dot*u_phi[i][qp]*JxW[qp];
-	    F_v(i) += rho*v_dot*u_phi[i][qp]*JxW[qp];
+	    F_u(i) -= rho*u_dot*u_phi[i][qp]*JxW[qp];
+	    F_v(i) -= rho*v_dot*u_phi[i][qp]*JxW[qp];
 
 	    if( this->_dim == 3 )
-	      F_w(i) += rho*w_dot*u_phi[i][qp]*JxW[qp];
+	      F_w(i) -= rho*w_dot*u_phi[i][qp]*JxW[qp];
 	  
 	    /*
 	      if( compute_jacobian )
@@ -614,10 +891,11 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u will be given by the interior_rate function.
+	libMesh::Real T_dot;
+        context.interior_rate(this->_T_var, qp, T_dot);
 
 	libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
 
@@ -627,7 +905,7 @@ namespace GRINS
       
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F_T(i) += rho*cp*T_dot*T_phi[i][qp]*JxW[qp];
+	    F_T(i) -= rho*cp*T_dot*T_phi[i][qp]*JxW[qp];
 	  } // End DoF loop i
 
       } // End quadrature loop qp
@@ -771,23 +1049,24 @@ namespace GRINS
 	libMesh::Number gamma = cp/cv;
 	libMesh::Number one_over_gamma = 1.0/(gamma-1.0);
 
-	libMesh::Number p0_dot = context.interior_value(this->_p0_var, qp );
+	libMesh::Number p0_dot;
+        context.interior_rate(this->_p0_var, qp, p0_dot);
 
 	libMesh::Number p0 = context.fixed_interior_value(this->_p0_var, qp );
 
 	for (unsigned int i=0; i != n_p0_dofs; i++)
 	  {
-	    F_p0(i) += p0_dot*one_over_gamma*JxW[qp];
+	    F_p0(i) -= p0_dot*one_over_gamma*JxW[qp];
 	  }
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    F_T(i) -= p0_dot*T_phi[i][qp]*JxW[qp];
+	    F_T(i) += p0_dot*T_phi[i][qp]*JxW[qp];
 	  }
 
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    F_p(i) -= p0_dot/p0*p_phi[i][qp]*JxW[qp];
+	    F_p(i) += p0_dot/p0*p_phi[i][qp]*JxW[qp];
 	  }
 
       }

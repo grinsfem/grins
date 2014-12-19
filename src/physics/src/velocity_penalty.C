@@ -192,7 +192,7 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    const libMesh::Number jac_ij = jac_i * u_phi[j][qp];
+                    const libMesh::Number jac_ij = context.get_elem_solution_derivative() * jac_i * u_phi[j][qp];
                     Kuu(i,j) += jac_ij * dFdU(0,0);
                     Kuv(i,j) += jac_ij * dFdU(0,1);
                     Kvu(i,j) += jac_ij * dFdU(1,0);

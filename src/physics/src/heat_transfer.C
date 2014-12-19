@@ -202,7 +202,7 @@ namespace GRINS
 		    // TODO: precompute some terms like:
 		    //   this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-		    KTT(i,j) += jac *
+		    KTT(i,j) += jac * context.get_elem_solution_derivative() *
 		      (-this->_rho*this->_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
 		       -_k_qp*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
 		  } // end of the inner dof (j) loop
@@ -210,10 +210,10 @@ namespace GRINS
 		// Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
 		for (unsigned int j=0; j != n_u_dofs; j++)
 		  {
-		    KTu(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
-		    KTv(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
+		    KTu(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+		    KTv(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
 		    if (this->_dim == 3)
-		      (*KTw)(i,j) += jac*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
+		      (*KTw)(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
 		  } // end of the inner dof (j) loop
 
 	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
@@ -291,10 +291,11 @@ namespace GRINS
       {
 	// For the mass residual, we need to be a little careful.
 	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u for the residual.
-	// u_fixed will be given by the fixed_interior_* functions
-	// while u will be given by the interior_* functions.
-	libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real T_dot;
+        context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
 
         const libMesh::Number r = u_qpoint[qp](0);
 
@@ -307,14 +308,14 @@ namespace GRINS
 
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
-	    F(i) += this->_rho*this->_Cp*T_dot*phi[i][qp]*jac;
+	    F(i) -= this->_rho*this->_Cp*T_dot*phi[i][qp]*jac;
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
 		    // We're assuming rho, cp are constant w.r.t. T here.
-                    M(i,j) += this->_rho*this->_Cp*phi[j][qp]*phi[i][qp]*jac;
+                    M(i,j) -= this->_rho*this->_Cp*phi[j][qp]*phi[i][qp]*jac * context.get_elem_solution_rate_derivative();
                   }
               }// End of check on Jacobian
           
