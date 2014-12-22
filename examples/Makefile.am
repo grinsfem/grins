@@ -67,6 +67,18 @@ EXTRA_DIST += $(cavitybenchmark_DATA)
 cavity_SOURCES = cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
 
+#=======================================================================
+# Cavity Benchmark No Stability
+#=======================================================================
+cavitybenchmarknostabdir = $(prefix)/examples/cavity_benchmark_no_stab
+cavitybenchmarknostab_PROGRAMS = cavity_no_stab
+cavitybenchmarknostab_DATA  = $(top_srcdir)/examples/cavity_benchmark_no_stab/cavity_no_stab.in
+cavitybenchmarknostab_SCRIPTS = $(top_builddir)/examples/cavity_benchmark_no_stab/run.sh
+
+EXTRA_DIST += $(cavitybenchmarknostab_DATA)
+
+cavity_no_stab_SOURCES = cavity_benchmark_no_stab/cavity_no_stab.C
+cavity_no_stab_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
 # Heated Channel Example

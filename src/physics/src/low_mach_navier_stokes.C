@@ -408,7 +408,7 @@ namespace GRINS
 
 	libMesh::Number rho = this->rho( T, p0 );
 	libMesh::Number d_rho = this->d_rho_dT( T, p0 );
-	libMesh::Number d_mu = 0.0; //TODO: make fix
+	libMesh::Number d_mu = this->_mu.deriv(T);
 	
 	libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_u_var, this->_u_var); // R_{u},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_u_var, this->_v_var); // R_{u},{v}
@@ -475,30 +475,29 @@ namespace GRINS
               for (unsigned int j=0; j != n_u_dofs; j++)
 	      		{				  
 				  //precompute repeated terms
-				  //TODO naming convention
-				  libMesh::Number rho_U_Uphi_i_UgradPhi_j = rho*U*u_phi[i][qp]*u_gradphi[j][qp];
-				  libMesh::Number UgradPhi_i_UgradPhi_j = u_gradphi[i][qp]*u_gradphi[j][qp];
-				  libMesh::Number rho_Uphi_i_Uphi_j = rho*u_phi[i][qp]*u_phi[j][qp];				  
+				  libMesh::Number r0 = rho*U*u_phi[i][qp]*u_gradphi[j][qp];
+				  libMesh::Number r1 = u_gradphi[i][qp]*u_gradphi[j][qp];
+				  libMesh::Number r2 = rho*u_phi[i][qp]*u_phi[j][qp];				  
 				  
 				  
 				  Kuu(i,j) += JxW[qp]*(
-				  				-rho_U_Uphi_i_UgradPhi_j
+				  				-r0
 				  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
-				  				-rho_Uphi_i_Uphi_j*grad_u(0)
+				  				-r2*grad_u(0)
 				  				//-rho*u_phi[i][qp]*grad_u(0)*u_phi[j][qp]
 				  				-this->_mu(T)*(
-				  					UgradPhi_i_UgradPhi_j
+				  					r1
 				  					//u_gradphi[i][qp]*u_gradphi[j][qp]
 				  					+ u_gradphi[i][qp](0)*u_gradphi[j][qp](0) // transpose
 				  					- 2.0/3.0*u_gradphi[i][qp](0)*u_gradphi[j][qp](0)
 				  								));
 				  Kvv(i,j) += JxW[qp]*(
-				  				-rho_U_Uphi_i_UgradPhi_j
+				  				-r0
 				  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
-				  				-rho_Uphi_i_Uphi_j*grad_v(1)
+				  				-r2*grad_v(1)
 				  				//-rho*u_phi[i][qp]*grad_v(1)*u_phi[j][qp]
 				  				-this->_mu(T)*(
-				  					UgradPhi_i_UgradPhi_j
+				  					r1
 				  					//u_gradphi[i][qp]*u_gradphi[j][qp]
 				  					+ u_gradphi[i][qp](1)*u_gradphi[j][qp](1) // transpose
 				  					- 2.0/3.0*u_gradphi[i][qp](1)*u_gradphi[j][qp](1)
@@ -507,14 +506,14 @@ namespace GRINS
 				  Kuv(i,j) += JxW[qp]*(
 				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
 				  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
-				  				-rho_Uphi_i_Uphi_j*grad_u(1)
+				  				-r2*grad_u(1)
 				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(1));
 				  						);
 				  				
 				  Kvu(i,j) += JxW[qp]*(
 				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
 				  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
-				  				-rho_Uphi_i_Uphi_j*grad_v(0)
+				  				-r2*grad_v(0)
 				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(0));
 				  						);
 				  				
@@ -525,38 +524,38 @@ namespace GRINS
 				  		(*Kuw)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](2)
 						  				-this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](0)
-						  				-rho_Uphi_i_Uphi_j*grad_u(2)
+						  				-r2*grad_u(2)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(2)
 						  					);
 				  				
 				  		(*Kvw)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
 						  				-this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
-						  				-rho_Uphi_i_Uphi_j*grad_v(2)
+						  				-r2*grad_v(2)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(2)
 						  						);
 				  				
 				  		(*Kwu)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](0)
 						  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](2)
-						  				-rho_Uphi_i_Uphi_j*grad_w(0)
+						  				-r2*grad_w(0)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(0)
 						  						);
 				  				
 				  		(*Kwv)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
 						  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
-						  				-rho_Uphi_i_Uphi_j*grad_w(1)
+						  				-r2*grad_w(1)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(1)
 						  						);
 				  										
 					 	(*Kww)(i,j) += JxW[qp]*(
-					 					-rho_U_Uphi_i_UgradPhi_j
+					 					-r0
 						  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
-						  				-rho_Uphi_i_Uphi_j*grad_w(2)
+						  				-r2*grad_w(2)
 						  				//-rho*u_phi[i][qp]*grad_w(2)*u_phi[j][qp]
 						  				-this->_mu(T)*(
-						  					UgradPhi_i_UgradPhi_j
+						  					r1
 						  					//u_gradphi[i][qp]*u_gradphi[j][qp]
 						  					+ u_gradphi[i][qp](2)*u_gradphi[j][qp](2) // transpose
 						  					- 2.0/3.0*u_gradphi[i][qp](2)*u_gradphi[j][qp](2)
@@ -578,41 +577,40 @@ namespace GRINS
 					{
 						
 						//precompute repeated term
-						//TODO naming convention?
-						libMesh:: Number d_rho_Uphi_i_Tphi_j = d_rho*u_phi[i][qp]*T_phi[j][qp];
+						libMesh:: Number r3 = d_rho*u_phi[i][qp]*T_phi[j][qp];
 						
 						// Analytical Jacobains
 					 	KuT(i,j) += JxW[qp]*(
-					 		-d_rho_Uphi_i_Tphi_j*U*grad_u
+					 		-r3*U*grad_u
 				  			//-d_rho*T_phi[j][qp]*U*grad_u*u_phi[i][qp]
 				  			-d_mu*T_phi[j][qp]*grad_u*u_gradphi[i][qp]
-				  			-d_mu*T_phi[j][qp]*grad_u*u_gradphi[i][qp] //TODO transpose
+				  			-d_mu*T_phi[j][qp]*grad_u(0)*u_gradphi[i][qp](0) // transpose
 				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](0)
-				  			+d_rho_Uphi_i_Tphi_j*this->_g(0)
+				  			+r3*this->_g(0)
 				  			//+d_rho*T_phi[j][qp]*this->_g(0)*u_phi[i][qp]
 				  							);
 				  				
 				 		 KvT(i,j) += JxW[qp]*(
-				 		 	-d_rho_Uphi_i_Tphi_j*U*grad_v
+				 		 	-r3*U*grad_v
 				  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
 				  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp]
-				  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp] //TODO transpose
+				  			-d_mu*T_phi[j][qp]*grad_v(1)*u_gradphi[i][qp](1) // transpose
 				  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](1)
-				  			+d_rho_Uphi_i_Tphi_j*this->_g(1)
+				  			+r3*this->_g(1)
 				  			//+d_rho*T_phi[j][qp]*this->_g(1)*u_phi[i][qp]
 				  							);
 				  							
 				  		if (this->_dim == 3)
 				  			{
 				  				(*KwT)(i,j) += JxW[qp]*(
-				  								-d_rho_Uphi_i_Tphi_j*U*grad_w
-									  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
-									  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp]
-									  			-d_mu*T_phi[j][qp]*grad_v*u_gradphi[i][qp] //TODO transpose
-									  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
-				  								+d_rho_Uphi_i_Tphi_j*this->_g(2)
-									  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
-									  							);	      			
+		  								-r3*U*grad_w
+							  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w*u_gradphi[i][qp]
+							  			-d_mu*T_phi[j][qp]*grad_w(2)*u_gradphi[i][qp](2) // transpose
+							  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
+		  								+r3*this->_g(2)
+							  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
+				  							);	      			
 				  			
 				  			} // end if _dim==3	      				 
 					} // end T_dofs loop
@@ -686,9 +684,9 @@ namespace GRINS
 		  }
 
 		libMesh::Number k = this->_k(T);
-		libMesh::Number dk_dT = 0.0; //TODO: make fix
+		libMesh::Number dk_dT = this->_k.deriv(T);
 		libMesh::Number cp = this->_cp(T);
-		libMesh::Number d_cp = 0.0; //TODO: make fix
+		libMesh::Number d_cp = this->_cp.deriv(T);
 		libMesh::Number rho = this->rho( T, p0 );
 		libMesh::Number d_rho = this->d_rho_dT( T, p0 );
 
@@ -706,35 +704,38 @@ namespace GRINS
 				 	for (unsigned int j=0; j!=n_u_dofs; j++)
 				 		{
 					 		//pre-compute repeated term
-					 		//TODO naming convention?
-					 		libMesh::Number rho_cp_Tphi_i_Uphi_j = rho*cp*T_phi[i][qp]*u_phi[j][qp];
+					 		libMesh::Number r0 = rho*cp*T_phi[i][qp]*u_phi[j][qp];
 					 		
 					 		KTu(i,j) += JxW[qp]*
-					 						-rho_cp_Tphi_i_Uphi_j*grad_T(0);
-					 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
+			 						-r0*grad_T(0);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
 
 					 		KTv(i,j) += JxW[qp]*
-					 						-rho_cp_Tphi_i_Uphi_j*grad_T(1);
-					 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
-					 				
+			 						-r0*grad_T(1);
+			 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
+			 				
 					 		if (this->_dim == 3)
 					 			{
 					 				(*KTw)(i,j) += JxW[qp]*
-					 								-rho_cp_Tphi_i_Uphi_j*grad_T(2);
-					 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
+			 								-r0*grad_T(2);
+			 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
 					 			}		 	
 				 	
 				 		} // end u_dofs loop (j)
 				 	
 				 	
-				 	for (unsigned int j=0; j!=n_T_dofs; j++) {
-					 	KTT(i,j) += JxW[qp]* (
-							 			-rho*cp*U*T_gradphi[j][qp]*T_phi[i][qp]
-							 			-d_rho*T_phi[j][qp]*cp*U*grad_T*T_phi[i][qp]
+				 	for (unsigned int j=0; j!=n_T_dofs; j++)
+				 	    {
+					 	    KTT(i,j) += JxW[qp]* (
+							 			-rho*(
+							 				cp*U*T_phi[i][qp]*T_gradphi[j][qp]
+							 				+ U*grad_T*T_phi[i][qp]*d_cp*T_phi[j][qp]
+							 				 )
+							 			-cp*U*grad_T*T_phi[i][qp]*d_rho*T_phi[j][qp]
 							 			-k*T_gradphi[i][qp]*T_gradphi[j][qp]
-							 			-dk_dT*T_phi[j][qp]*grad_T*T_gradphi[i][qp]		 	
-					 						);
-				 	} // end T_dofs loop (j)
+							 			-grad_T*T_gradphi[i][qp]*dk_dT*T_phi[j][qp]	 	
+					 						    );
+				 	    } // end T_dofs loop (j)
 			 
 			 	} // end if compute_jacobian
 		  } // end outer T_dofs loop (i)
