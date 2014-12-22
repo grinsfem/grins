@@ -438,7 +438,7 @@ namespace GRINS
 	Kwv = &context.get_elem_jacobian(this->_w_var, this->_v_var); // R_{w},{v};
 	Kww = &context.get_elem_jacobian(this->_w_var, this->_w_var); // R_{w},{w}
 	Kwp = &context.get_elem_jacobian(this->_w_var, this->_p_var); // R_{w},{p}
-	KwT = &context.get_elem_jacobian(this->_w_var, this->_T_var); // R_{w},{p}
+	KwT = &context.get_elem_jacobian(this->_w_var, this->_T_var); // R_{w},{T}
       }
             
 	// Now a loop over the pressure degrees of freedom.  This
@@ -560,16 +560,7 @@ namespace GRINS
 						  					+ u_gradphi[i][qp](2)*u_gradphi[j][qp](2) // transpose
 						  					- 2.0/3.0*u_gradphi[i][qp](2)*u_gradphi[j][qp](2)
 				  								));
-				  								
-				  								
-						(*KwT)(i,j) += JxW[qp]*(
-							  			-d_rho*U*grad_w*u_phi[i][qp]
-							  			-d_mu*grad_w*u_gradphi[i][qp]
-							  			-d_mu*grad_w*u_gradphi[i][qp] // transpose
-							  			+2.0/3.0*d_mu*divU*u_gradphi[i][qp](2)
-							  			+d_rho*this->_g(2)*u_phi[i][qp]
-				  						);
-				  						
+				  												  						
 					} // end if _dim==3
 	      		} // end of the inner dof (j) loop
 

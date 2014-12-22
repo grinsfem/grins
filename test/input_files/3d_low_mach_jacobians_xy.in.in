@@ -43,11 +43,11 @@ vel_bc_types = 'no_slip no_slip no_slip no_slip no_slip no_slip'
 
 
 bc_ids = '4 2 0 5 1 3'
-bc_types = 'isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall isothermal_wall isothermal_wall'
+bc_types = 'adiabatic_wall adiabatic_wall isothermal_wall isothermal_wall isothermal_wall isothermal_wall'
 
 
-T_wall_0 = 1
-T_wall_5 = 10
+T_wall_4 = 1
+T_wall_2 = 5
 
 enable_thermo_press_calc = 'false'
 
@@ -100,9 +100,9 @@ cp = '1.0' #[J/kg-K]
 mesh_option = create_3D_mesh
 element_type = HEX27
 
-mesh_nx1 = 5
-mesh_nx2 = 5
-mesh_nx3 = 5
+mesh_nx1 = 3
+mesh_nx2 = 3
+mesh_nx3 = 3
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -128,7 +128,7 @@ require_residual_reduction = 'true'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = 'cavity' 
+vis_output_file_prefix = '3d_low_mach_jacobians_xy' 
 
 output_residual = 'false' 
 
