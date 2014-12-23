@@ -8,7 +8,7 @@ enabled_physics = 'ElasticCable
 # Options for Incompressible Navier-Stokes physics
 [./ElasticCable]
 
-A0 = '0.00929'
+A0 = '0.1'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
@@ -21,34 +21,33 @@ elasticity_model = 'HookesLaw'
 bc_ids = '0 1 1'
 bc_types = 'pinned roller_x constant_traction'
 
-traction_1 = '0.5 0.0 0.0'
+traction_1 = '5.7735 0.0 0.0'
 
-ic_ids = '1'
-ic_types = 'parsed'
-ic_variables = 'w'
-ic_values = '0.3*sin(pi*x)'
+#ic_ids = '1'
+#ic_types = 'parsed'
+#ic_variables = 'w'
+#ic_values = '-1*sin(pi*x)'
 
 [../ElasticCableConstantGravity]
 
-A0 = '0.00929'
-pho0='1.587'
-gravity = '-9.81'
+A0 = '0.1'
+rho0='0.031056'
 
 [../HookesLaw]                                                                                                                                                                                                                               
 
 nu = '0.45'
-E = '1.0e4'
+E = '1.0e6'
 
 []
 
-[SolverOptions]
+#[SolverOptions]
 
-solver_type = 'gravity_continuation'
+#solver_type = 'gravity_continuation'
 
 [./GravityContinuation]
-initial_gravity = '-0.0981'
-final_gravity = '-9.81'
-n_increments = '50'
+initial_gravity='0.0'
+final_gravity='-32.2'
+n_increments='50'
 
 []
 
@@ -58,7 +57,7 @@ mesh_option = 'create_1D_mesh'
 #element_type = 'EDGE2'
                                                                                                                                                                                                                                            
 domain_x1_min = '0.0'
-domain_x1_max = '1.0'
+domain_x1_max = '200.0'
 
 mesh_nx1 = '10'
 
@@ -86,7 +85,7 @@ output_format = 'ExodusII xdr'
 # Options for print info to the screen
 [screen-options]
 
-system_name = 'StretchedElasticCable'
+system_name = 'SuspendedCable'
 
 print_equation_system_info = 'true'
 print_mesh_info = 'true'

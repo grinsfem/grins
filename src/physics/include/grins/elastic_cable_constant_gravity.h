@@ -43,9 +43,9 @@ namespace GRINS
 
     ElasticCableConstantGravity();
 
-    libMesh::Real _gravity;
-    libMesh::Real _A0;
-    libMesh::Real _rho0;
+    libMesh::Real _gravity=0;
+    libMesh::Real _A0=0;
+    libMesh::Real _rho0=0;
   };
 
 } // end namespace GRINS
