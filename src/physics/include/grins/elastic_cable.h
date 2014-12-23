@@ -104,7 +104,7 @@ namespace GRINS
 
     libMesh::Real _A0;
 
-    bool _lambda_sq_var;
+    bool _is_compressible;
 
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

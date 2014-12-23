@@ -45,12 +45,12 @@ namespace GRINS
 {
   template<typename StressStrainLaw>
   ElasticCable<StressStrainLaw>::ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                                                     bool lambda_sq_var )
+                                                     bool is_compressible )
     : Physics(physics_name,input),
 	  _disp_vars(input,physics_name),
       _stress_strain_law(input),
       _A0( input("Physics/"+physics_name+"/A0", 1.0 ) ),
-      _lambda_sq_var(lambda_sq_var)
+      _is_compressible(is_compressible)
   {
     // Force the user to set A0
     if( !input.have_variable("Physics/"+physics_name+"/A0") )
@@ -105,6 +105,8 @@ namespace GRINS
     // Need for constructing metric tensors
     context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
     context.get_element_fe(_disp_vars.u_var())->get_dxidx();
+    context.get_element_fe(_disp_vars.v_var())->get_dxidy();
+    context.get_element_fe(_disp_vars.w_var())->get_dxidz();
 
     return;
   }
@@ -179,7 +181,6 @@ namespace GRINS
 	    // All shape function gradients are w.r.t. master element coordinates
 	    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
 
-
 	    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
 	    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
 	    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
@@ -197,19 +198,15 @@ namespace GRINS
 
 			for( unsigned int d = 0; d < n_u_dofs; d++ )
 			{
-				libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );//, dphi_deta[d][qp] );
+				libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );
 				grad_u += u_coeffs(d)*u_gradphi;
 				grad_v += v_coeffs(d)*u_gradphi;
 				grad_w += w_coeffs(d)*u_gradphi;
 			}
 
-
-
-			libMesh::RealGradient grad_x( dxdxi[qp](0) );//, dxdeta[qp](0) );
-			libMesh::RealGradient grad_y( dxdxi[qp](1) );//, dxdeta[qp](1) );
-			libMesh::RealGradient grad_z( dxdxi[qp](2) );//, dxdeta[qp](2) );
-
-
+			libMesh::RealGradient grad_x( dxdxi[qp](0) );
+			libMesh::RealGradient grad_y( dxdxi[qp](1) );
+			libMesh::RealGradient grad_z( dxdxi[qp](2) );
 
 			libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 			libMesh::Real lambda_sq = 0;
@@ -222,27 +219,22 @@ namespace GRINS
 			// Compute stress tensor
 			libMesh::TensorValue<libMesh::Real> tau;
 			_stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
-			//ElasticityTensor C;
-			//_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
 			libMesh::Real jac = JxW[qp];
 
 			for (unsigned int i=0; i != n_u_dofs; i++)
 			{
-				libMesh::RealGradient u_gradphi( dphi_dxi[i][qp] );//, dphi_deta[i][qp] );
+				libMesh::RealGradient u_gradphi( dphi_dxi[i][qp] );
 
 				for( unsigned int alpha = 0; alpha < dim; alpha++ )
 				{
 					for( unsigned int beta = 0; beta < dim; beta++ )
 					{
-						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;// +
-														   //(grad_x(alpha) + grad_u(alpha))*u_gradphi(beta) )*jac;
+						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;
 
-						Fv(i) -= tau(alpha,beta)*_A0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;//+
-						//								   (grad_y(alpha) + grad_v(alpha))*u_gradphi(beta) )*jac;
+						Fv(i) -= tau(alpha,beta)*_A0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
 
-						Fw(i) -= tau(alpha,beta)*_A0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;// +
-						//								   (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) )*jac;
+						Fw(i) -= tau(alpha,beta)*_A0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;
 					}
 				}
 			}
@@ -251,7 +243,6 @@ namespace GRINS
 			{
 				libmesh_not_implemented();
 			}
-
 		}
 
     return;
@@ -262,7 +253,6 @@ namespace GRINS
                                                                AssemblyContext& context,
                                                                CachedValues& cache )
   {
-
       std::vector<BoundaryID> ids = context.side_boundary_ids();
 
       for( std::vector<BoundaryID>::const_iterator it = ids.begin();
@@ -321,15 +311,15 @@ namespace GRINS
 		libMesh::Gradient grad_u, grad_v, grad_w;
 		for( unsigned int d = 0; d < n_u_dofs; d++ )
 		  {
-			libMesh::RealGradient u_gradphi( dphi_dxi[d][0] );//, dphi_deta[d][0] );
+			libMesh::RealGradient u_gradphi( dphi_dxi[d][0] );
 			grad_u += u_coeffs(d)*u_gradphi;
 			grad_v += v_coeffs(d)*u_gradphi;
 			grad_w += w_coeffs(d)*u_gradphi;
 		  }
 
-		libMesh::RealGradient grad_x( dxdxi[0](0) );//, dxdeta[0](0) );
-		libMesh::RealGradient grad_y( dxdxi[0](1) );//, dxdeta[0](1) );
-		libMesh::RealGradient grad_z( dxdxi[0](2) );//, dxdeta[0](2) );
+		libMesh::RealGradient grad_x( dxdxi[0](0) );
+		libMesh::RealGradient grad_y( dxdxi[0](1) );
+		libMesh::RealGradient grad_z( dxdxi[0](2) );
 
 		libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
 		libMesh::Real lambda_sq = 0;
@@ -439,73 +429,50 @@ namespace GRINS
                                                                  libMesh::Real& lambda_sq )
   {
     const std::vector<libMesh::RealGradient>& dxdxi  = elem.get_dxyzdxi();
-    //const std::vector<libMesh::RealGradient>& dxdeta = elem.get_dxyzdeta();
 
     const std::vector<libMesh::Real>& dxidx  = elem.get_dxidx();
     const std::vector<libMesh::Real>& dxidy  = elem.get_dxidy();
     const std::vector<libMesh::Real>& dxidz  = elem.get_dxidz();
 
-    //const std::vector<libMesh::Real>& detadx  = elem.get_detadx();
-    //const std::vector<libMesh::Real>& detady  = elem.get_detady();
-    //const std::vector<libMesh::Real>& detadz  = elem.get_detadz();
-
     libMesh::RealGradient dxi( dxidx[qp], dxidy[qp], dxidz[qp] );
-    //libMesh::RealGradient deta( detadx[qp], detady[qp], detadz[qp] );
 
-    libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );//, grad_v(0), grad_w(0) );
-    //libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
+    libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
 
     // Covariant metric tensor of reference configuration
     a_cov.zero();
     a_cov(0,0) = dxdxi[qp]*dxdxi[qp];
-    //a_cov(0,1) = dxdxi[qp]*dxdeta[qp];
-    //a_cov(1,0) = dxdeta[qp]*dxdxi[qp];
-    //a_cov(1,1) = dxdeta[qp]*dxdeta[qp];
+    a_cov(1,1)    = 1.0;
+	a_cov(2,2)    = 1.0;
 
     libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
 
     // Covariant metric tensor of current configuration
     A_cov.zero();
     A_cov(0,0) = (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi);
-    //A_cov(0,1) = (dxdxi[qp] + dudxi)*(dxdeta[qp] + dudeta);
-    //A_cov(1,0) = (dxdeta[qp] + dudeta)*(dxdxi[qp] + dudxi);
-    //A_cov(1,1) = (dxdeta[qp] + dudeta)*(dxdeta[qp] + dudeta);
 
     // Contravariant metric tensor of reference configuration
     a_contra.zero();
     a_contra(0,0) = dxi*dxi;
-    //a_contra(0,1) = dxi*deta;
-    //a_contra(1,0) = deta*dxi;
-    //a_contra(1,1) = deta*deta;
+    a_contra(1,1) = 1.0;
+	a_contra(2,2) = 1.0;
 
     // Contravariant metric tensor in current configuration is A_cov^{-1}
     libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
-
     A_contra.zero();
-    A_contra(0,0) =  1/A_cov(1,1);//A_cov(1,1)/det_A;
-    //A_contra(0,1) = -A_cov(0,1)/det_A;
-    //A_contra(1,0) = -A_cov(1,0)/det_A;
-    //A_contra(1,1) =  A_cov(0,0)/det_A;
+    A_contra(0,0) =  1/A_cov(1,1);
 
-    a_cov(1,1)    = 1.0;
-    a_cov(2,2)    = 1.0;
-    a_contra(1,1) = 1.0;
-    a_contra(2,2) = 1.0;
-
-
-    //lambda_sq = det_a/det_A;//a_cov(0,0)/A_cov(0,0);
     // If the material is compressible, then lambda_sq is an independent variable
-    if( _lambda_sq_var )
-      {
-    	lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
-      }
+    if( _is_compressible )
+	{
+    	lambda_sq = context.interior_value(this->_is_compressible, qp);
+	}
     else
-      {
-        // If the material is incompressible, lambda^2 is known
-        lambda_sq = a_cov(0,0)/A_cov(0,0);//det_a/det_A;
-      }
+	{
+		// If the material is incompressible, lambda^2 is known
+		lambda_sq = a_cov(0,0)/A_cov(0,0);//det_a/det_A;
+	}
 
-
+    //Update the covariant and contravariant tensors of current configuration
     A_cov(1,1)    = lambda_sq;
     A_cov(2,2)    = lambda_sq;
     A_contra(1,1) = 1.0/lambda_sq;
