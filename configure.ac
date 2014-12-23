@@ -403,10 +403,15 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_euc
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
 
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_xy.sh,                            [chmod +x test/3d_low_mach_jacobians_xy.sh])
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_xz.sh,                            [chmod +x test/3d_low_mach_jacobians_xz.sh])
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [chmod +x test/3d_low_mach_jacobians_yz.sh])
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
 AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	     [chmod +x examples/cavity_benchmark/run.sh])
+AC_CONFIG_FILES(examples/cavity_benchmark_no_stab/run.sh,	     [chmod +x examples/cavity_benchmark_no_stab/run.sh])
 AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	     [chmod +x examples/backward_facing_step/run.sh])
 AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	     [chmod +x examples/lid_driven_cavity/run.sh])
 AC_CONFIG_FILES(examples/velocity_penalty/run.sh,	     [chmod +x examples/velocity_penalty/run.sh])
