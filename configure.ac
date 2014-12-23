@@ -404,11 +404,8 @@ AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_co
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
 
 AC_CONFIG_FILES(test/3d_low_mach_jacobians_xy.sh,                            [chmod +x test/3d_low_mach_jacobians_xy.sh])
-AC_CONFIG_FILES(test/input_files/3d_low_mach_jacobians_xy.in)
 AC_CONFIG_FILES(test/3d_low_mach_jacobians_xz.sh,                            [chmod +x test/3d_low_mach_jacobians_xz.sh])
-AC_CONFIG_FILES(test/input_files/3d_low_mach_jacobians_xz.in)
 AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [chmod +x test/3d_low_mach_jacobians_yz.sh])
-AC_CONFIG_FILES(test/input_files/3d_low_mach_jacobians_yz.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
