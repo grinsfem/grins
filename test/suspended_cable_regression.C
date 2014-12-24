@@ -93,6 +93,8 @@ int main(int argc, char* argv[])
 						     libmesh_init.comm() );
 
 	std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
+
+	// Get equation systems
 	std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 	const libMesh::System& system = es->get_system(system_name);
 
@@ -101,10 +103,6 @@ int main(int argc, char* argv[])
 	system.project_solution( initial_values, NULL, params );
 
 	grins.run();
-
-	// Get equation systems to create ExactSolution object
-	//std::tr1::shared_ptr<libMesh::EquationSystems>
-	//es = grins.get_equation_system();
 
 	//es->write("suspended_cable_test.xdr");
 
@@ -120,18 +118,18 @@ int main(int argc, char* argv[])
 	exact_sol.attach_reference_solution( &es_ref );
 
 	// Compute error and get it in various norms
-	exact_sol.compute_error("SuspendedCable", "u");
-	exact_sol.compute_error("SuspendedCable", "v");
-	exact_sol.compute_error("SuspendedCable", "w");
+	exact_sol.compute_error(system_name, "u");
+	exact_sol.compute_error(system_name, "v");
+	exact_sol.compute_error(system_name, "w");
 
-	double u_l2error = exact_sol.l2_error("SuspendedCable", "u");
-	double u_h1error = exact_sol.h1_error("SuspendedCable", "u");
+	double u_l2error = exact_sol.l2_error(system_name, "u");
+	double u_h1error = exact_sol.h1_error(system_name, "u");
 
-	double v_l2error = exact_sol.l2_error("SuspendedCable", "v");
-	double v_h1error = exact_sol.h1_error("SuspendedCable", "v");
+	double v_l2error = exact_sol.l2_error(system_name, "v");
+	double v_h1error = exact_sol.h1_error(system_name, "v");
 
-	double w_l2error = exact_sol.l2_error("SuspendedCable", "w");
-	double w_h1error = exact_sol.h1_error("SuspendedCable", "w");
+	double w_l2error = exact_sol.l2_error(system_name, "w");
+	double w_h1error = exact_sol.h1_error(system_name, "w");
 
 	int return_flag = 0;
 
@@ -153,7 +151,7 @@ int main(int argc, char* argv[])
 		<< "w h1 error    = " << w_h1error << std::endl;
 	}
 
-	return 0;
+	return return_flag;
 }
 
 libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &/*params*/,
