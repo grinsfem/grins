@@ -326,7 +326,7 @@ namespace GRINS
 	    			{
 		    			KPT(i,j) += JxW[qp]*(
 		    					-T_gradphi[j][qp]*U*p_phi[i][qp]/T
-		    					+U*grad_T*T_phi[j][qp])/(T*T);
+		    					+U*p_phi[i][qp]*grad_T*T_phi[j][qp])/(T*T);
 	    			} 		 			
 	    } // end if compute_jacobian
 	  } // end p_dofs loop
