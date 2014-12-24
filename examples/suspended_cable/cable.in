@@ -32,8 +32,7 @@ traction_1 = '5.7735 0.0 0.0'
 
 A0 = '0.1'
 rho0='0.031056'
-gravity ='-32.2'
-#gravity_vector ='0 0 -32.2'
+gravity_vector ='0 0 -32.2'
 
 [../HookesLaw]                                                                                                                                                                                                                               
 
