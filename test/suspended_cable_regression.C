@@ -27,107 +27,123 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation.h"
 #include "grins/simulation_builder.h"
-
-// GRVY
-#ifdef HAVE_GRVY
-#include "grvy.h"
-#endif
+#include "grins/simulation.h"
+#include "grins/math_constants.h"
 
 // libMesh
 #include "libmesh/parallel.h"
 #include "libmesh/exact_solution.h"
 
-int run( int argc, char* argv[], const GetPot& input );
+// GRVY
+#ifdef GRINS_HAVE_GRVY
+#include "grvy.h"
+#endif
+
+// SuspendedCable
+//#include "suspended_cable_solver_factory.h"
+
+// Function for getting initial temperature field
+libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
+		                      const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
-#ifdef USE_GRVY_TIMERS
+#ifdef GRINS_USE_GRVY_TIMERS
   GRVY::GRVY_Timer_Class grvy_timer;
   grvy_timer.Init("GRINS Timer");
 #endif
+	// Check command line count.
+	if( argc < 3 )
+	{
+		// TODO: Need more consistent error handling.
+		std::cerr << "Error: Must specify libMesh input file." << std::endl;
+		exit(1); // TODO: something more sophisticated for parallel runs?
+	}
 
-  // Check command line count.
-  if( argc < 3 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file and exact solution file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
+	// libMesh input file should be first argument
+	std::string libMesh_input_filename = argv[1];
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
+	// Create our GetPot object.
+	GetPot libMesh_inputfile( libMesh_input_filename );
 
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
+	// GetPot doesn't throw an error for a nonexistent file?
+	{
+		std::ifstream i(libMesh_input_filename.c_str());
+		if (!i)
+		{
+			std::cerr << "Error: Could not read from libMesh input file "
+					<< libMesh_input_filename << std::endl;
+			exit(1);
+		}
+	}
 
-  int return_flag = 0;
+	// Initialize libMesh library.
+	libMesh::LibMeshInit libmesh_init(argc, argv);
 
-  return_flag = run( argc, argv, libMesh_inputfile );
+	libMesh::out << "Starting GRINS with command:\n";
+	for (int i=0; i != argc; ++i)
+		libMesh::out << argv[i] << ' ';
+	libMesh::out << std::endl;
 
-  return return_flag;
-}
+	GRINS::SimulationBuilder sim_builder;
 
-int run( int argc, char* argv[], const GetPot& input )
-{
-#ifdef USE_GRVY_TIMERS
-  grvy_timer.BeginTimer("Initialize Solver");
-#endif
+	GRINS::Simulation grins( libMesh_inputfile,
+						     sim_builder,
+						     libmesh_init.comm() );
 
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
+	std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
+	std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+	const libMesh::System& system = es->get_system(system_name);
 
-  GRINS::SimulationBuilder sim_builder;
+	libMesh::Parameters &params = es->parameters;
 
-  GRINS::Simulation grins( input,
-			               sim_builder,
-                           libmesh_init.comm() );
+	system.project_solution( initial_values, NULL, params );
 
-  grins.run();
+	grins.run();
 
-  // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems>
-    es = grins.get_equation_system();
+	// Get equation systems to create ExactSolution object
+	//std::tr1::shared_ptr<libMesh::EquationSystems>
+	//es = grins.get_equation_system();
 
-  //es->write("foobar.xdr");
+	//es->write("suspended_cable_test.xdr");
 
-  // Create Exact solution object and attach exact solution quantities
-  libMesh::ExactSolution exact_sol(*es);
+	// Create Exact solution object and attach exact solution quantities
+	libMesh::ExactSolution exact_sol(*es);
 
-  libMesh::EquationSystems es_ref( es->get_mesh() );
+	libMesh::EquationSystems es_ref( es->get_mesh() );
 
-  // Filename of file where comparison solution is stashed
-  std::string solution_file = std::string(argv[2]);
-  es_ref.read( solution_file );
+	// Filename of file where comparison solution is stashed
+	std::string solution_file = std::string(argv[2]);
+	es_ref.read( solution_file );
 
-  exact_sol.attach_reference_solution( &es_ref );
+	exact_sol.attach_reference_solution( &es_ref );
 
-  // Compute error and get it in various norms
-  exact_sol.compute_error("SSuspendedCable", "u");
-  exact_sol.compute_error("SuspendedCable", "v");
-  exact_sol.compute_error("SuspendedCable", "w");
+	// Compute error and get it in various norms
+	exact_sol.compute_error("SuspendedCable", "u");
+	exact_sol.compute_error("SuspendedCable", "v");
+	exact_sol.compute_error("SuspendedCable", "w");
 
-  double u_l2error = exact_sol.l2_error("SuspendedCable", "u");
-  double u_h1error = exact_sol.h1_error("SuspendedCable", "u");
+	double u_l2error = exact_sol.l2_error("SuspendedCable", "u");
+	double u_h1error = exact_sol.h1_error("SuspendedCable", "u");
 
-  double v_l2error = exact_sol.l2_error("SuspendedCable", "v");
-  double v_h1error = exact_sol.h1_error("SuspendedCable", "v");
+	double v_l2error = exact_sol.l2_error("SuspendedCable", "v");
+	double v_h1error = exact_sol.h1_error("SuspendedCable", "v");
 
-  double w_l2error = exact_sol.l2_error("SuspendedCable", "w");
-  double w_h1error = exact_sol.h1_error("SuspendedCable", "w");
+	double w_l2error = exact_sol.l2_error("SuspendedCable", "w");
+	double w_h1error = exact_sol.h1_error("SuspendedCable", "w");
 
-  int return_flag = 0;
+	int return_flag = 0;
 
-  double tol = 5.0e-8;
+	double tol = 5.0e-8;
 
-  if( u_l2error > tol   || u_h1error > tol   ||
-      v_l2error > tol   || v_h1error > tol   ||
-      w_l2error > tol   || w_h1error > tol     )
-    {
-      return_flag = 1;
+	if( u_l2error > tol   || u_h1error > tol   ||
+	    v_l2error > tol   || v_h1error > tol   ||
+	    w_l2error > tol   || w_h1error > tol     )
+	{
+	  return_flag = 1;
 
-      std::cout << "Tolerance exceeded for suspended cable example." << std::endl
+	  std::cout << "Tolerance exceeded for suspended cable test." << std::endl
 		<< "tolerance     = " << tol << std::endl
 		<< "u l2 error    = " << u_l2error << std::endl
 		<< "u h1 error    = " << u_h1error << std::endl
@@ -135,9 +151,29 @@ int run( int argc, char* argv[], const GetPot& input )
 		<< "v h1 error    = " << v_h1error << std::endl
 		<< "w l2 error    = " << w_l2error << std::endl
 		<< "w h1 error    = " << w_h1error << std::endl;
-    }
+	}
 
-  return return_flag;
+	return 0;
 }
 
+libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters &/*params*/,
+		     const std::string& , const std::string& unknown_name )
+{
+	libMesh::Real value = 0.0;
 
+
+	if( unknown_name == "u" )
+	{
+		value = -35*sin(GRINS::Constants::pi*p(0)/400.0);
+	}
+	else if( unknown_name == "w" )
+	{
+		value = -55*sin(GRINS::Constants::pi*p(0)/200.0);
+	}
+	else
+	{
+		value = 0.0;
+	}
+
+	return value;
+}
