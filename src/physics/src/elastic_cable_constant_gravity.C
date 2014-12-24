@@ -41,9 +41,10 @@ namespace GRINS
   	  : Physics(physics_name,input),
   	    _disp_vars(input,physics_name),
 		_A0( input("Physics/"+physics_name+"/A0", 1.0 ) ),
-		_rho0( input("Physics/"+physics_name+"/rho0", 1.0 ) )
+		_rho0( input("Physics/"+physics_name+"/rho0", 1.0 ) ),
+		_gravity( input("Physics/"+physics_name+"/gravity", 1.0 ) )
   {
-    if( !input.have_variable("Physics/ElasticCableConstantGravity/A0") )
+	if( !input.have_variable("Physics/ElasticCableConstantGravity/A0") )
       {
         std::cerr << "Error: Must input area for ElasticCableConstantGravity." << std::endl
                   << "       Please set Physics/ElasticCableConstantGravity/A0." << std::endl;
@@ -55,6 +56,14 @@ namespace GRINS
                   << "       Please set Physics/ElasticCableConstantGravity/rho0." << std::endl;
         libmesh_error();
       }
+
+    /*
+    std::string gravity_str = "Physics/"+_physics_name+"/gravity_vector";
+    std::cout<<gravity_str<<std::endl;
+	int num = input.vector_variable_size(gravity_str);
+	for(int i=0;i<num;i++)_gravity[i]=input(gravity_str,1.0,i);
+	*/
+
 
     return;
   }
@@ -126,10 +135,6 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
 	{
-		// sqrt(det(a_cov)), a_cov being the covariant metric tensor of undeformed body
-		//libMesh::Real sqrt_a = sqrt( dxdxi[qp]*dxdxi[qp] )*dxdeta[qp]*dxdeta[qp]
-		//                             - dxdxi[qp]*dxdeta[qp]*dxdeta[qp]*dxdxi[qp] );
-
 		// Gradients are w.r.t. master element coordinates
 		libMesh::Gradient grad_u, grad_v, grad_w;
 		for( unsigned int d = 0; d < n_u_dofs; d++ )
@@ -141,20 +146,6 @@ namespace GRINS
 		}
 
 		libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
-		//libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
-
-		//libMesh::RealGradient A_1 = dxdxi[qp] + dudxi;
-		//libMesh::RealGradient A_2 = dxdeta[qp] + dudeta;
-
-		//libMesh::RealGradient A_3 = A_1.cross(A_2);
-
-		/* The formula here is actually
-		   P*\sqrt{\frac{A}{a}}*A_3, where A_3 is a unit vector
-		   But, |A_3| = \sqrt{A} so the normalizing part kills
-		   the \sqrt{A} in the numerator, so we can leave it out
-		   and *not* normalize A_3.
-		 */
-		//libMesh::RealGradient body_force = /sqrt_a*A_3;
 
 		libMesh::Real jac = JxW[qp];
 
@@ -175,11 +166,4 @@ namespace GRINS
 
     return;
   }
-
-  void ElasticCableConstantGravity::reset_gravity( libMesh::Real gravity_in )
-  {
-    _gravity = gravity_in;
-    return;
-  }
-
 } // end namespace GRINS

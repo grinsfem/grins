@@ -253,8 +253,6 @@ suspendedcable_SCRIPTS = $(top_builddir)/examples/suspended_cable/run.sh
 EXTRA_DIST += $(suspendedcable_DATA)
 
 cable_SOURCES  = suspended_cable/suspended_cable.C
-#cable_SOURCES += suspended_cable/suspended_cable_solver_factory.C
-#cable_SOURCES += suspended_cable/gravity_continuation_solver.C
 
 cable_LDADD = $(LIBGRINS_LIBS)
 cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
