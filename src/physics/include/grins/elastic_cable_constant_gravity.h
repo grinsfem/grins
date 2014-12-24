@@ -33,8 +33,6 @@ namespace GRINS
                                           AssemblyContext& context,
                                           CachedValues& cache );
 
-    void reset_gravity( libMesh::Real gravity_in );
-
   protected:
 
     SolidMechanicsFEVariables _disp_vars;
@@ -46,6 +44,7 @@ namespace GRINS
     libMesh::Real _gravity=0;
     libMesh::Real _A0=0;
     libMesh::Real _rho0=0;
+    //std::vector<libMesh::Real> _gravity;
   };
 
 } // end namespace GRINS

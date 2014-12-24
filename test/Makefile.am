@@ -29,6 +29,7 @@ check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
 check_PROGRAMS += power_law_catalycity_unit
 check_PROGRAMS += elastic_sheet_regression
+check_PROGRAMS += suspended_cable_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -104,6 +105,7 @@ constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
 elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
+suspended_cable_regression_SOURCES = suspended_cable_regression.C
 
 #Define tests to actually be run
 TESTS =

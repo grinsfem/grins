@@ -32,22 +32,13 @@ traction_1 = '5.7735 0.0 0.0'
 
 A0 = '0.1'
 rho0='0.031056'
+gravity ='-32.2'
+#gravity_vector ='0 0 -32.2'
 
 [../HookesLaw]                                                                                                                                                                                                                               
 
 nu = '0.45'
 E = '1.0e6'
-
-[]
-
-#[SolverOptions]
-
-#solver_type = 'gravity_continuation'
-
-[./GravityContinuation]
-initial_gravity='0.0'
-final_gravity='-32.2'
-n_increments='50'
 
 []
 
@@ -63,7 +54,7 @@ mesh_nx1 = '10'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  '50' 
+max_nonlinear_iterations =  '500' 
 max_linear_iterations = '2500'
 
 verify_analytic_jacobians = '0.0'
