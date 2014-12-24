@@ -165,6 +165,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 TESTS += elastic_mooney_rivlin_sheet_regression.sh
+TESTS += suspended_cable_test.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
@@ -218,6 +219,7 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_const
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
+shellfiles_src += suspended_cable_test.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
