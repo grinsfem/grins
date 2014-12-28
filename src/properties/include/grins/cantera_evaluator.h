@@ -89,6 +89,10 @@ namespace GRINS
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
 
+    void omega_dot( const libMesh::Real& T, libMesh::Real rho,
+                    const std::vector<libMesh::Real> mass_fractions,
+                    std::vector<libMesh::Real>& omega_dot );
+
     libMesh::Real cp( const libMesh::Real& /*T*/,
                       const std::vector<libMesh::Real>& /*Y*/ )
     {
@@ -250,6 +254,14 @@ namespace GRINS
                                     std::vector<libMesh::Real>& omega_dot ) const
   {
     return _kinetics.omega_dot(cache,qp,omega_dot);
+  }
+
+  inline
+  void CanteraEvaluator::omega_dot( const libMesh::Real& T, libMesh::Real rho,
+                                    const std::vector<libMesh::Real> mass_fractions,
+                                    std::vector<libMesh::Real>& omega_dot )
+  {
+    return _kinetics.omega_dot_TRY(T,rho,mass_fractions,omega_dot);
   }
 
 } // end namespace GRINS
