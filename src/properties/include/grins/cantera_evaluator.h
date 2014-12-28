@@ -67,10 +67,12 @@ namespace GRINS
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
     libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
-     
+
     libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
     void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
+
+    libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
 
     // Transport
     libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
@@ -86,6 +88,10 @@ namespace GRINS
     // Kinetics
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
+
+    void omega_dot( const libMesh::Real& T, libMesh::Real rho,
+                    const std::vector<libMesh::Real> mass_fractions,
+                    std::vector<libMesh::Real>& omega_dot );
 
     libMesh::Real cp( const libMesh::Real& /*T*/,
                       const std::vector<libMesh::Real>& /*Y*/ )
@@ -210,6 +216,12 @@ namespace GRINS
   }
 
   inline
+  libMesh::Real CanteraEvaluator::h_s( const libMesh::Real& T, unsigned int species )
+  {
+    return _thermo.h(T,species);
+  }
+
+  inline
   libMesh::Real CanteraEvaluator::mu( const CachedValues& cache, unsigned int qp ) const
   {
     return _transport.mu(cache,qp);
@@ -242,6 +254,14 @@ namespace GRINS
                                     std::vector<libMesh::Real>& omega_dot ) const
   {
     return _kinetics.omega_dot(cache,qp,omega_dot);
+  }
+
+  inline
+  void CanteraEvaluator::omega_dot( const libMesh::Real& T, libMesh::Real rho,
+                                    const std::vector<libMesh::Real> mass_fractions,
+                                    std::vector<libMesh::Real>& omega_dot )
+  {
+    return _kinetics.omega_dot_TRY(T,rho,mass_fractions,omega_dot);
   }
 
 } // end namespace GRINS

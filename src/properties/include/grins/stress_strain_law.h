@@ -61,6 +61,12 @@ namespace GRINS
                                         const libMesh::TensorValue<libMesh::Real>& G_cov,
                                         libMesh::TensorValue<libMesh::Real>& stress,
                                         ElasticityTensor& C );
+
+    //! This is primarily a helper function for the plane stress cases
+    libMesh::Real compute_33_stress( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                     const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                     const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                     const libMesh::TensorValue<libMesh::Real>& G_cov );
   };
 
   template <typename Law>
@@ -88,6 +94,16 @@ namespace GRINS
   {
     static_cast<Law*>(this)->compute_stress_and_elasticity_imp(dim,g_contra,g_cov,G_contra,G_cov,stress,C);
     return;
+  }
+
+  template <typename Law>
+  inline
+  libMesh::Real StressStrainLaw<Law>::compute_33_stress( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                                         const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                                         const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                                         const libMesh::TensorValue<libMesh::Real>& G_cov )
+  {
+    return static_cast<Law*>(this)->compute_33_stress_imp( g_contra, g_cov, G_contra, G_cov );
   }
 
 } // end namespace GRINS
