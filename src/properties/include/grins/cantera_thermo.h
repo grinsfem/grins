@@ -61,10 +61,12 @@ namespace GRINS
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
     libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
-     
+
     libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
     void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
+
+    libMesh::Real h( const libMesh::Real& T, unsigned int species ) const;
 
   protected:
 

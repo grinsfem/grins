@@ -8,7 +8,7 @@
      species        = 'N2   O2   NO N  O'
      mass_fractions = '0.78 0.22 0. 0. 0.'
 
-     chem_file = '@abs_top_srcdir@/test/input_files/air.xml'
+     chem_file = '@abs_top_srcdir@/test/input_files/air_5sp_test.xml'
 []
 
 [screen-options]
