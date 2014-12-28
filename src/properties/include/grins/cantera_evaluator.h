@@ -67,10 +67,12 @@ namespace GRINS
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
     libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
-     
+
     libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 
     void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
+
+    libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
 
     // Transport
     libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
@@ -207,6 +209,12 @@ namespace GRINS
   {
     _thermo.h(cache,qp,h);
     return;
+  }
+
+  inline
+  libMesh::Real CanteraEvaluator::h_s( const libMesh::Real& T, unsigned int species )
+  {
+    return _thermo.h(T,species);
   }
 
   inline
