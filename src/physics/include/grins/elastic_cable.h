@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_H_
-#define GRINS_ELASTIC_CABLE_H_
+#ifndef GRINS_ELASTIC_CABLE_H
+#define GRINS_ELASTIC_CABLE_H
 
 
 //GRINS
@@ -102,7 +102,7 @@ namespace GRINS
 
     StressStrainLaw _stress_strain_law;
 
-    libMesh::Real _A0;
+    libMesh::Real _A;
 
     bool _is_compressible;
 
@@ -117,4 +117,4 @@ namespace GRINS
 } // end namespace GRINS
 
 
-#endif /* GRINS_ELASTIC_CABLE_H_ */
+#endif /* GRINS_ELASTIC_CABLE_H */
