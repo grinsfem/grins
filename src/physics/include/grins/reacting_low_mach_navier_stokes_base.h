@@ -70,30 +70,6 @@ namespace GRINS
 
     libMesh::Real get_p0_transient( const AssemblyContext& c, unsigned int qp ) const;
 
-    //! Method to interface to thermochemistry quantity
-    /*! Intended to be called externally from Physics class, e.g. in a QoI.
-      This way, we can leverage the Physics class for the thermochemistry.*/
-    virtual libMesh::Real cp_mix( const libMesh::Real T,
-                                  const std::vector<libMesh::Real>& Y ) =0;
-
-    //! Method to interface to thermochemistry quantity
-    /*! Intended to be called externally from Physics class, e.g. in a QoI.
-      This way, we can leverage the Physics class for the thermochemistry.*/
-    virtual libMesh::Real mu( const libMesh::Real T,
-                              const std::vector<libMesh::Real>& Y ) =0;
-
-    //! Method to interface to thermochemistry quantity
-    /*! Intended to be called externally from Physics class, e.g. in a QoI.
-      This way, we can leverage the Physics class for the thermochemistry.*/
-    virtual libMesh::Real k( const libMesh::Real T,
-                             const std::vector<libMesh::Real>& Y ) =0;
-
-    //! Method to interface to thermochemistry quantity
-    /*! Intended to be called externally from Physics class, e.g. in a QoI.
-      This way, we can leverage the Physics class for the thermochemistry.*/
-    virtual void D( const libMesh::Real rho, const libMesh::Real cp,
-                    const libMesh::Real k,
-                    std::vector<libMesh::Real>& D ) =0;
 
   protected:
 

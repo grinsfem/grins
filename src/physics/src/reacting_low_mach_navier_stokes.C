@@ -900,42 +900,4 @@ namespace GRINS
     return;
   }
 
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::cp_mix( const libMesh::Real T,
-                                                                        const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.cp( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::mu( const libMesh::Real T,
-                                                                    const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.mu( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::k( const libMesh::Real T,
-                                                                   const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.k( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::D( const libMesh::Real rho,
-                                                          const libMesh::Real cp,
-                                                          const libMesh::Real k,
-                                                          std::vector<libMesh::Real>& D )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.D( rho, cp, k, D );
-  }
-
 } // namespace GRINS
