@@ -41,8 +41,7 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase(physics_name,input),
-      _gas_mixture(input),
+    : ReactingLowMachNavierStokesBase<Mixture,Evaluator>(physics_name,input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
@@ -159,7 +158,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
-    GRINS::ReactingLowMachNavierStokesBase::init_context(context);
+    ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context(context);
 
     // We also need the side shape functions, etc.
     context.get_side_fe(this->_u_var)->get_JxW();
@@ -224,9 +223,9 @@ namespace GRINS
                                                                         CachedValues& /* cache */ )
   {
     // Pin p = p_value at p_point
-    if( _pin_pressure )
+    if( this->_pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, _p_var );
+	_p_pinning.pin_value( context, compute_jacobian, this->_p_var );
       }
 
     return;

@@ -35,6 +35,7 @@
 
 namespace GRINS
 {
+  template<typename Mixture, typename Evaluator>
   class ReactingLowMachNavierStokesBase : public Physics
   {
   public:
@@ -70,8 +71,11 @@ namespace GRINS
 
     libMesh::Real get_p0_transient( const AssemblyContext& c, unsigned int qp ) const;
 
+    const Mixture& gas_mixture() const;
 
   protected:
+
+    Mixture _gas_mixture;
 
     libMesh::Number _p0;
 
@@ -116,20 +120,23 @@ namespace GRINS
 
   }; // class ReactingLowMachNavierStokesBase
 
+  template<typename Mixture, typename Evaluator>
   inline
-  unsigned int ReactingLowMachNavierStokesBase::n_species() const
+  unsigned int ReactingLowMachNavierStokesBase<Mixture,Evaluator>::n_species() const
   { return _n_species; }
 
-  
+
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::T( const libMesh::Point& p, 
-                                                    const AssemblyContext& c ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::T( const libMesh::Point& p,
+                                                                       const AssemblyContext& c ) const
   { return c.point_value(_T_var,p); }
 
+  template<typename Mixture, typename Evaluator>
   inline
-  void ReactingLowMachNavierStokesBase::mass_fractions( const libMesh::Point& p, 
-                                                        const AssemblyContext& c,
-                                                        std::vector<libMesh::Real>& mass_fracs ) const
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::mass_fractions( const libMesh::Point& p,
+                                                                           const AssemblyContext& c,
+                                                                           std::vector<libMesh::Real>& mass_fracs ) const
   {
     libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
 
@@ -141,10 +148,11 @@ namespace GRINS
     return;
   }
 
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::rho( libMesh::Real T, 
-                                                      libMesh::Real p0,
-                                                      libMesh::Real R_mix) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::rho( libMesh::Real T,
+                                                                         libMesh::Real p0,
+                                                                         libMesh::Real R_mix) const
   {
     libMesh::Real value = 0;
     if( this->_fixed_density )
@@ -155,9 +163,10 @@ namespace GRINS
     return value;
   }
 
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
-                                                                unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::get_p0_steady( const AssemblyContext& c,
+                                                                                   unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
@@ -171,9 +180,10 @@ namespace GRINS
     return p0;
   }
 
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady_side( const AssemblyContext& c, 
-                                                                     unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::get_p0_steady_side( const AssemblyContext& c,
+                                                                                        unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
@@ -187,9 +197,10 @@ namespace GRINS
     return p0;
   }
 
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_steady( const AssemblyContext& c, 
-                                                                const libMesh::Point& p ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::get_p0_steady( const AssemblyContext& c,
+                                                                                   const libMesh::Point& p ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
@@ -202,10 +213,11 @@ namespace GRINS
       }
     return p0;
   }
-  
+
+  template<typename Mixture, typename Evaluator>
   inline
-  libMesh::Real ReactingLowMachNavierStokesBase::get_p0_transient( const AssemblyContext& c,
-                                                                   unsigned int qp ) const
+  libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::get_p0_transient( const AssemblyContext& c,
+                                                                                      unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
@@ -217,6 +229,13 @@ namespace GRINS
         p0 = _p0;
       }
     return p0;
+  }
+
+  template<typename Mixture, typename Evaluator>
+  inline
+  const Mixture& ReactingLowMachNavierStokesBase<Mixture,Evaluator>::gas_mixture() const
+  {
+    return _gas_mixture;
   }
 
 } // namespace GRINS
