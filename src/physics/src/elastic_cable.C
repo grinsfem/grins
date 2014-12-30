@@ -49,14 +49,14 @@ namespace GRINS
     : Physics(physics_name,input),
 	  _disp_vars(input,physics_name),
       _stress_strain_law(input),
-      _A0( input("Physics/"+physics_name+"/A0", 1.0 ) ),
+      _A( input("Physics/"+physics_name+"/A", 1.0 ) ),
       _is_compressible(is_compressible)
   {
-    // Force the user to set A0
-    if( !input.have_variable("Physics/"+physics_name+"/A0") )
+    // Force the user to set A
+    if( !input.have_variable("Physics/"+physics_name+"/A") )
 	{
 		std::cerr << "Error: Must specify initial area for "+physics_name << std::endl
-				  << "       Input the option Physics/"+physics_name+"/A0" << std::endl;
+				  << "       Input the option Physics/"+physics_name+"/A" << std::endl;
 		libmesh_error();
 	}
 
@@ -230,11 +230,11 @@ namespace GRINS
 				{
 					for( unsigned int beta = 0; beta < dim; beta++ )
 					{
-						Fu(i) -= tau(alpha,beta)*_A0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;
+						Fu(i) -= tau(alpha,beta)*_A*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;
 
-						Fv(i) -= tau(alpha,beta)*_A0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
+						Fv(i) -= tau(alpha,beta)*_A*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
 
-						Fw(i) -= tau(alpha,beta)*_A0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;
+						Fw(i) -= tau(alpha,beta)*_A*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;
 					}
 				}
 			}
@@ -283,15 +283,9 @@ namespace GRINS
   {
 	value = std::numeric_limits<libMesh::Real>::quiet_NaN();
 
-	bool is_stress = ( _stress_indices[0] == quantity_index ||
-					   _stress_indices[1] == quantity_index ||
-					   _stress_indices[2] == quantity_index   );
+	bool is_strain = ( _strain_indices[0] == quantity_index );
 
-	bool is_strain = ( _strain_indices[0] == quantity_index ||
-					   _strain_indices[1] == quantity_index ||
-					   _strain_indices[2] == quantity_index   );
-
-	if( is_stress || is_strain )
+	if( is_strain )
 	  {
 		const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
@@ -333,14 +327,6 @@ namespace GRINS
 			  {
 				value = 0.5*(A_cov(0,0) - a_cov(0,0));
 			  }
-			else if( _strain_indices[1] == quantity_index )
-			  {
-				value = 0.5*(A_cov(0,1) - a_cov(0,1));
-			  }
-			else if( _strain_indices[2] == quantity_index )
-			  {
-				value = 0.5*(A_cov(1,1) - a_cov(1,1));
-			  }
 			else
 			  {
 				//Wat?!
@@ -348,36 +334,6 @@ namespace GRINS
 			  }
 			return;
 		  }
-
-		libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-		libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
-
-		libMesh::Real I3 = lambda_sq*det_A/det_a;
-
-		libMesh::TensorValue<libMesh::Real> tau;
-		_stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
-
-		if( _stress_indices[0] == quantity_index )
-		  {
-			// Need to convert to Cauchy stress
-			value = tau(0,0)/std::sqrt(I3);
-		  }
-		else if( _stress_indices[1] == quantity_index )
-		  {
-			// Need to convert to Cauchy stress
-			value = tau(0,1)/std::sqrt(I3);
-		  }
-		else if( _stress_indices[2] == quantity_index )
-		  {
-			// Need to convert to Cauchy stress
-			value = tau(1,1)/std::sqrt(I3);
-		  }
-		else
-		  {
-			//Wat?!
-			libmesh_error();
-		  }
-
 	  }
 
 	return;

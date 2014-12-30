@@ -40,32 +40,32 @@ namespace GRINS
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
   	  : Physics(physics_name,input),
   	    _disp_vars(input,physics_name),
-		_A0( input("Physics/"+physics_name+"/A0", 1.0 ) ),
-		_rho0( input("Physics/"+physics_name+"/rho0", 1.0 ) )
+		_A( input("Physics/"+physics_name+"/A", 1.0 ) ),
+		_rho( input("Physics/"+physics_name+"/rho", 1.0 ) )
   {
-	if( !input.have_variable("Physics/ElasticCableConstantGravity/A0") )
+	if( !input.have_variable("Physics/ElasticCableConstantGravity/A") )
 	{
 		std::cerr << "Error: Must input area for ElasticCableConstantGravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/A0." << std::endl;
+				  << "       Please set Physics/ElasticCableConstantGravity/A." << std::endl;
 		libmesh_error();
 	}
-    if( !input.have_variable("Physics/ElasticCableConstantGravity/rho0") )
+    if( !input.have_variable("Physics/ElasticCableConstantGravity/rho") )
 	{
 		std::cerr << "Error: Must input density for ElasticCableConstantGravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/rho0." << std::endl;
+				  << "       Please set Physics/ElasticCableConstantGravity/rho." << std::endl;
 		libmesh_error();
 	}
 
-    int num_gravity =  input.vector_variable_size("Physics/ElasticCableConstantGravity/gravity_vector");
-    if (num_gravity < 3 || num_gravity > 3)
+    int num_gravity =  input.vector_variable_size("Physics/ElasticCableConstantGravity/gravity");
+    if (num_gravity != 3)
     {
 		std::cerr << "Error: Must input three values for ElasticCableConstantGravity gravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/gravity_vector." << std::endl;
+				  << "       Please set Physics/ElasticCableConstantGravity/gravity." << std::endl;
 		libmesh_error();
 	}
     for( int i = 0; i < num_gravity; i++ )
 	{
-    	_gravity(i)=( input("Physics/ElasticCableConstantGravity/gravity_vector", 0.0 , i ) );
+    	_gravity(i)=( input("Physics/ElasticCableConstantGravity/gravity", 0.0 , i ) );
 	}
 
     return;
@@ -154,11 +154,11 @@ namespace GRINS
 
 		for (unsigned int i=0; i != n_u_dofs; i++)
 		{
-			Fu(i) += _gravity(0)*_A0*_rho0*u_phi[i][qp]*jac;
+			Fu(i) += _gravity(0)*_A*_rho*u_phi[i][qp]*jac;
 
-			Fv(i) += _gravity(1)*_A0*_rho0*u_phi[i][qp]*jac;
+			Fv(i) += _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
 
-			Fw(i) += _gravity(2)*_A0*_rho0*u_phi[i][qp]*jac;
+			Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
 
 			if( compute_jacobian )
 			{

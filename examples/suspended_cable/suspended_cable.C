@@ -107,11 +107,11 @@ libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters
 
 	if( unknown_name == "u" )
 	{
-		value = -35*sin(GRINS::Constants::pi*p(0)/400.0);
+		value = -3.5*sin(GRINS::Constants::pi*p(0)/400.0);
 	}
 	else if( unknown_name == "w" )
 	{
-		value = -55*sin(GRINS::Constants::pi*p(0)/200.0);
+		value = -5.5*sin(GRINS::Constants::pi*p(0)/200.0);
 	}
 	else
 	{
