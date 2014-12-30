@@ -167,6 +167,18 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
     libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.w_var());
+
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // All shape function gradients are w.r.t. master element coordinates
@@ -211,11 +223,10 @@ namespace GRINS
                                       a_cov, a_contra, A_cov, A_contra,
                                       lambda_sq );
 
-        // Compute stress tensor
+        // Compute stress and elasticity tensors
         libMesh::TensorValue<libMesh::Real> tau;
-        _stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
-        //ElasticityTensor C;
-        //_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
+        ElasticityTensor C;
+        _stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
         libMesh::Real jac = JxW[qp];
 
@@ -241,40 +252,73 @@ namespace GRINS
 
         if( compute_jacobian )
           {
-            libmesh_not_implemented();
-            /*
             for (unsigned int i=0; i != n_u_dofs; i++)
               {
+                libMesh::RealGradient u_gradphi_i( dphi_dxi[i][qp], dphi_deta[i][qp] );
+
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
+                    libMesh::RealGradient u_gradphi_j( dphi_dxi[j][qp], dphi_deta[j][qp] );
+
                     for( unsigned int alpha = 0; alpha < dim; alpha++ )
                       {
                         for( unsigned int beta = 0; beta < dim; beta++ )
                           {
-                            for( unsigned int alpha = 0; alpha < dim; alpha++ )
+                            const libMesh::Real diag_term = 0.5*_h0*jac*tau(alpha,beta)*( u_gradphi_j(beta)*u_gradphi_i(alpha) +
+                                                                                          u_gradphi_j(alpha)*u_gradphi_i(beta) );
+                            Kuu(i,j) -= diag_term;
+
+                            Kvv(i,j) -= diag_term;
+
+                            Kww(i,j) -= diag_term;
+
+                            for( unsigned int lambda = 0; lambda < dim; lambda++ )
                               {
-                                for( unsigned int beta = 0; beta < dim; beta++ )
+                                for( unsigned int mu = 0; mu < dim; mu++ )
                                   {
-                                    Kuu(i,j) -= 0.5*_h0*jac*( tau(alpha,beta)*( u_gradphi[j][qp](beta)*u_gradphi[i][qp](alpha) + u_gradphi[j][qp](alpha)*u_gradphi[i][qp](beta) )
-                                                              + C(alpha,beta,lambda,mu)* *( (grad_x(beta) + grad_u(beta))*u_gradphi[i][qp](alpha) +
-                                                                                            (grad_x(alpha) + grad_u(alpha))*u_gradphi[i][qp](beta) ) );
-                                    Kuv(i,j) -= ;
-                                    Kuw(i,j) -= ;
+                                    const libMesh::Real dgamma_du = 0.5*( u_gradphi_j(lambda)*(grad_x(mu)+grad_u(mu)) +
+                                                                          (grad_x(lambda)+grad_u(lambda))*u_gradphi_j(mu) );
 
-                                    Kvu(i,j) -= ;
-                                    Kvv(i,j) -= ;
-                                    Kvw(i,j) -= ;
+                                    const libMesh::Real dgamma_dv = 0.5*( u_gradphi_j(lambda)*(grad_y(mu)+grad_v(mu)) +
+                                                                          (grad_y(lambda)+grad_v(lambda))*u_gradphi_j(mu) );
 
-                                    Kwu(i,j) -= ;
-                                    Kwv(i,j) -= ;
-                                    Kww(i,j) -= ;
+                                    const libMesh::Real dgamma_dw = 0.5*( u_gradphi_j(lambda)*(grad_z(mu)+grad_w(mu)) +
+                                                                          (grad_z(lambda)+grad_w(lambda))*u_gradphi_j(mu) );
+
+                                    const libMesh::Real C1 = 0.5*_h0*jac*C(alpha,beta,lambda,mu);
+
+                                    const libMesh::Real x_term = C1*( (grad_x(beta)+grad_u(beta))*u_gradphi_i(alpha) +
+                                                                      (grad_x(alpha)+grad_u(alpha))*u_gradphi_i(beta) );
+
+                                    const libMesh::Real y_term = C1*( (grad_y(beta)+grad_v(beta))*u_gradphi_i(alpha) +
+                                                                      (grad_y(alpha)+grad_v(alpha))*u_gradphi_i(beta) );
+
+                                    const libMesh::Real z_term = C1*( (grad_z(beta)+grad_w(beta))*u_gradphi_i(alpha) +
+                                                                      (grad_z(alpha)+grad_w(alpha))*u_gradphi_i(beta) );
+
+                                    Kuu(i,j) -= x_term*dgamma_du;
+
+                                    Kuv(i,j) -= x_term*dgamma_dv;
+
+                                    Kuw(i,j) -= x_term*dgamma_dw;
+
+                                    Kvu(i,j) -= y_term*dgamma_du;
+
+                                    Kvv(i,j) -= y_term*dgamma_dv;
+
+                                    Kvw(i,j) -= y_term*dgamma_dw;
+
+                                    Kwu(i,j) -= z_term*dgamma_du;
+
+                                    Kwv(i,j) -= z_term*dgamma_dv;
+
+                                    Kww(i,j) -= z_term*dgamma_dw;
                                   }
                               }
                           }
                       }
                   }
               }
-            */
           }
 
       }
