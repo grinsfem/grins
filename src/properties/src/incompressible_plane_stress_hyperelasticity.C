@@ -101,7 +101,7 @@ namespace GRINS
     this->compute_stress_terms( lambda_sq, A_over_a, I1, I2, a_term, A_term );
 
     libMesh::TensorValue<libMesh::Real> daterm_dstrain, dAterm_dstrain;
-    this->compute_stress_deriv_terms( lambda_sq, A_over_a, I1, I2, A_contra, daterm_dstrain, dAterm_dstrain );
+    this->compute_stress_deriv_terms( lambda_sq, A_over_a, I1, I2, a_contra, A_contra, daterm_dstrain, dAterm_dstrain );
 
     ElasticityTensor dAcontra_dstrain;
     this->compute_Acontra_deriv( A_contra, dAcontra_dstrain );
@@ -175,6 +175,7 @@ namespace GRINS
   template <typename StrainEnergy>
   void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_deriv_terms( libMesh::Real lambda_sq, libMesh::Real A_over_a,
                                                                                            libMesh::Real I1, libMesh::Real I2,
+                                                                                           const libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                                            const libMesh::TensorValue<libMesh::Real>& A_contra,
                                                                                            libMesh::TensorValue<libMesh::Real>& daterm_dstrain,
                                                                                            libMesh::TensorValue<libMesh::Real>& dAterm_dstrain) const
