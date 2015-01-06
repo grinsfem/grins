@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-//
-// GRINS - General Reacting Incompressible Navier-Stokes
+// 
+// GRINS - General Reacting Incompressible Navier-Stokes 
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -107,11 +107,11 @@ libMesh::Real initial_values( const libMesh::Point& p, const libMesh::Parameters
 
 	if( unknown_name == "u" )
 	{
-		value = -3.5*sin(GRINS::Constants::pi*p(0)/400.0);
+		value = -35*sin(GRINS::Constants::pi*p(0)/400.0);
 	}
 	else if( unknown_name == "w" )
 	{
-		value = -5.5*sin(GRINS::Constants::pi*p(0)/200.0);
+		value = -55*sin(GRINS::Constants::pi*p(0)/200.0);
 	}
 	else
 	{
