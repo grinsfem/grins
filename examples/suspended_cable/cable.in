@@ -53,7 +53,7 @@ mesh_nx1 = '10'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  '2500' 
+max_nonlinear_iterations =  '500' 
 max_linear_iterations = '2500'
 
 verify_analytic_jacobians = '0.0'
