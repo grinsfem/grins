@@ -31,6 +31,7 @@
 #include "grins/primitive_flow_variables.h"
 #include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
+#include "grins/spalart_allmaras.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -96,12 +97,13 @@ namespace GRINS
 
 
     
-    libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
+    libMesh::Real compute_res_spalart_steady( AssemblyContext& context,
                                                        unsigned int qp,
                                                        const libMesh::Real rho,
-                                                       const libMesh::Real mu ) const;
+						      const libMesh::Real mu,
+						      const libMesh::Real distance_qp) const;
 
-    void compute_res_momentum_steady_and_derivs( AssemblyContext& context,
+    void compute_res_spalart_steady_and_derivs( AssemblyContext& context,
                                                  unsigned int qp,
                                                  const libMesh::Real rho,
                                                  const libMesh::Real mu,
@@ -112,11 +114,11 @@ namespace GRINS
                                                  libMesh::Tensor &d_res_Muvw_dhessuvw
                                                ) const;
 
-    libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
+    libMesh::RealGradient compute_res_spalart_transient( AssemblyContext& context,
                                                           unsigned int qp,
                                                           const libMesh::Real rho ) const;
 
-    void compute_res_momentum_transient_and_derivs( AssemblyContext& context,
+    void compute_res_spalart_transient_and_derivs( AssemblyContext& context,
                                                     unsigned int qp,
                                                     const libMesh::Real rho,
                                                     libMesh::RealGradient &res_M,
