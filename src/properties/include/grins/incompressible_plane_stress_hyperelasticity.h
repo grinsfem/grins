@@ -88,6 +88,11 @@ namespace GRINS
     void compute_Acontra_deriv( const libMesh::TensorValue<libMesh::Real>& A_contra,
                                 ElasticityTensor& dAcontra_dstrain ) const;
 
+    libMesh::Real compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                         const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                         const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                         const libMesh::TensorValue<libMesh::Real>& G_cov );
+
     StrainEnergy _W;
 
   };

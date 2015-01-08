@@ -64,6 +64,18 @@ namespace GRINS
     else if( bc_type == "constant_displacement" )
       bc_type_out = CONSTANT_DISPLACEMENT;
 
+    else if( bc_type == "roller_x" )
+      bc_type_out = ROLLER_X;
+
+    else if( bc_type == "roller_y" )
+      bc_type_out = ROLLER_Y;
+
+    else if( bc_type == "roller_z" )
+      bc_type_out = ROLLER_Z;
+
+    else if( bc_type == "constant_traction" )
+      bc_type_out = CONSTANT_TRACTION;
+
     else
       {
         // Call base class to detect any physics-common boundary conditions
@@ -125,6 +137,38 @@ namespace GRINS
                                             input("Physics/"+_physics_name+"/displacement_"+bc_id_string, 0.0, i ),
                                             i );
             }
+        }
+        break;
+
+      case(ROLLER_X):
+      case(ROLLER_Y):
+      case(ROLLER_Z):
+        {
+          this->set_dirichlet_bc_type( bc_id, bc_type );
+        }
+        break;
+
+      case(CONSTANT_TRACTION):
+        {
+          this->set_neumann_bc_type( bc_id, bc_type );
+
+          libMesh::Gradient t_in;
+
+          int num_t_components = input.vector_variable_size("Physics/"+_physics_name+"/traction_"+bc_id_string);
+
+          if( num_t_components < 3 )
+            {
+              std::cerr << "Error: Expecting 3 components when specifying traction!" << std::endl
+                        << "       Found " << num_t_components << " components." << std::endl;
+              libmesh_error();
+            }
+
+          for( int i = 0; i < num_t_components; i++ )
+            {
+              t_in(i) = input("Physics/"+_physics_name+"/traction_"+bc_id_string, 0.0, i );
+            }
+
+          this->set_neumann_bc_value( bc_id, t_in );
         }
         break;
 
@@ -240,6 +284,72 @@ namespace GRINS
         }
         break;
 
+        // Roller is free to move in the x-direction, so pin y and z-directions
+      case(ROLLER_X):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+
+          if( _disp_vars.have_v() )
+            dbc_vars.push_back(v_var);
+
+          if( _disp_vars.have_w() )
+            dbc_vars.push_back(w_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Roller is free to move in the y-direction, so pin x and z-directions
+      case(ROLLER_Y):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(u_var);
+
+          if( _disp_vars.have_w() )
+            dbc_vars.push_back(w_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Roller is free to move in the z-direction, so pin x and y-directions
+      case(ROLLER_Z):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(u_var);
+          dbc_vars.push_back(v_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
       default:
         {
           std::cerr << "Invalid BCType " << bc_type << std::endl;
@@ -247,6 +357,40 @@ namespace GRINS
         }
 
       }// end switch
+
+    return;
+  }
+
+  void SolidMechanicsBCHandling::user_apply_neumann_bcs( AssemblyContext& context,
+                                                         const GRINS::CachedValues& /*cache*/,
+                                                         const bool /*request_jacobian*/,
+                                                         const BoundaryID bc_id,
+                                                         const BCType bc_type ) const
+  {
+    switch( bc_type )
+      {
+      case(CONSTANT_TRACTION):
+        {
+          const libMesh::Point& traction = this->get_neumann_bc_value(bc_id);
+
+          _bound_conds.apply_neumann_normal( context, _disp_vars.u_var(), 1.0, traction(0) );
+
+          if( _disp_vars.have_v() )
+            _bound_conds.apply_neumann_normal( context, _disp_vars.v_var(), 1.0, traction(1) );
+
+          if( _disp_vars.have_w() )
+            _bound_conds.apply_neumann_normal( context, _disp_vars.w_var(), 1.0, traction(2) );
+        }
+        break;
+
+      default:
+        {
+          std::cerr << "Error: Invalid Neumann BC type for " << _physics_name
+                    << std::endl;
+          libmesh_error();
+        }
+
+      } // switch( bc_type )
 
     return;
   }

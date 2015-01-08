@@ -29,6 +29,9 @@ check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
 check_PROGRAMS += power_law_catalycity_unit
 check_PROGRAMS += elastic_sheet_regression
+check_PROGRAMS += 3d_low_mach_jacobians_xy
+check_PROGRAMS += 3d_low_mach_jacobians_xz
+check_PROGRAMS += 3d_low_mach_jacobians_yz
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -104,6 +107,9 @@ constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
 elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
+3d_low_mach_jacobians_xy_SOURCES = 3d_low_mach_jacobians.C
+3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
+3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
 
 #Define tests to actually be run
 TESTS =
@@ -163,6 +169,9 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 TESTS += elastic_mooney_rivlin_sheet_regression.sh
+TESTS += 3d_low_mach_jacobians_xy.sh
+TESTS += 3d_low_mach_jacobians_xz.sh
+TESTS += 3d_low_mach_jacobians_yz.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
@@ -216,6 +225,10 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_const
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
+shellfiles_src += 3d_low_mach_jacobians_xy.sh
+shellfiles_src += 3d_low_mach_jacobians_xz.sh
+shellfiles_src += 3d_low_mach_jacobians_yz.sh
+
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids

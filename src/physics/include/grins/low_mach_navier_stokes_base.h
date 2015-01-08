@@ -66,6 +66,8 @@ namespace GRINS
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0 ) const;
+    
+    libMesh::Real d_rho_dT( libMesh::Real T, libMesh::Real p0 ) const;
 
     libMesh::Real get_p0_steady( const AssemblyContext& c, unsigned int qp ) const;
 
@@ -135,6 +137,13 @@ namespace GRINS
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::rho( libMesh::Real T, libMesh::Real p0 ) const
   {
     return p0/(this->_R*T);
+  }
+  
+  template<class V, class SH, class TC>
+  inline
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::d_rho_dT( libMesh::Real T, libMesh::Real p0 ) const
+  {
+    return -p0/(this->_R*(T*T));
   }
   
   template<class V, class SH, class TC>

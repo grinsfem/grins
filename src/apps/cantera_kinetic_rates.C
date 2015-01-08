@@ -93,8 +93,8 @@ int main(int argc, char* argv[])
     { 
       libMesh::Real p = rho*R_mix*T;
 
-      kinetics.omega_dot( T, p, Y, omega_dot );
-     
+      kinetics.omega_dot_TPY( T, p, Y, omega_dot );
+
       output.open( "omega_dot.dat", std::ios::app );
       output << T << " ";
 
