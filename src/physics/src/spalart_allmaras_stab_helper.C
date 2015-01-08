@@ -121,44 +121,46 @@ namespace GRINS
                                   hess_u(0,2) + hess_v(1,2) + hess_w(2,2) );
   }
   
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::compute_res_momentum_steady( AssemblyContext& context,
-                                                                                                    unsigned int qp, const libMesh::Real rho, const libMesh::Real mu ) const
+  libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
+											unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp ) const
   {
-    libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u_var(), qp),
-                             context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
-      U(2) = context.fixed_interior_value(this->_flow_vars.w_var(), qp);
-
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p_var(), qp);
-
+    // The flow velocity
+    libMesh::Number u,v;
+    u = context.interior_value(this->_flow_vars.u_var(), qp);
+    v = context.interior_value(this->_flow_vars.v_var(), qp);
+    
+    libMesh::NumberVectorValue U(u,v);
+    if (this->_dim == 3)
+      U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+        
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
     libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
 
-    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_flow_vars.u_var(), qp);
-    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_flow_vars.v_var(), qp);
+    libMesh::Number nu_value = context.interior_value(this->_turbulence_vars.nu_var(), qp);
 
-    libMesh::RealGradient rhoUdotGradU;
-    libMesh::RealGradient divGradU;
+    libMesh::RealGradient grad_nu = context.fixed_interior_gradient(this->_turbulence_vars.nu_var(), qp);
+    
+    libMesh::RealTensor hess_nu = context.fixed_interior_hessian(this->_turbulence_vars.nu_var(), qp);
 
-    if( context.get_system().get_mesh().mesh_dimension() < 3 )
-      {
-        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v );
-        divGradU  = this->div_GradU( hess_u, hess_v );
-      }
-    else
-      {
-        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w_var(), qp);
-        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w_var(), qp);
+    // The convection term 
+    libMesh::Number rhoUdotGradnu = this->_rho*(U*grad_nu);
 
-        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v, grad_w );
+    // The diffusion term
+    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_cb2*grad_nu*grad_nu);
 
-        divGradU  = this->div_GradU( hess_u, hess_v, hess_w );
-      }
+    // The source term
+    libMesh::Real _vorticity_value_qp = this->_vorticity(context, qp);
+    libMesh::Real _S_tilde = this->_source_fn(nu_value, mu, distance_qp, _vorticity_value_qp);
+    libMesh::Real source_term = this->_cb1*_S_tilde*nu_value;
 
-    return rhoUdotGradU + grad_p - mu*divGradU;
+    // The destruction term
+    libMesh::Real _fw = this->_destruction_fn(nu_value, distance_qp, _S_tilde);
+    libMesh::Real destruction_term =  this->_cw1*_fw*pow(nu/(*distance_qp)(qp), 2.);
+
+    return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }
 
-  void SpalartAllmarasStabilizationHelper::compute_res_momentum_steady_and_derivs
+  void SpalartAllmarasStabilizationHelper::compute_res_spalart_steady_and_derivs
     ( AssemblyContext& context,
       unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
       libMesh::Gradient &res_M,
@@ -168,63 +170,7 @@ namespace GRINS
       libMesh::Tensor   &d_res_Muvw_dhessuvw
     ) const
   {
-    libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u_var(), qp),
-                             context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
-      U(2) = context.fixed_interior_value(this->_flow_vars.w_var(), qp);
-
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p_var(), qp);
-
-    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
-    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
-
-    libMesh::RealTensor hess_u = context.fixed_interior_hessian(this->_flow_vars.u_var(), qp);
-    libMesh::RealTensor hess_v = context.fixed_interior_hessian(this->_flow_vars.v_var(), qp);
-
-    libMesh::RealGradient rhoUdotGradU;
-    libMesh::RealGradient divGradU;
-
-    if( context.get_system().get_mesh().mesh_dimension() < 3 )
-      {
-        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v );
-        divGradU  = this->div_GradU( hess_u, hess_v );
-      }
-    else
-      {
-        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w_var(), qp);
-        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w_var(), qp);
-
-        rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v, grad_w );
-
-        divGradU  = this->div_GradU( hess_u, hess_v, hess_w );
-
-        d_res_M_dU(0,2) = rho * grad_u(2);
-        d_res_M_dU(1,2) = rho * grad_v(2);
-
-        d_res_Muvw_dgraduvw(2) = rho * U(2);
-        d_res_M_dgradp(2,2) = 1;
-        d_res_Muvw_dhessuvw(2,2) = mu;
-
-        d_res_M_dU(2,0) = rho * grad_w(0);
-        d_res_M_dU(2,1) = rho * grad_w(1);
-        d_res_M_dU(2,2) = rho * grad_w(2);
-      }
-
-    res_M = rhoUdotGradU + grad_p - mu*divGradU;
-
-    d_res_M_dU(0,0) = rho * grad_u(0);
-    d_res_M_dU(0,1) = rho * grad_u(1);
-    d_res_M_dU(1,0) = rho * grad_v(0);
-    d_res_M_dU(1,1) = rho * grad_v(1);
-
-    d_res_Muvw_dgraduvw(0) = rho * U(0);
-    d_res_Muvw_dgraduvw(1) = rho * U(1);
-
-    d_res_M_dgradp(0,0) = 1;
-    d_res_M_dgradp(1,1) = 1;
-
-    d_res_Muvw_dhessuvw(0,0) = mu;
-    d_res_Muvw_dhessuvw(1,1) = mu;
+    // To be filled when we start using analytic jacobians with SA 
   }
 
 
