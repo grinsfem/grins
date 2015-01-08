@@ -204,20 +204,32 @@ namespace GRINS
 	// The vorticity value
 	libMesh::Real _vorticity_value_qp = this->_vorticity(context, qp);
    
+	// The flow velocity
+	libMesh::Number u,v;
+	u = context.interior_value(this->_flow_vars.u_var(), qp);
+	v = context.interior_value(this->_flow_vars.v_var(), qp);
+	
+	libMesh::NumberVectorValue U(u,v);
+	if (this->_dim == 3)
+	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+	
+	//The source term
+	libMesh::Real _S_tilde = this->_source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
+	
+	// The wall destruction term
+	libMesh::Real _fw = this->_destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
+	
+	
         // First, an i-loop over the viscosity degrees of freedom.        
         for (unsigned int i=0; i != n_nu_dofs; i++)
-          {
-	    //The source term
-	    libMesh::Real _S_tilde = this->_source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
-
-	    // The wall destruction term
-	    libMesh::Real _fw = this->_destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
-
+          {	    
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
             Fnu(i) += jac *
-              (-this->_cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
+              ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
+	       -this->_cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
 	       + (1./this->_sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_cb2*grad_nu*grad_nu*nu_phi[i][qp])  // diffusion term 
-               - this->_cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term                          
+               + this->_cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term      
+                    
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)
 		{
