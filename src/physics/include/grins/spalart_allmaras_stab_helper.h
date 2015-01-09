@@ -29,9 +29,7 @@
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
 #include "grins/primitive_flow_variables.h"
-#include "grins/turbulence_fe_variables.h"
-#include "grins/turbulence_models_base.h"
-#include "grins/spalart_allmaras.h"
+#include "grins/turbulence_variables.h"
 
 //Utils
 #include "grins/distance_function.h"
