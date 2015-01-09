@@ -175,16 +175,13 @@ namespace GRINS
 
   libMesh::RealGradient SpalartAllmarasStabilizationHelper::compute_res_spalart_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
-    libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
-
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
-      u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
-
-    return rho*u_dot;
+    libMesh::Number nu_dot = context.interior_rate(this->_turbulence_vars.nu_var(), qp);
+    
+    return rho*nu_dot;
   }
 
 
-  void SpalartAllmarasStabilizationHelper::compute_res_momentum_transient_and_derivs
+  void SpalartAllmarasStabilizationHelper::compute_res_spalart_transient_and_derivs
     ( AssemblyContext& context,
       unsigned int qp,
       const libMesh::Real rho,
@@ -192,13 +189,7 @@ namespace GRINS
       libMesh::Real &d_res_Muvw_duvw
     ) const
   {
-    libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
-
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
-      u_dot(2) = context.interior_value(this->_flow_vars.w_var(), qp);
-
-    res_M = rho*u_dot;
-    d_res_Muvw_duvw = rho;
+    
   }
 
 } // namespace GRINS
