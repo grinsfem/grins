@@ -174,7 +174,7 @@ namespace GRINS
   }
 
 
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
+  libMesh::RealGradient SpalartAllmarasStabilizationHelper::compute_res_spalart_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
     libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
 
