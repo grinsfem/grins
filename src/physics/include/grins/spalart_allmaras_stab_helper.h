@@ -52,7 +52,7 @@ namespace GRINS
     void init( libMesh::FEMSystem& system );
 
    
-    libMesh::Real compute_tau_momentum( AssemblyContext& c,
+    libMesh::Real compute_tau_spalart( AssemblyContext& c,
                                         unsigned int qp,
                                         libMesh::RealGradient& g,
                                         libMesh::RealTensor& G,
@@ -61,7 +61,7 @@ namespace GRINS
                                         libMesh::Real mu,
                                         bool is_steady ) const;
 
-    void compute_tau_momentum_and_derivs( AssemblyContext& c,
+    void compute_tau_spalart_and_derivs( AssemblyContext& c,
                                           unsigned int qp,
                                           libMesh::RealGradient& g,
                                           libMesh::RealTensor& G,
@@ -72,7 +72,7 @@ namespace GRINS
                                           libMesh::Real &d_tau_M_d_rho,
                                           libMesh::Gradient &d_tau_M_d_U,
                                           bool is_steady ) const;
-
+    
     libMesh::Real compute_tau( AssemblyContext& c,
                                unsigned int qp,
                                libMesh::Real mat_prop_sq,
@@ -93,8 +93,6 @@ namespace GRINS
                                  libMesh::Real& d_tau_d_rho,
                                  libMesh::Gradient& d_tau_d_U,
                                  bool is_steady ) const;
-
-
 
     
     libMesh::Real compute_res_spalart_steady( AssemblyContext& context,
@@ -167,7 +165,7 @@ namespace GRINS
   /* ------------- Inline Functions ---------------*/
   
   inline
-  libMesh::Real SpalartAllmarasStabilizationHelper::compute_tau_momentum( AssemblyContext& c,
+  libMesh::Real SpalartAllmarasStabilizationHelper::compute_tau_spalart( AssemblyContext& c,
                                                                                      unsigned int qp,
                                                                                      libMesh::RealGradient& g,
                                                                                      libMesh::RealTensor& G,
@@ -180,7 +178,7 @@ namespace GRINS
   }
  
   inline void
-  SpalartAllmarasStabilizationHelper::compute_tau_momentum_and_derivs
+  SpalartAllmarasStabilizationHelper::compute_tau_spalart_and_derivs
     ( AssemblyContext& c,
       unsigned int qp,
       libMesh::RealGradient& g,

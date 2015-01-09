@@ -233,20 +233,7 @@ namespace GRINS
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)
 		{
-		  for (unsigned int j=0; j != n_nu_dofs; j++)
-		    {
-		      // TODO: precompute some terms like:
-		      //   (Uvec*u_gradphi[j][qp]),
-		      //   u_phi[i][qp]*u_phi[j][qp],
-		      //   (u_gradphi[i][qp]*u_gradphi[j][qp])
-		      
-		      // Knunu(i,j) += jac *
-		      // 	( 0.0     // source term
-		      // 	 // diffusion term
-		      // 	       ); // destruction term
-                                                              
-		    } // end of the inner dof (j) loop                                
-
+		  libmesh_not_implemented();		     
 		} // end - if (compute_jacobian)
 
           } // end of the outer dof (i) loop
