@@ -24,60 +24,40 @@
 
 
 // This class
-#include "grins/inc_navier_stokes_stab_base.h"
+#include "grins/turbulence_models_base.h"
 
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
-#include "grins/inc_nav_stokes_macro.h"
+#include "grins/grins_physics_names.h"
+#include "grins/turbulence_models_macro.h"
+
+// libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
-                                                                                            const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
-      _stab_helper( input )
+  TurbulenceModelsBase<Mu>::TurbulenceModelsBase(const std::string& physics_name, const GetPot& input )
+    : Physics(physics_name, input),
+      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
+      _mu(input)
   {
     return;
   }
 
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
+  TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
   {
     return;
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
-  {
-    // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_context(context);
-  
-    // We need pressure derivatives
-    context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
-
-    // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
-
-    return;
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
-
-    _stab_helper.init(*system);
-
-    return;
-  }
-
+  }  
+     
 } // namespace GRINS
 
 // Instantiate
-INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesStabilizationBase);
+INSTANTIATE_TURBULENCE_MODELS_SUBCLASS(TurbulenceModelsBase);

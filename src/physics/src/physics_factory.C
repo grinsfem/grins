@@ -60,10 +60,13 @@
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/grins_physics_names.h"
 
+#include "grins/spalart_allmaras.h"
+
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
+#include "grins/spalart_allmaras_viscosity.h"
 
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
@@ -157,6 +160,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -176,6 +184,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new Stokes<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) // For model adaptive cases
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new Stokes<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }	
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -195,6 +208,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }		
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -214,6 +232,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }		
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -233,6 +256,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDrag<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -252,6 +280,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityPenalty<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenalty<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -271,6 +304,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -290,6 +328,11 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new AveragedFan<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFan<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -309,7 +352,26 @@ namespace GRINS
 	    physics_list[physics_to_add] = 
 	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
 	  }
+	else if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
 	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }
+    else if( physics_to_add == spalart_allmaras )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
+	else     //Viscosity has to be SA viscosity if SA turbulence model is being used
 	  {
 	    this->visc_error(physics_to_add, viscosity);
 	  }
