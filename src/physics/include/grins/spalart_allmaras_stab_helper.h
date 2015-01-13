@@ -156,7 +156,7 @@ namespace GRINS
 
     PrimitiveFlowVariables _flow_vars;
     
-    TurbulenceFEVariables _turbulence_vars;        
+    TurbulenceVariables _turbulence_vars;        
 
   }; // class SpalartAllmarasStabilizationHelper
 
