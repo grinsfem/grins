@@ -111,7 +111,8 @@ namespace GRINS
                                                                                const libMesh::Real rho,
                                                                                const libMesh::Real Cp ) const
   {
-    libMesh::Real T_dot = context.interior_rate(this->_temp_vars.T_var(), qp);
+    libMesh::Real T_dot;
+    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
 
     return rho*Cp*T_dot;
   }
@@ -126,7 +127,8 @@ namespace GRINS
       libMesh::Real &d_res_dTdot
     ) const
   {
-    libMesh::Real T_dot = context.interior_rate(this->_temp_vars.T_var(), qp);
+    libMesh::Real T_dot;
+    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
 
     res = rho*Cp*T_dot;
     d_res_dTdot = rho*Cp;
