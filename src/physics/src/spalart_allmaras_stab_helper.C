@@ -38,7 +38,7 @@ namespace GRINS
     : StabilizationHelper(),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
-      _flow_vars(input)
+      _flow_vars(input),
       _turbulence_vars(input)
   {
     return;
