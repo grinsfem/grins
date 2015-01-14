@@ -37,6 +37,8 @@ print_mesh_info = 'true'
 print_log_info = 'true'
 solver_verbose = 'true'
 solver_quiet = 'false'
+print_perflog = 'true'
+timesteps_per_perflog = 4
 
 echo_physics = 'true'
 
