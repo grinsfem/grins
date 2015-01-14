@@ -110,7 +110,7 @@ namespace GRINS
                                                  libMesh::Tensor &d_res_Muvw_dhessuvw
                                                ) const;
 
-    libMesh::RealGradient compute_res_spalart_transient( AssemblyContext& context,
+    libMesh::Real compute_res_spalart_transient( AssemblyContext& context,
                                                           unsigned int qp,
                                                           const libMesh::Real rho ) const;
 

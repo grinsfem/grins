@@ -72,7 +72,7 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_turbulence_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
 
     // The viscosity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& nu_phi =
@@ -90,6 +90,8 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
     
     libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
+    
+    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
     
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -144,7 +146,7 @@ namespace GRINS
         
         libMesh::Number RM_spalart = this->_stab_helper.compute_res_spalart_steady( context, qp, this->_rho, _mu_qp, (*distance_qp)(qp) );
         
-        for (unsigned int i=0; i != n_u_dofs; i++)
+        for (unsigned int i=0; i != n_nu_dofs; i++)
           {
             Fnu(i) += jac*( tau_spalart*RM_spalart*nu_phi[i][qp]  );            
           }
@@ -162,71 +164,7 @@ namespace GRINS
 
     return;
   }
-
-  template<class Mu>
-  void SpalartAllmarasSPGSMStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                         AssemblyContext& context,
-                                                                         CachedValues& /*cache*/ )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::element_constraint");
-#endif
-
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
-
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
-
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
-
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
-
-    unsigned int n_qpoints = context.get_element_qrule().n_points();
-
-    for (unsigned int qp=0; qp != n_qpoints; qp++)
-      {
-        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
-      
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
-        if( this->_dim == 3 )
-          {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
-          }
-
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
-
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
-
-        libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
-
-        for (unsigned int i=0; i != n_p_dofs; i++)
-          {
-            Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
-          }
-
-        if( compute_jacobian )
-          {
-            libmesh_not_implemented();
-          }
-
-      }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("SpalartAllmarasSPGSMStabilization::element_constraint");
-#endif
-
-    return;
-  }
-
+  
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
                                                                     AssemblyContext& context,
@@ -236,32 +174,32 @@ namespace GRINS
     this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::mass_residual");
 #endif
 
+    // Get a pointer to the current element, we need this for computing the distance to wall for the
+    // quadrature points
+    libMesh::Elem &elem_pointer = context.get_elem();
+
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
-
-    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
-
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
-    if(this->_dim == 3)
-      Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
-
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
-
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    const std::vector<std::vector<libMesh::Real> >& nu_phi =
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
+    
+    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
+        
+    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    // Auto pointer to distance fcn evaluated at quad points
+    libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> > distance_qp;
+
+    // Fill the vector of distances to quadrature points
+    distance_qp = this->distance_function->interpolate(&elem_pointer, context.get_element_qrule().get_points());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -278,27 +216,15 @@ namespace GRINS
             U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
       
-        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
+        libMesh::Real tau_spalart = this->_stab_helper.compute_tau_spalart( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
 
-        libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
+        libMesh::Real RM_spalart = this->_stab_helper.compute_res_spalart_transient( context, qp, this->_rho );
 
-        for (unsigned int i=0; i != n_p_dofs; i++)
+        for (unsigned int i=0; i != n_nu_dofs; i++)
           {
-            Fp(i) -= tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+            Fnu(i) += JxW[qp]*(tau_spalart*RM_spalart*nu_phi[i][qp]);
           }
-
-        for (unsigned int i=0; i != n_u_dofs; i++)
-          {
-            Fu(i) -= tau_M*RM_t(0)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
-
-            Fv(i) -= tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
-
-            if( this->_dim == 3 )
-              {
-                (*Fw)(i) -= tau_M*RM_t(2)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
-              }
-          }
-
+        
         if( compute_jacobian )
           {
             libmesh_not_implemented();
