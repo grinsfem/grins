@@ -51,13 +51,12 @@ namespace GRINS
     _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
     _print_log_info( input("screen-options/print_log_info", false ) ),
     _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
-    _print_perflog( input("screen-options/print_perflog", false ) ),
     _print_qoi( input("screen-options/print_qoi", false ) ),
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
-    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 1 ) ),
+    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
   {
     // Only print libMesh logging info if the user requests it
@@ -139,7 +138,7 @@ namespace GRINS
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
     context.print_scalars = _print_scalars;
-    context.print_perflog = _print_perflog;
+    context.print_perflog = _print_log_info;
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
 
