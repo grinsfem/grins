@@ -174,6 +174,10 @@ namespace GRINS
 	  context.vis->output_residual( context.equation_system, context.system,
                                         t_step, sim_time );
 
+        if ( context.print_perflog &&
+             !((t_step+1)%context.timesteps_per_perflog) )
+          libMesh::perflog.print_log();
+
         if ( context.print_scalars )
           for (unsigned int v=0; v != context.system->n_vars(); ++v)
             if (context.system->variable(v).type().family ==
