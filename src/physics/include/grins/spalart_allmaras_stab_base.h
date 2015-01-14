@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/spalart_allmaras.h"
-#include "grins/spalart_allamaras_stab_helper.h"
+#include "grins/spalart_allmaras_stab_helper.h"
 
 //! GRINS namespace
 namespace GRINS
