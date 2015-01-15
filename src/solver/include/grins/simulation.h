@@ -111,6 +111,7 @@ namespace GRINS
     bool _print_mesh_info;
     bool _print_log_info;
     bool _print_equation_system_info;
+    bool _print_perflog;
     bool _print_qoi;
     bool _print_scalars;
 
@@ -119,6 +120,7 @@ namespace GRINS
     bool _output_residual;
 
     unsigned int _timesteps_per_vis;
+    unsigned int _timesteps_per_perflog;
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
 
