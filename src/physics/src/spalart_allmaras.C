@@ -46,7 +46,7 @@ namespace GRINS
 
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
-    : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
+    : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables      
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),      
       _cb1(0.1355),
@@ -266,7 +266,8 @@ namespace GRINS
 
 	_vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
       }
-	return _vorticity_value;
+
+    return _vorticity_value;
   }
   
   template<class Mu>
