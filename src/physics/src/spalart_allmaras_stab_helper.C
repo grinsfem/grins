@@ -37,13 +37,12 @@
 namespace GRINS
 {
 
-  SpalartAllmarasStabilizationHelper::SpalartAllmarasStabilizationHelper(const SpalartAllmaras& spalart_allmaras_in, const GetPot& input)
+  SpalartAllmarasStabilizationHelper::SpalartAllmarasStabilizationHelper(const GetPot& input)
     : StabilizationHelper(),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(input),
-      _turbulence_vars(input),
-      _spalart_allmaras(spalart_allmaras_in)
+      _turbulence_vars(input)      
   {
     return;
   }
