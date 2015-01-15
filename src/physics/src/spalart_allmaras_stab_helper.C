@@ -26,6 +26,9 @@
 // This class
 #include "grins/spalart_allmaras_stab_helper.h"
 
+// GRINS
+#include "grins/spalart_allmaras.h"
+
 //libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/mesh.h"
@@ -40,7 +43,8 @@ namespace GRINS
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(input),
-      _turbulence_vars(input)
+      _turbulence_vars(input),
+      _spalart_allmaras(spalart_allmaras_in)
   {
     return;
   }
@@ -146,18 +150,18 @@ namespace GRINS
     libMesh::Number rhoUdotGradnu = rho*(U*grad_nu);
 
     // The diffusion term
-    //libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_cb2*grad_nu*grad_nu);
+    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./_spalart_allmaras._sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (_spalart_allmaras._dim == 3)?hess_nu(2,2):0)) + _spalart_allmaras._cb2*grad_nu*grad_nu);
 
     // The source term
-    //libMesh::Real _vorticity_value_qp = this->_vorticity(context, qp);
-    ///libMesh::Real _S_tilde = this->_source_fn(nu_value, mu, distance_qp, _vorticity_value_qp);
-    //libMesh::Real source_term = this->_cb1*_S_tilde*nu_value;
+    libMesh::Real _vorticity_value_qp = _spalart_allmaras._vorticity(context, qp);
+    libMesh::Real _S_tilde = _spalart_allmaras._source_fn(nu_value, mu, distance_qp, _vorticity_value_qp);
+    libMesh::Real source_term = _spalart_allmaras._cb1*_S_tilde*nu_value;
 
     // The destruction term
-    //libMesh::Real _fw = this->_destruction_fn(nu_value, distance_qp, _S_tilde);
-    //libMesh::Real destruction_term =  this->_cw1*_fw*pow(nu_value/distance_qp, 2.);
+    libMesh::Real _fw = _spalart_allmaras._destruction_fn(nu_value, distance_qp, _S_tilde);
+    libMesh::Real destruction_term =  _spalart_allmaras._cw1*_fw*pow(nu_value/distance_qp, 2.);
 
-    return rhoUdotGradnu ;//+ source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
+    return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }
 
   void SpalartAllmarasStabilizationHelper::compute_res_spalart_steady_and_derivs
