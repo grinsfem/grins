@@ -23,49 +23,27 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPALART_ALLMARAS_H
-#define GRINS_SPALART_ALLMARAS_H
+#ifndef GRINS_SPALART_ALLMARAS_HELPER_H
+#define GRINS_SPALART_ALLMARAS_HELPER_H
 
 //GRINS
 #include "grins/physics.h"
 #include "primitive_flow_fe_variables.h"
-#include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
-#include "grins/spalart_allmaras_helper.h"
 
 //Utils
 #include "grins/distance_function.h"
 
 namespace GRINS
 {
-
-  //! Physics class for Incompressible Navier-Stokes
-  /*!
-    This physics class implements the classical Incompressible Navier-Stokes equations.
-    This is a templated class, the class Viscosity can be instantiated as a specific type
-    (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
-    to specify a constant or spatially varying viscosity in the input file
-   */
-  template<class Viscosity>
-  class SpalartAllmaras : public TurbulenceModelsBase<Viscosity>
+  class SpalartAllmarasHelper
   {
   public:
 
-    SpalartAllmaras(const std::string& physics_name, const GetPot& input);
+    SpalartAllmarasHelper(const std::string& physics_name, const GetPot& input);
 
-    ~SpalartAllmaras();
-        
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    // Context initialization
-    virtual void init_context( AssemblyContext& context );    
-
-    // Element time derivative
-    virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
-    
+    ~SpalartAllmarasHelper();
+            
     // The vorticity function
     libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp);
     
@@ -74,10 +52,7 @@ namespace GRINS
 
     // The destruction function f_w(nu)
     libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde);
-
-    // A distance function to get distances from boundaries to qps
-    libMesh::AutoPtr<DistanceFunction> distance_function;
-
+    
   protected:
 
     //! Spalart Allmaras model constants
@@ -88,16 +63,9 @@ namespace GRINS
 
     //! Constants specific to the calculation of the destruction function
     libMesh::Number _r_lin, _c_w2, _c_w3;
-
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
-
+    
     // The flow variables
     PrimitiveFlowFEVariables _flow_vars;
-
-    // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;    
     
   private:
     SpalartAllmaras();
@@ -106,4 +74,4 @@ namespace GRINS
 
 } //End namespace block
 
-#endif // GRINS_SPALART_ALLMARAS_H
+#endif // GRINS_SPALART_ALLMARAS_HELPER_H
