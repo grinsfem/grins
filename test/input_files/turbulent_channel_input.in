@@ -1,0 +1,74 @@
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+mesh_nx1 = 2 
+mesh_nx2 = 1 
+
+domain_x1_max = 5.0
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10 
+max_linear_iterations = 2500
+
+initial_linear_tolerance = 1.0e-12
+
+verify_analytic_jacobians = 1.e-6
+
+# Visualization options
+[vis-options]
+output_vis_time_series = false 
+output_vis = false 
+vis_output_file_prefix = couette_poiseuille 
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true' 
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+nu_order = FIRST
+
+rho = 1.0
+mu = 1.0
+
+bc_ids = '0 1 2 3'
+bc_types = 'general_velocity no_slip no_slip '
+
+bound_vel_2 = '0.0 0.0 0.0'
+
+pin_pressure = true
+pin_value = 100.0
+pin_location = '2.5 0.5'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+turbulent_viscosity = 'nu'
+
+[]
