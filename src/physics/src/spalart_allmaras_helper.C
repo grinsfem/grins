@@ -36,6 +36,7 @@
 #include "libmesh/quadrature.h"
 #include "libmesh/elem.h"
 #include "libmesh/unstructured_mesh.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -70,7 +71,7 @@ namespace GRINS
     return;
   }
     
-  libMesh::Real SpalartAllmarasHelper::_vorticity(AssemblyContext& context, unsigned int qp)
+  libMesh::Real SpalartAllmarasHelper::_vorticity(AssemblyContext& context, unsigned int qp) const
   {
     libMesh::Gradient grad_u, grad_v;
     grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
@@ -93,7 +94,7 @@ namespace GRINS
     return _vorticity_value;
   }
   
-  libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value)
+  libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value) const
   {
     // Step 1
     libMesh::Real _kai = nu/mu;
@@ -124,7 +125,7 @@ namespace GRINS
     return _S_tilde;
   }
   
-  libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde)
+  libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde) const
   {
     // Step 1
     libMesh::Real _r = 0.0;

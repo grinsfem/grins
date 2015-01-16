@@ -120,7 +120,7 @@ namespace GRINS
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
 	// The vorticity value
-	libMesh::Real _vorticity_value_qp = this->_vorticity(context, qp);
+	libMesh::Real _vorticity_value_qp = this->_spalart_allmaras_helper._vorticity(context, qp);
    
 	// The flow velocity
 	libMesh::Number u,v;

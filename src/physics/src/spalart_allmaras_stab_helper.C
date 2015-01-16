@@ -52,8 +52,10 @@ namespace GRINS
 
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
-    _flow_vars.init(&system);
-    _turbulence_vars.init(&system);
+    this->_flow_vars.init(&system);
+    this->_turbulence_vars.init(&system);
+
+    this->_dim = system.get_mesh().mesh_dimension();
 
     return;
   }

@@ -61,6 +61,7 @@
 #include "grins/grins_physics_names.h"
 
 #include "grins/spalart_allmaras.h"
+#include "grins/spalart_allmaras_spgsm_stab.h"
 
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
@@ -369,13 +370,27 @@ namespace GRINS
 	if( viscosity == "spalartallmaras" ) 
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedTurbine<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	      PhysicsPtr(new SpalartAllmaras<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
 	  }			
 	else     //Viscosity has to be SA viscosity if SA turbulence model is being used
 	  {
 	    this->visc_error(physics_to_add, viscosity);
 	  }
       }
+    else if( physics_to_add == spalart_allmaras_spgsm_stab )
+      {
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "spalartallmaras" ) 
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new SpalartAllmarasSPGSMStabilization<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	  }			
+	else     //Viscosity has to be SA viscosity if SA turbulence model is being used
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }    
     else if( physics_to_add == scalar_ode )
       {
 	physics_list[physics_to_add] = 
