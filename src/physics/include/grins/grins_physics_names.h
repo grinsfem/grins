@@ -50,6 +50,7 @@ namespace GRINS
   const PhysicsName averaged_fan_adjoint_stab = "AveragedFanAdjointStabilization";
   const PhysicsName averaged_turbine = "AveragedTurbine";
   const PhysicsName spalart_allmaras = "SpalartAllmaras";
+  const PhysicsName spalart_allmaras_spgsm_stab = "SpalartAllmarasSPGSMStabilization";
   const PhysicsName scalar_ode = "ScalarODE";
   const PhysicsName heat_conduction = "HeatConduction";
   const PhysicsName heat_transfer = "HeatTransfer";
