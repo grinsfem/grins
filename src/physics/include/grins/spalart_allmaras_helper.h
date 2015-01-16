@@ -28,8 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "primitive_flow_fe_variables.h"
-#include "grins/turbulence_models_base.h"
+#include "primitive_flow_variables.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -40,9 +39,11 @@ namespace GRINS
   {
   public:
 
-    SpalartAllmarasHelper(const std::string& physics_name, const GetPot& input);
+    SpalartAllmarasHelper(const GetPot& input);
 
     ~SpalartAllmarasHelper();
+
+    void init_variables( libMesh::FEMSystem* system );
             
     // The vorticity function
     libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp);
@@ -53,8 +54,6 @@ namespace GRINS
     // The destruction function f_w(nu)
     libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde);
     
-  protected:
-
     //! Spalart Allmaras model constants
     libMesh::Number _cb1, _sigma, _cb2, _cw1;
 
@@ -64,11 +63,13 @@ namespace GRINS
     //! Constants specific to the calculation of the destruction function
     libMesh::Number _r_lin, _c_w2, _c_w3;
     
+  protected:
+
     // The flow variables
-    PrimitiveFlowFEVariables _flow_vars;
+    PrimitiveFlowVariables _flow_vars;
     
   private:
-    SpalartAllmaras();
+    SpalartAllmarasHelper();
 
   };
 

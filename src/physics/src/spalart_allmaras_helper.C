@@ -44,16 +44,17 @@ namespace GRINS
     : _cb1(0.1355), // Define class variables
       _sigma(2./3.),
       _cb2(0.622),
-      _cw1(),
       _kappa(0.41),
-      _cv1(),
-      _cv2(),
-      _cv3(),
-      _r_lin(),
-      _c_w2(),
-      _c_w3(),
+      _cv1(7.1),
+      _cv2(0.7),
+      _cv3(0.9),
+      _r_lin(10.0),
+      _c_w2(0.3),
+      _c_w3(2.0),
       _flow_vars(input)
   {        
+    _cw1 = _cb1/pow(_kappa,2.0) + (1 + _cb2)/_sigma;
+
     return;
   }
   
