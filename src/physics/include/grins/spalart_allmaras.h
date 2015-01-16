@@ -65,30 +65,12 @@ namespace GRINS
 
     // Element time derivative
     virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
-    
-    // The vorticity function
-    libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp);
-    
-    // The source function \tilde{S}
-    libMesh::Real _source_fn( libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value);
-
-    // The destruction function f_w(nu)
-    libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde);
-
+        
     // A distance function to get distances from boundaries to qps
     libMesh::AutoPtr<DistanceFunction> distance_function;
 
   protected:
-
-    //! Spalart Allmaras model constants
-    libMesh::Number _cb1, _sigma, _cb2, _cw1;
-
-    //! Constants specific to the calculation of the source function
-    libMesh::Number _kappa, _cv1, _cv2, _cv3;
-
-    //! Constants specific to the calculation of the destruction function
-    libMesh::Number _r_lin, _c_w2, _c_w3;
-
+    
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
@@ -97,8 +79,11 @@ namespace GRINS
     PrimitiveFlowFEVariables _flow_vars;
 
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;    
-    
+    TurbulenceFEVariables _turbulence_vars;   
+
+    // Spalart Allmaras Helper object
+    SpalartAllmarasHelper _spalart_allmaras_helper;
+
   private:
     SpalartAllmaras();
 

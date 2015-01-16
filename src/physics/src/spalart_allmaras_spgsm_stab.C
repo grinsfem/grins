@@ -132,10 +132,10 @@ namespace GRINS
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 	
 	//The source term
-	libMesh::Real _S_tilde = this->_source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
+	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
 	
 	// The wall destruction term
-	libMesh::Real _fw = this->_destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
+	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
 
 	// Stabilization terms
 
