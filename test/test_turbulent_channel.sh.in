@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="@top_builddir@/test/test_ns_turbulent_channel"
+PROG="@top_builddir@/test/test_turbulent_channel"
 
 INPUT="@top_srcdir@/test/input_files/turbulent_channel_input.in"
 
