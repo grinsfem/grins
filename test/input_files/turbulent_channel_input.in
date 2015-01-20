@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 2 
-mesh_nx2 = 1 
+mesh_nx1 = 10
+mesh_nx2 = 10
 
 domain_x1_max = 5.0
 
@@ -22,6 +22,14 @@ max_linear_iterations = 2500
 initial_linear_tolerance = 1.0e-12
 
 verify_analytic_jacobians = 1.e-6
+
+[Materials]
+
+[./Viscosity]
+
+#mu = '2.95456e-5' #[kg/m-s]
+viscosity = 'spalartallmaras'
+mu = 1.0
 
 # Visualization options
 [vis-options]
@@ -53,12 +61,16 @@ P_order = FIRST
 nu_order = FIRST
 
 rho = 1.0
-mu = 1.0
 
-bc_ids = '0 1 2 3'
-bc_types = 'general_velocity no_slip no_slip '
+bc_ids = '1 3 2 0'
+bc_types = 'parabolic_profile parabolic_profile no_slip no_slip '
 
-bound_vel_2 = '0.0 0.0 0.0'
+parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_coeffs_3 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_var_1 = 'u'
+parabolic_profile_var_3 = 'u'
+parabolic_profile_fix_1 = 'v'
+parabolic_profile_fix_3 = 'v'
 
 pin_pressure = true
 pin_value = 100.0
