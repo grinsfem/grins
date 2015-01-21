@@ -22,36 +22,43 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
+#ifndef GRINS_SPALART_ALLMARAS_BC_HANDLING_H
+#define GRINS_SPALART_ALLMARAS_BC_HANDLING_H
+
+//GRINS
+#include "grins/bc_handling_base.h"
 #include "grins/turbulence_variables.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-
-// GRINS
-#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-  TurbulenceVariables::TurbulenceVariables( const GetPot& input )
-    :  _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
+  //! Base class for reading and handling boundary conditions for physics classes
+  class SpalartAllmarasBCHandling : public BCHandlingBase
   {
-    return;
-  }
-
-  TurbulenceVariables::~TurbulenceVariables()
-  {
-    return;
-  }
-
-  void TurbulenceVariables::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable( _nu_var_name ) );
+  public:
     
-    _nu_var = system->variable_number( _nu_var_name );
+    SpalartAllmarasBCHandling( const std::string& physics_name, const GetPot& input );
     
-    return;
-  }
+    virtual ~SpalartAllmarasBCHandling();
 
-} // end namespace GRINS
+    virtual int string_to_int( const std::string& bc_type_in ) const;
+
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
+
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
+				const GetPot& input );    
+
+  protected:
+
+    TurbulenceVariables _turb_vars;
+
+  private:
+
+    SpalartAllmarasBCHandling();
+    
+  };
+}
+#endif // GRINS_SPALART_ALLMARAS_BC_HANDLING_H

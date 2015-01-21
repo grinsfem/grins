@@ -2,10 +2,11 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 10
-mesh_nx2 = 10
+mesh_nx1 = 100
+mesh_nx2 = 100
 
 domain_x1_max = 5.0
+domain_x2_max = 5.0
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -21,7 +22,8 @@ max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
 
-verify_analytic_jacobians = 1.e-6
+#verify_analytic_jacobians = 1.e-6
+use_numerical_jacobians_only = 'true'
 
 [Materials]
 
@@ -57,7 +59,6 @@ enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-TU_order = FIRST
 
 viscosity_model = 'spalartallmaras'
 rho = 1.0
@@ -81,6 +82,22 @@ pin_location = '2.5 0.5'
 u_velocity = 'u'
 v_velocity = 'v'
 pressure = 'p'
+
+# Options for Spalart Allmaras physics
+[./SpalartAllmaras]
+
+TU_order = FIRST
+
+rho = 1.0
+
+bc_ids = '0 1 2 3'
+bc_types = 'constant_dirichlet no_flux constant_dirichlet constant_dirichlet'
+bc_variables = 'nu nu nu nu'
+bc_values = '0.0 0.0 0.0 0.1'
+
+
+[../VariableNames]
+
 turbulent_viscosity = 'nu'
 
 []
