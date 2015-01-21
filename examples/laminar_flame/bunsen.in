@@ -81,6 +81,8 @@ bound_species_3 = '0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.8'
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
 
+output_vars = 'rho_mix h_s mole_fractions omega_dot'
+
 []
 
 [restart-options]
@@ -118,8 +120,6 @@ vis_output_file_prefix = 'output'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
-
-output_vars = 'rho_mix h_s mole_fractions omega_dot'
 
 # Options for print info to the screen
 [screen-options]
