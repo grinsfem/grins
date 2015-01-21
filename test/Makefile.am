@@ -171,14 +171,10 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 TESTS += elastic_mooney_rivlin_sheet_regression.sh
-<<<<<<< HEAD
 TESTS += 3d_low_mach_jacobians_xy.sh
 TESTS += 3d_low_mach_jacobians_xz.sh
 TESTS += 3d_low_mach_jacobians_yz.sh
-||||||| merged common ancestors
-=======
 TESTS += suspended_cable_test.sh
->>>>>>> 0.5.0-release
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
@@ -232,15 +228,10 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_const
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
-<<<<<<< HEAD
 shellfiles_src += 3d_low_mach_jacobians_xy.sh
 shellfiles_src += 3d_low_mach_jacobians_xz.sh
 shellfiles_src += 3d_low_mach_jacobians_yz.sh
-
-||||||| merged common ancestors
-=======
 shellfiles_src += suspended_cable_test.sh
->>>>>>> 0.5.0-release
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
