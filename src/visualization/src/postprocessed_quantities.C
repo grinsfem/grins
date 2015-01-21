@@ -31,9 +31,20 @@
 namespace GRINS
 {
   template<class NumericType>
-  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& /*input*/ )
+  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
     : libMesh::FEMFunctionBase<NumericType>()
   {
+    if( input.have_variable("vis-options/output_vars") )
+      {
+
+        std::cerr << "================================================================================" << std::endl
+                  << "WARNING: Detected input variable 'vis-options/output_vars." << std::endl
+                  << "WARNING: THIS IS OUTDATED. output_vars is now input within" << std::endl
+                  << "WARNING: each Physics section." << std::endl
+                  << "         Erroring out to make you aware." << std::endl
+                  << "================================================================================" << std::endl;
+        libmesh_error();
+      }
     return;
   }
 
