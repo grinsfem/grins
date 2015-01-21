@@ -29,7 +29,7 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
+#include "grins/spalart_allmaras_bc_handling.h"
 #include "grins/turbulence_models_macro.h"
 
 #include "grins/constant_viscosity.h"
@@ -52,13 +52,8 @@ namespace GRINS
       _spalart_allmaras_helper(input)      
   {    
     // This is deleted in the base class
-    this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
-
-    if( this->_bc_handler->is_axisymmetric() )
-      {
-        this->_is_axisymmetric = true;
-      }
-
+    this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
+    
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
