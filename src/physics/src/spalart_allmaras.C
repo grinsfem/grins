@@ -216,11 +216,13 @@ namespace GRINS
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {	    
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
-            Fnu(i) += jac *
-              ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
-	       -this->_spalart_allmaras_helper._cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
-	       + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp])  // diffusion term 
-               + this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term      
+            // Fnu(i) += jac *
+            //   ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
+	    //    -this->_spalart_allmaras_helper._cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
+	    //    + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp])  // diffusion term 
+            //    + this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term
+	    
+	    Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);
                     
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)

@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 100
-mesh_nx2 = 100
+mesh_nx1 = 40
+mesh_nx2 = 40
 
 domain_x1_max = 5.0
 domain_x2_max = 5.0
@@ -74,7 +74,7 @@ parabolic_profile_fix_1 = 'v'
 parabolic_profile_fix_3 = 'v'
 
 pin_pressure = true
-pin_value = 100.0
+pin_value = 1.0
 pin_location = '2.5 0.5'
 
 [../VariableNames]
@@ -90,10 +90,18 @@ TU_order = FIRST
 
 rho = 1.0
 
+#bc_ids = '0 2 3'
+#bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet'
+#bc_variables = 'nu nu nu'
+#bc_values = '0.0 0.0 1.0'
+#bc_ids = '3'
+#bc_types = 'constant_dirichlet'
+#bc_variables = 'nu'
+#bc_values = '0.1'
 bc_ids = '0 1 2 3'
-bc_types = 'constant_dirichlet no_flux constant_dirichlet constant_dirichlet'
+bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
 bc_variables = 'nu nu nu nu'
-bc_values = '0.0 0.0 0.0 0.1'
+bc_values = '0.1 0.1 0.1 0.1'
 
 
 [../VariableNames]
