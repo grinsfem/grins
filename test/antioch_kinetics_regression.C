@@ -75,7 +75,7 @@ int main( int argc, char* argv[] )
     }
 
   int return_flag = 0;
-  double tol = std::numeric_limits<double>::epsilon()*10;
+  double tol = std::numeric_limits<double>::epsilon()*40;
 
   // Check that omega_dot sums to 1
   libMesh::Real sum = 0.0;
