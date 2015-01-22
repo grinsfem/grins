@@ -47,6 +47,10 @@ namespace GRINS
 
     this->read_bc_data( input, id_str, bc_str, var_str, val_str );
 
+    std::cout<<"Variable: "<<var_str<<std::endl;
+    std::cout<<"Id: "<<id_str<<std::endl;
+    std::cout<<"Number: "<<val_str<<std::endl;
+
     return;
   }
 
@@ -79,6 +83,10 @@ namespace GRINS
 					      const std::string& bc_value, 
 					      const GetPot& input )
   {
+    std::cout<<"Variable: "<<bc_vars<<std::endl;
+    std::cout<<"Id: "<<bc_id<<std::endl;
+    std::cout<<"Number: "<<bc_value<<std::endl;
+
     // Call base class to detect any physics-common boundary conditions
     BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
                                          bc_vars, bc_value, input );	
