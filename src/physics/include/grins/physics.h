@@ -49,6 +49,9 @@
 class GetPot;
 namespace libMesh
 {
+  template <typename Scalar>
+  class CompositeFunction;
+
   class FEMSystem;
   class Elem;
 }
@@ -65,9 +68,6 @@ namespace GRINS
 
   template <typename Scalar>
   class PostProcessedQuantities;
-
-  template <typename Scalar>
-  class CompositeFunction;
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
@@ -190,7 +190,7 @@ namespace GRINS
     void init_bcs( libMesh::FEMSystem* system );
 
     void init_ics( libMesh::FEMSystem* system,
-                   GRINS::CompositeFunction<libMesh::Number>& all_ics );
+                   libMesh::CompositeFunction<libMesh::Number>& all_ics );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 

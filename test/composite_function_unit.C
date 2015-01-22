@@ -22,16 +22,15 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// GRINS
-#include "grins/composite_function.h"
+// This test is in libMesh now, but let's leave it in GRINS until
+// we're sure that's working.
 
 // libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/const_function.h"
 #include "libmesh/dense_vector.h"
 
 using namespace libMesh;
-using namespace GRINS;
 
 int main( /*int argc, char* argv[]*/ )
 {

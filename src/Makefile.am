@@ -352,8 +352,6 @@ include_HEADERS += utilities/include/grins/math_constants.h
 include_HEADERS += utilities/include/grins/cached_values.h
 include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
-include_HEADERS += utilities/include/grins/composite_fem_function.h
-include_HEADERS += utilities/include/grins/composite_function.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h

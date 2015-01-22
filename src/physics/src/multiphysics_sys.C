@@ -27,10 +27,10 @@
 #include "grins/multiphysics_sys.h"
 
 // GRINS
-#include "grins/composite_function.h"
 #include "grins/assembly_context.h"
 
 // libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/getpot.h"
 
 namespace GRINS
@@ -130,7 +130,7 @@ namespace GRINS
 
     // After solution has been initialized we can project initial
     // conditions to it
-    CompositeFunction<libMesh::Number> ic_function;
+    libMesh::CompositeFunction<libMesh::Number> ic_function;
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )

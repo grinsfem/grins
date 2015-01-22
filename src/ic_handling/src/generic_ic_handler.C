@@ -31,7 +31,6 @@
 #include "grins/ic_handling_base.h"
 
 // GRINS
-#include "grins/composite_function.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/string_utils.h"
 

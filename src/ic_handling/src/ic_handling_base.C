@@ -31,10 +31,10 @@
 #include "grins/ic_handling_base.h"
 
 // GRINS
-#include "grins/composite_function.h"
 #include "grins/string_utils.h"
 
 // libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/dof_map.h"
@@ -127,7 +127,7 @@ namespace GRINS
   }
 
   void ICHandlingBase::init_ic_data( const libMesh::FEMSystem& system,
-                                     GRINS::CompositeFunction<libMesh::Number>& all_ics )
+                                     libMesh::CompositeFunction<libMesh::Number>& all_ics )
   {
     if (this->get_ic_func())
       {
