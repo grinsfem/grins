@@ -132,7 +132,9 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  const double tol = 1.0e-8;
+
+  if( l2error > tol || h1error > tol )
     {
       return_flag = 1;
 
@@ -147,7 +149,7 @@ int main(int argc, char* argv[])
   l2error = exact_sol.l2_error("GRINS", "p");
   h1error = exact_sol.h1_error("GRINS", "p");
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  if( l2error > tol || h1error > tol )
     {
       return_flag = 1;
 
