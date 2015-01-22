@@ -82,6 +82,11 @@ namespace GRINS
 
   //! Bz field
   const std::string Bz_var_name_default = "Bz";
+
+  const std::string u_disp_name_default = "u";
+  const std::string v_disp_name_default = "v";
+  const std::string w_disp_name_default = "w";
+  
 }
 
 #endif //VARIABLE_NAME_DEFAULTS_H

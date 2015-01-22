@@ -28,6 +28,9 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 //libMesh
 #include "libmesh/quadrature.h"
@@ -35,21 +38,24 @@
 namespace GRINS
 {
 
-  IncompressibleNavierStokesAdjointStabilization::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
+  template<class Mu>
+  IncompressibleNavierStokesAdjointStabilization<Mu>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
                                                                                                   const GetPot& input )
-    : IncompressibleNavierStokesStabilizationBase(physics_name,input)
+    : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  IncompressibleNavierStokesAdjointStabilization::~IncompressibleNavierStokesAdjointStabilization()
+  template<class Mu>
+  IncompressibleNavierStokesAdjointStabilization<Mu>::~IncompressibleNavierStokesAdjointStabilization()
   {
     return;
   }
 
-  void IncompressibleNavierStokesAdjointStabilization::element_time_derivative( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokesAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                                 AssemblyContext& context,
                                                                                 CachedValues& /*cache*/ )
   {
@@ -80,17 +86,17 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
     libMesh::DenseSubMatrix<libMesh::Number> &Kup = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.p_var()); // J_{up}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.p_var()); // J_{up}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{uu}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{uv}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvp = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.p_var()); // J_{vp}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.p_var()); // J_{vp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // J_{vu}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // J_{vv}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
 
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
@@ -104,17 +110,17 @@ namespace GRINS
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
         Kuw = &context.get_elem_jacobian
-          (_flow_vars.u_var(), _flow_vars.w_var()); // J_{uw}
+          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
         Kvw = &context.get_elem_jacobian
-          (_flow_vars.v_var(), _flow_vars.w_var()); // J_{vw}
+          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
         Kwp = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.p_var()); // J_{wp}
+          (this->_flow_vars.w_var(), this->_flow_vars.p_var()); // J_{wp}
         Kwu = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.u_var()); // J_{wu}
+          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
         Kwv = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.v_var()); // J_{wv}
+          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
         Kww = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.w_var()); // J_{ww}
+          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -135,10 +141,10 @@ namespace GRINS
       
         /*
           libMesh::Gradient grad_u, grad_v, grad_w;
-          grad_u = context.interior_gradient(_flow_vars.u_var(), qp);
-          grad_v = context.interior_gradient(_flow_vars.v_var(), qp);
+          grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
+          grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
           if (_dim == 3)
-          grad_w = context.interior_gradient(_flow_vars.w_var(), qp);
+          grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
         */
 
         libMesh::Real tau_M, tau_C;
@@ -149,10 +155,13 @@ namespace GRINS
         libMesh::Tensor d_RC_dgradU,
           d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu,
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 this->_is_steady );
             this->_stab_helper.compute_tau_continuity_and_derivs
@@ -160,7 +169,7 @@ namespace GRINS
                 g,
                 tau_C, d_tau_C_d_rho, d_tau_C_dU );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
-              ( context, qp, this->_rho, this->_mu,
+              ( context, qp, this->_rho, _mu_qp,
                 RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
             this->_stab_helper.compute_res_continuity_and_derivs
@@ -168,19 +177,19 @@ namespace GRINS
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
             tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
-            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
             RC = this->_stab_helper.compute_res_continuity( context, qp );
           }
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+              _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
-            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
+            //libMesh::RealGradient zeroth_order_term = - this->_rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
             Fu(i) += ( -tau_M*RM_s(0)*test_func - tau_C*RC*u_gradphi[i][qp](0) )*JxW[qp];
 
@@ -375,7 +384,8 @@ namespace GRINS
     return;
   }
 
-    void IncompressibleNavierStokesAdjointStabilization::element_constraint( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokesAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
                                                                              AssemblyContext& context,
                                                                              CachedValues& /*cache*/ )
   {
@@ -408,17 +418,17 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpp = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.p_var()); // J_{pp}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.p_var()); // J_{pp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.u_var()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.v_var()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{pw}
+          (this->_flow_vars.p_var(), this->_flow_vars.w_var()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -442,22 +452,25 @@ namespace GRINS
         libMesh::Gradient d_tau_M_dU;
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
         libMesh::Tensor d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
+	
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);	
 
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu,
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 this->_is_steady );
             this->_stab_helper.compute_res_momentum_steady_and_derivs
-              ( context, qp, this->_rho, this->_mu,
+              ( context, qp, this->_rho, _mu_qp,
                 RM_s, d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dgraduvw,
                 d_RM_s_uvw_dhessuvw);
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, this->_is_steady );
-            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, this->_mu );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
+            RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
           }
 
         // Now a loop over the pressure degrees of freedom.  This
@@ -534,8 +547,8 @@ namespace GRINS
     return;
   }
 
-
-  void IncompressibleNavierStokesAdjointStabilization::mass_residual( bool compute_jacobian,
+  template<class Mu>
+  void IncompressibleNavierStokesAdjointStabilization<Mu>::mass_residual( bool compute_jacobian,
                                                                       AssemblyContext& context,
                                                                       CachedValues& /*cache*/ )
   {
@@ -571,13 +584,13 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.u_var()); // J_{uu}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(_flow_vars.u_var(), _flow_vars.v_var()); // J_{uv}
+      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.u_var()); // J_{vu}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(_flow_vars.v_var(), _flow_vars.v_var()); // J_{vv}
+      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
 
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
@@ -586,9 +599,9 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.u_var()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(_flow_vars.p_var(), _flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.v_var()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
@@ -596,18 +609,18 @@ namespace GRINS
         Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
 
         Kuw = &context.get_elem_jacobian
-          (_flow_vars.u_var(), _flow_vars.w_var()); // J_{uw}
+          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
         Kvw = &context.get_elem_jacobian
-          (_flow_vars.v_var(), _flow_vars.w_var()); // J_{vw}
+          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
         Kwu = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.u_var()); // J_{wu}
+          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
         Kwv = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.v_var()); // J_{wv}
+          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
         Kww = &context.get_elem_jacobian
-          (_flow_vars.w_var(), _flow_vars.w_var()); // J_{ww}
+          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
 
         Kpw = &context.get_elem_jacobian
-          (_flow_vars.p_var(), _flow_vars.w_var()); // J_{pw}
+          (this->_flow_vars.p_var(), this->_flow_vars.w_var()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -628,10 +641,10 @@ namespace GRINS
 
         /*
           libMesh::Gradient grad_u, grad_v, grad_w;
-          grad_u = context.interior_gradient(_flow_vars.u_var(), qp);
-          grad_v = context.interior_gradient(_flow_vars.v_var(), qp);
+          grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
+          grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
           if (_dim == 3)
-          grad_w = context.interior_gradient(_flow_vars.w_var(), qp);
+          grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
         */
 
         libMesh::Real tau_M;
@@ -644,10 +657,13 @@ namespace GRINS
 
         libMesh::Real d_RM_t_uvw_duvw;
 
+	// Compute the viscosity at this qp
+	libMesh::Real _mu_qp = this->_mu(context, qp);
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_momentum_and_derivs
-              ( context, qp, g, G, this->_rho, U, this->_mu,
+              ( context, qp, g, G, this->_rho, U, _mu_qp,
                 tau_M, d_tau_M_d_rho, d_tau_M_dU,
                 false );
             this->_stab_helper.compute_res_momentum_transient_and_derivs
@@ -656,7 +672,7 @@ namespace GRINS
           }
         else
           {
-            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, this->_mu, false );
+            tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
             RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );
           }
 
@@ -665,7 +681,7 @@ namespace GRINS
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+            Fp(i) -= tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {
@@ -674,19 +690,19 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                    Kpu(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](0)*JxW[qp];
+                    Kpu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                    Kpu(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](0)*fixed_deriv*JxW[qp];
 
-                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                    Kpv(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](1)*JxW[qp];
+                    Kpv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                    Kpv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](1)*fixed_deriv*JxW[qp];
                   }
 
                 if(this->_dim == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
-                        (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
-                        (*Kpw)(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](2)*JxW[qp];
+                        (*Kpw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t*p_dphi[i][qp]*fixed_deriv*JxW[qp];
+                        (*Kpw)(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](2)*fixed_deriv*JxW[qp];
                       }
                   }
               }
@@ -695,18 +711,18 @@ namespace GRINS
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+              _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
-            //libMesh::RealGradient zeroth_order_term = - _rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
+            //libMesh::RealGradient zeroth_order_term = - this->_rho*u_phi[i][qp]*(grad_u + grad_v + grad_w);
 
-            Fu(i) += tau_M*RM_t(0)*test_func*JxW[qp];
+            Fu(i) -= tau_M*RM_t(0)*test_func*JxW[qp];
 
-            Fv(i) += tau_M*RM_t(1)*test_func*JxW[qp];
+            Fv(i) -= tau_M*RM_t(1)*test_func*JxW[qp];
 
             if(this->_dim == 3)
               {
-                (*Fw)(i) += tau_M*RM_t(2)*test_func*JxW[qp];
+                (*Fw)(i) -= tau_M*RM_t(2)*test_func*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -716,39 +732,39 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                    Kuu(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                    Kuu(i,j) += tau_M*RM_t(0)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kuu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                    Kuu(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*fixed_deriv*JxW[qp];
+                    Kuu(i,j) -= tau_M*RM_t(0)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kuv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                    Kuv(i,j) += tau_M*RM_t(0)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kuv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                    Kuv(i,j) -= tau_M*RM_t(0)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kvu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                    Kvu(i,j) += tau_M*RM_t(1)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kvu(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                    Kvu(i,j) -= tau_M*RM_t(1)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                    Kvv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                    Kvv(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                    Kvv(i,j) += tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                    Kvv(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                    Kvv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*fixed_deriv*JxW[qp];
+                    Kvv(i,j) -= tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                   }
                 if(this->_dim == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
-                        (*Kuw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
-                        (*Kuw)(i,j) += tau_M*RM_t(0)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kuw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(0)*test_func*fixed_deriv*JxW[qp];
+                        (*Kuw)(i,j) -= tau_M*RM_t(0)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kvw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
-                        (*Kvw)(i,j) += tau_M*RM_t(1)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kvw)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(1)*test_func*fixed_deriv*JxW[qp];
+                        (*Kvw)(i,j) -= tau_M*RM_t(1)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kwu)(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kwu)(i,j) += tau_M*RM_t(2)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kwu)(i,j) -= d_tau_M_dU(0)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kwu)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(0)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kwv)(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kwv)(i,j) += tau_M*RM_t(2)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kwv)(i,j) -= d_tau_M_dU(1)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kwv)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
 
-                        (*Kww)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
-                        (*Kww)(i,j) += tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*JxW[qp];
-                        (*Kww)(i,j) += tau_M*RM_t(2)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
+                        (*Kww)(i,j) -= d_tau_M_dU(2)*u_phi[j][qp]*RM_t(2)*test_func*fixed_deriv*JxW[qp];
+                        (*Kww)(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*fixed_deriv*JxW[qp];
+                        (*Kww)(i,j) -= tau_M*RM_t(2)*d_test_func_dU(2)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                       }
                   }
               }
@@ -763,3 +779,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesAdjointStabilization);

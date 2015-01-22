@@ -1,0 +1,87 @@
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+mesh_nx1 = 10
+mesh_nx2 = 10 
+
+domain_x1_max = 5.0
+
+# Options for tiem solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 10 
+max_linear_iterations = 2500
+
+initial_linear_tolerance = 1.0e-12
+
+verify_analytic_jacobians = 1.e-6
+
+[Materials]
+
+[./Viscosity]
+
+#mu = '2.95456e-5' #[kg/m-s]
+viscosity = 'parsed'
+mu = 1.0
+
+# Visualization options
+[vis-options]
+output_vis_time_series = false 
+output_vis = 'false' 
+vis_output_file_prefix = couette_poiseuille 
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true' 
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'Stokes'
+
+# Options for Stokes physics
+[./Stokes]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+rho = 1.0
+
+bc_ids = '1 3 2 0'
+bc_types = 'parabolic_profile parabolic_profile no_slip no_slip'
+
+parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_coeffs_3 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_var_1 = 'u'
+parabolic_profile_var_3 = 'u'
+parabolic_profile_fix_1 = 'v'
+parabolic_profile_fix_3 = 'v'
+
+pin_pressure = true
+pin_value = 100.0
+pin_location = '2.5 0.5'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
+[]

@@ -55,7 +55,6 @@ namespace GRINS
 
     void omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                     const libMesh::Real rho,
-                    const libMesh::Real R_mix,
                     const std::vector<libMesh::Real>& mass_fractions,
                     std::vector<libMesh::Real>& omega_dot );
 

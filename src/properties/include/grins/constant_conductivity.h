@@ -26,6 +26,9 @@
 #ifndef GRINS_CONSTANT_CONDUCTIVITY_H
 #define GRINS_CONSTANT_CONDUCTIVITY_H
 
+//GRINS
+#include "grins/assembly_context.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -42,6 +45,10 @@ namespace GRINS
 
     libMesh::Real operator()() const;
 
+    libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
+
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
+
     libMesh::Real operator()( const libMesh::Real T ) const;
 
     libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
@@ -52,13 +59,26 @@ namespace GRINS
 
     ConstantConductivity();
     
-    const libMesh::Real _k;
+    libMesh::Real _k;
 
   };
   
   /* ------------------------- Inline Functions -------------------------*/
   inline
   libMesh::Real ConstantConductivity::operator()() const
+  {
+    return _k;
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::operator()( AssemblyContext& /*context*/, unsigned int /*qp*/ ) const
+  {
+    return _k;
+  }
+
+  inline
+  libMesh::Real ConstantConductivity::operator()( const libMesh::Point& /*p*/,
+                                                  const libMesh::Real /*time*/ )
   {
     return _k;
   }

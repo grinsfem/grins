@@ -16,7 +16,7 @@ Engineering and Sciences ([ICES](https://www.ices.utexas.edu))
 at [The University of Texas at Austin](https://www.utexas.edu).
 
 We encourage pull requests for new features, bug fixes, etc. For questions regarding development,
-we have a grins-devel Google group setup. For user related questions, please use the grins-users
+we have a [grins-devel](https://groups.google.com/forum/#!forum/grins-devel) Google group setup. For user related questions, please use the [grins-users](https://groups.google.com/forum/#!forum/grins-users)
 group.
 
 Dependencies
@@ -27,7 +27,7 @@ Requirements
 
 In addition to a modern C++ compiler,
 GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git)
-finite element library (currently version 0.9.2.2 or later) as well as the Boost C++ library.
+finite element library (currently version 1.0.0 prerelease) as well as the Boost C++ library.
 
 Optional Packages
 -----------------

@@ -36,7 +36,8 @@ namespace GRINS
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
-  class HeatTransfer : public HeatTransferBase
+  template<class Conductivity>
+  class HeatTransfer : public HeatTransferBase<Conductivity>
   {
   public:
 
@@ -46,7 +47,11 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
-    
+
+    //! Register postprocessing variables for HeatTransfer
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
@@ -64,9 +69,18 @@ namespace GRINS
 				AssemblyContext& context,
 				CachedValues& cache );
 
+    //! Compute value of postprocessed quantities at libMesh::Point.
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   private:
 
     HeatTransfer();
+
+    //! Index from registering this postprocessed quantity
+    unsigned int _k_index;
 
   };
 

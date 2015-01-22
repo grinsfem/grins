@@ -28,27 +28,33 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 namespace GRINS
 {
 
-  IncompressibleNavierStokesStabilizationBase::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
+  template<class Mu>
+  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
                                                                                             const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name,input),
+    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
       _stab_helper( input )
   {
     return;
   }
 
-  IncompressibleNavierStokesStabilizationBase::~IncompressibleNavierStokesStabilizationBase()
+  template<class Mu>
+  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
   {
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationBase::init_context( AssemblyContext& context )
+  template<class Mu>
+  void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
   {
     // First call base class
-    IncompressibleNavierStokesBase::init_context(context);
+    IncompressibleNavierStokesBase<Mu>::init_context(context);
   
     // We need pressure derivatives
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
@@ -59,10 +65,11 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  template<class Mu>
+  void IncompressibleNavierStokesStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    IncompressibleNavierStokesBase::init_variables(system);
+    IncompressibleNavierStokesBase<Mu>::init_variables(system);
 
     _stab_helper.init(*system);
 
@@ -70,3 +77,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesStabilizationBase);

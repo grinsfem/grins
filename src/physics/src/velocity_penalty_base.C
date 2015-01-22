@@ -26,6 +26,11 @@
 // This class
 #include "grins/velocity_penalty_base.h"
 
+// GRINS
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/inc_nav_stokes_macro.h"
+
 // libMesh
 #include "libmesh/parsed_function.h"
 #include "libmesh/zero_function.h"
@@ -33,8 +38,9 @@
 namespace GRINS
 {
 
-  VelocityPenaltyBase::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase(physics_name, input),
+  template<class Mu>
+  VelocityPenaltyBase<Mu>::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu>(physics_name, input),
     _quadratic_scaling(false)
   {
     this->read_input_options(input);
@@ -42,12 +48,14 @@ namespace GRINS
     return;
   }
 
-  VelocityPenaltyBase::~VelocityPenaltyBase()
+  template<class Mu>
+  VelocityPenaltyBase<Mu>::~VelocityPenaltyBase()
   {
     return;
   }
-
-  void VelocityPenaltyBase::read_input_options( const GetPot& input )
+  
+  template<class Mu>  
+  void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
   {
     std::string base_physics_name = "VelocityPenalty";
     if (this->_physics_name == velocity_penalty2 ||
@@ -83,7 +91,8 @@ namespace GRINS
       input("Physics/"+base_physics_name+"/quadratic_scaling", false);
   }
 
-  bool VelocityPenaltyBase::compute_force
+  template<class Mu>
+  bool VelocityPenaltyBase<Mu>::compute_force
     ( const libMesh::Point& point,
       const libMesh::Real time,
       const libMesh::NumberVectorValue& U,
@@ -174,3 +183,6 @@ namespace GRINS
   }
 
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_INC_NS_SUBCLASS(VelocityPenaltyBase);

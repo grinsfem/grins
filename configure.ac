@@ -2,7 +2,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(grins, 0.4.0, pbauman@ices.utexas.edu)
+AC_INIT(grins, 0.5.0, grins-users@googlegroups.com)
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADER(grins_config.h.tmp)
@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(1.0.0,yes)
+AX_PATH_LIBMESH_NEW(0.9.4,yes)
 AX_LIBMESH_DIM()
 
 AC_ARG_ENABLE([libmesh-flags],
@@ -330,6 +330,8 @@ AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,                        [chmod
 AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,                        [chmod +x test/test_ns_couette_flow_2d_y.sh])
 AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod +x test/test_ns_poiseuille_flow.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity.sh])
+AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh, [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
@@ -372,7 +374,7 @@ AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
-
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
@@ -400,21 +402,31 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_euc
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
+AC_CONFIG_FILES(test/suspended_cable_test.sh,                    [chmod +x test/suspended_cable_test.sh])
+
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_xy.sh,                            [chmod +x test/3d_low_mach_jacobians_xy.sh])
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_xz.sh,                            [chmod +x test/3d_low_mach_jacobians_xz.sh])
+AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [chmod +x test/3d_low_mach_jacobians_yz.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
 AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	     [chmod +x examples/cavity_benchmark/run.sh])
+AC_CONFIG_FILES(examples/cavity_benchmark_no_stab/run.sh,	     [chmod +x examples/cavity_benchmark_no_stab/run.sh])
 AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	     [chmod +x examples/backward_facing_step/run.sh])
-AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	     [chmod +x examples/lid_driven_cavity/run.sh])
-AC_CONFIG_FILES(examples/velocity_penalty/run.sh,	     [chmod +x examples/velocity_penalty/run.sh])
-AC_CONFIG_FILES(examples/convection_cell/run.sh,	     [chmod +x examples/convection_cell/run.sh])
+AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	         [chmod +x examples/lid_driven_cavity/run.sh])
+AC_CONFIG_FILES(examples/velocity_penalty/run.sh,	         [chmod +x examples/velocity_penalty/run.sh])
+AC_CONFIG_FILES(examples/convection_cell/run.sh,	         [chmod +x examples/convection_cell/run.sh])
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	             [chmod +x examples/mass_injection/run.sh])
-AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	     [chmod +x examples/rayleigh_taylor/run.sh])
-AC_CONFIG_FILES(examples/simple_fan/run.sh,	             [chmod +x examples/simple_fan/run.sh])
+AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	         [chmod +x examples/rayleigh_taylor/run.sh])
+AC_CONFIG_FILES(examples/simple_fan/run.sh,	                 [chmod +x examples/simple_fan/run.sh])
 AC_CONFIG_FILES(examples/simple_prop/run.sh,	             [chmod +x examples/simple_prop/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
 AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
+AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/elastic_sheet/run.sh])
+AC_CONFIG_FILES(examples/cable_displacement/run.sh,          [chmod +x examples/cable_displacement/run.sh])
+AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/inflating_sheet/run.sh])
+AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/suspended_cable/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files

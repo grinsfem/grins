@@ -29,6 +29,7 @@
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
 #include "grins/steady_mesh_adaptive_solver.h"
+#include "grins/displacement_continuation_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -53,7 +54,13 @@ namespace GRINS
 
     std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
 
-    if(transient && !mesh_adaptive)
+    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
+
+    if( solver_type == std::string("displacement_continuation") )
+      {
+        solver.reset( new DisplacementContinuationSolver(input) );
+      }
+    else if(transient && !mesh_adaptive)
       {
         solver.reset( new UnsteadySolver(input) );
       }

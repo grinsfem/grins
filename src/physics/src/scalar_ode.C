@@ -131,16 +131,13 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fs =
             context.get_elem_residual(_scalar_ode_var); // R_{s}
 
-    const std::vector<libMesh::dof_id_type>& dof_indices =
-      context.get_dof_indices(_scalar_ode_var);
-
     const libMesh::Number time_deriv =
       (*time_deriv_function)(context, libMesh::Point(0),
                              context.get_time());
 
     Fs(0) += time_deriv;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
         // FIXME: we should replace this hacky FDM with a hook to the
         // AD fparser stuff
@@ -162,9 +159,8 @@ namespace GRINS
         Us(0) = s;
         time_deriv_jacobian /= (2*this->_epsilon);
 
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += time_deriv_jacobian;
+        Kss(0,0) += time_deriv_jacobian *
+          context.get_elem_solution_derivative();
       }
 
     return;
@@ -181,22 +177,19 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fs =
             context.get_elem_residual(_scalar_ode_var); // R_{s}
 
-    const std::vector<libMesh::dof_id_type>& dof_indices =
-      context.get_dof_indices(_scalar_ode_var);
-
     const libMesh::Number mass_res =
       (*mass_residual_function)(context, libMesh::Point(0),
                                 context.get_time());
 
-    Fs(0) += mass_res;
+    Fs(0) -= mass_res;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
         // FIXME: we should replace this hacky FDM with a hook to the
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(_scalar_ode_var)); // U_{s}
+            (context.get_elem_solution_rate(_scalar_ode_var)); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
@@ -212,9 +205,8 @@ namespace GRINS
         Us(0) = s;
         mass_residual_jacobian /= (2*this->_epsilon);
 
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += mass_residual_jacobian;
+        Kss(0,0) -= mass_residual_jacobian *
+          context.get_elem_solution_rate_derivative();
       }
 
     return;
@@ -231,16 +223,13 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fs =
             context.get_elem_residual(_scalar_ode_var); // R_{s}
 
-    const std::vector<libMesh::dof_id_type>& dof_indices =
-      context.get_dof_indices(_scalar_ode_var);
-
     const libMesh::Number constraint =
       (*constraint_function)(context, libMesh::Point(0),
                              context.get_time());
 
     Fs(0) += constraint;
 
-    if (compute_jacobian && context.elem_solution_derivative)
+    if (compute_jacobian)
       {
         // FIXME: we should replace this hacky FDM with a hook to the
         // AD fparser stuff
@@ -262,9 +251,8 @@ namespace GRINS
         Us(0) = s;
         constraint_jacobian /= (2*this->_epsilon);
 
-        libmesh_assert_equal_to (context.elem_solution_derivative, 1.0);
-
-        Kss(0,0) += constraint_jacobian;
+        Kss(0,0) += constraint_jacobian *
+          context.get_elem_solution_derivative();
       }
 
     return;

@@ -78,8 +78,6 @@ int main(int argc, char* argv[])
       Y[s] = input( "Conditions/mass_fractions", 0.0, s );
     }
 
-  libMesh::Real R_mix = antioch_mixture.R_mix(Y);
-
   std::vector<libMesh::Real> omega_dot(n_species,0.0);
 
   libMesh::Real T = T0;
@@ -101,7 +99,7 @@ int main(int argc, char* argv[])
     { 
       Antioch::TempCache<libMesh::Real> T_cache(T);
       
-      antioch_kinetics.omega_dot( T_cache, rho, R_mix, Y, omega_dot );
+      antioch_kinetics.omega_dot( T_cache, rho, Y, omega_dot );
      
       output.open( "omega_dot.dat", std::ios::app );
       output << T << " ";

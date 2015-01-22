@@ -33,7 +33,7 @@
 using namespace libMesh;
 using namespace GRINS;
 
-int main( int argc, char* argv[] )
+int main( /*int argc, char* argv[]*/ )
 {
   std::vector<std::vector<unsigned int> > index_sets(4);
   index_sets[0].resize(2);

@@ -198,43 +198,43 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
-                    Kuu(i,j) += -tau_M*residual(0)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
-                    Kuu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(0)*test_func*JxW[qp];
-                    Kuv(i,j) += -tau_M*residual(0)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
-                    Kuv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(0)*test_func*JxW[qp];
-                    Kvu(i,j) += -tau_M*residual(1)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
-                    Kvu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(1)*test_func*JxW[qp];
-                    Kvv(i,j) += -tau_M*residual(1)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
-                    Kvv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(1)*test_func*JxW[qp];
+                    Kuu(i,j) += -tau_M*residual(0)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                    Kuu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(0)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                    Kuv(i,j) += -tau_M*residual(0)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                    Kuv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(0)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                    Kvu(i,j) += -tau_M*residual(1)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                    Kvu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(1)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                    Kvv(i,j) += -tau_M*residual(1)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                    Kvv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(1)*test_func*JxW[qp] * context.get_elem_solution_derivative();
                   }
 
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
-                    // KuT(i,j) += -tau_M*residual(0)*dtest_func_dT[j]*JxW[qp];
-                    KuT(i,j) += -tau_M*d_residual_dT(0)*T_phi[j][qp]*test_func*JxW[qp];
-                    // KvT(i,j) += -tau_M*residual(1)*dtest_func_dT[j]*JxW[qp];
-                    KvT(i,j) += -tau_M*d_residual_dT(1)*T_phi[j][qp]*test_func*JxW[qp];
+                    // KuT(i,j) += -tau_M*residual(0)*dtest_func_dT[j]*JxW[qp] * context.get_elem_solution_derivative();
+                    KuT(i,j) += -tau_M*d_residual_dT(0)*T_phi[j][qp]*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                    // KvT(i,j) += -tau_M*residual(1)*dtest_func_dT[j]*JxW[qp] * context.get_elem_solution_derivative();
+                    KvT(i,j) += -tau_M*d_residual_dT(1)*T_phi[j][qp]*test_func*JxW[qp] * context.get_elem_solution_derivative();
                   }
                 if (_dim == 3)
                   {
                     for (unsigned int j=0; j != n_T_dofs; ++j)
                       {
-                        // KwT(i,j) += -tau_M*residual(2)*dtest_func_dT[j]*JxW[qp];
-                        (*KwT)(i,j) += -tau_M*d_residual_dT(2)*T_phi[j][qp]*test_func*JxW[qp];
+                        // KwT(i,j) += -tau_M*residual(2)*dtest_func_dT[j]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*KwT)(i,j) += -tau_M*d_residual_dT(2)*T_phi[j][qp]*test_func*JxW[qp] * context.get_elem_solution_derivative();
                       }
 
                     for (unsigned int j=0; j != n_u_dofs; ++j)
                       {
-                        (*Kuw)(i,j) += -tau_M*residual(0)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
-                        (*Kuw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(0)*test_func*JxW[qp];
-                        (*Kvw)(i,j) += -tau_M*residual(1)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
-                        (*Kvw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(1)*test_func*JxW[qp];
-                        (*Kwu)(i,j) += -tau_M*residual(2)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp];
-                        (*Kwu)(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(2)*test_func*JxW[qp];
-                        (*Kwv)(i,j) += -tau_M*residual(2)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp];
-                        (*Kwv)(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(2)*test_func*JxW[qp];
-                        (*Kww)(i,j) += -tau_M*residual(2)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp];
-                        (*Kww)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(2)*test_func*JxW[qp];
+                        (*Kuw)(i,j) += -tau_M*residual(0)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kuw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(0)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kvw)(i,j) += -tau_M*residual(1)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kvw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(1)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kwu)(i,j) += -tau_M*residual(2)*d_test_func_dU(0)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kwu)(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*residual(2)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kwv)(i,j) += -tau_M*residual(2)*d_test_func_dU(1)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kwv)(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*residual(2)*test_func*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kww)(i,j) += -tau_M*residual(2)*d_test_func_dU(2)*u_phi[j][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                        (*Kww)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*residual(2)*test_func*JxW[qp] * context.get_elem_solution_derivative();
                       }
                   }
 
@@ -347,18 +347,18 @@ namespace GRINS
               {
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
-                    KpT(i,j) += tau_M*d_residual_dT*T_phi[j][qp]*p_dphi[i][qp]*JxW[qp];
+                    KpT(i,j) += tau_M*d_residual_dT*T_phi[j][qp]*p_dphi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
                   }
 
                 for (unsigned int j=0; j != n_u_dofs; ++j)
                   {
-                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
-                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
+                    Kpu(i,j) += d_tau_M_dU(0)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
+                    Kpv(i,j) += d_tau_M_dU(1)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
                   }
                 if( this->_dim == 3 )
                   for (unsigned int j=0; j != n_u_dofs; ++j)
                     {
-                      (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp];
+                      (*Kpw)(i,j) += d_tau_M_dU(2)*u_phi[j][qp]*residual*p_dphi[i][qp]*JxW[qp] * context.get_elem_solution_derivative();
                     }
               }
           }

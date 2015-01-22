@@ -171,6 +171,19 @@ namespace GRINS
     return ap;
   }
 
+  void MultiphysicsSystem::register_postprocessing_vars( const GetPot& input,
+                                                         PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+        (physics_iter->second)->register_postprocessing_vars( input, postprocessing );
+      }
+
+    return;
+  }
+
   void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
   {
     AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
@@ -327,15 +340,16 @@ namespace GRINS
     return has_physics;
   }
 
-  void MultiphysicsSystem::compute_element_cache( const AssemblyContext& context,
-						  const std::vector<libMesh::Point>& points,
-						  CachedValues& cache ) const
+  void MultiphysicsSystem::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                           const AssemblyContext& context,
+                                                           const libMesh::Point& point,
+                                                           libMesh::Real& value )
   {
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
-	(physics_iter->second)->compute_element_cache( context, points, cache );
+        (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
       }
     return;
   }

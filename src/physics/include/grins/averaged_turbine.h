@@ -49,7 +49,8 @@ namespace GRINS
     may also be accelerated or decelerated by external power source or
     sink.
    */
-  class AveragedTurbine : public IncompressibleNavierStokesBase
+  template<class Viscosity> 
+  class AveragedTurbine : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 

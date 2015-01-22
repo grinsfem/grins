@@ -30,6 +30,7 @@
 #include "grins/physics.h"
 #include "primitive_flow_fe_variables.h"
 #include "primitive_temp_fe_variables.h"
+#include "grins/heat_transfer_macros.h"
 
 namespace GRINS
 {
@@ -38,6 +39,7 @@ namespace GRINS
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
    */
+  template<class Conductivity>
   class HeatTransferBase : public Physics
   {
   public:
@@ -73,7 +75,10 @@ namespace GRINS
               are assumed constant */
     /*! \todo Shouldn't this rho be the same as the one in the flow? Need
               to figure out how to have those shared */
-    libMesh::Number _rho, _Cp, _k;
+    libMesh::Number _rho, _Cp;
+
+    //! Conductivity
+    Conductivity _k;
 
   private:
     HeatTransferBase();

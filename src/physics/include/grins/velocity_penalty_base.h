@@ -41,7 +41,8 @@
 namespace GRINS
 {
 
-  class VelocityPenaltyBase : public IncompressibleNavierStokesBase
+  template<class Viscosity>
+  class VelocityPenaltyBase : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 

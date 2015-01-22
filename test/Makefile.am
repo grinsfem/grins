@@ -3,6 +3,8 @@ check_PROGRAMS =
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
 check_PROGRAMS += test_stokes_poiseuille_flow
+check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity
+check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
 check_PROGRAMS += test_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
@@ -26,6 +28,11 @@ check_PROGRAMS += gas_solid_catalytic_wall_unit
 check_PROGRAMS += constant_catalycity_unit
 check_PROGRAMS += arrhenius_catalycity_unit
 check_PROGRAMS += power_law_catalycity_unit
+check_PROGRAMS += elastic_sheet_regression
+check_PROGRAMS += 3d_low_mach_jacobians_xy
+check_PROGRAMS += 3d_low_mach_jacobians_xz
+check_PROGRAMS += 3d_low_mach_jacobians_yz
+check_PROGRAMS += suspended_cable_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -75,6 +82,8 @@ endif
 test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
 test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
 test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
+test_stokes_poiseuille_flow_parsed_viscosity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity.C
+test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
 test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
 test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
 test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
@@ -98,6 +107,11 @@ gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
 constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
 arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
 power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
+elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
+3d_low_mach_jacobians_xy_SOURCES = 3d_low_mach_jacobians.C
+3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
+3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
+suspended_cable_regression_SOURCES = suspended_cable_regression.C
 
 #Define tests to actually be run
 TESTS =
@@ -121,6 +135,8 @@ TESTS += power_law_catalycity_unit
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
 TESTS += test_stokes_poiseuille_flow.sh
+TESTS += test_stokes_poiseuille_flow_parsed_viscosity.sh
+TESTS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
 TESTS += test_ns_poiseuille_flow.sh
 TESTS += test_axi_ns_poiseuille_flow.sh
 TESTS += test_axi_ns_con_cyl_flow.sh
@@ -154,6 +170,11 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_cata
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
+TESTS += elastic_mooney_rivlin_sheet_regression.sh
+TESTS += 3d_low_mach_jacobians_xy.sh
+TESTS += 3d_low_mach_jacobians_xz.sh
+TESTS += 3d_low_mach_jacobians_yz.sh
+TESTS += suspended_cable_test.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
@@ -164,6 +185,8 @@ shellfiles_src =
 shellfiles_src += test_ns_couette_flow_2d_x.sh
 shellfiles_src += test_ns_couette_flow_2d_y.sh
 shellfiles_src += test_stokes_poiseuille_flow.sh
+shellfiles_src += test_stokes_poiseuille_flow_parsed_viscosity.sh
+shellfiles_src += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
 shellfiles_src += test_ns_poiseuille_flow.sh
 shellfiles_src += test_axi_ns_poiseuille_flow.sh
 shellfiles_src += test_axi_ns_con_cyl_flow.sh
@@ -205,6 +228,10 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_const
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
+shellfiles_src += 3d_low_mach_jacobians_xy.sh
+shellfiles_src += 3d_low_mach_jacobians_xz.sh
+shellfiles_src += 3d_low_mach_jacobians_yz.sh
+shellfiles_src += suspended_cable_test.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
@@ -212,6 +239,9 @@ EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
+
+# If we have tests fail, libmesh_error() may leave output
+CLEANFILES += traceout*.txt temp_print_trace.*
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

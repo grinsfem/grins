@@ -36,14 +36,25 @@ namespace GRINS
   //! Physics class for Incompressible Navier-Stokes
   /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
+    This is a templated class, the class Viscosity can be instantiated as a specific type
+    (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
+    to specify a constant or spatially varying viscosity in the input file
    */
-  class IncompressibleNavierStokes : public IncompressibleNavierStokesBase
+  template<class Viscosity>
+  class IncompressibleNavierStokes : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 
     IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input);
 
     ~IncompressibleNavierStokes();
+
+    //! Read options from GetPot input file.
+    virtual void read_input_options( const GetPot& input );
+
+    //! Register postprocessing variables for IncompressibleNavierStokes
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
@@ -67,13 +78,22 @@ namespace GRINS
 				AssemblyContext& context,
 				CachedValues& cache );
 
+    //! Compute value of postprocessed quantities at libMesh::Point.
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   protected:
 
     PressurePinning _p_pinning;
 
     //! Enable pressure pinning
     bool _pin_pressure;
- 
+
+    //! Index from registering this quantity
+    unsigned int _mu_index;
+
   private:
     IncompressibleNavierStokes();
 

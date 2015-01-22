@@ -57,7 +57,7 @@
     <species name="C">
       <atomArray>C:1 </atomArray>
       <thermo>
-        <NASA9 Tmax="200." Tmin="0." P0="100000.">
+        <NASA9 Tmax="200." Tmin="1.0" P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 2.51419772e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 8.54471572e+04, 4.69204550e+00 
            </floatArray>
@@ -97,7 +97,7 @@
     <species name="CN">
       <atomArray>C:1 N:1 </atomArray>
       <thermo>
-        <NASA9 Tmax="200." Tmin="0." P0="100000.">
+        <NASA9 Tmax="200." Tmin="1.0" P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 3.50104976e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 5.17171008e+04, 4.42372750e+00
            </floatArray>
@@ -138,7 +138,7 @@
     <species name="N">
       <atomArray>N:1 </atomArray>
       <thermo>
-        <NASA9 Tmax="1000." Tmin="0." P0="100000.">
+        <NASA9 Tmax="1000." Tmin="1.0" P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 2.50000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 5.61046378e+04, 4.19390932e+00
            </floatArray>
@@ -174,7 +174,7 @@
     <species name="N2">
       <atomArray>N:2 </atomArray>
       <thermo>
-        <NASA9 Tmax="200." Tmin="0." P0="100000.">
+        <NASA9 Tmax="200." Tmin="1.0" P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 3.50080109e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, -1.04381074e+03, 3.09890983e+00
            </floatArray>

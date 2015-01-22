@@ -67,6 +67,18 @@ EXTRA_DIST += $(cavitybenchmark_DATA)
 cavity_SOURCES = cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
 
+#=======================================================================
+# Cavity Benchmark No Stability
+#=======================================================================
+cavitybenchmarknostabdir = $(prefix)/examples/cavity_benchmark_no_stab
+cavitybenchmarknostab_PROGRAMS = cavity_no_stab
+cavitybenchmarknostab_DATA  = $(top_srcdir)/examples/cavity_benchmark_no_stab/cavity_no_stab.in
+cavitybenchmarknostab_SCRIPTS = $(top_builddir)/examples/cavity_benchmark_no_stab/run.sh
+
+EXTRA_DIST += $(cavitybenchmarknostab_DATA)
+
+cavity_no_stab_SOURCES = cavity_benchmark_no_stab/cavity_no_stab.C
+cavity_no_stab_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
 # Heated Channel Example
@@ -204,6 +216,59 @@ bunsen_SOURCES += laminar_flame/ignite_initial_guess.C
 
 bunsen_LDADD = $(LIBGRINS_LIBS)
 bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
+
+
+#=======================================================================
+# Elastic Sheet Example
+#=======================================================================
+elasticsheetdir = $(prefix)/examples/elastic_sheet
+elasticsheet_DATA = $(top_srcdir)/examples/elastic_sheet/sheet.in
+elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
+
+EXTRA_DIST += $(elasticsheet_DATA)
+
+#=======================================================================
+# Inflating Sheet Example
+#=======================================================================
+inflatingsheetdir = $(prefix)/examples/inflating_sheet
+inflatingsheet_PROGRAMS = sheet
+inflatingsheet_DATA  = $(top_srcdir)/examples/inflating_sheet/sheet.in
+inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/sheet_coarse.e
+inflatingsheet_SCRIPTS = $(top_builddir)/examples/inflating_sheet/run.sh
+
+EXTRA_DIST += $(inflatingsheet_DATA)
+
+sheet_SOURCES  = inflating_sheet/inflating_sheet.C
+sheet_SOURCES += inflating_sheet/inflating_sheet_solver_factory.C
+sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
+
+sheet_LDADD = $(LIBGRINS_LIBS)
+sheet_CPPFLAGS = -I$(top_srcdir)/examples/inflating_sheet $(AM_CPPFLAGS)
+
+#=======================================================================
+# Elastic Cable Example
+#=======================================================================
+cabledispdir = $(prefix)/examples/cable_displacement
+cabledisp_DATA = $(top_srcdir)/examples/cable_displacement/cable.in
+cabledisp_SCRIPTS = $(top_builddir)/examples/cable_displacement/run.sh
+
+EXTRA_DIST += $(cabledisp_DATA)
+
+#=======================================================================
+# Suspended Cable Example
+#=======================================================================
+suspendedcabledir = $(prefix)/examples/suspended_cable
+suspendedcable_PROGRAMS = cable
+suspendedcable_DATA  = $(top_srcdir)/examples/suspended_cable/cable.in
+suspendedcable_SCRIPTS = $(top_builddir)/examples/suspended_cable/run.sh
+
+EXTRA_DIST += $(suspendedcable_DATA)
+
+cable_SOURCES  = suspended_cable/suspended_cable.C
+
+cable_LDADD = $(LIBGRINS_LIBS)
+cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
+
 
 MAINTAINERCLEANFILES = Makefile.in
 

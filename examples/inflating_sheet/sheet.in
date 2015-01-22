@@ -1,0 +1,96 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'ElasticMembrane
+                   ElasticMembraneConstantPressure'
+
+# Options for Incompressible Navier-Stokes physics
+[./ElasticMembrane]
+
+h0 = '0.05'
+
+FE_family = 'LAGRANGE'
+order = 'FIRST'
+
+elasticity_model = 'MooneyRivlin'
+
+bc_ids = '1'
+bc_types = 'pinned'
+
+ic_ids = '1'
+ic_types = 'parsed'
+ic_variables = 'w'
+ic_values = '0.3*cos(pi/2*sqrt(x^2+y^2))'
+
+[../ElasticMembraneConstantPressure]
+
+pressure = '0.3'
+
+[../HookesLaw]
+
+E = '30'
+nu = '0.3'
+
+[../MooneyRivlin]
+
+C1 = '24'
+C2 = '3.0'
+
+[]
+
+[SolverOptions]
+
+solver_type = 'pressure_continuation'
+
+[./PressureContinuation]
+
+final_pressure = '3.0'
+n_increments = '50'
+
+[]
+
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file'
+mesh_filename = 'sheet_coarse.e'
+
+#uniformly_refine = '1'
+                                                                                                                                                                                                                                           
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+relative_residual_tolerance = '1.0e-10'
+
+max_nonlinear_iterations =  '50' 
+max_linear_iterations = '2500'
+
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+
+vis_output_file_prefix = 'sheet' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'InflatingElasticSheet'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+print_element_residuals = 'false'
+[]

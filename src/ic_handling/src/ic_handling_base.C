@@ -166,12 +166,12 @@ namespace GRINS
     return ic_type_out;
   }
 
-  void ICHandlingBase::init_ic_types( const libMesh::subdomain_id_type ic_id, 
-				      const std::string& ic_id_string, 
+  void ICHandlingBase::init_ic_types( const libMesh::subdomain_id_type /*ic_id*/, 
+				      const std::string& /*ic_id_string*/, 
 				      const int ic_type, 
 				      const std::string& ic_vars_string, 
 				      const std::string& ic_value_string, 
-				      const GetPot& input )
+				      const GetPot& /*input*/ )
   {
     SplitString(ic_vars_string, ":", _subfunction_variables);
 

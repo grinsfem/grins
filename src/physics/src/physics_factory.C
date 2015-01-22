@@ -56,11 +56,16 @@
 #include "grins/velocity_drag.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
+#include "grins/elastic_membrane.h"
+#include "grins/elastic_cable.h"
+#include "grins/elastic_membrane_constant_pressure.h"
+#include "grins/elastic_cable_constant_gravity.h"
 #include "grins/grins_physics_names.h"
 
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
 
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
@@ -69,6 +74,10 @@
 #include "grins/antioch_wilke_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
+
+#include "grins/hookes_law.h"
+#include "grins/incompressible_plane_stress_hyperelasticity.h"
+#include "grins/mooney_rivlin.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -138,58 +147,176 @@ namespace GRINS
   {
     if( physics_to_add == incompressible_navier_stokes )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new IncompressibleNavierStokes(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }          
       }
     else if( physics_to_add == stokes )
       {
-	physics_list[physics_to_add] =
-	  PhysicsPtr(new Stokes(physics_to_add,input));
-      }
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] =
+	      PhysicsPtr(new Stokes<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new Stokes<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
+      }      
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ConstantViscosity>(physics_to_add,input) );
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }  
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
-        physics_list[physics_to_add] = 
-          PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization(physics_to_add,input) );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ConstantViscosity>(physics_to_add,input) );
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }  
       }
     else if( physics_to_add == velocity_drag )
       {
-	physics_list[physics_to_add] =
-	  PhysicsPtr(new VelocityDrag(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDrag<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
-    else if( physics_to_add == velocity_penalty )
+    else if( physics_to_add == velocity_penalty ||
+             physics_to_add == velocity_penalty2 )
       {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new VelocityPenalty(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenalty<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenalty<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
-    else if( physics_to_add == velocity_penalty2 )
+    else if( physics_to_add == velocity_penalty_adjoint_stab ||
+             physics_to_add == velocity_penalty2_adjoint_stab )
       {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new VelocityPenalty(physics_to_add,input));
-      }
-    else if( physics_to_add == velocity_penalty_adjoint_stab )
-      {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
-      }
-    else if( physics_to_add == velocity_penalty2_adjoint_stab )
-      {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new VelocityPenaltyAdjointStabilization(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == averaged_fan )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new AveragedFan(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFan<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedFan<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == averaged_turbine )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new AveragedTurbine(physics_to_add,input));
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<ConstantViscosity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->visc_error(physics_to_add, viscosity);
+	  }
       }
     else if( physics_to_add == scalar_ode )
       {
@@ -198,18 +325,60 @@ namespace GRINS
       }
     else if( physics_to_add == heat_transfer )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatTransfer(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransfer<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransfer<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }
       }
     else if( physics_to_add == heat_transfer_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatTransferAdjointStabilization(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferAdjointStabilization<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferAdjointStabilization<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }		
       }
     else if( physics_to_add == heat_transfer_spgsm_stab )
       {
-        physics_list[physics_to_add] =
-          PhysicsPtr(new HeatTransferSPGSMStabilization(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferSPGSMStabilization<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatTransferSPGSMStabilization<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }        
       }
     else if( physics_to_add == heat_transfer_source )
       {
@@ -264,8 +433,22 @@ namespace GRINS
       }
     else if( physics_to_add == "HeatConduction" )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new HeatConduction(physics_to_add,input));
+	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+	
+	if( conductivity == "constant" )
+	  {	    
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatConduction<ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( conductivity == "parsed" )
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new HeatConduction<ParsedConductivity>(physics_to_add,input));
+	  }
+	else
+	  {
+	    this->conductivity_error(physics_to_add, conductivity);
+	  }	
       }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
@@ -334,6 +517,56 @@ namespace GRINS
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
         this->add_reacting_low_mach( input, physics_to_add, physics_list );
+      }
+    else if( physics_to_add == elastic_membrane )
+      {
+        std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "HookesLaw" );
+
+        if( elasticity_model == std::string("HookesLaw") )
+          {
+            physics_list[physics_to_add] =
+              // We need to track \lambda as an indendent variable
+              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input,true));
+          }
+        else if( elasticity_model == std::string("MooneyRivlin") )
+          {
+            physics_list[physics_to_add] =
+              // \lambda determined from incompressiblity
+              PhysicsPtr(new ElasticMembrane<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >(physics_to_add,input,false));
+          }
+        else
+          {
+            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
+                      << "       Valid selections are: Hookean" << std::endl;
+            libmesh_error();
+          }
+      }
+    else if( physics_to_add == elastic_membrane_constant_pressure )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ElasticMembraneConstantPressure(physics_to_add,input));
+      }
+    else if( physics_to_add == elastic_cable )
+      {
+        std::string elasticity_model = input("Physics/"+elastic_cable+"/elasticity_model", "HookesLaw" );
+
+        if( elasticity_model == std::string("HookesLaw") )
+          {
+            physics_list[physics_to_add] =
+              // We need to track \lambda as an indendent variable
+              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,true));
+          }
+        else
+          {
+            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
+                      << "       Valid selections are: Hookean" << std::endl;
+            libmesh_error();
+          }
+      }
+    else if( physics_to_add == elastic_cable_constant_gravity )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ElasticCableConstantGravity(physics_to_add,input));
       }
     else
       {
@@ -646,5 +879,26 @@ namespace GRINS
 	      << "================================================================" << std::endl;
     libmesh_error();
   }
+
+  void PhysicsFactory::visc_error( const std::string& physics,				  
+				   const std::string& viscosity ) const
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Viscosity model     = " << viscosity << std::endl	      
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
+  void PhysicsFactory::conductivity_error( const std::string& physics,				  
+				   const std::string& conductivity ) const
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Conductivity model     = " << conductivity << std::endl	      
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
 
 } // namespace GRINS
