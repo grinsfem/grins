@@ -80,12 +80,12 @@ namespace GRINS
 
     // The viscosity shape function gradients (in global coords.)
     // at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+    //const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
+    //context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
     
     // Quadrature point locations
-    const std::vector<libMesh::Point>& nu_qpoint = 
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
+    //const std::vector<libMesh::Point>& nu_qpoint = 
+    //context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
     
     libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
     
@@ -110,9 +110,9 @@ namespace GRINS
         libMesh::Gradient grad_nu;
         grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
         
-        const libMesh::Number  grad_nu_x = grad_nu(0);
-        const libMesh::Number  grad_nu_y = grad_nu(1);
-        const libMesh::Number  grad_nu_z = (this->_dim == 3)?grad_nu(2):0;
+        //const libMesh::Number  grad_nu_x = grad_nu(0);
+        //const libMesh::Number  grad_nu_y = grad_nu(1);
+        //const libMesh::Number  grad_nu_z = (this->_dim == 3)?grad_nu(2):0;
         
 	libMesh::Real jac = JxW[qp];
 	
@@ -135,7 +135,7 @@ namespace GRINS
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
 	
 	// The wall destruction term
-	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
+	//libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
 
 	// Stabilization terms
 

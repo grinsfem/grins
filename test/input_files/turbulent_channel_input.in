@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 40
-mesh_nx2 = 40
+mesh_nx1 = 5
+mesh_nx2 = 5
 
 domain_x1_max = 5.0
 domain_x2_max = 5.0
@@ -82,9 +82,10 @@ pin_location = '2.5 0.5'
 u_velocity = 'u'
 v_velocity = 'v'
 pressure = 'p'
+turbulent_viscosity = 'nu'
 
 # Options for Spalart Allmaras physics
-[./SpalartAllmaras]
+[../SpalartAllmaras]
 
 TU_order = FIRST
 
@@ -102,10 +103,5 @@ bc_ids = '0 1 2 3'
 bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
 bc_variables = 'nu nu nu nu'
 bc_values = '0.1 0.1 0.1 0.1'
-
-
-[../VariableNames]
-
-turbulent_viscosity = 'nu'
 
 []

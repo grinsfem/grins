@@ -321,12 +321,7 @@ namespace GRINS
                                       const std::string& bc_vars,
                                       const std::string& bc_value,
 				      const GetPot& input )
-  {
-
-    std::cout<<"Variable: "<<bc_vars<<std::endl;
-    std::cout<<"Id: "<<bc_id<<std::endl;
-    std::cout<<"Number: "<<bc_value<<std::endl;
-
+  {    
     switch(bc_type)
       {
       case(PERIODIC):
@@ -421,10 +416,6 @@ namespace GRINS
           dirichlet_bc.add_bc_id(bc_id);
 
           libMesh::Number bc_val_num = string_to_T<libMesh::Number>(bc_value);
-
-	  std::cout<<"Variable: "<<bc_vars<<std::endl;
-	  std::cout<<"Id: "<<bc_id<<std::endl;
-	  std::cout<<"Number: "<<bc_val_num<<std::endl;
 	  
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >

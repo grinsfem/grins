@@ -198,7 +198,7 @@ public:
     fe  (_fe.get())
   {
     // only supporting QUAD4 this way for now
-    libmesh_assert(_belem.type()==QUAD4);
+    libmesh_assert(_belem.type()==libMesh::QUAD4);
   }
 
   // dtor

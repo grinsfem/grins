@@ -32,6 +32,8 @@
 // libMesh
 #include "libmesh/libmesh_common.h"
 
+#include "libmesh/fem_system.h"
+
 class GetPot;
 
 namespace GRINS
@@ -52,6 +54,8 @@ namespace GRINS
     libMesh::Real operator()( const libMesh::Real T ) const;
 
     libMesh::Real deriv( const libMesh::Real T ) const;
+
+    void init(libMesh::FEMSystem* system);
 
   private:
 

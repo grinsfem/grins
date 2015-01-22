@@ -71,9 +71,9 @@ namespace GRINS
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
 
     this->_dim = system->get_mesh().mesh_dimension();
-    
+          
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
-
+    
     return;
   }
 
@@ -101,9 +101,7 @@ namespace GRINS
 
   template<class Mu>
   void SpalartAllmaras<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    const unsigned int dim = system->get_mesh().mesh_dimension();
-
+  {    
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
     system->time_evolving(this->_turbulence_vars.nu_var());
@@ -119,8 +117,7 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmaras::element_time_derivative");
 #endif
-
-    // Get a pointer to the current element, we need this for computing the distance to wall for the
+     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
 
@@ -175,8 +172,8 @@ namespace GRINS
       {
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number nu;
-        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp);        
-
+        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp); 
+	
         libMesh::Gradient grad_nu;
         grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
         

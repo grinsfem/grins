@@ -51,7 +51,7 @@ namespace GRINS
 
   void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
   {
-    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);    
+    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);     
     return;
   }
 

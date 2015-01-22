@@ -40,6 +40,8 @@
 #include "grins/parsed_viscosity.h"
 #include "grins/turbulence_fe_variables.h"
 
+#include "libmesh/fem_system.h"
+
 class GetPot;
 
 namespace GRINS
@@ -55,6 +57,8 @@ namespace GRINS
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
     libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+
+    void init(libMesh::FEMSystem* system);
 
   protected:
     
@@ -76,12 +80,17 @@ namespace GRINS
     libMesh::Real SpalartAllmarasViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
   {    
     // Compute the value of the total viscosity and return it
-    libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
+    //libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
     
-    //libMesh::Number _mu_value =  this->_mu(context, qp); // Physical viscosity
-    
+    libMesh::Number _mu_value =  this->_mu(context, qp); // Physical viscosity    
 
-    //std::cout<<"Mu turbulent: "<<context.interior_value(this->_turbulence_vars.nu_var(),qp)<<"Mu: "<<this->_mu(context, qp)<<"Mu value: "<<_mu_value<<std::endl;
+    //std::cout<<"nu_var: "<<this->_turbulence_vars.nu_var()<<std::endl;
+    //std::cout<<"qp: "<<qp<<std::endl;
+    std::cout<<"Mu turbulent from INS, nu_var: "<<context.interior_value(this->_turbulence_vars.nu_var(),qp)<<","<< this->_turbulence_vars.nu_var()<<std::endl;
+    
+    //std::cout<<"Mu: "<<this->_mu(context, qp)<<std::endl;
+      
+    //std::cout<<"Mu value: "<<_mu_value<<std::endl;
 
     // Assert that _mu_value is greater than 0
     libmesh_assert(_mu_value > 0.0);

@@ -50,6 +50,11 @@ namespace GRINS
     return;
   }
 
+  void ConstantViscosity::init( libMesh::FEMSystem* system )
+  {
+    return;
+  }
+
   ConstantViscosity::~ConstantViscosity()
   {
     return;

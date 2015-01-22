@@ -36,6 +36,8 @@
 #include "libmesh/auto_ptr.h"
 #include "libmesh/function_base.h"
 
+#include "libmesh/fem_system.h"
+
 class GetPot;
 
 namespace GRINS
@@ -50,6 +52,8 @@ namespace GRINS
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
     libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+
+    void init(libMesh::FEMSystem* system);
 
   private:
 
