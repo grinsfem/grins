@@ -97,10 +97,6 @@ namespace GRINS
 							    const std::string& bc_value, 
 							    const GetPot& input )
   {
-    std::cout<<"Variable: "<<bc_vars<<std::endl;
-    std::cout<<"Id: "<<bc_id<<std::endl;
-    std::cout<<"Number: "<<bc_value<<std::endl;
-
     switch(bc_type)
       {
       case(NO_SLIP):

@@ -43,7 +43,12 @@ namespace GRINS
     return;
   }
     
-
+  template<class Mu>
+  void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
+  {    
+    this->_turbulence_vars.init(system);
+  }
+    
   template<class Mu>
   SpalartAllmarasViscosity<Mu>::~SpalartAllmarasViscosity()
   {
