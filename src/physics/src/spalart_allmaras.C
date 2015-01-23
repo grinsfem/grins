@@ -68,10 +68,11 @@ namespace GRINS
   template<class Mu>
   void SpalartAllmaras<Mu>::init_variables( libMesh::FEMSystem* system )
   {
+    // Init base class.
+    TurbulenceModelsBase<Mu>::init_variables(system);
+
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
-              
-    std::cout<<"Initializing the TurbulenceFEVariables object in SA"<<std::endl;
-    
+                      
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
     
     return;
@@ -187,8 +188,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 	
-	// The physical viscosity
-	std::cout<<"QP: "<<qp<<std::endl;
+	// The physical viscosity	
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
 	// The vorticity value
@@ -205,22 +205,23 @@ namespace GRINS
 	
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
-	
+	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
+
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
-	
+	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.);
 	
         // First, an i-loop over the viscosity degrees of freedom.        
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {	    
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
-            // Fnu(i) += jac *
-            //   ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
-	    //    -this->_spalart_allmaras_helper._cb1*_S_tilde*nu*nu_phi[i][qp]  // source term
-	    //    + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp])  // diffusion term 
-            //    + this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.)*nu_phi[i][qp]); // destruction term
+            Fnu(i) += jac *
+              ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
+	    -_source_term*nu_phi[i][qp] // source term
+	      + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
+		+ _destruction_term*nu_phi[i][qp]); // destruction term
 	    
-	    Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);
+	    //Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);
                     
 	      // Compute the jacobian if not using numerical jacobians  
 	      if (compute_jacobian)

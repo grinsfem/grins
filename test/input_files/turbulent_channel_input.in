@@ -17,7 +17,7 @@ deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 25
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
@@ -99,9 +99,9 @@ rho = 1.0
 #bc_types = 'constant_dirichlet'
 #bc_variables = 'nu'
 #bc_values = '0.1'
-bc_ids = '0 1 2 3'
-bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
-bc_variables = 'nu nu nu nu'
-bc_values = '0.1 0.1 0.1 0.1'
+bc_ids = '0 2 3'
+bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet'
+bc_variables = 'nu nu nu'
+bc_values = '0.0 0.0 0.1'
 
 []
