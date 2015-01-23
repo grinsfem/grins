@@ -341,8 +341,11 @@ namespace GRINS
 
 	if( viscosity == "spalartallmaras" )
 	  {
+	    // The SpalartAllmaras physics itself needs access to the physical viscosity, so
+	    // it is instantiated as a Constant Viscosity.
+	    // FIX ME: This should be read in as Constant or Parsed
 	    physics_list[physics_to_add] =
-	      PhysicsPtr(new SpalartAllmaras<SpalartAllmarasViscosity<ConstantViscosity>>(physics_to_add,input));
+	      PhysicsPtr(new SpalartAllmaras<ConstantViscosity>(physics_to_add,input));
 	  }
 	else     //Viscosity has to be SA viscosity if SA turbulence model is being used
 	  {

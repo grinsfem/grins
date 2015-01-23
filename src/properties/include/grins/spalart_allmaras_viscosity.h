@@ -81,11 +81,9 @@ namespace GRINS
     libMesh::Real SpalartAllmarasViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
   {    
     // Compute the value of the total viscosity and return it
-    //libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
+    libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
     
-    libMesh::Number _mu_value =  this->_mu(context, qp); // Physical viscosity    
-
-    std::cout<<"Mu turbulent from INS, nu_var: "<<context.interior_value(this->_turbulence_vars.nu_var(),qp)<<","<< this->_turbulence_vars.nu_var()<<std::endl;
+    //libMesh::Number _mu_value =  this->_mu(context, qp); // Physical viscosity    
         
     // Assert that _mu_value is greater than 0
     libmesh_assert(_mu_value > 0.0);
