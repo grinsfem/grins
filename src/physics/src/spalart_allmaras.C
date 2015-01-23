@@ -69,9 +69,9 @@ namespace GRINS
   void SpalartAllmaras<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
-
-    this->_dim = system->get_mesh().mesh_dimension();
-          
+              
+    std::cout<<"Initializing the TurbulenceFEVariables object in SA"<<std::endl;
+    
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
     
     return;
@@ -188,6 +188,7 @@ namespace GRINS
         libMesh::Real jac = JxW[qp];
 	
 	// The physical viscosity
+	std::cout<<"QP: "<<qp<<std::endl;
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
 	// The vorticity value

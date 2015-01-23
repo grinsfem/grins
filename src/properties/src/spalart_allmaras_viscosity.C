@@ -45,6 +45,8 @@ namespace GRINS
   template<class Mu>
   void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
   {    
+    std::cout<<"Initializing the TurbulenceFEVariables object in SA viscosity"<<std::endl;
+
     this->_turbulence_vars.init(system);
   }
     

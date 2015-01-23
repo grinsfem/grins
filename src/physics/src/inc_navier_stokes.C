@@ -228,7 +228,8 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-	// Compute the viscosity at this qp	
+	// Compute the viscosity at this qp
+	std::cout<<"QP: "<<qp<<std::endl;
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_is_axisymmetric )
