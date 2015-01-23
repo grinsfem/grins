@@ -125,7 +125,7 @@ namespace GRINS
 
 
   void Physics::init_ics( libMesh::FEMSystem* system,
-                          GRINS::CompositeFunction<libMesh::Number>& all_ics )
+                          libMesh::CompositeFunction<libMesh::Number>& all_ics )
   {
     if( _ic_handler )
       {

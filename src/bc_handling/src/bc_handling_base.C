@@ -25,13 +25,13 @@
 
 // This class
 #include "grins/bc_handling_base.h"
-#include "grins/composite_function.h"
-#include "grins/composite_fem_function.h"
 
 // GRINS
 #include "grins/string_utils.h"
 
 // libMesh
+#include "libmesh/composite_function.h"
+#include "libmesh/composite_fem_function.h"
 #include "libmesh/fem_context.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/dof_map.h"
@@ -147,7 +147,7 @@ namespace GRINS
         // Remap indices as necessary
         if (func.get())
           {
-            GRINS::CompositeFunction<libMesh::Number> remapped_func;
+            libMesh::CompositeFunction<libMesh::Number> remapped_func;
             remapped_func.attach_subfunction(*func, dbc_vars);
 
 	    // Now create DirichletBoundary object and give it to libMesh
@@ -170,7 +170,7 @@ namespace GRINS
             libMesh::ParsedFEMFunction<libMesh::Number>
               func(*system, func_string);
 
-            GRINS::CompositeFEMFunction<libMesh::Number> remapped_func;
+            libMesh::CompositeFEMFunction<libMesh::Number> remapped_func;
             remapped_func.attach_subfunction(func, dbc_vars);
 
 	    // Now create DirichletBoundary object and give it to libMesh
