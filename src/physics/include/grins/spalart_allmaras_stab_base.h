@@ -22,42 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// This class
-#include "grins/constant_viscosity.h"
+#ifndef GRINS_SPALART_ALLMARAS_STAB_BASE_H
+#define GRINS_SPALART_ALLMARAS_STAB_BASE_H
 
 //GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/spalart_allmaras.h"
+#include "grins/spalart_allmaras_stab_helper.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-
+//! GRINS namespace
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
+  template<class Viscosity>
+  class SpalartAllmarasStabilizationBase : public SpalartAllmaras<Viscosity>
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
 
-	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
-	
-      }
+  public:
 
-    return;
-  }
+   SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
-  {
-    return;
-  }
+    virtual ~SpalartAllmarasStabilizationBase();
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext& context );
 
-} // namespace GRINS
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+  protected:
+
+    SpalartAllmarasStabilizationHelper _stab_helper;
+
+  private:
+
+    SpalartAllmarasStabilizationBase();
+
+  }; // End SpalartAllmarasStabilizationBase class declarations
+
+} // End namespace GRINS
+
+#endif // GRINS_SPALART_ALLMARAS_STAB_BASE_H

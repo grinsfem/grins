@@ -22,42 +22,43 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// This class
-#include "grins/constant_viscosity.h"
+#ifndef GRINS_SPALART_ALLMARAS_BC_HANDLING_H
+#define GRINS_SPALART_ALLMARAS_BC_HANDLING_H
 
 //GRINS
-#include "grins/grins_physics_names.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/bc_handling_base.h"
+#include "grins/turbulence_variables.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
+  //! Base class for reading and handling boundary conditions for physics classes
+  class SpalartAllmarasBCHandling : public BCHandlingBase
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
+  public:
+    
+    SpalartAllmarasBCHandling( const std::string& physics_name, const GetPot& input );
+    
+    virtual ~SpalartAllmarasBCHandling();
 
-	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
-	
-      }
+    virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    return;
-  }
+    virtual void init_bc_data( const libMesh::FEMSystem& system );
 
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
-  {
-    return;
-  }
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
+				const std::string& bc_id_string, 
+				const int bc_type, 
+				const std::string& bc_vars, 
+				const std::string& bc_value, 
+				const GetPot& input );    
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
+  protected:
 
-} // namespace GRINS
+    TurbulenceVariables _turb_vars;
+
+  private:
+
+    SpalartAllmarasBCHandling();
+    
+  };
+}
+#endif // GRINS_SPALART_ALLMARAS_BC_HANDLING_H

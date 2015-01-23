@@ -321,7 +321,7 @@ namespace GRINS
                                       const std::string& bc_vars,
                                       const std::string& bc_value,
 				      const GetPot& input )
-  {
+  {    
     switch(bc_type)
       {
       case(PERIODIC):
@@ -416,7 +416,7 @@ namespace GRINS
           dirichlet_bc.add_bc_id(bc_id);
 
           libMesh::Number bc_val_num = string_to_T<libMesh::Number>(bc_value);
-
+	  
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
               (new libMesh::ConstFunction<libMesh::Number>(bc_val_num)));

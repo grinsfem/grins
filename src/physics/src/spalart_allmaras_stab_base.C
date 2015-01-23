@@ -24,53 +24,50 @@
 
 
 // This class
-#include "grins/inc_navier_stokes_stab_base.h"
+#include "grins/spalart_allmaras_stab_base.h"
 
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
-#include "grins/inc_nav_stokes_macro.h"
+#include "grins/turbulence_models_macro.h"
 
 namespace GRINS
 {
 
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
+  SpalartAllmarasStabilizationBase<Mu>::SpalartAllmarasStabilizationBase( const std::string& physics_name, 
                                                                                             const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+    : SpalartAllmaras<Mu>(physics_name,input),
       _stab_helper( input )
   {
     return;
   }
 
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
+  SpalartAllmarasStabilizationBase<Mu>::~SpalartAllmarasStabilizationBase()
   {
     return;
   }
 
   template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
+  void SpalartAllmarasStabilizationBase<Mu>::init_context( AssemblyContext& context )
   {
     // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_context(context);
-  
-    // We need pressure derivatives
-    context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
-
+    SpalartAllmaras<Mu>::init_context(context);
+      
     // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+    context.get_element_fe(this->_turbulence_vars.nu_var())->get_d2phi();
 
     return;
   }
 
   template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
+  void SpalartAllmarasStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
+    SpalartAllmaras<Mu>::init_variables(system);
 
     _stab_helper.init(*system);
 
@@ -80,4 +77,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-INSTANTIATE_INC_NS_SUBCLASS(IncompressibleNavierStokesStabilizationBase);
+INSTANTIATE_TURBULENCE_MODELS_SUBCLASS(SpalartAllmarasStabilizationBase);

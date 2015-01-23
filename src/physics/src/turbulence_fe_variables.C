@@ -22,42 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 // This class
-#include "grins/constant_viscosity.h"
+#include "grins/turbulence_fe_variables.h"
 
-//GRINS
-#include "grins/grins_physics_names.h"
+// GRINS
+#include "grins/grins_enums.h"
+#include "grins/variable_name_defaults.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
-  {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
-
-	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
-	
-      }
-
-    return;
-  }
-
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
+  TurbulenceFEVariables::TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
+    :  TurbulenceVariables(input),
+       _TU_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _TU_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) )
   {
     return;
   }
 
-  ConstantViscosity::~ConstantViscosity()
+  TurbulenceFEVariables::~TurbulenceFEVariables()
   {
     return;
   }
 
-} // namespace GRINS
+  void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
+  {
+    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);     
+    return;
+  }
+
+} // end namespace GRINS

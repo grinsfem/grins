@@ -22,42 +22,50 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_TURBULENCE_FE_VARIABLES_H
+#define GRINS_TURBULENCE_FE_VARIABLES_H
 
-// This class
-#include "grins/constant_viscosity.h"
+// GRINS
+#include "grins/grins_enums.h"
+#include "grins/turbulence_variables.h"
+#include "grins/var_typedefs.h"
 
-//GRINS
-#include "grins/grins_physics_names.h"
+//libMesh
+#include "libmesh/enum_order.h"
+#include "libmesh/enum_fe_family.h"
 
-// libMesh
-#include "libmesh/getpot.h"
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
+  class TurbulenceFEVariables : public TurbulenceVariables
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
+  public:
 
-	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
-	
-      }
+    TurbulenceFEVariables( const GetPot& input, const std::string& physics_name );
+    ~TurbulenceFEVariables();
 
-    return;
-  }
+    virtual void init( libMesh::FEMSystem* system );
 
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
-  {
-    return;
-  }
+  protected:
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
+    //! Element type, read from input
+    GRINSEnums::FEFamily _TU_FE_family;
 
-} // namespace GRINS
+    //! Element orders, read from input
+    GRINSEnums::Order _TU_order;
+
+  private:
+
+    TurbulenceFEVariables();
+
+  };
+
+} // end namespace GRINS
+
+#endif // GRINS_TURBULENCE_FE_VARIABLES_H

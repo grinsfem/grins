@@ -96,7 +96,7 @@ namespace GRINS
 					                    const std::string& bc_vars, 
 							    const std::string& bc_value, 
 							    const GetPot& input )
-  {
+  {    
     switch(bc_type)
       {
       case(NO_SLIP):

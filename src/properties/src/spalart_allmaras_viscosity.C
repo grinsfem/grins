@@ -14,10 +14,13 @@
 
 
 // This class
+#include "grins/spalart_allmaras_viscosity.h"
+#include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 
 //GRINS
 #include "grins/grins_physics_names.h"
+#include "grins/turbulent_viscosity_macro.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -25,40 +28,32 @@
 
 namespace GRINS
 {
-
-   ParsedViscosity::ParsedViscosity( const GetPot& input )    
-    {
-      if( !input.have_variable("Materials/Viscosity/mu") )
-       {
-         std::cerr<<"No viscosity has been specified."<<std::endl;
-      
-         libmesh_error();
-       }
-      else
-       {
-         std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
-
-         mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-         if (viscosity_function == "0")
-            {
-              std::cerr << "Warning! Zero Viscosity specified!" << std::endl;
-
-              libmesh_error();
-            }
-       }
-
-      return;
-      }
-
-  void ParsedViscosity::init( libMesh::FEMSystem* system )
+  template<class Mu>
+  SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input ):
+    _turbulence_vars(input, spalart_allmaras),
+    _mu(input)
   {
+    if( !input.have_variable("Materials/Viscosity/mu") )
+	{
+	  std::cerr<<"No viscosity has been specified."<<std::endl;
+	  
+	  libmesh_error();
+	}
     return;
   }
-
-  ParsedViscosity::~ParsedViscosity()
+    
+  template<class Mu>
+  void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
+  {    
+    this->_turbulence_vars.init(system);
+  }
+    
+  template<class Mu>
+  SpalartAllmarasViscosity<Mu>::~SpalartAllmarasViscosity()
   {
     return;
   }
 
 } // namespace GRINS
+
+INSTANTIATE_TURBULENT_VISCOSITY_SUBCLASS(SpalartAllmarasViscosity);
