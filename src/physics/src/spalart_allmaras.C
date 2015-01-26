@@ -72,6 +72,8 @@ namespace GRINS
     // Init base class.
     TurbulenceModelsBase<Mu>::init_variables(system);
 
+    // Use the _wall_type_str to identify the walls
+
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
                       
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
