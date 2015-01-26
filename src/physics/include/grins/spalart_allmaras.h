@@ -84,6 +84,9 @@ namespace GRINS
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
 
+    // Wall type string, to be read in
+    std::string& wall_type_str; 
+
   private:
     SpalartAllmaras();
 

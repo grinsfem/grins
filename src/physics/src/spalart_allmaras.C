@@ -49,7 +49,8 @@ namespace GRINS
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables      
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),      
-      _spalart_allmaras_helper(input)      
+      _spalart_allmaras_helper(input),
+      _wall_type_str(input("Physics/"+spalart_allmaras+"/wall_type"), '')      
   {    
     // This is deleted in the base class
     this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
@@ -182,9 +183,9 @@ namespace GRINS
         const libMesh::Number  grad_nu_y = grad_nu(1);
         const libMesh::Number  grad_nu_z = (this->_dim == 3)?grad_nu(2):0;
         
-        //const libMesh::Number x = u_qpoint[qp](0);
-	//const libMesh::Number y = u_qpoint[qp](1);
-	//const libMesh::Number z = (this->_dim==3)?u_qpoint[qp](2):0;
+        const libMesh::Number x = nu_qpoint[qp](0);
+	const libMesh::Number y = nu_qpoint[qp](1);
+	//const libMesh::Number z = (this->_dim==3)?nu_qpoint[qp](2):0;
 
         libMesh::Real jac = JxW[qp];
 	
@@ -203,6 +204,9 @@ namespace GRINS
 	if (this->_dim == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 	
+	// The calculated distance
+	std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
+
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
 	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
