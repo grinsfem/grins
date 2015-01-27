@@ -36,6 +36,9 @@
 //Utils
 #include "grins/distance_function.h"
 
+//libMesh
+#include "libmesh/boundary_info.h"
+
 namespace GRINS
 {
 
@@ -84,8 +87,13 @@ namespace GRINS
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
 
-    // Wall ids string, to be read in, tells us which bc_id's correspond to walls
-    std::string& _wall_ids_str; 
+    // Wall ids set, to be read in, tells us which bc_id's correspond to walls
+    std::set<boundary_id_type> _wall_ids; 
+    
+    // No of walls
+    unsigned int _no_of_walls;
+
+    const UnstructuredMesh& boundary_mesh
 
   private:
     SpalartAllmaras();
