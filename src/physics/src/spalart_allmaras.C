@@ -50,7 +50,7 @@ namespace GRINS
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),      
       _spalart_allmaras_helper(input),
-      _wall_type_str(input("Physics/"+spalart_allmaras+"/wall_type"), '')      
+      _wall_ids_str(input("Physics/"+spalart_allmaras+"/wall_ids"), '')      
   {    
     // This is deleted in the base class
     this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
