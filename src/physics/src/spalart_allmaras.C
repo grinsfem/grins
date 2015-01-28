@@ -39,8 +39,6 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/elem.h"
-#include "libmesh/unstructured_mesh.h"
-#include "libmesh/boundary_mesh.h"
 
 namespace GRINS
 {
@@ -51,7 +49,8 @@ namespace GRINS
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),      
       _spalart_allmaras_helper(input),
-      _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls"), 0)      
+      _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0)),
+      boundary_mesh(libMesh::NULL, _dim)
   {    
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
@@ -78,10 +77,10 @@ namespace GRINS
     TurbulenceModelsBase<Mu>::init_variables(system);
 
     // Use the _wall_ids set to build the boundary mesh object
-    (system->get_mesh())->boundary_info->sync(_wall_ids, *boundary_mesh);        
+    (system->get_mesh()).boundary_info->sync(_wall_ids, boundary_mesh);        
 
     //this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
-    this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), *boundary_mesh));
+    this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), boundary_mesh));
                  
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
     
