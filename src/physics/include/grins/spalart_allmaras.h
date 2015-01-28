@@ -39,7 +39,7 @@
 //libMesh
 #include "libmesh/mesh.h"
 #include "libmesh/boundary_info.h"
-#include "libmesh/unstructured_mesh.h"
+#include "libmesh/serial_mesh.h"
 #include "libmesh/boundary_mesh.h"
 
 namespace GRINS
@@ -75,6 +75,9 @@ namespace GRINS
     // A distance function to get distances from boundaries to qps
     libMesh::AutoPtr<DistanceFunction> distance_function;
 
+    // Boundary mesh objected that will be updated using the wall ids
+    libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
+
   protected:
     
     //! Physical dimension of problem
@@ -95,10 +98,7 @@ namespace GRINS
     
     // No of walls
     unsigned int _no_of_walls;
-
-    // Boundary mesh objected that will be updated using the wall ids
-    libMesh::UnstructuredMesh& boundary_mesh;
-
+    
   private:
     SpalartAllmaras();
 
