@@ -240,7 +240,8 @@ namespace GRINS
 	    this->visc_error(physics_to_add, viscosity);
 	  }
       }
-    else if( physics_to_add == velocity_penalty )
+    else if( physics_to_add == velocity_penalty ||
+             physics_to_add == velocity_penalty2 )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
@@ -259,7 +260,8 @@ namespace GRINS
 	    this->visc_error(physics_to_add, viscosity);
 	  }
       }
-    else if( physics_to_add == velocity_penalty_adjoint_stab )
+    else if( physics_to_add == velocity_penalty_adjoint_stab ||
+             physics_to_add == velocity_penalty2_adjoint_stab )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
 
