@@ -49,13 +49,21 @@ namespace GRINS
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),      
       _spalart_allmaras_helper(input),
-      _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0)),
-      boundary_mesh(libMesh::NULL, _dim)
+      _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0))      
   {    
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
-      _wall_ids.insert(input("Physics/"+spalart_allmaras+"/wall_ids", 0.0, i ));
+      {
+	_wall_ids.insert(input("Physics/"+spalart_allmaras+"/wall_ids", 0, i ));
+      }
     
+    std::cout<<"No of walls: "<<_no_of_walls<<std::endl;
+    
+    for( std::set<libMesh::boundary_id_type>::iterator b_id = _wall_ids.begin(); b_id != _wall_ids.end(); ++b_id )
+      {
+	std::cout<<"Boundary Id: "<<*b_id<<std::endl;
+      }
+
     // This is deleted in the base class
     this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
     
@@ -76,11 +84,16 @@ namespace GRINS
     // Init base class.
     TurbulenceModelsBase<Mu>::init_variables(system);
 
+    // Initialize Boundary Mesh 
+    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , _dim));
+
     // Use the _wall_ids set to build the boundary mesh object
-    (system->get_mesh()).boundary_info->sync(_wall_ids, boundary_mesh);        
+    (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);        
 
     //this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
-    this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), boundary_mesh));
+    this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), *boundary_mesh));
+    
+    this->distance_function->initialize();
                  
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
     
