@@ -23,18 +23,17 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_VELOCITY_DRAG_H
-#define GRINS_VELOCITY_DRAG_H
+#ifndef GRINS_VELOCITY_DRAG_BASE_H
+#define GRINS_VELOCITY_DRAG_BASE_H
 
 // GRINS
 #include "grins_config.h"
-#include "grins/assembly_context.h"
-#include "grins/cached_values.h"
 #include "grins/inc_navier_stokes_base.h"
-#include "grins/velocity_drag_base.h"
 
 // libMesh
+#include "libmesh/function_base.h"
 #include "libmesh/getpot.h"
+#include "libmesh/tensor_value.h"
 
 // C++
 #include <string>
@@ -42,34 +41,32 @@
 namespace GRINS
 {
 
-  //! Physics class for Velocity Drag
-  /*
-    This physics class imposes a force against the direction of (and
-    proportional to an exponent of the magnitude of) a specified
-    vector field.
-   */
   template<class Viscosity>
-  class VelocityDrag : public VelocityDragBase<Viscosity>
+  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
 
-    VelocityDrag( const std::string& physics_name, const GetPot& input );
+    VelocityDragBase( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityDrag();
+    ~VelocityDragBase();
 
-    virtual void init_context( AssemblyContext& context );
+    //! Read options from GetPot input file.
+    virtual void read_input_options( const GetPot& input );
 
-    // residual and jacobian calculations
-    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+    bool compute_force ( const libMesh::Point& point,
+                         const libMesh::Real time,
+                         const libMesh::NumberVectorValue& U,
+                         libMesh::NumberVectorValue& F,
+                         libMesh::NumberTensorValue *dFdU = NULL);
+ 
+  protected:
 
-    // Constraint part(s)
-    virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+    libMesh::Real _exponent;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _coefficient;
 
   private:
 
-    VelocityDrag();
+    VelocityDragBase();
   };
 
 } // end namespace block
