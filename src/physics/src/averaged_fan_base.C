@@ -228,16 +228,15 @@ namespace GRINS
 
     if (dFdU)
       {
-        const libMesh::Number UPNR = U_P*N_R;
-
-        const libMesh::NumberVectorValue
-          LDderivfactor = 
-            (N_lift*C_lift+N_drag*C_drag) *
-            0.5 * this->_rho * chord / area;
+        // FIXME: Jacobians here are very inexact!
+        // Dropping all AoA dependence on U terms!
+        const libMesh::NumberVectorValue LDderivfactor = 
+          (N_lift*C_lift+N_drag*C_drag) *
+          this->_rho * chord / area;
 
         for (unsigned int i=0; i != 3; ++i)
           for (unsigned int j=0; j != 3; ++j)
-            (*dFdU)(i,j) = 2 * LDderivfactor(i) * (U_P(j) - N_R(j)*UPNR);
+            (*dFdU)(i,j) = LDderivfactor(i) * (U_P(j) - N_R(j)*UPNR);
       }
 
     return true;
