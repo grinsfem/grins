@@ -30,7 +30,6 @@
 #include "grins/physics.h"
 #include "primitive_flow_fe_variables.h"
 #include "primitive_temp_fe_variables.h"
-#include "grins/heat_transfer_macros.h"
 
 namespace GRINS
 {

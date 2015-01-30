@@ -26,6 +26,7 @@
 // This class
 #include "grins/assembly_context.h"
 #include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/heat_transfer_macros.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
