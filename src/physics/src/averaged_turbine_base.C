@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/averaged_fan_base.h"
+#include "grins/averaged_turbine_base.h"
 
 // GRINS
 #include "grins/inc_nav_stokes_macro.h"
@@ -37,7 +37,7 @@ namespace GRINS
 {
 
   template<class Mu>
-  AveragedFanBase<Mu>::AveragedFanBase( const std::string& physics_name, const GetPot& input )
+  AveragedTurbineBase<Mu>::AveragedTurbineBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name, input)
   {
     this->read_input_options(input);
@@ -46,20 +46,39 @@ namespace GRINS
   }
 
   template<class Mu>
-  AveragedFanBase<Mu>::~AveragedFanBase()
+  AveragedTurbineBase<Mu>::~AveragedTurbineBase()
   {
     return;
   }
 
+  template<class Mu> 
+  void AveragedTurbineBase<Mu>::init_variables( libMesh::FEMSystem* system )
+  {
+    this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
+                                                libMesh::FIRST,
+                                                libMesh::SCALAR);
+
+    IncompressibleNavierStokesBase<Mu>::init_variables(system);
+  }
+
+  template<class Mu> 
+  void AveragedTurbineBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    system->time_evolving(this->fan_speed_var());
+
+    IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars(system);
+  }
+
+
   template<class Mu>
-  void AveragedFanBase<Mu>::read_input_options( const GetPot& input )
+  void AveragedTurbineBase<Mu>::read_input_options( const GetPot& input )
   {
     std::string base_function =
-      input("Physics/"+averaged_fan+"/base_velocity",
+      input("Physics/"+averaged_turbine+"/base_velocity",
         std::string("0"));
 
     if (base_function == "0")
-      libmesh_error_msg("Error! Zero AveragedFan specified!" <<
+      libmesh_error_msg("Error! Zero AveragedTurbine specified!" <<
                         std::endl);
 
     if (base_function == "0")
@@ -70,7 +89,7 @@ namespace GRINS
         (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
     std::string vertical_function =
-      input("Physics/"+averaged_fan+"/local_vertical",
+      input("Physics/"+averaged_turbine+"/local_vertical",
         std::string("0"));
 
     if (vertical_function == "0")
@@ -81,7 +100,7 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(vertical_function));
 
     std::string lift_function_string =
-      input("Physics/"+averaged_fan+"/lift",
+      input("Physics/"+averaged_turbine+"/lift",
         std::string("0"));
 
     if (lift_function_string == "0")
@@ -91,7 +110,7 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(lift_function_string));
 
     std::string drag_function_string =
-      input("Physics/"+averaged_fan+"/drag",
+      input("Physics/"+averaged_turbine+"/drag",
         std::string("0"));
 
     if (drag_function_string == "0")
@@ -101,7 +120,7 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(drag_function_string));
 
     std::string chord_function_string =
-      input("Physics/"+averaged_fan+"/chord_length",
+      input("Physics/"+averaged_turbine+"/chord_length",
         std::string("0"));
 
     if (chord_function_string == "0")
@@ -112,7 +131,7 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(chord_function_string));
 
     std::string area_function_string =
-      input("Physics/"+averaged_fan+"/area_swept",
+      input("Physics/"+averaged_turbine+"/area_swept",
         std::string("0"));
 
     if (area_function_string == "0")
@@ -123,7 +142,7 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(area_function_string));
 
     std::string aoa_function_string =
-      input("Physics/"+averaged_fan+"/angle_of_attack",
+      input("Physics/"+averaged_turbine+"/angle_of_attack",
         std::string("00000"));
 
     if (aoa_function_string == "00000")
@@ -132,15 +151,43 @@ namespace GRINS
 
     this->aoa_function.reset
       (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
+
+    std::string torque_function_string =
+      input("Physics/"+averaged_turbine+"/torque",
+        std::string("0"));
+
+    if (torque_function_string == "0")
+      std::cout << "Warning! Zero torque function specified!" << std::endl;
+
+    this->torque_function.reset
+      (new libMesh::ParsedFunction<libMesh::Number>(torque_function_string));
+
+    this->moment_of_inertia = input("Physics/"+averaged_turbine+"/moment_of_inertia",
+                                    libMesh::Number(0));
+
+    if (!moment_of_inertia)
+      libmesh_error_msg(
+        "Error! Zero AveragedTurbine moment of inertia specified!" <<
+        std::endl);
+
+    this->initial_speed = input("Physics/"+averaged_turbine+"/initial_speed",
+                                libMesh::Number(0));
+
+    this->_fan_speed_var_name = input("Physics/VariableNames/fan_speed",
+                                      fan_speed_var_name_default);
+
   }
 
   template<class Mu>
-  bool AveragedFanBase<Mu>::compute_force
+  bool AveragedTurbineBase<Mu>::compute_force
     ( const libMesh::Point& point,
       const libMesh::Real time,
       const libMesh::NumberVectorValue& U,
+      libMesh::Number s,
+      libMesh::NumberVectorValue& U_B_1,
       libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU)
+      libMesh::NumberTensorValue *dFdU,
+      libMesh::NumberVectorValue *dFds)
   {
     // Find base velocity of moving fan at this point
     libmesh_assert(base_velocity_function.get());
@@ -150,9 +197,11 @@ namespace GRINS
     (*base_velocity_function)(point, time,
                               output_vec);
 
-    const libMesh::NumberVectorValue U_B(output_vec(0),
-                                         output_vec(1),
-                                         output_vec(2));
+    U_B_1(0) = output_vec(0);
+    U_B_1(1) = output_vec(1);
+    U_B_1(2) = output_vec(2);
+
+    const libMesh::NumberVectorValue U_B = U_B_1 * s;
 
     const libMesh::Number U_B_size = U_B.size();
 
@@ -228,11 +277,15 @@ namespace GRINS
 
     if (dFdU)
       {
-        // FIXME: Jacobians here are very inexact!
-        // Dropping all AoA dependence on U terms!
+        const libMesh::Number UPNR = U_P*N_R;
+
         const libMesh::NumberVectorValue LDderivfactor = 
           (N_lift*C_lift+N_drag*C_drag) *
           this->_rho * chord / area;
+
+        const libMesh::Number sfactor = -(U_P*U_B_1);
+
+        (*dFds) = LDderivfactor * sfactor;
 
         for (unsigned int i=0; i != 3; ++i)
           for (unsigned int j=0; j != 3; ++j)
@@ -245,4 +298,4 @@ namespace GRINS
 } // namespace GRINS
 
 // Instantiate
-INSTANTIATE_INC_NS_SUBCLASS(AveragedFanBase);
+INSTANTIATE_INC_NS_SUBCLASS(AveragedTurbineBase);
