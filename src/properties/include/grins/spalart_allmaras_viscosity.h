@@ -84,7 +84,9 @@ namespace GRINS
     libMesh::Number _mu_value = context.interior_value(this->_turbulence_vars.nu_var(),qp) + this->_mu(context, qp); // Turbulent viscosity + physical viscosity
     
     //libMesh::Number _mu_value =  this->_mu(context, qp); // Physical viscosity    
-        
+
+    //std::cout<<"Physical viscosity: "<<this->_mu(context, qp); // Physical viscosity
+    
     // Assert that _mu_value is greater than 0
     libmesh_assert(_mu_value > 0.0);
 

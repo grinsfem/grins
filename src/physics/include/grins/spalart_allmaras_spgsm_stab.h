@@ -40,6 +40,8 @@ namespace GRINS
     SpalartAllmarasSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~SpalartAllmarasSPGSMStabilization();
 
+    virtual void init_variables( libMesh::FEMSystem* system );
+
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext& context,
 					  CachedValues& cache );
