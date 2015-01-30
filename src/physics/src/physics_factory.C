@@ -67,6 +67,7 @@
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
+#include "grins/parsed_conductivity.h"
 #include "grins/parsed_viscosity.h"
 
 #include "grins/reacting_low_mach_navier_stokes.h"
@@ -86,6 +87,113 @@
 
 namespace GRINS
 {
+
+  // Starting with helper functions for model-templated physics
+  // instantiation.  These don't need to be visible elsewhere.
+
+  typedef PhysicsFactory::PhysicsPtr PhysicsPtr;
+
+  void visc_cond_specheat_error( const std::string& physics,
+				 const std::string& conductivity,
+				 const std::string& viscosity,
+				 const std::string& specific_heat )
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl
+	      << "Conductivity model  = " << conductivity << std::endl
+	      << "Viscosity model     = " << viscosity << std::endl
+	      << "Specific heat model = " << specific_heat << std::endl
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
+  void visc_error( const std::string& physics,				  
+		   const std::string& viscosity )
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Viscosity model     = " << viscosity << std::endl	      
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
+  void conductivity_error( const std::string& physics,				  
+			   const std::string& conductivity )
+  {
+    std::cerr << "================================================================" << std::endl
+	      << "Invalid combination of models for " << physics << std::endl	      
+	      << "Conductivity model     = " << conductivity << std::endl	      
+	      << "================================================================" << std::endl;
+    libmesh_error();
+  }
+
+
+  // FIXME: Currently we always look for a lone viscosity model in the
+  // IncompressibleNavierStokes input, or for a lone conductivity
+  // model in the HeatTransfer input, or for a viscosity + specific
+  // heat + conductivity model set in the LowMachNavierStokes input.
+  // This needs to be fixed, but carefully to avoid breaking old input
+  // files.
+
+  template <template<typename> class Subclass>
+  PhysicsPtr new_mu_class(const std::string& physics_to_add,
+                          const GetPot& input)
+  {
+    std::string viscosity =
+      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	
+    if( viscosity == "constant" )
+      return PhysicsPtr
+        (new Subclass<ConstantViscosity>(physics_to_add,input));
+    else if( viscosity == "parsed" )
+      return PhysicsPtr
+        (new Subclass<ParsedViscosity>(physics_to_add,input));
+ 
+    visc_error(physics_to_add, viscosity);
+    return PhysicsPtr(NULL);
+  }
+
+  template <template<typename> class Subclass>
+  PhysicsPtr new_k_class(const std::string& physics_to_add,
+                         const GetPot& input)
+  {
+    std::string conductivity =
+      input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+
+    if( conductivity == "constant" )
+      return PhysicsPtr
+        (new Subclass<ConstantConductivity>(physics_to_add,input));
+    else if( conductivity == "parsed" )
+      return PhysicsPtr
+        (new Subclass<ParsedConductivity>(physics_to_add,input));
+
+    conductivity_error(physics_to_add, conductivity);
+    return PhysicsPtr(NULL);
+  }
+
+  template <template<typename,typename,typename> class Subclass>
+  PhysicsPtr new_mu_cp_k_class(const std::string& physics_to_add,
+                               const GetPot& input)
+  {
+    std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
+    std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+    std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+
+    if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
+      {
+        return PhysicsPtr
+          (new Subclass<ConstantViscosity,
+                        ConstantSpecificHeat,
+                        ConstantConductivity>
+             (physics_to_add,input));
+      }
+
+    visc_cond_specheat_error(physics_to_add, conductivity,
+                             viscosity, specific_heat);
+    return PhysicsPtr(NULL);
+  }
+
+  // And now PhysicsFactory methods
 
   PhysicsFactory::PhysicsFactory()
   {
@@ -149,214 +257,71 @@ namespace GRINS
   {
     if( physics_to_add == incompressible_navier_stokes )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-	
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }          
+	physics_list[physics_to_add] =
+          new_mu_class<IncompressibleNavierStokes>
+            (physics_to_add, input);
       }
     else if( physics_to_add == stokes )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-	
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] =
-	      PhysicsPtr(new Stokes<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new Stokes<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<Stokes>
+            (physics_to_add, input);
       }      
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ConstantViscosity>(physics_to_add,input) );
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }  
+	physics_list[physics_to_add] =
+          new_mu_class<IncompressibleNavierStokesAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-	
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ConstantViscosity>(physics_to_add,input) );
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }  
+	physics_list[physics_to_add] =
+          new_mu_class<IncompressibleNavierStokesSPGSMStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == velocity_drag )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDrag<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<VelocityDrag>
+            (physics_to_add, input);
       }
     else if( physics_to_add == velocity_drag_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDragAdjointStabilization<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDragAdjointStabilization<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<VelocityDragAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == velocity_penalty ||
              physics_to_add == velocity_penalty2 )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenalty<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenalty<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<VelocityPenalty>
+            (physics_to_add, input);
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab ||
              physics_to_add == velocity_penalty2_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<VelocityPenaltyAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == averaged_fan )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFan<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFan<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<AveragedFan>
+            (physics_to_add, input);
       }
     else if( physics_to_add == averaged_fan_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFanAdjointStabilization<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFanAdjointStabilization<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<AveragedFanAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == averaged_turbine )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedTurbine<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_class<AveragedTurbine>
+            (physics_to_add, input);
       }
     else if( physics_to_add == scalar_ode )
       {
@@ -365,60 +330,21 @@ namespace GRINS
       }
     else if( physics_to_add == heat_transfer )
       {
-	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
-	
-	if( conductivity == "constant" )
-	  {	    
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransfer<ConstantConductivity>(physics_to_add,input));
-	  }
-	else if( conductivity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransfer<ParsedConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->conductivity_error(physics_to_add, conductivity);
-	  }
+	physics_list[physics_to_add] =
+          new_k_class<HeatTransfer>
+            (physics_to_add, input);
       }
     else if( physics_to_add == heat_transfer_adjoint_stab )
       {
-	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
-	
-	if( conductivity == "constant" )
-	  {	    
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransferAdjointStabilization<ConstantConductivity>(physics_to_add,input));
-	  }
-	else if( conductivity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransferAdjointStabilization<ParsedConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->conductivity_error(physics_to_add, conductivity);
-	  }		
+	physics_list[physics_to_add] =
+          new_k_class<HeatTransferAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == heat_transfer_spgsm_stab )
       {
-	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
-	
-	if( conductivity == "constant" )
-	  {	    
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransferSPGSMStabilization<ConstantConductivity>(physics_to_add,input));
-	  }
-	else if( conductivity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatTransferSPGSMStabilization<ParsedConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->conductivity_error(physics_to_add, conductivity);
-	  }        
+	physics_list[physics_to_add] =
+          new_k_class<HeatTransferSPGSMStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == heat_transfer_source )
       {
@@ -439,17 +365,9 @@ namespace GRINS
       }
     else if( physics_to_add == axisymmetric_heat_transfer )
       {
-	std::string conductivity = input( "Physics/"+axisymmetric_heat_transfer+"/conductivity_model", "constant" );
-	if(  conductivity == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AxisymmetricHeatTransfer<ConstantConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    std::cerr << "Invalid conductivity model " << conductivity << std::endl;
-	    libmesh_error();
-	  }
+	physics_list[physics_to_add] =
+          new_k_class<AxisymmetricHeatTransfer>
+            (physics_to_add, input);
       }
     else if( physics_to_add == boussinesq_buoyancy )
       {
@@ -473,86 +391,33 @@ namespace GRINS
       }
     else if( physics_to_add == "HeatConduction" )
       {
-	std::string conductivity     = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
-	
-	if( conductivity == "constant" )
-	  {	    
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatConduction<ConstantConductivity>(physics_to_add,input));
-	  }
-	else if( conductivity == "parsed" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new HeatConduction<ParsedConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->conductivity_error(physics_to_add, conductivity);
-	  }	
+	physics_list[physics_to_add] =
+          new_k_class<HeatConduction>
+            (physics_to_add, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
-	std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-	std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
-
-	if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
-	  {
-	    physics_list[low_mach_navier_stokes] = 
-	      PhysicsPtr(new LowMachNavierStokes<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_cp_k_class<LowMachNavierStokes>
+            (physics_to_add, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_spgsm_stab )
       {
-	std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-	std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
-
-	if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new LowMachNavierStokesSPGSMStabilization<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_cp_k_class<LowMachNavierStokesSPGSMStabilization>
+            (physics_to_add, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_vms_stab )
       {
-	std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-	std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
-
-	if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new LowMachNavierStokesVMSStabilization<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_cp_k_class<LowMachNavierStokesVMSStabilization>
+            (physics_to_add, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_braack_stab )
       {
-	std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-	std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-	std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
-
-	if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
-	  {
-	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new LowMachNavierStokesBraackStabilization<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>(physics_to_add,input));
-	  }
-	else
-	  {
-	    this->visc_cond_specheat_error(physics_to_add, conductivity, viscosity, specific_heat);
-	  }
+	physics_list[physics_to_add] =
+          new_mu_cp_k_class<LowMachNavierStokesBraackStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
@@ -905,40 +770,5 @@ namespace GRINS
 
     return;
   }
-
-  void PhysicsFactory::visc_cond_specheat_error( const std::string& physics,
-						 const std::string& conductivity,
-						 const std::string& viscosity,
-						 const std::string& specific_heat ) const
-  {
-    std::cerr << "================================================================" << std::endl
-	      << "Invalid combination of models for " << physics << std::endl
-	      << "Conductivity model  = " << conductivity << std::endl
-	      << "Viscosity model     = " << viscosity << std::endl
-	      << "Specific heat model = " << specific_heat << std::endl
-	      << "================================================================" << std::endl;
-    libmesh_error();
-  }
-
-  void PhysicsFactory::visc_error( const std::string& physics,				  
-				   const std::string& viscosity ) const
-  {
-    std::cerr << "================================================================" << std::endl
-	      << "Invalid combination of models for " << physics << std::endl	      
-	      << "Viscosity model     = " << viscosity << std::endl	      
-	      << "================================================================" << std::endl;
-    libmesh_error();
-  }
-
-  void PhysicsFactory::conductivity_error( const std::string& physics,				  
-				   const std::string& conductivity ) const
-  {
-    std::cerr << "================================================================" << std::endl
-	      << "Invalid combination of models for " << physics << std::endl	      
-	      << "Conductivity model     = " << conductivity << std::endl	      
-	      << "================================================================" << std::endl;
-    libmesh_error();
-  }
-
 
 } // namespace GRINS
