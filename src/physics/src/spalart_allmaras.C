@@ -93,7 +93,10 @@ namespace GRINS
     //this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), *boundary_mesh));
     
-    this->distance_function->initialize();
+    // For now, we are hacking this. Without this initialize function being called
+    // the distance variable will just be zero. For the channel flow, we are just
+    // going to analytically compute the wall distance
+    //this->distance_function->initialize();
                  
     this->_turbulence_vars.init(system); // Should replace this turbulence_vars
     
@@ -225,15 +228,30 @@ namespace GRINS
 	if (this->_dim == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 	
+	// To be fixed
+	// For the channel flow we will just set the distance function analytically
+	(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
+
 	// The calculated distance
-	std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
+	//std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
 
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
+	if( isnan(_S_tilde) )
+	  {
+	    std::cout<<"_S_tilde blows up when x, y :"<<x<<","<<y<<std::endl;
+	  }
+	    
 	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
 
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
+	if( isnan(_fw) )
+	  {
+	    std::cout<<"_fw blows up when x, y :"<<x<<","<<y<<std::endl;
+	    std::cout<<"Distance: "<<(*distance_qp)(qp)<<std::endl;
+	  }
+	
 	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.);
 	
         // First, an i-loop over the viscosity degrees of freedom.        

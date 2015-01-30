@@ -132,7 +132,7 @@ namespace GRINS
     
     if(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)) < this->_r_lin)
       {
-	_r = nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0));
+	_r = nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0));		    
       }
     else
       {
@@ -141,10 +141,21 @@ namespace GRINS
 
     // Step 2
     libMesh::Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
-
+    
     // Step 3
     libMesh::Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
     
+    if( isnan(_fw) )
+	  {
+	    std::cout<<"_fw blows up when _g : "<<_g<<std::endl;
+	    std::cout<<"_r: "<<_r<<std::endl;
+	    std::cout<<"_r1: "<<nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0))<<std::endl;
+	    std::cout<<"Wall Distance: "<<wall_distance<<std::endl;
+	    std::cout<<"S tilde: "<<_S_tilde<<std::endl;
+	    std::cout<<"Second term: "<<_r + this->_c_w2*(pow(_r,6.0) - _r)<<std::endl;
+	  }
+    
+        
     return _fw;
   }
   

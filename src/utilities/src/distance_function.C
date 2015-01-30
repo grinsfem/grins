@@ -257,6 +257,8 @@ libMesh::Real DistanceFunction::node_to_boundary (const libMesh::Node* node)
 
       // Ensure that elem defined by edge/face is linear
       libmesh_assert( belem->default_order() == FIRST );
+      // For now we assume that the boundary_elems are linear, but give a warning
+      //libmesh_warning( "Moving ahead, but need to make sure that the boundary elems are linear");
 
       // Initialize distance to this edge/face to infinity
       libMesh::Real dedge = std::numeric_limits<libMesh::Real>::infinity();
@@ -270,6 +272,8 @@ libMesh::Real DistanceFunction::node_to_boundary (const libMesh::Node* node)
 	  // not part of the boundary mesh, and thus we skip them.
 	  //
 	  if (belem->dim()!=1) continue;
+
+	  std::cout<<"Number of nodes: "<<belem->n_nodes()<<std::endl;
 
 	  libmesh_assert( belem->n_nodes() == 2 );
 	  libmesh_assert( belem->type() == EDGE2 );
