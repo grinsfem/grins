@@ -136,6 +136,9 @@ namespace GRINS
 
     //const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
 
+    //Grab the Jacobian matrix
+	libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
+
     for (unsigned int qp=0; qp != n_qpoints; qp++)
 	{
 		// Gradients are w.r.t. master element coordinates
@@ -160,10 +163,12 @@ namespace GRINS
 
 			Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
 
+			/*
 			if( compute_jacobian )
 			{
-				libmesh_not_implemented();
+				//libmesh_not_implemented();
 			}
+			*/
 		}
 	}
 

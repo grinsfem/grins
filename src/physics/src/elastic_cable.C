@@ -176,6 +176,19 @@ namespace GRINS
 	    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
 	    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
+	    //Grab the Jacobian matrix as submatrices
+	    //libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
+	    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(0,0);
+	    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(0,1);
+	    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(0,2);
+	    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(1,0);
+		libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(1,1);
+		libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(1,2);
+	    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(2,0);
+		libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(2,1);
+		libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(2,2);
+
+
 	    unsigned int n_qpoints = context.get_element_qrule().n_points();
 
 	    // All shape function gradients are w.r.t. master element coordinates
@@ -218,7 +231,10 @@ namespace GRINS
 
 			// Compute stress tensor
 			libMesh::TensorValue<libMesh::Real> tau;
-			_stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
+			ElasticityTensor C;
+			//_stress_strain_law.compute_stress(dim,a_contra,a_cov,A_contra,A_cov,tau);
+			_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
+
 
 			libMesh::Real jac = JxW[qp];
 
@@ -230,18 +246,35 @@ namespace GRINS
 				{
 					for( unsigned int beta = 0; beta < dim; beta++ )
 					{
-						Fu(i) -= tau(alpha,beta)*_A*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) )*jac;
+						Fu(i) -= tau(alpha,beta)*_A*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) ) * jac;
 
 						Fv(i) -= tau(alpha,beta)*_A*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
 
-						Fw(i) -= tau(alpha,beta)*_A*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) )*jac;
+						Fw(i) -= tau(alpha,beta)*_A*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) ) * jac;
 					}
 				}
 			}
 
 			if( compute_jacobian )
 			{
-				libmesh_not_implemented();
+				for(unsigned int i=0; i != n_u_dofs; i++)
+				{
+					libMesh::RealGradient u_gradphi_I( dphi_dxi[i][qp] );
+					for(unsigned int j=0; j != n_u_dofs; j++)
+					{
+						libMesh::RealGradient u_gradphi_J( dphi_dxi[i][qp] );
+						Kuu(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
+												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_x(0) + grad_u(0)));
+
+						Kvv(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
+												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_y(0) + grad_v(0)));
+
+						Kww(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
+												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_z(0) + grad_w(0)));
+
+					}
+				}
+				//libmesh_not_implemented();
 			}
 		}
 
