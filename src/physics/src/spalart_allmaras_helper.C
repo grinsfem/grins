@@ -129,16 +129,9 @@ namespace GRINS
   {
     // Step 1
     libMesh::Real _r = 0.0;
-
-    if(_S_tilde == 0.0)
-      {
-	_r = this->_r_lin;
-      }
-    else
-      {
-	_r = std::min(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
-      }
-            
+    
+    _r = std::min(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
+    
     // Step 2
     libMesh::Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
     

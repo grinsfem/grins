@@ -27,17 +27,16 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = 'false'
 output_vis = 'true' 
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'ExodusII'
+output_format = 'GMV'
 
 [Materials]
 
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0e-1'
+mu = '1.0e-0'
 
 # Visualization options
 [vis-options]
@@ -83,7 +82,7 @@ parabolic_profile_fix_3 = 'v'
 ic_ids = '1'
 ic_types = 'parsed'
 ic_variables = 'u'
-ic_values = '4*y*(1.0 - y)'
+ic_values = '4*y*(1.0-y)'
 
 pin_pressure = true
 pin_value = 1.0
@@ -106,13 +105,13 @@ rho = 1.0
 bc_ids = '0 2 3'
 bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
 bc_variables = 'nu nu nu'
-bc_values = '0.0 0.0 0.1*y*(1.0 - y)'
+bc_values = '0.0 0.0 0.1*y*(1.0-y)'
 no_of_walls = 2
 wall_ids = '0 2'
 
 ic_ids = '1'
 ic_types = 'parsed'
 ic_variables = 'nu'
-ic_values = '0.1*y*(1.0 - y)'
+ic_values = '0.1*y*(1.0-y)'
 
 []
