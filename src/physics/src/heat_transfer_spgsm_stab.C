@@ -25,6 +25,7 @@
 
 // This class
 #include "grins/assembly_context.h"
+#include "grins/heat_transfer_macros.h"
 #include "grins/heat_transfer_spgsm_stab.h"
 
 // libMesh

@@ -30,6 +30,7 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
+#include "grins/heat_transfer_macros.h"
 #include "grins/grins_physics_names.h"
 
 // libMesh
