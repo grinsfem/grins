@@ -67,6 +67,8 @@ namespace GRINS
   void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
   {    
     this->_dim = system->get_mesh().mesh_dimension();
+
+    this->_flow_vars.init(system);
         
     return;
   }
