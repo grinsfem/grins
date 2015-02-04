@@ -56,10 +56,10 @@ namespace GRINS
   
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    // Init base class.
-    SpalartAllmaras<Mu>::init_variables(system);
-
+  {    
+    // Init base class variables for stab_helper and distance function initialization    
+    SpalartAllmarasStabilizationBase<Mu>::init_variables(system);
+    
     return;
   }
     
@@ -118,7 +118,7 @@ namespace GRINS
       {
 	// Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number nu;
-        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp);        
+	nu = context.interior_value(this->_turbulence_vars.nu_var(), qp);        
 
         libMesh::Gradient grad_nu;
         grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);

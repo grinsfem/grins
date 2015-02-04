@@ -84,8 +84,14 @@ namespace GRINS
     // Init base class.
     TurbulenceModelsBase<Mu>::init_variables(system);
 
+    this->_turbulence_vars.init(system); 
+    this->_flow_vars.init(system); 
+    
+    // Init the variables belonging to SA helper
+    _spalart_allmaras_helper.init_variables(system);
+
     // Initialize Boundary Mesh 
-    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , _dim));
+    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , this->_dim));
 
     // Use the _wall_ids set to build the boundary mesh object
     (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);        
@@ -97,9 +103,7 @@ namespace GRINS
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-                 
-    this->_turbulence_vars.init(system); // Should replace this turbulence_vars
-    
+                     
     return;
   }
 

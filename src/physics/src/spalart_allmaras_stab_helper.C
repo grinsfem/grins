@@ -55,6 +55,9 @@ namespace GRINS
     this->_flow_vars.init(&system);
     this->_turbulence_vars.init(&system);
 
+    // Init the variables belonging to SA helper
+    _spalart_allmaras_helper.init_variables(&system);
+
     this->_dim = system.get_mesh().mesh_dimension();
 
     return;
@@ -138,7 +141,6 @@ namespace GRINS
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
     libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
 
-    std::cout<<"Turbulence var: "<<this->_turbulence_vars.nu_var()<<std::endl;
     libMesh::Number nu_value = context.interior_value(this->_turbulence_vars.nu_var(), qp);
 
     libMesh::RealGradient grad_nu = context.fixed_interior_gradient(this->_turbulence_vars.nu_var(), qp);

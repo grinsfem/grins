@@ -79,11 +79,7 @@ namespace GRINS
     libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
 
   protected:
-    
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
-
+        
     // The flow variables
     PrimitiveFlowFEVariables _flow_vars;
 
