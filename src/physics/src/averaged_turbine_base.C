@@ -277,8 +277,6 @@ namespace GRINS
 
     if (dFdU)
       {
-        const libMesh::Number UPNR = U_P*N_R;
-
         const libMesh::NumberVectorValue LDderivfactor = 
           (N_lift*C_lift+N_drag*C_drag) *
           this->_rho * chord / area;
