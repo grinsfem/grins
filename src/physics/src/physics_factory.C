@@ -150,7 +150,7 @@ namespace GRINS
         (new Subclass<ParsedViscosity>(physics_to_add,input));
  
     visc_error(physics_to_add, viscosity);
-    return PhysicsPtr(NULL);
+    return PhysicsPtr();
   }
 
   template <template<typename> class Subclass>
@@ -168,7 +168,7 @@ namespace GRINS
         (new Subclass<ParsedConductivity>(physics_to_add,input));
 
     conductivity_error(physics_to_add, conductivity);
-    return PhysicsPtr(NULL);
+    return PhysicsPtr();
   }
 
   template <template<typename,typename,typename> class Subclass>
@@ -190,7 +190,7 @@ namespace GRINS
 
     visc_cond_specheat_error(physics_to_add, conductivity,
                              viscosity, specific_heat);
-    return PhysicsPtr(NULL);
+    return PhysicsPtr();
   }
 
   // And now PhysicsFactory methods
