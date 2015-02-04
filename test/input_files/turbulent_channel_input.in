@@ -13,7 +13,7 @@ domain_x2_max = 1.0
 transient = false 
 theta = 0.5
 n_timesteps = 1
-deltat = 0.1
+deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -36,7 +36,7 @@ output_format = 'pvtu'
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0e-1'
+mu = '1.0e-2'
 
 # Options for print info to the screen
 [screen-options]
@@ -73,7 +73,7 @@ parabolic_profile_var_3 = 'u'
 parabolic_profile_fix_1 = 'v'
 parabolic_profile_fix_3 = 'v'
 
-ic_ids = '1'
+ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'u'
 ic_values = '4*y*(1.0-y)'
@@ -103,7 +103,7 @@ bc_values = '0.0 0.0 0.1*y*(1.0-y)'
 no_of_walls = 2
 wall_ids = '0 2'
 
-ic_ids = '1'
+ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'nu'
 ic_values = '0.1*y*(1.0-y)'
