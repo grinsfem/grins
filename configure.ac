@@ -336,6 +336,7 @@ AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
 AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
+AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])
 AC_CONFIG_FILES(test/test_dirichlet_fem.sh,                               [chmod +x test/test_dirichlet_fem.sh])
 AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod +x test/test_dirichlet_nan.sh])
 AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])
