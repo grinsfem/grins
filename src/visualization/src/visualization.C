@@ -189,8 +189,7 @@ namespace GRINS
 	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
 	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
 	    // one timestep per file.
-
-	    std::cout<<"Mesh dimension: "<<mesh.mesh_dimension()<<std::endl;
+	    
             libMesh::ExodusII_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );
 	  }

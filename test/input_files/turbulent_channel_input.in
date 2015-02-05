@@ -29,14 +29,14 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'true'
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'pvtu'
+output_format = 'ExodusII'
 
 [Materials]
 
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0e-2'
+mu = '1.0e-4'
 
 # Options for print info to the screen
 [screen-options]
