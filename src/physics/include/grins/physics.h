@@ -238,7 +238,10 @@ namespace GRINS
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects
       in GRINS namespace */
-    const PhysicsName& _physics_name;
+    /*! No, we use a copy, because otherwise as soon as the memory in
+     * std::set<std::string> requested_physics gets overwritten we get
+     * in trouble. */
+    const PhysicsName _physics_name;
 
     GRINS::BCHandlingBase* _bc_handler;
 
