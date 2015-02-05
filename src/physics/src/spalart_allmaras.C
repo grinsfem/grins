@@ -240,21 +240,13 @@ namespace GRINS
 	//std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
 
 	//The source term
-	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
-	if( isnan(_S_tilde) )
-	  {
-	    std::cout<<"_S_tilde blows up when x, y :"<<x<<","<<y<<std::endl;
-	  }
+	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);	
 	    
 	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
 
+	
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
-	if( isnan(_fw) )
-	  {
-	    std::cout<<"_fw blows up when x, y :"<<x<<","<<y<<std::endl;
-	    std::cout<<"Distance: "<<(*distance_qp)(qp)<<std::endl;
-	  }
 	
 	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.);
 	
@@ -263,10 +255,10 @@ namespace GRINS
           {	    
 	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
             Fnu(i) += jac *
-              ( this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
-	    -_source_term*nu_phi[i][qp] // source term
+              ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
+	    +_source_term*nu_phi[i][qp] // source term
 	      + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
-		+ _destruction_term*nu_phi[i][qp]); // destruction term
+		- _destruction_term*nu_phi[i][qp]); // destruction term
 	    
 	    //Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);
                     
