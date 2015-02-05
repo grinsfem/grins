@@ -66,7 +66,7 @@ namespace GRINS
 
     std::string vel_penalty = "vel_penalty";
     if (this->_physics_name == "VelocityPenalty2")
-      vel_penalty += 2;
+      vel_penalty += '2';
 
     if( input.have_variable(section) )
       {
