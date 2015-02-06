@@ -382,20 +382,22 @@ namespace GRINS
                                                                          const libMesh::Point& point,
                                                                          libMesh::Real& value )
   {
-    value = std::numeric_limits<libMesh::Real>::quiet_NaN();
+    bool is_stress = false;
+    if( !_stress_indices.empty() )
+      is_stress= ( _stress_indices[0] == quantity_index ||
+                   _stress_indices[1] == quantity_index ||
+                   _stress_indices[2] == quantity_index ||
+                   _stress_indices[3] == quantity_index ||
+                   _stress_indices[4] == quantity_index ||
+                   _stress_indices[5] == quantity_index ||
+                   _stress_indices[6] == quantity_index ||
+                   _stress_zz_index == quantity_index   );
 
-    bool is_stress = ( _stress_indices[0] == quantity_index ||
-                       _stress_indices[1] == quantity_index ||
-                       _stress_indices[2] == quantity_index ||
-                       _stress_indices[3] == quantity_index ||
-                       _stress_indices[4] == quantity_index ||
-                       _stress_indices[5] == quantity_index ||
-                       _stress_indices[6] == quantity_index ||
-                       _stress_zz_index == quantity_index   );
-
-    bool is_strain = ( _strain_indices[0] == quantity_index ||
-                       _strain_indices[1] == quantity_index ||
-                       _strain_indices[2] == quantity_index   );
+    bool is_strain = false;
+    if( !_strain_indices.empty() )
+      is_strain = ( _strain_indices[0] == quantity_index ||
+                    _strain_indices[1] == quantity_index ||
+                    _strain_indices[2] == quantity_index   );
 
     if( is_stress || is_strain )
       {

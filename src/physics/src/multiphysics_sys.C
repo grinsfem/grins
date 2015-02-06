@@ -349,7 +349,11 @@ namespace GRINS
          physics_iter != _physics_list.end();
          physics_iter++ )
       {
-        (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
+        // Only compute if physics is active on current subdomain or globally
+        if( (physics_iter->second)->enabled_on_elem( &context.get_elem() ) )
+          {
+            (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
+          }
       }
     return;
   }

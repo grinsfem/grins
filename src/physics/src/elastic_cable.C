@@ -281,9 +281,9 @@ namespace GRINS
                                                                          const libMesh::Point& point,
                                                                          libMesh::Real& value )
   {
-	value = std::numeric_limits<libMesh::Real>::quiet_NaN();
-
-	bool is_strain = ( _strain_indices[0] == quantity_index );
+	bool is_strain = false;
+        if( !_strain_indices.empty() )
+          is_strain = ( _strain_indices[0] == quantity_index );
 
 	if( is_strain )
 	  {
