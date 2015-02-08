@@ -262,7 +262,7 @@ namespace GRINS
 					libMesh::RealGradient u_gradphi_I( dphi_dxi[i][qp] );
 					for(unsigned int j=0; j != n_u_dofs; j++)
 					{
-						libMesh::RealGradient u_gradphi_J( dphi_dxi[i][qp] );
+						libMesh::RealGradient u_gradphi_J( dphi_dxi[j][qp] );
 
                         const libMesh::Real diag_term = _A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0));
 
