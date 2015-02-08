@@ -263,14 +263,46 @@ namespace GRINS
 					for(unsigned int j=0; j != n_u_dofs; j++)
 					{
 						libMesh::RealGradient u_gradphi_J( dphi_dxi[i][qp] );
-						Kuu(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
-												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_x(0) + grad_u(0)));
 
-						Kvv(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
-												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_y(0) + grad_v(0)));
+                        const libMesh::Real diag_term = _A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0));
 
-						Kww(i,j) -=  _A * jac * (tau(0,0)*u_gradphi_I(0)*u_gradphi_J(0) +
-												 C(0,0,0,0)*u_gradphi_I(0)*u_gradphi_J(0)*(grad_z(0) + grad_w(0)));
+                        Kuu(i,j) -= diag_term;
+
+                        Kvv(i,j) -= diag_term;
+
+                        Kww(i,j) -= diag_term;
+
+                        const libMesh::Real dgamma_du = ( u_gradphi_J(0)*(grad_x(0)+grad_u(0)) );
+
+						const libMesh::Real dgamma_dv = ( u_gradphi_J(0)*(grad_y(0)+grad_v(0)) );
+
+						const libMesh::Real dgamma_dw = ( u_gradphi_J(0)*(grad_z(0)+grad_w(0)) );
+
+						const libMesh::Real C1 = _A*jac*C(0,0,0,0);
+
+						const libMesh::Real x_term = C1*( (grad_x(0)+grad_u(0))*u_gradphi_I(0) );
+
+						const libMesh::Real y_term = C1*( (grad_y(0)+grad_v(0))*u_gradphi_I(0) );
+
+						const libMesh::Real z_term = C1*( (grad_z(0)+grad_w(0))*u_gradphi_I(0) );
+
+						Kuu(i,j) -= x_term*dgamma_du;
+
+						Kuv(i,j) -= x_term*dgamma_dv;
+
+						Kuw(i,j) -= x_term*dgamma_dw;
+
+						Kvu(i,j) -= y_term*dgamma_du;
+
+						Kvv(i,j) -= y_term*dgamma_dv;
+
+						Kvw(i,j) -= y_term*dgamma_dw;
+
+						Kwu(i,j) -= z_term*dgamma_du;
+
+						Kwv(i,j) -= z_term*dgamma_dv;
+
+						Kww(i,j) -= z_term*dgamma_dw;
 
 					}
 				}
