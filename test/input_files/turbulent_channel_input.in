@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 50
-mesh_nx2 = 10
+mesh_nx1 = 250
+mesh_nx2 = 50
 
 domain_x1_max = 5.0
 domain_x2_max = 1.0
@@ -18,7 +18,7 @@ deltat = 0.01
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 25
-max_linear_iterations = 2500
+max_linear_iterations = 25000
 
 initial_linear_tolerance = 1.0e-12
 
@@ -29,7 +29,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'true'
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'ExodusII'
+output_format = 'pvtu'
 
 [Materials]
 
@@ -52,6 +52,7 @@ echo_physics = 'true'
 [Physics]
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
