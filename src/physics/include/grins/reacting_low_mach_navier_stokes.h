@@ -82,22 +82,6 @@ namespace GRINS
 
   protected:
 
-    void assemble_mass_time_deriv(AssemblyContext& c, 
-				  unsigned int qp,
-				  const CachedValues& cache);
-
-    void assemble_species_time_deriv(AssemblyContext& c, 
-				     unsigned int qp,
-				     const CachedValues& cache);
-
-    void assemble_momentum_time_deriv(AssemblyContext& c, 
-				      unsigned int qp,
-				      const CachedValues& cache);
-
-    void assemble_energy_time_deriv(AssemblyContext& c, 
-				    unsigned int qp,
-				    const CachedValues& cache);
-
     //! Enable pressure pinning
     bool _pin_pressure;
     
