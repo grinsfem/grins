@@ -375,6 +375,8 @@ AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_inflating_sheet_regression.sh, [chmod +x test/elastic_mooney_rivlin_inflating_sheet_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_inflating_sheet_regression.in)
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
