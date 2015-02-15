@@ -385,6 +385,11 @@ namespace GRINS
               {
                 Fl(i) += stress_33*phi[i][qp]*jac;
               }
+
+            if( compute_jacobian )
+              {
+                libmesh_not_implemented();
+              }
           }
       } // is_compressible
 
