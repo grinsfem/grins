@@ -72,6 +72,15 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
     libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
+
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // All shape function gradients are w.r.t. master element coordinates
@@ -125,14 +134,35 @@ namespace GRINS
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
             Fu(i) += traction(0)*u_phi[i][qp]*jac;
-            
+
             Fv(i) += traction(1)*u_phi[i][qp]*jac;
 
             Fw(i) += traction(2)*u_phi[i][qp]*jac;
 
             if( compute_jacobian )
               {
-                libmesh_not_implemented();
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    libMesh::RealGradient u_gradphi( dphi_dxi[j][qp], dphi_deta[j][qp] );
+
+                    const libMesh::Real dt0_dv = _pressure/sqrt_a*(u_gradphi(0)*A_2(2) - A_1(2)*u_gradphi(1));
+                    const libMesh::Real dt0_dw = _pressure/sqrt_a*(A_1(1)*u_gradphi(1) - u_gradphi(0)*A_2(1));
+
+                    const libMesh::Real dt1_du = _pressure/sqrt_a*(A_1(2)*u_gradphi(1) - u_gradphi(0)*A_2(2));
+                    const libMesh::Real dt1_dw = _pressure/sqrt_a*(u_gradphi(0)*A_2(0) - A_1(0)*u_gradphi(1));
+
+                    const libMesh::Real dt2_du = _pressure/sqrt_a*(u_gradphi(0)*A_2(1) - A_1(1)*u_gradphi(1));
+                    const libMesh::Real dt2_dv = _pressure/sqrt_a*(A_1(0)*u_gradphi(1) - u_gradphi(0)*A_2(0));
+
+                    Kuv(i,j) += dt0_dv*u_phi[i][qp]*jac;
+                    Kuw(i,j) += dt0_dw*u_phi[i][qp]*jac;
+
+                    Kvu(i,j) += dt1_du*u_phi[i][qp]*jac;
+                    Kvw(i,j) += dt1_dw*u_phi[i][qp]*jac;
+
+                    Kwu(i,j) += dt2_du*u_phi[i][qp]*jac;
+                    Kwv(i,j) += dt2_dv*u_phi[i][qp]*jac;
+                  }
               }
           }
       }

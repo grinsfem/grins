@@ -165,6 +165,7 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalyti
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
 TESTS += elastic_mooney_rivlin_sheet_regression.sh
+TESTS += elastic_mooney_rivlin_inflating_sheet_regression.sh
 TESTS += suspended_cable_test.sh
 
 CLEANFILES  = penalty_poiseuille.exo
