@@ -87,8 +87,6 @@ namespace GRINS
                                                                                                   libMesh::TensorValue<libMesh::Real>& stress,
                                                                                                   ElasticityTensor& C)
   {
-    libmesh_not_implemented();
-
     // We're treating a_* and A_* as 2x2, but we're cheating to pick up lambda^2
     libMesh::Real lambda_sq = A_cov(2,2);
 
@@ -101,7 +99,7 @@ namespace GRINS
     this->compute_stress_terms( lambda_sq, A_over_a, I1, I2, a_term, A_term );
 
     libMesh::TensorValue<libMesh::Real> daterm_dstrain, dAterm_dstrain;
-    this->compute_stress_deriv_terms( lambda_sq, A_over_a, I1, I2, A_contra, daterm_dstrain, dAterm_dstrain );
+    this->compute_stress_deriv_terms( lambda_sq, A_over_a, I1, I2, a_contra, A_contra, daterm_dstrain, dAterm_dstrain );
 
     ElasticityTensor dAcontra_dstrain;
     this->compute_Acontra_deriv( A_contra, dAcontra_dstrain );
@@ -175,6 +173,7 @@ namespace GRINS
   template <typename StrainEnergy>
   void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_deriv_terms( libMesh::Real lambda_sq, libMesh::Real A_over_a,
                                                                                            libMesh::Real I1, libMesh::Real I2,
+                                                                                           const libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                                            const libMesh::TensorValue<libMesh::Real>& A_contra,
                                                                                            libMesh::TensorValue<libMesh::Real>& daterm_dstrain,
                                                                                            libMesh::TensorValue<libMesh::Real>& dAterm_dstrain) const
@@ -195,15 +194,19 @@ namespace GRINS
             // a_term = 2.0*(dWdI1 + dWdI2*lambda^2);
             // => da_dstrain = 2.0*dWdI2*dlambda^2_dstrain
             // dlambda_sq_dstrain = -2*lambda^2 A^{alpha,beta}
-            daterm_dstrain(alpha,beta) = 2.0*dWdI2*(-2.0*lambda_sq*A_contra(alpha,beta));
+            const libMesh::Real dlamsq_dstrain = -2.0*lambda_sq*A_contra(alpha,beta);
+
+            daterm_dstrain(alpha,beta) = 2.0*dWdI2*dlamsq_dstrain;
 
             // A_term = 2.0*dWdI2*A_over_a + p;
             // A = det(A_cov) ==> dA_dstrain = 2*A*A_contra(alpha,beta)
             // p = -2.0*lambda_sq*( dWdI1 + dWdI2*(I1-lambda_sq) );
+            const libMesh::Real dI1_dstrain = 2.0*a_contra(alpha,beta) + dlamsq_dstrain;
 
-            dAterm_dstrain(alpha,beta) = 2.0*dWdI2*A_over_a*(2.0*A_contra(alpha,beta))
-                                       - 2.0*(-2.0*lambda_sq*A_contra(alpha,beta))*( dWdI1 + dWdI2*(I1-lambda_sq) )
-                                       - 2.0*lambda_sq*( dWdI2*(2.0*lambda_sq*A_contra(alpha,beta)) );
+            const libMesh::Real dp_dstrain = -2.0*dlamsq_dstrain*( dWdI1 + dWdI2*(I1-lambda_sq) )
+                                             -2.0*lambda_sq*dWdI2*(dI1_dstrain - dlamsq_dstrain);
+
+            dAterm_dstrain(alpha,beta) = 2.0*dWdI2*A_over_a*(2.0*A_contra(alpha,beta)) + dp_dstrain;
           }
       }
 
@@ -222,9 +225,8 @@ namespace GRINS
               {
                 for( unsigned int mu = 0; mu < 2; mu++ )
                   {
-                    dAcontra_dstrain(alpha,beta,lambda,mu) = -0.5*( A_contra(alpha,lambda)*A_contra(beta,mu)
-                                                                    + A_contra(alpha,mu)*A_contra(beta,lambda) )
-                                                             -A_contra(alpha,beta)*A_contra(lambda,mu);
+                    dAcontra_dstrain(alpha,beta,lambda,mu) = -( A_contra(alpha,lambda)*A_contra(beta,mu)
+                                                                + A_contra(alpha,mu)*A_contra(beta,lambda) );
                   }
               }
           }

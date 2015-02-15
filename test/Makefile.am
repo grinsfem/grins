@@ -172,10 +172,11 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_cata
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += composite_function_unit
-TESTS += elastic_mooney_rivlin_sheet_regression.sh
 TESTS += 3d_low_mach_jacobians_xy.sh
 TESTS += 3d_low_mach_jacobians_xz.sh
 TESTS += 3d_low_mach_jacobians_yz.sh
+TESTS += elastic_mooney_rivlin_sheet_regression.sh
+TESTS += elastic_mooney_rivlin_inflating_sheet_regression.sh
 TESTS += suspended_cable_test.sh
 
 CLEANFILES  = penalty_poiseuille.exo
