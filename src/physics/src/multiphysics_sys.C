@@ -238,6 +238,39 @@ namespace GRINS
     return compute_jacobian;
   }
 
+   bool MultiphysicsSystem::_nonlocal_residual( bool request_jacobian,
+                                                libMesh::DiffContext& context,
+                                                ResFuncType resfunc,
+                                                CacheFuncType cachefunc)
+  {
+    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+
+    bool compute_jacobian = true;
+    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
+    CachedValues cache;
+
+    // Now compute cache for this element
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+        // boost::shared_ptr gets confused by operator->*
+	((*(physics_iter->second)).*cachefunc)( c, cache );
+      }
+
+    // Loop over each physics and compute their contributions
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+	 physics_iter != _physics_list.end();
+	 physics_iter++ )
+      {
+
+        ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+      }
+
+    return compute_jacobian;
+  }
+
 
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 						    libMesh::DiffContext& context )
@@ -262,7 +295,7 @@ namespace GRINS
   bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,
 						     libMesh::DiffContext& context )
   {
-    return this->_general_residual
+    return this->_nonlocal_residual
       (request_jacobian,
        context,
        &GRINS::Physics::nonlocal_time_derivative,
@@ -292,7 +325,7 @@ namespace GRINS
   bool MultiphysicsSystem::nonlocal_constraint( bool request_jacobian,
 					        libMesh::DiffContext& context )
   {
-    return this->_general_residual
+    return this->_nonlocal_residual
       (request_jacobian,
        context,
        &GRINS::Physics::nonlocal_constraint,
@@ -312,7 +345,7 @@ namespace GRINS
   bool MultiphysicsSystem::nonlocal_mass_residual( bool request_jacobian,
 					           libMesh::DiffContext& context )
   {
-    return this->_general_residual
+    return this->_nonlocal_residual
       (request_jacobian,
        context,
        &GRINS::Physics::nonlocal_mass_residual,

@@ -186,6 +186,14 @@ namespace GRINS
 			    libMesh::DiffContext& context,
                             ResFuncType resfunc,
                             CacheFuncType cachefunc);
+
+    // Refactored nonlocal residual evaluation implementation
+    // This is separate since this is only called when context._elem=NULL
+    // and the enabled_on_elem() is meaningless.
+    bool _nonlocal_residual( bool request_jacobian,
+                             libMesh::DiffContext& context,
+                             ResFuncType resfunc,
+                             CacheFuncType cachefunc);
   };
 
   inline
