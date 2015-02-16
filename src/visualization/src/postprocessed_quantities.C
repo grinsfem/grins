@@ -117,11 +117,28 @@ namespace GRINS
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
-    if( &(context.get_elem()) != &(_multiphysics_context->get_elem()) )
+    if(context.has_elem() && _multiphysics_context->has_elem())
       {
-	_multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
-	_multiphysics_context->elem_fe_reinit();
+        if( &(context.get_elem()) != &(_multiphysics_context->get_elem()) )
+          {
+            _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
+            _multiphysics_context->elem_fe_reinit();
+          }
       }
+    else if( !context.has_elem() && _multiphysics_context->has_elem() )
+      {
+        // Incoming context has NULL elem ==> SCALAR variables
+        _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,NULL);
+        _multiphysics_context->elem_fe_reinit();
+      }
+    else if( context.has_elem() && !_multiphysics_context->has_elem() )
+      {
+        _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
+        _multiphysics_context->elem_fe_reinit();
+      }
+    //else
+    /* If has_elem() is false for both contexts, we're still dealing with SCALAR variables
+       and therefore don't need to reinit. */
 
     libMesh::Real value = 0.0;
 

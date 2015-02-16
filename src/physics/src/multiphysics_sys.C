@@ -226,18 +226,23 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
-	  }
+        if(c.has_elem())
+          {
+            if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
+              {
+                ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+              }
+          }
+        else
+          {
+            ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+          }
       }
 
     // TODO: Need to think about the implications of this because there might be some
     // TODO: jacobian terms we don't want to compute for efficiency reasons
     return compute_jacobian;
   }
-
 
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 						    libMesh::DiffContext& context )
