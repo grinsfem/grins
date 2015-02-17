@@ -99,19 +99,12 @@ namespace GRINS
   {
     context.get_element_fe(_disp_vars.u_var())->get_JxW();
     context.get_element_fe(_disp_vars.u_var())->get_phi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
-
-    // Need for constructing metric tensors
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-	context.get_element_fe(_disp_vars.v_var())->get_dxidy();
-	context.get_element_fe(_disp_vars.w_var())->get_dxidz();
 
     return;
   }
 
 
-  void ElasticCableConstantGravity::element_time_derivative( bool compute_jacobian,
+  void ElasticCableConstantGravity::element_time_derivative( bool /*compute_jacobian*/,
                                                                  AssemblyContext& context,
                                                                  CachedValues& /*cache*/ )
   {
@@ -127,32 +120,8 @@ namespace GRINS
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    // All shape function gradients are w.r.t. master element coordinates
-    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
-
-    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
-    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
-    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
-
-    //const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-
-    //Grab the Jacobian matrix
-	libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
 	{
-		// Gradients are w.r.t. master element coordinates
-		libMesh::Gradient grad_u, grad_v, grad_w;
-		for( unsigned int d = 0; d < n_u_dofs; d++ )
-		{
-			libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );
-			grad_u += u_coeffs(d)*u_gradphi;
-			grad_v += v_coeffs(d)*u_gradphi;
-			grad_w += w_coeffs(d)*u_gradphi;
-		}
-
-		libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
-
 		libMesh::Real jac = JxW[qp];
 
 		for (unsigned int i=0; i != n_u_dofs; i++)
@@ -162,13 +131,6 @@ namespace GRINS
 			Fv(i) += _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
 
 			Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
-
-			/*
-			if( compute_jacobian )
-			{
-				//libmesh_not_implemented();
-			}
-			*/
 		}
 	}
 
