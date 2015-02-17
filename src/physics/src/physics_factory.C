@@ -523,14 +523,13 @@ namespace GRINS
         if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              // We need to track \lambda as an indendent variable
-              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input,true));
+              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input,false /*is_compressible*/));
           }
         else if( elasticity_model == std::string("MooneyRivlin") )
           {
             physics_list[physics_to_add] =
               // \lambda determined from incompressiblity
-              PhysicsPtr(new ElasticMembrane<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >(physics_to_add,input,false));
+              PhysicsPtr(new ElasticMembrane<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >(physics_to_add,input,false /*is_compressible*/));
           }
         else
           {
@@ -551,8 +550,7 @@ namespace GRINS
         if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              // We need to track \lambda as an indendent variable
-              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,true));
+              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,false /*is_compressible*/));
           }
         else
           {
