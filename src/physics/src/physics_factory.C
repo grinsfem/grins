@@ -551,8 +551,7 @@ namespace GRINS
         if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              // We need to track \lambda as an indendent variable
-              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,true));
+              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,false));
           }
         else
           {

@@ -485,7 +485,8 @@ namespace GRINS
     // If the material is compressible, then lambda_sq is an independent variable
     if( _is_compressible )
 	{
-    	lambda_sq = context.interior_value(this->_is_compressible, qp);
+          libmesh_not_implemented();
+          //lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
 	}
     else
 	{
