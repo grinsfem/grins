@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -53,10 +53,17 @@ namespace GRINS
   class CachedValues;
   class CanteraMixture;
 
+  //! Wrapper class for evaluating transport properties using Cantera
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread. Note that this documentation will always
+    be built regardless if Cantera is included in the GRINS build or not. Check configure
+    output to confirm that Cantera was included in the build if you wish to use it.
+   */
   class CanteraTransport
   {
   public:
-    
+
     CanteraTransport( CanteraMixture& mixture );
     ~CanteraTransport();
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -38,6 +38,13 @@
 
 namespace GRINS
 {
+  //! Wrapper class for evaluating thermochemistry and transport properties using Cantera
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread. Note that this documentation will always
+    be built regardless if Cantera is included in the GRINS build or not. Check configure
+    output to confirm that Cantera was included in the build if you wish to use it.
+   */
   class CanteraEvaluator
   {
   public:
@@ -56,7 +63,7 @@ namespace GRINS
 
     libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
 	    std::vector<libMesh::Real>& mole_fractions ) const;
 
     unsigned int species_index( const std::string& species_name ) const;
@@ -163,27 +170,27 @@ namespace GRINS
   {
     return _chem.R_mix(mass_fractions);
   }
-  
+
   inline
   libMesh::Real CanteraEvaluator::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
   {
     return _chem.X(species,M,mass_fraction);
   }
-  
+
   inline
-  void CanteraEvaluator::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+  void CanteraEvaluator::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
     return;
   }
-  
+
   inline
   unsigned int CanteraEvaluator::species_index( const std::string& species_name ) const
   {
     return _chem.species_index(species_name);
   }
-  
+
   inline
   std::string CanteraEvaluator::species_name( unsigned int species_index ) const
   {
@@ -201,13 +208,13 @@ namespace GRINS
   {
     return _thermo.cv(cache,qp);
   }
-  
+
   inline
   libMesh::Real CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, unsigned int species) const
   {
     return _thermo.h(cache,qp,species);
   }
-  
+
   inline
   void CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const
   {
