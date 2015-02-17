@@ -245,6 +245,7 @@ include_HEADERS += physics/include/grins/inc_navier_stokes.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_stab_base.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_adjoint_stab.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_spgsm_stab.h
+include_HEADERS += physics/include/grins/heat_transfer_macros.h
 include_HEADERS += physics/include/grins/heat_transfer_base.h
 include_HEADERS += physics/include/grins/heat_transfer.h
 include_HEADERS += physics/include/grins/heat_transfer_source.h
