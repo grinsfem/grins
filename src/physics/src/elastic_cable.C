@@ -439,7 +439,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   void ElasticCable<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                  const libMesh::FEBase& elem,
-																 const AssemblyContext& context,
+                                                              const AssemblyContext& /*context*/,
                                                                  const libMesh::Gradient& grad_u,
 																 const libMesh::Gradient& grad_v,
 																 const libMesh::Gradient& grad_w,
@@ -465,8 +465,6 @@ namespace GRINS
     a_cov(1,1)    = 1.0;
 	a_cov(2,2)    = 1.0;
 
-    libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-
     // Covariant metric tensor of current configuration
     A_cov.zero();
     A_cov(0,0) = (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi);
@@ -478,7 +476,6 @@ namespace GRINS
 	a_contra(2,2) = 1.0;
 
     // Contravariant metric tensor in current configuration is A_cov^{-1}
-    libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
     A_contra.zero();
     A_contra(0,0) =  1/A_cov(1,1);
 
