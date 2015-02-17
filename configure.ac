@@ -2,7 +2,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(grins, 0.5.0, grins-users@googlegroups.com)
+AC_INIT(grins, 0.6.0, grins-users@googlegroups.com)
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADER(grins_config.h.tmp)
@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.4,yes)
+AX_PATH_LIBMESH_NEW(1.0.0,yes)
 AX_LIBMESH_DIM()
 
 AC_ARG_ENABLE([libmesh-flags],
