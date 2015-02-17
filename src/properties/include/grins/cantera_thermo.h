@@ -51,6 +51,13 @@ namespace GRINS
   class CanteraMixture;
   class CachedValues;
   
+  //! Wrapper class for evaluating thermo properties using Cantera
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread. Note that this documentation will always
+    be built regardless if Cantera is included in the GRINS build or not. Check configure
+    output to confirm that Cantera was included in the build if you wish to use it.
+   */
   class CanteraThermodynamics
   {
   public:

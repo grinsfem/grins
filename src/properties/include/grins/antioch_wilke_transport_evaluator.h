@@ -42,6 +42,14 @@
 
 namespace GRINS
 {
+  //! Wrapper class for evaluating Wilke transport properties using Antioch
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   class AntiochWilkeTransportEvaluator : public AntiochEvaluator<Thermo>
   {
