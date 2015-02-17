@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -55,11 +55,19 @@
 // These are "dummy" types to help force operator overloading
 namespace GRINS
 {
-  
+
 }
 
 namespace GRINS
 {
+  //! Wrapper class for storing state for computing Wilke transport properties using Antioch
+  /*!
+    This class is expected to be constructed *before* threads have been forked and will
+    live during the whole program.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   class AntiochWilkeTransportMixture : public AntiochMixture
   {
@@ -72,13 +80,13 @@ namespace GRINS
     const Antioch::WilkeMixture<libMesh::Real>& wilke_mixture() const;
 
     const Viscosity& viscosity() const;
-    
+
     const Conductivity& conductivity() const;
 
     const Diffusivity& diffusivity() const;
 
     typedef AntiochChemistry ChemistryParent;
-    
+
   protected:
 
     Antioch::WilkeMixture<libMesh::Real> _wilke_mixture;
@@ -118,7 +126,7 @@ namespace GRINS
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
       return;
     }
-    
+
     void specialized_build_thermo( const GetPot& /*input*/,
                                    boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
@@ -132,7 +140,7 @@ namespace GRINS
                                       viscosity_type<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> > > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
-      
+
       Antioch::read_sutherland_data_ascii_default( *(viscosity.get()) );
       return;
     }
@@ -163,14 +171,14 @@ namespace GRINS
         {
           std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
                     << std::endl;
-           
+
           libmesh_error();
         }
-       
+
       const libMesh::Real Le = input( "Physics/Antioch/Le", 0.0 );
-       
+
       diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( Le ) );
-       
+
       return;
     }
 

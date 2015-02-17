@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -46,6 +46,14 @@
 
 namespace GRINS
 {
+  //! Wrapper class for evaluating chemistry and thermo properties using Antioch
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   template<typename Thermo>
   class AntiochEvaluator
   {
@@ -66,7 +74,7 @@ namespace GRINS
 
     libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
 	    std::vector<libMesh::Real>& mole_fractions ) const;
 
     unsigned int species_index( const std::string& species_name ) const;
@@ -77,7 +85,7 @@ namespace GRINS
     libMesh::Real cp( const CachedValues& cache, unsigned int qp );
 
     libMesh::Real cv( const CachedValues& cache, unsigned int qp );
-     
+
     libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
 
     void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
@@ -98,7 +106,7 @@ namespace GRINS
   protected:
 
     const AntiochMixture& _chem;
-    
+
     // This is a template type
     boost::scoped_ptr<Thermo> _thermo;
 
@@ -129,7 +137,7 @@ namespace GRINS
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
       return;
     }
-    
+
     void specialized_build_thermo( const AntiochMixture& mixture,
                                    boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
@@ -168,30 +176,30 @@ namespace GRINS
   {
     return _chem.R_mix(mass_fractions);
   }
-  
+
   template<typename Thermo>
   inline
   libMesh::Real AntiochEvaluator<Thermo>::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
   {
     return _chem.X(species,M,mass_fraction);
   }
-  
+
   template<typename Thermo>
   inline
-  void AntiochEvaluator<Thermo>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+  void AntiochEvaluator<Thermo>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
                                     std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
     return;
   }
-  
+
   template<typename Thermo>
   inline
   unsigned int AntiochEvaluator<Thermo>::species_index( const std::string& species_name ) const
   {
     return _chem.species_index(species_name);
   }
-  
+
   template<typename Thermo>
   inline
   std::string AntiochEvaluator<Thermo>::species_name( unsigned int species_index ) const

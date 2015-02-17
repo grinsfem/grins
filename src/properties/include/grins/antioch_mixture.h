@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -52,6 +52,14 @@ class GetPot;
 
 namespace GRINS
 {
+  //! Wrapper class for storing state for Antioch thermo and kinetics
+  /*!
+    This class is expected to be constructed *before* threads have been forked and will
+    live during the whole program.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   class AntiochMixture : public AntiochChemistry
   {
   public:
@@ -100,7 +108,7 @@ namespace GRINS
   {
     return _h_stat_mech_ref_correction[species];
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
