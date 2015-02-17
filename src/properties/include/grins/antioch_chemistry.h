@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -49,6 +49,14 @@ class GetPot;
 
 namespace GRINS
 {
+  //! Wrapper class for Antioch::ChemicalMixture
+  /*!
+    This class is expected to be constructed *before* threads have been forked and will
+    live during the whole program.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   class AntiochChemistry
   {
   public:
@@ -57,23 +65,32 @@ namespace GRINS
 
     virtual ~AntiochChemistry();
 
+    //! Species molar mass (molecular weight), [kg/mol]
     libMesh::Real M( unsigned int species ) const;
 
+    //! Mixture molar mass (molecular weight), [kg/mol]
     libMesh::Real M_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
 
+    //! Species gas constant, [J/kg-K]
+    /*! R_universal/M(species) */
     libMesh::Real R( unsigned int species ) const;
 
+    //! Mixture gas constant, [J/kg-K]
     libMesh::Real R_mix( const std::vector<libMesh::Real>& mass_fractions ) const;
 
+    //! Species mole fraction, unitless
     libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
+    //! Mole fraction for all species, unitless
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
 	    std::vector<libMesh::Real>& mole_fractions ) const;
 
+    //! Species molar density, [mol/m^3]
     libMesh::Real molar_density( const unsigned int species,
                                  const libMesh::Real rho,
                                  const libMesh::Real mass_fraction ) const;
 
+    //! Molar density for all species, [mol/m^3]
     void molar_densities( const libMesh::Real rho,
 			  const std::vector<libMesh::Real>& mass_fractions,
 			  std::vector<libMesh::Real>& molar_densities ) const;
@@ -84,8 +101,10 @@ namespace GRINS
 
     std::string species_name( unsigned int species_index ) const;
 
+    //! Accessor to underlying Antioch object
     const Antioch::ChemicalMixture<libMesh::Real>& chemical_mixture() const;
 
+    //! Accessor for this class
     const AntiochChemistry& chemistry() const;
 
   protected:
@@ -100,25 +119,25 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  libMesh::Real AntiochChemistry::M( unsigned int species ) const 
+  libMesh::Real AntiochChemistry::M( unsigned int species ) const
   {
     return _antioch_gas->M(species);
   }
 
   inline
-  libMesh::Real AntiochChemistry::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
+  libMesh::Real AntiochChemistry::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _antioch_gas->M(mass_fractions);
   }
 
   inline
-  libMesh::Real AntiochChemistry::R( unsigned int species ) const 
+  libMesh::Real AntiochChemistry::R( unsigned int species ) const
   {
     return _antioch_gas->R(species);
   }
 
   inline
-  libMesh::Real AntiochChemistry::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const 
+  libMesh::Real AntiochChemistry::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _antioch_gas->R(mass_fractions);
   }
@@ -132,7 +151,7 @@ namespace GRINS
 
   inline
   void AntiochChemistry::X( libMesh::Real M,
-                            const std::vector<libMesh::Real>& mass_fractions, 
+                            const std::vector<libMesh::Real>& mass_fractions,
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _antioch_gas->X(M,mass_fractions,mole_fractions);
@@ -183,7 +202,7 @@ namespace GRINS
   {
     return *this;
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
