@@ -1,6 +1,29 @@
-Version 0.5.0 (in progress)
+Version 0.5.0
+https://github.com/grinsfem/grins/releases/tag/v0.5.0
+
+  * Last GRINS version to support libMesh 0.9.4, future versions will
+    require libMesh >= 1.0.0
+  * Refactored viscosity and conductivity handling to support using
+    ParsedFunctions
   * Complete refactoring of postprocessing
     - Now each Physics registers its own postprocessing variables 
+  * Added ElasticMembrane and ElasticMembraneConstantPressure Physics
+    - Supports two-dimensional manifolds
+    - Templated around the stress-strain law
+    - Have implemented Hooke's law and incompressible hyperelastic materials
+    - Compressible materials supported, but no explicit stress-strain laws yet
+    - Example/tests include stretched elastic sheet (displacement controlled) and
+      an inflating sheet under constant pressure
+    - Jacobians/derivatives implemented
+    - Some boundary condition support
+   * Complete refactoring of postprocessing
+    - Now each Physics registers its own postprocessing variables
+   * Added ElasticCable and ElasticCableConstantGravity Physics
+    - Supports one-dimensional manifolds
+    - Currently only supporting Hooke's law
+    - Jacobians/derivatives included
+   * Updated Doxygen generation to better include all code documentation
+   * Variety of bugfixes
 
 Version 0.4.0
 https://github.com/grinsfem/grins/releases/tag/v0.4.0
