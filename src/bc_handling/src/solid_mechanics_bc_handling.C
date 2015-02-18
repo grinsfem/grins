@@ -73,6 +73,15 @@ namespace GRINS
     else if( bc_type == "roller_z" )
       bc_type_out = ROLLER_Z;
 
+    else if( bc_type == "yz_symmetry" )
+      bc_type_out = SYMMETRY_YZ;
+
+    else if( bc_type == "xz_symmetry" )
+      bc_type_out = SYMMETRY_XZ;
+
+    else if( bc_type == "xy_symmetry" )
+      bc_type_out = SYMMETRY_XY;
+
     else if( bc_type == "constant_traction" )
       bc_type_out = CONSTANT_TRACTION;
 
@@ -143,6 +152,9 @@ namespace GRINS
       case(ROLLER_X):
       case(ROLLER_Y):
       case(ROLLER_Z):
+      case(SYMMETRY_YZ):
+      case(SYMMETRY_XZ):
+      case(SYMMETRY_XY):
         {
           this->set_dirichlet_bc_type( bc_id, bc_type );
         }
@@ -339,6 +351,63 @@ namespace GRINS
           std::vector<VariableIndex> dbc_vars;
           dbc_vars.push_back(u_var);
           dbc_vars.push_back(v_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Symmetric about YZ-plane so pin x-direction
+      case(SYMMETRY_YZ):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(u_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Symmetric about XZ-plane so pin y-direction
+      case(SYMMETRY_XZ):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(v_var);
+
+          libMesh::ZeroFunction<libMesh::Number> zero;
+
+          libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+                                                 dbc_vars,
+                                                 &zero );
+
+          dof_map.add_dirichlet_boundary( no_slip_dbc );
+        }
+        break;
+
+        // Symmetric about XY-plane so pin z-direction
+      case(SYMMETRY_XY):
+        {
+          std::set<BoundaryID> dbc_ids;
+          dbc_ids.insert(bc_id);
+
+          std::vector<VariableIndex> dbc_vars;
+          dbc_vars.push_back(w_var);
 
           libMesh::ZeroFunction<libMesh::Number> zero;
 
