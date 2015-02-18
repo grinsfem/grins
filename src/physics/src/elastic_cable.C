@@ -242,17 +242,12 @@ namespace GRINS
           {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp] );
 
-            for( unsigned int alpha = 0; alpha < dim; alpha++ )
-              {
-                for( unsigned int beta = 0; beta < dim; beta++ )
-                  {
-                    Fu(i) -= tau(alpha,beta)*_A*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) ) * jac;
+            Fu(i) -= tau(0,0)*_A*( (grad_x(0) + grad_u(0))*u_gradphi(0) ) * jac;
 
-                    Fv(i) -= tau(alpha,beta)*_A*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
+            Fv(i) -= tau(0,0)*_A*( (grad_y(0) + grad_v(0))*u_gradphi(0) ) * jac;
 
-                    Fw(i) -= tau(alpha,beta)*_A*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) ) * jac;
-                  }
-              }
+            Fw(i) -= tau(0,0)*_A*( (grad_z(0) + grad_w(0))*u_gradphi(0) ) * jac;
+
           }
 
         if( compute_jacobian )
