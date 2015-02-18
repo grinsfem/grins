@@ -40,18 +40,18 @@ namespace GRINS
   {
   public:
 
-	  ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                     bool lambda_sq_var );
+    ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
+                  bool lambda_sq_var );
 
     virtual ~ElasticCable();
 
     //! Initialize variables for this physics.
-	virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system );
 
-	virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-	//! Initialize context for added physics variables
-	virtual void init_context( AssemblyContext& context );
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext& context );
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -90,10 +90,10 @@ namespace GRINS
 
     void compute_metric_tensors( unsigned int qp,
                                  const libMesh::FEBase& elem,
-								 const AssemblyContext& context,
+                                 const AssemblyContext& context,
                                  const libMesh::Gradient& grad_u,
-								 const libMesh::Gradient& grad_v,
-								 const libMesh::Gradient& grad_w,
+                                 const libMesh::Gradient& grad_v,
+                                 const libMesh::Gradient& grad_w,
                                  libMesh::TensorValue<libMesh::Real>& a_cov,
                                  libMesh::TensorValue<libMesh::Real>& a_contra,
                                  libMesh::TensorValue<libMesh::Real>& A_cov,

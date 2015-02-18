@@ -38,35 +38,35 @@
 namespace GRINS
 {
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
-  	  : Physics(physics_name,input),
-  	    _disp_vars(input,physics_name),
-		_A( input("Physics/"+physics_name+"/A", 1.0 ) ),
-		_rho( input("Physics/"+physics_name+"/rho", 1.0 ) )
+    : Physics(physics_name,input),
+      _disp_vars(input,physics_name),
+      _A( input("Physics/"+physics_name+"/A", 1.0 ) ),
+      _rho( input("Physics/"+physics_name+"/rho", 1.0 ) )
   {
-	if( !input.have_variable("Physics/ElasticCableConstantGravity/A") )
-	{
-		std::cerr << "Error: Must input area for ElasticCableConstantGravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/A." << std::endl;
-		libmesh_error();
-	}
+    if( !input.have_variable("Physics/ElasticCableConstantGravity/A") )
+      {
+        std::cerr << "Error: Must input area for ElasticCableConstantGravity." << std::endl
+                  << "       Please set Physics/ElasticCableConstantGravity/A." << std::endl;
+        libmesh_error();
+      }
     if( !input.have_variable("Physics/ElasticCableConstantGravity/rho") )
-	{
-		std::cerr << "Error: Must input density for ElasticCableConstantGravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/rho." << std::endl;
-		libmesh_error();
-	}
+      {
+        std::cerr << "Error: Must input density for ElasticCableConstantGravity." << std::endl
+                  << "       Please set Physics/ElasticCableConstantGravity/rho." << std::endl;
+        libmesh_error();
+      }
 
     int num_gravity =  input.vector_variable_size("Physics/ElasticCableConstantGravity/gravity");
     if (num_gravity != 3)
-    {
-		std::cerr << "Error: Must input three values for ElasticCableConstantGravity gravity." << std::endl
-				  << "       Please set Physics/ElasticCableConstantGravity/gravity." << std::endl;
-		libmesh_error();
-	}
+      {
+        std::cerr << "Error: Must input three values for ElasticCableConstantGravity gravity." << std::endl
+                  << "       Please set Physics/ElasticCableConstantGravity/gravity." << std::endl;
+        libmesh_error();
+      }
     for( int i = 0; i < num_gravity; i++ )
-	{
-    	_gravity(i)=( input("Physics/ElasticCableConstantGravity/gravity", 0.0 , i ) );
-	}
+      {
+        _gravity(i)=( input("Physics/ElasticCableConstantGravity/gravity", 0.0 , i ) );
+      }
 
     return;
   }
@@ -105,8 +105,8 @@ namespace GRINS
 
 
   void ElasticCableConstantGravity::element_time_derivative( bool /*compute_jacobian*/,
-                                                                 AssemblyContext& context,
-                                                                 CachedValues& /*cache*/ )
+                                                             AssemblyContext& context,
+                                                             CachedValues& /*cache*/ )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
@@ -121,18 +121,18 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
-	{
-		libMesh::Real jac = JxW[qp];
+      {
+        libMesh::Real jac = JxW[qp];
 
-		for (unsigned int i=0; i != n_u_dofs; i++)
-		{
-			Fu(i) += _gravity(0)*_A*_rho*u_phi[i][qp]*jac;
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += _gravity(0)*_A*_rho*u_phi[i][qp]*jac;
 
-			Fv(i) += _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
+            Fv(i) += _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
 
-			Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
-		}
-	}
+            Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
+          }
+      }
 
     return;
   }
