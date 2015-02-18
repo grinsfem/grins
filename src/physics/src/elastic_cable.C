@@ -477,7 +477,7 @@ namespace GRINS
 
     // Contravariant metric tensor in current configuration is A_cov^{-1}
     A_contra.zero();
-    A_contra(0,0) =  1/A_cov(1,1);
+    A_contra(0,0) =  1/A_cov(0,0);
 
     // If the material is compressible, then lambda_sq is an independent variable
     if( _is_compressible )
