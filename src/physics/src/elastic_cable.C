@@ -466,7 +466,7 @@ namespace GRINS
 
     // Contravariant metric tensor of reference configuration
     a_contra.zero();
-    a_contra(0,0) = dxi*dxi;
+    a_contra(0,0) = 1/a_cov(0,0);
     a_contra(1,1) = 1.0;
     a_contra(2,2) = 1.0;
 
