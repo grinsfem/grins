@@ -178,15 +178,15 @@ namespace GRINS
 
     //Grab the Jacobian matrix as submatrices
     //libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(0,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(0,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(0,2);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(1,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(1,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(1,2);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(2,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(2,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(2,2);
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.w_var());
 
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
