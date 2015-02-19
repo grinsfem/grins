@@ -79,6 +79,7 @@
 #include "grins/antioch_constant_transport_evaluator.h"
 
 #include "grins/hookes_law.h"
+#include "grins/hookes_law_1d.h"
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
@@ -457,7 +458,7 @@ namespace GRINS
         if( elasticity_model == std::string("HookesLaw") )
           {
             physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticCable<HookesLaw>(physics_to_add,input,false /*is_compressible*/));
+              PhysicsPtr(new ElasticCable<HookesLaw1D>(physics_to_add,input,false /*is_compressible*/));
           }
         else
           {
