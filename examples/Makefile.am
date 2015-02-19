@@ -272,7 +272,18 @@ cable_LDADD = $(LIBGRINS_LIBS)
 cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
 
 
+#=======================================================================
+# Inflating Quarter Sheet with 1D Stiffeners Example
+#=======================================================================
+mixeddiminflatingsheetdir = $(prefix)/examples/mixed_dim_inflating_sheet
+mixeddiminflatingsheet_DATA  = $(top_srcdir)/examples/mixed_dim_inflating_sheet/sheet.in
+mixeddiminflatingsheet_DATA += $(top_srcdir)/examples/mixed_dim_inflating_sheet/quarter_sheet.exo
+mixeddiminflatingsheet_SCRIPTS = $(top_builddir)/examples/mixed_dim_inflating_sheet/run.sh
+
+EXTRA_DIST += $(mixeddiminflatingsheet_DATA)
+
+
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
-
