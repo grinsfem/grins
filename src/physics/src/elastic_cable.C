@@ -105,8 +105,8 @@ namespace GRINS
     // Need for constructing metric tensors
     context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
     context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.v_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.w_var())->get_dxidz();
+    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
+    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
 
     return;
   }
@@ -178,15 +178,15 @@ namespace GRINS
 
     //Grab the Jacobian matrix as submatrices
     //libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(0,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(0,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(0,2);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(1,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(1,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(1,2);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(2,0);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(2,1);
-    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(2,2);
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.w_var());
 
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -242,17 +242,12 @@ namespace GRINS
           {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp] );
 
-            for( unsigned int alpha = 0; alpha < dim; alpha++ )
-              {
-                for( unsigned int beta = 0; beta < dim; beta++ )
-                  {
-                    Fu(i) -= tau(alpha,beta)*_A*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) ) * jac;
+            Fu(i) -= tau(0,0)*_A*( (grad_x(0) + grad_u(0))*u_gradphi(0) ) * jac;
 
-                    Fv(i) -= tau(alpha,beta)*_A*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) ) * jac;
+            Fv(i) -= tau(0,0)*_A*( (grad_y(0) + grad_v(0))*u_gradphi(0) ) * jac;
 
-                    Fw(i) -= tau(alpha,beta)*_A*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) ) * jac;
-                  }
-              }
+            Fw(i) -= tau(0,0)*_A*( (grad_z(0) + grad_w(0))*u_gradphi(0) ) * jac;
+
           }
 
         if( compute_jacobian )
@@ -471,13 +466,13 @@ namespace GRINS
 
     // Contravariant metric tensor of reference configuration
     a_contra.zero();
-    a_contra(0,0) = dxi*dxi;
+    a_contra(0,0) = 1/a_cov(0,0);
     a_contra(1,1) = 1.0;
     a_contra(2,2) = 1.0;
 
     // Contravariant metric tensor in current configuration is A_cov^{-1}
     A_contra.zero();
-    A_contra(0,0) =  1/A_cov(1,1);
+    A_contra(0,0) =  1/A_cov(0,0);
 
     // If the material is compressible, then lambda_sq is an independent variable
     if( _is_compressible )
