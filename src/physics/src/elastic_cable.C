@@ -105,8 +105,8 @@ namespace GRINS
     // Need for constructing metric tensors
     context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
     context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.v_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.w_var())->get_dxidz();
+    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
+    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
 
     return;
   }
