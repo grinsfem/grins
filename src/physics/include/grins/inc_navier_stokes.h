@@ -64,6 +64,10 @@ namespace GRINS
 					  AssemblyContext& context,
 					  CachedValues& cache );
 
+    // Side Boundary Normal Flux Term (of form, \int d()/dn )
+    virtual void side_time_derivative( bool compute_jacobian,
+				       AssemblyContext& context,
+				       CachedValues& cache );
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
 				     AssemblyContext& context,
