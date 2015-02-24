@@ -244,7 +244,8 @@ namespace GRINS
 	    
 	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
 
-	
+	std::cout<<"The source term at "<<x<<", "<<y<<" is: "<<_source_term<<std::endl;
+
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
 	
@@ -252,12 +253,11 @@ namespace GRINS
 	
         // First, an i-loop over the viscosity degrees of freedom.        
         for (unsigned int i=0; i != n_nu_dofs; i++)
-          {	    
-	    // TODO: intialize constants cb1, cb2, cw1, sigma, and functions source_fn(nu), destruction_fn(nu), and resolve issue of grad(nu + nu_tilde)
+          {	    	    
             Fnu(i) += jac *
               ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
 	    +_source_term*nu_phi[i][qp] // source term
-	      + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] - grad_nu*grad_nu*nu_phi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
+	      + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
 		- _destruction_term*nu_phi[i][qp]); // destruction term
 	    
 	    //Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);

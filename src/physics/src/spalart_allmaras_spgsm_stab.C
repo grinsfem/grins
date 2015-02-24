@@ -93,8 +93,8 @@ namespace GRINS
 
     // The viscosity shape function gradients (in global coords.)
     // at interior quadrature points.
-    //const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-    //context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+    const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
+    context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
     
     // Quadrature point locations
     //const std::vector<libMesh::Point>& nu_qpoint = 
@@ -169,7 +169,7 @@ namespace GRINS
         
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
-            Fnu(i) += jac*( tau_spalart*RM_spalart*nu_phi[i][qp]  );            
+            Fnu(i) += jac*( -tau_spalart*RM_spalart*U*nu_gradphi[i][qp] );            
           }
 
         if( compute_jacobian )
