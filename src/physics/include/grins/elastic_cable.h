@@ -27,8 +27,7 @@
 
 
 //GRINS
-#include "grins/physics.h"
-#include "grins/solid_mechanics_fe_variables.h"
+#include "grins/elastic_cable_base.h"
 
 //LIBMESH
 #include "libmesh/fe_base.h"
@@ -36,22 +35,14 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCable : public Physics
+  class ElasticCable : public ElasticCableBase
   {
   public:
 
-    ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
+    ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                   bool lambda_sq_var );
 
     virtual ~ElasticCable();
-
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -75,9 +66,6 @@ namespace GRINS
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
-  protected:
-
-    SolidMechanicsFEVariables _disp_vars;
 
   private:
 

@@ -44,10 +44,9 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  ElasticCable<StressStrainLaw>::ElasticCable( const GRINS::PhysicsName& physics_name, const GetPot& input,
+  ElasticCable<StressStrainLaw>::ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                                                bool is_compressible )
-    : Physics(physics_name,input),
-      _disp_vars(input,physics_name),
+    : ElasticCableBase(physics_name,input),
       _stress_strain_law(input),
       _A( input("Physics/"+physics_name+"/A", 1.0 ) ),
       _is_compressible(is_compressible)
@@ -73,43 +72,6 @@ namespace GRINS
     return;
   }
 
-
-  template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
-
-    return;
-  }
-
-
-  template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u_var());
-    system->time_evolving(_disp_vars.v_var());
-    system->time_evolving(_disp_vars.w_var());
-
-    return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::init_context( AssemblyContext& context )
-  {
-    context.get_element_fe(_disp_vars.u_var())->get_JxW();
-    context.get_element_fe(_disp_vars.u_var())->get_phi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
-
-    // Need for constructing metric tensors
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
-
-    return;
-  }
 
   template<typename StressStrainLaw>
   void ElasticCable<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
