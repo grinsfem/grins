@@ -82,9 +82,9 @@ namespace GRINS
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
-    const std::vector<libMesh::Real> &JxW = context.get_element_fe(_disp_vars.u_var())->get_JxW();
+    const std::vector<libMesh::Real> &JxW = this->get_fe(context)->get_JxW();
 
-    const std::vector<std::vector<libMesh::Real> >& u_phi = context.get_element_fe(_disp_vars.u_var())->get_phi();
+    const std::vector<std::vector<libMesh::Real> >& u_phi = this->get_fe(context)->get_phi();
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
