@@ -26,33 +26,20 @@
 #define GRINS_ELASTIC_CABLE_CONSTANT_GRAVITY_H
 
 //GRINS
-#include "grins/physics.h"
-#include "grins/solid_mechanics_fe_variables.h"
+#include "grins/elastic_cable_base.h"
 
 namespace GRINS
 {
-  class ElasticCableConstantGravity : public Physics
+  class ElasticCableConstantGravity : public ElasticCableBase
   {
   public:
 	  ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~ElasticCableConstantGravity();
 
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
-
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context,
                                           CachedValues& cache );
-
-  protected:
-
-    SolidMechanicsFEVariables _disp_vars;
 
   private:
 
