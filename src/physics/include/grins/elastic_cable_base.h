@@ -28,6 +28,10 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/solid_mechanics_fe_variables.h"
+#include "grins/assembly_context.h"
+
+// libMesh
+#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
@@ -51,12 +55,20 @@ namespace GRINS
 
     SolidMechanicsFEVariables _disp_vars;
 
+    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 
   private:
 
     ElasticCableBase();
 
   };
+
+  inline
+  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableBase::get_fe( const AssemblyContext& context )
+  {
+    // For this Physics, we need to make sure that we grab only the 1D elements
+    return context.get_element_fe(_disp_vars.u_var(),1);
+  }
 }
 
 #endif // GRINS_ELASTIC_CABLE_BASE_H
