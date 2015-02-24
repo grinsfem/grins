@@ -38,8 +38,7 @@
 namespace GRINS
 {
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : Physics(physics_name,input),
-      _disp_vars(input,physics_name),
+    : ElasticCableBase(physics_name,input),
       _A( input("Physics/"+physics_name+"/A", 1.0 ) ),
       _rho( input("Physics/"+physics_name+"/rho", 1.0 ) )
   {
@@ -73,33 +72,6 @@ namespace GRINS
 
   ElasticCableConstantGravity::~ElasticCableConstantGravity()
   {
-    return;
-  }
-
-  void ElasticCableConstantGravity::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
-
-    return;
-  }
-
-
-  void ElasticCableConstantGravity::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u_var());
-    system->time_evolving(_disp_vars.v_var());
-    system->time_evolving(_disp_vars.w_var());
-
-    return;
-  }
-
-  void ElasticCableConstantGravity::init_context( AssemblyContext& context )
-  {
-    context.get_element_fe(_disp_vars.u_var())->get_JxW();
-    context.get_element_fe(_disp_vars.u_var())->get_phi();
-
     return;
   }
 

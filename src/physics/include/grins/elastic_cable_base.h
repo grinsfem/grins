@@ -22,34 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_CONSTANT_GRAVITY_H
-#define GRINS_ELASTIC_CABLE_CONSTANT_GRAVITY_H
+#ifndef GRINS_ELASTIC_CABLE_BASE_H
+#define GRINS_ELASTIC_CABLE_BASE_H
 
 //GRINS
-#include "grins/elastic_cable_base.h"
+#include "grins/physics.h"
+#include "grins/solid_mechanics_fe_variables.h"
 
 namespace GRINS
 {
-  class ElasticCableConstantGravity : public ElasticCableBase
+  class ElasticCableBase : public Physics
   {
   public:
-	  ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticCableConstantGravity();
 
-    //! Time dependent part(s) of physics for element interiors
-    virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+    ElasticCableBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+
+    virtual ~ElasticCableBase();
+
+    //! Initialize variables for this physics.
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext& context );
+
+  protected:
+
+    SolidMechanicsFEVariables _disp_vars;
+
 
   private:
 
-    ElasticCableConstantGravity();
+    ElasticCableBase();
 
-    libMesh::Real  _A;
-    libMesh::Real  _rho;
-    libMesh::Point _gravity;
   };
+}
 
-} // end namespace GRINS
-
-#endif /* GRINS_ELASTIC_CABLE_CONSTANT_GRAVITY_H */
+#endif // GRINS_ELASTIC_CABLE_BASE_H
