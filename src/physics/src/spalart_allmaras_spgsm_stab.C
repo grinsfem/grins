@@ -169,7 +169,7 @@ namespace GRINS
         
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
-            Fnu(i) += jac*( -tau_spalart*RM_spalart*U*nu_gradphi[i][qp] );            
+            Fnu(i) += jac*( -tau_spalart*RM_spalart*this->_rho*(U*nu_gradphi[i][qp]) );            
           }
 
         if( compute_jacobian )
@@ -207,8 +207,8 @@ namespace GRINS
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& nu_phi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
+    const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
+    context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();    
     
     libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
         
@@ -243,7 +243,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
-            Fnu(i) += JxW[qp]*(tau_spalart*RM_spalart*nu_phi[i][qp]);
+            Fnu(i) += -JxW[qp]*tau_spalart*RM_spalart*this->_rho*(U*nu_gradphi[i][qp]);
           }
         
         if( compute_jacobian )
