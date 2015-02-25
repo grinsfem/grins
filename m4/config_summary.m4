@@ -34,6 +34,7 @@ echo Library Dependencies:
 echo libMesh....................... : $LIBMESH_PREFIX
 echo libMesh CXXFLAGS.............. : $LIBMESH_CXXFLAGS
 echo libMesh INCLUDE............... : $LIBMESH_INCLUDE
+echo libMesh LIBS.................. : $LIBMESH_LIBS
 #echo QUESO......................... : $QUESO_PREFIX
 #echo Trilinos...................... : $TRILINOS_PREFIX
 #echo HDF5.......................... : $HDF5_PREFIX
