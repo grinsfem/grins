@@ -415,6 +415,9 @@ AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [ch
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.in)
 
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_regression.in)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
