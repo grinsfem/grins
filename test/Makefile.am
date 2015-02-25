@@ -178,6 +178,8 @@ TESTS += 3d_low_mach_jacobians_yz.sh
 TESTS += elastic_mooney_rivlin_sheet_regression.sh
 TESTS += elastic_mooney_rivlin_inflating_sheet_regression.sh
 TESTS += suspended_cable_test.sh
+TESTS += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
+TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr

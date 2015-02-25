@@ -76,6 +76,9 @@ namespace GRINS
                          ROLLER_X,
                          ROLLER_Y,
                          ROLLER_Z,
+                         SYMMETRY_YZ,
+                         SYMMETRY_XZ,
+                         SYMMETRY_XY,
                          CONSTANT_TRACTION};
 
   };

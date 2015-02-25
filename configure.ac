@@ -415,6 +415,9 @@ AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [ch
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.in)
 
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_regression.in)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
@@ -434,6 +437,7 @@ AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/
 AC_CONFIG_FILES(examples/cable_displacement/run.sh,          [chmod +x examples/cable_displacement/run.sh])
 AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/inflating_sheet/run.sh])
 AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/suspended_cable/run.sh])
+AC_CONFIG_FILES(examples/mixed_dim_inflating_sheet/run.sh,   [chmod +x examples/mixed_dim_inflating_sheet/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
