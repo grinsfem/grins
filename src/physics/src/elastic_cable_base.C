@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_membrane_base.h"
+#include "grins/elastic_cable_base.h"
 
 // GRINS
 #include "grins_config.h"
@@ -35,19 +35,20 @@
 
 namespace GRINS
 {
-  ElasticMembraneBase::ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  ElasticCableBase::ElasticCableBase( const PhysicsName& physics_name,
+                                      const GetPot& input )
     : Physics(physics_name,input),
       _disp_vars(input,physics_name)
   {
     return;
   }
 
-  ElasticMembraneBase::~ElasticMembraneBase()
+  ElasticCableBase::~ElasticCableBase()
   {
     return;
   }
 
-  void ElasticMembraneBase::init_variables( libMesh::FEMSystem* system )
+  void ElasticCableBase::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true
     _disp_vars.init(system,false,true);
@@ -55,7 +56,8 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembraneBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+
+  void ElasticCableBase::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u_var());
@@ -65,22 +67,17 @@ namespace GRINS
     return;
   }
 
-  void ElasticMembraneBase::init_context( AssemblyContext& context )
+  void ElasticCableBase::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
     this->get_fe(context)->get_dphidxi();
-    this->get_fe(context)->get_dphideta();
 
     // Need for constructing metric tensors
     this->get_fe(context)->get_dxyzdxi();
-    this->get_fe(context)->get_dxyzdeta();
     this->get_fe(context)->get_dxidx();
     this->get_fe(context)->get_dxidy();
     this->get_fe(context)->get_dxidz();
-    this->get_fe(context)->get_detadx();
-    this->get_fe(context)->get_detady();
-    this->get_fe(context)->get_detadz();
 
     return;
   }

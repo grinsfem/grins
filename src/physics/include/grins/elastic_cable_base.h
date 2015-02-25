@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_MEMBRANE_BASE_H
-#define GRINS_ELASTIC_MEMBRANE_BASE_H
+#ifndef GRINS_ELASTIC_CABLE_BASE_H
+#define GRINS_ELASTIC_CABLE_BASE_H
 
 //GRINS
 #include "grins/physics.h"
@@ -35,12 +35,13 @@
 
 namespace GRINS
 {
-  class ElasticMembraneBase : public Physics
+  class ElasticCableBase : public Physics
   {
   public:
 
-    ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneBase();
+    ElasticCableBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+
+    virtual ~ElasticCableBase();
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system );
@@ -58,17 +59,16 @@ namespace GRINS
 
   private:
 
-    ElasticMembraneBase();
+    ElasticCableBase();
 
   };
 
   inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneBase::get_fe( const AssemblyContext& context )
+  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableBase::get_fe( const AssemblyContext& context )
   {
-    // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u_var(),2);
+    // For this Physics, we need to make sure that we grab only the 1D elements
+    return context.get_element_fe(_disp_vars.u_var(),1);
   }
+}
 
-} // end namespace GRINS
-
-#endif // GRINS_ELASTIC_MEMBRANE_BASE_H
+#endif // GRINS_ELASTIC_CABLE_BASE_H
