@@ -147,13 +147,11 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmaras::element_time_derivative");
 #endif
-     // Get a pointer to the current element, we need this for computing the distance to wall for the
-    // quadrature points
+    
+    // Get a pointer to the current element, we need this for computing 
+    // the distance to wall for the  quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
-
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
-        
+            
     // We get some references to cell-specific data that
     // will be used to assemble the linear system.
 
@@ -170,6 +168,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
     
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+
     // Quadrature point locations
     const std::vector<libMesh::Point>& nu_qpoint = 
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
@@ -276,7 +277,78 @@ namespace GRINS
 #endif
 
     return;
-  }    
+  }
+
+  template<class K>
+  void SpalartAllmaras<K>::mass_residual( bool compute_jacobian,
+				    AssemblyContext& context,
+				    CachedValues& /*cache*/ )
+  {
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->BeginTimer("SpalartAllmaras::mass_residual");
+#endif
+    
+    // First we get some references to cell-specific data that
+    // will be used to assemble the linear system.
+
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real> &JxW =
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
+
+    // The viscosity shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& nu_phi =
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
+
+    // The viscosity shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+    
+    // Quadrature point locations
+    const std::vector<libMesh::Point>& nu_qpoint = 
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
+    
+    // The subvectors and submatrices we need to fill:
+    libMesh::DenseSubVector<libMesh::Real> &F = context.get_elem_residual(this->_turbulence_vars.nu_var());
+
+    //libMesh::DenseSubMatrix<libMesh::Real> &M = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var());
+
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
+      {
+	// For the mass residual, we need to be a little careful.
+	// The time integrator is handling the time-discretization
+	// for us so we need to supply M(u_fixed)*u' for the residual.
+	// u_fixed will be given by the fixed_interior_value function
+	// while u' will be given by the interior_rate function.
+	libMesh::Real nu_dot;
+        context.interior_rate(this->_turbulence_vars.nu_var(), qp, nu_dot);
+        
+	for (unsigned int i = 0; i != n_nu_dofs; ++i)
+	  {
+	    F(i) += -JxW[qp]*this->_rho*nu_dot*nu_phi[i][qp];
+
+	    if( compute_jacobian )
+              {
+                libmesh_not_implemented();
+              }// End of check on Jacobian
+          
+	  } // End of element dof loop
+      
+      } // End of the quadrature point loop
+
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->EndTimer("SpalartAllmaras::mass_residual");
+#endif
+
+    return;
+  }
+
+    
   
 } // namespace GRINS
 
