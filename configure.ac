@@ -147,7 +147,7 @@ dnl AC_CACHE_SAVE
 dnl-------------------------------
 dnl Check for GRVY
 dnl
-dnl libGRVY Config 
+dnl libGRVY Config
 dnl (min_version,required=yes/no)
 dnl-------------------------------
 AX_PATH_GRVY_NEW([0.30],[no])
@@ -202,7 +202,7 @@ if test "$enable_cantera" != no; then
    # v2.0.x with scons
    LDFLAGS="-L$CANTERA_PREFIX/lib"
    LIBS="-lcantera_shared"
-   
+
    if (test -f $CANTERA_PREFIX/lib/libcvode_shared*); then
       LIBS="$LIBS -lcvode_shared"
    fi
@@ -239,7 +239,7 @@ if test "$enable_cantera" != no; then
                                     [Cantera::IdealGasMix()])],
                                     [AC_MSG_RESULT(yes)
                                      found_cantera_library=yes],
-                                    [AC_MSG_RESULT(no) 
+                                    [AC_MSG_RESULT(no)
                                      found_cantera_library=no] )
    AC_LANG_POP([C++])
 
@@ -268,7 +268,7 @@ AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 AX_PATH_ANTIOCH(0.2.0,no)
 
- 
+
 dnl-------------------
 dnl Check for TRILINOS
 dnl-------------------
@@ -412,6 +412,9 @@ AC_CONFIG_FILES(test/3d_low_mach_jacobians_xy.sh,                            [ch
 AC_CONFIG_FILES(test/3d_low_mach_jacobians_xz.sh,                            [chmod +x test/3d_low_mach_jacobians_xz.sh])
 AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [chmod +x test/3d_low_mach_jacobians_yz.sh])
 
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.in)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
@@ -436,7 +439,7 @@ dnl-----------------------------------------------
 dnl Generate header files
 dnl-----------------------------------------------
 AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)
-            
+
 dnl-----------------------------------------------
 dnl Generate Makefiles
 dnl-----------------------------------------------

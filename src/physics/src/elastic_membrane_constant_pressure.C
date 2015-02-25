@@ -61,12 +61,12 @@ namespace GRINS
                                                                  CachedValues& /*cache*/ )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
-    
+
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_disp_vars.u_var())->get_JxW();
+      this->get_fe(context)->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(_disp_vars.u_var())->get_phi();
+      this->get_fe(context)->get_phi();
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
@@ -85,17 +85,17 @@ namespace GRINS
 
     // All shape function gradients are w.r.t. master element coordinates
     const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
-      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+      this->get_fe(context)->get_dphidxi();
 
     const std::vector<std::vector<libMesh::Real> >& dphi_deta =
-      context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+      this->get_fe(context)->get_dphideta();
 
     const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
     const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
     const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
-    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
+    const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
+    const std::vector<libMesh::RealGradient>& dxdeta = this->get_fe(context)->get_dxyzdeta();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -115,7 +115,7 @@ namespace GRINS
 
         libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
         libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
-        
+
         libMesh::RealGradient A_1 = dxdxi[qp] + dudxi;
         libMesh::RealGradient A_2 = dxdeta[qp] + dudeta;
 

@@ -69,15 +69,15 @@ namespace GRINS
 
   void ElasticCableBase::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(_disp_vars.u_var())->get_JxW();
-    context.get_element_fe(_disp_vars.u_var())->get_phi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+    this->get_fe(context)->get_JxW();
+    this->get_fe(context)->get_phi();
+    this->get_fe(context)->get_dphidxi();
 
     // Need for constructing metric tensors
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
+    this->get_fe(context)->get_dxyzdxi();
+    this->get_fe(context)->get_dxidx();
+    this->get_fe(context)->get_dxidy();
+    this->get_fe(context)->get_dxidz();
 
     return;
   }

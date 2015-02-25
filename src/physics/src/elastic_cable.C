@@ -27,7 +27,6 @@
 
 // GRINS
 #include "grins_config.h"
-#include "grins/assembly_context.h"
 #include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/elasticity_tensor.h"
@@ -131,7 +130,7 @@ namespace GRINS
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_disp_vars.u_var())->get_JxW();
+      this->get_fe(context)->get_JxW();
 
     // Residuals that we're populating
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
@@ -154,14 +153,14 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // All shape function gradients are w.r.t. master element coordinates
-    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = this->get_fe(context)->get_dphidxi();
 
     const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
     const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
     const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
     // Need these to build up the covariant and contravariant metric tensors
-    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
+    const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
 
     const unsigned int dim = 1; // The cable dimension is always 1 for this physics
 
@@ -186,7 +185,7 @@ namespace GRINS
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
 
-        this->compute_metric_tensors( qp, *(context.get_element_fe(_disp_vars.u_var())), context,
+        this->compute_metric_tensors( qp, *(this->get_fe(context)), context,
                                       grad_u, grad_v, grad_w,
                                       a_cov, a_contra, A_cov, A_contra,
                                       lambda_sq );
@@ -316,7 +315,7 @@ namespace GRINS
         const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
         // Build new FE for the current point. We need this to build tensors at point.
-        libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( context.get_elem(), context.get_element_fe(_disp_vars.u_var()), point );
+        libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( context.get_elem(), this->get_fe(context), point );
 
         const std::vector<std::vector<libMesh::Real> >& dphi_dxi =  fe_new->get_dphidxi();
 
