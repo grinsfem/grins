@@ -245,7 +245,7 @@ namespace GRINS
 	    
 	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
 
-	std::cout<<"The source term at "<<x<<", "<<y<<" is: "<<_source_term<<std::endl;
+	//std::cout<<"The source term at "<<x<<", "<<y<<" is: "<<_source_term<<std::endl;
 
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
