@@ -43,8 +43,7 @@ enabled_physics = 'Stokes'
 # Hack for the way we are parsing properties right now
 [./IncompressibleNavierStokes]
 
-rho = 1.0
-mu = 1.0e-0
+mu = '1.0'
 
 [../VariableNames]
 
@@ -55,6 +54,8 @@ pressure = 'p'
 
 # Options for Stokes physics
 [../Stokes]
+
+rho = '1.0'
 
 FE_family = LAGRANGE
 V_order = SECOND
