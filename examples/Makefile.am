@@ -148,20 +148,6 @@ rlmns_LDADD = $(LIBGRINS_LIBS)
 EXTRA_DIST += $(rlmnsex_DATA)
 
 #=======================================================================
-# Vortex Example
-#=======================================================================
-vortexexdir = $(prefix)/examples/thermal_vortex
-vortexex_PROGRAMS = vortex
-vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
-vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
-
-vortex_SOURCES = thermal_vortex/vortex.C
-
-vortex_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(vortexex_DATA)
-
-#=======================================================================
 # Averaged Fan/Turbine Examples
 #=======================================================================
 simplefandir = $(prefix)/examples/simple_fan
