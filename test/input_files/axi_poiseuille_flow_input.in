@@ -10,9 +10,6 @@ domain_x1_max = 1.0
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 1.0
-n_timesteps = 20
-deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -76,7 +73,6 @@ pin_location = '0.0 0.0'
 
 [../VariableNames]
 
-Temperature = 'T'
 u_velocity = 'r_vel'
 v_velocity = 'z_vel'
 pressure = 'p'
