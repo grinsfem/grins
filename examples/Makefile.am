@@ -43,18 +43,6 @@ backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 EXTRA_DIST += $(backwardfacingstep_DATA)
 
 #=======================================================================
-# Toy heat conduction problem
-#=======================================================================
-toyprobdir = $(prefix)/examples/toyprob
-toyprob_PROGRAMS = toy
-toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
-
-toy_SOURCES = toyprob/toy.C
-toy_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(toyprob_DATA)
-
-#=======================================================================
 # Cavity Benchmark
 #=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
