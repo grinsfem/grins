@@ -8,9 +8,6 @@ mesh_nx2 = 10
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -23,8 +20,7 @@ initial_linear_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
-output_vis_flag = false
+output_vis = 'false'
 vis_output_file_prefix = thermally_driven_2d
 output_format = 'ExodusII xdr'
 
@@ -105,8 +101,3 @@ pressure = 'p'
 k = 1.0
 
 []
-
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_2d.xdr'
