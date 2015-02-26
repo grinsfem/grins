@@ -38,7 +38,9 @@ namespace GRINS
 
   template<class Mu>
   VelocityPenaltyBase<Mu>::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input),
+    : IncompressibleNavierStokesBase<Mu>(physics_name,
+                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         input),
     _quadratic_scaling(false)
   {
     this->read_input_options(input);

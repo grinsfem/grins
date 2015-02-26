@@ -40,10 +40,12 @@
 namespace GRINS
 {
   template<class Mu>
-  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input),
-      _flow_vars(input, physics_name),
-      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
+  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& my_physics_name,
+                                                                     const std::string& core_physics_name,
+                                                                     const GetPot& input )
+    : Physics(my_physics_name, input),
+      _flow_vars(input, core_physics_name),
+      _rho(input("Physics/"+core_physics_name+"/rho", 1.0)),
       _mu(input)
   {
     return;

@@ -41,7 +41,9 @@ namespace GRINS
 
   template<class Mu>
   IncompressibleNavierStokes<Mu>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+    : IncompressibleNavierStokesBase<Mu>(physics_name,
+                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);

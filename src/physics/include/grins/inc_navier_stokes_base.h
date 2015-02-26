@@ -45,7 +45,9 @@ namespace GRINS
   {
   public:
 
-    IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input);
+    IncompressibleNavierStokesBase(const std::string& my_physics_name,
+                                   const std::string& core_physics_name,
+                                   const GetPot& input);
 
     ~IncompressibleNavierStokesBase();
     
