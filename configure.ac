@@ -334,6 +334,7 @@ AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh, [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
+AC_CONFIG_FILES(test/convection_cell_regression.sh,                       [chmod +x test/convection_cell_regression.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
 AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
 AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])

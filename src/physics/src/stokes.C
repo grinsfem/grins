@@ -41,8 +41,10 @@ namespace GRINS
 
   template<class Mu>
   Stokes<Mu>::Stokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
-      _p_pinning(input,physics_name),   
+    : IncompressibleNavierStokesBase<Mu>(physics_name,
+                                         stokes, /* "core" Physics name */
+                                         input),
+      _p_pinning(input,physics_name),
       _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
   {
     // This is deleted in the base class
