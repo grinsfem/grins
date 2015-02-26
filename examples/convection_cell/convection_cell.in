@@ -1,4 +1,11 @@
 
+# Materials section
+[Materials]
+
+[./Conductivity]
+
+k = '2.624e-2'
+
 # Options related to all Physics
 [Physics]
 
@@ -59,7 +66,8 @@ ic_values = '300.0'
 
 rho = '1.77'
 Cp = '1004.9'
-k = '2.624e-2'
+
+conductivity_model = 'constant'
 
 [../BoussinesqBuoyancy]
 
@@ -125,8 +133,6 @@ initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
 
-require_residual_reduction = 'true'
-
 # Visualization options
 [vis-options]
 output_vis = true
@@ -150,11 +156,5 @@ solver_quiet = false
 
 print_element_jacobians = 'false'
 
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
 
 []
