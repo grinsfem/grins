@@ -47,6 +47,14 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
+
 # Mesh related options
 [mesh-options]
 mesh_option = 'create_2D_mesh'
@@ -81,8 +89,6 @@ initial_linear_tolerance = '1.0e-10'
 
 use_numerical_jacobians_only = 'false'
 
-require_residual_reduction = 'true'
-
 # Visualization options
 [vis-options]
 output_vis = 'false'
@@ -106,11 +112,5 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
 
 []
