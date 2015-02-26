@@ -1,6 +1,6 @@
 EXTRA_DIST =
 
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
@@ -66,23 +66,6 @@ EXTRA_DIST += $(cavitybenchmark_DATA)
 
 cavity_SOURCES = cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
-
-#=======================================================================
-# Cavity Benchmark No Stability
-#=======================================================================
-cavitybenchmarknostabdir = $(prefix)/examples/cavity_benchmark_no_stab
-cavitybenchmarknostab_PROGRAMS = cavity_no_stab
-cavitybenchmarknostab_DATA  = $(top_srcdir)/examples/cavity_benchmark_no_stab/cavity_no_stab.in
-cavitybenchmarknostab_SCRIPTS = $(top_builddir)/examples/cavity_benchmark_no_stab/run.sh
-
-EXTRA_DIST += $(cavitybenchmarknostab_DATA)
-
-cavity_no_stab_SOURCES = cavity_benchmark_no_stab/cavity_no_stab.C
-cavity_no_stab_LDADD = $(LIBGRINS_LIBS)
-
-#=======================================================================
-# Heated Channel Example
-#=======================================================================
 
 
 #=======================================================================
@@ -203,8 +186,8 @@ laminarflame_DATA  = $(top_srcdir)/examples/laminar_flame/bunsen.in
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/elements.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
 
 EXTRA_DIST += $(laminarflame_DATA)
