@@ -58,6 +58,7 @@ pin_pressure = true
 pin_location = '0.0 0.0'
 pin_value = '0.0'
 
+output_vars = 'rho'
 
 []
 
@@ -139,8 +140,6 @@ output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 
-output_vars = 'rho'
-
 # Options for print info to the screen
 [screen-options]
 
@@ -152,12 +151,5 @@ solver_quiet = false
 
 system_name = "RayleighTaylor"
 
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []
