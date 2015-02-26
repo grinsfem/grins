@@ -82,6 +82,14 @@ bound_species_3 = '0.6 0.4'
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
 
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
 []
 
 [restart-options]
@@ -142,13 +150,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []
