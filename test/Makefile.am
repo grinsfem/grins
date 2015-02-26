@@ -143,6 +143,7 @@ TESTS += test_axi_ns_con_cyl_flow.sh
 TESTS += test_thermally_driven_2d_flow.sh
 TESTS += test_axi_thermally_driven_flow.sh
 TESTS += test_thermally_driven_3d_flow.sh
+TESTS += convection_cell_regression.sh
 TESTS += test_2d_pseudofan.sh
 TESTS += test_2d_pseudoprop.sh
 TESTS += test_2d_fantrick.sh
