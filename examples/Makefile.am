@@ -261,6 +261,7 @@ cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
 mixeddiminflatingsheetdir = $(prefix)/examples/mixed_dim_inflating_sheet
 mixeddiminflatingsheet_DATA  = $(top_srcdir)/examples/mixed_dim_inflating_sheet/sheet.in
 mixeddiminflatingsheet_DATA += $(top_srcdir)/examples/mixed_dim_inflating_sheet/quarter_sheet.exo
+mixeddiminflatingsheet_DATA += $(top_srcdir)/examples/mixed_dim_inflating_sheet/README
 mixeddiminflatingsheet_SCRIPTS = $(top_builddir)/examples/mixed_dim_inflating_sheet/run.sh
 
 EXTRA_DIST += $(mixeddiminflatingsheet_DATA)
