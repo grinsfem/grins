@@ -7,7 +7,7 @@ enabled_physics = 'ElasticCable'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticCable]
 
-A0 = '0.5'
+A = '0.5'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
