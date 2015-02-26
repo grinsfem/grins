@@ -49,12 +49,10 @@ mu = '1.0'
 
 enabled_physics = 'Stokes'
 
-# This is a hack for the way we are parsing rho at the moment.
-[./IncompressibleNavierStokes]
-rho = '1.0'
-
 # Options for Stokes physics
-[../Stokes]
+[./Stokes]
+
+rho = '1.0'
 
 FE_family = LAGRANGE
 V_order = SECOND

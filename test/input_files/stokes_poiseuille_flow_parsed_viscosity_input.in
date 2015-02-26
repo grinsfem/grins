@@ -51,10 +51,11 @@ enabled_physics = 'Stokes'
 # This is a hack for the way we are currently parsing viscosity models
 [./IncompressibleNavierStokes]
 viscosity_model = 'parsed'
-rho = '1.0'
 
 # Options for Stokes physics
 [../Stokes]
+
+rho = '1.0'
 
 FE_family = LAGRANGE
 V_order = SECOND
