@@ -62,7 +62,7 @@ domain_x1_max = '0.5'
 domain_x2_min = '-0.5'
 domain_x2_max = '0.5'
 domain_x3_min = '0.0'
-domain_x3_mas = '1.0'
+domain_x3_max = '1.0'
 
 
 # Options for time solvers
@@ -85,8 +85,6 @@ initial_linear_tolerance = '1.0e-3'
 minimum_linear_tolerance = '1.0e-6'
 
 use_numerical_jacobians_only = 'false'
-
-require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]
@@ -111,12 +109,5 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []
