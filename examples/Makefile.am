@@ -134,20 +134,6 @@ stokesns_SCRIPTS = $(top_builddir)/examples/coupled_stokes_navierstokes/run.sh
 EXTRA_DIST += $(stokesns_DATA)
 
 #=======================================================================
-# Reacting Low Mach Navier Stokes Example
-#=======================================================================
-rlmnsexdir = $(prefix)/examples/reacting_flow
-rlmnsex_PROGRAMS = rlmns
-rlmnsex_DATA  = $(top_srcdir)/examples/reacting_flow/rlmns.in
-rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/elements.xml
-rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/air_2sp.xml
-
-rlmns_SOURCES = reacting_flow/rlmns.C
-rlmns_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(rlmnsex_DATA)
-
-#=======================================================================
 # Averaged Fan/Turbine Examples
 #=======================================================================
 simplefandir = $(prefix)/examples/simple_fan
