@@ -31,6 +31,12 @@ pin_pressure = 'false'
 rho = '1.0'
 mu = '1.0e-1'
 
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
 []
 
 [Stabilization]
@@ -56,9 +62,6 @@ mesh_filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'false' 
-theta = 1.0
-n_timesteps = 10
-deltat = 0.05
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -94,13 +97,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []
