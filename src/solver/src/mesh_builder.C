@@ -319,11 +319,11 @@ namespace GRINS
         n_elems_z = input("mesh-options/mesh_nx3", 0);
       }
 
-    std::string element_type = input("mesh-options/element_type", "NULL");
+    std::string element_type = input("mesh-options/element_type", "default");
 
     if( dimension == 1 )
       {
-        if(element_type=="NULL")
+        if(element_type=="default")
 	  {
 	    element_type = "EDGE3";
 	  }
@@ -340,7 +340,7 @@ namespace GRINS
 
     else if( dimension == 2 )
       {
-	if(element_type=="NULL")
+	if(element_type=="default")
 	  {
 	    element_type = "TRI6";
 	  }
@@ -360,7 +360,7 @@ namespace GRINS
 
     else if( dimension == 3 )
       {
-	if(element_type=="NULL")
+	if(element_type=="default")
 	  {
 	    element_type = "TET10";
 	  }
