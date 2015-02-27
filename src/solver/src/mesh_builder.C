@@ -234,9 +234,35 @@ namespace GRINS
           z_min = input("mesh-options/domain_x3_min", 0.0);
       }
 
-    libMesh::Real x_max = input("mesh-options/domain_x1_max", 1.0);
-    libMesh::Real y_max = input("mesh-options/domain_x2_max", 1.0);
-    libMesh::Real z_max = input("mesh-options/domain_x3_max", 1.0);
+    libMesh::Real x_max = input("MeshOptions/Generation/x_max", 1.0);
+    if( input.have_variable("mesh-options/domain_x1_max") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x1_max is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/x_max.\n";
+          grins_warning(warning);
+
+          x_max = input("mesh-options/domain_x1_max", 1.0);
+      }
+
+    libMesh::Real y_max = input("MeshOptions/Generation/y_max", 1.0);
+    if( input.have_variable("mesh-options/domain_x2_max") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x2_max is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/y_max.\n";
+          grins_warning(warning);
+
+          y_max = input("mesh-options/domain_x2_max", 1.0);
+      }
+
+    libMesh::Real z_max = input("MeshOptions/Generation/z_max", 1.0);
+    if( input.have_variable("mesh-options/domain_x3_max") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x3_max is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/z_max.\n";
+          grins_warning(warning);
+
+          z_max = input("mesh-options/domain_x3_max", 1.0);
+      }
 
     int n_elems_x = input("mesh-options/mesh_nx1", -1);
     int n_elems_y = input("mesh-options/mesh_nx2", -1);
