@@ -234,6 +234,9 @@ include_HEADERS += boundary_conditions/include/grins/constant_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/arrhenius_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/power_law_catalycity.h
 
+# src/common headers
+include_HEADERS += common/include/grins/common.h
+
 # src/error_estimation headers
 include_HEADERS += error_estimation/include/grins/error_estimation_factory.h
 
@@ -426,6 +429,7 @@ endif
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
