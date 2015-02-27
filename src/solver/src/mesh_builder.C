@@ -204,17 +204,17 @@ namespace GRINS
     // Set the mesh dimension
     mesh->set_mesh_dimension(dimension);
 
-    libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
-    libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
-    libMesh::Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
+    libMesh::Real x_min = input("mesh-options/domain_x1_min", 0.0);
+    libMesh::Real y_min = input("mesh-options/domain_x2_min", 0.0);
+    libMesh::Real z_min = input("mesh-options/domain_x3_min", 0.0);
 
-    libMesh::Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
-    libMesh::Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
-    libMesh::Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
+    libMesh::Real x_max = input("mesh-options/domain_x1_max", 1.0);
+    libMesh::Real y_max = input("mesh-options/domain_x2_max", 1.0);
+    libMesh::Real z_max = input("mesh-options/domain_x3_max", 1.0);
 
-    int mesh_nx1 = input("mesh-options/mesh_nx1", -1);
-    int mesh_nx2 = input("mesh-options/mesh_nx2", -1);
-    int mesh_nx3 = input("mesh-options/mesh_nx3", -1);
+    int n_elems_x = input("mesh-options/mesh_nx1", -1);
+    int n_elems_y = input("mesh-options/mesh_nx2", -1);
+    int n_elems_z = input("mesh-options/mesh_nx3", -1);
 
     std::string element_type = input("mesh-options/element_type", "NULL");
 
@@ -229,9 +229,9 @@ namespace GRINS
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_line(*mesh,
-						   mesh_nx1,
-						   domain_x1_min,
-						   domain_x1_max,
+                                                   n_elems_x,
+                                                   x_min,
+                                                   x_max,
 						   element_enum_type);
       }
 
@@ -246,12 +246,12 @@ namespace GRINS
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_square(*mesh,
-						     mesh_nx1,
-						     mesh_nx2,
-						     domain_x1_min,
-						     domain_x1_max,
-						     domain_x2_min,
-						     domain_x2_max,
+                                                     n_elems_x,
+                                                     n_elems_y,
+                                                     x_min,
+                                                     x_max,
+                                                     y_min,
+                                                     y_max,
 						     element_enum_type);
       }
 
@@ -266,15 +266,15 @@ namespace GRINS
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_cube(*mesh,
-						   mesh_nx1,
-						   mesh_nx2,
-						   mesh_nx3,
-						   domain_x1_min,
-						   domain_x1_max,
-						   domain_x2_min,
-						   domain_x2_max,
-						   domain_x3_min,
-						   domain_x3_max,
+                                                   n_elems_x,
+                                                   n_elems_y,
+                                                   n_elems_z,
+                                                   x_min,
+                                                   x_max,
+                                                   y_min,
+                                                   y_max,
+                                                   z_min,
+                                                   z_max,
 						   element_enum_type);
       }
 
