@@ -204,9 +204,35 @@ namespace GRINS
     // Set the mesh dimension
     mesh->set_mesh_dimension(dimension);
 
-    libMesh::Real x_min = input("mesh-options/domain_x1_min", 0.0);
-    libMesh::Real y_min = input("mesh-options/domain_x2_min", 0.0);
-    libMesh::Real z_min = input("mesh-options/domain_x3_min", 0.0);
+    libMesh::Real x_min = input("MeshOptions/Generation/x_min", 0.0);
+    if( input.have_variable("mesh-options/domain_x1_min") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x1_min is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/x_min.\n";
+          grins_warning(warning);
+
+          x_min = input("mesh-options/domain_x1_min", 0.0);
+      }
+
+    libMesh::Real y_min = input("MeshOptions/Generation/y_min", 0.0);
+    if( input.have_variable("mesh-options/domain_x2_min") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x2_min is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/y_min.\n";
+          grins_warning(warning);
+
+          y_min = input("mesh-options/domain_x2_min", 0.0);
+      }
+
+    libMesh::Real z_min = input("MeshOptions/Generation/z_min", 0.0);
+    if( input.have_variable("mesh-options/domain_x3_min") )
+      {
+        std::string warning = "WARNING: mesh-options/domain_x3_min is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/Generation/z_min.\n";
+          grins_warning(warning);
+
+          z_min = input("mesh-options/domain_x3_min", 0.0);
+      }
 
     libMesh::Real x_max = input("mesh-options/domain_x1_max", 1.0);
     libMesh::Real y_max = input("mesh-options/domain_x2_max", 1.0);
