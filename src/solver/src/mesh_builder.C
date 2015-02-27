@@ -264,9 +264,60 @@ namespace GRINS
           z_max = input("mesh-options/domain_x3_max", 1.0);
       }
 
-    int n_elems_x = input("mesh-options/mesh_nx1", -1);
-    int n_elems_y = input("mesh-options/mesh_nx2", -1);
-    int n_elems_z = input("mesh-options/mesh_nx3", -1);
+    // Make sure user gave us info about how many elements to use
+    if( !input.have_variable("mesh-options/mesh_nx1") /* Deprecated */ &&
+        !input.have_variable("MeshOptions/Generation/n_elems_x") )
+      {
+        libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_x for mesh generation.");
+      }
+
+    if( dimension > 1 )
+      {
+        if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
+        !input.have_variable("MeshOptions/Generation/n_elems_y") )
+          {
+            libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_y for mesh generation.");
+          }
+      }
+
+    if( dimension > 2 )
+      {
+        if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
+        !input.have_variable("MeshOptions/Generation/n_elems_z") )
+          {
+            libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_z for mesh generation.");
+          }
+      }
+
+    unsigned int n_elems_x = input("MeshOptions/Generation/n_elems_x", 0);
+    if( input.have_variable("mesh-options/mesh_nx1") )
+      {
+        std::string warning = "WARNING: mesh-options/mesh_nx1 is DEPRECATED.\n";
+        warning += "         Please update to use MeshOptions/Generation/n_elems_x.\n";
+        grins_warning(warning);
+
+        n_elems_x = input("mesh-options/mesh_nx1", 0);
+      }
+
+    unsigned int n_elems_y = input("MeshOptions/Generation/n_elems_y", 0);
+    if( input.have_variable("mesh-options/mesh_nx2") )
+      {
+        std::string warning = "WARNING: mesh-options/mesh_nx2 is DEPRECATED.\n";
+        warning += "         Please update to use MeshOptions/Generation/n_elems_y.\n";
+        grins_warning(warning);
+
+        n_elems_y = input("mesh-options/mesh_nx2", 0);
+      }
+
+    unsigned int n_elems_z = input("MeshOptions/Generation/n_elems_z", 0);
+    if( input.have_variable("mesh-options/mesh_nx3") )
+      {
+        std::string warning = "WARNING: mesh-options/mesh_nx3 is DEPRECATED.\n";
+        warning += "         Please update to use MeshOptions/Generation/n_elems_z.\n";
+        grins_warning(warning);
+
+        n_elems_z = input("mesh-options/mesh_nx3", 0);
+      }
 
     std::string element_type = input("mesh-options/element_type", "NULL");
 
