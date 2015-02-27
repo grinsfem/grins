@@ -65,8 +65,7 @@ namespace GRINS
     if( !input.have_variable("mesh-options/mesh_option") &&
         !input.have_variable("MeshOptions/type") )
       {
-        libMesh::err << "ERROR: Must specify MeshOptions/type in input." << std::endl;
-        libmesh_error();
+        libmesh_error_msg("ERROR: Must specify MeshOptions/type in input.");
       }
 
     // Are we generating the mesh or are we reading one in from a file?
