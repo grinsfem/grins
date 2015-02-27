@@ -319,7 +319,15 @@ namespace GRINS
         n_elems_z = input("mesh-options/mesh_nx3", 0);
       }
 
-    std::string element_type = input("mesh-options/element_type", "default");
+    std::string element_type = input("MeshOptions/Generation/element_type", "default");
+    if( input.have_variable("mesh-options/element_type") )
+      {
+        std::string warning = "WARNING: mesh-options/element_type is DEPRECATED.\n";
+        warning += "         Please update to use MeshOptions/Generation/element_type.\n";
+        grins_warning(warning);
+
+        element_type = input("mesh-options/element_type", "default");
+      }
 
     if( dimension == 1 )
       {
