@@ -101,13 +101,13 @@ namespace GRINS
 
     // Were we specifically asked to use a ParallelMesh or SerialMesh?
     {
-      std::string mesh_class = input("Mesh/mesh_class", "default");
+      std::string mesh_class = input("Mesh/class", "default");
 
       if( input.have_variable("mesh-options/mesh_class") )
         {
           std::string warning = "WARNING: mesh-options/mesh_class is DEPRECATED.\n";
-          warning += "         Please update to use Mesh/mesh_class.\n";
-          warning += "         Mesh/mesh_class can take values: serial, parallel\n";
+          warning += "         Please update to use Mesh/class.\n";
+          warning += "         Mesh/class can take values: serial, parallel\n";
           grins_warning(warning);
 
           mesh_class = input("mesh-options/mesh_class", "default");
@@ -121,7 +121,7 @@ namespace GRINS
         mesh = new libMesh::Mesh(comm);
       else
         {
-          std::string error = "ERROR: Invalid mesh_class "+mesh_class+" input for Mesh/mesh_class.\n";
+          std::string error = "ERROR: Invalid class "+mesh_class+" input for Mesh/class.\n";
             error += "       Valid choices are: serial, parallel.\n";
             libmesh_error_msg(error);
         }

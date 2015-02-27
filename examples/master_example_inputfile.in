@@ -39,7 +39,7 @@
    # Optional. Defaults to libMesh::Mesh (which depends on the
    #           libMesh build.
    # Acceptable values: serial, parallel
-   mesh_class = 'serial'
+   class = 'serial'
 
    # Since we are generating a mesh, all the generation
    # options will be in the Generation subsection.
@@ -98,7 +98,7 @@
    # Optional. Defaults to libMesh::Mesh (which depends on the
    #           libMesh build.
    # Acceptable values: serial, parallel
-   mesh_class = 'serial'
+   class = 'serial'
 
    # Since we are reading a mesh, all read options
    # go in the Read subsection.
