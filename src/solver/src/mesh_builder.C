@@ -205,6 +205,8 @@ namespace GRINS
     // Set the mesh dimension
     mesh->set_mesh_dimension(dimension);
 
+    /* Now look for spatial extent of the grid that the user wants to generate. */
+
     libMesh::Real x_min = input("Mesh/Generation/x_min", 0.0);
     if( input.have_variable("mesh-options/domain_x1_min") )
       {
@@ -283,6 +285,8 @@ namespace GRINS
           }
       }
 
+    /* Now check for the number of elements in each direction */
+
     // Make sure user gave us info about how many elements to use
     if( !input.have_variable("mesh-options/mesh_nx1") /* Deprecated */ &&
         !input.have_variable("Mesh/Generation/n_elems_x") )
@@ -337,6 +341,7 @@ namespace GRINS
 
         n_elems_z = input("mesh-options/mesh_nx3", 0);
       }
+    /* Now grab the element_type the user wants for the mesh. */
 
     std::string element_type = input("Mesh/Generation/element_type", "default");
     if( input.have_variable("mesh-options/element_type") )
@@ -348,6 +353,7 @@ namespace GRINS
         element_type = input("mesh-options/element_type", "default");
       }
 
+    /* Now generate the mesh. */
     if( dimension == 1 )
       {
         if(element_type=="default")
@@ -413,6 +419,8 @@ namespace GRINS
         // This shouldn't have happened
 	libmesh_error();
       }
+
+    return;
   }
 
   void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
