@@ -185,7 +185,7 @@ namespace GRINS
   {
     unsigned int dimension = input("MeshOptions/Generation/dimension",0);
 
-    if( !input.have_variable("mesh-options/mesh_option") &&
+    if( !input.have_variable("mesh-options/mesh_option") /* Deprecated */ &&
         !input.have_variable("MeshOptions/Generation/dimension") )
       {
         libmesh_error_msg("ERROR: Must specify MeshOptions/Generation/dimension for generating mesh.");
