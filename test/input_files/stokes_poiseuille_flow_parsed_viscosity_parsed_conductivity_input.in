@@ -10,9 +10,6 @@ domain_x1_max = 5.0
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -30,17 +27,14 @@ verify_analytic_jacobians = 1.e-6
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-viscosity = 'parsed'
-mu = 1.0
+mu = '1.0'
 
 [../Conductivity]
 
-conductivity = 'parsed'
-k = 1.0
+k = '1.0'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = 'false' 
 vis_output_file_prefix = couette_poiseuille 
 output_format = 'ExodusII xdr'
@@ -60,14 +54,22 @@ echo_physics = 'true'
 
 enabled_physics = 'Stokes HeatConduction'
 
+# This is a hack for the way we are currently parsing viscosity models
+[./IncompressibleNavierStokes]
+viscosity_model = 'parsed'
+
+# This is a hack for the way we are currently parsing conductivity models
+[../HeatTransfer]
+conductivity_model = 'parsed'
+
 # Options for Stokes physics
-[./Stokes]
+[../Stokes]
+
+rho = '1.0'
 
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = 1.0
 
 bc_ids = '1 3 2 0'
 bc_types = 'parabolic_profile parabolic_profile no_slip no_slip'
@@ -95,7 +97,6 @@ bc_types = 'isothermal_wall general_heat_flux adiabatic_wall isothermal_wall'
 
 T_wall_1 = 1
 T_wall_3 = 10
-
 
 [../VariableNames]
 

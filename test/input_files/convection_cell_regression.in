@@ -1,4 +1,12 @@
 
+# Material section
+[Materials]
+
+[./Conductivity]
+
+k = '1.0'
+
+
 # Options related to all Physics
 [Physics]
 
@@ -59,7 +67,8 @@ ic_values = '300.0'
 
 rho = '1.77'
 Cp = '1004.9'
-k = '2.624e-2'
+
+conductivity_model = 'constant'
 
 [../BoussinesqBuoyancy]
 

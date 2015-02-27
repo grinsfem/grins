@@ -56,9 +56,6 @@ mesh_filename = 'mesh.e'
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'false' 
-theta = 1.0
-n_timesteps = 10
-deltat = 0.05
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -93,13 +90,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

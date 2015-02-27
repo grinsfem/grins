@@ -12,9 +12,6 @@ domain_x2_max = 1.0
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -37,7 +34,6 @@ numerical_jacobian_h = 1.e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = true
 vis_output_file_prefix = penalty_poiseuille 
 output_format = 'ExodusII xdr'
@@ -84,11 +80,8 @@ penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
 #penalty_function = '{(abs(y-.5)>.25)*1e8}{0}{0}'
 #quadratic_scaling = true
 
-[]
-
 [../VariableNames]
 
-Temperature = 'T'
 u_velocity = 'u'
 v_velocity = 'v'
 w_velocity = 'w'

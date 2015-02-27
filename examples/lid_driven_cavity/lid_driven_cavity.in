@@ -80,8 +80,6 @@ initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
 
-require_residual_reduction = 'true'
-
 # Visualization options
 [vis-options]
 output_vis = true
@@ -104,13 +102,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

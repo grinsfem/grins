@@ -25,7 +25,6 @@ minimum_linear_tolerance = 1.0e-6
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = false
 timesteps_per_vis = 1
 vis_output_file_prefix = 'simple_ode'
@@ -59,6 +58,3 @@ time_deriv = '-scalar_var'
 
 []
 
-[ExactSolution]
-
-solution_file = 'test_data/simple_ode.xdr'

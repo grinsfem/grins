@@ -117,6 +117,23 @@ namespace GRINS
         _equation_system->reinit();
       }
 
+    /* Everything should be set up now, so check if there's any unused variables
+       in the input file. If so, then tell the user what they were and error out. */
+    std::vector<std::string> unused_vars = input.unidentified_variables();
+
+    if( !unused_vars.empty() )
+      {
+        libMesh::err << "==========================================================" << std::endl;
+        libMesh::err << "Error: Found unused variables!" << std::endl;
+        for( std::vector<std::string>::const_iterator it = unused_vars.begin();
+             it != unused_vars.end(); ++it )
+          {
+            libMesh::err << *it << std::endl;
+          }
+        libMesh::err << "==========================================================" << std::endl;
+        libmesh_error();
+      }
+
     return;
   }
 

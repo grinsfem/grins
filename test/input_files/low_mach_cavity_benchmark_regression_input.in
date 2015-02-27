@@ -46,16 +46,24 @@ temp_bc_ids = '0 2 1 3'
 temp_bc_types = 'adiabatic adiabatic isothermal isothermal'
 
 # Cold wall at x = 1
-T_wall_1 = '${* ${T0} ${- 1.0 ${epsilon} } }'
+T_wall_1 = '${* ${T0} ${- 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
 
 # Hot wall at x = 3
-T_wall_3 = '${* ${T0} ${+ 1.0 ${epsilon} } }'
+T_wall_3 = '${* ${T0} ${+ 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
 
 enable_thermo_press_calc = 'true'
 
 pin_pressure = true
 pin_location = '0.0 0.01'
 pin_value = '0.0'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
 
 []
 
@@ -70,9 +78,7 @@ thermal_conductivity = '0.041801' #[W/m-K]
 
 bc_ids = '3'
 
-Pr_over_TwomuT = '20.025542438'
-
-scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierStokes/epsilon} }'
+scaling = '0.0332262120257623' 
 
 []
 
@@ -124,9 +130,6 @@ mesh_nx2 = 10
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'false' 
-theta = 1.0
-n_timesteps = 700
-deltat = 50.0 
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -138,8 +141,6 @@ verify_analytic_jacobians = 0.0
 initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
-
-require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]
@@ -167,13 +168,5 @@ print_qoi = 'true'
 echo_qoi = 'true'
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

@@ -9,9 +9,6 @@ mesh_nx2 = 10
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -24,7 +21,6 @@ initial_linear_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = false
 vis_output_file_prefix = 'dirichlet_nan'
 output_format = 'ExodusII xdr'
@@ -113,7 +109,3 @@ k = 1.0
 
 []
 
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_2d.xdr'

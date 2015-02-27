@@ -12,9 +12,6 @@ domain_x2_max = 1.0
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -33,7 +30,6 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = true
 vis_output_file_prefix = penalty_poiseuille_stab
 output_format = 'ExodusII xdr'
@@ -78,22 +74,18 @@ pin_location = '2.5 0.5'
 penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
 #penalty_function = '{0}{0}{0}'
 
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
+
 []
 
 [Stabilization]
 
 tau_constant = '10'
 tau_factor = '0.05'
-
-[]
-
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

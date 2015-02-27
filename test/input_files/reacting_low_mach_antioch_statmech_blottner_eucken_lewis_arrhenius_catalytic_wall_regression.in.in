@@ -73,11 +73,16 @@ gamma_N_2_type = 'arrhenius'
 gamma0_N_2 = '0.001'
 Ta_N_2 = '300'
 
-# Not used at the moment - dummy.
-gamma_N2_2 = '0.00070710678'
-
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
 
 []
 
@@ -137,13 +142,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

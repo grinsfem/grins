@@ -1,0 +1,3 @@
+The first few steps are a little rough for the linear solver.
+It is recommended that you use a sparse direct solver, or increase
+the quality of preconditioning beyond PETSc's defaults.

@@ -31,6 +31,13 @@ pin_pressure = 'false'
 rho = '1.0'
 mu = '1.0e-1'
 
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
 []
 
 [Stabilization]
@@ -58,9 +65,6 @@ redistribute = '{x+x*(x-30)/30}{y*2}{z}'
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'false' 
-theta = 1.0
-n_timesteps = 10
-deltat = 0.05
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -96,11 +100,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
 
 []

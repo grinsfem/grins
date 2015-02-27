@@ -29,7 +29,7 @@ bc_types = 'pinned yz_symmetry xz_symmetry'
 ic_ids       = '1'
 ic_types     = 'parsed'
 ic_variables = 'w'
-ic_values    = '0.1*sqrt(x^2+y^2)'
+ic_values    = '0.025*(x+0.5)*x*(x-1.5)*(y+0.5)*(y-1.5)'
 
 h0 = '0.05'
 
@@ -58,7 +58,7 @@ elasticity_model = 'HookesLaw'
 
 [../HookesLaw]
 
-E = '100000'
+E = '10000'
 nu = '0.3'
 
 []
@@ -71,7 +71,7 @@ solver_type = 'pressure_continuation'
 [./PressureContinuation]
 
 final_pressure = '9.0'
-n_increments = '50'
+n_increments = '20'
 
 []
 

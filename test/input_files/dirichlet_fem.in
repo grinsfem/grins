@@ -24,7 +24,6 @@ initial_linear_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = false
 timesteps_per_vis = 1
 vis_output_file_prefix = 'dirichlet_fem'
@@ -112,7 +111,3 @@ k = 1.0
 
 []
 
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_2d.xdr'

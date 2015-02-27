@@ -8,9 +8,6 @@ mesh_filename = '@abs_top_srcdir@/test/grids/coupled_stokes_ns.e'
 # Options for time solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -23,7 +20,6 @@ verify_analytic_jacobians = '1.e-6'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = 'false'
 output_vis = 'false' 
 vis_output_file_prefix = 'stokes_ns'
 output_format = 'ExodusII'
@@ -55,9 +51,6 @@ FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
 
-rho = '1.0'
-mu = '1.0e-3'
-
 bc_ids = '4 6 7 8'
 bc_types = 'no_slip no_slip parabolic_profile no_slip'
 
@@ -81,10 +74,8 @@ bc_types = 'no_slip no_slip no_slip'
 
 [../VariableNames]
 
-Temperature = 'T'
 u_velocity = 'u'
 v_velocity = 'v'
-w_velocity = 'w'
 pressure = 'p'
 
 []
