@@ -294,24 +294,6 @@ namespace GRINS
         libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_x for mesh generation.");
       }
 
-    if( dimension > 1 )
-      {
-        if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/n_elems_y") )
-          {
-            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
-          }
-      }
-
-    if( dimension > 2 )
-      {
-        if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/n_elems_z") )
-          {
-            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
-          }
-      }
-
     unsigned int n_elems_x = input("Mesh/Generation/n_elems_x", 0);
     if( input.have_variable("mesh-options/mesh_nx1") )
       {
@@ -322,25 +304,52 @@ namespace GRINS
         n_elems_x = input("mesh-options/mesh_nx1", 0);
       }
 
-    unsigned int n_elems_y = input("Mesh/Generation/n_elems_y", 0);
-    if( input.have_variable("mesh-options/mesh_nx2") )
+    /* We only check n_elems_y input if dimension is > 1 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D grid. */
+    unsigned int n_elems_y = 0;
+    if( dimension > 1 )
       {
-        std::string warning = "WARNING: mesh-options/mesh_nx2 is DEPRECATED.\n";
-        warning += "         Please update to use Mesh/Generation/n_elems_y.\n";
-        grins_warning(warning);
+        if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/n_elems_y") )
+          {
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
+          }
 
-        n_elems_y = input("mesh-options/mesh_nx2", 0);
+        n_elems_y = input("Mesh/Generation/n_elems_y", 0);
+        if( input.have_variable("mesh-options/mesh_nx2") )
+          {
+            std::string warning = "WARNING: mesh-options/mesh_nx2 is DEPRECATED.\n";
+            warning += "         Please update to use Mesh/Generation/n_elems_y.\n";
+            grins_warning(warning);
+
+            n_elems_y = input("mesh-options/mesh_nx2", 0);
+          }
       }
 
-    unsigned int n_elems_z = input("Mesh/Generation/n_elems_z", 0);
-    if( input.have_variable("mesh-options/mesh_nx3") )
+    /* We only check n_elems_z input if dimension is > 2 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D or 2D grid. */
+    unsigned int n_elems_z = 0;
+    if( dimension > 2 )
       {
-        std::string warning = "WARNING: mesh-options/mesh_nx3 is DEPRECATED.\n";
-        warning += "         Please update to use Mesh/Generation/n_elems_z.\n";
-        grins_warning(warning);
+        if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/n_elems_z") )
+          {
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
+          }
 
-        n_elems_z = input("mesh-options/mesh_nx3", 0);
+        n_elems_z = input("Mesh/Generation/n_elems_z", 0);
+        if( input.have_variable("mesh-options/mesh_nx3") )
+          {
+            std::string warning = "WARNING: mesh-options/mesh_nx3 is DEPRECATED.\n";
+            warning += "         Please update to use Mesh/Generation/n_elems_z.\n";
+            grins_warning(warning);
+
+            n_elems_z = input("mesh-options/mesh_nx3", 0);
+          }
       }
+
     /* Now grab the element_type the user wants for the mesh. */
 
     std::string element_type = input("Mesh/Generation/element_type", "default");
