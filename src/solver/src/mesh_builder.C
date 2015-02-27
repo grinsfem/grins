@@ -30,6 +30,9 @@
 #include "grins/grins_enums.h"
 #include "grins/mesh_builder.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
@@ -58,8 +61,26 @@ namespace GRINS
     (const GetPot& input,
      const libMesh::Parallel::Communicator &comm)
   {
-    // First, read all needed variables
-    std::string mesh_option = input("mesh-options/mesh_option", "NULL");
+    // User needs to tell us if we are generating or reading a mesh
+    if( !input.have_variable("mesh-options/mesh_option") &&
+        !input.have_variable("MeshOptions/type") )
+      {
+        libMesh::err << "ERROR: Must specify MeshOptions/type in input." << std::endl;
+        libmesh_error();
+      }
+
+    // Are we generating the mesh or are we reading one in from a file?
+    std::string mesh_build_type = input("MeshOptions/type", "DIE!");
+    if( input.have_variable("mesh-options/mesh_option") )
+      {
+        std::string warning = "WARNING: mesh-options/mesh_option is DEPRECATED.\n";
+        warning += "         Please update to use MeshOptions/type.\n";
+        warning += "         MeshOptions/type can take values: generate, read\n";
+        grins_warning(warning);
+
+        mesh_build_type = input("mesh-options/mesh_option", "DIE!");
+      }
+
     std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
 
     libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
@@ -75,15 +96,6 @@ namespace GRINS
     int mesh_nx3 = input("mesh-options/mesh_nx3", -1);
 
     std::string element_type = input("mesh-options/element_type", "NULL");
-
-    // Make sure the user told us what to do
-    if(mesh_option == "NULL")
-      {
-	std::cerr << " MeshBuilder::read_input_options :"
-		  << " mesh-options/mesh_option NOT specified "
-		  << std::endl;
-	libmesh_error();
-      }
 
     // Create UnstructuredMesh object (defaults to dimension 1).
     libMesh::UnstructuredMesh* mesh;
@@ -105,7 +117,7 @@ namespace GRINS
         libmesh_error();
       }
 
-    if(mesh_option=="read_mesh_from_file")
+    if(mesh_build_type=="read_mesh_from_file")
       {
 	// According to Roy Stogner, the only read format
 	// that won't properly reset the dimension is gmsh.
@@ -113,7 +125,7 @@ namespace GRINS
 	mesh->read(mesh_filename);
       }
 
-    else if(mesh_option=="create_1D_mesh")
+    else if(mesh_build_type=="create_1D_mesh")
       {
 	if(element_type=="NULL")
 	  {
@@ -129,8 +141,8 @@ namespace GRINS
 						   domain_x1_max,
 						   element_enum_type);
       }
-      
-    else if(mesh_option=="create_2D_mesh")
+
+    else if(mesh_build_type=="create_2D_mesh")
       {
 	if(element_type=="NULL")
 	  {
@@ -153,7 +165,7 @@ namespace GRINS
 						     element_enum_type);
       }
 
-    else if(mesh_option=="create_3D_mesh")
+    else if(mesh_build_type=="create_3D_mesh")
       {
 	if(element_type=="NULL")
 	  {
@@ -182,7 +194,7 @@ namespace GRINS
     else
       {
 	std::cerr << " MeshBuilder::build_mesh :"
-		  << " mesh-options/mesh_option [" << mesh_option
+		  << " mesh-options/mesh_option [" << mesh_build_type
 		  << "] NOT supported " << std::endl;
 	libmesh_error();
       }
