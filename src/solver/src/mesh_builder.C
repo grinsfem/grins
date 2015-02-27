@@ -81,6 +81,20 @@ namespace GRINS
       }
 
     std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
+    // Make sure the user gave a valid option
+    /*! \todo Can remove last 4 checks once mesh-options/mesh_option support is removed. */
+    if( mesh_build_type != std::string("generate") &&
+        mesh_build_type != std::string("read") &&
+        mesh_build_type != std::string("read_mesh_from_file") &&
+        mesh_build_type != std::string("create_1D_mesh") &&
+        mesh_build_type != std::string("create_2D_mesh") &&
+        mesh_build_type != std::string("create_3D_mesh") )
+      {
+        std::string error = "ERROR: Invalid value of "+mesh_build_type+" for MeshOptions/type.\n";
+          error += "       Valid values are: generate\n";
+          error += "                         read\n";
+          libmesh_error_msg(error);
+      }
 
     libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
     libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
