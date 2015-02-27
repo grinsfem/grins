@@ -63,18 +63,19 @@ namespace GRINS
   {
     // User needs to tell us if we are generating or reading a mesh
     if( !input.have_variable("mesh-options/mesh_option") &&
-        !input.have_variable("MeshOptions/type") )
+        !input.have_variable("Mesh/type") )
       {
-        libmesh_error_msg("ERROR: Must specify MeshOptions/type in input.");
+        libmesh_error_msg("ERROR: Must specify Mesh/type in input.");
       }
 
     // Are we generating the mesh or are we reading one in from a file?
-    std::string mesh_build_type = input("MeshOptions/type", "DIE!");
+    std::string mesh_build_type = input("Mesh/type", "DIE!");
+
     if( input.have_variable("mesh-options/mesh_option") )
       {
         std::string warning = "WARNING: mesh-options/mesh_option is DEPRECATED.\n";
-        warning += "         Please update to use MeshOptions/type.\n";
-        warning += "         MeshOptions/type can take values: generate, read\n";
+        warning += "         Please update to use Mesh/type.\n";
+        warning += "         Mesh/type can take values: generate, read\n";
         grins_warning(warning);
 
         mesh_build_type = input("mesh-options/mesh_option", "DIE!");
@@ -89,7 +90,7 @@ namespace GRINS
         mesh_build_type != std::string("create_2D_mesh") &&
         mesh_build_type != std::string("create_3D_mesh") )
       {
-        std::string error = "ERROR: Invalid value of "+mesh_build_type+" for MeshOptions/type.\n";
+        std::string error = "ERROR: Invalid value of "+mesh_build_type+" for Mesh/type.\n";
           error += "       Valid values are: generate\n";
           error += "                         read\n";
           libmesh_error_msg(error);
@@ -100,13 +101,13 @@ namespace GRINS
 
     // Were we specifically asked to use a ParallelMesh or SerialMesh?
     {
-      std::string mesh_class = input("MeshOptions/mesh_class", "default");
+      std::string mesh_class = input("Mesh/mesh_class", "default");
 
       if( input.have_variable("mesh-options/mesh_class") )
         {
           std::string warning = "WARNING: mesh-options/mesh_class is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/mesh_class.\n";
-          warning += "         MeshOptions/mesh_class can take values: serial, parallel\n";
+          warning += "         Please update to use Mesh/mesh_class.\n";
+          warning += "         Mesh/mesh_class can take values: serial, parallel\n";
           grins_warning(warning);
 
           mesh_class = input("mesh-options/mesh_class", "default");
@@ -120,7 +121,7 @@ namespace GRINS
         mesh = new libMesh::Mesh(comm);
       else
         {
-          std::string error = "ERROR: Invalid mesh_class "+mesh_class+" input for MeshOptions/mesh_class.\n";
+          std::string error = "ERROR: Invalid mesh_class "+mesh_class+" input for Mesh/mesh_class.\n";
             error += "       Valid choices are: serial, parallel.\n";
             libmesh_error_msg(error);
         }
@@ -132,17 +133,17 @@ namespace GRINS
       {
         // Make sure the user set the filename to read
         if( !input.have_variable("mesh-options/mesh_filename") /* This is deprecated */ &&
-            !input.have_variable("MeshOptions/Read/filename") )
+            !input.have_variable("Mesh/Read/filename") )
           {
-            libmesh_error_msg("ERROR: Must specify MeshOptions/Read/filename for reading mesh.");
+            libmesh_error_msg("ERROR: Must specify Mesh/Read/filename for reading mesh.");
           }
 
-        std::string mesh_filename = input("MeshOptions/Read/filename", "DIE!");
+        std::string mesh_filename = input("Mesh/Read/filename", "DIE!");
 
         if( input.have_variable("mesh-options/mesh_filename") )
           {
             std::string warning = "WARNING: mesh-options/mesh_filename is DEPRECATED.\n";
-            warning += "         Please update to use MeshOptions/Read/filename.\n";
+            warning += "         Please update to use Mesh/Read/filename.\n";
             grins_warning(warning);
 
             mesh_filename = input("mesh-options/mesh_filename", "DIE!");
@@ -183,12 +184,12 @@ namespace GRINS
   void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
                                    libMesh::UnstructuredMesh* mesh )
   {
-    unsigned int dimension = input("MeshOptions/Generation/dimension",0);
+    unsigned int dimension = input("Mesh/Generation/dimension",0);
 
     if( !input.have_variable("mesh-options/mesh_option") /* Deprecated */ &&
-        !input.have_variable("MeshOptions/Generation/dimension") )
+        !input.have_variable("Mesh/Generation/dimension") )
       {
-        libmesh_error_msg("ERROR: Must specify MeshOptions/Generation/dimension for generating mesh.");
+        libmesh_error_msg("ERROR: Must specify Mesh/Generation/dimension for generating mesh.");
       }
 
     /* Remove these once suport for mesh-options/mesh_option is removed */
@@ -204,61 +205,61 @@ namespace GRINS
     // Set the mesh dimension
     mesh->set_mesh_dimension(dimension);
 
-    libMesh::Real x_min = input("MeshOptions/Generation/x_min", 0.0);
+    libMesh::Real x_min = input("Mesh/Generation/x_min", 0.0);
     if( input.have_variable("mesh-options/domain_x1_min") )
       {
         std::string warning = "WARNING: mesh-options/domain_x1_min is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/x_min.\n";
+          warning += "         Please update to use Mesh/Generation/x_min.\n";
           grins_warning(warning);
 
           x_min = input("mesh-options/domain_x1_min", 0.0);
       }
 
-    libMesh::Real y_min = input("MeshOptions/Generation/y_min", 0.0);
+    libMesh::Real y_min = input("Mesh/Generation/y_min", 0.0);
     if( input.have_variable("mesh-options/domain_x2_min") )
       {
         std::string warning = "WARNING: mesh-options/domain_x2_min is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/y_min.\n";
+          warning += "         Please update to use Mesh/Generation/y_min.\n";
           grins_warning(warning);
 
           y_min = input("mesh-options/domain_x2_min", 0.0);
       }
 
-    libMesh::Real z_min = input("MeshOptions/Generation/z_min", 0.0);
+    libMesh::Real z_min = input("Mesh/Generation/z_min", 0.0);
     if( input.have_variable("mesh-options/domain_x3_min") )
       {
         std::string warning = "WARNING: mesh-options/domain_x3_min is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/z_min.\n";
+          warning += "         Please update to use Mesh/Generation/z_min.\n";
           grins_warning(warning);
 
           z_min = input("mesh-options/domain_x3_min", 0.0);
       }
 
-    libMesh::Real x_max = input("MeshOptions/Generation/x_max", 1.0);
+    libMesh::Real x_max = input("Mesh/Generation/x_max", 1.0);
     if( input.have_variable("mesh-options/domain_x1_max") )
       {
         std::string warning = "WARNING: mesh-options/domain_x1_max is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/x_max.\n";
+          warning += "         Please update to use Mesh/Generation/x_max.\n";
           grins_warning(warning);
 
           x_max = input("mesh-options/domain_x1_max", 1.0);
       }
 
-    libMesh::Real y_max = input("MeshOptions/Generation/y_max", 1.0);
+    libMesh::Real y_max = input("Mesh/Generation/y_max", 1.0);
     if( input.have_variable("mesh-options/domain_x2_max") )
       {
         std::string warning = "WARNING: mesh-options/domain_x2_max is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/y_max.\n";
+          warning += "         Please update to use Mesh/Generation/y_max.\n";
           grins_warning(warning);
 
           y_max = input("mesh-options/domain_x2_max", 1.0);
       }
 
-    libMesh::Real z_max = input("MeshOptions/Generation/z_max", 1.0);
+    libMesh::Real z_max = input("Mesh/Generation/z_max", 1.0);
     if( input.have_variable("mesh-options/domain_x3_max") )
       {
         std::string warning = "WARNING: mesh-options/domain_x3_max is DEPRECATED.\n";
-          warning += "         Please update to use MeshOptions/Generation/z_max.\n";
+          warning += "         Please update to use Mesh/Generation/z_max.\n";
           grins_warning(warning);
 
           z_max = input("mesh-options/domain_x3_max", 1.0);
@@ -266,64 +267,64 @@ namespace GRINS
 
     // Make sure user gave us info about how many elements to use
     if( !input.have_variable("mesh-options/mesh_nx1") /* Deprecated */ &&
-        !input.have_variable("MeshOptions/Generation/n_elems_x") )
+        !input.have_variable("Mesh/Generation/n_elems_x") )
       {
-        libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_x for mesh generation.");
+        libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_x for mesh generation.");
       }
 
     if( dimension > 1 )
       {
         if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
-        !input.have_variable("MeshOptions/Generation/n_elems_y") )
+        !input.have_variable("Mesh/Generation/n_elems_y") )
           {
-            libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_y for mesh generation.");
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
           }
       }
 
     if( dimension > 2 )
       {
         if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
-        !input.have_variable("MeshOptions/Generation/n_elems_z") )
+        !input.have_variable("Mesh/Generation/n_elems_z") )
           {
-            libmesh_error_msg("ERROR: Must supply MeshOptions/Generation/n_elems_z for mesh generation.");
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
           }
       }
 
-    unsigned int n_elems_x = input("MeshOptions/Generation/n_elems_x", 0);
+    unsigned int n_elems_x = input("Mesh/Generation/n_elems_x", 0);
     if( input.have_variable("mesh-options/mesh_nx1") )
       {
         std::string warning = "WARNING: mesh-options/mesh_nx1 is DEPRECATED.\n";
-        warning += "         Please update to use MeshOptions/Generation/n_elems_x.\n";
+        warning += "         Please update to use Mesh/Generation/n_elems_x.\n";
         grins_warning(warning);
 
         n_elems_x = input("mesh-options/mesh_nx1", 0);
       }
 
-    unsigned int n_elems_y = input("MeshOptions/Generation/n_elems_y", 0);
+    unsigned int n_elems_y = input("Mesh/Generation/n_elems_y", 0);
     if( input.have_variable("mesh-options/mesh_nx2") )
       {
         std::string warning = "WARNING: mesh-options/mesh_nx2 is DEPRECATED.\n";
-        warning += "         Please update to use MeshOptions/Generation/n_elems_y.\n";
+        warning += "         Please update to use Mesh/Generation/n_elems_y.\n";
         grins_warning(warning);
 
         n_elems_y = input("mesh-options/mesh_nx2", 0);
       }
 
-    unsigned int n_elems_z = input("MeshOptions/Generation/n_elems_z", 0);
+    unsigned int n_elems_z = input("Mesh/Generation/n_elems_z", 0);
     if( input.have_variable("mesh-options/mesh_nx3") )
       {
         std::string warning = "WARNING: mesh-options/mesh_nx3 is DEPRECATED.\n";
-        warning += "         Please update to use MeshOptions/Generation/n_elems_z.\n";
+        warning += "         Please update to use Mesh/Generation/n_elems_z.\n";
         grins_warning(warning);
 
         n_elems_z = input("mesh-options/mesh_nx3", 0);
       }
 
-    std::string element_type = input("MeshOptions/Generation/element_type", "default");
+    std::string element_type = input("Mesh/Generation/element_type", "default");
     if( input.have_variable("mesh-options/element_type") )
       {
         std::string warning = "WARNING: mesh-options/element_type is DEPRECATED.\n";
-        warning += "         Please update to use MeshOptions/Generation/element_type.\n";
+        warning += "         Please update to use Mesh/Generation/element_type.\n";
         grins_warning(warning);
 
         element_type = input("mesh-options/element_type", "default");
