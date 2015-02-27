@@ -95,7 +95,43 @@ int main(int argc, char* argv[])
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
+
+  // Build a 1-d turbulent_bc_system to get the bc data from files
+  libMesh::SerialMesh mesh(libmesh_init.comm);
+  
+  libMesh::AutoPtr<MeshRefinement> mesh_refinement =
+    build_mesh_refinement(mesh, param);
+
+  mesh.read("file.xda");
+  
+  //mesh.all_second_order();
+  
+  // And an EquationSystems to run on it
+  libMesh::EquationSystems equation_systems (mesh);
+
+  libMesh::LinearImplicitSystem & turbulent_bc_system = equation_systems.add_system<libMesh::LinearImplicitSystem>("Turbulent-BC");
+
+  equation_systems.read("sol.xda", READ,
+			libMesh::EquationSystems::READ_HEADER |
+  			     libMesh::EquationSystems::READ_DATA |
+  			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
  
+  // Prepare a global solution and a MeshFunction of the Turbulent system
+  libMesh::AutoPtr<MeshFunction> coarse_values;
+  libMesh::AutoPtr<libMesh::NumericVector<Number> > turbulent_bc_soln = libMesh::NumericVector<Number>::build(equation_systems.comm());
+      
+  std::vector<unsigned int>turbulent_bc_system_variables;
+  turbulent_bc_system_variables.push_back(0);
+  turbulent_bc_system_variables.push_back(1);
+  
+  turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
+    (new libMesh::MeshFunction(equation_systems,
+			       *turbulent_bc_soln,
+			       turbulent_bc_system.get_dof_map(),
+			       turbulent_bc_system_variables ));
+  
+  turbulent_bc_values->init();    
+
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
