@@ -65,6 +65,11 @@ namespace GRINS
                                         const libMesh::Parallel::Communicator &comm,
                                         libMesh::UnstructuredMesh& mesh ) const;
 
+  private:
+
+    void generate_mesh( const std::string& mesh_build_type, const GetPot& input,
+                        libMesh::UnstructuredMesh* mesh );
+
   };
 
 } // end namespace block

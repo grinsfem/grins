@@ -80,7 +80,6 @@ namespace GRINS
         mesh_build_type = input("mesh-options/mesh_option", "DIE!");
       }
 
-    std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
     // Make sure the user gave a valid option
     /*! \todo Can remove last 4 checks once mesh-options/mesh_option support is removed. */
     if( mesh_build_type != std::string("generate") &&
@@ -96,6 +95,99 @@ namespace GRINS
           libmesh_error_msg(error);
       }
 
+    // Create UnstructuredMesh object (defaults to dimension 1).
+    libMesh::UnstructuredMesh* mesh;
+
+    // Were we specifically asked to use a ParallelMesh or SerialMesh?
+    {
+      std::string mesh_class = input("MeshOptions/mesh_class", "default");
+
+      if( input.have_variable("mesh-options/mesh_class") )
+        {
+          std::string warning = "WARNING: mesh-options/mesh_class is DEPRECATED.\n";
+          warning += "         Please update to use MeshOptions/mesh_class.\n";
+          warning += "         MeshOptions/mesh_class can take values: serial, parallel\n";
+          grins_warning(warning);
+
+          mesh_class = input("mesh-options/mesh_class", "default");
+        }
+
+      if (mesh_class == "parallel")
+        mesh = new libMesh::ParallelMesh(comm);
+      else if (mesh_class == "serial")
+        mesh = new libMesh::SerialMesh(comm);
+      else if (mesh_class == "default")
+        mesh = new libMesh::Mesh(comm);
+      else
+        {
+          std::string error = "ERROR: Invalid mesh_class "+mesh_class+" input for MeshOptions/mesh_class.\n";
+            error += "       Valid choices are: serial, parallel.\n";
+            libmesh_error_msg(error);
+        }
+    }
+
+    // Read mesh from file
+    if(mesh_build_type =="read_mesh_from_file" /* This is deprecated */ ||
+       mesh_build_type == "read" )
+      {
+        std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
+
+	// According to Roy Stogner, the only read format
+	// that won't properly reset the dimension is gmsh.
+	/*! \todo Need to a check a GMSH meshes */
+	mesh->read(mesh_filename);
+      }
+
+    // Generate the mesh using built-in libMesh functions
+    else if(mesh_build_type=="create_1D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="create_2D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="create_3D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="generate")
+      {
+        this->generate_mesh(mesh_build_type,input,mesh);
+      }
+
+    else
+      {
+        // Shouldn't have gotten here
+        libmesh_error();
+      }
+
+    /* Only do the mesh refinement here if we don't have a restart file.
+       Otherwise, we need to wait until we've read in the restart file.
+       That is done in Simulation::check_for_restart */
+    if( !input.have_variable("restart-options/restart_file") )
+      {
+        this->do_mesh_refinement_from_input( input, comm, *mesh );
+      }
+
+    return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
+  }
+
+  void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
+                                   libMesh::UnstructuredMesh* mesh )
+  {
+    unsigned int dimension = input("MeshOptions/Generation/dimension",0);
+
+    if( !input.have_variable("mesh-options/mesh_option") &&
+        !input.have_variable("MeshOptions/Generation/dimension") )
+      {
+        libmesh_error_msg("ERROR: Must specify MeshOptions/Generation/dimension for generating mesh.");
+      }
+
+    /* Remove these once suport for mesh-options/mesh_option is removed */
+    if( mesh_build_type == "create_1D_mesh" /* This is deprecated */ )
+      dimension = 1;
+
+    if( mesh_build_type=="create_2D_mesh" /* This is deprecated */ )
+      dimension = 2;
+
+    if( mesh_build_type=="create_3D_mesh" /* This is deprecated */ )
+      dimension = 3;
+
+    // Set the mesh dimension
+    mesh->set_mesh_dimension(dimension);
+
     libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
     libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
     libMesh::Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
@@ -110,44 +202,16 @@ namespace GRINS
 
     std::string element_type = input("mesh-options/element_type", "NULL");
 
-    // Create UnstructuredMesh object (defaults to dimension 1).
-    libMesh::UnstructuredMesh* mesh;
-
-    // Were we specifically asked to use a ParallelMesh or SerialMesh?
-    std::string mesh_class = input("mesh-options/mesh_class", "default");
-
-    if (mesh_class == "parallel")
-      mesh = new libMesh::ParallelMesh(comm);
-    else if (mesh_class == "serial")
-      mesh = new libMesh::SerialMesh(comm);
-    else if (mesh_class == "default")
-      mesh = new libMesh::Mesh(comm);
-    else
+    if( dimension == 1 )
       {
-        std::cerr << " MeshBuilder::build:"
-                  << " mesh-options/mesh_class had invalid value " << mesh_class
-                  << std::endl;
-        libmesh_error();
-      }
-
-    if(mesh_build_type=="read_mesh_from_file")
-      {
-	// According to Roy Stogner, the only read format
-	// that won't properly reset the dimension is gmsh.
-	/*! \todo Need to a check a GMSH meshes */
-	mesh->read(mesh_filename);
-      }
-
-    else if(mesh_build_type=="create_1D_mesh")
-      {
-	if(element_type=="NULL")
+        if(element_type=="NULL")
 	  {
 	    element_type = "EDGE3";
 	  }
-      
-	GRINSEnums::ElemType element_enum_type =
+
+        GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
-      
+
 	libMesh::MeshTools::Generation::build_line(*mesh,
 						   mesh_nx1,
 						   domain_x1_min,
@@ -155,17 +219,14 @@ namespace GRINS
 						   element_enum_type);
       }
 
-    else if(mesh_build_type=="create_2D_mesh")
+    else if( dimension == 2 )
       {
 	if(element_type=="NULL")
 	  {
 	    element_type = "TRI6";
 	  }
 
-	// Reset mesh dimension to 2.
-	mesh->set_mesh_dimension(2);
-
-	GRINSEnums::ElemType element_enum_type =
+        GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_square(*mesh,
@@ -178,17 +239,14 @@ namespace GRINS
 						     element_enum_type);
       }
 
-    else if(mesh_build_type=="create_3D_mesh")
+    else if( dimension == 3 )
       {
 	if(element_type=="NULL")
 	  {
 	    element_type = "TET10";
 	  }
 
-	// Reset mesh dimension to 3.
-	mesh->set_mesh_dimension(3);
-
-	GRINSEnums::ElemType element_enum_type =
+        GRINSEnums::ElemType element_enum_type =
 	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
 	libMesh::MeshTools::Generation::build_cube(*mesh,
@@ -206,21 +264,9 @@ namespace GRINS
 
     else
       {
-	std::cerr << " MeshBuilder::build_mesh :"
-		  << " mesh-options/mesh_option [" << mesh_build_type
-		  << "] NOT supported " << std::endl;
+        // This shouldn't have happened
 	libmesh_error();
       }
-
-    /* Only do the mesh refinement here if we don't have a restart file.
-       Otherwise, we need to wait until we've read in the restart file.
-       That is done in Simulation::check_for_restart */
-    if( !input.have_variable("restart-options/restart_file") )
-      {
-        this->do_mesh_refinement_from_input( input, comm, *mesh );
-      }
-
-    return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }
 
   void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
