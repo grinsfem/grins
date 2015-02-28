@@ -242,14 +242,7 @@ namespace GRINS
           }
 
         n_elems_y = input("Mesh/Generation/n_elems_y", 0);
-        if( input.have_variable("mesh-options/mesh_nx2") )
-          {
-            std::string warning = "WARNING: mesh-options/mesh_nx2 is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/n_elems_y.\n";
-            grins_warning(warning);
-
-            n_elems_y = input("mesh-options/mesh_nx2", 0);
-          }
+        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx2", "Mesh/Generation/n_elems_y", 0, n_elems_y );
       }
 
     /* We only check n_elems_z input if dimension is > 2 so that GetPot
