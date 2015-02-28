@@ -57,6 +57,13 @@ namespace GRINS
     (const GetPot& input,
      const libMesh::Parallel::Communicator &comm)
   {
+    // First check if the user has both old and new versions of mesh input
+    if( input.have_section("mesh-options/") &&
+        input.have_section("Mesh/") )
+      {
+        libmesh_error_msg("Error: Detected illegal simulataneous use of [mesh-options] and [Mesh] in input!");
+      }
+
     // User needs to tell us if we are generating or reading a mesh
     if( !input.have_variable("mesh-options/mesh_option") &&
         !input.have_variable("Mesh/type") )
