@@ -1,11 +1,12 @@
 # Mesh related options
-[mesh-options]
-
-mesh_option = create_3D_mesh
-element_type = HEX27
-mesh_nx1 = 3 
-mesh_nx2 = 3
-mesh_nx3 = 3
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX27'
+      n_elems_x = '3'
+      n_elems_y = '3'
+      n_elems_z = '3'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
