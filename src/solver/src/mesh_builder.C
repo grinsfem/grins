@@ -211,24 +211,10 @@ namespace GRINS
     if( dimension > 2 )
       {
         z_min = input("Mesh/Generation/z_min", 0.0);
-        if( input.have_variable("mesh-options/domain_x3_min") )
-          {
-            std::string warning = "WARNING: mesh-options/domain_x3_min is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/z_min.\n";
-            grins_warning(warning);
-
-            z_min = input("mesh-options/domain_x3_min", 0.0);
-          }
+        this->deprecated_option( input, "mesh-options/domain_x3_min", "Mesh/Generation/z_min", 0.0, z_min );
 
         z_max = input("Mesh/Generation/z_max", 1.0);
-        if( input.have_variable("mesh-options/domain_x3_max") )
-          {
-            std::string warning = "WARNING: mesh-options/domain_x3_max is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/z_max.\n";
-            grins_warning(warning);
-
-            z_max = input("mesh-options/domain_x3_max", 1.0);
-          }
+        this->deprecated_option( input, "mesh-options/domain_x3_max", "Mesh/Generation/z_max", 1.0, z_max );
       }
 
     /* Now check for the number of elements in each direction */
