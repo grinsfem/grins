@@ -227,14 +227,7 @@ namespace GRINS
       }
 
     unsigned int n_elems_x = input("Mesh/Generation/n_elems_x", 0);
-    if( input.have_variable("mesh-options/mesh_nx1") )
-      {
-        std::string warning = "WARNING: mesh-options/mesh_nx1 is DEPRECATED.\n";
-        warning += "         Please update to use Mesh/Generation/n_elems_x.\n";
-        grins_warning(warning);
-
-        n_elems_x = input("mesh-options/mesh_nx1", 0);
-      }
+    this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx1", "Mesh/Generation/n_elems_x", 0, n_elems_x );
 
     /* We only check n_elems_y input if dimension is > 1 so that GetPot
        UFO detection will give us an error if we have this in the input file
