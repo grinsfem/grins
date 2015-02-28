@@ -30,10 +30,6 @@
 # a mesh from a file is given below. Use only ONE of these sections.
 [Mesh]
 
-   # Specify that we are generating a mesh
-   # Mandatory.
-   type = 'generate'
-
    # Specify whether you want to use libMesh::SerialMesh
    # or libMesh::ParallelMesh.
    # Optional. Defaults to libMesh::Mesh (which depends on the
@@ -88,10 +84,6 @@
 # mesh file. An example of generating  a mesh using libMesh's basic
 # utilities is given above. Use only ONE of these sections.
 [Mesh]
-
-   # Specify that we are generating a mesh
-   # Mandatory.
-   type = 'read'
 
    # Specify whether you want to use libMesh::SerialMesh
    # or libMesh::ParallelMesh.
