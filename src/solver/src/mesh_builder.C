@@ -362,7 +362,8 @@ namespace GRINS
                                                    libMesh::UnstructuredMesh& mesh ) const
   {
     std::string redistribution_function_string =
-            input("mesh-options/redistribute", std::string("0"));
+            input("Mesh/Redistribution/function", std::string("0"));
+    this->deprecated_option<std::string>( input, "mesh-options/redistribute", "Mesh/Redistribution/function", "0", redistribution_function_string );
 
     if (redistribution_function_string != "0")
       {
