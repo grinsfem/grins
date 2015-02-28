@@ -258,14 +258,7 @@ namespace GRINS
           }
 
         n_elems_z = input("Mesh/Generation/n_elems_z", 0);
-        if( input.have_variable("mesh-options/mesh_nx3") )
-          {
-            std::string warning = "WARNING: mesh-options/mesh_nx3 is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/n_elems_z.\n";
-            grins_warning(warning);
-
-            n_elems_z = input("mesh-options/mesh_nx3", 0);
-          }
+        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx3", "Mesh/Generation/n_elems_z", 0, n_elems_z );
       }
 
     /* Now grab the element_type the user wants for the mesh. */
