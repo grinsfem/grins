@@ -41,41 +41,41 @@
    # options will be in the Generation subsection.
    [./Generate]
 
-   # Specify the dimension of the mesh to build.
-   # Mandatory.
-   # Acceptable values: 1, 2, 3
-   dimension = '3'
+      # Specify the dimension of the mesh to build.
+      # Mandatory.
+      # Acceptable values: 1, 2, 3
+      dimension = '3'
 
-   # Specify the number of elements in the {x,y,z}-direction
-   # Mandatory:
-   #    dimension = 1: n_elems_x
-   #    dimension = 2: n_elems_x, n_elems_y
-   #    dimension = 3: n_elems_x, n_elems_y, n_elems_z
-   # Acceptable values: postive integer
-   n_elems_x = '10'
-   n_elems_y = '10'
-   n_elems_z = '10'
+      # Specify the number of elements in the {x,y,z}-direction
+      # Mandatory:
+      #    dimension = 1: n_elems_x
+      #    dimension = 2: n_elems_x, n_elems_y
+      #    dimension = 3: n_elems_x, n_elems_y, n_elems_z
+      # Acceptable values: postive integer
+      n_elems_x = '10'
+      n_elems_y = '10'
+      n_elems_z = '10'
 
-   # Specify the spatial extents in the {x,y,z}-direction
-   # Optional. {x,y,z}_min defaults to 0.0, {x,y,z}_max defaults to 1.0
-   # Acceptable values: Real number
-   x_min = '0.0'
-   x_max = '1.0'
+      # Specify the spatial extents in the {x,y,z}-direction
+      # Optional. {x,y,z}_min defaults to 0.0, {x,y,z}_max defaults to 1.0
+      # Acceptable values: Real number
+      x_min = '0.0'
+      x_max = '1.0'
 
-   y_min = '0.0'
-   y_max = '1.0'
+      y_min = '0.0'
+      y_max = '1.0'
 
-   z_min = '0.0'
-   z_max = '1.0'
+      z_min = '0.0'
+      z_max = '1.0'
 
-   # Specify the geometric element type to use in the mesh
-   # Optional:
-   #    dimension = 1, defaults to EDGE3
-   #    dimension = 2, defaults to TRI6
-   #    dimension = 3, defaults to TET10
-   # Acceptable values:
-   #    See enum libMesh::ElemType at libmesh.github.io/doxygen/index.html
-   element_type = 'QUAD4'
+      # Specify the geometric element type to use in the mesh
+      # Optional:
+      #    dimension = 1, defaults to EDGE3
+      #    dimension = 2, defaults to TRI6
+      #    dimension = 3, defaults to TET10
+      # Acceptable values:
+      #    See enum libMesh::ElemType at libmesh.github.io/doxygen/index.html
+      element_type = 'QUAD4'
 
 []
 
