@@ -55,9 +55,10 @@ tau_factor = '0.05'
 
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file' 
-mesh_filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
