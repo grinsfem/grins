@@ -399,7 +399,8 @@ namespace GRINS
       }
 
     std::string h_refinement_function_string =
-            input("mesh-options/locally_h_refine", std::string("0"));
+            input("Mesh/Refinement/locally_h_refine", std::string("0"));
+    this->deprecated_option<std::string>( input, "mesh-options/locally_h_refine", "Mesh/Refinement/locally_h_refine", "0", h_refinement_function_string );
 
     if (h_refinement_function_string != "0")
       { 
