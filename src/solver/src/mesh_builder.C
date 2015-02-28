@@ -181,24 +181,11 @@ namespace GRINS
     /* Now look for spatial extent of the grid that the user wants to generate. */
 
     libMesh::Real x_min = input("Mesh/Generation/x_min", 0.0);
-    if( input.have_variable("mesh-options/domain_x1_min") )
-      {
-        std::string warning = "WARNING: mesh-options/domain_x1_min is DEPRECATED.\n";
-          warning += "         Please update to use Mesh/Generation/x_min.\n";
-          grins_warning(warning);
-
-          x_min = input("mesh-options/domain_x1_min", 0.0);
-      }
+    this->deprecated_option( input, "mesh-options/domain_x1_min", "Mesh/Generation/x_min", 0.0, x_min );
 
     libMesh::Real x_max = input("Mesh/Generation/x_max", 1.0);
-    if( input.have_variable("mesh-options/domain_x1_max") )
-      {
-        std::string warning = "WARNING: mesh-options/domain_x1_max is DEPRECATED.\n";
-          warning += "         Please update to use Mesh/Generation/x_max.\n";
-          grins_warning(warning);
+    this->deprecated_option( input, "mesh-options/domain_x1_max", "Mesh/Generation/x_max", 1.0, x_max );
 
-          x_max = input("mesh-options/domain_x1_max", 1.0);
-      }
 
     /* We only check the y_{min,max} input if dimension is > 1 so that GetPot
        UFO detection will give us an error if we have this in the input file
