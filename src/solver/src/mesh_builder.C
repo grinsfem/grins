@@ -390,8 +390,9 @@ namespace GRINS
           }
       }
 
-    int uniformly_refine = input("mesh-options/uniformly_refine", 0);
-    
+    int uniformly_refine = input("Mesh/Refinement/uniformly_refine", 0);
+    this->deprecated_option( input, "mesh-options/uniformly_refine", "Mesh/Refinement/uniformly_refine", 0, uniformly_refine );
+
     if( uniformly_refine > 0 )
       {
         libMesh::MeshRefinement(mesh).uniformly_refine(uniformly_refine);
