@@ -264,14 +264,7 @@ namespace GRINS
     /* Now grab the element_type the user wants for the mesh. */
 
     std::string element_type = input("Mesh/Generation/element_type", "default");
-    if( input.have_variable("mesh-options/element_type") )
-      {
-        std::string warning = "WARNING: mesh-options/element_type is DEPRECATED.\n";
-        warning += "         Please update to use Mesh/Generation/element_type.\n";
-        grins_warning(warning);
-
-        element_type = input("mesh-options/element_type", "default");
-      }
+    this->deprecated_option<std::string>( input, "mesh-options/element_type", "Mesh/Generation/element_type", "default", element_type );
 
     /* Now generate the mesh. */
     if( dimension == 1 )
