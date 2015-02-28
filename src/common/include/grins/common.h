@@ -24,9 +24,16 @@
 
 #include "libmesh/libmesh_common.h"
 
-#define grins_warning(message) \
+#define grins_warning_once(message) \
   libmesh_do_once(libMesh::out <<"==========================================================" << std::endl \
                   << message \
                   << __FILE__ << ", line " << __LINE__ << ", compiled " << __LIBMESH_DATE__ << " at " << __LIBMESH_TIME__ << " ***" << std::endl \
                   <<"==========================================================" \
                   << std::endl;)
+
+#define grins_warning(message) \
+  libMesh::out <<"==========================================================" << std::endl \
+               << message \
+               << __FILE__ << ", line " << __LINE__ << ", compiled " << __LIBMESH_DATE__ << " at " << __LIBMESH_TIME__ << " ***" << std::endl \
+               <<"==========================================================" \
+               << std::endl;
