@@ -91,15 +91,7 @@ namespace GRINS
     {
       std::string mesh_class = input("Mesh/class", "default");
 
-      if( input.have_variable("mesh-options/mesh_class") )
-        {
-          std::string warning = "WARNING: mesh-options/mesh_class is DEPRECATED.\n";
-          warning += "         Please update to use Mesh/class.\n";
-          warning += "         Mesh/class can take values: serial, parallel\n";
-          grins_warning(warning);
-
-          mesh_class = input("mesh-options/mesh_class", "default");
-        }
+      this->deprecated_option<std::string>( input, "mesh-options/mesh_class", "Mesh/class", "default", mesh_class);
 
       if (mesh_class == "parallel")
         mesh = new libMesh::ParallelMesh(comm);
