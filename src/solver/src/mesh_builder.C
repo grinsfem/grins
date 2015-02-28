@@ -196,24 +196,10 @@ namespace GRINS
     if( dimension > 1 )
       {
         y_min = input("Mesh/Generation/y_min", 0.0);
-        if( input.have_variable("mesh-options/domain_x2_min") )
-          {
-            std::string warning = "WARNING: mesh-options/domain_x2_min is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/y_min.\n";
-            grins_warning(warning);
-
-            y_min = input("mesh-options/domain_x2_min", 0.0);
-          }
+        this->deprecated_option( input, "mesh-options/domain_x2_min", "Mesh/Generation/y_min", 0.0, y_min );
 
         y_max = input("Mesh/Generation/y_max", 1.0);
-        if( input.have_variable("mesh-options/domain_x2_max") )
-          {
-            std::string warning = "WARNING: mesh-options/domain_x2_max is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Generation/y_max.\n";
-            grins_warning(warning);
-
-            y_max = input("mesh-options/domain_x2_max", 1.0);
-          }
+        this->deprecated_option( input, "mesh-options/domain_x2_max", "Mesh/Generation/y_max", 1.0, y_max );
       }
 
     /* We only check the z_{min,max} input if dimension is > 2 so that GetPot
