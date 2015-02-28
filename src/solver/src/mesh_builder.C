@@ -30,11 +30,7 @@
 #include "grins/grins_enums.h"
 #include "grins/mesh_builder.h"
 
-// GRINS
-#include "grins/common.h"
-
 // libMesh
-#include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/mesh_generation.h"
 #include "libmesh/mesh_modification.h"
@@ -71,15 +67,7 @@ namespace GRINS
     // Are we generating the mesh or are we reading one in from a file?
     std::string mesh_build_type = input("Mesh/type", "DIE!");
 
-    if( input.have_variable("mesh-options/mesh_option") )
-      {
-        std::string warning = "WARNING: mesh-options/mesh_option is DEPRECATED.\n";
-        warning += "         Please update to use Mesh/type.\n";
-        warning += "         Mesh/type can take values: generate, read\n";
-        grins_warning(warning);
-
-        mesh_build_type = input("mesh-options/mesh_option", "DIE!");
-      }
+    this->deprecated_option<std::string>( input, "mesh-options/mesh_option", "Mesh/Read or Mesh/Generation", "DIE!", mesh_build_type);
 
     // Make sure the user gave a valid option
     /*! \todo Can remove last 4 checks once mesh-options/mesh_option support is removed. */
