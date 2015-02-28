@@ -120,14 +120,7 @@ namespace GRINS
 
         std::string mesh_filename = input("Mesh/Read/filename", "DIE!");
 
-        if( input.have_variable("mesh-options/mesh_filename") )
-          {
-            std::string warning = "WARNING: mesh-options/mesh_filename is DEPRECATED.\n";
-            warning += "         Please update to use Mesh/Read/filename.\n";
-            grins_warning(warning);
-
-            mesh_filename = input("mesh-options/mesh_filename", "DIE!");
-          }
+        this->deprecated_option<std::string>( input, "mesh-options/mesh_filename", "Mesh/Read/filename", "DIE!", mesh_filename);
 
 	// According to Roy Stogner, the only read format
 	// that won't properly reset the dimension is gmsh.
