@@ -56,11 +56,16 @@ tau_factor = '0.05'
 
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file' 
-mesh_filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
-locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
-redistribute = '{x+x*(x-30)/30}{y*2}{z}'
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+
+   [../Refinement]
+      locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
+
+   [../Redistribution]
+      function = '{x+x*(x-30)/30}{y*2}{z}'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
