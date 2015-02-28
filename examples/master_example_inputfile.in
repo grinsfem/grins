@@ -39,7 +39,7 @@
 
    # Since we are generating a mesh, all the generation
    # options will be in the Generation subsection.
-   [./Generate]
+   [./Generation]
 
       # Specify the dimension of the mesh to build.
       # Mandatory.
