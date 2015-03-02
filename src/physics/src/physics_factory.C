@@ -292,15 +292,17 @@ namespace GRINS
           new_mu_class<VelocityDragAdjointStabilization>
             (physics_to_add, input);
       }
-    else if( physics_to_add == velocity_penalty ||
-             physics_to_add == velocity_penalty2 )
+    else if( physics_to_add == velocity_penalty  ||
+             physics_to_add == velocity_penalty2 ||
+             physics_to_add == velocity_penalty3)
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenalty>
             (physics_to_add, input);
       }
-    else if( physics_to_add == velocity_penalty_adjoint_stab ||
-             physics_to_add == velocity_penalty2_adjoint_stab )
+    else if( physics_to_add == velocity_penalty_adjoint_stab  ||
+             physics_to_add == velocity_penalty2_adjoint_stab ||
+             physics_to_add == velocity_penalty3_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenaltyAdjointStabilization>
