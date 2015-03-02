@@ -1,4 +1,5 @@
 Version 0.6.0 (In progress)
+   * Added velocitypenalty2 + velocitypenalty3, to support 3d constraints 
 
 Version 0.5.0
 https://github.com/grinsfem/grins/releases/tag/v0.5.0
