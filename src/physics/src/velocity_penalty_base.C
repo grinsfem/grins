@@ -62,6 +62,10 @@ namespace GRINS
         this->_physics_name == velocity_penalty2_adjoint_stab)
       base_physics_name.push_back('2');
 
+    if (this->_physics_name == velocity_penalty3 ||
+        this->_physics_name == velocity_penalty3_adjoint_stab)
+      base_physics_name.push_back('3');
+
     std::string penalty_function =
       input("Physics/"+base_physics_name+"/penalty_function",
         std::string("0"));
