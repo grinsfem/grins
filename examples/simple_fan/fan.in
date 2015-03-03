@@ -42,21 +42,21 @@ area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'create_3D_mesh'
-element_type = 'HEX27'
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX27'
+      n_elems_x = '10'
+      n_elems_y = '10'
+      n_elems_z = '10'
 
-mesh_nx1 = '10'
-mesh_nx2 = '10'
-mesh_nx3 = '10'
-
-domain_x1_min = '-0.5'
-domain_x1_max = '0.5'
-domain_x2_min = '-0.5'
-domain_x2_max = '0.5'
-domain_x3_min = '0.0'
-domain_x3_max = '1.0'
-
+      x_min = '-0.5'
+      x_max = '0.5'
+      y_min = '-0.5'
+      y_max = '0.5'
+      z_min = '0.0'
+      z_max = '1.0'
+[]
 
 # Options for time solvers
 [unsteady-solver]
