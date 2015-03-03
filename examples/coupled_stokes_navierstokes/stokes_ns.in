@@ -1,9 +1,11 @@
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = 'mesh.e'
+[Mesh]
+   [./Read]
+      filename = 'mesh.e'
 
-uniformly_refine = '2'
+   [../Refinement]
+      uniformly_refine = '2'
+[]
 
 # Options for time solvers
 [unsteady-solver]
