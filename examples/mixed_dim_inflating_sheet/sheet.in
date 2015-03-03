@@ -1,10 +1,10 @@
 ##### Mesh related options #####
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = 'quarter_sheet.exo'
+[Mesh]
+   [./Read]
+      filename = 'quarter_sheet.exo'
 
-uniformly_refine = '2'
-
+   [../Refinement]
+      uniformly_refine = '2'
 []
 
 ##### Options related to all Physics #####
