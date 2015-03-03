@@ -182,6 +182,7 @@ TESTS += elastic_mooney_rivlin_inflating_sheet_regression.sh
 TESTS += suspended_cable_test.sh
 TESTS += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
+TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
