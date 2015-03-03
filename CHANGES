@@ -1,4 +1,6 @@
 Version 0.6.0 (In progress)
+
+   * Added 'continue_after_max_iterations' option to parser
    * Added velocitypenalty2 + velocitypenalty3, to support 3d constraints 
 
 Version 0.5.0
