@@ -42,6 +42,7 @@ namespace GRINS
 
   Solver::Solver( const GetPot& input )
     : _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
+      _continue_after_max_iterations( input("linear-nonlinear-solver/continue_after_max_iterations", false ) ),
       _relative_step_tolerance( input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 ) ),
       _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
       _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-15 ) ),
@@ -95,6 +96,7 @@ namespace GRINS
     solver.continue_after_backtrack_failure = this->_continue_after_backtrack_failure;
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
+    solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
 
     return;
   }
