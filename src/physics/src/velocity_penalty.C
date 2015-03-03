@@ -68,6 +68,9 @@ namespace GRINS
     if (this->_physics_name == "VelocityPenalty2")
       vel_penalty += '2';
 
+    if (this->_physics_name == "VelocityPenalty3")
+      vel_penalty += '3';
+
     if( input.have_variable(section) )
       {
         unsigned int n_vars = input.vector_variable_size(section);

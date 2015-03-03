@@ -42,8 +42,10 @@ namespace GRINS
   const PhysicsName velocity_drag_adjoint_stab = "VelocityDragAdjointStabilization";
   const PhysicsName velocity_penalty = "VelocityPenalty";
   const PhysicsName velocity_penalty2 = "VelocityPenalty2";
+  const PhysicsName velocity_penalty3 = "VelocityPenalty3";
   const PhysicsName velocity_penalty_adjoint_stab  = "VelocityPenaltyAdjointStabilization";
   const PhysicsName velocity_penalty2_adjoint_stab = "VelocityPenalty2AdjointStabilization";
+  const PhysicsName velocity_penalty3_adjoint_stab = "VelocityPenalty3AdjointStabilization";
   const PhysicsName averaged_fan = "AveragedFan";
   const PhysicsName averaged_fan_adjoint_stab = "AveragedFanAdjointStabilization";
   const PhysicsName averaged_turbine = "AveragedTurbine";
