@@ -42,14 +42,14 @@ n_increments = '50'
 []
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'create_1D_mesh'
-#element_type = 'EDGE2'
-                                                                                                                                                                                                                                           
-domain_x1_min = '0.0'
-domain_x1_max = '8.0'
-
-mesh_nx1 = '10'
+[Mesh]
+   [./Generation]
+      dimension = '1'
+      element_type = 'EDGE2'
+      x_min = '0.0'
+      x_max = '8.0'
+      n_elems_x = '10'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
