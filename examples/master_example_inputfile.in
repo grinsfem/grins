@@ -102,3 +102,37 @@
        filename = 'meshfile.exo'
 
 []
+
+# The block below illustrates two optional sections.
+# They can be used together, where redistribution will be done
+# before refinement, and can be used in conjunction with mesh
+# generation or reading a mesh from a file.
+[Mesh]
+
+   # Options related to doing input-based refinement. Adaptive refinement
+   # is controlled in the in solver section.
+   [./Refinement]
+
+       # Specify the number of uniform refinements to perform
+       # Optional. Defaults to 0.
+       uniformly_refine = '1'
+
+       # Specify a function of (x,y,z) suitable for libMesh::ParsedFunction.
+       # This function should return the number of refinements to be performed
+       # as a function of (x,y,z); element centroids are used to evaluate the
+       # spatial locations. Value from function will automatically be converted to int.
+       # If the value is less than zero, no refinements will be done.
+       locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
+
+   # Options related to input-based mesh redistribution
+   [../Redistribution]
+
+       # Specify a function of (x,y,z) suitable for libMesh::ParsedFunction.
+       # Nodal (x,y,z) locations will be mapped according to the function given.
+       # See libMesh::MeshTools::Modification::redistribute. Note each mapping componenet
+       # is in separated by {}. In the example given, the x-components of the node will be
+       # mapped by x+x*(x-30)/30, the y-compoenents of the nodes will by scaled by a factor of 2,
+       # and z-components remain unchanged.
+       function = '{x+x*(x-30)/30}{y*2}{z}'
+
+[]
