@@ -35,12 +35,11 @@ C2 = '3.0'
 []
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = '@abs_top_srcdir@/test/input_files/circular_sheet.e'
+[Mesh]
+    [./Read]
+       filename = '@abs_top_srcdir@/test/input_files/circular_sheet.e'
+[]
 
-#uniformly_refine = '1'
-                                                                                                                                                                                                                                           
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 relative_residual_tolerance = '1.0e-10'

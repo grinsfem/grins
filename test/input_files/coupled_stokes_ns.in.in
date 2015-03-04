@@ -1,7 +1,8 @@
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = '@abs_top_srcdir@/test/grids/coupled_stokes_ns.e'
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/grids/coupled_stokes_ns.e'
+[]
 
 #uniformly_refine = '2'
 

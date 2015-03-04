@@ -1,11 +1,9 @@
 ##### Mesh related options #####
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = '@abs_top_srcdir@/test/input_files/mixed_dim_symmetric_square.exo'
-
-#uniformly_refine = '2'
-
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/input_files/mixed_dim_symmetric_square.exo'
 []
+
 
 ##### Options related to all Physics #####
 [Physics]

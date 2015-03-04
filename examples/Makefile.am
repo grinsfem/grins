@@ -3,6 +3,7 @@ EXTRA_DIST =
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
