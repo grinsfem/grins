@@ -35,37 +35,70 @@
 #include "grins/parabolic_profile.h"
 
 //libMesh
-#include "libmesh/exact_solution.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+//#include "libmesh/exact_solution.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
 
-libMesh::Number
-exact_solution( const libMesh::Point& p,
-		const libMesh::Parameters&,   // parameters, not needed
-		const std::string&,  // sys_name, not needed
-		const std::string&); // unk_name, not needed);
+// libMesh::Number
+// exact_solution( const libMesh::Point& p,
+// 		const libMesh::Parameters&,   // parameters, not needed
+// 		const std::string&,  // sys_name, not needed
+// 		const std::string&); // unk_name, not needed);
 
-libMesh::Gradient
-exact_derivative( const libMesh::Point& p,
-		  const libMesh::Parameters&,   // parameters, not needed
-		  const std::string&,  // sys_name, not needed
-		  const std::string&); // unk_name, not needed);
+// libMesh::Gradient
+// exact_derivative( const libMesh::Point& p,
+// 		  const libMesh::Parameters&,   // parameters, not needed
+// 		  const std::string&,  // sys_name, not needed
+// 		  const std::string&); // unk_name, not needed);
 
-class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
+// class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
+// {
+// public:
+
+//   ParabolicBCFactory()
+//     : GRINS::BoundaryConditionsFactory()
+//   { return; };
+
+//   ~ParabolicBCFactory(){return;};
+
+//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+// };
+
+// Function to set the Dirichlet boundary function for the inlet u velocity and nu profiles
+class BdyFunction : public FunctionBase<Number>
 {
 public:
+  BdyFunction (MeshFunction)
+    : MeshFunction.initialize)
+  { this->_initialized = true; }
 
-  ParabolicBCFactory()
-    : GRINS::BoundaryConditionsFactory()
-  { return; };
+  virtual Number operator() (const Point&, const Real = 0)
+  { libmesh_not_implemented(); }
 
-  ~ParabolicBCFactory(){return;};
+  virtual void operator() (const Point& p,
+                           const Real,
+                           DenseVector<Number>& output)
+  {
+    output.resize(2);
+    output.zero();
+    const Real y=p(1);
+    // Set the parabolic inflow boundary conditions at stations 0 & 1
+    output(_u_var) = (_sign)*((y-2) * (y-3));
+    output(_v_var) = 0;
+  }
 
-  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+  virtual AutoPtr<FunctionBase<Number> > clone() const
+  { return AutoPtr<FunctionBase<Number> > (new BdyFunction(_u_var, _v_var, _sign)); }
+
+private:
+  const unsigned int _u_var, _v_var;
 };
+
 
 int main(int argc, char* argv[]) 
 {
@@ -153,114 +186,115 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  //std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
-  libMesh::ExactSolution exact_sol(*es);
+  //libMesh::ExactSolution exact_sol(*es);
 
-  exact_sol.attach_exact_value(&exact_solution);
-  exact_sol.attach_exact_deriv(&exact_derivative);
+  //exact_sol.attach_exact_value(&exact_solution);
+  //exact_sol.attach_exact_deriv(&exact_derivative);
   
   // Compute error and get it in various norms
-  exact_sol.compute_error("GRINS", "u");
+  //exact_sol.compute_error("GRINS", "u");
 
-  double l2error = exact_sol.l2_error("GRINS", "u");
-  double h1error = exact_sol.h1_error("GRINS", "u");
+  //double l2error = exact_sol.l2_error("GRINS", "u");
+  //double h1error = exact_sol.h1_error("GRINS", "u");
 
+  // Needs to change to 1 based on comparison
   int return_flag = 0;
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
-    {
-      return_flag = 1;
+  // if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  //   {
+  //     return_flag = 1;
 
-      std::cout << "Tolerance exceeded for velocity in Poiseuille test." << std::endl
-		<< "l2 error = " << l2error << std::endl
-		<< "h1 error = " << h1error << std::endl;
-    }
+  //     std::cout << "Tolerance exceeded for velocity in Poiseuille test." << std::endl
+  // 		<< "l2 error = " << l2error << std::endl
+  // 		<< "h1 error = " << h1error << std::endl;
+  //   }
 
-  // Compute error and get it in various norms
-  exact_sol.compute_error("GRINS", "p");
+  // // Compute error and get it in various norms
+  // exact_sol.compute_error("GRINS", "p");
 
-  l2error = exact_sol.l2_error("GRINS", "p");
-  h1error = exact_sol.h1_error("GRINS", "p");
+  // l2error = exact_sol.l2_error("GRINS", "p");
+  // h1error = exact_sol.h1_error("GRINS", "p");
 
-  if( l2error > 2.0e-9 || h1error > 2.0e-9 )
-    {
-      return_flag = 1;
+  // if( l2error > 2.0e-9 || h1error > 2.0e-9 )
+  //   {
+  //     return_flag = 1;
 
-      std::cout << "Tolerance exceeded for pressure in Poiseuille test." << std::endl
-		<< "l2 error = " << l2error << std::endl
-		<< "h1 error = " << h1error << std::endl;
-    }
+  //     std::cout << "Tolerance exceeded for pressure in Poiseuille test." << std::endl
+  // 		<< "l2 error = " << l2error << std::endl
+  // 		<< "h1 error = " << h1error << std::endl;
+  //   }
 
   return return_flag;
 }
 
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
-{
-  GRINS::DBCContainer cont;
-  cont.add_var_name( "u" );
-  cont.add_bc_id( 1 );
-  cont.add_bc_id( 3 );
+// std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
+// {
+//   GRINS::DBCContainer cont;
+//   cont.add_var_name( "u" );
+//   cont.add_bc_id( 1 );
+//   cont.add_bc_id( 3 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
+//   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
 
-  cont.set_func( u_func );
+//   cont.set_func( u_func );
 
-  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
+//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+//   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
 
-  return mymap;
-}
+//   return mymap;
+// }
 
-libMesh::Number
-exact_solution( const libMesh::Point& p,
-		const libMesh::Parameters& /*params*/,   // parameters, not needed
-		const std::string& /*sys_name*/,  // sys_name, not needed
-		const std::string& var )  // unk_name, not needed);
-{
-  const double x = p(0);
-  const double y = p(1);
+// libMesh::Number
+// exact_solution( const libMesh::Point& p,
+// 		const libMesh::Parameters& /*params*/,   // parameters, not needed
+// 		const std::string& /*sys_name*/,  // sys_name, not needed
+// 		const std::string& var )  // unk_name, not needed);
+// {
+//   const double x = p(0);
+//   const double y = p(1);
 
-  libMesh::Number f = 0;
-  // Hardcoded to velocity in input file.
-  if( var == "u" ) f = 4*y*(1-y);
-  else if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
-  else libmesh_assert(false);
+//   libMesh::Number f = 0;
+//   // Hardcoded to velocity in input file.
+//   if( var == "u" ) f = 4*y*(1-y);
+//   else if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
+//   else libmesh_assert(false);
 
-  return f;
-}
+//   return f;
+// }
 
-libMesh::Gradient
-exact_derivative( const libMesh::Point& p,
-		  const libMesh::Parameters& /*params*/,   // parameters, not needed
-		  const std::string& /*sys_name*/,  // sys_name, not needed
-		  const std::string& var)  // unk_name, not needed);
-{
-  const double y = p(1);
+// libMesh::Gradient
+// exact_derivative( const libMesh::Point& p,
+// 		  const libMesh::Parameters& /*params*/,   // parameters, not needed
+// 		  const std::string& /*sys_name*/,  // sys_name, not needed
+// 		  const std::string& var)  // unk_name, not needed);
+// {
+//   const double y = p(1);
 
-  libMesh::Gradient g;
+//   libMesh::Gradient g;
 
-  // Hardcoded to velocity in input file.
-  if( var == "u" )
-    {
-      g(0) = 0.0;
-      g(1) = 4*(1-y) - 4*y;
+//   // Hardcoded to velocity in input file.
+//   if( var == "u" )
+//     {
+//       g(0) = 0.0;
+//       g(1) = 4*(1-y) - 4*y;
 
-#if LIBMESH_DIM > 2
-      g(2) = 0.0;
-#endif
-    }
+// #if LIBMESH_DIM > 2
+//       g(2) = 0.0;
+// #endif
+//     }
 
-  if( var == "p" )
-    {
-      g(0) = (80.0-120.0)/5.0;
-      g(1) = 0.0;
+//   if( var == "p" )
+//     {
+//       g(0) = (80.0-120.0)/5.0;
+//       g(1) = 0.0;
 
-#if LIBMESH_DIM > 2
-      g(2) = 0.0;
-#endif
-    }
-  return g;
-}
+// #if LIBMESH_DIM > 2
+//       g(2) = 0.0;
+// #endif
+//     }
+//   return g;
+// }
