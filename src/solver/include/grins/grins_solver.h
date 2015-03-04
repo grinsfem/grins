@@ -77,6 +77,7 @@ namespace GRINS
     double _minimum_linear_tolerance;
     unsigned int _max_linear_iterations;
     bool _continue_after_backtrack_failure;
+    bool _continue_after_max_iterations;
 
     // Screen display options
     bool _solver_quiet;
