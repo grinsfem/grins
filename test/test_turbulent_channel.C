@@ -150,8 +150,8 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
   std::vector<unsigned int> unu(1, 0);
   unu.push_back(3);
   
-turbulent_bc_system.get_dof_map().add_dirichlet_boundary
-(libMesh::DirichletBoundary (left_inlet_bdy, unu, &turbulent_inlet));
+//some_system.get_dof_map().add_dirichlet_boundary
+//(libMesh::DirichletBoundary (left_inlet_bdy, unu, &turbulent_inlet));
 
   GRINS::SimulationBuilder sim_builder;
 
