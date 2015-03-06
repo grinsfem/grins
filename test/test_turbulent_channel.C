@@ -48,7 +48,24 @@
 #include "grvy.h"
 #endif
 
-// Function to set the Dirichlet boundary function for the inlet u velocity and nu profiles
+
+class TurbulentBCFactory : public GRINS::BoundaryConditionsFactory
+{
+public:
+
+  TurbulentBCFactory( )
+    : GRINS::BoundaryConditionsFactory()
+  { return; };
+
+  ~TurbulentBCFactory(){return;};
+
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+
+  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs
+  
+};
+
+// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
 class TurbulentBdyFunction : public libMesh::FunctionBase<libMesh::Number>
 {
 public:
@@ -65,6 +82,8 @@ public:
   {
     output.resize(4);
     output.zero();
+    // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
+    p(1) = 0.0;
     turbulent_bc_values->operator()(p, t, output);    
   }
 
@@ -130,7 +149,7 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 
   std::vector<unsigned int>turbulent_bc_system_variables;
   turbulent_bc_system_variables.push_back(0);
-  turbulent_bc_system_variables.push_back(3);
+  turbulent_bc_system_variables.push_back(1);
   
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
@@ -155,9 +174,9 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 
   GRINS::SimulationBuilder sim_builder;
 
-//std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
+  std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory );
 
-//sim_builder.attach_bc_factory(bc_factory);
+  sim_builder.attach_bc_factory(bc_factory);
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder,
@@ -218,6 +237,25 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
   return return_flag;
 }
 
+std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
+{
+  GRINS::DBCContainer cont;
+  cont.add_var_name( "u" );
+  cont.add_bc_id( 1 );
+  cont.add_bc_id( 3 );
+  
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
+
+  cont.set_func( u_func );
+
+  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
+
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+
+  return mymap;
+}
+
+
 // libMesh::Number
 // exact_solution( const libMesh::Point& p,
 // 		const libMesh::Parameters&,   // parameters, not needed
@@ -229,37 +267,6 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 // 		  const libMesh::Parameters&,   // parameters, not needed
 // 		  const std::string&,  // sys_name, not needed
 // 		  const std::string&); // unk_name, not needed);
-
-// class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
-// {
-// public:
-
-//   ParabolicBCFactory()
-//     : GRINS::BoundaryConditionsFactory()
-//   { return; };
-
-//   ~ParabolicBCFactory(){return;};
-
-//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
-// };
-
-// std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
-// {
-//   GRINS::DBCContainer cont;
-//   cont.add_var_name( "u" );
-//   cont.add_bc_id( 1 );
-//   cont.add_bc_id( 3 );
-  
-//   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
-
-//   cont.set_func( u_func );
-
-//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
-
-//   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
-
-//   return mymap;
-// }
 
 // libMesh::Number
 // exact_solution( const libMesh::Point& p,
