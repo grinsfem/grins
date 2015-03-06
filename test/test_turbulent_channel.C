@@ -37,6 +37,10 @@
 //libMesh
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/fe_interface.h"
+#include "libmesh/mesh_function.h"
+#include "libmesh/linear_implicit_system.h"
 //#include "libmesh/exact_solution.h"
 
 // GRVY
@@ -44,59 +48,31 @@
 #include "grvy.h"
 #endif
 
-// libMesh::Number
-// exact_solution( const libMesh::Point& p,
-// 		const libMesh::Parameters&,   // parameters, not needed
-// 		const std::string&,  // sys_name, not needed
-// 		const std::string&); // unk_name, not needed);
-
-// libMesh::Gradient
-// exact_derivative( const libMesh::Point& p,
-// 		  const libMesh::Parameters&,   // parameters, not needed
-// 		  const std::string&,  // sys_name, not needed
-// 		  const std::string&); // unk_name, not needed);
-
-// class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
-// {
-// public:
-
-//   ParabolicBCFactory()
-//     : GRINS::BoundaryConditionsFactory()
-//   { return; };
-
-//   ~ParabolicBCFactory(){return;};
-
-//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
-// };
-
 // Function to set the Dirichlet boundary function for the inlet u velocity and nu profiles
-class BdyFunction : public FunctionBase<Number>
+class TurbulentBdyFunction : public libMesh::FunctionBase<libMesh::Number>
 {
 public:
-  BdyFunction (MeshFunction)
-    : MeshFunction.initialize)
+  TurbulentBdyFunction (libMesh::MeshFunction* _turbulent_bc_values) :
+    turbulent_bc_values(_turbulent_bc_values)
   { this->_initialized = true; }
 
-  virtual Number operator() (const Point&, const Real = 0)
+  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
   { libmesh_not_implemented(); }
 
-  virtual void operator() (const Point& p,
-                           const Real,
-                           DenseVector<Number>& output)
+  virtual void operator() (const libMesh::Point& p,
+                           const libMesh::Real t,
+                           libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(2);
+    output.resize(4);
     output.zero();
-    const Real y=p(1);
-    // Set the parabolic inflow boundary conditions at stations 0 & 1
-    output(_u_var) = (_sign)*((y-2) * (y-3));
-    output(_v_var) = 0;
+    turbulent_bc_values->operator()(p, t, output);    
   }
 
-  virtual AutoPtr<FunctionBase<Number> > clone() const
-  { return AutoPtr<FunctionBase<Number> > (new BdyFunction(_u_var, _v_var, _sign)); }
+  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunction(turbulent_bc_values)); }
 
 private:
-  const unsigned int _u_var, _v_var;
+  libMesh::MeshFunction* turbulent_bc_values;
 };
 
 
@@ -130,12 +106,9 @@ int main(int argc, char* argv[])
   libMesh::LibMeshInit libmesh_init(argc, argv);
 
   // Build a 1-d turbulent_bc_system to get the bc data from files
-  libMesh::SerialMesh mesh(libmesh_init.comm);
-  
-  libMesh::AutoPtr<MeshRefinement> mesh_refinement =
-    build_mesh_refinement(mesh, param);
-
-  mesh.read("file.xda");
+  libMesh::SerialMesh mesh(libmesh_init.comm());
+    
+  mesh.read("/home/vikram/grins/test/test_data/turbulent_channel_Re944_grid.xda");
   
   //mesh.all_second_order();
   
@@ -144,18 +117,20 @@ int main(int argc, char* argv[])
 
   libMesh::LinearImplicitSystem & turbulent_bc_system = equation_systems.add_system<libMesh::LinearImplicitSystem>("Turbulent-BC");
 
-  equation_systems.read("sol.xda", READ,
+  equation_systems.read("/home/vikram/grins/test/test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
 			libMesh::EquationSystems::READ_HEADER |
   			     libMesh::EquationSystems::READ_DATA |
   			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
  
   // Prepare a global solution and a MeshFunction of the Turbulent system
-  libMesh::AutoPtr<MeshFunction> coarse_values;
-  libMesh::AutoPtr<libMesh::NumericVector<Number> > turbulent_bc_soln = libMesh::NumericVector<Number>::build(equation_systems.comm());
+  libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
       
+libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(turbulent_bc_system.comm());
+      
+
   std::vector<unsigned int>turbulent_bc_system_variables;
   turbulent_bc_system_variables.push_back(0);
-  turbulent_bc_system_variables.push_back(1);
+  turbulent_bc_system_variables.push_back(3);
   
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
@@ -165,11 +140,24 @@ int main(int argc, char* argv[])
   
   turbulent_bc_values->init();    
 
+  TurbulentBdyFunction turbulent_inlet(turbulent_bc_values.get());
+
+  const libMesh::boundary_id_type left_inlet_id = 0;
+  std::set<libMesh::boundary_id_type> left_inlet_bdy;
+  left_inlet_bdy.insert(left_inlet_id);
+
+  // The uv identifier for the setting the inlet and wall velocity boundary conditions
+  std::vector<unsigned int> unu(1, 0);
+  unu.push_back(3);
+  
+turbulent_bc_system.get_dof_map().add_dirichlet_boundary
+(libMesh::DirichletBoundary (left_inlet_bdy, unu, &turbulent_inlet));
+
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
+//std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
 
-  sim_builder.attach_bc_factory(bc_factory);
+//sim_builder.attach_bc_factory(bc_factory);
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder,
@@ -229,6 +217,31 @@ int main(int argc, char* argv[])
 
   return return_flag;
 }
+
+// libMesh::Number
+// exact_solution( const libMesh::Point& p,
+// 		const libMesh::Parameters&,   // parameters, not needed
+// 		const std::string&,  // sys_name, not needed
+// 		const std::string&); // unk_name, not needed);
+
+// libMesh::Gradient
+// exact_derivative( const libMesh::Point& p,
+// 		  const libMesh::Parameters&,   // parameters, not needed
+// 		  const std::string&,  // sys_name, not needed
+// 		  const std::string&); // unk_name, not needed);
+
+// class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
+// {
+// public:
+
+//   ParabolicBCFactory()
+//     : GRINS::BoundaryConditionsFactory()
+//   { return; };
+
+//   ~ParabolicBCFactory(){return;};
+
+//   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+// };
 
 // std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
 // {
