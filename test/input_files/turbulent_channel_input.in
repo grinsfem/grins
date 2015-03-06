@@ -1,0 +1,112 @@
+# Mesh related options
+[mesh-options]
+mesh_option = create_2D_mesh
+element_type = QUAD9
+mesh_nx1 = 50
+mesh_nx2 = 10
+
+domain_x1_max = 5.0
+domain_x2_max = 1.0
+
+# Options for time solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.01
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 25
+max_linear_iterations = 25000
+
+initial_linear_tolerance = 1.0e-12
+
+#verify_analytic_jacobians = 1.e-6
+use_numerical_jacobians_only = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+vis_output_file_prefix = 'turbulent_channel'
+output_format = 'pvtu'
+
+[Materials]
+
+[./Viscosity]
+
+#mu = '2.95456e-5' #[kg/m-s]
+mu = '1.0e-4'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true' 
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = SECOND
+P_order = FIRST
+
+viscosity_model = 'spalartallmaras'
+rho = 1.0
+
+bc_ids = '1 3 2 0'
+bc_types = 'parabolic_profile parabolic_profile no_slip no_slip '
+
+parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_coeffs_3 = '0.0 0.0 -4.0 0.0 4.0 0.0'
+parabolic_profile_var_1 = 'u'
+parabolic_profile_var_3 = 'u'
+parabolic_profile_fix_1 = 'v'
+parabolic_profile_fix_3 = 'v'
+
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'u'
+ic_values = '4*y*(1.0-y)'
+
+pin_pressure = true
+pin_value = 1.0
+pin_location = '2.5 0.5'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+turbulent_viscosity = 'nu'
+
+# Options for Spalart Allmaras physics
+[../SpalartAllmaras]
+
+TU_order = FIRST
+
+rho = 1.0
+
+bc_ids = '0 2 3'
+bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
+bc_variables = 'nu nu nu'
+bc_values = '0.0 0.0 0.01*y*(1.0-y)'
+no_of_walls = 2
+wall_ids = '0 2'
+
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'nu'
+ic_values = '0.1*y*(1.0-y)'
+
+[]
