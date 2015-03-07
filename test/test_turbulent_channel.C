@@ -86,7 +86,7 @@ public:
     output.zero();
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
-    p_copy = 0.0;
+    p_copy(1) = 0.0;
 libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
 output(0) = u_nu_values(0);
@@ -164,12 +164,7 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 			       turbulent_bc_system_variables ));
   
   turbulent_bc_values->init();    
-
-  
-    
-//some_system.get_dof_map().add_dirichlet_boundary
-//(libMesh::DirichletBoundary (left_inlet_bdy, unu, &turbulent_inlet));
-
+      
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
@@ -236,18 +231,18 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 }
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
-{  
-  TurbulentBdyFunction turbulent_inlet(this->turbulent_bc_values);
-  
+{    
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet( new TurbulentBdyFunction(this->turbulent_bc_values) );
+
   GRINS::DBCContainer cont_u;
   cont_u.add_var_name( "u" );
-  cont_u.add_bc_id( 0 );
+  cont_u.add_bc_id( 3 );
     
   cont_u.set_func( turbulent_inlet );
 
   GRINS::DBCContainer cont_nu;
   cont_nu.add_var_name( "nu" );
-  cont_nu.add_bc_id( 0 );
+  cont_nu.add_bc_id( 3 );
     
   cont_nu.set_func( turbulent_inlet );
 
