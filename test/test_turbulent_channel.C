@@ -53,16 +53,18 @@ class TurbulentBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  TurbulentBCFactory( )
-    : GRINS::BoundaryConditionsFactory()
+  TurbulentBCFactory(libMesh::MeshFunction* _turbulent_bc_values)
+    : GRINS::BoundaryConditionsFactory(),
+      turbulent_bc_values(_turbulent_bc_values)
   { return; };
 
   ~TurbulentBCFactory(){return;};
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
 
-  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs
-  
+  private:
+  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs  
+  libMesh::MeshFunction* turbulent_bc_values;
 };
 
 // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
@@ -159,22 +161,14 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
   
   turbulent_bc_values->init();    
 
-  TurbulentBdyFunction turbulent_inlet(turbulent_bc_values.get());
-
-  const libMesh::boundary_id_type left_inlet_id = 0;
-  std::set<libMesh::boundary_id_type> left_inlet_bdy;
-  left_inlet_bdy.insert(left_inlet_id);
-
-  // The uv identifier for the setting the inlet and wall velocity boundary conditions
-  std::vector<unsigned int> unu(1, 0);
-  unu.push_back(3);
   
+    
 //some_system.get_dof_map().add_dirichlet_boundary
 //(libMesh::DirichletBoundary (left_inlet_bdy, unu, &turbulent_inlet));
 
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory );
+  std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -238,15 +232,15 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 }
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
-{
+{  
   GRINS::DBCContainer cont;
   cont.add_var_name( "u" );
-  cont.add_bc_id( 1 );
+  cont.add_var_name( "nu" );
   cont.add_bc_id( 3 );
   
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
-
-  cont.set_func( u_func );
+  TurbulentBdyFunction turbulent_inlet(this->_turbulent_bc_values.get());
+  
+  cont.set_func( turbulent_inlet );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
@@ -318,3 +312,12 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 //     }
 //   return g;
 // }
+
+// const libMesh::boundary_id_type left_inlet_id = 0;
+//   std::set<libMesh::boundary_id_type> left_inlet_bdy;
+//   left_inlet_bdy.insert(left_inlet_id);
+
+//   // The uv identifier for the setting the inlet and wall velocity boundary conditions
+//   std::vector<unsigned int> unu(1, 0);
+//   unu.push_back(3);
+  
