@@ -237,7 +237,7 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
 {  
-  TurbulentBdyFunction turbulent_inlet(this->_turbulent_bc_values.get());
+  TurbulentBdyFunction turbulent_inlet(this->turbulent_bc_values);
   
   GRINS::DBCContainer cont_u;
   cont_u.add_var_name( "u" );
@@ -247,7 +247,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 
   GRINS::DBCContainer cont_nu;
   cont_nu.add_var_name( "nu" );
-  cont_nu.add_bc_id( 3 );
+  cont_nu.add_bc_id( 0 );
     
   cont_nu.set_func( turbulent_inlet );
 
