@@ -85,8 +85,12 @@ public:
     output.resize(4);
     output.zero();
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
-    p(1) = 0.0;
-    turbulent_bc_values->operator()(p, t, output);    
+    libMesh::Point p_copy(p);
+    p_copy = 0.0;
+libMesh::DenseVector<libMesh::Number> u_nu_values;
+    turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
+output(0) = u_nu_values(0);
+output(3) = u_nu_values(1);
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -233,18 +237,25 @@ libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = l
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
 {  
-  GRINS::DBCContainer cont;
-  cont.add_var_name( "u" );
-  cont.add_var_name( "nu" );
-  cont.add_bc_id( 3 );
-  
   TurbulentBdyFunction turbulent_inlet(this->_turbulent_bc_values.get());
   
-  cont.set_func( turbulent_inlet );
+  GRINS::DBCContainer cont_u;
+  cont_u.add_var_name( "u" );
+  cont_u.add_bc_id( 0 );
+    
+  cont_u.set_func( turbulent_inlet );
+
+  GRINS::DBCContainer cont_nu;
+  cont_nu.add_var_name( "nu" );
+  cont_nu.add_bc_id( 3 );
+    
+  cont_nu.set_func( turbulent_inlet );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont_u) );
+
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
 
   return mymap;
 }
