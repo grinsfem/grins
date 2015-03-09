@@ -41,6 +41,7 @@
 #include "libmesh/fe_interface.h"
 #include "libmesh/mesh_function.h"
 #include "libmesh/linear_implicit_system.h"
+#include "libmesh/gmv_io.h"
 //#include "libmesh/exact_solution.h"
 
 // GRVY
@@ -86,7 +87,10 @@ public:
     output.zero();
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
-    p_copy(1) = 0.0;
+    // Also the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to
+    // the corresponding point on the y axis
+    p_copy(0) = p_copy(1);
+    p_copy(1)= 0;
 libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
 output(0) = u_nu_values(0);
@@ -140,13 +144,32 @@ int main(int argc, char* argv[])
   // And an EquationSystems to run on it
   libMesh::EquationSystems equation_systems (mesh);
 
-  libMesh::LinearImplicitSystem & turbulent_bc_system = equation_systems.add_system<libMesh::LinearImplicitSystem>("Turbulent-BC");
+  //libMesh::LinearImplicitSystem & turbulent_bc_system = equation_systems.add_system<libMesh::LinearImplicitSystem>("Turbulent-BC");
 
   equation_systems.read("/home/vikram/grins/test/test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
 			libMesh::EquationSystems::READ_HEADER |
   			     libMesh::EquationSystems::READ_DATA |
   			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
+  
+  // Get a reference to the system so that we can call update() on it
+  libMesh::System & turbulent_bc_system =
+    equation_systems.get_system<libMesh::System>
+        ("flow");
+  
+      // We need to call update to put system in a consistent state
+      // with the solution that was read in
+      turbulent_bc_system.update();
  
+// Write out this solution to make sure it was read properly
+      std::ostringstream file_name_gmv;
+      file_name_gmv << "turbulent_bc.gmv";
+      
+      libMesh::GMVIO(mesh).write_equation_systems
+	(file_name_gmv.str(), equation_systems);
+
+// Print information about the system to the screen.
+  equation_systems.print_info();
+
   // Prepare a global solution and a MeshFunction of the Turbulent system
   libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
       
