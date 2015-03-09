@@ -158,6 +158,7 @@ namespace GRINS
     context.print_perflog = _print_log_info;
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
+    context.print_qoi = _print_qoi;
 
     _solver->solve( context );
 
