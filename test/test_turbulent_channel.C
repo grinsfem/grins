@@ -42,7 +42,7 @@
 #include "libmesh/mesh_function.h"
 #include "libmesh/linear_implicit_system.h"
 #include "libmesh/gmv_io.h"
-//#include "libmesh/exact_solution.h"
+#include "libmesh/exact_solution.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -87,14 +87,13 @@ public:
     output.zero();
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
-    // Also the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to
-    // the corresponding point on the y axis
+    // Also the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
     p_copy(0) = p_copy(1);
-    p_copy(1)= 0;
-libMesh::DenseVector<libMesh::Number> u_nu_values;
+    p_copy(1)= 0.0;
+    libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-output(0) = u_nu_values(0);
-output(3) = u_nu_values(1);
+    output(0) = 1.0; //u_nu_values(0);
+    output(3) = 1.0; //u_nu_values(1);
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -137,49 +136,52 @@ int main(int argc, char* argv[])
   // Build a 1-d turbulent_bc_system to get the bc data from files
   libMesh::SerialMesh mesh(libmesh_init.comm());
     
-  mesh.read("/home/vikram/grins/test/test_data/turbulent_channel_Re944_grid.xda");
+  mesh.read("test_data/turbulent_channel_Re944_grid.xda");
   
   //mesh.all_second_order();
   
   // And an EquationSystems to run on it
   libMesh::EquationSystems equation_systems (mesh);
-
-  //libMesh::LinearImplicitSystem & turbulent_bc_system = equation_systems.add_system<libMesh::LinearImplicitSystem>("Turbulent-BC");
-
-  equation_systems.read("/home/vikram/grins/test/test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
+  
+  equation_systems.read("test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
 			libMesh::EquationSystems::READ_HEADER |
   			     libMesh::EquationSystems::READ_DATA |
   			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
   
   // Get a reference to the system so that we can call update() on it
-  libMesh::System & turbulent_bc_system =
-    equation_systems.get_system<libMesh::System>
-        ("flow");
+  libMesh::System & turbulent_bc_system = equation_systems.get_system<libMesh::System>("flow");
   
-      // We need to call update to put system in a consistent state
-      // with the solution that was read in
-      turbulent_bc_system.update();
+  // We need to call update to put system in a consistent state
+  // with the solution that was read in
+  turbulent_bc_system.update();
  
-// Write out this solution to make sure it was read properly
-      std::ostringstream file_name_gmv;
-      file_name_gmv << "turbulent_bc.gmv";
-      
-      libMesh::GMVIO(mesh).write_equation_systems
-	(file_name_gmv.str(), equation_systems);
+  // Write out this solution to make sure it was read properly
+  std::ostringstream file_name_gmv;
+  file_name_gmv << "turbulent_bc.gmv";
+  
+  libMesh::GMVIO(mesh).write_equation_systems
+    (file_name_gmv.str(), equation_systems);
 
-// Print information about the system to the screen.
+  // Print information about the system to the screen.
   equation_systems.print_info();
 
   // Prepare a global solution and a MeshFunction of the Turbulent system
   libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
       
-libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(turbulent_bc_system.comm());
+  libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(turbulent_bc_system.comm());
       
+  std::cout<<"Turbulent bc soln initialized: "<<turbulent_bc_soln->initialized();
 
   std::vector<unsigned int>turbulent_bc_system_variables;
   turbulent_bc_system_variables.push_back(0);
   turbulent_bc_system_variables.push_back(1);
   
+  std::vector<libMesh::Number> flow_soln;
+
+  turbulent_bc_system.update_global_solution(flow_soln);
+
+  turbulent_bc_soln->init(libMesh::cast_int<libMesh::numeric_index_type>(flow_soln.size()), true, libMesh::SERIAL); 
+      
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
 			       *turbulent_bc_soln,
@@ -342,11 +344,4 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 //   return g;
 // }
 
-// const libMesh::boundary_id_type left_inlet_id = 0;
-//   std::set<libMesh::boundary_id_type> left_inlet_bdy;
-//   left_inlet_bdy.insert(left_inlet_id);
-
-//   // The uv identifier for the setting the inlet and wall velocity boundary conditions
-//   std::vector<unsigned int> unu(1, 0);
-//   unu.push_back(3);
   
