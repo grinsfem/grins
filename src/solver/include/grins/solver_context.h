@@ -62,6 +62,7 @@ namespace GRINS
     bool output_residual;
     bool print_perflog;
     bool print_scalars;
+    bool print_qoi;
 
     std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
