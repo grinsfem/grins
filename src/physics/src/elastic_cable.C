@@ -103,12 +103,21 @@ namespace GRINS
                 this->_strain_indices[0] = postprocessing.register_quantity("strain_xx");
 
               }
+            else if( name == std::string("force") )
+              {
+                // force_x
+                _force_indices.resize(1);
+
+                this->_force_indices[0] = postprocessing.register_quantity("cable_force_x");
+
+              }
             else
               {
                 std::cerr << "Error: Invalue output_vars value for "+elastic_cable << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: stress" << std::endl
-                          << "                              strain" << std::endl;
+                          << "                              strain" << std::endl
+                          << "                              force " << std::endl;
                 libmesh_error();
               }
           }
@@ -304,7 +313,11 @@ namespace GRINS
     if( !_stress_indices.empty() )
       is_stress = ( _stress_indices[0] == quantity_index );
 
-    if( is_strain || is_stress )
+    bool is_force = false;
+    if( !_force_indices.empty() )
+      is_force = ( _force_indices[0] == quantity_index );
+
+    if( is_strain || is_stress || is_force )
       {
         const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
@@ -339,6 +352,14 @@ namespace GRINS
 
         this->compute_metric_tensors(0, *fe_new, context, grad_u, grad_v, grad_w, a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
+        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+        libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+
+        libMesh::Real I3 = lambda_sq*det_A/det_a;
+
+        libMesh::TensorValue<libMesh::Real> tau;
+        _stress_strain_law.compute_stress(1,a_contra,a_cov,A_contra,A_cov,tau);
+
         // We have everything we need for strain now, so check if we are computing strain
         if( is_strain )
           {
@@ -356,19 +377,22 @@ namespace GRINS
 
         if( is_stress )
           {
-
-            libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
-            libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
-
-            libMesh::Real I3 = lambda_sq*det_A/det_a;
-
-            libMesh::TensorValue<libMesh::Real> tau;
-            _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
-
             if( _stress_indices[0] == quantity_index )
               {
                 // Need to convert to Cauchy stress
                 value = tau(0,0)/std::sqrt(I3);
+              }
+            else
+              {
+                libmesh_error();
+              }
+          }
+        if( is_force )
+          {
+
+            if( _force_indices[0] == quantity_index )
+              {
+                value = tau(0,0)/std::sqrt(I3)*_A;
               }
             else
               {
