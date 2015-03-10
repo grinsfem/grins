@@ -28,6 +28,8 @@ traction_1 = '5.7735 0.0 0.0'
 #ic_variables = 'w'
 #ic_values = '-1*sin(pi*x)'
 
+output_vars = 'stress strain'
+
 [../ElasticCableConstantGravity]
 
 A = '0.1'
