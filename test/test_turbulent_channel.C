@@ -90,10 +90,14 @@ public:
     // Also the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
     p_copy(0) = p_copy(1);
     p_copy(1)= 0.0;
+    if(p_copy(0) > 0.5)
+      {
+	p_copy(0) = 1 - p_copy(0);
+      }
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    output(0) = 1.0; //u_nu_values(0);
-    output(3) = 1.0; //u_nu_values(1);
+    output(0) = u_nu_values(0);
+    output(3) = u_nu_values(1);
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
