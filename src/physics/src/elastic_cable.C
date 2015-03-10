@@ -91,26 +91,20 @@ namespace GRINS
 
             if( name == std::string("stress") )
               {
-                // sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
-                // sigma_zz = 0 by assumption of this Physics
-                _stress_indices.resize(3);
+                // sigma_xx
+                // sigma_yy=sigma_zz = 0 by assumption of this Physics
+                _stress_indices.resize(1);
 
                 this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
 
-                this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
-
-                this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
               }
             else if( name == std::string("strain") )
               {
-                // eps_xx, eps_xy, eps_yy, eps_yx = eps_xy
-                _strain_indices.resize(3);
+                // eps_xx
+                _strain_indices.resize(1);
 
                 this->_strain_indices[0] = postprocessing.register_quantity("strain_xx");
 
-                this->_strain_indices[1] = postprocessing.register_quantity("strain_xy");
-
-                this->_strain_indices[2] = postprocessing.register_quantity("strain_yy");
               }
             else
               {
