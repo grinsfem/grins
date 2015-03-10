@@ -303,7 +303,11 @@ namespace GRINS
     if( !_strain_indices.empty() )
       is_strain = ( _strain_indices[0] == quantity_index );
 
-    if( is_strain )
+    bool is_stress = false;
+    if( !_stress_indices.empty() )
+      is_stress = ( _stress_indices[0] == quantity_index );
+
+    if( is_strain || is_stress )
       {
         const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
@@ -351,6 +355,28 @@ namespace GRINS
                 libmesh_error();
               }
             return;
+          }
+
+        if( is_stress )
+          {
+
+            libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+            libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+
+            libMesh::Real I3 = lambda_sq*det_A/det_a;
+
+            libMesh::TensorValue<libMesh::Real> tau;
+            _stress_strain_law.compute_stress(2,a_contra,a_cov,A_contra,A_cov,tau);
+
+            if( _stress_indices[0] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,0)/std::sqrt(I3);
+              }
+            else
+              {
+                libmesh_error();
+              }
           }
       }
 
