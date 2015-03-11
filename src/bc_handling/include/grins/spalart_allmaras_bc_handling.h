@@ -51,13 +51,23 @@ namespace GRINS
 				const std::string& bc_value, 
 				const GetPot& input );    
 
+    virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+					  libMesh::DofMap& dof_map,
+					  GRINS::BoundaryID bc_id,
+					  GRINS::BCType bc_type ) const;
+    
   protected:
-
+    
     TurbulenceVariables _turb_vars;
 
   private:
 
     SpalartAllmarasBCHandling();
+
+    enum INS_BC_TYPES{NO_SLIP=1, 
+		      PRESCRIBED_VISCOSITY, 
+		      PARABOLIC_PROFILE,
+		      GENERAL_VISCOSITY};
     
   };
 }
