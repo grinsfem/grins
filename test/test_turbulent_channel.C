@@ -97,9 +97,8 @@ public:
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
     output(0) = u_nu_values(0);
-    //std::cout<<"Velocity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(0)<<std::endl;
     output(3) = u_nu_values(1);
-    //std::cout<<"Viscosity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(1)<<std::endl;    
+    std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
