@@ -145,6 +145,8 @@ namespace GRINS
 
     libMesh::Real value = 0.0;
 
+    // Quantity we want had better be there.
+    libmesh_assert(_quantity_index_var_map.find(component) != _quantity_index_var_map.end());
     unsigned int quantity_index = _quantity_index_var_map.find(component)->second;
 
     _multiphysics_sys->compute_postprocessed_quantity( quantity_index,
