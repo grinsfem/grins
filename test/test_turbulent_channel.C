@@ -97,9 +97,9 @@ public:
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
     output(0) = u_nu_values(0);
-    std::cout<<"Velocity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(0)<<std::endl;
+    //std::cout<<"Velocity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(0)<<std::endl;
     output(3) = u_nu_values(1);
-    std::cout<<"Viscosity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(1)<<std::endl;    
+    //std::cout<<"Viscosity bc at ("<<p_copy(1)<<","<<p_copy(0)<<"): "<<u_nu_values(1)<<std::endl;    
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -187,6 +187,8 @@ int main(int argc, char* argv[])
   std::cout<<"Flow solution size: "<<flow_soln.size()<<std::endl;
 
   turbulent_bc_soln->init(libMesh::cast_int<libMesh::numeric_index_type>(flow_soln.size()), true, libMesh::SERIAL); 
+
+  (*turbulent_bc_soln) = flow_soln;
       
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
@@ -196,18 +198,17 @@ int main(int argc, char* argv[])
   
   turbulent_bc_values->init();    
 
-  libMesh::Point p_test(0.3, 0.0);
+  // libMesh::Point p_test(0.3, 0.0);
 
-  libMesh::Real t;
+  // libMesh::Real t;
 
-  libMesh::DenseVector<libMesh::Number> u_nu_values;
+  // libMesh::DenseVector<libMesh::Number> u_nu_values;
 
-  turbulent_bc_values->operator()(p_test, t, u_nu_values);
+  // turbulent_bc_values->operator()(p_test, t, u_nu_values);
 
-  std::cout<<"Viscosity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(1)<<std::endl;
-  std::cout<<"Velocity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(0)<<std::endl;
-  
-      
+  // std::cout<<"Viscosity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(1)<<std::endl;
+  // std::cout<<"Velocity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(0)<<std::endl;
+        
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
