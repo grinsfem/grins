@@ -42,7 +42,11 @@ namespace GRINS
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
     : ReactingLowMachNavierStokesBase<Mixture,Evaluator>(physics_name,input),
-      _p_pinning(input,physics_name)
+    _p_pinning(input,physics_name),
+    _rho_index(0),
+    _mu_index(0),
+    _k_index(0),
+    _cp_index(0)
   {
     this->read_input_options(input);
 
