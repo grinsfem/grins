@@ -64,7 +64,10 @@ namespace GRINS
         libmesh_error();
       }
 
-    unsigned int new_index = _quantity_name_index_map.size();
+    /* We add 1 so that the locally cached indices in each of the Physics
+       can safely initialize the index to zero. In particular this ensures
+       we count starting from 1. */
+    unsigned int new_index = _quantity_name_index_map.size()+1;
 
     _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
 
