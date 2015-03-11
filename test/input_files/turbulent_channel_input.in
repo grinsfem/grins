@@ -98,7 +98,7 @@ TU_order = FIRST
 rho = 1.0
 
 bc_ids = '0 2 3'
-bc_types = 'constant_dirichlet constant_dirichlet general_velocity'
+bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
 bc_variables = 'nu nu nu'
 bc_values = '0.0 0.0 0.01*y*(1.0-y)'
 no_of_walls = 2

@@ -59,9 +59,9 @@ namespace GRINS
   {
     int bc_type_out;
 
-    if( bc_type == "general_velocity" )
+    if( bc_type == "general_viscosity" )
       {
-	bc_type_out = GENERAL_VELOCITY;
+	bc_type_out = GENERAL_VISCOSITY;
       }
     else
       {
@@ -88,7 +88,7 @@ namespace GRINS
   { 
     switch(bc_type)
       {
-      case(GENERAL_VELOCITY):
+      case(GENERAL_VISCOSITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type);
 	}
@@ -104,14 +104,14 @@ namespace GRINS
     return;
   }
   
-   void IncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+   void SpalartAllmarasBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
 								      libMesh::DofMap& dof_map,
 								      BoundaryID bc_id,
 								      BCType bc_type ) const
   {
     switch( bc_type )
       {
-	case(GENERAL_VELOCITY):
+	case(GENERAL_VISCOSITY):
 	// This case is handled in the init_dirichlet_bc_func_objs
 	break;
 	
