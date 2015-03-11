@@ -59,8 +59,15 @@ namespace GRINS
   {
     int bc_type_out;
 
-    // Call base class to detect any physics-common boundary conditions
-    bc_type_out = BCHandlingBase::string_to_int( bc_type );
+    if( bc_type == "general_velocity" )
+      {
+	bc_type_out = GENERAL_VELOCITY;
+      }
+    else
+      {
+	// Call base class to detect any physics-common boundary conditions
+	bc_type_out = BCHandlingBase::string_to_int( bc_type );
+      }
 
     return bc_type_out;
   }
@@ -78,12 +85,43 @@ namespace GRINS
 					      const std::string& bc_vars, 
 					      const std::string& bc_value, 
 					      const GetPot& input )
-  {    
-    // Call base class to detect any physics-common boundary conditions
-    BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+  { 
+    switch(bc_type)
+      {
+      case(GENERAL_VELOCITY):
+	{
+	  this->set_dirichlet_bc_type( bc_id, bc_type);
+	}
+	break;
+	
+      default:
+	{
+	  // Call base class to detect any physics-common boundary conditions
+	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
                                          bc_vars, bc_value, input );	
-
+	}
+      } // End switch(bc_type)
     return;
   }
   
+   void IncompressibleNavierStokesBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
+								      libMesh::DofMap& dof_map,
+								      BoundaryID bc_id,
+								      BCType bc_type ) const
+  {
+    switch( bc_type )
+      {
+	case(GENERAL_VELOCITY):
+	// This case is handled in the init_dirichlet_bc_func_objs
+	break;
+	
+      default:
+	{
+	  std::cerr << "Invalid BCType " << bc_type << std::endl;
+	  libmesh_error();
+	}
+      
+      }// end switch
+  }
+
 } // namespace GRINS
