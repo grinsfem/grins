@@ -174,21 +174,22 @@ int main(int argc, char* argv[])
   libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
       
   libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
+        
+  std::vector<libMesh::Number> flow_soln;
+
+  turbulent_bc_system.update_global_solution(flow_soln);
+
+  std::cout<<"Turbulent system size: "<<turbulent_bc_system.solution->size()<<std::endl;
+  
+  //turbulent_bc_soln->init(libMesh::cast_int<libMesh::numeric_index_type>(turbulent_bc_system->size()), true, libMesh::SERIAL); 
+  turbulent_bc_soln->init(turbulent_bc_system.solution->size(), true, libMesh::SERIAL); 
+
+  (*turbulent_bc_soln) = flow_soln;
       
   std::vector<unsigned int>turbulent_bc_system_variables;
   turbulent_bc_system_variables.push_back(0);
   turbulent_bc_system_variables.push_back(1);
   
-  std::vector<libMesh::Number> flow_soln;
-
-  turbulent_bc_system.update_global_solution(flow_soln);
-
-  std::cout<<"Flow solution size: "<<flow_soln.size()<<std::endl;
-
-  turbulent_bc_soln->init(libMesh::cast_int<libMesh::numeric_index_type>(flow_soln.size()), true, libMesh::SERIAL); 
-
-  (*turbulent_bc_soln) = flow_soln;
-      
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
 			       *turbulent_bc_soln,
@@ -197,13 +198,19 @@ int main(int argc, char* argv[])
   
   turbulent_bc_values->init();    
 
-  libMesh::Point p_test(0.0, 0.0);
+  libMesh::Point p_test(0.1, 0.0);
 
   libMesh::Real t;
 
   std::vector<libMesh::Gradient> u_nu_gradient_values;
 
+  libMesh::DenseVector<libMesh::Number> u_nu_values;
+
   turbulent_bc_values->gradient(p_test, t, u_nu_gradient_values);
+
+  turbulent_bc_values->operator()(p_test, t, u_nu_values); 
+
+  std::cout<<p_test(0)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;
 
   std::cout<<"Velocity gradient bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[0](0)<<", "<<u_nu_gradient_values[0](1)<<std::endl;
   std::cout<<"Viscosity gradient at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[1](0)<<", "<<u_nu_gradient_values[1](1)<<std::endl;
