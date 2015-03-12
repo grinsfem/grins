@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 2
-mesh_nx2 = 1332
+mesh_nx1 = 50
+mesh_nx2 = 10
 
 domain_x1_max = 5.0
 domain_x2_max = 1.0
