@@ -96,8 +96,8 @@ public:
       }
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    output(0) = u_nu_values(0);
-    output(3) = u_nu_values(1);
+    output(0) = u_nu_values(0)*1887.034*1.0e-3;
+    output(3) = u_nu_values(1)*943.517*1.0e-3;
     std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
   }
 
@@ -197,16 +197,16 @@ int main(int argc, char* argv[])
   
   turbulent_bc_values->init();    
 
-  // libMesh::Point p_test(0.3, 0.0);
+  libMesh::Point p_test(0.0, 0.0);
 
-  // libMesh::Real t;
+  libMesh::Real t;
 
-  // libMesh::DenseVector<libMesh::Number> u_nu_values;
+  std::vector<libMesh::Gradient> u_nu_gradient_values;
 
-  // turbulent_bc_values->operator()(p_test, t, u_nu_values);
+  turbulent_bc_values->gradient(p_test, t, u_nu_gradient_values);
 
-  // std::cout<<"Viscosity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(1)<<std::endl;
-  // std::cout<<"Velocity bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_values(0)<<std::endl;
+  std::cout<<"Velocity gradient bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[0](0)<<", "<<u_nu_gradient_values[0](1)<<std::endl;
+  std::cout<<"Viscosity gradient at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[1](0)<<", "<<u_nu_gradient_values[1](1)<<std::endl;
         
   GRINS::SimulationBuilder sim_builder;
 
