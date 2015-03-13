@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 50
-mesh_nx2 = 10
+mesh_nx1 = 100
+mesh_nx2 = 20
 
 domain_x1_max = 5.0
 domain_x2_max = 1.0
@@ -36,7 +36,7 @@ output_format = 'ExodusII'
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0e-3'
+mu = '2.434e-5'
 
 # Options for print info to the screen
 [screen-options]
@@ -58,14 +58,14 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMSta
 [./IncompressibleNavierStokes]
 
 FE_family = LAGRANGE
-V_order = FIRST
+V_order = SECOND
 P_order = FIRST
 
 viscosity_model = 'spalartallmaras'
 rho = 1.0
 
-#bc_ids = '1 3 2 0'
-#bc_types = 'parabolic_profile general_velocity no_slip no_slip '
+#bc_ids = '3 2 0'
+#bc_types = 'parabolic_profile no_slip no_slip '
 
 bc_ids = '3 2 0'
 bc_types = 'general_velocity no_slip no_slip '
@@ -102,8 +102,10 @@ rho = 1.0
 
 bc_ids = '0 2 3'
 bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
+#bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
 bc_variables = 'nu nu nu'
-bc_values = '0.0 0.0 0.01*y*(1.0-y)'
+bc_values = '0.0 0.0 0.0'
+#bc_values = '0.0 0.0 0.01*y*(1.0-y)'
 no_of_walls = 2
 wall_ids = '0 2'
 
