@@ -40,6 +40,9 @@
 #include "libmesh/fe_base.h"
 #include "libmesh/fe_interface.h"
 #include "libmesh/mesh_function.h"
+#include "libmesh/mesh.h"
+#include "libmesh/edge_edge2.h"
+#include "libmesh/mesh_generation.h"
 #include "libmesh/linear_implicit_system.h"
 #include "libmesh/gmv_io.h"
 #include "libmesh/exact_solution.h"
@@ -69,10 +72,10 @@ public:
 };
 
 // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
-class TurbulentBdyFunction : public libMesh::FunctionBase<libMesh::Number>
+class TurbulentBdyFunctionU : public libMesh::FunctionBase<libMesh::Number>
 {
 public:
-  TurbulentBdyFunction (libMesh::MeshFunction* _turbulent_bc_values) :
+  TurbulentBdyFunctionU (libMesh::MeshFunction* _turbulent_bc_values) :
     turbulent_bc_values(_turbulent_bc_values)
   { this->_initialized = true; }
 
@@ -83,26 +86,76 @@ public:
                            const libMesh::Real t,
                            libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(4);
+    output.resize(1);
     output.zero();
+    
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
-    // Also the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
+    // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
     p_copy(0) = p_copy(1);
     p_copy(1)= 0.0;
+    // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
+    // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
     if(p_copy(0) > 0.5)
       {
-	p_copy(0) = 1 - p_copy(0);
+       p_copy(0) = 1 - p_copy(0);
       }
+    p_copy(0) = 2*p_copy(0);
+    
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    output(0) = u_nu_values(0)*1887.034*1.0e-3;
-    output(3) = u_nu_values(1)*943.517*1.0e-3;
-    std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
-  }
+    //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
+    
+    output(0) = u_nu_values(0)/21.995539;    
+    }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunction(turbulent_bc_values)); }
+  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(turbulent_bc_values)); }
+
+private:
+  libMesh::MeshFunction* turbulent_bc_values;
+};
+
+// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
+class TurbulentBdyFunctionNu : public libMesh::FunctionBase<libMesh::Number>
+{
+public:
+  TurbulentBdyFunctionNu (libMesh::MeshFunction* _turbulent_bc_values) :
+    turbulent_bc_values(_turbulent_bc_values)
+  { this->_initialized = true; }
+
+  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+  { libmesh_not_implemented(); }
+
+  virtual void operator() (const libMesh::Point& p,
+                           const libMesh::Real t,
+                           libMesh::DenseVector<libMesh::Number>& output)
+  {
+    output.resize(1);
+    output.zero();
+    
+    // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
+    libMesh::Point p_copy(p);
+    // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
+    p_copy(0) = p_copy(1);
+    p_copy(1)= 0.0;
+    // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
+    // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
+    if(p_copy(0) > 0.5)
+      {
+       p_copy(0) = 1 - p_copy(0);
+      }
+    p_copy(0) = 2*p_copy(0);
+    
+    libMesh::DenseVector<libMesh::Number> u_nu_values;
+    turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
+    //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
+        
+    output(0) = u_nu_values(1)/(2.0*21.995539);
+    }
+
+  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(turbulent_bc_values)); }
 
 private:
   libMesh::MeshFunction* turbulent_bc_values;
@@ -143,19 +196,17 @@ int main(int argc, char* argv[])
     
   mesh.read("test_data/turbulent_channel_Re944_grid.xda");
   
-  //mesh.all_second_order();
-  
   // And an EquationSystems to run on it
   libMesh::EquationSystems equation_systems (mesh);
   
   equation_systems.read("test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
-			libMesh::EquationSystems::READ_HEADER |
+  			libMesh::EquationSystems::READ_HEADER |
   			     libMesh::EquationSystems::READ_DATA |
   			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
   
   // Get a reference to the system so that we can call update() on it
   libMesh::System & turbulent_bc_system = equation_systems.get_system<libMesh::System>("flow");
-  
+   
   // We need to call update to put system in a consistent state
   // with the solution that was read in
   turbulent_bc_system.update();
@@ -181,7 +232,6 @@ int main(int argc, char* argv[])
 
   std::cout<<"Turbulent system size: "<<turbulent_bc_system.solution->size()<<std::endl;
   
-  //turbulent_bc_soln->init(libMesh::cast_int<libMesh::numeric_index_type>(turbulent_bc_system->size()), true, libMesh::SERIAL); 
   turbulent_bc_soln->init(turbulent_bc_system.solution->size(), true, libMesh::SERIAL); 
 
   (*turbulent_bc_soln) = flow_soln;
@@ -197,23 +247,6 @@ int main(int argc, char* argv[])
 			       turbulent_bc_system_variables ));
   
   turbulent_bc_values->init();    
-
-  libMesh::Point p_test(0.1, 0.0);
-
-  libMesh::Real t;
-
-  std::vector<libMesh::Gradient> u_nu_gradient_values;
-
-  libMesh::DenseVector<libMesh::Number> u_nu_values;
-
-  turbulent_bc_values->gradient(p_test, t, u_nu_gradient_values);
-
-  turbulent_bc_values->operator()(p_test, t, u_nu_values); 
-
-  std::cout<<p_test(0)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;
-
-  std::cout<<"Velocity gradient bc at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[0](0)<<", "<<u_nu_gradient_values[0](1)<<std::endl;
-  std::cout<<"Viscosity gradient at ("<<p_test(1)<<","<<p_test(0)<<"): "<<u_nu_gradient_values[1](0)<<", "<<u_nu_gradient_values[1](1)<<std::endl;
         
   GRINS::SimulationBuilder sim_builder;
 
@@ -282,19 +315,21 @@ int main(int argc, char* argv[])
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
 {    
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet( new TurbulentBdyFunction(this->turbulent_bc_values) );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_u( new TurbulentBdyFunctionU(this->turbulent_bc_values) );
+
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_nu( new TurbulentBdyFunctionNu(this->turbulent_bc_values) );
 
   GRINS::DBCContainer cont_u;
   cont_u.add_var_name( "u" );
   cont_u.add_bc_id( 3 );
     
-  cont_u.set_func( turbulent_inlet );
+  cont_u.set_func( turbulent_inlet_u );
 
   GRINS::DBCContainer cont_nu;
   cont_nu.add_var_name( "nu" );
   cont_nu.add_bc_id( 3 );
     
-  cont_nu.set_func( turbulent_inlet );
+  cont_nu.set_func( turbulent_inlet_nu );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
@@ -369,4 +404,49 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 //   return g;
 // }
 
+// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
+// class TurbulentBdyFunction : public libMesh::FunctionBase<libMesh::Number>
+// {
+// public:
+//   TurbulentBdyFunction (libMesh::MeshFunction* _turbulent_bc_values) :
+//     turbulent_bc_values(_turbulent_bc_values)
+//   { this->_initialized = true; }
+
+//   virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+//   { libmesh_not_implemented(); }
+
+//   virtual void operator() (const libMesh::Point& p,
+//                            const libMesh::Real t,
+//                            libMesh::DenseVector<libMesh::Number>& output)
+//   {
+//     output.resize(4);
+//     output.zero();
+    
+//     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
+//     libMesh::Point p_copy(p);
+//     // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
+//     p_copy(0) = p_copy(1);
+//     p_copy(1)= 0.0;
+//     // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
+//     // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
+//     if(p_copy(0) > 0.5)
+//       {
+//        p_copy(0) = 1 - p_copy(0);
+//       }
+//     p_copy(0) = 2*p_copy(0);
+    
+//     libMesh::DenseVector<libMesh::Number> u_nu_values;
+//     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
+//     //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
+    
+//     output(0) = 1.0; //u_nu_values(0)/21.995539;
+//     output(3) = 0.0; //10000*u_nu_values(1)/(2.0*21.995539);
+//     }
+
+//   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+//   { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunction(turbulent_bc_values)); }
+
+// private:
+//   libMesh::MeshFunction* turbulent_bc_values;
+// };
   

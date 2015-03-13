@@ -99,7 +99,11 @@ namespace GRINS
     // Compute the value of the total viscosity and return it
     libMesh::Number _mu_value = mu_turbulent + mu_physical; // Turbulent viscosity + physical viscosity            
     // Assert that _mu_value is greater than 0
-    libmesh_assert(_mu_value > 0.0);
+    if(_mu_value < 0.0)
+    {
+      std::cout<<_mu_value<<std::endl;
+      libmesh_assert(_mu_value > 0.0);
+    }
 
     return _mu_value;
   }    
