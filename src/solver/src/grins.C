@@ -57,6 +57,9 @@ int main(int argc, char* argv[])
   // libMesh input file should be first argument
   std::string libMesh_input_filename = argv[1];
   
+  // Initialize libMesh library.
+  libMesh::LibMeshInit libmesh_init(argc, argv);
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
@@ -75,9 +78,6 @@ int main(int argc, char* argv[])
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
- 
   libMesh::out << "Starting GRINS with command:\n";
   for (int i=0; i != argc; ++i)
     libMesh::out << argv[i] << ' ';
