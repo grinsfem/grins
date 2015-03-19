@@ -298,19 +298,19 @@ namespace GRINS
     // adding forcing
     else if( quantity_index == this->_velocity_penalty_force_x_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        (*this->force_velocity_function)(point, context.time, output_vec);
 
         value = output_vec(0);
       }
     else if( quantity_index == this->_velocity_penalty_force_y_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        (*this->force_velocity_function)(point, context.time, output_vec);
 
         value = output_vec(1);
       }
     else if( quantity_index == this->_velocity_penalty_force_z_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        (*this->force_velocity_function)(point, context.time, output_vec);
 
         value = output_vec(2);
       }
