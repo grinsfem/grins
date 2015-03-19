@@ -108,6 +108,7 @@ namespace GRINS
     // value
     libmesh_assert(normal_vector_function.get());
     libmesh_assert(base_velocity_function.get());
+    libmesh_assert(force_velocity_function.get());
 
     libMesh::DenseVector<libMesh::Number> output_vec(3);
 
@@ -126,6 +127,10 @@ namespace GRINS
                                          output_vec(2));
 
     const libMesh::NumberVectorValue U_Rel = U-U_B;
+
+    // adding forcing to output
+    (*force_velocity_function)(point, time,
+			       output_vec);
 
     // Old code
     // const libMesh::NumberVectorValue F1 = (U_Rel*U_N)*U_N; //
