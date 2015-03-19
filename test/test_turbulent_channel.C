@@ -131,7 +131,7 @@ public:
                            const libMesh::Real t,
                            libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(1);
+    output.resize(4);
     output.zero();
     
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
@@ -151,7 +151,7 @@ public:
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
     //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
         
-    output(0) = u_nu_values(1)/(2.0*21.995539);
+    output(3) = u_nu_values(1)/(2.0*21.995539);
     }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
