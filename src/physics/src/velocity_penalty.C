@@ -44,7 +44,10 @@ namespace GRINS
     _velocity_penalty_z_index(0),
     _velocity_penalty_base_x_index(0),
     _velocity_penalty_base_y_index(0),
-    _velocity_penalty_base_z_index(0)
+    _velocity_penalty_base_z_index(0),
+    _velocity_penalty_force_x(0),  
+    _velocity_penalty_force_y(0),  
+    _velocity_penalty_force_z(0)
   {
     return;
   }
