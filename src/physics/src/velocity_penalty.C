@@ -295,6 +295,25 @@ namespace GRINS
 
         value = output_vec(2);
       }
+    // adding forcing
+    else if( quantity_index == this->_velocity_penalty_force_x )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_velocity_penalty_force_y )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_force_y )
+      {
+        (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
 
     return;
   }
