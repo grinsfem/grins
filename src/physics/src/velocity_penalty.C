@@ -95,6 +95,17 @@ namespace GRINS
 
                 _velocity_penalty_z_index =
                   postprocessing.register_quantity( vel_penalty+"_z" );
+
+		// adding force to postprocessing
+		//
+                _velocity_penalty_force_x =
+                  postprocessing.register_quantity( vel_penalty+"_force_x" );
+
+                _velocity_penalty_force_y =
+                  postprocessing.register_quantity( vel_penalty+"_force_y" );
+
+                _velocity_penalty_force_z =
+                  postprocessing.register_quantity( vel_penalty+"_force_z" );
               }
             else if( name == std::string("velocity_penalty_base") )
               {
