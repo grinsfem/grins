@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 4
-mesh_nx2 = 500
+mesh_nx1 = 20
+mesh_nx2 = 600
 redistribute = '{x}{0.5*(1 + (tanh((y -0.5)*3.0)/tanh(1.5)))}{z}'
 domain_x1_max = 5.0
 domain_x2_max = 1.0
@@ -18,7 +18,7 @@ deltat = 0.01
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 25
-max_linear_iterations = 25000
+max_linear_iterations = 50000
 
 initial_linear_tolerance = 1.0e-12
 
