@@ -116,6 +116,8 @@ suspended_cable_regression_SOURCES = suspended_cable_regression.C
 
 #Define tests to actually be run
 TESTS =
+XFAIL_TESTS =
+
 TESTS += gaussian_profiles
 TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
@@ -162,7 +164,7 @@ TESTS += redistribute_regression.sh
 TESTS += coupled_stokes_ns.sh
 
 TESTS += reacting_low_mach_cantera_regression.sh
-XFAIL_TESTS = reacting_low_mach_cantera_regression.sh
+XFAIL_TESTS += reacting_low_mach_cantera_regression.sh
 
 TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
