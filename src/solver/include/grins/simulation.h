@@ -95,6 +95,9 @@ namespace GRINS
     void init_multiphysics_system( const GetPot& input,
                                    SimulationBuilder& sim_builder );
 
+    //! Helper function
+    void init_qois( const GetPot& input, SimulationBuilder& sim_builder );
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;

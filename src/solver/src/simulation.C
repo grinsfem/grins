@@ -61,17 +61,7 @@ namespace GRINS
   {
     this->init_multiphysics_system(input,sim_builder);
 
-    // If the user actually asks for a QoI, then we add it.
-    std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
-    if( qois->n_qois() > 0 )
-      {
-        // This *must* be done after equation_system->init in order to get variable indices
-        qois->init(input, *_multiphysics_system );
-      
-        /* Note that we are effectively transfering ownership of the qoi pointer because
-           it will be cloned in _multiphysics_system and all the calculations are done there. */
-        _multiphysics_system->attach_qoi( qois.get() );
-      }
+    this->init_qois(input,sim_builder);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
@@ -150,6 +140,22 @@ namespace GRINS
     return;
   }
 
+  void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
+  {
+    // If the user actually asks for a QoI, then we add it.
+    std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
+    if( qois->n_qois() > 0 )
+      {
+        // This *must* be done after equation_system->init in order to get variable indices
+        qois->init(input, *_multiphysics_system );
+
+        /* Note that we are effectively transfering ownership of the qoi pointer because
+           it will be cloned in _multiphysics_system and all the calculations are done there. */
+        _multiphysics_system->attach_qoi( qois.get() );
+      }
+
+    return;
+  }
   void Simulation::run()
   {
     this->print_sim_info();
