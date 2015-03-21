@@ -71,7 +71,7 @@ namespace GRINS
         this->init_restart(input,sim_builder,comm);
       }
 
-    this->check_for_unused_vars(input);
+    this->check_for_unused_vars(input, false /*warning only*/);
 
     return;
   }
@@ -150,7 +150,7 @@ namespace GRINS
     return;
   }
 
-  void Simulation::check_for_unused_vars( const GetPot& input )
+  void Simulation::check_for_unused_vars( const GetPot& input, bool warning_only )
   {
     /* Everything should be set up now, so check if there's any unused variables
        in the input file. If so, then tell the user what they were and error out. */
@@ -159,14 +159,22 @@ namespace GRINS
     if( !unused_vars.empty() )
       {
         libMesh::err << "==========================================================" << std::endl;
-        libMesh::err << "Error: Found unused variables!" << std::endl;
+        if( warning_only )
+          libMesh::err << "Warning: ";
+        else
+          libMesh::err << "Error: ";
+
+        libMesh::err << "Found unused variables!" << std::endl;
+
         for( std::vector<std::string>::const_iterator it = unused_vars.begin();
              it != unused_vars.end(); ++it )
           {
             libMesh::err << *it << std::endl;
           }
         libMesh::err << "==========================================================" << std::endl;
-        libmesh_error();
+
+        if( !warning_only )
+          libmesh_error();
       }
 
     return;

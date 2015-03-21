@@ -103,7 +103,7 @@ namespace GRINS
                        const libMesh::Parallel::Communicator &comm );
 
     //! Helper function
-    void check_for_unused_vars( const GetPot& input );
+    void check_for_unused_vars( const GetPot& input, bool warning_only );
 
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
