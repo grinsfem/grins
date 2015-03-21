@@ -79,7 +79,7 @@ namespace GRINS
   }
 
   Simulation::Simulation( const GetPot& input,
-                          GetPot& /*command_line*/,
+                          GetPot& command_line,
                           SimulationBuilder& sim_builder,
                           const libMesh::Parallel::Communicator &comm )
     :  _mesh( sim_builder.build_mesh(input, comm) ),
@@ -112,7 +112,8 @@ namespace GRINS
         this->init_restart(input,sim_builder,comm);
       }
 
-    this->check_for_unused_vars(input, false /*warning only*/);
+    bool warning_only = command_line.search("--warn-only-unused-var");
+    this->check_for_unused_vars(input, warning_only );
 
     return;
   }
