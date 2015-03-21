@@ -33,6 +33,7 @@ check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
+check_PROGRAMS += ufo_unit
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -113,6 +114,7 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
+ufo_unit_SOURCES = ufo_unit.C
 
 #Define tests to actually be run
 TESTS =
