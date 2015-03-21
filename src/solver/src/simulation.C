@@ -71,22 +71,7 @@ namespace GRINS
         this->init_restart(input,sim_builder,comm);
       }
 
-    /* Everything should be set up now, so check if there's any unused variables
-       in the input file. If so, then tell the user what they were and error out. */
-    std::vector<std::string> unused_vars = input.unidentified_variables();
-
-    if( !unused_vars.empty() )
-      {
-        libMesh::err << "==========================================================" << std::endl;
-        libMesh::err << "Error: Found unused variables!" << std::endl;
-        for( std::vector<std::string>::const_iterator it = unused_vars.begin();
-             it != unused_vars.end(); ++it )
-          {
-            libMesh::err << *it << std::endl;
-          }
-        libMesh::err << "==========================================================" << std::endl;
-        libmesh_error();
-      }
+    this->check_for_unused_vars(input);
 
     return;
   }
@@ -161,6 +146,28 @@ namespace GRINS
     /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
        call reinit()? */
     _equation_system->reinit();
+
+    return;
+  }
+
+  void Simulation::check_for_unused_vars( const GetPot& input )
+  {
+    /* Everything should be set up now, so check if there's any unused variables
+       in the input file. If so, then tell the user what they were and error out. */
+    std::vector<std::string> unused_vars = input.unidentified_variables();
+
+    if( !unused_vars.empty() )
+      {
+        libMesh::err << "==========================================================" << std::endl;
+        libMesh::err << "Error: Found unused variables!" << std::endl;
+        for( std::vector<std::string>::const_iterator it = unused_vars.begin();
+             it != unused_vars.end(); ++it )
+          {
+            libMesh::err << *it << std::endl;
+          }
+        libMesh::err << "==========================================================" << std::endl;
+        libmesh_error();
+      }
 
     return;
   }

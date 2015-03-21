@@ -102,6 +102,9 @@ namespace GRINS
     void init_restart( const GetPot& input, SimulationBuilder& sim_builder,
                        const libMesh::Parallel::Communicator &comm );
 
+    //! Helper function
+    void check_for_unused_vars( const GetPot& input );
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
