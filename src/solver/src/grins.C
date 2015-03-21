@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
+                           command_line,
 			   sim_builder,
                            libmesh_init.comm() );
 
