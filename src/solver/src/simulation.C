@@ -68,15 +68,7 @@ namespace GRINS
 
     if( input.have_variable("restart-options/restart_file") )
       {
-        this->read_restart( input );
-
-        /* We do this here only if there's a restart file. Otherwise, this was done
-           at mesh construction time */
-        sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
-
-        /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
-                 call reinit()? */
-        _equation_system->reinit();
+        this->init_restart(input,sim_builder,comm);
       }
 
     /* Everything should be set up now, so check if there's any unused variables
@@ -156,6 +148,23 @@ namespace GRINS
 
     return;
   }
+
+  void Simulation::init_restart( const GetPot& input, SimulationBuilder& sim_builder,
+                                 const libMesh::Parallel::Communicator &comm )
+  {
+    this->read_restart( input );
+
+    /* We do this here only if there's a restart file. Otherwise, this was done
+       at mesh construction time */
+    sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+
+    /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
+       call reinit()? */
+    _equation_system->reinit();
+
+    return;
+  }
+
   void Simulation::run()
   {
     this->print_sim_info();
