@@ -59,6 +59,47 @@ namespace GRINS
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
   {
+    libmesh_deprecated();
+
+    this->init_multiphysics_system(input,sim_builder);
+
+    this->init_qois(input,sim_builder);
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->init_restart(input,sim_builder,comm);
+      }
+
+    this->check_for_unused_vars(input, false /*warning only*/);
+
+    return;
+  }
+
+  Simulation::Simulation( const GetPot& input,
+                          GetPot& /*command_line*/,
+                          SimulationBuilder& sim_builder,
+                          const libMesh::Parallel::Communicator &comm )
+    :  _mesh( sim_builder.build_mesh(input, comm) ),
+       _equation_system( new libMesh::EquationSystems( *_mesh ) ),
+       _solver( sim_builder.build_solver(input) ),
+       _system_name( input("screen-options/system_name", "GRINS" ) ),
+       _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
+       _vis( sim_builder.build_vis(input, comm) ),
+       _postprocessing( sim_builder.build_postprocessing(input) ),
+    _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
+    _print_log_info( input("screen-options/print_log_info", false ) ),
+    _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+    _print_qoi( input("screen-options/print_qoi", false ) ),
+    _print_scalars( input("screen-options/print_scalars", false ) ),
+    _output_vis( input("vis-options/output_vis", false ) ),
+    _output_residual( input( "vis-options/output_residual", false ) ),
+    _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
+    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+    _error_estimator() // effectively NULL
+  {
     this->init_multiphysics_system(input,sim_builder);
 
     this->init_qois(input,sim_builder);
