@@ -91,6 +91,10 @@ namespace GRINS
     void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
 				    GRINS::MultiphysicsSystem* system );
 
+    //! Helper function
+    void init_multiphysics_system( const GetPot& input,
+                                   SimulationBuilder& sim_builder );
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;

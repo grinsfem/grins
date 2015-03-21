@@ -59,35 +59,7 @@ namespace GRINS
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
   {
-    // Only print libMesh logging info if the user requests it
-    libMesh::perflog.disable_logging();
-    if( this->_print_log_info ) libMesh::perflog.enable_logging();
-
-    PhysicsList physics_list = sim_builder.build_physics(input);
-
-    _multiphysics_system->attach_physics_list( physics_list );
-
-    _multiphysics_system->read_input_options( input );
-
-    _multiphysics_system->register_postprocessing_vars( input, *(_postprocessing) );
-
-    // This *must* be done before equation_system->init
-    this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
-
-    /* Postprocessing needs to be initialized before the solver since that's 
-       where equation_system gets init'ed */
-    _postprocessing->initialize( *_multiphysics_system, *_equation_system );
-
-    _solver->initialize( input, _equation_system, _multiphysics_system );
-
-    // Useful for debugging
-    if( input("screen-options/print_dof_constraints", false ) )
-      {
-        _multiphysics_system->get_dof_map().print_dof_constraints();
-      }
-
-    // This *must* be done after equation_system->init in order to get variable indices
-    this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
+    this->init_multiphysics_system(input,sim_builder);
 
     // If the user actually asks for a QoI, then we add it.
     std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
@@ -139,6 +111,42 @@ namespace GRINS
 
   Simulation::~Simulation()
   {
+    return;
+  }
+
+  void Simulation::init_multiphysics_system( const GetPot& input,
+                                             SimulationBuilder& sim_builder )
+  {
+    // Only print libMesh logging info if the user requests it
+    libMesh::perflog.disable_logging();
+    if( this->_print_log_info ) libMesh::perflog.enable_logging();
+
+    PhysicsList physics_list = sim_builder.build_physics(input);
+
+    _multiphysics_system->attach_physics_list( physics_list );
+
+    _multiphysics_system->read_input_options( input );
+
+    _multiphysics_system->register_postprocessing_vars( input, *(_postprocessing) );
+
+    // This *must* be done before equation_system->init
+    this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
+
+    /* Postprocessing needs to be initialized before the solver since that's
+       where equation_system gets init'ed */
+    _postprocessing->initialize( *_multiphysics_system, *_equation_system );
+
+    _solver->initialize( input, _equation_system, _multiphysics_system );
+
+    // Useful for debugging
+    if( input("screen-options/print_dof_constraints", false ) )
+      {
+        _multiphysics_system->get_dof_map().print_dof_constraints();
+      }
+
+    // This *must* be done after equation_system->init in order to get variable indices
+    this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
+
     return;
   }
 
