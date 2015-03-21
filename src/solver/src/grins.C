@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
+  GetPot command_line(argc,argv);
+
   // GetPot doesn't throw an error for a nonexistent file?
   {
     std::ifstream i(libMesh_input_filename.c_str());
