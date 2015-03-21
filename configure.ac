@@ -422,6 +422,8 @@ AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.in)
 
+AC_CONFIG_FILES(test/warn_only_ufo_unit.sh, [chmod +x test/warn_only_ufo_unit.sh])
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
