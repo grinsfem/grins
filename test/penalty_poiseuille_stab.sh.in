@@ -4,6 +4,4 @@ PROG="@top_builddir@/test/grins_flow_regression"
 
 INPUT="@top_srcdir@/test/input_files/penalty_poiseuille_stab.in @top_srcdir@/test/test_data/penalty_poiseuille_stab.xdr 1e-9"
 
-PETSC_OPTIONS="-pc_type ilu"
-
-$PROG $INPUT $PETSC_OPTIONS 
+${LIBMESH_RUN:-} $PROG $INPUT
