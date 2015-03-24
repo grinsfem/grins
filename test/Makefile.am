@@ -33,6 +33,7 @@ check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
+check_PROGRAMS += ufo_unit
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -113,9 +114,12 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
+ufo_unit_SOURCES = ufo_unit.C
 
 #Define tests to actually be run
 TESTS =
+XFAIL_TESTS =
+
 TESTS += gaussian_profiles
 TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
@@ -132,6 +136,9 @@ TESTS += gas_solid_catalytic_wall_unit_cantera.sh
 TESTS += constant_catalycity_unit
 TESTS += arrhenius_catalycity_unit
 TESTS += power_law_catalycity_unit
+TESTS += warn_only_ufo_unit.sh
+TESTS += error_ufo_unit.sh
+XFAIL_TESTS += error_ufo_unit.sh
 
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
@@ -162,7 +169,7 @@ TESTS += redistribute_regression.sh
 TESTS += coupled_stokes_ns.sh
 
 TESTS += reacting_low_mach_cantera_regression.sh
-XFAIL_TESTS = reacting_low_mach_cantera_regression.sh
+XFAIL_TESTS += reacting_low_mach_cantera_regression.sh
 
 TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
@@ -242,6 +249,8 @@ shellfiles_src += 3d_low_mach_jacobians_xy.sh
 shellfiles_src += 3d_low_mach_jacobians_xz.sh
 shellfiles_src += 3d_low_mach_jacobians_yz.sh
 shellfiles_src += suspended_cable_test.sh
+shellfiles_src += warn_only_ufo_unit.sh
+shellfiles_src += error_ufo_unit.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
