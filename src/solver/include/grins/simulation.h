@@ -61,10 +61,16 @@ namespace GRINS
   class Simulation
   {
   public:
-    
+
     Simulation( const GetPot& input,
 		SimulationBuilder& sim_builder,
-                const libMesh::Parallel::Communicator &comm 
+                const libMesh::Parallel::Communicator &comm
+                LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+
+    Simulation( const GetPot& input,
+                GetPot& command_line, /* Has to be non-const for search() */
+		SimulationBuilder& sim_builder,
+                const libMesh::Parallel::Communicator &comm
                 LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     virtual ~Simulation();
@@ -90,6 +96,20 @@ namespace GRINS
     
     void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
 				    GRINS::MultiphysicsSystem* system );
+
+    //! Helper function
+    void init_multiphysics_system( const GetPot& input,
+                                   SimulationBuilder& sim_builder );
+
+    //! Helper function
+    void init_qois( const GetPot& input, SimulationBuilder& sim_builder );
+
+    //! Helper function
+    void init_restart( const GetPot& input, SimulationBuilder& sim_builder,
+                       const libMesh::Parallel::Communicator &comm );
+
+    //! Helper function
+    void check_for_unused_vars( const GetPot& input, bool warning_only );
 
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 

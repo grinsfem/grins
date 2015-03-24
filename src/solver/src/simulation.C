@@ -59,6 +59,72 @@ namespace GRINS
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
   {
+    libmesh_deprecated();
+
+    this->init_multiphysics_system(input,sim_builder);
+
+    this->init_qois(input,sim_builder);
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->init_restart(input,sim_builder,comm);
+      }
+
+    this->check_for_unused_vars(input, false /*warning only*/);
+
+    return;
+  }
+
+  Simulation::Simulation( const GetPot& input,
+                          GetPot& /*command_line*/,
+                          SimulationBuilder& sim_builder,
+                          const libMesh::Parallel::Communicator &comm )
+    :  _mesh( sim_builder.build_mesh(input, comm) ),
+       _equation_system( new libMesh::EquationSystems( *_mesh ) ),
+       _solver( sim_builder.build_solver(input) ),
+       _system_name( input("screen-options/system_name", "GRINS" ) ),
+       _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
+       _vis( sim_builder.build_vis(input, comm) ),
+       _postprocessing( sim_builder.build_postprocessing(input) ),
+    _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
+    _print_log_info( input("screen-options/print_log_info", false ) ),
+    _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+    _print_qoi( input("screen-options/print_qoi", false ) ),
+    _print_scalars( input("screen-options/print_scalars", false ) ),
+    _output_vis( input("vis-options/output_vis", false ) ),
+    _output_residual( input( "vis-options/output_residual", false ) ),
+    _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
+    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+    _error_estimator() // effectively NULL
+  {
+    this->init_multiphysics_system(input,sim_builder);
+
+    this->init_qois(input,sim_builder);
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->init_restart(input,sim_builder,comm);
+      }
+
+    this->check_for_unused_vars(input, false /*warning only*/);
+
+    return;
+  }
+
+  Simulation::~Simulation()
+  {
+    return;
+  }
+
+  void Simulation::init_multiphysics_system( const GetPot& input,
+                                             SimulationBuilder& sim_builder )
+  {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
     if( this->_print_log_info ) libMesh::perflog.enable_logging();
@@ -74,7 +140,7 @@ namespace GRINS
     // This *must* be done before equation_system->init
     this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
 
-    /* Postprocessing needs to be initialized before the solver since that's 
+    /* Postprocessing needs to be initialized before the solver since that's
        where equation_system gets init'ed */
     _postprocessing->initialize( *_multiphysics_system, *_equation_system );
 
@@ -89,34 +155,44 @@ namespace GRINS
     // This *must* be done after equation_system->init in order to get variable indices
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
+    return;
+  }
+
+  void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
+  {
     // If the user actually asks for a QoI, then we add it.
     std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
     if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
         qois->init(input, *_multiphysics_system );
-      
+
         /* Note that we are effectively transfering ownership of the qoi pointer because
            it will be cloned in _multiphysics_system and all the calculations are done there. */
         _multiphysics_system->attach_qoi( qois.get() );
       }
 
-    // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+    return;
+  }
 
-    if( input.have_variable("restart-options/restart_file") )
-      {
-        this->read_restart( input );
+  void Simulation::init_restart( const GetPot& input, SimulationBuilder& sim_builder,
+                                 const libMesh::Parallel::Communicator &comm )
+  {
+    this->read_restart( input );
 
-        /* We do this here only if there's a restart file. Otherwise, this was done
-           at mesh construction time */
-        sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+    /* We do this here only if there's a restart file. Otherwise, this was done
+       at mesh construction time */
+    sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
 
-        /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
-                 call reinit()? */
-        _equation_system->reinit();
-      }
+    /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
+       call reinit()? */
+    _equation_system->reinit();
 
+    return;
+  }
+
+  void Simulation::check_for_unused_vars( const GetPot& input, bool warning_only )
+  {
     /* Everything should be set up now, so check if there's any unused variables
        in the input file. If so, then tell the user what they were and error out. */
     std::vector<std::string> unused_vars = input.unidentified_variables();
@@ -124,21 +200,24 @@ namespace GRINS
     if( !unused_vars.empty() )
       {
         libMesh::err << "==========================================================" << std::endl;
-        libMesh::err << "Error: Found unused variables!" << std::endl;
+        if( warning_only )
+          libMesh::err << "Warning: ";
+        else
+          libMesh::err << "Error: ";
+
+        libMesh::err << "Found unused variables!" << std::endl;
+
         for( std::vector<std::string>::const_iterator it = unused_vars.begin();
              it != unused_vars.end(); ++it )
           {
             libMesh::err << *it << std::endl;
           }
         libMesh::err << "==========================================================" << std::endl;
-        libmesh_error();
+
+        if( !warning_only )
+          libmesh_error();
       }
 
-    return;
-  }
-
-  Simulation::~Simulation()
-  {
     return;
   }
 
