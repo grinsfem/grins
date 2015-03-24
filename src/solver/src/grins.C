@@ -78,10 +78,19 @@ int main(int argc, char* argv[])
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
-  libMesh::out << "Starting GRINS with command:\n";
+  /* Echo GRINS version, libMesh version, and command */
+  libMesh::out << "=========================================================="
+               << std::endl;
+  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
+               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
+               << "Running with command:\n";
+
   for (int i=0; i != argc; ++i)
     libMesh::out << argv[i] << ' ';
-  libMesh::out << std::endl;
+
+  libMesh::out << std::endl
+               << "=========================================================="
+               << std::endl;
 
   GRINS::SimulationBuilder sim_builder;
 
