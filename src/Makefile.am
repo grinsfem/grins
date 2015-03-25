@@ -119,6 +119,7 @@ libgrins_la_SOURCES += physics/src/elastic_cable_base.C
 libgrins_la_SOURCES += physics/src/elastic_cable.C
 libgrins_la_SOURCES += physics/src/elastic_cable_constant_gravity.C
 libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
+libgrins_la_SOURCES += physics/src/source_function_base.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -310,6 +311,7 @@ include_HEADERS += physics/include/grins/elastic_cable_base.h
 include_HEADERS += physics/include/grins/elastic_cable.h
 include_HEADERS += physics/include/grins/elastic_membrane_constant_pressure.h
 include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
+include_HEADERS += physics/include/grins/source_function_base.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
