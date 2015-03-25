@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
   
   int return_flag = 0;
  
-  double tol = 1.0e-11;
+  double tol = 1.0e-9;
 
   if( l2error > tol || h1error > tol )
     {

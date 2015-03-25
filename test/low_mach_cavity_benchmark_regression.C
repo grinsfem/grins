@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   // Value after libMesh 7acb6fc9 bugfix
   const libMesh::Real exact_qoi = 4.8654229502012685;
 
-  const libMesh::Real tol = 1.0e-11;
+  const libMesh::Real tol = 1.0e-9;
 
   int return_flag = 0;
 
