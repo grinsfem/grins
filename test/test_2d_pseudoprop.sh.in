@@ -3,7 +3,7 @@
 if [ "@LIBMESH_DIM@" -gt 1 ]; then
    PROG="@top_builddir@/test/grins_flow_regression"
 
-   INPUT="@top_srcdir@/test/input_files/2d_pseudoprop.in @top_srcdir@/test/test_data/2d_pseudoprop.xdr 1.0e-8"
+   INPUT="@top_srcdir@/test/input_files/2d_pseudoprop.in @top_srcdir@/test/test_data/2d_pseudoprop.xdr 2.0e-8"
 
    PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
 
