@@ -67,14 +67,13 @@ transient = 'false'
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations =  25 
-max_linear_iterations = 25000
+max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
-relative_step_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-11
 
-use_numerical_jacobians_only = 'true'
+use_numerical_jacobians_only = 'false'
 
 # Visualization options
 [vis-options]
