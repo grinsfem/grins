@@ -4,7 +4,7 @@ PROG="@top_builddir@/test/test_axi_ns_con_cyl_flow"
 
 INPUT="@top_srcdir@/test/input_files/axi_con_cyl_flow.in"
 
-# A nuclear option preconditioner
-PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type lu -sub_pc_factor_mat_solver_package mumps"
+# A thermonuclear option preconditioner
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 8 -sub_pc_type lu -sub_pc_factor_mat_solver_package mumps"
 
 ${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS
