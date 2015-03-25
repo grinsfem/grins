@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/source_function_base.h"
+#include "grins/source_term_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -32,7 +32,7 @@
 
 namespace GRINS
 {
-  SourceFunctionBase::SourceFunctionBase( const std::string& physics_name, const GetPot& input )
+  SourceTermBase::SourceTermBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input)
   {
     this->parse_var_info(input);
@@ -40,12 +40,12 @@ namespace GRINS
     return;
   }
 
-  SourceFunctionBase::~SourceFunctionBase()
+  SourceTermBase::~SourceTermBase()
   {
     return;
   }
 
-  void SourceFunctionBase::parse_var_info( const GetPot& input )
+  void SourceTermBase::parse_var_info( const GetPot& input )
   {
     if( !input.have_variable("Physics/"+this->_physics_name+"/Variables/names") )
       {
@@ -92,7 +92,7 @@ namespace GRINS
     return;
   }
 
-  void SourceFunctionBase::init_variables( libMesh::FEMSystem* system )
+  void SourceTermBase::init_variables( libMesh::FEMSystem* system )
   {
     // We'd better have at least 1 variable read from input
     libmesh_assert( !_var_names.empty() );

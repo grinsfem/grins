@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SOURCE_FUNCTION_BASE_H
-#define GRINS_SOURCE_FUNCTION_BASE_H
+#ifndef GRINS_SOURCE_TERM_BASE_H
+#define GRINS_SOURCE_TERM_BASE_H
 
 // GRINS
 #include "grins/physics.h"
@@ -47,13 +47,13 @@ namespace GRINS
   /*! Idea is for the user to specify which variables they want to add a source
       term and then, depending on the subclass, parse for each variable and
       have it added to that equation.*/
-  class SourceFunctionBase : public Physics
+  class SourceTermBase : public Physics
   {
   public:
 
-    SourceFunctionBase( const std::string& physics_name, const GetPot& input );
+    SourceTermBase( const std::string& physics_name, const GetPot& input );
 
-    virtual ~SourceFunctionBase();
+    virtual ~SourceTermBase();
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -66,7 +66,7 @@ namespace GRINS
 
   private:
 
-    SourceFunctionBase();
+    SourceTermBase();
 
     //! Helper function
     void parse_var_info( const GetPot& input );
@@ -75,4 +75,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif // GRINS_SOURCE_FUNCTION_BASE_H
+#endif // GRINS_SOURCE_TERM_BASE_H
