@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_CONSTANT_SOURCE_FUNCTION_H
-#define GRINS_CONSTANT_SOURCE_FUNCTION_H
+#ifndef GRINS_CONSTANT_SOURCE_TERM_H
+#define GRINS_CONSTANT_SOURCE_TERM_H
 
 // GRINS
 #include "grins/source_term_base.h"
@@ -56,4 +56,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_SOURCE_FUNCTION_H
+#endif // GRINS_CONSTANT_SOURCE_TERM_H
