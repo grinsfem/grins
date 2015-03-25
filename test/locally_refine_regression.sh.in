@@ -4,9 +4,6 @@ PROG="@top_builddir@/test/grins_flow_regression"
 
 INPUT="@top_builddir@/test/input_files/locally_refine.in @top_srcdir@/test/test_data/locally_refine.xdr 1.0e-8"
 
-PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_factor_levels 4"
 
-# FIXME: Even with a ton of ILU levels, the linear solver doesn't
-# converge quickly when splitting these systems onto 12 processors
-#${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS
-$PROG $INPUT $PETSC_OPTIONS
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS

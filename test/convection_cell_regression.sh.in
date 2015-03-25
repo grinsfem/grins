@@ -4,7 +4,6 @@ PROG="@top_builddir@/test/test_thermally_driven_flow"
 
 INPUT="@top_srcdir@/test/input_files/convection_cell_regression.in @top_srcdir@/test/test_data/convection_cell_regression.xdr"
 
-# FIXME: The linear solver doesn't converge quickly when splitting
-# these systems onto 12 processors
-#${LIBMESH_RUN:-} $PROG $INPUT
-$PROG $INPUT
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_factor_levels 4"
+
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS
