@@ -2,8 +2,8 @@
 [mesh-options]
 mesh_option = create_2D_mesh
 element_type = QUAD9
-mesh_nx1 = 20
-mesh_nx2 = 600
+mesh_nx1 = 10
+mesh_nx2 = 300
 redistribute = '{x}{0.5*(1 + (tanh((y -0.5)*3.0)/tanh(1.5)))}{z}'
 domain_x1_max = 5.0
 domain_x2_max = 1.0
@@ -52,7 +52,7 @@ echo_physics = 'true'
 [Physics]
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
-#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
+#enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]

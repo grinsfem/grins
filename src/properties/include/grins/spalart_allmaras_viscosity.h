@@ -85,24 +85,29 @@ namespace GRINS
     // The unscaled turbulent viscosity (the nu the SA physics solves for)
     libMesh::Real nu = context.interior_value(this->_turbulence_vars.nu_var(),qp);
     
+    // Assert that _mu_value is greater than 0
+    if(nu < 0.0)
+    {
+      std::cout<<nu<<std::endl;
+      libmesh_warning("Negative turbulent viscosity encountered !");
+      
+      // We are using a negative S-A model, so will set eddy viscosity to zero
+      // if the turbulent viscosity nu < 0.0
+      nu = 0.0;
+    }
+
     // Step 1
-    libMesh::Real _kai = nu/mu_physical;
+    libMesh::Real _chi = nu/mu_physical;
 
     // Step 2    
     libMesh::Real _cv1 = 7.1;
-    libMesh::Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(_cv1, 3.0));
+    libMesh::Real _fv1 = pow(_chi, 3.0)/(pow(_chi, 3.0) + pow(_cv1, 3.0));
 
     // Step 3
     libMesh::Real mu_turbulent = nu*_fv1;
    
     // Compute the value of the total viscosity and return it
-    libMesh::Number _mu_value = mu_turbulent + mu_physical; // Turbulent viscosity + physical viscosity            
-    // Assert that _mu_value is greater than 0
-    if(_mu_value < 0.0)
-    {
-      std::cout<<_mu_value<<std::endl;
-      libmesh_assert(_mu_value > 0.0);
-    }
+    libMesh::Number _mu_value = mu_turbulent + mu_physical; // Turbulent viscosity + physical viscosity                
 
     return _mu_value;
   }    
