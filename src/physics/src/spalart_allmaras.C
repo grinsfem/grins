@@ -243,14 +243,35 @@ namespace GRINS
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);	
 	    
-	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*_S_tilde*nu;
+	// The ft2 function needed for the negative S-A model
+	libMesh::Real _chi = nu/_mu_qp;
+	libMesh::Real _f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*pow(_chi, 2.0));
+
+	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*(1 - _f_t2)*_S_tilde*nu;
+	// For a negative turbulent viscosity nu < 0.0 we need to use a different production function
+	if(nu < 0.0)
+	  {
+	    _source_term = this->_spalart_allmaras_helper._cb1*(1 - this->_spalart_allmaras_helper._c_t3)*_vorticity_value_qp*nu;
+	  }
 
 	//std::cout<<"The source term at "<<x<<", "<<y<<" is: "<<_source_term<<std::endl;
 
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
 	
-	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cw1*_fw*pow(nu/(*distance_qp)(qp), 2.);
+	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*_fw - (this->_spalart_allmaras_helper._cb1/pow(this->_spalart_allmaras_helper._kappa, 2.0))*_f_t2)*pow(nu/(*distance_qp)(qp), 2.);
+	// For a negative turbulent viscosity nu < 0.0 we need to use a different production function
+	if(nu < 0.0)
+	  {
+	    _destruction_term = -this->_spalart_allmaras_helper._cw1*pow(nu/((*distance_qp)(qp)), 2.0);
+	  }
+	
+	libMesh::Real _fn1 = 1.0;
+	// For a negative turbulent viscosity, _fn1 needs to be calculated
+	if(nu < 0.0)
+	  {
+	    _fn1 = (this->_spalart_allmaras_helper._c_n1 + pow(_chi, 3.0))/(this->_spalart_allmaras_helper._c_n1 - pow(_chi, 3.0));
+	  }
 	
         // First, an i-loop over the viscosity degrees of freedom.        
         for (unsigned int i=0; i != n_nu_dofs; i++)
@@ -258,7 +279,7 @@ namespace GRINS
             Fnu(i) += jac *
               ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
 	    +_source_term*nu_phi[i][qp] // source term
-	      + (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+nu)*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
+		+ (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+(_fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
 		- _destruction_term*nu_phi[i][qp]); // destruction term
 	    
 	    //Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);

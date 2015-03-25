@@ -52,6 +52,9 @@ namespace GRINS
       _r_lin(10.0),
       _c_w2(0.3),
       _c_w3(2.0),
+      _c_t3(1.2),
+      _c_t4(0.5),
+      _c_n1(16.0),
       _flow_vars(input)
   {        
     _cw1 = _cb1/pow(_kappa,2.0) + (1 + _cb2)/_sigma;
@@ -99,13 +102,13 @@ namespace GRINS
   libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value) const
   {
     // Step 1
-    libMesh::Real _kai = nu/mu;
+    libMesh::Real _chi = nu/mu;
     
     // Step 2
-    libMesh::Real _fv1 = pow(_kai, 3.0)/(pow(_kai, 3.0) + pow(this->_cv1, 3.0));
+    libMesh::Real _fv1 = pow(_chi, 3.0)/(pow(_chi, 3.0) + pow(this->_cv1, 3.0));
 
     // Step 3
-    libMesh::Real _fv2 = 1 - (_kai/(1 + _kai*_fv1));
+    libMesh::Real _fv2 = 1 - (_chi/(1 + _chi*_fv1));
 
     // Step 4
     libMesh::Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(_fv2) ;

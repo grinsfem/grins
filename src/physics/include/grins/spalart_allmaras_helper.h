@@ -61,7 +61,14 @@ namespace GRINS
     libMesh::Number _kappa, _cv1, _cv2, _cv3;
 
     //! Constants specific to the calculation of the destruction function
-    libMesh::Number _r_lin, _c_w2, _c_w3;
+    libMesh::Number _r_lin, _c_w2, _c_w3;    
+
+    //! Constants specific to the calculation of the trip function (but used in
+    // the source and destruction term)
+    libMesh::Number _c_t3, _c_t4;
+
+    //! Constants specific to the calculation of the negative S-A model
+    libMesh::Number _c_n1;
     
   protected:
 
