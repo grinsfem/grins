@@ -4,9 +4,7 @@ PROG="@top_builddir@/test/low_mach_cavity_benchmark_regression"
 
 INPUT="@top_srcdir@/test/input_files/low_mach_cavity_benchmark_regression_input.in"
 
-PETSC_OPTIONS="-pc_factor_levels 6 -sub_pc_factor_levels 6"
+# A nuclear option preconditioner
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type lu -sub_pc_factor_mat_solver_package mumps"
 
-# FIXME - I can't get this to converge with any preconditioner on 11
-# processors
-# ${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS
-$PROG $INPUT $PETSC_OPTIONS
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS
