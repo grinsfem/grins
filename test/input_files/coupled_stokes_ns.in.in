@@ -15,8 +15,8 @@ transient = false
 max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
-initial_linear_tolerance = '1.0e-12'
-relative_step_tolerance = '1.0e-9'
+minimum_linear_tolerance = '1e-6'
+relative_step_tolerance = '1.0e-11'
 
 verify_analytic_jacobians = '1.e-6'
 
