@@ -12,7 +12,7 @@ transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 20
 max_linear_iterations = 2500
 
 minimum_linear_tolerance = '1e-6'
