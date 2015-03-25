@@ -39,7 +39,7 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy HeatTransferSource'
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy ConstantSourceTerm'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -82,11 +82,17 @@ beta_T = 1.0
 
 g = '0 -9.8'
 
-[../SourceFunction]
+[../ConstantSourceTerm]
+  [./Variables]
+     names = 'T'
+     FE_types = 'LAGRANGE'
+     FE_orders = 'FIRST'
 
-value = '0.0'
+  [../Function]
 
-[../VariableNames]
+    value = '0.0'
+
+[../../VariableNames]
 
 Temperature = 'T'
 u_velocity = 'u'
