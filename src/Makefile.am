@@ -390,7 +390,7 @@ include_HEADERS += visualization/include/grins/postprocessing_factory.h
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
 else
-   libgrins_la_LIBADD = $(LIBMESH_LDFLAGS)
+   libgrins_la_LIBADD = $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 if GRVY_ENABLED
@@ -404,13 +404,13 @@ endif
 grins_SOURCES = solver/src/grins.C
 grins_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
-grins_LDADD += $(LIBMESH_LDFLAGS)
+grins_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 grins_version_SOURCES = utilities/src/version.C
 grins_version_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
-grins_version_LDADD += $(LIBMESH_LDFLAGS)
+grins_version_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 if CANTERA_ENABLED
