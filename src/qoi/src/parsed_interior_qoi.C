@@ -45,7 +45,8 @@ namespace GRINS
   ParsedInteriorQoI::ParsedInteriorQoI( const ParsedInteriorQoI& original )
     : QoIBase(original.name())
   {
-    this->qoi_functional = original.qoi_functional->clone();
+    if (original.qoi_functional.get())
+      this->qoi_functional = original.qoi_functional->clone();
   }
 
   ParsedInteriorQoI::~ParsedInteriorQoI() {}
