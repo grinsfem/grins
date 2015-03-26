@@ -4,7 +4,7 @@ PROG="@top_builddir@/test/reacting_low_mach_regression"
 
 INPUT="@top_builddir@/test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in @top_srcdir@/test/test_data/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.xdr"
 
-# A nuclear option preconditioner
-PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type lu -sub_pc_factor_mat_solver_package mumps"
+# A MOAB preconditioner
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_levels 10"
 
 ${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 
