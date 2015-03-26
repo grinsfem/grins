@@ -58,7 +58,7 @@ namespace GRINS
   void ParsedInteriorQoI::init( const GetPot& input, const MultiphysicsSystem& system )
   {
     std::string qoi_functional_string =
-      input("QoI/ParsedInterior/", std::string("0"));
+      input("QoI/ParsedInterior/qoi_functional", std::string("0"));
 
     if (qoi_functional_string == "0")
       libmesh_error_msg("Error! Zero ParsedInteriorQoI specified!" <<
