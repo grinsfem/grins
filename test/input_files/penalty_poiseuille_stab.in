@@ -68,7 +68,7 @@ bc_values = '{(abs(y-.5)<.25)*(y-.25)*(.75-y)} {(abs(y-.5)<.25)*(y-.25)*(.75-y)}
 
 pin_pressure = true
 pin_value = 100.0
-pin_location = '2.5 0.5'
+pin_location = '2.5 0' # Must be on boundary!
 
 [../VelocityPenalty]
 

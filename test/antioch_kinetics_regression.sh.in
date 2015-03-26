@@ -4,4 +4,4 @@ PROG="@top_builddir@/test/antioch_kinetics_regression"
 
 INPUT="@top_builddir@/test/input_files/antioch.in"
 
-$PROG $INPUT $PETSC_OPTIONS 
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 
