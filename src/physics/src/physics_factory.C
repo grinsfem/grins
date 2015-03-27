@@ -214,8 +214,8 @@ namespace GRINS
   PhysicsPtr new_k_class(const std::string& physics_to_add,
                          const GetPot& input)
   {
-    std::string conductivity =
-      input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+    std::string conductivity;
+    PhysicsFactoryHelper::parse_conductivity_model(input,physics_to_add,conductivity);
 
     if( conductivity == "constant" )
       return PhysicsPtr
