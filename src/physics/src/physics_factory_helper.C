@@ -41,4 +41,12 @@ namespace GRINS
     return;
   }
 
+  void PhysicsFactoryHelper::parse_conductivity_model( const GetPot& input,
+                                                       const std::string& physics,
+                                                       std::string& model )
+  {
+    model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+    return;
+  }
+
 } // end namespace GRINS
