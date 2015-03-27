@@ -44,6 +44,11 @@ namespace GRINS
                                 const std::string& physics,
                                 std::string& model );
 
+    //! Determine conductivity model based on given physics name
+    void parse_conductivity_model( const GetPot& input,
+                                   const std::string& physics,
+                                   std::string& model );
+
   } // end namespace PhysicsFactoryHelper
 
 } // end namespace GRINS
