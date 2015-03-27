@@ -563,6 +563,11 @@ void DistanceFunction::compute ()
   libMesh::System& system = _equation_systems.get_system<libMesh::System>("distance_function");
   const unsigned int sys_num = system.number();
 
+  //Debugging code
+  std::string system_info = system.get_info();
+  std::cout<<system_info<<std::endl;
+  //End debugging
+
   // The boundary mesh needs to all be on this processor for us to
   // calculate a correct distance function.  Since we don't need it to
   // be serial afterwards, we use a temporary serializer.
@@ -572,7 +577,14 @@ void DistanceFunction::compute ()
   // Loop over nodes in mesh
   libMesh::MeshBase::const_node_iterator node_it  = mesh.local_nodes_begin();
   const libMesh::MeshBase::const_node_iterator node_end = mesh.local_nodes_end();
+  
+  //Debugging code
+  const libMesh::Elem *elem = *mesh.elements_begin();
+  if (elem->default_order() == libMesh::FIRST)
+    std::cout<<"Mesh is using FIRST order elements."<<std::endl;
+  //End debugging
 
+  
   for ( ; node_it != node_end; ++node_it) {
 
     // Grab node
