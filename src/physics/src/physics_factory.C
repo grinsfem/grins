@@ -234,7 +234,9 @@ namespace GRINS
   {
     std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
     std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-    std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+
+    std::string specific_heat;
+    PhysicsFactoryHelper::parse_specific_heat_model(input,physics_to_add,specific_heat);
 
     if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
       {
