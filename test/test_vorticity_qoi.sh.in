@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="@top_builddir@/src/grins"
+PROG="@top_builddir@/test/vorticity_qoi"
 
 INPUT="@top_builddir@/test/input_files/vorticity_qoi.in"
 
