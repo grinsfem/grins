@@ -49,6 +49,11 @@ namespace GRINS
                                    const std::string& physics,
                                    std::string& model );
 
+    //! Determine specific heat model based on given physics name
+    void parse_specific_heat_model( const GetPot& input,
+                                    const std::string& physics,
+                                    std::string& model );
+
   } // end namespace PhysicsFactoryHelper
 
 } // end namespace GRINS

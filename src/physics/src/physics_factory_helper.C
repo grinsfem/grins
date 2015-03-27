@@ -49,4 +49,13 @@ namespace GRINS
     return;
   }
 
+  void PhysicsFactoryHelper::parse_specific_heat_model( const GetPot& input,
+                                                        const std::string& physics,
+                                                        std::string& model )
+  {
+    model = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+    return;
+  }
+
+
 } // end namespace GRINS
