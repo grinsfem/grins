@@ -564,8 +564,8 @@ void DistanceFunction::compute ()
   const unsigned int sys_num = system.number();
 
   //Debugging code
-  std::string system_info = system.get_info();
-  std::cout<<system_info<<std::endl;
+  system.print_info();
+  _equation_systems.print_info();
   //End debugging
 
   // The boundary mesh needs to all be on this processor for us to
