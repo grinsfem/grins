@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PROG="@top_builddir@/src/grins"
+
+INPUT="@top_builddir@/test/input_files/parsed_qoi.in"
+
+${LIBMESH_RUN:-} $PROG $INPUT
+
