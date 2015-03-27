@@ -141,7 +141,7 @@ namespace GRINS
 	
 	// To be fixed
 	// For the channel flow we will just set the distance function analytically
-	(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
+	//(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
    
 	// The flow velocity
 	libMesh::Number u,v;

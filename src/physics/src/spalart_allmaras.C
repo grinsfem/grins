@@ -102,7 +102,7 @@ namespace GRINS
     // For now, we are hacking this. Without this initialize function being called
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
-    //this->distance_function->initialize();
+    this->distance_function->initialize();
                      
     return;
   }
@@ -235,10 +235,10 @@ namespace GRINS
 	
 	// To be fixed
 	// For the channel flow we will just set the distance function analytically
-	(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
+	//(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
 
 	// The calculated distance
-	//std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
+	std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
 
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);	
