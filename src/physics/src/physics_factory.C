@@ -65,6 +65,7 @@
 #include "grins/grins_physics_names.h"
 #include "grins/constant_source_term.h"
 #include "grins/parsed_source_term.h"
+#include "grins/parsed_fem_source_term.h"
 
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
@@ -485,6 +486,11 @@ namespace GRINS
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ParsedSourceTerm(physics_to_add,input));
+      }
+    else if( physics_to_add == parsed_fem_source_term )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ParsedFEMSourceTerm(physics_to_add,input));
       }
     else
       {
