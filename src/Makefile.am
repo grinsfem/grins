@@ -166,6 +166,7 @@ libgrins_la_SOURCES += properties/src/incompressible_plane_stress_hyperelasticit
 libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 libgrins_la_SOURCES += properties/src/materials_parsing.C
+libgrins_la_SOURCES += properties/src/viscosity_base.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
@@ -390,6 +391,7 @@ include_HEADERS += properties/include/grins/incompressible_plane_stress_hyperela
 include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
 include_HEADERS += properties/include/grins/mooney_rivlin.h
 include_HEADERS += properties/include/grins/materials_parsing.h
+include_HEADERS += properties/include/grins/viscosity_base.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
