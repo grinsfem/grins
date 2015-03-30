@@ -44,6 +44,7 @@ namespace GRINS
 
   protected:
     void check_input_consistency( const GetPot& input, const std::string& material ) const;
+    void old_mu_warning() const;
   };
 
 } // end namespace GRINS
