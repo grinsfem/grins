@@ -1,11 +1,24 @@
 
+# Material options
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0e-1'
+[]
+
 # Options related to all Physics
 [Physics]
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization'
 
+[./IncompressibleNavierStokesAdjointStabilization]
+material = 'TestMaterial'
+
 # Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+[../IncompressibleNavierStokes]
+
+material = 'TestMaterial'
 
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
@@ -29,7 +42,6 @@ parabolic_profile_fix_1 = 'v'
 pin_pressure = 'false'
 
 rho = '1.0'
-mu = '1.0e-1'
 
 [../VariableNames]
 
