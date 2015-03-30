@@ -26,6 +26,10 @@
 // This class
 #include "grins/parsed_viscosity.h"
 
+//GRINS
+#include "grins/grins_physics_names.h"
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -36,9 +40,23 @@ namespace GRINS
     : ParsedPropertyBase(),
       ParameterUser("ParsedViscosity")
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     this->set_parameter(this->_func, input,
                         "Materials/Viscosity/mu",
                         "DIE!");
+
+    std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
+
+    if( !this->check_func_nonzero(viscosity_function) )
+      {
+        libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
+      }
   }
 
   ParsedViscosity::~ParsedViscosity()
