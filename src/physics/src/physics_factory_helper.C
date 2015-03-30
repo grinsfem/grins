@@ -39,7 +39,7 @@ namespace GRINS
                                                     std::string& model )
   {
     // Newer, preferred version
-    bool have_material = input.have_variable("Physics/"+physics+"/material");
+    bool have_material = PhysicsFactoryHelper::have_material(input,physics);
 
     // Old deprecated version
     bool have_viscosity_model = input.have_variable("Physics/"+incompressible_navier_stokes+"/viscosity_model");
@@ -79,7 +79,7 @@ namespace GRINS
                                                        std::string& model )
   {
     // Newer, preferred version
-    bool have_material = input.have_variable("Physics/"+physics+"/material");
+    bool have_material = PhysicsFactoryHelper::have_material(input,physics);
 
     // Old deprecated version
     bool have_conductivity_model = input.have_variable("Physics/"+heat_transfer+"/conductivity_model");
@@ -120,6 +120,11 @@ namespace GRINS
   {
     model = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
     return;
+  }
+
+  bool PhysicsFactoryHelper::have_material( const GetPot& input, const std::string& physics )
+  {
+    return input.have_variable("Physics/"+physics+"/material");
   }
 
 

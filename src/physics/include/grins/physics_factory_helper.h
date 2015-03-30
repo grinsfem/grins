@@ -54,6 +54,8 @@ namespace GRINS
                                     const std::string& physics,
                                     std::string& model );
 
+    bool have_material( const GetPot& input, const std::string& physics );
+
   } // end namespace PhysicsFactoryHelper
 
 } // end namespace GRINS
