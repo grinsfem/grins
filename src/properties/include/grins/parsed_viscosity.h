@@ -67,7 +67,7 @@ namespace GRINS
     void check_mu_nonzero( const std::string& function ) const;
 
     // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _mu;
 
   };
 
@@ -81,15 +81,15 @@ namespace GRINS
 
     const libMesh::Point& x_qp = x[qp];
 
-    libMesh::Number _mu_value = (*mu)(x_qp,context.time);
+    libMesh::Number mu_value = (*_mu)(x_qp,context.time);
 
-    return _mu_value;
+    return mu_value;
   }
 
   inline
   libMesh::Real ParsedViscosity::operator()( const libMesh::Point& p, const libMesh::Real time )
   {
-    return (*mu)(p,time);
+    return (*_mu)(p,time);
   }
 
 } // end namespace GRINS
