@@ -18,6 +18,7 @@
 
 //GRINS
 #include "grins/grins_physics_names.h"
+#include "grins/common.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -29,6 +30,14 @@ namespace GRINS
    ParsedViscosity::ParsedViscosity( const GetPot& input ) :
      ParameterUser("ParsedViscosity")
     {
+
+      // Warning about this constructor being deprecated
+      {
+        std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+        warning += "         Please update to use constructor with input material name.\n";
+        grins_warning(warning);
+      }
+
       if( !input.have_variable("Materials/Viscosity/mu") )
        {
          std::cerr<<"No viscosity has been specified."<<std::endl;
