@@ -64,7 +64,7 @@ namespace GRINS
 
     if( have_viscosity_model )
       {
-        std::string warning = "Warning: Option Physics/"+incompressible_navier_stokes+"/viscosity_model is deprecated.\n";
+        std::string warning = "Warning: Option Physics/"+incompressible_navier_stokes+"/viscosity_model is DEPRECATED.\n";
         warning += "         Please update to use Physics/"+physics+"/material.\n";
         grins_warning(warning);
 
