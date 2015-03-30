@@ -48,15 +48,9 @@ namespace GRINS
       else
        {
          std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
+         this->check_mu_nonzero(viscosity_function);
 
          mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-         if (viscosity_function == "0")
-            {
-              std::cerr << "Warning! Zero Viscosity specified!" << std::endl;
-
-              libmesh_error();
-            }
        }
 
       return;
