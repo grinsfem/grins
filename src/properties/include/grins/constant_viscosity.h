@@ -27,6 +27,7 @@
 #define GRINS_CONSTANT_VISCOSITY_H
 
 //GRINS
+#include "grins/viscosity_base.h"
 #include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
 
@@ -39,7 +40,8 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantViscosity : public ParameterUser
+  class ConstantViscosity : public ParameterUser,
+                            public ViscosityBase
   {
   public:
 
@@ -50,7 +52,7 @@ namespace GRINS
 
     //! Deprecated constructor
     ConstantViscosity( const GetPot& input );
-    ~ConstantViscosity();
+    virtual ~ConstantViscosity();
 
     libMesh::Real operator()() const;
 

@@ -38,6 +38,7 @@ namespace GRINS
 
   ConstantViscosity::ConstantViscosity( const GetPot& input )
     : ParameterUser("ConstantViscosity"),
+      ViscosityBase(),
       _mu(1.0)
   {
     // Warning about this constructor being deprecated
@@ -63,26 +64,15 @@ namespace GRINS
 
   ConstantViscosity::ConstantViscosity( const GetPot& input, const std::string& material )
     : ParameterUser("ConstantViscosity"),
+      ViscosityBase(),
       _mu( 0.0 ) // Initialize to nonsense value
   {
-    // We can't have both the materials version and the old versions
-    if( input.have_variable("Materials/"+material+"/Viscosity/value") &&
-        input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/Viscosity/value and Materials/Viscosity/mu");
-      }
+    this->check_input_consistency(input,material);
 
     if( input.have_variable("Materials/"+material+"/Viscosity/value") &&
         input.have_variable("Physics/"+incompressible_navier_stokes+"/mu") )
       {
         libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/Viscosity/value and Physics/"+incompressible_navier_stokes+"/mu");
-      }
-
-    // If the material section exists, but not the variable, this is an error
-    if( input.have_section("Materials/"+material+"/Viscosity") &&
-        !input.have_variable("Materials/"+material+"/Viscosity/value") )
-      {
-        libmesh_error_msg("Error: Found section Materials/"+material+"/Viscosity, but not variable value.");
       }
 
     // If we have the "new" version, then parse it
