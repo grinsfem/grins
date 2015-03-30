@@ -158,6 +158,9 @@ XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
 
 TESTS += laplace_parsed_source_regression.sh
 TESTS += poisson_weighted_flux_regression.sh
+TESTS += viscosity_options_conflict_unit_1.sh
+XFAIL_TESTS += viscosity_options_conflict_unit_1.sh
+
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
 TESTS += test_stokes_poiseuille_flow.sh
@@ -284,6 +287,8 @@ shellfiles_src += warn_only_ufo_unit.sh
 shellfiles_src += error_ufo_unit.sh
 shellfiles_src += laplace_parsed_source_regression.sh
 shellfiles_src += poisson_weighted_flux_regression.sh
+shellfiles_src += viscosity_options_conflict_unit_1.sh
+
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 
