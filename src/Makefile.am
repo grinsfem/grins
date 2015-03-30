@@ -122,6 +122,7 @@ libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
 libgrins_la_SOURCES += physics/src/source_term_base.C
 libgrins_la_SOURCES += physics/src/constant_source_term.C
 libgrins_la_SOURCES += physics/src/parsed_source_term.C
+libgrins_la_SOURCES += physics/src/parsed_fem_source_term.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
