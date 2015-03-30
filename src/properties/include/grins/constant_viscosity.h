@@ -43,6 +43,11 @@ namespace GRINS
   {
   public:
 
+    //! Constructor with specified material
+    /*! Will look in the input file for [Materials/material/Viscosity/value]
+        for the value of viscosity. */
+    ConstantViscosity( const GetPot& input, const std::string& material );
+
     //! Deprecated constructor
     ConstantViscosity( const GetPot& input );
     ~ConstantViscosity();
