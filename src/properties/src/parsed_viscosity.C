@@ -61,6 +61,46 @@ namespace GRINS
       }
   }
 
+  ParsedViscosity::ParsedViscosity( const GetPot& input, const std::string& material )
+    : ParameterUser("ParsedViscosity"),
+      ViscosityBase()
+  {
+    this->check_input_consistency(input,material);
+
+    std::string viscosity_function = "0";
+
+    // If we have the new version, we parse that
+    if( input.have_variable("Materials/"+material+"/Viscosity/value") )
+      {
+        this->set_parameter(this->_func, input,
+                            "Materials/"+material+"/Viscosity/value",
+                            "DIE!");
+
+        viscosity_function = input("Materials/"+material+"/Viscosity/value",std::string("0"));
+      }
+    // If we have the old DEPRECATED version, use that
+    else if( input.have_variable("Materials/Viscosity/mu") )
+      {
+        this->old_mu_warning();
+
+        this->set_parameter(this->_func, input,
+                            "Materials/Viscosity/mu",
+                            "DIE!");
+
+        viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
+      }
+    // If we don't have either, that's an error
+    else
+      {
+        libmesh_error_msg("Error: Could not find either Materials/"+material+"/Viscosity/value or Materials/Viscosity/mu");
+      }
+
+    if( !this->check_func_nonzero(viscosity_function) )
+      {
+        libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
+      }
+  }
+
   ParsedViscosity::~ParsedViscosity()
   {
     return;
