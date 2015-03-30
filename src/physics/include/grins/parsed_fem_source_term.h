@@ -49,7 +49,8 @@ namespace GRINS
 
   protected:
 
-    libMesh::ParsedFEMFunction<libMesh::Real> _value;
+    // will need to convert this to a libmesh ParsedFEMFunction
+    libMesh::ParsedFunction<libMesh::Real> _value;
 
   private:
 
