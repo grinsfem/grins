@@ -92,7 +92,7 @@ namespace GRINS
         warning += "       Materials/"+material+"/Viscosity/value specified!\n";
         warning += "       We are assuming then that you want to specify through\n";
         warning += "       Physics/"+incompressible_navier_stokes+"/mu.\n";
-        warning += "       This is DEPRECATED. Please updated to use Materials/"+material+"/Viscosity/value.";
+        warning += "       This is DEPRECATED. Please updated to use Materials/"+material+"/Viscosity/value.\n";
         grins_warning(warning);
 
 	// Try and get the viscosity from other specifications
