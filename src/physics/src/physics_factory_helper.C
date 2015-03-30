@@ -53,7 +53,7 @@ namespace GRINS
        we're assuming they're using the old version. */
     if( !have_viscosity_model && !have_material )
       {
-        std::string warning = "Warning: Neither viscosity_model norm material were specified.\n";
+        std::string warning = "Warning: Neither viscosity_model nor material were specified.\n";
         warning += "      We are assuming a constant viscosity model.\n";
         warning += "      This case is DEPRECATED.\n";
         warning += "      Please update and specify Physics/"+physics+"/material.\n";
@@ -89,7 +89,28 @@ namespace GRINS
         libmesh_error_msg("Error: Cannot specify both conductivity_model and material.");
       }
 
-    model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+    /* If the user hasn't specified the material or the conductivity_model,
+       we're assuming they're using the old version. */
+    if( !have_conductivity_model && !have_material )
+      {
+        std::string warning = "Warning: Neither conductivity_model nor material were specified.\n";
+        warning += "      We are assuming a constant conductivity model.\n";
+        warning += "      This case is DEPRECATED.\n";
+        warning += "      Please update and specify Physics/"+physics+"/material.\n";
+        grins_warning(warning);
+
+        model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+      }
+
+    if( have_conductivity_model )
+      {
+        std::string warning = "Warning: Option Physics/"+heat_transfer+"/conductivity_model is DEPRECATED.\n";
+        warning += "         Please update to use Physics/"+physics+"/material.\n";
+        grins_warning(warning);
+
+        model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+      }
+
     return;
   }
 
