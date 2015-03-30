@@ -27,6 +27,8 @@
 #define GRINS_PARSED_VISCOSITY_H
 
 //GRINS
+#include "grins/viscosity_base.h"
+#include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
 #include "grins/parsed_property_base.h"
 
@@ -35,14 +37,16 @@ class GetPot;
 namespace GRINS
 {
   class ParsedViscosity : public ParsedPropertyBase,
-                          public ParameterUser
+                          public ParameterUser,
+                          public ViscosityBase
   {
   public:
 
     //! Deprecated constructor
     ParsedViscosity( const GetPot& input );
+    
+    virtual ~ParsedViscosity();
 
-    ~ParsedViscosity();
 
   private:
 

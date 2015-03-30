@@ -36,16 +36,18 @@
 namespace GRINS
 {
 
-  ParsedViscosity::ParsedViscosity( const GetPot& input )
-    : ParsedPropertyBase(),
-      ParameterUser("ParsedViscosity")
-  {
-    // Warning about this constructor being deprecated
-    {
-      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
-      warning += "         Please update to use constructor with input material name.\n";
-      grins_warning(warning);
-    }
+   ParsedViscosity::ParsedViscosity( const GetPot& input )
+     : ParsedPropertyBase(),
+       ParameterUser("ParsedViscosity"),
+       ViscosityBase()
+   {
+
+     // Warning about this constructor being deprecated
+     {
+       std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+       warning += "         Please update to use constructor with input material name.\n";
+       grins_warning(warning);
+     }
 
     this->set_parameter(this->_func, input,
                         "Materials/Viscosity/mu",
