@@ -53,7 +53,7 @@ namespace GRINS
        we're assuming they're using the old version. */
     if( !have_viscosity_model && !have_material )
       {
-        std::string warning = "Warning: Neither viscosity_model norm material were specified.\n";
+        std::string warning = "Warning: Neither viscosity_model nor material were specified.\n";
         warning += "      We are assuming a constant viscosity model.\n";
         warning += "      This case is DEPRECATED.\n";
         warning += "      Please update and specify Physics/"+physics+"/material.\n";
@@ -93,7 +93,7 @@ namespace GRINS
        we're assuming they're using the old version. */
     if( !have_conductivity_model && !have_material )
       {
-        std::string warning = "Warning: Neither conductivity_model norm material were specified.\n";
+        std::string warning = "Warning: Neither conductivity_model nor material were specified.\n";
         warning += "      We are assuming a constant conductivity model.\n";
         warning += "      This case is DEPRECATED.\n";
         warning += "      Please update and specify Physics/"+physics+"/material.\n";
