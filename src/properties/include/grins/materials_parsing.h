@@ -22,40 +22,46 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PHYSICS_FACTORY_HELPER_H
-#define GRINS_PHYSICS_FACTORY_HELPER_H
+#ifndef GRINS_MATERIALS_PARSING_H
+#define GRINS_MATERIALS_PARSING_H
 
 // C++
 #include <string>
 
 // libMesh
-class GetPot;
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
 
-  //! Helper functions for PhysicsFactory
+  //! Helper functions for parsing material properties
   /*! There's no state needed for these functions so we put them in
       a namespace instead of an object. */
-  namespace PhysicsFactoryHelper
+  namespace MaterialsParsing
   {
-    //! Determine viscosity model based on given physics name
-    void parse_viscosity_model( const GetPot& input,
-                                const std::string& physics,
-                                std::string& model );
+    //! Check if Physics/physics section has a material variable
+    bool have_material( const GetPot& input, const std::string& physics );
 
-    //! Determine conductivity model based on given physics name
-    void parse_conductivity_model( const GetPot& input,
-                                   const std::string& physics,
-                                   std::string& model );
+    //! Get the name of the material in the Physics/physics section
+    void material_name( const GetPot& input, const std::string& physics,
+                        std::string& material );
 
-    //! Determine specific heat model based on given physics name
-    void parse_specific_heat_model( const GetPot& input,
-                                    const std::string& physics,
-                                    std::string& model );
+  } // end namespace MaterialsParsing
 
-  } // end namespace PhysicsFactoryHelper
+  inline
+  bool MaterialsParsing::have_material( const GetPot& input, const std::string& physics )
+  {
+    return input.have_variable("Physics/"+physics+"/material");
+  }
+
+  inline
+  void MaterialsParsing::material_name( const GetPot& input, const std::string& physics,
+                                        std::string& material )
+  {
+    material = input("Physics/"+physics+"/material", "DIE!");
+    return;
+  }
 
 } // end namespace GRINS
 
-#endif // GRINS_PHYSICS_FACTORY_HELPER_H
+#endif // GRINS_MATERIALS_PARSING_H

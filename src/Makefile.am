@@ -388,6 +388,7 @@ include_HEADERS += properties/include/grins/hyperelasticity.h
 include_HEADERS += properties/include/grins/incompressible_plane_stress_hyperelasticity.h
 include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
 include_HEADERS += properties/include/grins/mooney_rivlin.h
+include_HEADERS += properties/include/grins/materials_parsing.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
