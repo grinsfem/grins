@@ -46,6 +46,10 @@ namespace GRINS
     void material_name( const GetPot& input, const std::string& physics,
                         std::string& material );
 
+    //! Parse the viscosity model for the given material
+    void viscosity_model( const GetPot& input, const std::string& physics,
+                          const std::string& material, std::string& model );
+
   } // end namespace MaterialsParsing
 
   inline
