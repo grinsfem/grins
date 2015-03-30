@@ -27,22 +27,17 @@
 
 namespace GRINS
 {
-
-  namespace MaterialsParsing
+  void MaterialsParsing::viscosity_model( const GetPot& input, const std::string& physics,
+                                          const std::string& material, std::string& model )
   {
-    void viscosity_model( const GetPot& input, const std::string& physics,
-                          const std::string& material, std::string& model )
-    {
-      if( !input.have_variable("Materials/"+material+"/Viscosity/model") )
-        {
-          libmesh_error_msg("Error: Could not find Materials/"+material+"/Viscosity/model in input file.");
-        }
+    if( !input.have_variable("Materials/"+material+"/Viscosity/model") )
+      {
+        libmesh_error_msg("Error: Could not find Materials/"+material+"/Viscosity/model in input file.");
+      }
 
-      model = input( "Materials/"+material+"/Viscosity/model", "DIE!" );
+    model = input( "Materials/"+material+"/Viscosity/model", "DIE!" );
 
-      return;
-    }
-
-  } // end namespace MaterialsParsing
+    return;
+  }
 
 } // end namespace GRINS

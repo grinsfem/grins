@@ -37,20 +37,24 @@ namespace GRINS
   //! Helper functions for parsing material properties
   /*! There's no state needed for these functions so we put them in
       a namespace instead of an object. */
-  namespace MaterialsParsing
+  class MaterialsParsing
   {
+  public:
+    MaterialsParsing(){};
+    ~MaterialsParsing(){};
+
     //! Check if Physics/physics section has a material variable
-    bool have_material( const GetPot& input, const std::string& physics );
+    static bool have_material( const GetPot& input, const std::string& physics );
 
     //! Get the name of the material in the Physics/physics section
-    void material_name( const GetPot& input, const std::string& physics,
-                        std::string& material );
+    static void material_name( const GetPot& input, const std::string& physics,
+                               std::string& material );
 
     //! Parse the viscosity model for the given material
-    void viscosity_model( const GetPot& input, const std::string& physics,
-                          const std::string& material, std::string& model );
+    static void viscosity_model( const GetPot& input, const std::string& physics,
+                                 const std::string& material, std::string& model );
 
-  } // end namespace MaterialsParsing
+  };
 
   inline
   bool MaterialsParsing::have_material( const GetPot& input, const std::string& physics )
