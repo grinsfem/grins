@@ -144,6 +144,14 @@ namespace GRINS
         this->project_solution(&ic_function);
       }
 
+    // Now do any auxillary initialization required by each Physics
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+         physics_iter != _physics_list.end();
+         physics_iter++ )
+      {
+        (physics_iter->second)->auxiliary_init( *this );
+      }
+
     return;
   }
 
