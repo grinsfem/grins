@@ -84,9 +84,7 @@ namespace GRINS
     // If instead we have the old version, use that.
     else if( input.have_variable("Materials/Viscosity/mu") )
       {
-        std::string warning = "WARNING: specification of Materials/Viscosity/mu is DEPRECATED.\n";
-        warning += "        Please update to use Materials/"+material+"/Viscosity/value.\n";
-        grins_warning(warning);
+        this->old_mu_warning();
 
         this->set_parameter
           (_mu, input, "Materials/Viscosity/mu", _mu);
