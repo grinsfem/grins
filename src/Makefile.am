@@ -318,6 +318,7 @@ include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
 include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
+include_HEADERS += physics/include/grins/parsed_fem_source_term.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
