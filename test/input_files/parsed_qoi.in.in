@@ -13,7 +13,7 @@ transient = false
 max_nonlinear_iterations = 10 
 max_linear_iterations = 2500
 
-relative_step_tolerance = 1.0e-12
+initial_linear_tolerance = 1.0e-12
 
 verify_analytic_jacobians = 1.e-6
 
@@ -74,7 +74,9 @@ pin_pressure = 'false'
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'vorticity'
-[./Vorticity]
-enabled_subdomains = '2'
+enabled_qois = 'parsed_interior'
+
+[./ParsedInterior]
+qoi_functional = 'u'
+
 []
