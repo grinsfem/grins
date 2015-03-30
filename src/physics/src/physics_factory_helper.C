@@ -78,6 +78,17 @@ namespace GRINS
                                                        const std::string& physics,
                                                        std::string& model )
   {
+    // Newer, preferred version
+    bool have_material = input.have_variable("Physics/"+physics+"/material");
+
+    // Old deprecated version
+    bool have_conductivity_model = input.have_variable("Physics/"+heat_transfer+"/conductivity_model");
+
+    if( have_material && have_conductivity_model )
+      {
+        libmesh_error_msg("Error: Cannot specify both conductivity_model and material.");
+      }
+
     model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
     return;
   }
