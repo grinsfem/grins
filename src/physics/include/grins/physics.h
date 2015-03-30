@@ -54,6 +54,9 @@ namespace libMesh
 
   class FEMSystem;
   class Elem;
+
+  template <typename Scalar>
+  class ParameterMultiPointer;
 }
 
 //! GRINS namespace
@@ -146,6 +149,13 @@ namespace GRINS
      */
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
+
+    //! Each Physics will register its copy(s) of an independent variable
+    //  named in this call.
+    virtual void register_parameter
+      ( const std::string & /*param_name*/,
+        libMesh::ParameterMultiPointer<libMesh::Number> & /*param_pointer*/ )
+    const {}
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
