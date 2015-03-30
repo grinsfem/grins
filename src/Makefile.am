@@ -165,6 +165,7 @@ libgrins_la_SOURCES += properties/src/hyperelasticity.C
 libgrins_la_SOURCES += properties/src/incompressible_plane_stress_hyperelasticity.C
 libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
+libgrins_la_SOURCES += properties/src/materials_parsing.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
