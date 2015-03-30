@@ -115,6 +115,15 @@ namespace GRINS
     return;
   }
 
+  void CompositeQoI::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer )
+  const
+  {
+    for( unsigned int q = 0; q < _qois.size(); q++ )
+      (*_qois[q]).register_parameter(param_name, param_pointer);
+  }
+
   void CompositeQoI::element_qoi( libMesh::DiffContext& context,
                                   const libMesh::QoISet& /*qoi_indices*/ )
   {
