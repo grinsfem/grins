@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/parsed_source_term.h"
+#include "grins/parsed_fem_source_term.h"
 
 // GRINS
 #include "grins/assembly_context.h"
@@ -35,13 +35,13 @@
 
 namespace GRINS
 {
-  ParsedSourceTerm::ParsedSourceTerm( const std::string& physics_name, const GetPot& input )
+  ParsedFEMSourceTerm::ParsedFEMSourceTerm( const std::string& physics_name, const GetPot& input )
     : SourceTermBase(physics_name,input),
       _value( input("Physics/"+physics_name+"/Function/value","DIE!") )
   {
     if( !input.have_variable("Physics/"+physics_name+"/Function/value") )
       {
-        libMesh::err << "Error: Must specify value for ParsedSourceTerm." << std::endl
+        libMesh::err << "Error: Must specify value for ParsedFEMSourceTerm." << std::endl
                      << "       Please specify Physics/"+physics_name+"/Function/value" << std::endl;
         libmesh_error();
       }
@@ -49,12 +49,12 @@ namespace GRINS
     return;
   }
 
-  ParsedSourceTerm::~ParsedSourceTerm()
+  ParsedFEMSourceTerm::~ParsedFEMSourceTerm()
   {
     return;
   }
 
-  void ParsedSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
+  void ParsedFEMSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
                                                   AssemblyContext& context,
                                                   CachedValues& /*cache*/ )
   {
