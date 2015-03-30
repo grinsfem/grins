@@ -72,6 +72,13 @@ namespace GRINS
         model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
       }
 
+    if( have_material )
+      {
+        std::string material;
+        MaterialsParsing::material_name( input, physics, material );
+        MaterialsParsing::viscosity_model( input, physics, material, model );
+      }
+
     return;
   }
 
