@@ -62,7 +62,10 @@ namespace GRINS
   private:
 
     ParsedViscosity();
-    
+
+    //! Helper function to ensure parsed function is non-zero
+    void check_mu_nonzero( const std::string& function ) const;
+
     // User specified parsed function
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
 

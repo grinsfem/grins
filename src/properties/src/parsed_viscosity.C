@@ -67,4 +67,13 @@ namespace GRINS
     return;
   }
 
+  void ParsedViscosity::check_mu_nonzero( const std::string& function ) const
+  {
+    if (function == std::string("0"))
+      {
+        libmesh_error_msg("ERROR: Found '0' for parsed viscosity function.");
+      }
+    return;
+  }
+
 } // namespace GRINS
