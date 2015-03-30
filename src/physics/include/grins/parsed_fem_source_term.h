@@ -22,26 +22,26 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PARSED_SOURCE_TERM_H
-#define GRINS_PARSED_SOURCE_TERM_H
+#ifndef GRINS_PARSED_FEM_SOURCE_TERM_H
+#define GRINS_PARSED_FEM_SOURCE_TERM_H
 
 // GRINS
 #include "grins/source_term_base.h"
 
 // libMesh
-//#include "libmesh/parsed_function.h"
-#include "libmesh/parsed_fem_function.h"
+#include "libmesh/parsed_function.h"
+//#include "libmesh/parsed_fem_function.h"
 
 namespace GRINS
 {
 
-  class ParsedSourceTerm : public SourceTermBase
+  class ParsedFEMSourceTerm : public SourceTermBase
   {
   public:
 
-    ParsedSourceTerm( const std::string& physics_name, const GetPot& input );
+    ParsedFEMSourceTerm( const std::string& physics_name, const GetPot& input );
 
-    virtual ~ParsedSourceTerm();
+    virtual ~ParsedFEMSourceTerm();
 
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext& context,
@@ -53,10 +53,10 @@ namespace GRINS
 
   private:
 
-    ParsedSourceTerm();
+    ParsedFEMSourceTerm();
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_PARSED_SOURCE_TERM_H
+#endif // GRINS_PARSED_FEM_SOURCE_TERM_H
