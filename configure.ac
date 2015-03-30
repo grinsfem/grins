@@ -431,6 +431,7 @@ AC_CONFIG_FILES(test/warn_only_ufo_unit.sh, [chmod +x test/warn_only_ufo_unit.sh
 AC_CONFIG_FILES(test/error_ufo_unit.sh, [chmod +x test/error_ufo_unit.sh])
 
 AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace_parsed_source_regression.sh])
+AC_CONFIG_FILES(test/viscosity_options_conflict_unit_1.sh, [chmod +x test/viscosity_options_conflict_unit_1.sh])
 
 AC_CONFIG_FILES(test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)

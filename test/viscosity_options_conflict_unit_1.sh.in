@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROG="@top_builddir@/src/grins"
+
+INPUT="@top_srcdir@/test/input_files/viscosity_options_conflict_1.in"
+
+${LIBMESH_RUN:-} $PROG $INPUT
