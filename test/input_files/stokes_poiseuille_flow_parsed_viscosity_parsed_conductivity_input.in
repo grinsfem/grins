@@ -23,15 +23,14 @@ relative_step_tolerance = 1.0e-11
 verify_analytic_jacobians = 1.e-6
 
 [Materials]
+   [./TestMaterial]
+      [./Viscosity]
+          model = 'parsed'
+          value = '1.0'
 
-[./Viscosity]
-
-#mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0'
-
-[../Conductivity]
-
-k = '1.0'
+   [../../Conductivity]
+      k = '1.0'
+[]
 
 # Visualization options
 [vis-options]
@@ -54,16 +53,14 @@ echo_physics = 'true'
 
 enabled_physics = 'Stokes HeatConduction'
 
-# This is a hack for the way we are currently parsing viscosity models
-[./IncompressibleNavierStokes]
-viscosity_model = 'parsed'
-
 # This is a hack for the way we are currently parsing conductivity models
-[../HeatTransfer]
+[./HeatTransfer]
 conductivity_model = 'parsed'
 
 # Options for Stokes physics
 [../Stokes]
+
+material = 'TestMaterial'
 
 rho = '1.0'
 
