@@ -35,26 +35,28 @@ namespace GRINS
 {
 
   //! Helper functions for PhysicsFactory
-  /*! There's no state needed for these functions so we put them in
-      a namespace instead of an object. */
-  namespace PhysicsFactoryHelper
+  class PhysicsFactoryHelper
   {
+  public:
+    PhysicsFactoryHelper(){};
+    ~PhysicsFactoryHelper(){};
+
     //! Determine viscosity model based on given physics name
-    void parse_viscosity_model( const GetPot& input,
-                                const std::string& physics,
-                                std::string& model );
+    static void parse_viscosity_model( const GetPot& input,
+                                       const std::string& physics,
+                                       std::string& model );
 
     //! Determine conductivity model based on given physics name
-    void parse_conductivity_model( const GetPot& input,
-                                   const std::string& physics,
-                                   std::string& model );
+    static void parse_conductivity_model( const GetPot& input,
+                                          const std::string& physics,
+                                          std::string& model );
 
     //! Determine specific heat model based on given physics name
-    void parse_specific_heat_model( const GetPot& input,
-                                    const std::string& physics,
-                                    std::string& model );
+    static void parse_specific_heat_model( const GetPot& input,
+                                           const std::string& physics,
+                                           std::string& model );
 
-  } // end namespace PhysicsFactoryHelper
+  };
 
 } // end namespace GRINS
 
