@@ -381,13 +381,15 @@ namespace GRINS
       }
     else if( physics_to_add == boussinesq_buoyancy_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new BoussinesqBuoyancyAdjointStabilization(physics_to_add,input));
+        physics_list[physics_to_add] =
+          new_mu_class<BoussinesqBuoyancyAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
       {
         physics_list[physics_to_add] =
-          PhysicsPtr(new BoussinesqBuoyancySPGSMStabilization(physics_to_add,input));
+          new_mu_class<BoussinesqBuoyancySPGSMStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
