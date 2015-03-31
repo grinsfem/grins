@@ -32,12 +32,14 @@
 #include "grins/heat_transfer_stab_helper.h"
 
 namespace GRINS
-{  
-  //! Adds Boussinesq bouyancy adjoint stabilization source term
+{
+  //! Adds Boussinesq bouyancy SPGSM stabilization source term
   /*!
-    This class implements the adjiont stabilization term for the BoussinesqBuoyancy
+    This class implements the SPGSM stabilization term for the BoussinesqBuoyancy
     Physics. Intended to be used with IncompressibleNavierStokesSPGSMStabilization
-    and HeatTransferSPGSMStabilization.
+    and HeatTransferSPGSMStabilization. This, essentially, is just adding
+    SUPG terms to the momentum equation and PSPG terms to the pressure
+    equation.
    */
   template<class Viscosity>
   class BoussinesqBuoyancySPGSMStabilization : public BoussinesqBuoyancyBase
