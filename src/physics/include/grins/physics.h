@@ -65,6 +65,7 @@ namespace GRINS
   class NBCContainer;
   class DBCContainer;
   class AssemblyContext;
+  class MultiphysicsSystem;
 
   template <typename Scalar>
   class PostProcessedQuantities;
@@ -131,6 +132,11 @@ namespace GRINS
       time evolving variables.
     */
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+    //! Any auxillary initialization a Physics class may need
+    /*! This is called after all variables are added, so this method can
+        safely query the MultiphysicsSystem about variable information. */
+    virtual void auxiliary_init( MultiphysicsSystem& system );
 
     //! Register name of postprocessed quantity with PostProcessedQuantities
     /*!

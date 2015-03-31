@@ -109,6 +109,11 @@ namespace GRINS
     return;
   }
 
+  void Physics::auxiliary_init( MultiphysicsSystem& /*system*/ )
+  {
+    return;
+  }
+
   void Physics::init_bcs( libMesh::FEMSystem* system )
   {
     // Only need to init BC's if the physics actually created a handler
