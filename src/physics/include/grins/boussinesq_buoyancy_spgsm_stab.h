@@ -39,6 +39,7 @@ namespace GRINS
     Physics. Intended to be used with IncompressibleNavierStokesSPGSMStabilization
     and HeatTransferSPGSMStabilization.
    */
+  template<class Viscosity>
   class BoussinesqBuoyancySPGSMStabilization : public BoussinesqBuoyancyBase
   {
   public:
@@ -64,7 +65,10 @@ namespace GRINS
     IncompressibleNavierStokesStabilizationHelper _flow_stab_helper;
     HeatTransferStabilizationHelper _temp_stab_helper;
 
-    libMesh::Number _rho, _mu, _Cp, _k;
+    libMesh::Number _rho, _Cp, _k;
+
+    //! Viscosity object
+    Viscosity _mu;
 
   private:
 
