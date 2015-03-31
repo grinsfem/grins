@@ -179,4 +179,25 @@ namespace GRINS
     return;
   }
 
+  void SteadyMeshAdaptiveSolver::adjoint_qoi_parameter_sensitivity
+    (SolverContext& context,
+     const libMesh::QoISet&          qoi_indices,
+     const libMesh::ParameterVector& parameters_in,
+     libMesh::SensitivityData&       sensitivities) const
+  {
+    context.system->adjoint_qoi_parameter_sensitivity
+      (qoi_indices, parameters_in, sensitivities);
+  }
+
+  void SteadyMeshAdaptiveSolver::forward_qoi_parameter_sensitivity
+    (SolverContext& context,
+     const libMesh::QoISet&          qoi_indices,
+     const libMesh::ParameterVector& parameters_in,
+     libMesh::SensitivityData&       sensitivities) const
+  {
+    context.system->forward_qoi_parameter_sensitivity
+      (qoi_indices, parameters_in, sensitivities);
+  }
+
+
 } // end namespace GRINS
