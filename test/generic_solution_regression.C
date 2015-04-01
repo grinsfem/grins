@@ -44,32 +44,32 @@ int main(int argc, char* argv[])
 {
   GetPot command_line(argc,argv);
 
-  if( !command_line.search("--input") )
+  if( !command_line.have_variable("input") )
     {
-      std::cerr << "ERROR: Must specify input file on command line with --input=<file>." << std::endl;
+      std::cerr << "ERROR: Must specify input file on command line with input=<file>." << std::endl;
       exit(1);
     }
 
-  if( !command_line.search("--soln-data") )
+  if( !command_line.have_variable("soln-data") )
     {
-      std::cerr << "ERROR: Must specify solution data on command line with --soln-data=<file>." << std::endl;
+      std::cerr << "ERROR: Must specify solution data on command line with soln-data=<file>." << std::endl;
       exit(1);
     }
 
-  if( !command_line.search("--vars") )
+  if( !command_line.have_variable("vars") )
     {
-      std::cerr << "ERROR: Must specify variables on command line with --vars='var1 var2'" << std::endl;
+      std::cerr << "ERROR: Must specify variables on command line with vars='var1 var2'" << std::endl;
       exit(1);
     }
 
-  if( !command_line.search("--norms") )
+  if( !command_line.have_variable("norms") )
     {
-      std::cerr << "ERROR: Must specify variables on command line with --norms='L2 H1'" << std::endl;
+      std::cerr << "ERROR: Must specify variables on command line with norms='L2 H1'" << std::endl;
       exit(1);
     }
 
   // libMesh input file should be first argument
-  std::string libMesh_input_filename = command_line("--input", "DIE!");
+  std::string libMesh_input_filename = command_line("input", "DIE!");
 
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
@@ -95,25 +95,25 @@ int main(int argc, char* argv[])
   libMesh::EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
-  std::string solution_file = command_line("--soln-data", "DIE!");
+  std::string solution_file = command_line("soln-data", "DIE!");
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );
 
   // Now grab the variables for which we want to compare
-  unsigned int n_vars = command_line.vector_variable_size("--vars");
+  unsigned int n_vars = command_line.vector_variable_size("vars");
   std::vector<std::string> vars(n_vars);
   for( unsigned int v = 0; v < n_vars; v++ )
     {
-      vars[v] = command_line("--vars", "DIE!", v);
+      vars[v] = command_line("vars", "DIE!", v);
     }
 
   // Now grab the norms to compute for each variable error
-  unsigned int n_norms = command_line.vector_variable_size("--norms");
+  unsigned int n_norms = command_line.vector_variable_size("norms");
   std::vector<std::string> norms(n_norms);
   for( unsigned int n = 0; n < n_norms; n++ )
     {
-      norms[n] = command_line("--norms", "DIE!", n);
+      norms[n] = command_line("norms", "DIE!", n);
       if( norms[n] != std::string("L2") &&
           norms[n] != std::string("H1") )
         {
