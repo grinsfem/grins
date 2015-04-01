@@ -27,9 +27,9 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis = 'true'
+output_vis = 'false'
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'ExodusII'
+output_format = 'ExodusII xdr'
 
 [Materials]
 
