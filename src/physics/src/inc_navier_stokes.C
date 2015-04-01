@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,9 +31,6 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
@@ -44,8 +41,11 @@ namespace GRINS
 
   template<class Mu>
   IncompressibleNavierStokes<Mu>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
-      _p_pinning(input,physics_name)
+    : IncompressibleNavierStokesBase<Mu>(physics_name,
+                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         input),
+    _p_pinning(input,physics_name),
+    _mu_index(0)
   {
     this->read_input_options(input);
 

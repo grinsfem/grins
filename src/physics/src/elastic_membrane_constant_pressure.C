@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -61,32 +61,41 @@ namespace GRINS
                                                                  CachedValues& /*cache*/ )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
-    
+
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_disp_vars.u_var())->get_JxW();
+      this->get_fe(context)->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(_disp_vars.u_var())->get_phi();
+      this->get_fe(context)->get_phi();
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
     libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
 
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
+
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // All shape function gradients are w.r.t. master element coordinates
     const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
-      context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
+      this->get_fe(context)->get_dphidxi();
 
     const std::vector<std::vector<libMesh::Real> >& dphi_deta =
-      context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+      this->get_fe(context)->get_dphideta();
 
     const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
     const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
     const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
 
-    const std::vector<libMesh::RealGradient>& dxdxi  = context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    const std::vector<libMesh::RealGradient>& dxdeta = context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
+    const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
+    const std::vector<libMesh::RealGradient>& dxdeta = this->get_fe(context)->get_dxyzdeta();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
@@ -106,7 +115,7 @@ namespace GRINS
 
         libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
         libMesh::RealGradient dudeta( grad_u(1), grad_v(1), grad_w(1) );
-        
+
         libMesh::RealGradient A_1 = dxdxi[qp] + dudxi;
         libMesh::RealGradient A_2 = dxdeta[qp] + dudeta;
 
@@ -125,14 +134,35 @@ namespace GRINS
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
             Fu(i) += traction(0)*u_phi[i][qp]*jac;
-            
+
             Fv(i) += traction(1)*u_phi[i][qp]*jac;
 
             Fw(i) += traction(2)*u_phi[i][qp]*jac;
 
             if( compute_jacobian )
               {
-                libmesh_not_implemented();
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    libMesh::RealGradient u_gradphi( dphi_dxi[j][qp], dphi_deta[j][qp] );
+
+                    const libMesh::Real dt0_dv = _pressure/sqrt_a*(u_gradphi(0)*A_2(2) - A_1(2)*u_gradphi(1));
+                    const libMesh::Real dt0_dw = _pressure/sqrt_a*(A_1(1)*u_gradphi(1) - u_gradphi(0)*A_2(1));
+
+                    const libMesh::Real dt1_du = _pressure/sqrt_a*(A_1(2)*u_gradphi(1) - u_gradphi(0)*A_2(2));
+                    const libMesh::Real dt1_dw = _pressure/sqrt_a*(u_gradphi(0)*A_2(0) - A_1(0)*u_gradphi(1));
+
+                    const libMesh::Real dt2_du = _pressure/sqrt_a*(u_gradphi(0)*A_2(1) - A_1(1)*u_gradphi(1));
+                    const libMesh::Real dt2_dv = _pressure/sqrt_a*(A_1(0)*u_gradphi(1) - u_gradphi(0)*A_2(0));
+
+                    Kuv(i,j) += dt0_dv*u_phi[i][qp]*jac;
+                    Kuw(i,j) += dt0_dw*u_phi[i][qp]*jac;
+
+                    Kvu(i,j) += dt1_du*u_phi[i][qp]*jac;
+                    Kvw(i,j) += dt1_dw*u_phi[i][qp]*jac;
+
+                    Kwu(i,j) += dt2_du*u_phi[i][qp]*jac;
+                    Kwv(i,j) += dt2_dv*u_phi[i][qp]*jac;
+                  }
               }
           }
       }

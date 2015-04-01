@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -50,6 +50,7 @@ namespace GRINS
       _minimum_linear_tolerance( input("linear-nonlinear-solver/minimum_linear_tolerance", 1.e-3 ) ),
       _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
       _continue_after_backtrack_failure( input("linear-nonlinear-solver/continue_after_backtrack_failure", false ) ),
+      _continue_after_max_iterations( input("linear-nonlinear-solver/continue_after_max_iterations", false ) ),
       _solver_quiet( input("screen-options/solver_quiet", false ) ),
       _solver_verbose( input("screen-options/solver_verbose", false ) )
   {
@@ -95,6 +96,7 @@ namespace GRINS
     solver.continue_after_backtrack_failure = this->_continue_after_backtrack_failure;
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
+    solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
 
     return;
   }

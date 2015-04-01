@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -22,16 +22,15 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// GRINS
-#include "grins/composite_function.h"
+// This test is in libMesh now, but let's leave it in GRINS until
+// we're sure that's working.
 
 // libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/const_function.h"
 #include "libmesh/dense_vector.h"
 
 using namespace libMesh;
-using namespace GRINS;
 
 int main( /*int argc, char* argv[]*/ )
 {

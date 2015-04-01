@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,9 +29,6 @@
 
 // GRINS
 #include "grins/assembly_context.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
@@ -45,7 +42,7 @@ namespace GRINS
   VelocityPenaltyAdjointStabilization<Mu>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : VelocityPenaltyBase<Mu>(physics_name,input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
-      _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
+      _mu( input ),
       _stab_helper( input )
   {
     return;
@@ -155,18 +152,21 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
+        // Compute the viscosity at this qp
+        libMesh::Real mu_qp = this->_mu(context, qp);
+
         libMesh::Real tau_M;
         libMesh::Real d_tau_M_d_rho;
         libMesh::Gradient d_tau_M_dU;
 
         if (compute_jacobian)
           this->_stab_helper.compute_tau_momentum_and_derivs
-            ( context, qp, g, G, this->_rho, U, this->_mu,
+            ( context, qp, g, G, this->_rho, U, mu_qp,
               tau_M, d_tau_M_d_rho, d_tau_M_dU,
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, this->_mu,
+                    ( context, qp, g, G, this->_rho, U, mu_qp,
                       this->_is_steady );
 
         libMesh::NumberVectorValue F;
@@ -179,7 +179,7 @@ namespace GRINS
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+              mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             Fu(i) += tau_M*F(0)*test_func*JxW[qp];
 
             Fv(i) += tau_M*F(1)*test_func*JxW[qp];
@@ -305,18 +305,21 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
+        // Compute the viscosity at this qp
+        libMesh::Real mu_qp = this->_mu(context, qp);
+
         libMesh::Real tau_M;
         libMesh::Real d_tau_M_d_rho;
         libMesh::Gradient d_tau_M_dU;
 
         if (compute_jacobian)
           this->_stab_helper.compute_tau_momentum_and_derivs
-            ( context, qp, g, G, this->_rho, U, this->_mu,
+            ( context, qp, g, G, this->_rho, U, mu_qp,
               tau_M, d_tau_M_d_rho, d_tau_M_dU,
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, this->_mu,
+                    ( context, qp, g, G, this->_rho, U, mu_qp,
                       this->_is_steady );
 
         libMesh::NumberVectorValue F;

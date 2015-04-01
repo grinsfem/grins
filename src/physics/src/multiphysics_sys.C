@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -27,10 +27,10 @@
 #include "grins/multiphysics_sys.h"
 
 // GRINS
-#include "grins/composite_function.h"
 #include "grins/assembly_context.h"
 
 // libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/getpot.h"
 
 namespace GRINS
@@ -130,7 +130,7 @@ namespace GRINS
 
     // After solution has been initialized we can project initial
     // conditions to it
-    CompositeFunction<libMesh::Number> ic_function;
+    libMesh::CompositeFunction<libMesh::Number> ic_function;
     for( PhysicsListIter physics_iter = _physics_list.begin();
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
@@ -142,6 +142,14 @@ namespace GRINS
     if (ic_function.n_subfunctions())
       {
         this->project_solution(&ic_function);
+      }
+
+    // Now do any auxillary initialization required by each Physics
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+         physics_iter != _physics_list.end();
+         physics_iter++ )
+      {
+        (physics_iter->second)->auxiliary_init( *this );
       }
 
     return;
@@ -226,18 +234,23 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-	// Only compute if physics is active on current subdomain or globally
-	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
-	  {
-	    ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
-	  }
+        if(c.has_elem())
+          {
+            if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
+              {
+                ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+              }
+          }
+        else
+          {
+            ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+          }
       }
 
     // TODO: Need to think about the implications of this because there might be some
     // TODO: jacobian terms we don't want to compute for efficiency reasons
     return compute_jacobian;
   }
-
 
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
 						    libMesh::DiffContext& context )
@@ -349,7 +362,11 @@ namespace GRINS
          physics_iter != _physics_list.end();
          physics_iter++ )
       {
-        (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
+        // Only compute if physics is active on current subdomain or globally
+        if( (physics_iter->second)->enabled_on_elem( &context.get_elem() ) )
+          {
+            (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
+          }
       }
     return;
   }

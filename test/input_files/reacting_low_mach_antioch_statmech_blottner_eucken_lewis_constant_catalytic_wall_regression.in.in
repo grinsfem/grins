@@ -71,11 +71,16 @@ wall_catalytic_reactions_2 = 'N->N2'
 gamma_N_2_type = 'constant'
 gamma_N_2 = '0.001'
 
-# Not used at the moment - dummy.
-gamma_N2_2 = '0.00070710678'
-
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
 
 []
 
@@ -84,17 +89,17 @@ pin_pressure = 'false'
 #restart_file = 'cavity.xdr'
 
 # Mesh related options
-[mesh-options]
-mesh_option = create_2D_mesh
-element_type = QUAD9
-
-domain_x1_min = 0.0
-domain_x1_max = 50.0
-domain_x2_min = -1.0
-domain_x2_max = 1.0
-
-mesh_nx1 = 25 
-mesh_nx2 = 5
+[Mesh]
+   [./Generation]
+       dimension = '2'
+       element_type = 'QUAD9'
+       x_min = '0.0'
+       x_max = '50.0'
+       y_min = '-1.0'
+       y_max = '1.0'
+       n_elems_x = '25'
+       n_elems_y = '5'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -137,13 +142,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

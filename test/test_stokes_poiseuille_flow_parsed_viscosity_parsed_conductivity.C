@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -132,7 +132,9 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  const double tol = 1.0e-8;
+
+  if( l2error > tol || h1error > tol )
     {
       return_flag = 1;
 
@@ -147,7 +149,7 @@ int main(int argc, char* argv[])
   l2error = exact_sol.l2_error("GRINS", "p");
   h1error = exact_sol.h1_error("GRINS", "p");
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  if( l2error > tol || h1error > tol )
     {
       return_flag = 1;
 
@@ -186,7 +188,7 @@ exact_solution( const libMesh::Point& p,
   const double x = p(0);
   const double y = p(1);
 
-  libMesh::Number f;
+  libMesh::Number f = 0.0;
   // Hardcoded to velocity in input file.
   if( var == "u" ) f = 4*y*(1-y);
   if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -39,15 +39,14 @@
 // libMesh forward declarations
 namespace libMesh
 {
+  template <typename Scalar>
+  class CompositeFunction;
+
   class FEMSystem;
 }
 
 namespace GRINS
 {
-  // GRINS forward declarations
-  template <typename Scalar>
-  class CompositeFunction;
-
   //! Base class for reading and handling initial conditions for physics classes
   class ICHandlingBase
   {
@@ -68,7 +67,7 @@ namespace GRINS
     /*! Override this method to, for example, cache a System variable
         number. */
     virtual void init_ic_data( const libMesh::FEMSystem& system,
-                               GRINS::CompositeFunction<libMesh::Number>& all_ics );
+                               libMesh::CompositeFunction<libMesh::Number>& all_ics );
 
     // User will need to implement these functions for IC handling
     virtual int string_to_int( const std::string& bc_type_in ) const;

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -52,6 +52,13 @@ namespace
 
 namespace GRINS
 {
+  //! Wrapper class for storing state for computing thermochemistry and transport properties using Cantera
+  /*!
+    This class is expected to be constructed *before* threads have been forked and will
+    live during the whole program. Note that this documentation will always
+    be built regardless if Cantera is included in the GRINS build or not. Check configure
+    output to confirm that Cantera was included in the build if you wish to use it.
+   */
   class CanteraMixture
   {
   public:

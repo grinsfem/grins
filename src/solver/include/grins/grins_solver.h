@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -77,6 +77,7 @@ namespace GRINS
     double _minimum_linear_tolerance;
     unsigned int _max_linear_iterations;
     bool _continue_after_backtrack_failure;
+    bool _continue_after_max_iterations;
 
     // Screen display options
     bool _solver_quiet;

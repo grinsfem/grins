@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -45,6 +45,14 @@
 
 namespace GRINS
 {
+  //! Wrapper class for storing state for constant transport properties, including Antioch::ConstantLewisDiffusivity
+  /*!
+    This class is expected to be constructed *before* threads have been forked and will
+    live during the whole program.
+    By default, Antioch is working in SI units. Note that this documentation will always
+    be built regardless if Antioch is included in the GRINS build or not. Check configure
+    output to confirm that Antioch was included in the build.
+   */
   template<typename Conductivity>
   class AntiochConstantTransportMixture : public AntiochMixture
   {

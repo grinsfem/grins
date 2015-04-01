@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
 
 //GRINS
 #include "grins/elastic_membrane_base.h"
+#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
@@ -36,8 +37,15 @@ namespace GRINS
   public:
 
     ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                     bool lambda_sq_coupled, bool lambda_sq_var );
+                     bool is_compressible );
+
     virtual ~ElasticMembrane();
+
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    //! Register postprocessing variables for ElasticMembrane
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
@@ -48,20 +56,58 @@ namespace GRINS
                                        AssemblyContext& context,
                                        CachedValues& cache );
 
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
+
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
                                 CachedValues& cache );
+
+    //! Compute the registered postprocessed quantities
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
 
   private:
 
     ElasticMembrane();
 
+    /*! \todo This is straight up copied from libMesh. Should make this a friend or public. */
+    libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
+                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                           const libMesh::Point p );
+
+    void compute_metric_tensors( unsigned int qp,
+                                 const libMesh::FEBase& elem,
+                                 const AssemblyContext& context,
+                                 const libMesh::Gradient& grad_u,
+                                 const libMesh::Gradient& grad_v,
+                                 const libMesh::Gradient& grad_w,
+                                 libMesh::TensorValue<libMesh::Real>& a_cov,
+                                 libMesh::TensorValue<libMesh::Real>& a_contra,
+                                 libMesh::TensorValue<libMesh::Real>& A_cov,
+                                 libMesh::TensorValue<libMesh::Real>& A_contra,
+                                 libMesh::Real& lambda_sq);
+
     StressStrainLaw _stress_strain_law;
 
     libMesh::Real _h0;
 
-    bool _lambda_sq_coupled;
-    bool _lambda_sq_var;
+    bool _is_compressible;
+
+    //! Variable index for lambda_sq variable
+    VariableIndex _lambda_sq_var;
+
+    //! Index from registering this quantity for postprocessing. Each component will have it's own index.
+    std::vector<unsigned int> _stress_indices;
+
+    //! Index from registering sigma_zz for postprocessing. Mainly for sanity checking.
+    unsigned int _stress_zz_index;
+
+    //! Index from registering this quantity for postprocessing. Each component will have it's own index.
+    std::vector<unsigned int> _strain_indices;
 
   };
 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -28,23 +28,18 @@
 
 // GRINS
 #include "grins/generic_ic_handler.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/boundary_info.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/zero_function.h"
 
 namespace GRINS
 {
 
   template<class Mu>
   VelocityDrag<Mu>::VelocityDrag( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input)
+    : VelocityDragBase<Mu>(physics_name, input)
   {
     this->read_input_options(input);
 
@@ -57,21 +52,16 @@ namespace GRINS
     return;
   }
 
+
   template<class Mu>
-  void VelocityDrag<Mu>::read_input_options( const GetPot& input )
+  void VelocityDrag<Mu>::init_context( AssemblyContext& context )
   {
-    _exponent = input("Physics/"+velocity_drag+"/exponent", libMesh::Real(2));
+    context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+    context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-    std::string coefficient_function =
-      input("Physics/"+velocity_drag+"/coefficient",
-        std::string("0"));
-
-    this->_coefficient.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(coefficient_function));
-
-    if (coefficient_function == "0")
-      std::cout << "Warning! Zero VelocityDrag specified!" << std::endl;
+    return;
   }
+
 
   template<class Mu>
   void VelocityDrag<Mu>::element_time_derivative( bool compute_jacobian,
@@ -136,67 +126,44 @@ namespace GRINS
         if (this->_dim == 3)
           U(2) = context.interior_value(this->_flow_vars.w_var(), qp); // w
 
-        libMesh::Number Umag = U.size();
-
-
-        libMesh::Number coeff_val = (*_coefficient)(u_qpoint[qp], context.time);
-
-        libMesh::Number F_coeff = std::pow(Umag, _exponent-1) * -coeff_val;
-
-        libMesh::Number J_coeff = compute_jacobian ? 
-                                  std::pow(Umag, _exponent-2) *
-                                  -coeff_val * (_exponent-1) :
-                                  0;
+        libMesh::NumberVectorValue F;
+        libMesh::NumberTensorValue dFdU;
+        libMesh::NumberTensorValue* dFdU_ptr =
+          compute_jacobian ? &dFdU : NULL;
+        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+          continue;
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += jac * F_coeff*U(0)*u_phi[i][qp];
-            Fv(i) += jac * F_coeff*U(1)*u_phi[i][qp];
+            const libMesh::Number jac_i = jac * u_phi[i][qp];
+
+            Fu(i) += F(0)*jac_i;
+            Fv(i) += F(1)*jac_i;
 
             if( this->_dim == 3 )
-              (*Fw)(i) += jac * F_coeff*U(2)*u_phi[i][qp];
+              (*Fw)(i) += F(2)*jac_i;
 
 	    if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    Kuu(i,j) += context.get_elem_solution_derivative() * jac *
-                      (F_coeff*u_phi[j][qp] +
-                       J_coeff*U(0)*U(0)*u_phi[j][qp]/Umag) *
-                      u_phi[i][qp];
-                    Kuv(i,j) += context.get_elem_solution_derivative() * jac *
-                      (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
-                      u_phi[i][qp];
-
-                    Kvu(i,j) += context.get_elem_solution_derivative() * jac *
-                      (J_coeff*U(0)*U(1)*u_phi[j][qp]/Umag) *
-                      u_phi[i][qp];
-                    Kvv(i,j) += context.get_elem_solution_derivative() * jac *
-                      (F_coeff*u_phi[j][qp] +
-                       J_coeff*U(1)*U(1)*u_phi[j][qp]/Umag) *
-                      u_phi[i][qp];
+                    const libMesh::Number jac_ij =
+                      jac_i * context.get_elem_solution_derivative() *
+                      u_phi[j][qp];
+                    Kuu(i,j) += jac_ij * dFdU(0,0);
+                    Kuv(i,j) += jac_ij * dFdU(0,1);
+                    Kvu(i,j) += jac_ij * dFdU(1,0);
+                    Kvv(i,j) += jac_ij * dFdU(1,1);
 
                     if( this->_dim == 3 )
                       {
-                        (*Kuw)(i,j) += context.get_elem_solution_derivative() * jac *
-                          (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
-                          u_phi[i][qp];
-                        (*Kvw)(i,j) += context.get_elem_solution_derivative() * jac *
-                          (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
-                          u_phi[i][qp];
-
-                        (*Kwu)(i,j) += context.get_elem_solution_derivative() * jac *
-                          (J_coeff*U(0)*U(2)*u_phi[j][qp]/Umag) *
-                          u_phi[i][qp];
-                        (*Kwv)(i,j) += context.get_elem_solution_derivative() * jac *
-                          (J_coeff*U(1)*U(2)*u_phi[j][qp]/Umag) *
-                          u_phi[i][qp];
-                        (*Kww)(i,j) += context.get_elem_solution_derivative() * jac *
-                          (F_coeff*u_phi[j][qp] +
-                           J_coeff*U(2)*U(2)*u_phi[j][qp]/Umag) *
-                          u_phi[i][qp];
+                        (*Kuw)(i,j) += jac_ij * dFdU(0,2);
+                        (*Kvw)(i,j) += jac_ij * dFdU(1,2);
+                        (*Kwu)(i,j) += jac_ij * dFdU(2,0);
+                        (*Kwv)(i,j) += jac_ij * dFdU(2,1);
+                        (*Kww)(i,j) += jac_ij * dFdU(2,2);
                       }
                   }
               }

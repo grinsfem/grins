@@ -47,19 +47,26 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
+
 # Mesh related options
-[mesh-options]
-mesh_option = 'create_2D_mesh'
-element_type = 'QUAD9'
-
-mesh_nx1 = '10'
-mesh_nx2 = '10'
-
-domain_x1_min = '-0.5'
-domain_x1_max = '0.5'
-domain_x2_min = '-0.5'
-domain_x2_max = '0.5'
-
+[Mesh]
+   [./Generation]
+     dimension = '2'
+     element_type = 'QUAD9'
+     n_elems_x = '10'
+     n_elems_y = '10'
+     x_min = '-0.5'
+     x_max = '0.5'
+     y_min = '-0.5'
+     y_max = '0.5'
+[]
 
 # Options for time solvers
 [unsteady-solver]
@@ -74,14 +81,13 @@ max_nonlinear_iterations = '7'
 max_linear_iterations = '500'
 
 relative_residual_tolerance = '1.0e-10'
+relative_step_tolerance = '1.0e-10'
 
 verify_analytic_jacobians = '0.0'
 
 initial_linear_tolerance = '1.0e-10'
 
 use_numerical_jacobians_only = 'false'
-
-require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]
@@ -106,11 +112,5 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
 
 []

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/suspended_cable_regression"
+
+INPUT="@top_srcdir@/test/input_files/suspended_cable_test.in @top_srcdir@/test/test_data/suspended_cable_test.xdr"
+
+${LIBMESH_RUN:-} $PROG $INPUT

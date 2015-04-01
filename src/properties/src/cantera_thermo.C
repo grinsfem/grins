@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -184,6 +184,25 @@ namespace GRINS
     }
 
     return;
+  }
+
+  libMesh::Real CanteraThermodynamics::h( const libMesh::Real& T, unsigned int species ) const
+  {
+    std::vector<libMesh::Real> h_RT( _cantera_gas.nSpecies(), 0.0 );
+
+    try
+      {
+        _cantera_gas.setTemperature( T );
+
+        _cantera_gas.getEnthalpy_RT( &h_RT[0] );
+      }
+    catch(Cantera::CanteraError)
+      {
+        Cantera::showErrors(std::cerr);
+        libmesh_error();
+      }
+
+    return h_RT[species]*_cantera_mixture.R(species)*T;
   }
 
 } // namespace GRINS

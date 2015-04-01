@@ -3,7 +3,7 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -81,12 +81,18 @@ namespace GRINS
 
     void compute_stress_deriv_terms( libMesh::Real lambda_sq, libMesh::Real A_over_a,
                                      libMesh::Real I1, libMesh::Real I2,
+                                     const libMesh::TensorValue<libMesh::Real>& a_contra,
                                      const libMesh::TensorValue<libMesh::Real>& A_contra,
                                      libMesh::TensorValue<libMesh::Real>& daterm_dstrain,
                                      libMesh::TensorValue<libMesh::Real>& dAterm_dstrain) const;
 
     void compute_Acontra_deriv( const libMesh::TensorValue<libMesh::Real>& A_contra,
                                 ElasticityTensor& dAcontra_dstrain ) const;
+
+    libMesh::Real compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,
+                                         const libMesh::TensorValue<libMesh::Real>& g_cov,
+                                         const libMesh::TensorValue<libMesh::Real>& G_contra,
+                                         const libMesh::TensorValue<libMesh::Real>& G_cov );
 
     StrainEnergy _W;
 

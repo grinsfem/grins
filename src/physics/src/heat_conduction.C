@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
+#include "grins/heat_transfer_macros.h"
 #include "grins/grins_physics_names.h"
 
 // libMesh
@@ -146,16 +147,13 @@ namespace GRINS
 	libMesh::Gradient grad_T;
 	grad_T = context.interior_gradient(_temp_vars.T_var(), qp);
 
-	const libMesh::Real f = this->forcing( q_points[qp] );
-
 	// Compute the conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
 	
 	// First, an i-loop over the  degrees of freedom.
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) += JxW[qp] *
-	      (-_k_qp*(T_gradphi[i][qp]*grad_T) + f);  // diffusion term
+	    FT(i) += JxW[qp]*(-_k_qp*(T_gradphi[i][qp]*grad_T));
 
 	    if (compute_jacobian)
 	      {
@@ -228,26 +226,12 @@ namespace GRINS
                         * JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
-          
+
 	  } // End of element dof loop
-      
+
       } // End of the quadrature point loop
 
     return;
-  }
-  
-  template<class K>
-  inline
-  libMesh::Real HeatConduction<K>::forcing( const libMesh::Point& p )
-  {
-    const libMesh::Real x = p(0);
-    const libMesh::Real y = p(1);
-    const libMesh::Real z = p(2);
-
-    return
-      std::cos(.5*libMesh::pi*x) *
-      std::sin(.5*libMesh::pi*y) *
-      std::cos(.5*libMesh::pi*z);
   }
 
 } // namespace GRINS

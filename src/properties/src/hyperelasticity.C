@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -105,6 +105,16 @@ namespace GRINS
   {
     libmesh_not_implemented();
     return;
+  }
+
+  template <typename StrainEnergy>
+  libMesh::Real Hyperelasticity<StrainEnergy>::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& /*g_contra*/,
+                                                                      const libMesh::TensorValue<libMesh::Real>& /*g_cov*/,
+                                                                      const libMesh::TensorValue<libMesh::Real>& /*G_contra*/,
+                                                                      const libMesh::TensorValue<libMesh::Real>& /*G_cov*/ )
+  {
+    libmesh_not_implemented();
+    return 0.0;
   }
 
 } // end namespace GRINS

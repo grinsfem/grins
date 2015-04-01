@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -64,14 +64,14 @@ namespace GRINS
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
-    this->omega_dot( T, P, Y, omega_dot );
+    this->omega_dot_TPY( T, P, Y, omega_dot );
 
     return;
   }
 
-  void CanteraKinetics::omega_dot( const libMesh::Real T, const libMesh::Real P,
-                                   const std::vector<libMesh::Real>& mass_fractions,
-                                   std::vector<libMesh::Real>& omega_dot ) const
+  void CanteraKinetics::omega_dot_TPY( const libMesh::Real T, const libMesh::Real P,
+                                       const std::vector<libMesh::Real>& mass_fractions,
+                                       std::vector<libMesh::Real>& omega_dot ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), omega_dot.size() );
     libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
@@ -111,11 +111,46 @@ namespace GRINS
                 std::cout << "omega_dot[" << s << "] = " << omega_dot[s] << std::endl;
               }
 
-            libmesh_error();	      
+            libmesh_error();
           }
       }
 #endif
-      
+
+    for( unsigned int s = 0; s < omega_dot.size(); s++ )
+      {
+        // convert [kmol/m^3-s] to [kg/m^3-s]
+        omega_dot[s] *= this->_cantera_gas.molecularWeight(s);
+      }
+
+    return;
+  }
+
+  void CanteraKinetics::omega_dot_TRY( const libMesh::Real& T, const libMesh::Real rho,
+                                       const std::vector<libMesh::Real>& mass_fractions,
+                                       std::vector<libMesh::Real>& omega_dot ) const
+  {
+    libmesh_assert_equal_to( mass_fractions.size(), omega_dot.size() );
+    libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas.nSpecies() );
+    libmesh_assert_greater(T,0.0);
+    libmesh_assert_greater(rho,0.0);
+
+    {
+      /*! \todo Need to make sure this will work in a threaded environment.
+	Not sure if we will get thread lock here or not. */
+      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+
+      try
+	{
+	  _cantera_gas.setState_TRY(T, rho, &mass_fractions[0]);
+	  _cantera_gas.getNetProductionRates(&omega_dot[0]);
+	}
+      catch(Cantera::CanteraError)
+	{
+	  Cantera::showErrors(std::cerr);
+	  libmesh_error();
+	}
+    }
+
     for( unsigned int s = 0; s < omega_dot.size(); s++ )
       {
         // convert [kmol/m^3-s] to [kg/m^3-s]

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   int return_flag = 0;
   const libMesh::Number exact_value = -0.5;
   const libMesh::Number rel_error = std::fabs( (qoi - exact_value )/exact_value );
-  const libMesh::Number tol = 1.0e-15;
+  const libMesh::Number tol = 1.0e-11;
   if( rel_error > tol )
     {
       std::cerr << "Computed voriticity QoI mismatch greater than tolerance." << std::endl

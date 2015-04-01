@@ -1,16 +1,15 @@
 # Mesh related options
-[mesh-options]
-mesh_option = create_2D_mesh
-element_type = QUAD9
-mesh_nx1 = 10
-mesh_nx2 = 10
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD9'
+      n_elems_x = '10'
+      n_elems_y = '10'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -20,11 +19,11 @@ max_linear_iterations = 2500
 verify_analytic_jacobians = 1.0e-6
 
 initial_linear_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
-output_vis_flag = false
+output_vis = 'false'
 vis_output_file_prefix = thermally_driven_2d
 output_format = 'ExodusII xdr'
 
@@ -41,7 +40,7 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy HeatTransferSource'
+enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy ConstantSourceTerm'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -84,11 +83,17 @@ beta_T = 1.0
 
 g = '0 -9.8'
 
-[../SourceFunction]
+[../ConstantSourceTerm]
+  [./Variables]
+     names = 'T'
+     FE_types = 'LAGRANGE'
+     FE_orders = 'SECOND'
 
-value = '0.0'
+  [../Function]
 
-[../VariableNames]
+    value = '0.0'
+
+[../../VariableNames]
 
 Temperature = 'T'
 u_velocity = 'u'
@@ -105,8 +110,3 @@ pressure = 'p'
 k = 1.0
 
 []
-
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_2d.xdr'

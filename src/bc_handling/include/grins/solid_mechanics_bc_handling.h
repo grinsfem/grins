@@ -3,7 +3,7 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -57,6 +57,12 @@ namespace GRINS
 					  GRINS::BoundaryID bc_id,
 					  GRINS::BCType bc_type ) const;
 
+    virtual void user_apply_neumann_bcs( AssemblyContext& context,
+					 const GRINS::CachedValues& cache,
+					 const bool request_jacobian,
+					 const GRINS::BoundaryID bc_id,
+					 const GRINS::BCType bc_type ) const;
+
   protected:
 
     SolidMechanicsVariables _disp_vars;
@@ -66,7 +72,14 @@ namespace GRINS
     SolidMechanicsBCHandling();
 
     enum SOLIDS_BC_TYPES{PINNED=1,
-                         CONSTANT_DISPLACEMENT};
+                         CONSTANT_DISPLACEMENT,
+                         ROLLER_X,
+                         ROLLER_Y,
+                         ROLLER_Z,
+                         SYMMETRY_YZ,
+                         SYMMETRY_XZ,
+                         SYMMETRY_XY,
+                         CONSTANT_TRACTION};
 
   };
 

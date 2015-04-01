@@ -4,4 +4,4 @@ PROG="@top_builddir@/test/cantera_transport_regression"
 
 INPUT="@top_builddir@/test/input_files/cantera_transport.in"
 
-$PROG $INPUT $PETSC_OPTIONS 
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -162,10 +162,15 @@ namespace GRINS
                           << " active dofs" << std::endl
                           << "==========================================================" << std::endl;
 
-                context.system->assemble_qoi();
-                const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
-                my_qoi->output_qoi( std::cout );
-                std::cout << std::endl;
+                // It's helpful to print the qoi along the way, but only do it if the user
+                // asks for it
+                if( context.print_qoi )
+                  {
+                    context.system->assemble_qoi();
+                    const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
+                    my_qoi->output_qoi( std::cout );
+                    std::cout << std::endl;
+                  }
               }
           }
 

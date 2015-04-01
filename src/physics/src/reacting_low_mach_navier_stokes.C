@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -41,9 +41,12 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase(physics_name,input),
-      _gas_mixture(input),
-      _p_pinning(input,physics_name)
+    : ReactingLowMachNavierStokesBase<Mixture,Evaluator>(physics_name,input),
+    _p_pinning(input,physics_name),
+    _rho_index(0),
+    _mu_index(0),
+    _k_index(0),
+    _cp_index(0)
   {
     this->read_input_options(input);
 
@@ -159,7 +162,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
-    GRINS::ReactingLowMachNavierStokesBase::init_context(context);
+    ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context(context);
 
     // We also need the side shape functions, etc.
     context.get_side_fe(this->_u_var)->get_JxW();
@@ -180,20 +183,215 @@ namespace GRINS
                                                                                 AssemblyContext& context,
                                                                                 CachedValues& cache )
   {
-    unsigned int n_qpoints = context.get_element_qrule().n_points();
-
     if( compute_jacobian )
       {
         libmesh_not_implemented();
       }
+    // Convenience
+    const VariableIndex s0_var = this->_species_vars[0];
 
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
+    const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
+
+    // Check number of dofs is same for _u_var, v_var and w_var.
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
+    if (this->_dim == 3)
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
+
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real>& JxW =
+      context.get_element_fe(this->_u_var)->get_JxW();
+
+    // The pressure shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& p_phi =
+      context.get_element_fe(this->_p_var)->get_phi();
+
+    // The species shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& s_phi = context.get_element_fe(s0_var)->get_phi();
+
+    // The species shape function gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = context.get_element_fe(s0_var)->get_dphi();
+
+    // The pressure shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_element_fe(this->_u_var)->get_phi();
+
+    // The velocity shape function gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
+      context.get_element_fe(this->_u_var)->get_dphi();
+
+    // The temperature shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& T_phi =
+      context.get_element_fe(this->_T_var)->get_phi();
+
+    // The temperature shape functions gradients at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
+      context.get_element_fe(this->_T_var)->get_dphi();
+
+    const std::vector<libMesh::Point>& u_qpoint =
+      context.get_element_fe(this->_u_var)->get_xyz();
+
+    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_p_var); // R_{p}
+
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_w_var); // R_{w}
+
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
+
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	this->assemble_mass_time_deriv(context, qp, cache);
-	this->assemble_species_time_deriv(context, qp, cache);
-	this->assemble_momentum_time_deriv(context, qp, cache);
-	this->assemble_energy_time_deriv(context, qp, cache);
-      }
+        libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
+
+        libMesh::Number u, v, T;
+        u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
+        v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
+
+        T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
+
+        const libMesh::Gradient& grad_T =
+          cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
+
+        libMesh::NumberVectorValue U(u,v);
+        if (this->_dim == 3)
+          U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
+
+        libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
+        libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+
+        libMesh::Gradient grad_w;
+        if (this->_dim == 3)
+          grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
+
+        libMesh::Number divU = grad_u(0) + grad_v(1);
+        if (this->_dim == 3)
+          divU += grad_w(2);
+
+        libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) );
+        libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
+        libMesh::NumberVectorValue grad_wT;
+        if( this->_dim == 3 )
+          {
+            grad_uT(2) = grad_w(0);
+            grad_vT(2) = grad_w(1);
+            grad_wT = libMesh::NumberVectorValue( grad_u(2), grad_v(2), grad_w(2) );
+          }
+
+        libMesh::Number mu = cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[qp];
+        libMesh::Number p = cache.get_cached_values(Cache::PRESSURE)[qp];
+
+        const std::vector<libMesh::Real>& D =
+          cache.get_cached_vector_values(Cache::DIFFUSION_COEFFS)[qp];
+
+        libMesh::Number cp =
+          cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
+
+        libMesh::Number k =
+          cache.get_cached_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY)[qp];
+
+        const std::vector<libMesh::Real>& omega_dot =
+          cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
+
+        const std::vector<libMesh::Real>& h =
+          cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[qp];
+
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if( this->_is_axisymmetric )
+          {
+            divU += U(0)/r;
+            jac *= r;
+          }
+
+        libMesh::Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
+
+        std::vector<libMesh::Gradient> grad_ws = cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
+        libmesh_assert_equal_to( grad_ws.size(), this->_n_species );
+
+        // Continuity Residual
+        libMesh::Gradient mass_term(0.0,0.0,0.0);
+        for(unsigned int s=0; s < this->_n_species; s++ )
+          {
+            mass_term += grad_ws[s]/this->_gas_mixture.M(s);
+          }
+        mass_term *= M;
+
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += (-U*(mass_term + grad_T/T) + divU)*jac*p_phi[i][qp];
+          }
+
+        // Species residuals
+        for(unsigned int s=0; s < this->_n_species; s++ )
+          {
+            libMesh::DenseSubVector<libMesh::Number> &Fs =
+              context.get_elem_residual(this->_species_vars[s]); // R_{s}
+
+            const libMesh::Real term1 = -rho*(U*grad_ws[s]) + omega_dot[s];
+            const libMesh::Gradient term2 = -rho*D[s]*grad_ws[s];
+
+            for (unsigned int i=0; i != n_s_dofs; i++)
+              {
+                /*! \todo Need to add SCEBD term. */
+                Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*jac;
+              }
+          }
+
+        // Momentum residuals
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += ( -rho*U*grad_u*u_phi[i][qp]
+                       + p*u_gradphi[i][qp](0)
+                       - mu*(u_gradphi[i][qp]*grad_u + u_gradphi[i][qp]*grad_uT
+                             - 2.0/3.0*divU*u_gradphi[i][qp](0) )
+                       + rho*this->_g(0)*u_phi[i][qp]
+                       )*jac;
+
+            /*! \todo Would it be better to put this in its own DoF loop
+                      and do the if check once?*/
+            if( this->_is_axisymmetric )
+              {
+                Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
+              }
+
+            Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]
+                       + p*u_gradphi[i][qp](1)
+                       - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
+                             - 2.0/3.0*divU*u_gradphi[i][qp](1) )
+                       + rho*this->_g(1)*u_phi[i][qp]
+                       )*jac;
+
+            if (this->_dim == 3)
+              {
+                Fw(i) += ( -rho*U*grad_w*u_phi[i][qp]
+                           + p*u_gradphi[i][qp](2)
+                           - mu*(u_gradphi[i][qp]*grad_w + u_gradphi[i][qp]*grad_wT
+                                 - 2.0/3.0*divU*u_gradphi[i][qp](2) )
+                           + rho*this->_g(2)*u_phi[i][qp]
+                           )*jac;
+              }
+          }
+
+        // Energy residual
+        libMesh::Real chem_term = 0.0;
+        for(unsigned int s=0; s < this->_n_species; s++ )
+          {
+            chem_term += h[s]*omega_dot[s];
+          }
+
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) += ( ( -rho*cp*U*grad_T - chem_term )*T_phi[i][qp]
+                       - k*grad_T*T_gradphi[i][qp]  )*jac;
+          }
+
+      } // quadrature loop
 
     return;
   }
@@ -224,9 +422,9 @@ namespace GRINS
                                                                         CachedValues& /* cache */ )
   {
     // Pin p = p_value at p_point
-    if( _pin_pressure )
+    if( this->_pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, _p_var );
+	_p_pinning.pin_value( context, compute_jacobian, this->_p_var );
       }
 
     return;
@@ -242,367 +440,8 @@ namespace GRINS
     return;
   }
 
-
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_mass_time_deriv( AssemblyContext& context, 
-                                                                                 unsigned int qp,
-                                                                                 const CachedValues& cache )
-  {
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_p_var).size();
-    
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real>& JxW =
-      context.get_element_fe(this->_u_var)->get_JxW();
-    
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.get_element_fe(this->_p_var)->get_phi();
-    
-    const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_u_var)->get_xyz();
-
-    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_p_var); // R_{p}
-
-    libMesh::Number u, v, T;
-    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-    
-    T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-
-    libMesh::NumberVectorValue U(u,v);
-    if (this->_dim == 3)
-      U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
-
-    libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
-    libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
-
-    libMesh::Gradient grad_w;
-    if (this->_dim == 3)
-      grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
-
-    libMesh::Number divU = grad_u(0) + grad_v(1);
-    if (this->_dim == 3)
-      divU += grad_w(2);
-
-    const libMesh::Number r = u_qpoint[qp](0);
-
-    libMesh::Real jac = JxW[qp];
-
-    if( this->_is_axisymmetric )
-      {
-	divU += U(0)/r;
-	jac *= r;
-      }
-
-    libMesh::Gradient grad_T = 
-      cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
-
-    libMesh::Real M = cache.get_cached_values(Cache::MOLAR_MASS)[qp];
-
-    std::vector<libMesh::Gradient> grad_ws = cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
-    libmesh_assert_equal_to( grad_ws.size(), this->_n_species );
-    
-    libMesh::Gradient mass_term(0.0,0.0,0.0);
-    for(unsigned int s=0; s < this->_n_species; s++ )
-      {
-	mass_term += grad_ws[s]/this->_gas_mixture.M(s);
-      }
-    mass_term *= M;
-    
-    const libMesh::Number term1 = -U*(mass_term + grad_T/T);
-
-    const libMesh::Number termf = (term1 + divU)*jac;
-      
-    for (unsigned int i=0; i != n_p_dofs; i++)
-      {
-	Fp(i) += termf*p_phi[i][qp];
-        libmesh_assert( !libMesh::libmesh_isnan(Fp(i)) );
-      }
-
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_species_time_deriv(AssemblyContext& context, 
-                                                                                   unsigned int qp,
-                                                                                   const CachedValues& cache)
-  {
-    // Convenience
-    const VariableIndex s0_var = this->_species_vars[0];
-    
-    /* The number of local degrees of freedom in each species variable.
-       We assume the same number of dofs for each species */
-    const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
-    
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW = context.get_element_fe(s0_var)->get_JxW();
-    
-    // The species shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& s_phi = context.get_element_fe(s0_var)->get_phi();
-
-    // The species shape function gradients at interior quadrature points.
-    const std::vector<std::vector<libMesh::Gradient> >& s_grad_phi = context.get_element_fe(s0_var)->get_dphi();
-
-    const std::vector<libMesh::Point>& s_qpoint = 
-      context.get_element_fe(this->_species_vars[0])->get_xyz();
-
-    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-
-    libMesh::Number u, v, w;
-    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-    if (this->_dim == 3)
-      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
-
-    libMesh::NumberVectorValue U(u,v);
-    if (this->_dim == 3)
-      U(2) = w;
-
-    std::vector<libMesh::Gradient> grad_w = 
-      cache.get_cached_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD)[qp];
-    libmesh_assert_equal_to( grad_w.size(), this->_n_species );
-
-    const std::vector<libMesh::Real>& D = 
-      cache.get_cached_vector_values(Cache::DIFFUSION_COEFFS)[qp];
-
-    const std::vector<libMesh::Real>& omega_dot = 
-      cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
-
-    const libMesh::Number r = s_qpoint[qp](0);
-
-    libMesh::Real jac = JxW[qp];
-
-    if( this->_is_axisymmetric )
-      {
-	jac *= r;
-      }
-
-    for(unsigned int s=0; s < this->_n_species; s++ )
-      {
-	libMesh::DenseSubVector<libMesh::Number> &Fs = 
-	  context.get_elem_residual(this->_species_vars[s]); // R_{s}
-
-	const libMesh::Real term1 = -rho*(U*grad_w[s]) + omega_dot[s];
-	const libMesh::Gradient term2 = -rho*D[s]*grad_w[s];
-
-	for (unsigned int i=0; i != n_s_dofs; i++)
-	  {
-	    /*! \todo Need to add SCEBD term. */
-	    Fs(i) += ( term1*s_phi[i][qp] + term2*s_grad_phi[i][qp] )*jac;
-
-            libmesh_assert( !libMesh::libmesh_isnan(Fs(i)) );
-	  }
-      }
-
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_momentum_time_deriv(AssemblyContext& context, 
-									  unsigned int qp,
-									  const CachedValues& cache)
-  {
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
-
-    // Check number of dofs is same for _u_var, v_var and w_var.
-    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_v_var).size());
-    if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_w_var).size());
-
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_u_var)->get_JxW();
-
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_u_var)->get_phi();
-
-    // The velocity shape function gradients at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_u_var)->get_dphi();
-
-    const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_u_var)->get_xyz();
-
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_u_var); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_v_var); // R_{v}
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_w_var); // R_{w}
-    
-    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-
-    libMesh::Number u, v, w;
-    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-    if (this->_dim == 3)
-      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
-
-    libMesh::NumberVectorValue U(u,v);
-    if (this->_dim == 3)
-      U(2) = w;
-
-    libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
-    libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
-
-    libMesh::Gradient grad_w;
-    if (this->_dim == 3)
-      grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
-
-    libMesh::Number divU = grad_u(0) + grad_v(1);
-    if (this->_dim == 3)
-      divU += grad_w(2);
-
-    libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) ); 
-    libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
-    libMesh::NumberVectorValue grad_wT;
-    if( this->_dim == 3 )
-      {
-	grad_uT(2) = grad_w(0);
-	grad_vT(2) = grad_w(1);
-	grad_wT = libMesh::NumberVectorValue( grad_u(2), grad_v(2), grad_w(2) );
-      }
-
-    libMesh::Number mu = cache.get_cached_values(Cache::MIXTURE_VISCOSITY)[qp];
-    libMesh::Number p = cache.get_cached_values(Cache::PRESSURE)[qp];
-
-    const libMesh::Number r = u_qpoint[qp](0);
-
-    libMesh::Real jac = JxW[qp];
-
-    if( this->_is_axisymmetric )
-      {
-	divU += U(0)/r;
-	jac *= r;
-      }
-
-    // Now a loop over the pressure degrees of freedom.  This
-    // computes the contributions of the continuity equation.
-    for (unsigned int i=0; i != n_u_dofs; i++)
-      {
-	Fu(i) += ( -rho*U*grad_u*u_phi[i][qp]                 // convection term
-		   + p*u_gradphi[i][qp](0)                           // pressure term
-		   - mu*(u_gradphi[i][qp]*grad_u + u_gradphi[i][qp]*grad_uT
-			 - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
-		   + rho*this->_g(0)*u_phi[i][qp]                 // hydrostatic term
-		   )*jac; 
-
-	/*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
-	if( this->_is_axisymmetric )
-	  {
-	    Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
-	  }
-
-        libmesh_assert( !libMesh::libmesh_isnan(Fu(i)) );
-
-	Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]                 // convection term
-		   + p*u_gradphi[i][qp](1)                           // pressure term
-		   - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
-			 - 2.0/3.0*divU*u_gradphi[i][qp](1) )    // diffusion term
-		   + rho*this->_g(1)*u_phi[i][qp]                 // hydrostatic term
-		   )*jac;
-
-	
-        libmesh_assert( !libMesh::libmesh_isnan(Fv(i)) );
-
-	if (this->_dim == 3)
-	  {
-	    Fw(i) += ( -rho*U*grad_w*u_phi[i][qp]                 // convection term
-		       + p*u_gradphi[i][qp](2)                           // pressure term
-		       - mu*(u_gradphi[i][qp]*grad_w + u_gradphi[i][qp]*grad_wT
-			     - 2.0/3.0*divU*u_gradphi[i][qp](2) )    // diffusion term
-		       + rho*this->_g(2)*u_phi[i][qp]                 // hydrostatic term
-		       )*jac;
-
-            libmesh_assert( !libMesh::libmesh_isnan(Fw(i)) );
-	  }
-      }
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::assemble_energy_time_deriv( AssemblyContext& context, 
-                                                                                   unsigned int qp,
-                                                                                   const CachedValues& cache)
-  {
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_T_var).size();
-
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_T_var)->get_JxW();
-
-    // The temperature shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.get_element_fe(this->_T_var)->get_phi();
-
-    // The temperature shape functions gradients at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_T_var)->get_dphi();
-
-    // Physical location of the quadrature points
-    const std::vector<libMesh::Point>& T_qpoint =
-      context.get_element_fe(this->_T_var)->get_xyz();
-
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_T_var); // R_{T}
-
-    libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-
-    libMesh::Number u, v, w;
-    u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-    v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
-    if (this->_dim == 3)
-      w = cache.get_cached_values(Cache::Z_VELOCITY)[qp];
-
-    libMesh::NumberVectorValue U(u,v);
-    if (this->_dim == 3)
-      U(2) = w;
-
-    libMesh::Number cp = 
-      cache.get_cached_values(Cache::MIXTURE_SPECIFIC_HEAT_P)[qp];
-
-    libMesh::Number k = 
-      cache.get_cached_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY)[qp];
-
-    const libMesh::Gradient& grad_T = 
-      cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
-
-    const std::vector<libMesh::Real>& omega_dot = 
-      cache.get_cached_vector_values(Cache::OMEGA_DOT)[qp];
-
-    const std::vector<libMesh::Real>& h = 
-      cache.get_cached_vector_values(Cache::SPECIES_ENTHALPY)[qp];
-
-    libMesh::Real chem_term = 0.0;
-    
-    for(unsigned int s=0; s < this->_n_species; s++ )
-      {
-	chem_term += h[s]*omega_dot[s];
-      }
-
-    libmesh_assert( !libMesh::libmesh_isnan(chem_term) );
-
-    libMesh::Real jac = JxW[qp];
-
-    if( this->_is_axisymmetric )
-      {
-	const libMesh::Number r = T_qpoint[qp](0);
-	jac *= r;
-      }
-    
-    for (unsigned int i=0; i != n_T_dofs; i++)
-      {
-	FT(i) += ( ( -rho*cp*U*grad_T - chem_term )*T_phi[i][qp] // convection term + chemistry term
-		     - k*grad_T*T_gradphi[i][qp]   /* diffusion term */   )*jac;
-
-        libmesh_assert( !libMesh::libmesh_isnan(FT(i)) );
-      }
-
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const AssemblyContext& context, 
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const AssemblyContext& context,
                                                                                               CachedValues& cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
@@ -898,44 +737,6 @@ namespace GRINS
       } // if/else quantity_index
 
     return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::cp_mix( const libMesh::Real T,
-                                                                        const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.cp( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::mu( const libMesh::Real T,
-                                                                    const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.mu( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  libMesh::Real ReactingLowMachNavierStokes<Mixture,Evaluator>::k( const libMesh::Real T,
-                                                                   const std::vector<libMesh::Real>& Y )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.k( T, Y );
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::D( const libMesh::Real rho,
-                                                          const libMesh::Real cp,
-                                                          const libMesh::Real k,
-                                                          std::vector<libMesh::Real>& D )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-    
-    return gas_evaluator.D( rho, cp, k, D );
   }
 
 } // namespace GRINS

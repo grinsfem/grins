@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,9 +31,9 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_values.h"
 #include "grins/inc_navier_stokes_base.h"
+#include "grins/velocity_drag_base.h"
 
 // libMesh
-#include "libmesh/fem_system.h"
 #include "libmesh/getpot.h"
 
 // C++
@@ -49,7 +49,7 @@ namespace GRINS
     vector field.
    */
   template<class Viscosity>
-  class VelocityDrag : public IncompressibleNavierStokesBase<Viscosity>
+  class VelocityDrag : public VelocityDragBase<Viscosity>
   {
   public:
 
@@ -57,9 +57,8 @@ namespace GRINS
 
     ~VelocityDrag();
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-    
+    virtual void init_context( AssemblyContext& context );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
@@ -69,9 +68,6 @@ namespace GRINS
 				          CachedValues& cache );
 
   private:
-
-    libMesh::Real _exponent;
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _coefficient;
 
     VelocityDrag();
   };

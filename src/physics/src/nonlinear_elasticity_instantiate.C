@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -23,10 +23,14 @@
 //-----------------------------------------------------------------------el-
 
 #include "elastic_membrane.C"
+#include "elastic_cable.C"
 
 #include "grins/hookes_law.h"
+#include "grins/hookes_law_1d.h"
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
 template class GRINS::ElasticMembrane<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
+
+template class GRINS::ElasticCable<GRINS::HookesLaw1D>;

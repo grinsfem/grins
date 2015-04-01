@@ -1,18 +1,16 @@
 # Mesh related options
-[mesh-options]
-
-mesh_option = create_3D_mesh
-element_type = HEX27
-mesh_nx1 = 3 
-mesh_nx2 = 3
-mesh_nx3 = 3
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX27'
+      n_elems_x = '3'
+      n_elems_y = '3'
+      n_elems_z = '3'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -21,11 +19,10 @@ max_linear_iterations = 2000
 
 verify_analytic_jacobians = 1.0e-6 
 
-initial_linear_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = false 
 vis_output_file_prefix = thermally_driven_3d_flow
 output_format = 'ExodusII xdr'
@@ -111,7 +108,3 @@ k = 1.0
 
 []
 
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_3d.xdr'
