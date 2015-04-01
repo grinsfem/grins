@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
 //
 // Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
@@ -30,7 +30,7 @@
 // GRINS
 #include "grins/mesh_builder.h"
 #include "grins/simulation.h"
-#include "grins/simulation_builder.h" 
+#include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/parabolic_profile.h"
 
@@ -66,8 +66,8 @@ public:
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
 
-  private:
-  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs  
+private:
+  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs
   libMesh::MeshFunction* turbulent_bc_values;
 };
 
@@ -88,7 +88,7 @@ public:
   {
     output.resize(1);
     output.zero();
-    
+
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
     // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
@@ -98,15 +98,15 @@ public:
     // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
     if(p_copy(0) > 0.5)
       {
-       p_copy(0) = 1 - p_copy(0);
+        p_copy(0) = 1 - p_copy(0);
       }
     p_copy(0) = 2*p_copy(0);
-    
+
     libMesh::DenseVector<libMesh::Number> u_nu_values;
-    turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    
-    output(0) = u_nu_values(0)/21.995539;    
-    }
+    turbulent_bc_values->operator()(p_copy, t, u_nu_values);
+
+    output(0) = u_nu_values(0)/21.995539;
+  }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
   { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(turbulent_bc_values)); }
@@ -132,7 +132,7 @@ public:
   {
     output.resize(1);
     output.zero();
-    
+
     // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
     libMesh::Point p_copy(p);
     // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
@@ -142,15 +142,15 @@ public:
     // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
     if(p_copy(0) > 0.5)
       {
-       p_copy(0) = 1 - p_copy(0);
+        p_copy(0) = 1 - p_copy(0);
       }
     p_copy(0) = 2*p_copy(0);
-    
+
     libMesh::DenseVector<libMesh::Number> u_nu_values;
-    turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-        
+    turbulent_bc_values->operator()(p_copy, t, u_nu_values);
+
     output(0) = u_nu_values(1)/(2.0*21.995539);
-    }
+  }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
   { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(turbulent_bc_values)); }
@@ -160,7 +160,7 @@ private:
 };
 
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 
   // libMesh input file should be first argument
   std::string libMesh_input_filename = argv[1];
-  
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
@@ -202,54 +202,45 @@ int main(int argc, char* argv[])
 
   std::string oned_data = command_line("data-1d", "DIE!");
   equation_systems.read(oned_data, libMesh::XdrMODE::READ,
-                                   libMesh::EquationSystems::READ_HEADER |
-                                   libMesh::EquationSystems::READ_DATA |
-                                   libMesh::EquationSystems::READ_ADDITIONAL_DATA);
+                        libMesh::EquationSystems::READ_HEADER |
+                        libMesh::EquationSystems::READ_DATA |
+                        libMesh::EquationSystems::READ_ADDITIONAL_DATA);
 
   // Get a reference to the system so that we can call update() on it
   libMesh::System & turbulent_bc_system = equation_systems.get_system<libMesh::System>("flow");
-   
+
   // We need to call update to put system in a consistent state
   // with the solution that was read in
   turbulent_bc_system.update();
- 
-  // Write out this solution to make sure it was read properly
-  std::ostringstream file_name_gmv;
-  file_name_gmv << "turbulent_bc.gmv";
-  
-  libMesh::GMVIO(mesh).write_equation_systems
-    (file_name_gmv.str(), equation_systems);
 
   // Print information about the system to the screen.
   equation_systems.print_info();
 
   // Prepare a global solution and a MeshFunction of the Turbulent system
   libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
-      
+
   libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
-        
+
   std::vector<libMesh::Number> flow_soln;
 
   turbulent_bc_system.update_global_solution(flow_soln);
 
-  std::cout<<"Turbulent system size: "<<turbulent_bc_system.solution->size()<<std::endl;
-  
-  turbulent_bc_soln->init(turbulent_bc_system.solution->size(), true, libMesh::SERIAL); 
+  turbulent_bc_soln->init(turbulent_bc_system.solution->size(), true, libMesh::SERIAL);
 
   (*turbulent_bc_soln) = flow_soln;
-      
+
   std::vector<unsigned int>turbulent_bc_system_variables;
   turbulent_bc_system_variables.push_back(0);
   turbulent_bc_system_variables.push_back(1);
-  
+
   turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
 			       *turbulent_bc_soln,
 			       turbulent_bc_system.get_dof_map(),
 			       turbulent_bc_system_variables ));
-  
-  turbulent_bc_values->init();    
-        
+
+  turbulent_bc_values->init();
+
   GRINS::SimulationBuilder sim_builder;
 
   std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
@@ -278,7 +269,7 @@ int main(int argc, char* argv[])
 
   //exact_sol.attach_exact_value(&exact_solution);
   //exact_sol.attach_exact_deriv(&exact_derivative);
-  
+
   // Compute error and get it in various norms
   //exact_sol.compute_error("GRINS", "u");
 
@@ -316,7 +307,7 @@ int main(int argc, char* argv[])
 }
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
-{    
+{
   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_u( new TurbulentBdyFunctionU(this->turbulent_bc_values) );
 
   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_nu( new TurbulentBdyFunctionNu(this->turbulent_bc_values) );
@@ -324,13 +315,13 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
   GRINS::DBCContainer cont_u;
   cont_u.add_var_name( "u" );
   cont_u.add_bc_id( 3 );
-    
+
   cont_u.set_func( turbulent_inlet_u );
 
   GRINS::DBCContainer cont_nu;
   cont_nu.add_var_name( "nu" );
   cont_nu.add_bc_id( 3 );
-    
+
   cont_nu.set_func( turbulent_inlet_nu );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
