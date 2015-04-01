@@ -36,10 +36,24 @@ namespace GRINS
 
   IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper(const GetPot& input)
     : StabilizationHelper(),
-      _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
+      _C(1),
+      _tau_factor(0.5),
       _flow_vars(input)
   {
+    if (input.have_variable("Stabilization/tau_constant_vel"))
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant_vel", _C );
+    else
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant", _C );
+
+    if (input.have_variable("Stabilization/tau_factor_vel"))
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor_vel", _tau_factor );
+    else
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
+
     return;
   }
 

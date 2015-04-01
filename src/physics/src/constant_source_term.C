@@ -37,7 +37,7 @@ namespace GRINS
 {
   ConstantSourceTerm::ConstantSourceTerm( const std::string& physics_name, const GetPot& input )
     : SourceTermBase(physics_name,input),
-      _value( input("Physics/"+physics_name+"/Function/value",0.0) )
+      _value(0.0)
   {
     if( !input.have_variable("Physics/"+physics_name+"/Function/value") )
       {
@@ -46,7 +46,9 @@ namespace GRINS
         libmesh_error();
       }
 
-    return;
+    this->set_parameter
+      (_value, input,
+       "Physics/"+physics_name+"/Function/value", _value);
   }
 
   ConstantSourceTerm::~ConstantSourceTerm()

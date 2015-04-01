@@ -45,10 +45,12 @@ namespace GRINS
                                                                      const GetPot& input )
     : Physics(my_physics_name, input),
       _flow_vars(input, core_physics_name),
-      _rho(input("Physics/"+core_physics_name+"/rho", 1.0)),
+      _rho(1.0),
       _mu(input)
   {
-    return;
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+core_physics_name+"/rho", this->_rho);
   }
 
   template<class Mu>

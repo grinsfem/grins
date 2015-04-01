@@ -39,16 +39,17 @@ namespace GRINS
 {
   ElasticMembraneConstantPressure::ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : ElasticMembraneBase(physics_name,input),
-      _pressure( input("Physics/ElasticMembraneConstantPressure/pressure", 0.0) )
+      _pressure(0.0)
   {
-    if( !input.have_variable("Physics/ElasticMembraneConstantPressure/pressure") )
+    if( !input.have_variable("Physics/"+physics_name+"/pressure") )
       {
-        std::cerr << "Error: Must input pressure for ElasticMembraneConstantPressure." << std::endl
-                  << "       Please set Physics/ElasticMembraneConstantPressure/pressure." << std::endl;
+        std::cerr << "Error: Must input pressure for "+physics_name+"." << std::endl
+                  << "       Please set Physics/"+physics_name+"/pressure." << std::endl;
         libmesh_error();
       }
 
-    return;
+    this->set_parameter
+      (_pressure, input, "Physics/"+physics_name+"/pressure", _pressure );
   }
 
   ElasticMembraneConstantPressure::~ElasticMembraneConstantPressure()

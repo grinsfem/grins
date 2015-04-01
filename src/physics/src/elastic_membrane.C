@@ -48,7 +48,7 @@ namespace GRINS
                                                      bool is_compressible )
     : ElasticMembraneBase(physics_name,input),
       _stress_strain_law(input),
-      _h0( input("Physics/"+physics_name+"/h0", 1.0 ) ),
+      _h0(1.0),
       _is_compressible(is_compressible)
   {
     // Force the user to set h0
@@ -58,6 +58,9 @@ namespace GRINS
                   << "       Input the option Physics/"+physics_name+"/h0" << std::endl;
         libmesh_error();
       }
+
+    this->set_parameter
+      (_h0, input, "Physics/"+physics_name+"/h0", _h0 );
 
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 

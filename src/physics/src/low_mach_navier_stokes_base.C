@@ -89,9 +89,12 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
     // Read thermodynamic state info
-    _p0 = input("Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-    _T0 = input("Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
-    _R  = input("Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
+    this->set_parameter
+      (_p0, input, "Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    this->set_parameter
+      (_T0, input, "Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
+    this->set_parameter
+      (_R, input, "Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
 
     if( _R <= 0.0 )
       {

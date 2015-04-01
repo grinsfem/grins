@@ -44,10 +44,18 @@ namespace GRINS
     : Physics(physics_name, input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho( input("Physics/"+heat_transfer+"/rho", 1.0) ),
-      _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
+      _rho(1.0),
+      _Cp(1.0),
       _k(input)
   {
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+heat_transfer+"/rho", _rho);
+
+    this->set_parameter
+      (this->_Cp, input,
+       "Physics/"+heat_transfer+"/Cp", _Cp);
+
     this->read_input_options(input);
 
     return;
