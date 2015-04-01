@@ -169,6 +169,7 @@ libgrins_la_SOURCES += solver/src/simulation_builder.C
 libgrins_la_SOURCES += solver/src/solver_context.C
 libgrins_la_SOURCES += solver/src/mesh_adaptive_solver_base.C
 libgrins_la_SOURCES += solver/src/parameter_manager.C
+libgrins_la_SOURCES += solver/src/parameter_user.C
 libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 
@@ -370,6 +371,7 @@ include_HEADERS += solver/include/grins/simulation_builder.h
 include_HEADERS += solver/include/grins/solver_context.h
 include_HEADERS += solver/include/grins/mesh_adaptive_solver_base.h
 include_HEADERS += solver/include/grins/parameter_manager.h
+include_HEADERS += solver/include/grins/parameter_user.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/displacement_continuation_solver.h
 
