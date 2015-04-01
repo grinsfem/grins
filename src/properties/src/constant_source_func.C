@@ -29,9 +29,11 @@ namespace GRINS
 {
 
   ConstantSourceFunction::ConstantSourceFunction( const GetPot& input )
-    : _value( input("Physics/SourceFunction/value", 0.0) )
+    : ParameterUser("ConstantSourceFunction"),
+      _value(0.0)
   {
-    return;
+    this->set_parameter
+      (_value, input, "Physics/SourceFunction/value", _value);
   }
 
   ConstantSourceFunction::~ConstantSourceFunction()

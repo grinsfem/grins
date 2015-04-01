@@ -33,14 +33,17 @@ namespace GRINS
 {
 
   ConstantPrandtlConductivity::ConstantPrandtlConductivity( const GetPot& input )
-    : _Pr( input("Materials/Conductivity/Pr", 0.0) )
+    : ParameterUser("ConstantPrandtlConductivity"),
+      _Pr(0.0)
   {
     if( !input.have_variable("Materials/Conductivity/Pr") )
       {
         std::cerr << "Error: Must specify Prandtl number for constant_prandtl conductivity model!" << std::endl;
         libmesh_error();
       }
-    return;
+
+    this->set_parameter
+      (_Pr, input, "Materials/Conductivity/Pr", _Pr);
   }
 
   ConstantPrandtlConductivity::~ConstantPrandtlConductivity()

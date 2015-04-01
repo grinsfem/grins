@@ -26,6 +26,9 @@
 #ifndef CONSTANT_SOURCE_FUNC_H
 #define CONSTANT_SOURCE_FUNC_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/point.h"
@@ -33,7 +36,7 @@
 
 namespace GRINS
 {
-  class ConstantSourceFunction
+  class ConstantSourceFunction : public ParameterUser
   {
   public:
 
