@@ -68,6 +68,12 @@ int main(int argc, char* argv[])
       exit(1);
     }
 
+  if( !command_line.have_variable("tol") )
+    {
+      std::cerr << "ERROR: Must specify test tolerance on command line with tol=<tol>" << std::endl;
+      exit(1);
+    }
+
   // libMesh input file should be first argument
   std::string libMesh_input_filename = command_line("input", "DIE!");
 
@@ -143,7 +149,7 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  double tol = 1.0e-10;
+  double tol = command_line("tol", 1.0e-10);
 
   // Now test error for each variable, for each norm
   for( unsigned int v = 0; v < n_vars; v++ )
