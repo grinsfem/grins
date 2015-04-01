@@ -42,9 +42,6 @@ namespace GRINS
 											  const GetPot& input )
     : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
   {
-    this->read_input_options(input);
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
