@@ -74,6 +74,8 @@ namespace GRINS
         const std::string & param_name,
         libMesh::Number param_default );
 
+    // FIXME: add set_parameter for vectors
+
     //! Each subclass will register its copy of an independent
     //  variable when the library makes this call.
     //  If the subclass has more than one copy to register, or if the
