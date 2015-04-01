@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
   // Now grab the norms to compute for each variable error
   unsigned int n_norms = command_line.vector_variable_size("--norms");
-  std::vector<std::string> norms(n_vars);
+  std::vector<std::string> norms(n_norms);
   for( unsigned int n = 0; n < n_norms; n++ )
     {
       norms[n] = command_line("--norms", "DIE!", n);
