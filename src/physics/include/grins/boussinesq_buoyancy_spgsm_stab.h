@@ -46,7 +46,9 @@ namespace GRINS
   {
   public:
     
-    BoussinesqBuoyancySPGSMStabilization( const std::string& physics_name, const GetPot& input );
+    BoussinesqBuoyancySPGSMStabilization
+      ( const std::string& physics_name,
+        const GetPot& input );
 
     ~BoussinesqBuoyancySPGSMStabilization();
 

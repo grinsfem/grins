@@ -32,7 +32,9 @@
 namespace GRINS
 {
 
-  StabilizationHelper::StabilizationHelper()
+  StabilizationHelper::StabilizationHelper
+    ( const std::string & helper_name ) :
+    ParameterUser(helper_name)
   {
     return;
   }

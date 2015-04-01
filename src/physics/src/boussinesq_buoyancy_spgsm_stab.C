@@ -40,8 +40,8 @@ namespace GRINS
   template<class Mu>
   BoussinesqBuoyancySPGSMStabilization<Mu>::BoussinesqBuoyancySPGSMStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
-      _flow_stab_helper(input),
-      _temp_stab_helper(input),
+      _flow_stab_helper(physics_name+"FlowStabHelper", input),
+      _temp_stab_helper(physics_name+"TempStabHelper", input),
       _rho(1.0),
       _Cp(1.0),
       _k(1.0),

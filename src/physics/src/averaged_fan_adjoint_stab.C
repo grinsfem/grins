@@ -42,7 +42,7 @@ namespace GRINS
     : AveragedFanBase<Mu>(physics_name, input),
       _rho(1.0),
       _mu( input ),
-      _stab_helper( input )
+      _stab_helper( physics_name+"StabHelper", input )
   {
     this->set_parameter
       (_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", _rho);
