@@ -171,6 +171,9 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
 
   double error = 0.0;
 
+  std::cout << "==========================================================" << std::endl
+            << "Checking variable " << var << " using error norm " << norm << " with tol " << tol << "...";
+
   if( norm == std::string("L2") )
     {
       error = exact_sol.l2_error(system_name, var);
@@ -194,6 +197,11 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
                 << "norm of error = " << error << std::endl
                 << "norm type     = " << norm << std::endl
                 << "var           = " << var << std::endl;
+    }
+  else
+    {
+      std::cout << "PASSED!" << std::endl
+                << "==========================================================" << std::endl;
     }
 
   return;
