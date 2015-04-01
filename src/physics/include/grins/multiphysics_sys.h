@@ -48,6 +48,9 @@ namespace libMesh
 {
   class EquationSystems;
   class DiffContext;
+
+  template <typename Scalar>
+  class ParameterMultiPointer;
 }
 
 namespace GRINS
@@ -104,6 +107,12 @@ namespace GRINS
     //! Each Physics will register their postprocessed quantities with this call
     void register_postprocessing_vars( const GetPot& input,
                                        PostProcessedQuantities<libMesh::Real>& postprocessing );
+
+    //! Each Physics will register its copy(s) of an independent variable
+    //  named in this call.
+    void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
