@@ -193,17 +193,21 @@ int main(int argc, char* argv[])
 
   // Build a 1-d turbulent_bc_system to get the bc data from files
   libMesh::SerialMesh mesh(libmesh_init.comm());
-    
-  mesh.read("test_data/turbulent_channel_Re944_grid.xda");
-  
+
+  GetPot command_line(argc,argv);
+
+  std::string oned_mesh = command_line("mesh-1d", "DIE!");
+  mesh.read(oned_mesh);
+
   // And an EquationSystems to run on it
   libMesh::EquationSystems equation_systems (mesh);
-  
-  equation_systems.read("test_data/turbulent_channel_soln.xda", libMesh::XdrMODE::READ,
-  			libMesh::EquationSystems::READ_HEADER |
-  			     libMesh::EquationSystems::READ_DATA |
-  			     libMesh::EquationSystems::READ_ADDITIONAL_DATA);
-  
+
+  std::string oned_data = command_line("data-1d", "DIE!");
+  equation_systems.read(oned_data, libMesh::XdrMODE::READ,
+                                   libMesh::EquationSystems::READ_HEADER |
+                                   libMesh::EquationSystems::READ_DATA |
+                                   libMesh::EquationSystems::READ_ADDITIONAL_DATA);
+
   // Get a reference to the system so that we can call update() on it
   libMesh::System & turbulent_bc_system = equation_systems.get_system<libMesh::System>("flow");
    
