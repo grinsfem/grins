@@ -83,6 +83,8 @@ namespace GRINS
 
     libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
 
+    const std::string& get_multiphysics_system_name() const;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
 #endif
@@ -149,5 +151,11 @@ namespace GRINS
     Simulation();
 
   };
+
+  inline
+  const std::string& Simulation::get_multiphysics_system_name() const
+  {
+    return this->_system_name;
+  }
 }
 #endif // GRINS_SIMULATION_H

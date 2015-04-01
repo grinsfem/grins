@@ -97,6 +97,8 @@ namespace GRINS
     // We'd better have at least 1 variable read from input
     libmesh_assert( !_var_names.empty() );
 
+    _vars.resize( _var_names.size() );
+
     for( unsigned int var = 0; var < _vars.size(); var++ )
       {
         _vars[var] = system->add_variable( _var_names[var], _var_order[var], _var_FE[var] );

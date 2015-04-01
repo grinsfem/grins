@@ -34,6 +34,7 @@ check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
+check_PROGRAMS += generic_solution_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -115,6 +116,7 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
 ufo_unit_SOURCES = ufo_unit.C
+generic_solution_regression_SOURCES = generic_solution_regression.C
 
 #Define tests to actually be run
 TESTS =
@@ -140,6 +142,7 @@ TESTS += warn_only_ufo_unit.sh
 TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
 
+TESTS += laplace_parsed_source_regression.sh
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
 TESTS += test_stokes_poiseuille_flow.sh
@@ -256,7 +259,7 @@ shellfiles_src += 3d_low_mach_jacobians_yz.sh
 shellfiles_src += suspended_cable_test.sh
 shellfiles_src += warn_only_ufo_unit.sh
 shellfiles_src += error_ufo_unit.sh
-
+shellfiles_src += laplace_parsed_source_regression.sh
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 
