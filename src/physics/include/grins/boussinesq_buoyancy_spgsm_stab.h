@@ -64,6 +64,13 @@ namespace GRINS
                                 AssemblyContext& context,
                                 CachedValues& cache );
 
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _flow_stab_helper;

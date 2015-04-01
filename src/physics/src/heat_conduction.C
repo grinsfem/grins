@@ -241,6 +241,17 @@ namespace GRINS
     return;
   }
 
+  template<class K>
+  void HeatConduction<K>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _k.register_parameter(param_name, param_pointer);
+  }
+
+
 } // namespace GRINS
 
 // Instantiate

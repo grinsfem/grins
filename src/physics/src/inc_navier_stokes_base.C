@@ -107,6 +107,17 @@ namespace GRINS
     return;
   }
 
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
+  }
+
+
 } // namespace GRINS
 
 // Instantiate
