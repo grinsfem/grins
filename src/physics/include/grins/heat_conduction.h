@@ -63,8 +63,6 @@ namespace GRINS
 
   protected:
 
-    libMesh::Real forcing( const libMesh::Point& p );
-
     unsigned int _dim;
 
     PrimitiveTempFEVariables _temp_vars;
