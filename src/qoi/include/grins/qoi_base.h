@@ -33,6 +33,7 @@
 #include "libmesh/diff_qoi.h"
 
 // GRINS
+#include "grins/parameter_user.h"
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
@@ -50,7 +51,7 @@ namespace GRINS
   class MultiphysicsSystem;
   class AssemblyContext;
 
-  class QoIBase
+  class QoIBase : public ParameterUser
   {
   public:
 
@@ -80,13 +81,6 @@ namespace GRINS
     virtual void init( const GetPot& input, const MultiphysicsSystem& system );
 
     virtual void init_context( AssemblyContext& context );
-
-    //! Each QoI will register its copy(s) of an independent variable
-    //  named in this call.
-    virtual void register_parameter
-      ( const std::string & /*param_name*/,
-        libMesh::ParameterMultiPointer<libMesh::Number> & /*param_pointer*/ )
-    const {}
 
     //! Compute the qoi value for element interiors.
     /*! Override this method if your QoI is defined on element interiors */

@@ -37,7 +37,8 @@
 namespace GRINS
 {
   QoIBase::QoIBase( const std::string& qoi_name )
-    : _qoi_name(qoi_name),
+    : ParameterUser(qoi_name),
+      _qoi_name(qoi_name),
       _qoi_value(0.0)
   {
     return;
