@@ -71,6 +71,16 @@ int main(int argc, char* argv[])
   // libMesh input file should be first argument
   std::string libMesh_input_filename = command_line("input", "DIE!");
 
+  {
+    std::ifstream i(libMesh_input_filename.c_str());
+    if (!i)
+      {
+        std::cerr << "Error: Could not read from libMesh input file "
+                << libMesh_input_filename << std::endl;
+        exit(1);
+      }
+  }
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
