@@ -87,7 +87,7 @@ g = '0 -9.8'
   [./Variables]
      names = 'T'
      FE_types = 'LAGRANGE'
-     FE_orders = 'FIRST'
+     FE_orders = 'SECOND'
 
   [../Function]
 
