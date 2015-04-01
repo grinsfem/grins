@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
   if( !command_line.have_variable("norms") )
     {
-      std::cerr << "ERROR: Must specify variables on command line with norms='L2 H1'" << std::endl;
+      std::cerr << "ERROR: Must specify error norms on command line with norms='L2 H1'" << std::endl;
       exit(1);
     }
 
