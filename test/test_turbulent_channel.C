@@ -104,7 +104,6 @@ public:
     
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
     
     output(0) = u_nu_values(0)/21.995539;    
     }
@@ -149,7 +148,6 @@ public:
     
     libMesh::DenseVector<libMesh::Number> u_nu_values;
     turbulent_bc_values->operator()(p_copy, t, u_nu_values);    
-    //std::cout<<p(1)<<", "<<u_nu_values(0)<<", "<<u_nu_values(1)<<std::endl;    
         
     output(0) = u_nu_values(1)/(2.0*21.995539);
     }
