@@ -1,0 +1,75 @@
+# Materials
+[Materials]
+   [./Conductivity]
+      k = '1.0'
+[]
+
+# Options related to all Physics
+[Physics]
+
+   enabled_physics = 'HeatConduction ParsedSourceTerm'
+
+   [./HeatConduction]
+
+      T_FE_family = 'LAGRANGE'
+      T_order = 'FIRST'
+
+      bc_ids = '0'
+      bc_types = 'constant_dirichlet'
+      bc_variables = 'T'
+      bc_values = '0.0'
+
+      rho = '1.0'
+      Cp = '1.0'
+
+   [../ParsedSourceTerm]
+      [./Function]
+         # Forcing function corresponding to \Delta u, where u = -5*x^2*(1-x)^2*(exp(10*x^2)-1)*y^2*(1-y)^2*(exp(10*y^2)-1)
+         value = '-10*x^2*y^2*(x-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-10*x^2*y^2*(y-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-10*x^2*(x-1)^2*(y-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-10*y^2*(x-1)^2*(y-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-20*x*y^2*(2*x-2)*(y-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-20*x^2*y*(2*y-2)*(x-1)^2*(exp(10*x^2)-1)*(exp(10*y^2)-1)-200*x^2*y^3*exp(10*y^2)*(2*y-2)*(x-1)^2*(exp(10*x^2)-1)-200*x^3*y^2*exp(10*x^2)*(2*x-2)*(y-1)^2*(exp(10*y^2)-1)-500*x^2*y^2*exp(10*x^2)*(x-1)^2*(y-1)^2*(exp(10*y^2)-1)-500*x^2*y^2*exp(10*y^2)*(x-1)^2*(y-1)^2*(exp(10*x^2)-1)-2000*x^2*y^4*exp(10*y^2)*(x-1)^2*(y-1)^2*(exp(10*x^2)-1)-2000*x^4*y^2*exp(10*x^2)*(x-1)^2*(y-1)^2*(exp(10*y^2)-1)'
+      [../Variables]
+         names = 'T'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      n_elems_x = '20'
+      n_elems_y = '20'
+      x_min = '0.0'
+      x_max = '1.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      element_type = 'QUAD4'
+[]
+
+# Options for tiem solvers
+[unsteady-solver]
+   transient = 'false'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   relative_residual_tolerance = '1.0e-10'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = true
+   vis_output_file_prefix = 'laplace'
+   output_format = 'ExodusII xdr'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'Laplace'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]
