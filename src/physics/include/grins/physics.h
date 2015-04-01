@@ -35,6 +35,7 @@
 #include "grins/var_typedefs.h"
 #include "grins/grins_physics_names.h"
 #include "grins/cached_values.h"
+#include "grins/parameter_user.h"
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -102,7 +103,7 @@ namespace GRINS
   //  *_time_derivative correspond to calculating terms for F(u)
   //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
 
-  class Physics
+  class Physics : public ParameterUser
   {
 
   public:
@@ -149,13 +150,6 @@ namespace GRINS
      */
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
-
-    //! Each Physics will register its copy(s) of an independent variable
-    //  named in this call.
-    virtual void register_parameter
-      ( const std::string & /*param_name*/,
-        libMesh::ParameterMultiPointer<libMesh::Number> & /*param_pointer*/ )
-    const {}
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
