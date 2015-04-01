@@ -41,8 +41,6 @@ namespace GRINS
   AveragedTurbine<Mu>::AveragedTurbine( const std::string& physics_name, const GetPot& input )
     : AveragedTurbineBase<Mu>(physics_name, input)
   {
-    this->read_input_options(input);
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
