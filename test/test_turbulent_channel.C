@@ -267,47 +267,66 @@ int main(int argc, char* argv[])
   // Solve
   grins.run();
 
-  // Get equation systems to create ExactSolution object
-  //std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+// Get equation systems to create ExactSolution object
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   //libMesh::ExactSolution exact_sol(*es);
 
-  //exact_sol.attach_exact_value(&exact_solution);
-  //exact_sol.attach_exact_deriv(&exact_derivative);
+   // Create Exact solution object and attach exact solution quantities
+  libMesh::ExactSolution exact_sol(*es);
 
-  // Compute error and get it in various norms
-  //exact_sol.compute_error("GRINS", "u");
+  libMesh::EquationSystems es_ref( es->get_mesh() );
 
-  //double l2error = exact_sol.l2_error("GRINS", "u");
-  //double h1error = exact_sol.h1_error("GRINS", "u");
+  // Filename of file where comparison solution is stashed
+  std::string solution_file = command_line("soln-data", "DIE!");
+  es_ref.read( solution_file );
 
-  // Needs to change to 1 based on comparison
+  exact_sol.attach_reference_solution( &es_ref );
+
+  // Now grab the variables for which we want to compare
+  unsigned int n_vars = command_line.vector_variable_size("vars");
+  std::vector<std::string> vars(n_vars);
+  for( unsigned int v = 0; v < n_vars; v++ )
+    {
+      vars[v] = command_line("vars", "DIE!", v);
+    }
+
+  // Now grab the norms to compute for each variable error
+  unsigned int n_norms = command_line.vector_variable_size("norms");
+  std::vector<std::string> norms(n_norms);
+  for( unsigned int n = 0; n < n_norms; n++ )
+    {
+      norms[n] = command_line("norms", "DIE!", n);
+      if( norms[n] != std::string("L2") &&
+          norms[n] != std::string("H1") )
+        {
+          std::cerr << "ERROR: Invalid norm input " << norms[n] << std::endl
+                    << "       Valid values are: L2" << std::endl
+                    << "                         H1" << std::endl;
+        }
+    }
+
+  const std::string& system_name = grins.get_multiphysics_system_name();
+
+  // Now compute error for each variable
+  for( unsigned int v = 0; v < n_vars; v++ )
+    {
+      exact_sol.compute_error(system_name, vars[v]);
+    }
+
   int return_flag = 0;
 
-  // if( l2error > 1.0e-9 || h1error > 1.0e-9 )
-  //   {
-  //     return_flag = 1;
+  double tol = command_line("tol", 1.0e-10);
 
-  //     std::cout << "Tolerance exceeded for velocity in Poiseuille test." << std::endl
-  // 		<< "l2 error = " << l2error << std::endl
-  // 		<< "h1 error = " << h1error << std::endl;
-  //   }
-
-  // // Compute error and get it in various norms
-  // exact_sol.compute_error("GRINS", "p");
-
-  // l2error = exact_sol.l2_error("GRINS", "p");
-  // h1error = exact_sol.h1_error("GRINS", "p");
-
-  // if( l2error > 2.0e-9 || h1error > 2.0e-9 )
-  //   {
-  //     return_flag = 1;
-
-  //     std::cout << "Tolerance exceeded for pressure in Poiseuille test." << std::endl
-  // 		<< "l2 error = " << l2error << std::endl
-  // 		<< "h1 error = " << h1error << std::endl;
-  //   }
+  // Now test error for each variable, for each norm
+  for( unsigned int v = 0; v < n_vars; v++ )
+    {
+      for( unsigned int n = 0; n < n_norms; n++ )
+        {
+          test_error_norm( exact_sol, system_name, vars[v], norms[n], tol, return_flag );
+        }
+    }
 
   return return_flag;
 }
