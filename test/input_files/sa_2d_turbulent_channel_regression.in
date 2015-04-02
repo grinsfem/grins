@@ -1,12 +1,18 @@
 # Mesh related options
-[mesh-options]
-mesh_option = create_2D_mesh
-element_type = QUAD4
-mesh_nx1 = 20
-mesh_nx2 = 150
-redistribute = '{x}{0.5*(1 + (tanh((y -0.5)*3.0)/tanh(1.5)))}{z}'
-domain_x1_max = 5.0
-domain_x2_max = 1.0
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      x_min = '0.0'
+      x_max = '5.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      n_elems_x = '20'
+      n_elems_y = '150'
+      element_type = 'QUAD4'
+
+    [../Redistribution]
+      function = '{x}{0.5*(1+(tanh((y-0.5)*3.0)/tanh(1.5)))}{z}'
+[]
 
 # Options for time solvers
 [unsteady-solver]
