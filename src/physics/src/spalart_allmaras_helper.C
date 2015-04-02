@@ -82,69 +82,69 @@ namespace GRINS
     grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
     grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
 
-    libMesh::Real _vorticity_value;
-    _vorticity_value = fabs(grad_v(0) - grad_u(1));
+    libMesh::Real vorticity_value;
+    vorticity_value = fabs(grad_v(0) - grad_u(1));
 
     if(this->_dim == 3)
       {
         libMesh::Gradient grad_w;
         grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
 
-        libMesh::Real _vorticity_component_0 = grad_w(1) - grad_v(2);
-        libMesh::Real _vorticity_component_1 = grad_u(2) - grad_v(0);
+        libMesh::Real vorticity_component_0 = grad_w(1) - grad_v(2);
+        libMesh::Real vorticity_component_1 = grad_u(2) - grad_v(0);
 
-        _vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
+        vorticity_value += pow(pow(vorticity_component_0, 2.0) + pow(vorticity_component_1, 2.0) + pow(vorticity_value, 2.0), 0.5);
       }
 
-    return _vorticity_value;
+    return vorticity_value;
   }
 
-  libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value) const
+  libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real vorticity_value) const
   {
     // Step 1
-    libMesh::Real _chi = nu/mu;
+    libMesh::Real chi = nu/mu;
 
     // Step 2
-    libMesh::Real chi3 = _chi*_chi*_chi;
-    libMesh::Real _fv1 = chi3/(chi3 + _cv1*_cv1*_cv1);
+    libMesh::Real chi3 = chi*chi*chi;
+    libMesh::Real fv1 = chi3/(chi3 + _cv1*_cv1*_cv1);
 
     // Step 3
-    libMesh::Real _fv2 = 1 - (_chi/(1 + _chi*_fv1));
+    libMesh::Real fv2 = 1 - (chi/(1 + chi*fv1));
 
     // Step 4
-    libMesh::Real _S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(_fv2) ;
+    libMesh::Real S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(fv2) ;
 
     // Step 5, the absolute value of the vorticity
-    libMesh::Real _S = _vorticity_value;
+    libMesh::Real S = vorticity_value;
 
     // Step 6
-    libMesh::Real _S_tilde = 0.0;
-    if(_S_bar >= -this->_cv2*_S)
+    libMesh::Real S_tilde = 0.0;
+    if(S_bar >= -this->_cv2*S)
       {
-        _S_tilde = _S + _S_bar;
+        S_tilde = S + S_bar;
       }
     else
       {
-        _S_tilde = _S + (_S*(pow(this->_cv2,2.0)*_S + this->_cv3*_S_bar))/((this->_cv3 - (2*this->_cv2))*_S - _S_bar);
+        S_tilde = S + (S*(pow(this->_cv2,2.0)*S + this->_cv3*S_bar))/((this->_cv3 - (2*this->_cv2))*S - S_bar);
       }
 
-    return _S_tilde;
+    return S_tilde;
   }
 
-  libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde) const
+  libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real S_tilde) const
   {
     // Step 1
-    libMesh::Real _r = 0.0;
+    libMesh::Real r = 0.0;
 
-    _r = std::min(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
+    r = std::min(nu/(S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
 
     // Step 2
-    libMesh::Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
+    libMesh::Real g = r + this->_c_w2*(pow(r,6.0) - r);
 
     // Step 3
-    libMesh::Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
+    libMesh::Real fw = g*pow((1 + pow(this->_c_w3,6.0))/(pow(g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
 
-    return _fw;
+    return fw;
   }
 
 
