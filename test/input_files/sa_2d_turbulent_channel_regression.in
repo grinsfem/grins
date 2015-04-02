@@ -1,0 +1,112 @@
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      x_min = '0.0'
+      x_max = '5.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      n_elems_x = '20'
+      n_elems_y = '150'
+      element_type = 'QUAD4'
+
+    [../Redistribution]
+      function = '{x}{0.5*(1+(tanh((y-0.5)*3.0)/tanh(1.5)))}{z}'
+[]
+
+# Options for time solvers
+[unsteady-solver]
+transient = false
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 25
+max_linear_iterations = 1000
+
+#verify_analytic_jacobians = 1.e-6
+use_numerical_jacobians_only = 'true'
+[]
+
+# Visualization options
+[vis-options]
+output_vis = 'false'
+vis_output_file_prefix = 'turbulent_channel'
+output_format = 'ExodusII xdr'
+
+[Materials]
+
+[./Viscosity]
+
+#mu = '2.95456e-5' #[kg/m-s]
+mu = '2.434e-5'
+
+[]
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+#enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = FIRST
+P_order = FIRST
+
+viscosity_model = 'spalartallmaras'
+rho = 1.0
+
+#bc_ids = '3 2 0'
+#bc_types = 'parabolic_profile no_slip no_slip '
+
+bc_ids = '3 2 0'
+bc_types = 'general_velocity no_slip no_slip '
+
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'u'
+ic_values = '4*y*(1.0-y)'
+
+pin_pressure = true
+pin_value = 1.0
+pin_location = '2.5 0.5'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+turbulent_viscosity = 'nu'
+
+# Options for Spalart Allmaras physics
+[../SpalartAllmaras]
+
+TU_order = FIRST
+
+bc_ids = '0 2 3'
+bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
+#bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
+bc_variables = 'nu nu nu'
+bc_values = '0.0 0.0 0.0'
+#bc_values = '0.0 0.0 0.01*y*(1.0-y)'
+no_of_walls = 2
+wall_ids = '0 2'
+
+ic_ids = '0'
+ic_types = 'parsed'
+ic_variables = 'nu'
+ic_values = '0.1*y*(1.0-y)'
+
+[]

@@ -23,12 +23,25 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_INC_NAVIER_STOKES_BASE_H
-#define GRINS_INC_NAVIER_STOKES_BASE_H
+#ifndef GRINS_SPALART_ALLMARAS_H
+#define GRINS_SPALART_ALLMARAS_H
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
+#include "primitive_flow_fe_variables.h"
+#include "grins/turbulence_fe_variables.h"
+#include "grins/turbulence_models_base.h"
+#include "grins/spalart_allmaras_helper.h"
+#include "grins/spalart_allmaras_parameters.h"
+
+//Utils
+#include "grins/distance_function.h"
+
+//libMesh
+#include "libmesh/mesh.h"
+#include "libmesh/boundary_info.h"
+#include "libmesh/serial_mesh.h"
+#include "libmesh/boundary_mesh.h"
 
 namespace GRINS
 {
@@ -39,59 +52,63 @@ namespace GRINS
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
-   */
+  */
   template<class Viscosity>
-  class IncompressibleNavierStokesBase : public Physics
+  class SpalartAllmaras : public TurbulenceModelsBase<Viscosity>
   {
   public:
 
-    IncompressibleNavierStokesBase(const std::string& my_physics_name,
-                                   const std::string& core_physics_name,
-                                   const GetPot& input);
+    SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
-    ~IncompressibleNavierStokesBase();
-    
-    //virtual void read_input_options( const GetPot& input);
+    ~SpalartAllmaras();
 
-    //! Initialization of Navier-Stokes variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
     virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );    
+    virtual void init_context( AssemblyContext& context );
 
-    // Registers all parameters in this physics and in its property
-    // classes
-    virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
-    const;
+    // Element time derivative
+    virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
+
+    // Mass matrix part(s)
+    virtual void mass_residual( bool compute_jacobian,
+                                AssemblyContext& context,
+                                CachedValues& cache );
+
+    // A distance function to get distances from boundaries to qps
+    libMesh::AutoPtr<DistanceFunction> distance_function;
+
+    // Boundary mesh objected that will be updated using the wall ids
+    libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
-
+    // The flow variables
     PrimitiveFlowFEVariables _flow_vars;
 
-    //! Material parameters, read from input
-    /** \todo Create objects to allow for function specification */
-    libMesh::Number _rho;
+    // These are defined for each physics
+    TurbulenceFEVariables _turbulence_vars;
 
-    //! Viscosity object
-    Viscosity _mu;
- 
+    // Spalart Allmaras Helper object
+    SpalartAllmarasHelper _spalart_allmaras_helper;
+
+    //! Object handling the plethora of parameters
+    SpalartAllmarasParameters _sa_params;
+
+    // Wall ids set, to be read in, tells us which bc_id's correspond to walls
+    std::set<libMesh::boundary_id_type> _wall_ids;
+
+    // No of walls
+    unsigned int _no_of_walls;
+
   private:
-    IncompressibleNavierStokesBase();
+    SpalartAllmaras();
 
   };
 
 } //End namespace block
 
-#endif // GRINS_INC_NAVIER_STOKES_BASE_H
+#endif // GRINS_SPALART_ALLMARAS_H
