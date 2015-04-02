@@ -207,10 +207,10 @@ namespace GRINS
         libMesh::Real jac = JxW[qp];
 
 	// The physical viscosity
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+	libMesh::Real mu_qp = this->_mu(context, qp);
 
 	// The vorticity value
-	libMesh::Real _vorticity_value_qp = this->_spalart_allmaras_helper._vorticity(context, qp);
+	libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
 
 	// The flow velocity
 	libMesh::Number u,v;
@@ -222,35 +222,35 @@ namespace GRINS
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
 	//The source term
-	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
+	libMesh::Real S_tilde = this->_spalart_allmaras_helper.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp);
 
 	// The ft2 function needed for the negative S-A model
-	libMesh::Real _chi = nu/_mu_qp;
-	libMesh::Real _f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*pow(_chi, 2.0));
+	libMesh::Real chi = nu/mu_qp;
+	libMesh::Real f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*pow(chi, 2.0));
 
-	libMesh::Real _source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*(1 - _f_t2)*_S_tilde*nu;
+	libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*(1 - f_t2)*S_tilde*nu;
 	// For a negative turbulent viscosity nu < 0.0 we need to use a different production function
 	if(nu < 0.0)
 	  {
-	    _source_term = this->_spalart_allmaras_helper._cb1*(1 - this->_spalart_allmaras_helper._c_t3)*_vorticity_value_qp*nu;
+	    source_term = this->_spalart_allmaras_helper._cb1*(1 - this->_spalart_allmaras_helper._c_t3)*vorticity_value_qp*nu;
 	  }
 
 	// The wall destruction term
-	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
+	libMesh::Real fw = this->_spalart_allmaras_helper.destruction_fn(nu, (*distance_qp)(qp), S_tilde);
 
-	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*_fw - (this->_spalart_allmaras_helper._cb1/pow(this->_spalart_allmaras_helper._kappa, 2.0))*_f_t2)*pow(nu/(*distance_qp)(qp), 2.);
+	libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*fw - (this->_spalart_allmaras_helper._cb1/pow(this->_spalart_allmaras_helper._kappa, 2.0))*f_t2)*pow(nu/(*distance_qp)(qp), 2.);
 
 	// For a negative turbulent viscosity nu < 0.0 we need to use a different production function
 	if(nu < 0.0)
 	  {
-	    _destruction_term = -this->_spalart_allmaras_helper._cw1*pow(nu/((*distance_qp)(qp)), 2.0);
+	    destruction_term = -this->_spalart_allmaras_helper._cw1*pow(nu/((*distance_qp)(qp)), 2.0);
 	  }
 
-	libMesh::Real _fn1 = 1.0;
-	// For a negative turbulent viscosity, _fn1 needs to be calculated
+	libMesh::Real fn1 = 1.0;
+	// For a negative turbulent viscosity, fn1 needs to be calculated
 	if(nu < 0.0)
 	  {
-	    _fn1 = (this->_spalart_allmaras_helper._c_n1 + pow(_chi, 3.0))/(this->_spalart_allmaras_helper._c_n1 - pow(_chi, 3.0));
+	    fn1 = (this->_spalart_allmaras_helper._c_n1 + pow(chi, 3.0))/(this->_spalart_allmaras_helper._c_n1 - pow(chi, 3.0));
 	  }
 
         // First, an i-loop over the viscosity degrees of freedom.
@@ -258,9 +258,9 @@ namespace GRINS
           {
             Fnu(i) += jac *
               ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
-                +_source_term*nu_phi[i][qp] // source term
-		+ (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+(_fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term
-		- _destruction_term*nu_phi[i][qp]); // destruction term
+                +source_term*nu_phi[i][qp] // source term
+		+ (1./this->_spalart_allmaras_helper._sigma)*(-(mu_qp+(fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term
+		- destruction_term*nu_phi[i][qp]); // destruction term
 
             // Compute the jacobian if not using numerical jacobians
             if (compute_jacobian)

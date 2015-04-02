@@ -76,7 +76,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::Real SpalartAllmarasHelper::_vorticity(AssemblyContext& context, unsigned int qp) const
+  libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const
   {
     libMesh::Gradient grad_u, grad_v;
     grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
@@ -99,7 +99,8 @@ namespace GRINS
     return vorticity_value;
   }
 
-  libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real vorticity_value) const
+  libMesh::Real SpalartAllmarasHelper::source_fn(libMesh::Number nu, libMesh::Real mu,
+                                                 libMesh::Real wall_distance, libMesh::Real vorticity_value) const
   {
     // Step 1
     libMesh::Real chi = nu/mu;
@@ -131,7 +132,8 @@ namespace GRINS
     return S_tilde;
   }
 
-  libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real S_tilde) const
+  libMesh::Real SpalartAllmarasHelper::destruction_fn(libMesh::Number nu, libMesh::Real wall_distance,
+                                                      libMesh::Real S_tilde) const
   {
     // Step 1
     libMesh::Real r = 0.0;

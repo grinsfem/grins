@@ -46,13 +46,15 @@ namespace GRINS
     void init_variables( libMesh::FEMSystem* system );
 
     // The vorticity function
-    libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp) const;
+    libMesh::Real vorticity(AssemblyContext& context, unsigned int qp) const;
 
     // The source function \tilde{S}
-    libMesh::Real _source_fn( libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
+    libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
+                             libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
 
     // The destruction function f_w(nu)
-    libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real S_tilde) const;
+    libMesh::Real destruction_fn(libMesh::Number nu, libMesh::Real wall_distance,
+                                 libMesh::Real S_tilde) const;
 
     //! Spalart Allmaras model constants
     libMesh::Number _cb1, _sigma, _cb2, _cw1;
