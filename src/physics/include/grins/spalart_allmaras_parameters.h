@@ -89,6 +89,8 @@ namespace GRINS
     libMesh::Real get_c_n1() const
     { return _c_n1;}
 
+  protected:
+
     //! Constants specific to the calculation of the source function
     libMesh::Real _kappa, _cv1, _cv2, _cv3;
 
