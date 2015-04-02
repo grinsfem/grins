@@ -227,13 +227,13 @@ namespace GRINS
 
         // The ft2 function needed for the negative S-A model
         libMesh::Real chi = nu/mu_qp;
-        libMesh::Real f_t2 = this->_sa_params._c_t3*exp(-this->_sa_params._c_t4*chi*chi);
+        libMesh::Real f_t2 = this->_sa_params.get_c_t3()*exp(-this->_sa_params.get_c_t4()*chi*chi);
 
-        libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_sa_params._cb1*(1 - f_t2)*S_tilde*nu;
+        libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
-            source_term = this->_sa_params._cb1*(1 - this->_sa_params._c_t3)*vorticity_value_qp*nu;
+            source_term = this->_sa_params.get_cb1()*(1 - this->_sa_params.get_c_t3())*vorticity_value_qp*nu;
           }
 
         // The wall destruction term
@@ -241,13 +241,13 @@ namespace GRINS
 
         libMesh::Real nud = nu/(*distance_qp)(qp);
         libMesh::Real nud2 = nud*nud;
-        libMesh::Real kappa2 = (this->_sa_params._kappa)*(this->_sa_params._kappa);
-        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params._cw1*fw - (this->_sa_params._cb1/kappa2)*f_t2)*nud2;
+        libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
+        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
-            destruction_term = -this->_sa_params._cw1*nud2;
+            destruction_term = -this->_sa_params.get_cw1()*nud2;
           }
 
         libMesh::Real fn1 = 1.0;
@@ -255,7 +255,7 @@ namespace GRINS
         if(nu < 0.0)
           {
             libMesh::Real chi3 = chi*chi*chi;
-            fn1 = (this->_sa_params._c_n1 + chi3)/(this->_sa_params._c_n1 - chi3);
+            fn1 = (this->_sa_params.get_c_n1() + chi3)/(this->_sa_params.get_c_n1() - chi3);
           }
 
         // First, an i-loop over the viscosity degrees of freedom.
@@ -264,7 +264,7 @@ namespace GRINS
             Fnu(i) += jac *
               ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
                 +source_term*nu_phi[i][qp] // source term
-                + (1./this->_sa_params._sigma)*(-(mu_qp+(fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_sa_params._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term
+                + (1./this->_sa_params.get_sigma())*(-(mu_qp+(fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_sa_params.get_cb2()*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term
                 - destruction_term*nu_phi[i][qp]); // destruction term
 
             // Compute the jacobian if not using numerical jacobians
