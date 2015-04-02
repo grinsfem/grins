@@ -40,7 +40,7 @@
 #include "libmesh/fe_base.h"
 #include "libmesh/fe_interface.h"
 #include "libmesh/mesh_function.h"
-#include "libmesh/mesh.h"
+#include "libmesh/serial_mesh.h"
 #include "libmesh/edge_edge2.h"
 #include "libmesh/mesh_generation.h"
 #include "libmesh/linear_implicit_system.h"
