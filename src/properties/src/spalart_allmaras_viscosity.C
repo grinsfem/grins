@@ -35,20 +35,20 @@ namespace GRINS
     _turbulence_vars(input, spalart_allmaras)
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
-	{
-	  std::cerr<<"No viscosity has been specified."<<std::endl;
-	  
-	  libmesh_error();
-	}
+      {
+        std::cerr<<"No viscosity has been specified."<<std::endl;
+
+        libmesh_error();
+      }
     return;
   }
-    
+
   template<class Mu>
   void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
-  {    
+  {
     this->_turbulence_vars.init(system);
   }
-    
+
   template<class Mu>
   SpalartAllmarasViscosity<Mu>::~SpalartAllmarasViscosity()
   {
