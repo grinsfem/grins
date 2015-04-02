@@ -52,7 +52,7 @@ namespace GRINS
   public:
 
     SpalartAllmarasViscosity( const GetPot& input );
-    ~SpalartAllmarasViscosity();
+    ~SpalartAllmarasViscosity(){};
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
@@ -76,41 +76,7 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   //inline
-  template<class Mu>
-  libMesh::Real SpalartAllmarasViscosity<Mu>::operator()(AssemblyContext& context, unsigned int qp) const
-  {
-    // The physical viscosity
-    libMesh::Real mu_physical = this->_mu(context, qp);
 
-    // The unscaled turbulent viscosity (the nu the SA physics solves for)
-    libMesh::Real nu = context.interior_value(this->_turbulence_vars.nu_var(),qp);
-
-    // Assert that mu_value is greater than 0
-    if(nu < 0.0)
-      {
-        libmesh_warning("Negative turbulent viscosity encountered !");
-
-        // We are using a negative S-A model, so will set eddy viscosity to zero
-        // if the turbulent viscosity nu < 0.0
-        nu = 0.0;
-      }
-
-    // Step 1
-    libMesh::Real chi = nu/mu_physical;
-
-    // Step 2
-    libMesh::Real cv1 = 7.1;
-    libMesh::Real chi3 = chi*chi*chi;
-    libMesh::Real fv1 = chi3/(chi3 + cv1*cv1*cv1);
-
-    // Step 3
-    libMesh::Real mu_turbulent = nu*fv1;
-
-    // Compute the value of the total viscosity and return it
-    libMesh::Number mu_value = mu_turbulent + mu_physical; // Turbulent viscosity + physical viscosity
-
-    return mu_value;
-  }
 
   template<class Mu>
   libMesh::Real SpalartAllmarasViscosity<Mu>::operator()( const libMesh::Point& p, const libMesh::Real time )
