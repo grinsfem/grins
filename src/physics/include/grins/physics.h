@@ -35,6 +35,7 @@
 #include "grins/var_typedefs.h"
 #include "grins/grins_physics_names.h"
 #include "grins/cached_values.h"
+#include "grins/parameter_user.h"
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -54,6 +55,9 @@ namespace libMesh
 
   class FEMSystem;
   class Elem;
+
+  template <typename Scalar>
+  class ParameterMultiPointer;
 }
 
 //! GRINS namespace
@@ -99,7 +103,7 @@ namespace GRINS
   //  *_time_derivative correspond to calculating terms for F(u)
   //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
 
-  class Physics
+  class Physics : public ParameterUser
   {
 
   public:

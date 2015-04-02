@@ -33,10 +33,17 @@
 #include "libmesh/diff_qoi.h"
 
 // GRINS
+#include "grins/parameter_user.h"
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
 class GetPot;
+
+namespace libMesh
+{
+  template <typename Scalar>
+  class ParameterMultiPointer;
+}
 
 namespace GRINS
 {
@@ -44,7 +51,7 @@ namespace GRINS
   class MultiphysicsSystem;
   class AssemblyContext;
 
-  class QoIBase
+  class QoIBase : public ParameterUser
   {
   public:
 

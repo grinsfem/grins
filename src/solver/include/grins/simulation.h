@@ -37,6 +37,7 @@
 #include "grins/grins_physics_names.h"
 #include "grins/nbc_container.h"
 #include "grins/dbc_container.h"
+#include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
 
 // libMesh
@@ -107,6 +108,9 @@ namespace GRINS
     void init_qois( const GetPot& input, SimulationBuilder& sim_builder );
 
     //! Helper function
+    void init_params( const GetPot& input, SimulationBuilder& sim_builder );
+
+    //! Helper function
     void init_restart( const GetPot& input, SimulationBuilder& sim_builder,
                        const libMesh::Parallel::Communicator &comm );
 
@@ -145,6 +149,10 @@ namespace GRINS
     unsigned int _timesteps_per_perflog;
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
+
+    ParameterManager _adjoint_parameters;
+
+    ParameterManager _forward_parameters;
 
   private:
 

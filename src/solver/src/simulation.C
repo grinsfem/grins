@@ -34,6 +34,9 @@
 
 // libMesh
 #include "libmesh/dof_map.h"
+#include "libmesh/parameter_vector.h"
+#include "libmesh/qoi_set.h"
+#include "libmesh/sensitivity_data.h"
 
 namespace GRINS
 {
@@ -64,6 +67,8 @@ namespace GRINS
     this->init_multiphysics_system(input,sim_builder);
 
     this->init_qois(input,sim_builder);
+
+    this->init_params(input,sim_builder);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
@@ -103,6 +108,8 @@ namespace GRINS
     this->init_multiphysics_system(input,sim_builder);
 
     this->init_qois(input,sim_builder);
+
+    this->init_params(input,sim_builder);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
@@ -176,6 +183,44 @@ namespace GRINS
     return;
   }
 
+  void Simulation::init_params( const GetPot& input, SimulationBuilder& sim_builder )
+  {
+    unsigned int n_adjoint_parameters =
+      input.vector_variable_size("QoI/adjoint_sensitivity_parameters");
+
+    unsigned int n_forward_parameters =
+      input.vector_variable_size("QoI/forward_sensitivity_parameters");
+
+    // If the user actually asks for parameter sensitivities, then we
+    // set up the parameter vectors to use.
+    if ( n_adjoint_parameters )
+      {
+        CompositeQoI* qoi =
+          libMesh::cast_ptr<CompositeQoI*>
+            (this->_multiphysics_system->get_qoi());
+
+        libmesh_assert(qoi);
+
+        _adjoint_parameters.initialize
+          (input, "QoI/adjoint_sensitivity_parameters",
+           *this->_multiphysics_system, *qoi);
+      }
+
+    if ( n_forward_parameters )
+      {
+        CompositeQoI* qoi =
+          libMesh::cast_ptr<CompositeQoI*>
+            (this->_multiphysics_system->get_qoi());
+
+        libmesh_assert(qoi);
+
+        _forward_parameters.initialize
+          (input, "QoI/forward_sensitivity_parameters",
+           *this->_multiphysics_system, *qoi);
+      }
+  }
+
+
   void Simulation::init_restart( const GetPot& input, SimulationBuilder& sim_builder,
                                  const libMesh::Parallel::Communicator &comm )
   {
@@ -242,11 +287,65 @@ namespace GRINS
 
     _solver->solve( context );
 
-    if( this->_print_qoi )
+    if ( this->_print_qoi )
       {
         _multiphysics_system->assemble_qoi();
         const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
+      }
+
+    if ( _adjoint_parameters.parameter_vector.size() )
+      {
+        // Default: "calculate sensitivities for all QoIs"
+        libMesh::QoISet qois;
+
+        const libMesh::ParameterVector & params =
+          _adjoint_parameters.parameter_vector;
+
+        libMesh::SensitivityData sensitivities
+          (qois, *this->_multiphysics_system, params);
+
+        _solver->adjoint_qoi_parameter_sensitivity
+          (context, qois, params, sensitivities);
+
+        std::cout << "Adjoint sensitivities:" << std::endl;
+
+        for (unsigned int q=0;
+             q != this->_multiphysics_system->qoi.size(); ++q)
+          {
+            for (unsigned int p=0; p != params.size(); ++p)
+              {
+                std::cout << "dq" << q << "/dp" << p << " = " <<
+                        sensitivities[q][p] << std::endl;
+              }
+          }
+      }
+
+    if ( _forward_parameters.parameter_vector.size() )
+      {
+        // Default: "calculate sensitivities for all QoIs"
+        libMesh::QoISet qois;
+
+        const libMesh::ParameterVector & params =
+          _forward_parameters.parameter_vector;
+
+        libMesh::SensitivityData sensitivities
+          (qois, *this->_multiphysics_system, params);
+
+        _solver->forward_qoi_parameter_sensitivity
+          (context, qois, params, sensitivities);
+
+        std::cout << "Forward sensitivities:" << std::endl;
+
+        for (unsigned int q=0;
+             q != this->_multiphysics_system->qoi.size(); ++q)
+          {
+            for (unsigned int p=0; p != params.size(); ++p)
+              {
+                std::cout << "dq" << q << "/dp" << p << " = " <<
+                        sensitivities[q][p] << std::endl;
+              }
+          }
       }
 
     return;

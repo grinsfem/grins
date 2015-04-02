@@ -23,39 +23,41 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
+// This class
+#include "grins/parameter_user.h"
 
-//GRINS
-#include "grins/grins_solver.h"
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/parameter_multipointer.h"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  void ParameterUser::set_parameter( libMesh::Number & param_variable,
+                                     const GetPot& input,
+                                     const std::string & param_name,
+                                     libMesh::Number param_default )
   {
-  public:
+    param_variable = input(param_name, param_default);
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
+    libmesh_assert_equal_to (_my_parameters.count(param_name), 0);
 
-    virtual void solve( SolverContext& context );
+    _my_parameters[param_name] = &param_variable;
+  }
 
-    virtual void adjoint_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
+  void ParameterUser::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    std::map<std::string, libMesh::Number*>::const_iterator it =
+      _my_parameters.find(param_name);
 
-    virtual void forward_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
+    if (it != _my_parameters.end())
+      {
+        std::cout << _my_name << " uses parameter " << param_name
+                  << std::endl;
+        param_pointer.push_back(it->second);
+      }
+  }
 
-  protected:
-
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
-
-  };
 } // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H

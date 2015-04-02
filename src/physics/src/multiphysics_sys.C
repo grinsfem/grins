@@ -32,6 +32,7 @@
 // libMesh
 #include "libmesh/composite_function.h"
 #include "libmesh/getpot.h"
+#include "libmesh/parameter_multipointer.h"
 
 namespace GRINS
 {
@@ -191,6 +192,22 @@ namespace GRINS
 
     return;
   }
+
+  void MultiphysicsSystem::register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer )
+  {
+    //Loop over each physics to ask each for the requested parameter
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+         physics_iter != _physics_list.end();
+         physics_iter++ )
+      {
+        (physics_iter->second)->register_parameter( param_name,
+                                                    param_pointer );
+      }
+  }
+
+
 
   void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
   {

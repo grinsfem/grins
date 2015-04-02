@@ -69,6 +69,13 @@ namespace GRINS
 
     unsigned int n_qois() const;
 
+    //! Each QoI will register its copy(s) of an independent variable
+    //  named in this call.
+    void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer)
+    const;
+
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.

@@ -23,39 +23,51 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
+#ifndef PARAMETER_MANAGER_H
+#define PARAMETER_MANAGER_H
 
-//GRINS
-#include "grins/grins_solver.h"
+// GRINS
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/parameter_vector.h"
+
+// C++
+#include "boost/tr1/memory.hpp"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  // Forward declarations
+  class MultiphysicsSystem;
+  class CompositeQoI;
+
+
+
+  //! Simple class to hold and initialize a ParameterVector
+  /*! Allows the user to specify parameters by name in the input file.
+   */
+  class ParameterManager
   {
   public:
+    
+    ParameterManager() {}
+    virtual ~ParameterManager() {}
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
+    virtual void initialize( const GetPot& input, 
+                             const std::string & parameters_varname,
+                             GRINS::MultiphysicsSystem & system,
+                             GRINS::CompositeQoI & qoi);
 
-    virtual void solve( SolverContext& context );
+    /*
+     * Ordered list of names of independent parameters to study
+     */
+    std::vector<std::string> parameter_name_list;
 
-    virtual void adjoint_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
-
-    virtual void forward_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
-
-  protected:
-
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
-
+    /*
+     * Ordered vector of parameter accessors
+     */
+    libMesh::ParameterVector parameter_vector;
   };
-} // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+
+} // end namespace GRINS
+#endif // PARAMETER_MANAGER_H
