@@ -180,6 +180,22 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  // Instantiate classes whose only valid viscosity models are turbulent
+  template <template<typename> class Subclass>
+  PhysicsPtr new_turb_mu_class(const std::string& physics_to_add,
+                               const GetPot& input)
+  {
+    std::string viscosity =
+      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+    if( viscosity == "spalartallmaras" )
+      return PhysicsPtr
+        (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+
+    visc_error(physics_to_add, viscosity);
+    return PhysicsPtr();
+  }
+
   template <template<typename> class Subclass>
   PhysicsPtr new_k_class(const std::string& physics_to_add,
                          const GetPot& input)
