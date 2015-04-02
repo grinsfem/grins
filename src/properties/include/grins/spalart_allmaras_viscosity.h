@@ -23,15 +23,23 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_CONSTANT_VISCOSITY_H
-#define GRINS_CONSTANT_VISCOSITY_H
+#ifndef GRINS_SPALART_ALLMARAS_VISCOSITY_H
+#define GRINS_SPALART_ALLMARAS_VISCOSITY_H
 
 //GRINS
 #include "grins/assembly_context.h"
-#include "grins/parameter_user.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/auto_ptr.h"
+#include "libmesh/function_base.h"
+
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/turbulence_fe_variables.h"
 
 #include "libmesh/fem_system.h"
 
@@ -39,65 +47,37 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantViscosity : public ParameterUser
+  template<class Viscosity>
+  class SpalartAllmarasViscosity
   {
   public:
 
-    ConstantViscosity( const GetPot& input );
-    ~ConstantViscosity();
-
-    libMesh::Real operator()() const;
+    SpalartAllmarasViscosity( const GetPot& input );
+    ~SpalartAllmarasViscosity(){};
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
-    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
-
-    libMesh::Real operator()( const libMesh::Real T ) const;
-
-    libMesh::Real deriv( const libMesh::Real T ) const;
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 )
+    { return _mu(p,time); }
 
     void init(libMesh::FEMSystem* system);
 
+  protected:
+
+    //! Viscosity object (so we have access to the physical viscosity)
+    Viscosity _mu;
+
+    // These are defined for each physics
+    TurbulenceFEVariables _turbulence_vars;
+
+    SpalartAllmarasParameters _sa_params;
+
   private:
 
-    ConstantViscosity();
-
-    libMesh::Real _mu;
+    SpalartAllmarasViscosity();
 
   };
 
-  /* ------------------------- Inline Functions -------------------------*/
-  inline
-  libMesh::Real ConstantViscosity::operator()() const
-  {
-    return _mu;
-  }
-
-  inline
-  libMesh::Real ConstantViscosity::operator()(AssemblyContext& /*context*/, unsigned int /*qp*/) const
-  {
-    return _mu;
-  }
-
-  inline
-  libMesh::Real ConstantViscosity::operator()( const libMesh::Point& /*p*/,
-                                               const libMesh::Real /*time*/ )
-  {
-    return _mu;
-  }
-
-  inline
-  libMesh::Real ConstantViscosity::operator()( const libMesh::Real /*T*/ ) const
-  {
-    return (*this)();
-  }
-
-  inline
-  libMesh::Real ConstantViscosity::deriv( const libMesh::Real /*T*/ ) const
-  {
-    return 0.0;
-  }
-
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_VISCOSITY_H
+#endif // GRINS_SPALART_ALLMARAS_VISCOSITY_H

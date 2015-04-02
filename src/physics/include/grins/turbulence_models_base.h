@@ -23,62 +23,43 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_INC_NAVIER_STOKES_BASE_H
-#define GRINS_INC_NAVIER_STOKES_BASE_H
+#ifndef GRINS_TURBULENCE_MODELS_BASE_H
+#define GRINS_TURBULENCE_MODELS_BASE_H
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
+#include "grins/turbulence_fe_variables.h"
+
+//Utils
+#include "grins/distance_function.h"
 
 namespace GRINS
 {
 
-  //! Physics class for Incompressible Navier-Stokes
+  //! Physics class for Turbulence Models
   /*!
-    This physics class implements the classical Incompressible Navier-Stokes equations.
+    This physics class implements the various turbulence models that can be used alongside 
+    NS to model turbulent flows.
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
    */
   template<class Viscosity>
-  class IncompressibleNavierStokesBase : public Physics
+  class TurbulenceModelsBase : public Physics
   {
   public:
 
-    IncompressibleNavierStokesBase(const std::string& my_physics_name,
-                                   const std::string& core_physics_name,
-                                   const GetPot& input);
+    TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
-    ~IncompressibleNavierStokesBase();
-    
-    //virtual void read_input_options( const GetPot& input);
-
-    //! Initialization of Navier-Stokes variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
     virtual void init_variables( libMesh::FEMSystem* system );
 
-    //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    // Context initialization
-    virtual void init_context( AssemblyContext& context );    
-
-    // Registers all parameters in this physics and in its property
-    // classes
-    virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
-    const;
-
+    ~TurbulenceModelsBase();
+       
   protected:
 
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
-
-    PrimitiveFlowFEVariables _flow_vars;
     
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
@@ -86,12 +67,12 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
-    
+        
   private:
-    IncompressibleNavierStokesBase();
+    TurbulenceModelsBase();
 
   };
 
 } //End namespace block
 
-#endif // GRINS_INC_NAVIER_STOKES_BASE_H
+#endif // GRINS_TURBULENCE_MODELS_BASE_H

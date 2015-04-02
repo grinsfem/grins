@@ -118,7 +118,7 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("IncompressibleNavierStokes::element_time_derivative");
 #endif
-
+    
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
     const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
@@ -228,7 +228,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-	// Compute the viscosity at this qp
+	// Compute the viscosity at this qp	
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_is_axisymmetric )

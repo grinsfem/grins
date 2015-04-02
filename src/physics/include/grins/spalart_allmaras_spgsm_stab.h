@@ -22,46 +22,40 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// This class
-#include "grins/constant_viscosity.h"
+#ifndef GRINS_SPALART_ALLMARAS_SPGSM_STAB_H
+#define GRINS_SPALART_ALLMARAS_SPGSM_STAB_H
 
 //GRINS
-#include "grins/grins_physics_names.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/spalart_allmaras_stab_base.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : ParameterUser("ConstantViscosity"),
-      _mu(1.0)
+  //! Adds SUPG stabilization to the SpalartAllmaras 'physics'
+  template<class Viscosity>
+  class SpalartAllmarasSPGSMStabilization : public SpalartAllmarasStabilizationBase<Viscosity>
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
 
-	// Try and get the viscosity from other specifications
-        this->set_parameter
-	  (_mu, input,
-           "Physics/"+incompressible_navier_stokes+"/mu", _mu);
-	
-      }
-    else
-      this->set_parameter
-        (_mu, input, "Materials/Viscosity/mu", _mu);
-  }
+  public:
 
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
-  {
-    return;
-  }
+    SpalartAllmarasSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    virtual ~SpalartAllmarasSPGSMStabilization();
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
+    virtual void init_variables( libMesh::FEMSystem* system );
 
-} // namespace GRINS
+    virtual void element_time_derivative( bool compute_jacobian,
+					  AssemblyContext& context,
+					  CachedValues& cache );
+    
+    virtual void mass_residual( bool compute_jacobian,
+				AssemblyContext& context,
+				CachedValues& cache );
+    
+  private:
+
+    SpalartAllmarasSPGSMStabilization();
+
+  };
+
+} // end namespace GRINS
+
+#endif // GRINS_SPALART_ALLMARAS_SPGSM_STAB_H

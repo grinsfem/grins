@@ -22,46 +22,36 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 // This class
-#include "grins/constant_viscosity.h"
-
-//GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/turbulence_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
+
+// GRINS
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : ParameterUser("ConstantViscosity"),
-      _mu(1.0)
-  {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
-
-	// Try and get the viscosity from other specifications
-        this->set_parameter
-	  (_mu, input,
-           "Physics/"+incompressible_navier_stokes+"/mu", _mu);
-	
-      }
-    else
-      this->set_parameter
-        (_mu, input, "Materials/Viscosity/mu", _mu);
-  }
-
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
+  TurbulenceVariables::TurbulenceVariables( const GetPot& input )
+    :  _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
   {
     return;
   }
 
-  ConstantViscosity::~ConstantViscosity()
+  TurbulenceVariables::~TurbulenceVariables()
   {
     return;
   }
 
-} // namespace GRINS
+  void TurbulenceVariables::init( libMesh::FEMSystem* system )
+  {
+    libmesh_assert( system->has_variable( _nu_var_name ) );
+    
+    _nu_var = system->variable_number( _nu_var_name );
+    
+    return;
+  }
+
+} // end namespace GRINS

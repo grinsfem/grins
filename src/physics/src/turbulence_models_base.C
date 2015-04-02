@@ -24,44 +24,50 @@
 
 
 // This class
-#include "grins/constant_viscosity.h"
+#include "grins/turbulence_models_base.h"
 
-//GRINS
+// GRINS
+#include "grins/assembly_context.h"
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/grins_physics_names.h"
+#include "grins/turbulence_models_macro.h"
 
 // libMesh
+#include "libmesh/utility.h"
+#include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : ParameterUser("ConstantViscosity"),
-      _mu(1.0)
-  {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
-
-	// Try and get the viscosity from other specifications
-        this->set_parameter
-	  (_mu, input,
-           "Physics/"+incompressible_navier_stokes+"/mu", _mu);
-	
-      }
-    else
-      this->set_parameter
-        (_mu, input, "Materials/Viscosity/mu", _mu);
-  }
-
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
+  template<class Mu>
+  TurbulenceModelsBase<Mu>::TurbulenceModelsBase(const std::string& physics_name, const GetPot& input )
+    : Physics(physics_name, input),
+      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
+      _mu(input)
   {
     return;
   }
 
-  ConstantViscosity::~ConstantViscosity()
+  template<class Mu>
+  void TurbulenceModelsBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
+    this->_dim = system->get_mesh().mesh_dimension();
+        
+    this->_mu.init(system); 
+   
     return;
   }
 
+  template<class Mu>
+  TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
+  {
+    return;
+  }  
+     
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_TURBULENCE_MODELS_SUBCLASS(TurbulenceModelsBase);

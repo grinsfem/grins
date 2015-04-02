@@ -52,6 +52,11 @@ namespace GRINS
       return;
       }
 
+  void ParsedViscosity::init( libMesh::FEMSystem* system )
+  {
+    return;
+  }
+
   ParsedViscosity::~ParsedViscosity()
   {
     return;

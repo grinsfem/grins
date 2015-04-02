@@ -108,6 +108,14 @@ int main(int argc, char* argv[])
   grins.attach_grvy_timer( &grvy_timer );
 #endif
 
+std::vector<std::string> ufo_vars = libMesh_inputfile.unidentified_variables();
+if( !ufo_vars.empty())
+{
+  std::cerr << "WARNING: UNUSED INPUT VARIABLES" << std::endl;
+  for( std::vector<std::string>::iterator it = ufo_vars.begin(); it != ufo_vars.end(); ++it )
+      std::cerr << "unused variable: " << *it << std::endl;
+}
+
 grins.run();
 
 #ifdef GRINS_USE_GRVY_TIMERS

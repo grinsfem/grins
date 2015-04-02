@@ -23,45 +23,45 @@
 //-----------------------------------------------------------------------el-
 
 
-// This class
-#include "grins/constant_viscosity.h"
+#ifndef GRINS_SPALART_ALLMARAS_HELPER_H
+#define GRINS_SPALART_ALLMARAS_HELPER_H
 
 //GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/physics.h"
+#include "grins/primitive_flow_variables.h"
 
-// libMesh
-#include "libmesh/getpot.h"
+//Utils
+#include "grins/distance_function.h"
 
 namespace GRINS
 {
-
-  ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : ParameterUser("ConstantViscosity"),
-      _mu(1.0)
+  class SpalartAllmarasHelper
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_warning("No Materials/Viscosity/mu specified!\n");
+  public:
 
-	// Try and get the viscosity from other specifications
-        this->set_parameter
-	  (_mu, input,
-           "Physics/"+incompressible_navier_stokes+"/mu", _mu);
-	
-      }
-    else
-      this->set_parameter
-        (_mu, input, "Materials/Viscosity/mu", _mu);
-  }
+    SpalartAllmarasHelper(const GetPot& input);
 
-  void ConstantViscosity::init( libMesh::FEMSystem* system )
-  {
-    return;
-  }
+    virtual ~SpalartAllmarasHelper(){};
 
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
+    void init_variables( libMesh::FEMSystem* system );
 
-} // namespace GRINS
+    // The vorticity function
+    libMesh::Real vorticity(AssemblyContext& context, unsigned int qp) const;
+
+  protected:
+
+    // Physical dimension
+    unsigned int _dim;
+
+    // The flow variables
+    PrimitiveFlowVariables _flow_vars;
+
+  private:
+
+    SpalartAllmarasHelper();
+
+  };
+
+} //End namespace block
+
+#endif // GRINS_SPALART_ALLMARAS_HELPER_H
