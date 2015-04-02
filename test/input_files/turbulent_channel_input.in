@@ -11,9 +11,6 @@ domain_x2_max = 1.0
 # Options for time solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.01
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -72,13 +69,6 @@ rho = 1.0
 bc_ids = '3 2 0'
 bc_types = 'general_velocity no_slip no_slip '
 
-parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_coeffs_3 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_var_1 = 'u'
-parabolic_profile_var_3 = 'u'
-parabolic_profile_fix_1 = 'v'
-parabolic_profile_fix_3 = 'v'
-
 ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'u'
@@ -99,8 +89,6 @@ turbulent_viscosity = 'nu'
 [../SpalartAllmaras]
 
 TU_order = FIRST
-
-rho = 1.0
 
 bc_ids = '0 2 3'
 bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
