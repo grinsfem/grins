@@ -53,8 +53,7 @@ namespace GRINS
     libMesh::Real chi = nu/mu;
 
     // Step 2
-    libMesh::Real chi3 = chi*chi*chi;
-    libMesh::Real fv1 = chi3/(chi3 + _cv1*_cv1*_cv1);
+    libMesh::Real fv1 = this->fv1(chi);
 
     // Step 3
     libMesh::Real fv2 = 1 - (chi/(1 + chi*fv1));
