@@ -50,6 +50,10 @@ namespace GRINS
     libMesh::Real destruction_fn( libMesh::Number nu, libMesh::Real wall_distance,
                                   libMesh::Real S_tilde) const;
 
+    //! Helper function
+    /*! This expression appears in a couple of places so we provide a function for it*/
+    libMesh::Real fv1( libMesh::Real chi ) const;
+
     libMesh::Real get_kappa() const
     { return _kappa;}
 
@@ -115,6 +119,16 @@ namespace GRINS
     SpalartAllmarasParameters();
 
   };
+
+  inline
+  libMesh::Real SpalartAllmarasParameters::fv1( libMesh::Real chi ) const
+  {
+    libMesh::Real chi3 = chi*chi*chi;
+    libMesh::Real cv1 = this->get_cv1();
+    libMesh::Real cv13 = cv1*cv1*cv1;
+
+    return chi3/(chi3 + cv13);
+  }
 
 } // end namespace GRINS
 
