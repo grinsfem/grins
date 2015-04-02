@@ -45,20 +45,20 @@ namespace GRINS
 
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
-    : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables      
-      _flow_vars(input,incompressible_navier_stokes),
-      _turbulence_vars(input, spalart_allmaras),      
-      _spalart_allmaras_helper(input),
-      _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0))      
-  {    
+    : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
+    _flow_vars(input,incompressible_navier_stokes),
+    _turbulence_vars(input, spalart_allmaras),
+    _spalart_allmaras_helper(input),
+    _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0))
+  {
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
       {
 	_wall_ids.insert(input("Physics/"+spalart_allmaras+"/wall_ids", 0, i ));
       }
-    
+
     std::cout<<"No of walls: "<<_no_of_walls<<std::endl;
-    
+
     for( std::set<libMesh::boundary_id_type>::iterator b_id = _wall_ids.begin(); b_id != _wall_ids.end(); ++b_id )
       {
 	std::cout<<"Boundary Id: "<<*b_id<<std::endl;
@@ -66,7 +66,7 @@ namespace GRINS
 
     // This is deleted in the base class
     this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
-    
+
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     return;
@@ -84,26 +84,26 @@ namespace GRINS
     // Init base class.
     TurbulenceModelsBase<Mu>::init_variables(system);
 
-    this->_turbulence_vars.init(system); 
-    this->_flow_vars.init(system); 
-    
+    this->_turbulence_vars.init(system);
+    this->_flow_vars.init(system);
+
     // Init the variables belonging to SA helper
     _spalart_allmaras_helper.init_variables(system);
 
-    // Initialize Boundary Mesh 
+    // Initialize Boundary Mesh
     this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , this->_dim));
 
     // Use the _wall_ids set to build the boundary mesh object
-    (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);        
+    (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);
 
     //this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), *boundary_mesh));
-    
+
     // For now, we are hacking this. Without this initialize function being called
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-                     
+
     return;
   }
 
@@ -131,27 +131,27 @@ namespace GRINS
 
   template<class Mu>
   void SpalartAllmaras<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {    
+  {
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
     system->time_evolving(this->_turbulence_vars.nu_var());
-    
+
     return;
   }
- 
+
   template<class Mu>
   void SpalartAllmaras<Mu>::element_time_derivative( bool compute_jacobian,
-                                                            AssemblyContext& context,
-                                                            CachedValues& /*cache*/ )
+                                                     AssemblyContext& context,
+                                                     CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmaras::element_time_derivative");
 #endif
-    
-    // Get a pointer to the current element, we need this for computing 
+
+    // Get a pointer to the current element, we need this for computing
     // the distance to wall for the  quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
-            
+
     // We get some references to cell-specific data that
     // will be used to assemble the linear system.
 
@@ -167,7 +167,7 @@ namespace GRINS
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
-    
+
     // The number of local degrees of freedom in each variable.
     const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
 
@@ -180,7 +180,7 @@ namespace GRINS
     //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
 
     libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
-    
+
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
     // gradient from the previous timestep.  This must be
@@ -199,31 +199,31 @@ namespace GRINS
       {
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number nu;
-        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp); 
-	
+        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp);
+
         libMesh::Gradient grad_nu;
         grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
 
         libMesh::Real jac = JxW[qp];
-	
-	// The physical viscosity	
+
+	// The physical viscosity
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
 	// The vorticity value
 	libMesh::Real _vorticity_value_qp = this->_spalart_allmaras_helper._vorticity(context, qp);
-   
+
 	// The flow velocity
 	libMesh::Number u,v;
 	u = context.interior_value(this->_flow_vars.u_var(), qp);
 	v = context.interior_value(this->_flow_vars.v_var(), qp);
-	
+
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
 	//The source term
-	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);	
-	    
+	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);
+
 	// The ft2 function needed for the negative S-A model
 	libMesh::Real _chi = nu/_mu_qp;
 	libMesh::Real _f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*pow(_chi, 2.0));
@@ -237,35 +237,36 @@ namespace GRINS
 
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
-	
+
 	libMesh::Real _destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*_fw - (this->_spalart_allmaras_helper._cb1/pow(this->_spalart_allmaras_helper._kappa, 2.0))*_f_t2)*pow(nu/(*distance_qp)(qp), 2.);
+
 	// For a negative turbulent viscosity nu < 0.0 we need to use a different production function
 	if(nu < 0.0)
 	  {
 	    _destruction_term = -this->_spalart_allmaras_helper._cw1*pow(nu/((*distance_qp)(qp)), 2.0);
 	  }
-	
+
 	libMesh::Real _fn1 = 1.0;
 	// For a negative turbulent viscosity, _fn1 needs to be calculated
 	if(nu < 0.0)
 	  {
 	    _fn1 = (this->_spalart_allmaras_helper._c_n1 + pow(_chi, 3.0))/(this->_spalart_allmaras_helper._c_n1 - pow(_chi, 3.0));
 	  }
-	
-        // First, an i-loop over the viscosity degrees of freedom.        
+
+        // First, an i-loop over the viscosity degrees of freedom.
         for (unsigned int i=0; i != n_nu_dofs; i++)
-          {	    	    
+          {
             Fnu(i) += jac *
               ( -this->_rho*(U*grad_nu)*nu_phi[i][qp]  // convection term (assumes incompressibility)
-	    +_source_term*nu_phi[i][qp] // source term
-		+ (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+(_fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
+                +_source_term*nu_phi[i][qp] // source term
+		+ (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+(_fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term
 		- _destruction_term*nu_phi[i][qp]); // destruction term
 
-	      // Compute the jacobian if not using numerical jacobians
-	      if (compute_jacobian)
-		{
-		  libmesh_not_implemented();		     
-		} // end - if (compute_jacobian)
+            // Compute the jacobian if not using numerical jacobians
+            if (compute_jacobian)
+              {
+                libmesh_not_implemented();
+              } // end - if (compute_jacobian)
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
@@ -279,13 +280,13 @@ namespace GRINS
 
   template<class K>
   void SpalartAllmaras<K>::mass_residual( bool compute_jacobian,
-				    AssemblyContext& context,
-				    CachedValues& /*cache*/ )
+                                          AssemblyContext& context,
+                                          CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmaras::mass_residual");
 #endif
-    
+
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
 
@@ -316,7 +317,7 @@ namespace GRINS
 	// while u' will be given by the interior_rate function.
 	libMesh::Real nu_dot;
         context.interior_rate(this->_turbulence_vars.nu_var(), qp, nu_dot);
-        
+
 	for (unsigned int i = 0; i != n_nu_dofs; ++i)
 	  {
 	    F(i) += -JxW[qp]*this->_rho*nu_dot*nu_phi[i][qp];
@@ -325,9 +326,9 @@ namespace GRINS
               {
                 libmesh_not_implemented();
               }// End of check on Jacobian
-          
+
 	  } // End of element dof loop
-      
+
       } // End of the quadrature point loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -337,8 +338,6 @@ namespace GRINS
     return;
   }
 
-    
-  
 } // namespace GRINS
 
 // Instantiate
