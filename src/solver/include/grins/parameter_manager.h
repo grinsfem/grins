@@ -56,7 +56,7 @@ namespace GRINS
     virtual void initialize( const GetPot& input, 
                              const std::string & parameters_varname,
                              GRINS::MultiphysicsSystem & system,
-                             GRINS::CompositeQoI & qoi);
+                             GRINS::CompositeQoI * qoi);
 
     /*
      * Ordered list of names of independent parameters to study
