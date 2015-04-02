@@ -39,6 +39,8 @@ namespace GRINS
       timesteps_per_perflog( 1 ),
       output_vis( false ),
       output_residual( false ),
+      output_residual_sensitivities( false ),
+      output_solution_sensitivities( false ),
       print_perflog( false ),
       print_scalars( false ),
       postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >() )
