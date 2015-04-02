@@ -122,35 +122,6 @@ namespace GRINS
                                                     libMesh::Real &d_res_Muvw_duvw
                                                   ) const;
 
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u, 
-                                     libMesh::Gradient& grad_v ) const;
-    
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u, 
-                                     libMesh::Gradient& grad_v, libMesh::Gradient& grad_w ) const;
-
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_GradU( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v ) const;
-
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_GradU( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v,
-                                     libMesh::RealTensor& hess_w ) const;
-
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_GradU_T( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v ) const;
-
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_GradU_T( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v,
-                                       libMesh::RealTensor& hess_w ) const;
-    
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_divU_I( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v ) const;
-
-    /*! \todo Should we inline this? */
-    libMesh::RealGradient div_divU_I( libMesh::RealTensor& hess_u, libMesh::RealTensor& hess_v,
-                                      libMesh::RealTensor& hess_w ) const;
-
   protected:
 
     //! Physical dimension of problem
