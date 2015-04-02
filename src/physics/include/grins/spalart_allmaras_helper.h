@@ -29,14 +29,13 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/primitive_flow_variables.h"
-#include "grins/spalart_allmaras_parameters.h"
 
 //Utils
 #include "grins/distance_function.h"
 
 namespace GRINS
 {
-  class SpalartAllmarasHelper : public SpalartAllmarasParameters
+  class SpalartAllmarasHelper
   {
   public:
 

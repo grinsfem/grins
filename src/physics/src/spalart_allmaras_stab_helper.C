@@ -41,7 +41,8 @@ namespace GRINS
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(input),
       _turbulence_vars(input),
-      _spalart_allmaras_helper(input)
+      _spalart_allmaras_helper(input),
+      _sa_params(input)
   {
     return;
   }
@@ -89,16 +90,16 @@ namespace GRINS
     libMesh::Number rhoUdotGradnu = rho*(U*grad_nu);
 
     // The diffusion term
-    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_spalart_allmaras_helper._sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu);
+    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sa_params._sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_sa_params._cb2*grad_nu*grad_nu);
 
     // The source term
     libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
-    libMesh::Real S_tilde = this->_spalart_allmaras_helper.source_fn(nu_value, mu, distance_qp, vorticity_value_qp);
-    libMesh::Real source_term = this->_spalart_allmaras_helper._cb1*S_tilde*nu_value;
+    libMesh::Real S_tilde = this->_sa_params.source_fn(nu_value, mu, distance_qp, vorticity_value_qp);
+    libMesh::Real source_term = this->_sa_params._cb1*S_tilde*nu_value;
 
     // The destruction term
-    libMesh::Real fw = this->_spalart_allmaras_helper.destruction_fn(nu_value, distance_qp, S_tilde);
-    libMesh::Real destruction_term =  this->_spalart_allmaras_helper._cw1*fw*pow(nu_value/distance_qp, 2.);
+    libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde);
+    libMesh::Real destruction_term =  this->_sa_params._cw1*fw*pow(nu_value/distance_qp, 2.);
 
     return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }
