@@ -31,6 +31,9 @@ class GetPot;
 
 namespace GRINS
 {
+  //! Encapsulate Spalart-Allmaras model parameters
+  /*! This is mostly a container class, but there are a few helper functions
+      here that are used in different places in SpalartAllmaras classes. */
   class SpalartAllmarasParameters
   {
   public:
@@ -39,11 +42,11 @@ namespace GRINS
 
     ~SpalartAllmarasParameters(){};
 
-    // The source function \tilde{S}
+    // The source function \f$ \tilde{S} \f$
     libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
                              libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
 
-    // The destruction function f_w(nu)
+    // The destruction function \f$ f_w(\nu) \f$
     libMesh::Real destruction_fn( libMesh::Number nu, libMesh::Real wall_distance,
                                   libMesh::Real S_tilde) const;
 
