@@ -99,7 +99,7 @@ namespace GRINS
         const libMesh::Number func_val =
           (*qoi_functional)(context, x_qp[qp], context.get_time());
 
-        qoi += func_val;
+        qoi += func_val * JxW[qp];
       }
   }
 
@@ -148,7 +148,8 @@ namespace GRINS
             const libMesh::Number minus_val =
               (*qoi_functional)(context, x_qp[qp], context.get_time());
 
-            Qu(i) += (plus_val - minus_val) * (0.5 / libMesh::TOLERANCE);
+            Qu(i) += (plus_val - minus_val) *
+                     (0.5 / libMesh::TOLERANCE) * JxW[qp];
 
             // Don't forget to restore the correct solution...
             current_solution = original_solution;
