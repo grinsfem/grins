@@ -166,13 +166,13 @@ namespace GRINS
   }
 
   void SpalartAllmarasStabilizationHelper::compute_res_spalart_steady_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
-      libMesh::Gradient &res_M,
-      libMesh::Tensor   &d_res_M_dgradp,
-      libMesh::Tensor   &d_res_M_dU,
-      libMesh::Gradient &d_res_Muvw_dgraduvw,
-      libMesh::Tensor   &d_res_Muvw_dhessuvw
+  ( AssemblyContext& /*context*/,
+    unsigned int /*qp*/, const libMesh::Real /*rho*/, const libMesh::Real /*mu*/,
+    libMesh::Gradient& /*res_M*/,
+    libMesh::Tensor&   /*d_res_M_dgradp*/,
+    libMesh::Tensor&   /*d_res_M_dU*/,
+    libMesh::Gradient& /*d_res_Muvw_dgraduvw*/,
+    libMesh::Tensor&   /*d_res_Muvw_dhessuvw*/
     ) const
   {    
     // To be filled when we start using analytic jacobians with SA 
@@ -183,17 +183,17 @@ namespace GRINS
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
     libMesh::Number nu_dot = context.interior_value(this->_turbulence_vars.nu_var(), qp);
-    
+
     return rho*nu_dot;
   }
 
 
   void SpalartAllmarasStabilizationHelper::compute_res_spalart_transient_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp,
-      const libMesh::Real rho,
-      libMesh::RealGradient &res_M,
-      libMesh::Real &d_res_Muvw_duvw
+  ( AssemblyContext& /*context*/,
+    unsigned int /*qp*/,
+    const libMesh::Real /*rho*/,
+    libMesh::RealGradient& /*res_M*/,
+    libMesh::Real& /*d_res_Muvw_duvw*/
     ) const
   {
     libmesh_not_implemented();
