@@ -91,13 +91,13 @@ namespace GRINS
     libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_spalart_allmaras_helper._sigma)*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu);
 
     // The source term
-    libMesh::Real _vorticity_value_qp = this->_spalart_allmaras_helper._vorticity(context, qp);
-    libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu_value, mu, distance_qp, _vorticity_value_qp);
-    libMesh::Real source_term = this->_spalart_allmaras_helper._cb1*_S_tilde*nu_value;
+    libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
+    libMesh::Real S_tilde = this->_spalart_allmaras_helper.source_fn(nu_value, mu, distance_qp, vorticity_value_qp);
+    libMesh::Real source_term = this->_spalart_allmaras_helper._cb1*S_tilde*nu_value;
 
     // The destruction term
-    libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu_value, distance_qp, _S_tilde);
-    libMesh::Real destruction_term =  this->_spalart_allmaras_helper._cw1*_fw*pow(nu_value/distance_qp, 2.);
+    libMesh::Real fw = this->_spalart_allmaras_helper.destruction_fn(nu_value, distance_qp, S_tilde);
+    libMesh::Real destruction_term =  this->_spalart_allmaras_helper._cw1*fw*pow(nu_value/distance_qp, 2.);
 
     return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }
