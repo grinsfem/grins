@@ -352,20 +352,9 @@ namespace GRINS
       }
     else if( physics_to_add == spalart_allmaras )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "spalartallmaras" )
-	  {
-	    // The SpalartAllmaras physics itself needs access to the physical viscosity, so
-	    // it is instantiated as a Constant Viscosity.
-	    // FIX ME: This should be read in as Constant or Parsed
-	    physics_list[physics_to_add] =
-	      PhysicsPtr(new SpalartAllmaras<ConstantViscosity>(physics_to_add,input));
-	  }
-	else     //Viscosity has to be SA viscosity if SA turbulence model is being used
-	  {
-	    this->visc_error(physics_to_add, viscosity);
-	  }
+        physics_list[physics_to_add] =
+          new_mu_class<SpalartAllmaras>
+            (physics_to_add, input);
       }
     else if( physics_to_add == spalart_allmaras_spgsm_stab )
       {
