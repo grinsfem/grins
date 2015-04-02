@@ -72,7 +72,11 @@ namespace GRINS
         libMesh::Real vorticity_component_0 = grad_w(1) - grad_v(2);
         libMesh::Real vorticity_component_1 = grad_u(2) - grad_v(0);
 
-        vorticity_value += pow(pow(vorticity_component_0, 2.0) + pow(vorticity_component_1, 2.0) + pow(vorticity_value, 2.0), 0.5);
+        libMesh::Real term = vorticity_component_0*vorticity_component_0
+          + vorticity_component_1*vorticity_component_1
+          + vorticity_value*vorticity_value;
+
+        vorticity_value += std::sqrt(term);
       }
 
     return vorticity_value;
