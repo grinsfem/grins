@@ -58,6 +58,7 @@ namespace GRINS
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
@@ -101,6 +102,7 @@ namespace GRINS
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
@@ -279,11 +281,22 @@ namespace GRINS
     context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
+    context.output_solution_sensitivities = _output_solution_sensitivities;
     context.print_scalars = _print_scalars;
     context.print_perflog = _print_log_info;
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
     context.print_qoi = _print_qoi;
+
+    if (_output_solution_sensitivities &&
+        !_forward_parameters.parameter_vector.size())
+    {
+      std::cout <<
+        "Error: output_solution_sensitivities is specified but\n" <<
+        "no forward sensitivity parameters have been specified.\n" <<
+        std::endl;
+      libmesh_error();
+    }
 
     _solver->solve( context );
 

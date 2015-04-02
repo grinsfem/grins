@@ -44,8 +44,12 @@ namespace GRINS
 				  const unsigned int time_step,
 				  const libMesh::Real time );
 
-  protected:
-
+    virtual void output_solution_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params,
+       const unsigned int time_step,
+       const libMesh::Real time );
   };
 }
 #endif

@@ -144,6 +144,7 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+    bool _output_solution_sensitivities;
 
     unsigned int _timesteps_per_vis;
     unsigned int _timesteps_per_perflog;
