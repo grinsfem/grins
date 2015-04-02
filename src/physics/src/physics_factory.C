@@ -163,6 +163,21 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  template <>
+  PhysicsPtr new_mu_class<SpalartAllmaras>(const std::string& physics_to_add,
+                                                                    const GetPot& input)
+  {
+    std::string viscosity =
+      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+    if( viscosity == "spalartallmaras" )
+      return PhysicsPtr
+        (new SpalartAllmaras<ConstantViscosity>(physics_to_add,input));
+
+    visc_error(physics_to_add, viscosity);
+    return PhysicsPtr();
+  }
+
   template <template<typename> class Subclass>
   PhysicsPtr new_k_class(const std::string& physics_to_add,
                          const GetPot& input)
