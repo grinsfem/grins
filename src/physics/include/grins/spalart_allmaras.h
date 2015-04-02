@@ -32,6 +32,7 @@
 #include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
 #include "grins/spalart_allmaras_helper.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -93,6 +94,9 @@ namespace GRINS
 
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
+
+    //! Object handling the plethora of parameters
+    SpalartAllmarasParameters _sa_params;
 
     // Wall ids set, to be read in, tells us which bc_id's correspond to walls
     std::set<libMesh::boundary_id_type> _wall_ids; 

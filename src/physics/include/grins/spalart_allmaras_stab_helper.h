@@ -31,6 +31,7 @@
 #include "grins/primitive_flow_variables.h"
 #include "grins/turbulence_variables.h"
 #include "grins/spalart_allmaras_helper.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -135,6 +136,8 @@ namespace GRINS
     TurbulenceVariables _turbulence_vars;
 
     SpalartAllmarasHelper _spalart_allmaras_helper;
+
+    SpalartAllmarasParameters _sa_params;
 
   }; // class SpalartAllmarasStabilizationHelper
 
