@@ -181,6 +181,12 @@ namespace GRINS
            it will be cloned in _multiphysics_system and all the calculations are done there. */
         _multiphysics_system->attach_qoi( qois.get() );
       }
+    else if (_print_qoi)
+      {
+        std::cout << "Error: print_qoi is specified but\n" <<
+          "no QoIs have been specified.\n" << std::endl;
+        libmesh_error();
+      }
 
     return;
   }
