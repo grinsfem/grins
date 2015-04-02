@@ -64,69 +64,6 @@ namespace GRINS
     return;
   }
 
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::UdotGradU( libMesh::Gradient& U,
-                                                                       libMesh::Gradient& grad_u,
-                                                                       libMesh::Gradient& grad_v ) const
-  {
-    return libMesh::RealGradient( U*grad_u, U*grad_v );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::UdotGradU( libMesh::Gradient& U,
-                                                                       libMesh::Gradient& grad_u,
-                                                                       libMesh::Gradient& grad_v,
-                                                                       libMesh::Gradient& grad_w ) const
-  {
-    return libMesh::RealGradient( U*grad_u, U*grad_v, U*grad_w );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u,
-                                                                       libMesh::RealTensor& hess_v ) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1),
-                                  hess_v(0,0) + hess_v(1,1) );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u,
-                                                                       libMesh::RealTensor& hess_v,
-                                                                       libMesh::RealTensor& hess_w ) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1) + hess_u(2,2),
-                                  hess_v(0,0) + hess_v(1,1) + hess_v(2,2),
-                                  hess_w(0,0) + hess_w(1,1) + hess_w(2,2) );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u,
-                                                                         libMesh::RealTensor& hess_v ) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1),
-                                  hess_u(1,0) + hess_v(1,1) );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u,
-                                                                         libMesh::RealTensor& hess_v,
-                                                                         libMesh::RealTensor& hess_w ) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1) + hess_w(0,2),
-                                  hess_u(1,0) + hess_v(1,1) + hess_w(1,2),
-                                  hess_u(2,0) + hess_v(2,1) + hess_w(2,2) );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u,
-                                                                        libMesh::RealTensor& hess_v ) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0),
-                                  hess_u(0,1) + hess_v(1,1) );
-  }
-
-  libMesh::RealGradient SpalartAllmarasStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u,
-                                                                        libMesh::RealTensor& hess_v,
-                                                                        libMesh::RealTensor& hess_w) const
-  {
-    return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0) + hess_w(2,0),
-                                  hess_u(0,1) + hess_v(1,1) + hess_w(2,1),
-                                  hess_u(0,2) + hess_v(1,2) + hess_w(2,2) );
-  }
-
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
                                                                                 unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp ) const
   {
