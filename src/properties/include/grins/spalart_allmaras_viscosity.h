@@ -56,7 +56,8 @@ namespace GRINS
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
-    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 )
+    { return _mu(p,time); }
 
     void init(libMesh::FEMSystem* system);
 
@@ -73,16 +74,6 @@ namespace GRINS
     SpalartAllmarasViscosity();
 
   };
-
-  /* ------------------------- Inline Functions -------------------------*/
-  //inline
-
-
-  template<class Mu>
-  libMesh::Real SpalartAllmarasViscosity<Mu>::operator()( const libMesh::Point& p, const libMesh::Real time )
-  {
-    return _mu(p,time);
-  }
 
 } // end namespace GRINS
 
