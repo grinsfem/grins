@@ -185,7 +185,8 @@ namespace GRINS
     return;
   }
 
-  void Simulation::init_params( const GetPot& input, SimulationBuilder& sim_builder )
+  void Simulation::init_params( const GetPot& input,
+                                SimulationBuilder& /*sim_builder*/ )
   {
     unsigned int n_adjoint_parameters =
       input.vector_variable_size("QoI/adjoint_sensitivity_parameters");
