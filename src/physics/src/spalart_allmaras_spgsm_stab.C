@@ -39,8 +39,8 @@ namespace GRINS
 {
 
   template<class Mu>
-  SpalartAllmarasSPGSMStabilization<Mu>::SpalartAllmarasSPGSMStabilization( const std::string& physics_name, 
-                                                                                              const GetPot& input )
+  SpalartAllmarasSPGSMStabilization<Mu>::SpalartAllmarasSPGSMStabilization( const std::string& physics_name,
+                                                                            const GetPot& input )
     : SpalartAllmarasStabilizationBase<Mu>(physics_name,input)
   {
     this->read_input_options(input);
@@ -53,20 +53,20 @@ namespace GRINS
   {
     return;
   }
-  
+
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::init_variables( libMesh::FEMSystem* system )
-  {    
-    // Init base class variables for stab_helper and distance function initialization    
+  {
+    // Init base class variables for stab_helper and distance function initialization
     SpalartAllmarasStabilizationBase<Mu>::init_variables(system);
-    
+
     return;
   }
-    
+
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                              AssemblyContext& context,
-                                                                              CachedValues& /*cache*/ )
+                                                                       AssemblyContext& context,
+                                                                       CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::element_time_derivative");
@@ -86,18 +86,18 @@ namespace GRINS
     // The viscosity shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-    context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
-    
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+
     // Quadrature point locations
-    //const std::vector<libMesh::Point>& nu_qpoint = 
+    //const std::vector<libMesh::Point>& nu_qpoint =
     //context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
 
     //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
 
     libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
-    
+
     libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
-    
+
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // Auto pointer to distance fcn evaluated at quad points
@@ -111,33 +111,33 @@ namespace GRINS
         libMesh::Gradient grad_nu;
         grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
 
-	libMesh::Real jac = JxW[qp];
-	
-	// The physical viscosity
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        libMesh::Real jac = JxW[qp];
 
-	// To be fixed
-	// For the channel flow we will just set the distance function analytically
-	//(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
-   
-	// The flow velocity
-	libMesh::Number u,v;
-	u = context.interior_value(this->_flow_vars.u_var(), qp);
-	v = context.interior_value(this->_flow_vars.v_var(), qp);
-	
-	libMesh::NumberVectorValue U(u,v);
-	if (this->_dim == 3)
-	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+        // The physical viscosity
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
-	// Stabilization terms
+        // To be fixed
+        // For the channel flow we will just set the distance function analytically
+        //(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        // The flow velocity
+        libMesh::Number u,v;
+        u = context.interior_value(this->_flow_vars.u_var(), qp);
+        v = context.interior_value(this->_flow_vars.v_var(), qp);
+
+        libMesh::NumberVectorValue U(u,v);
+        if (this->_dim == 3)
+          U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+
+        // Stabilization terms
+
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
-			
+
         libMesh::Real tau_spalart = this->_stab_helper.compute_tau_spalart( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
-        
+
         libMesh::Number RM_spalart = this->_stab_helper.compute_res_spalart_steady( context, qp, this->_rho, _mu_qp, (*distance_qp)(qp) );
-        
+
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
             Fnu(i) += jac*( -tau_spalart*RM_spalart*this->_rho*(U*nu_gradphi[i][qp]) );
@@ -156,11 +156,11 @@ namespace GRINS
 
     return;
   }
-  
+
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
-                                                                    AssemblyContext& context,
-                                                                    CachedValues& /*cache*/ )
+                                                             AssemblyContext& context,
+                                                             CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::mass_residual");
@@ -179,10 +179,10 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-    context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();    
-    
+      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+
     libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
-        
+
     libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -200,14 +200,14 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_dim == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
-      
+
         libMesh::Real tau_spalart = this->_stab_helper.compute_tau_spalart( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
 
         libMesh::Real RM_spalart = this->_stab_helper.compute_res_spalart_transient( context, qp, this->_rho );
@@ -216,7 +216,7 @@ namespace GRINS
           {
             Fnu(i) += -JxW[qp]*tau_spalart*RM_spalart*this->_rho*(U*nu_gradphi[i][qp]);
           }
-        
+
         if( compute_jacobian )
           {
             libmesh_not_implemented();
