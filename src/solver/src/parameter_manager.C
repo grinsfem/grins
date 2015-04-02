@@ -43,7 +43,7 @@ namespace GRINS
     ( const GetPot& input, 
       const std::string & parameters_varname,
       MultiphysicsSystem & system,
-      CompositeQoI & qoi)
+      CompositeQoI * qoi)
   {
     const unsigned int n_parameters =
       input.vector_variable_size(parameters_varname);
@@ -61,9 +61,12 @@ namespace GRINS
         libMesh::ParameterMultiPointer<libMesh::Number> *next_param =
           new libMesh::ParameterMultiPointer<libMesh::Number>();
 
+        // We always have Physics solving for u
         system.register_parameter(param_name, *next_param);
 
-        qoi.register_parameter(param_name, *next_param);
+        // We don't always have QoIs when solving for du/dp
+        if (qoi)
+          qoi->register_parameter(param_name, *next_param);
 
         if (next_param->size() == 0)
           {

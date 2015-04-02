@@ -204,28 +204,42 @@ namespace GRINS
     // set up the parameter vectors to use.
     if ( n_adjoint_parameters )
       {
+        // If we're doing adjoint sensitivities, dq/dp only makes
+        // sense if we have q
         CompositeQoI* qoi =
           libMesh::cast_ptr<CompositeQoI*>
             (this->_multiphysics_system->get_qoi());
 
-        libmesh_assert(qoi);
+        if (!qoi)
+          {
+            std::cout <<
+              "Error: adjoint_sensitivity_parameters are specified but\n"
+              << "no QoIs have been specified.\n" << std::endl;
+            libmesh_error();
+          }
 
         _adjoint_parameters.initialize
           (input, "QoI/adjoint_sensitivity_parameters",
-           *this->_multiphysics_system, *qoi);
+           *this->_multiphysics_system, qoi);
       }
 
     if ( n_forward_parameters )
       {
+        // If we're doing forward sensitivities, du/dp can make
+        // sense even with no q defined
         CompositeQoI* qoi =
-          libMesh::cast_ptr<CompositeQoI*>
+          dynamic_cast<CompositeQoI*>
             (this->_multiphysics_system->get_qoi());
 
-        libmesh_assert(qoi);
+        // dynamic_cast returns NULL if our QoI isn't a CompositeQoI;
+        // i.e. if there were no QoIs that made us bother setting up
+        // the CompositeQoI object.  Passing NULL tells
+        // ParameterManager not to bother asking for qoi registration
+        // of parameters.
 
         _forward_parameters.initialize
           (input, "QoI/forward_sensitivity_parameters",
-           *this->_multiphysics_system, *qoi);
+           *this->_multiphysics_system, qoi);
       }
   }
 
