@@ -37,7 +37,7 @@ namespace GRINS
 
     SpalartAllmarasParameters(const GetPot& input);
 
-    virtual ~SpalartAllmarasParameters(){};
+    ~SpalartAllmarasParameters(){};
 
     // The source function \tilde{S}
     libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
