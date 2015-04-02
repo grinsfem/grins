@@ -220,13 +220,6 @@ namespace GRINS
 	libMesh::NumberVectorValue U(u,v);
 	if (this->_dim == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
-	
-	// To be fixed
-	// For the channel flow we will just set the distance function analytically
-	//(*distance_qp)(qp) = std::min(fabs(y),fabs(1 - y));
-
-	// The calculated distance
-	//std::cout<<"Distance to wall from point("<<x<<","<<y<<") is: "<< ( (*distance_qp)(qp) ) <<std::endl;
 
 	//The source term
 	libMesh::Real _S_tilde = this->_spalart_allmaras_helper._source_fn(nu, _mu_qp, (*distance_qp)(qp), _vorticity_value_qp);	
@@ -241,8 +234,6 @@ namespace GRINS
 	  {
 	    _source_term = this->_spalart_allmaras_helper._cb1*(1 - this->_spalart_allmaras_helper._c_t3)*_vorticity_value_qp*nu;
 	  }
-
-	//std::cout<<"The source term at "<<x<<", "<<y<<" is: "<<_source_term<<std::endl;
 
 	// The wall destruction term
 	libMesh::Real _fw = this->_spalart_allmaras_helper._destruction_fn(nu, (*distance_qp)(qp), _S_tilde);
@@ -269,10 +260,8 @@ namespace GRINS
 	    +_source_term*nu_phi[i][qp] // source term
 		+ (1./this->_spalart_allmaras_helper._sigma)*(-(_mu_qp+(_fn1*nu))*grad_nu*nu_gradphi[i][qp] + this->_spalart_allmaras_helper._cb2*grad_nu*grad_nu*nu_phi[i][qp]) // diffusion term 
 		- _destruction_term*nu_phi[i][qp]); // destruction term
-	    
-	    //Fnu(i) += jac * (grad_nu*nu_gradphi[i][qp]);
-                    
-	      // Compute the jacobian if not using numerical jacobians  
+
+	      // Compute the jacobian if not using numerical jacobians
 	      if (compute_jacobian)
 		{
 		  libmesh_not_implemented();		     
