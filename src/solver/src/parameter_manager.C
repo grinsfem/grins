@@ -27,6 +27,7 @@
 #include "grins/parameter_manager.h"
 
 // GRINS
+#include "grins/composite_qoi.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
 
@@ -61,6 +62,15 @@ namespace GRINS
           new libMesh::ParameterMultiPointer<libMesh::Number>();
 
         system.register_parameter(param_name, *next_param);
+
+        qoi.register_parameter(param_name, *next_param);
+
+        if (next_param->size() == 0)
+          {
+            std::cout << "No parameters named " << param_name <<
+              " found in active Physics or QoIs" << std::endl;
+            libmesh_error();
+          }
 
         this->parameter_vector.push_back
           (UniquePtr<libMesh::ParameterAccessor<libMesh::Number> >
