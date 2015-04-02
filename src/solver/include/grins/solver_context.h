@@ -60,6 +60,7 @@ namespace GRINS
     unsigned int timesteps_per_perflog;
     bool output_vis;
     bool output_residual;
+    bool output_solution_sensitivities;
     bool print_perflog;
     bool print_scalars;
     bool print_qoi;

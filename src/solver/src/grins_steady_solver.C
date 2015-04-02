@@ -121,6 +121,10 @@ namespace GRINS
   {
     context.system->forward_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);
+
+    if( context.output_solution_sensitivities )
+      context.vis->output_solution_sensitivities
+        ( context.equation_system, context.system, parameters_in );
   }
 
 } // namespace GRINS
