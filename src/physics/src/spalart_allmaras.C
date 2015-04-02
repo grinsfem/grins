@@ -226,7 +226,7 @@ namespace GRINS
 
         // The ft2 function needed for the negative S-A model
         libMesh::Real chi = nu/mu_qp;
-        libMesh::Real f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*pow(chi, 2.0));
+        libMesh::Real f_t2 = this->_spalart_allmaras_helper._c_t3*exp(-this->_spalart_allmaras_helper._c_t4*chi*chi);
 
         libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_spalart_allmaras_helper._cb1*(1 - f_t2)*S_tilde*nu;
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
@@ -238,19 +238,23 @@ namespace GRINS
         // The wall destruction term
         libMesh::Real fw = this->_spalart_allmaras_helper.destruction_fn(nu, (*distance_qp)(qp), S_tilde);
 
-        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*fw - (this->_spalart_allmaras_helper._cb1/pow(this->_spalart_allmaras_helper._kappa, 2.0))*f_t2)*pow(nu/(*distance_qp)(qp), 2.);
+        libMesh::Real nud = nu/(*distance_qp)(qp);
+        libMesh::Real nud2 = nud*nud;
+        libMesh::Real kappa2 = (this->_spalart_allmaras_helper._kappa)*(this->_spalart_allmaras_helper._kappa);
+        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_spalart_allmaras_helper._cw1*fw - (this->_spalart_allmaras_helper._cb1/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
-            destruction_term = -this->_spalart_allmaras_helper._cw1*pow(nu/((*distance_qp)(qp)), 2.0);
+            destruction_term = -this->_spalart_allmaras_helper._cw1*nud2;
           }
 
         libMesh::Real fn1 = 1.0;
         // For a negative turbulent viscosity, fn1 needs to be calculated
         if(nu < 0.0)
           {
-            fn1 = (this->_spalart_allmaras_helper._c_n1 + pow(chi, 3.0))/(this->_spalart_allmaras_helper._c_n1 - pow(chi, 3.0));
+            libMesh::Real chi3 = chi*chi*chi;
+            fn1 = (this->_spalart_allmaras_helper._c_n1 + chi3)/(this->_spalart_allmaras_helper._c_n1 - chi3);
           }
 
         // First, an i-loop over the viscosity degrees of freedom.
