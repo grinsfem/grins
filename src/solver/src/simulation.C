@@ -288,6 +288,16 @@ namespace GRINS
     context.error_estimator = _error_estimator;
     context.print_qoi = _print_qoi;
 
+    if (_output_solution_sensitivities &&
+        !_forward_parameters.parameter_vector.size())
+    {
+      std::cout <<
+        "Error: output_solution_sensitivities is specified but\n" <<
+        "no forward sensitivity parameters have been specified.\n" <<
+        std::endl;
+      libmesh_error();
+    }
+
     _solver->solve( context );
 
     if ( this->_print_qoi )
