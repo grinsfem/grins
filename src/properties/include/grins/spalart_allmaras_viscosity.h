@@ -88,7 +88,6 @@ namespace GRINS
     // Assert that _mu_value is greater than 0
     if(nu < 0.0)
     {
-      std::cout<<nu<<std::endl;
       libmesh_warning("Negative turbulent viscosity encountered !");
       
       // We are using a negative S-A model, so will set eddy viscosity to zero
