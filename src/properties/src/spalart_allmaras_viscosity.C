@@ -73,9 +73,7 @@ namespace GRINS
     libMesh::Real chi = nu/mu_physical;
 
     // Step 2
-    libMesh::Real cv1 = 7.1;
-    libMesh::Real chi3 = chi*chi*chi;
-    libMesh::Real fv1 = chi3/(chi3 + cv1*cv1*cv1);
+    libMesh::Real fv1 = _sa_params.fv1(chi);
 
     // Step 3
     libMesh::Real mu_turbulent = nu*fv1;
