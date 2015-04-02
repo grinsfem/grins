@@ -52,6 +52,12 @@
 #include "grvy.h"
 #endif
 
+void test_error_norm( libMesh::ExactSolution& exact_sol,
+                      const std::string& system_name,
+                      const std::string& var,
+                      const std::string& norm,
+                      const double tol,
+                      int& return_flag );
 
 class TurbulentBCFactory : public GRINS::BoundaryConditionsFactory
 {
@@ -305,6 +311,57 @@ int main(int argc, char* argv[])
 
   return return_flag;
 }
+
+void test_error_norm( libMesh::ExactSolution& exact_sol,
+                      const std::string& system_name,
+                      const std::string& var,
+                      const std::string& norm,
+                      const double tol,
+                      int& return_flag )
+{
+  // We don't set return_flag unless we are setting it 1
+  // since this function gets called multiple times and we don't
+  // want to overwrite a previous "fail" (return_flag = 1) with
+  // a "pass" (return_flag = 0)
+
+  double error = 0.0;
+
+  std::cout << "==========================================================" << std::endl
+            << "Checking variable " << var << " using error norm " << norm << " with tol " << tol << "...";
+
+  if( norm == std::string("L2") )
+    {
+      error = exact_sol.l2_error(system_name, var);
+    }
+  else if( norm == std::string("H1") )
+    {
+      error = exact_sol.h1_error(system_name, var);
+    }
+  else
+    {
+      std::cerr << "ERROR: Invalid norm " << norm << std::endl;
+      exit(1);
+    }
+
+  if( error > tol )
+    {
+      return_flag = 1;
+
+      std::cerr << "Tolerance exceeded for generic regression test!" << std::endl
+                << "tolerance     = " << tol << std::endl
+                << "norm of error = " << error << std::endl
+                << "norm type     = " << norm << std::endl
+                << "var           = " << var << std::endl;
+    }
+  else
+    {
+      std::cout << "PASSED!" << std::endl
+                << "==========================================================" << std::endl;
+    }
+
+  return;
+}
+
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
 {
