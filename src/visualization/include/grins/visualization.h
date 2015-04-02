@@ -66,6 +66,17 @@ namespace GRINS
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step, const libMesh::Real time ) =0;
 
+    void output_residual_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params);
+
+    virtual void output_residual_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params,
+       const unsigned int time_step, const libMesh::Real time ) =0;
+
     void output_solution_sensitivities
       (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
        GRINS::MultiphysicsSystem* system,

@@ -126,6 +126,15 @@ namespace GRINS
     return;
   }
 
+  void Visualization::output_residual_sensitivities
+    (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+     MultiphysicsSystem* system,
+     const libMesh::ParameterVector & params)
+  {
+    this->output_residual_sensitivities
+      ( equation_system, system, params, 0, 0.0 );
+  }
+
   void Visualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
      MultiphysicsSystem* system,
