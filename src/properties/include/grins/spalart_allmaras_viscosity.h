@@ -29,6 +29,7 @@
 //GRINS
 #include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -69,6 +70,8 @@ namespace GRINS
 
     // These are defined for each physics
     TurbulenceFEVariables _turbulence_vars;
+
+    SpalartAllmarasParameters _sa_params;
 
   private:
 

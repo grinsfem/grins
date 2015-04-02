@@ -32,7 +32,8 @@ namespace GRINS
   SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input ):
     ParameterUser("SpalartAllmarasViscosity"),
     _mu(input),
-    _turbulence_vars(input, spalart_allmaras)
+    _turbulence_vars(input, spalart_allmaras),
+    _sa_params(input)
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
