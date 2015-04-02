@@ -163,6 +163,8 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  /* Specialize new_mu_class for SA since it is only valid for viscosity == "spalartallmaras"
+     AND *must* be instantiated with *physical* viscosity */
   template <>
   PhysicsPtr new_mu_class<SpalartAllmaras>(const std::string& physics_to_add,
                                                                     const GetPot& input)
