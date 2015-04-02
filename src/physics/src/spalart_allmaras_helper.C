@@ -40,7 +40,7 @@
 
 namespace GRINS
 {
-  
+
   SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& input )
     : _cb1(0.1355), // Define class variables
       _sigma(2./3.),
@@ -56,26 +56,26 @@ namespace GRINS
       _c_t4(0.5),
       _c_n1(16.0),
       _flow_vars(input)
-  {        
+  {
     _cw1 = _cb1/pow(_kappa,2.0) + (1 + _cb2)/_sigma;
 
     return;
   }
-  
+
   SpalartAllmarasHelper::~SpalartAllmarasHelper()
   {
     return;
   }
- 
+
   void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
-  {    
+  {
     this->_dim = system->get_mesh().mesh_dimension();
 
     this->_flow_vars.init(system);
-        
+
     return;
   }
-    
+
   libMesh::Real SpalartAllmarasHelper::_vorticity(AssemblyContext& context, unsigned int qp) const
   {
     libMesh::Gradient grad_u, grad_v;
@@ -87,23 +87,23 @@ namespace GRINS
 
     if(this->_dim == 3)
       {
-	libMesh::Gradient grad_w;
-	grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
-	
-	libMesh::Real _vorticity_component_0 = grad_w(1) - grad_v(2);
-	libMesh::Real _vorticity_component_1 = grad_u(2) - grad_v(0);
+        libMesh::Gradient grad_w;
+        grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
 
-	_vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
+        libMesh::Real _vorticity_component_0 = grad_w(1) - grad_v(2);
+        libMesh::Real _vorticity_component_1 = grad_u(2) - grad_v(0);
+
+        _vorticity_value += pow(pow(_vorticity_component_0, 2.0) + pow(_vorticity_component_1, 2.0) + pow(_vorticity_value, 2.0), 0.5);
       }
 
     return _vorticity_value;
   }
-  
+
   libMesh::Real SpalartAllmarasHelper::_source_fn(libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value) const
   {
     // Step 1
     libMesh::Real _chi = nu/mu;
-    
+
     // Step 2
     libMesh::Real chi3 = _chi*_chi*_chi;
     libMesh::Real _fv1 = chi3/(chi3 + _cv1*_cv1*_cv1);
@@ -121,33 +121,32 @@ namespace GRINS
     libMesh::Real _S_tilde = 0.0;
     if(_S_bar >= -this->_cv2*_S)
       {
-	_S_tilde = _S + _S_bar;
+        _S_tilde = _S + _S_bar;
       }
     else
       {
-	_S_tilde = _S + (_S*(pow(this->_cv2,2.0)*_S + this->_cv3*_S_bar))/((this->_cv3 - (2*this->_cv2))*_S - _S_bar);
+        _S_tilde = _S + (_S*(pow(this->_cv2,2.0)*_S + this->_cv3*_S_bar))/((this->_cv3 - (2*this->_cv2))*_S - _S_bar);
       }
-    
+
     return _S_tilde;
   }
-  
+
   libMesh::Real SpalartAllmarasHelper::_destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde) const
   {
     // Step 1
     libMesh::Real _r = 0.0;
-    
+
     _r = std::min(nu/(_S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
-    
+
     // Step 2
     libMesh::Real _g = _r + this->_c_w2*(pow(_r,6.0) - _r);
-    
+
     // Step 3
     libMesh::Real _fw = _g*pow((1 + pow(this->_c_w3,6.0))/(pow(_g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
-                
+
     return _fw;
   }
-  
 
-  
+
+
 } // namespace GRINS
-
