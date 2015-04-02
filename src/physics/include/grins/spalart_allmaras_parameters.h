@@ -47,6 +47,48 @@ namespace GRINS
     libMesh::Real destruction_fn( libMesh::Number nu, libMesh::Real wall_distance,
                                   libMesh::Real S_tilde) const;
 
+    libMesh::Real get_kappa() const
+    { return _kappa;}
+
+    libMesh::Real get_cv1() const
+    { return _cv1;}
+
+    libMesh::Real get_cv2() const
+    { return _cv2;}
+
+    libMesh::Real get_cv3() const
+    { return _cv3;}
+
+    libMesh::Real get_cb1() const
+    { return _cb1;}
+
+    libMesh::Real get_cb2() const
+    { return _cb2;}
+
+    libMesh::Real get_sigma() const
+    { return _sigma;}
+
+    libMesh::Real get_cw1() const
+    { return _cw1;}
+
+    libMesh::Real get_c_w2() const
+    { return _c_w2;}
+
+    libMesh::Real get_c_w3() const
+    { return _c_w3;}
+
+    libMesh::Real get_r_lin() const
+    { return _r_lin;}
+
+    libMesh::Real get_c_t3() const
+    { return _c_t3;}
+
+    libMesh::Real get_c_t4() const
+    { return _c_t4;}
+
+    libMesh::Real get_c_n1() const
+    { return _c_n1;}
+
     //! Constants specific to the calculation of the source function
     libMesh::Real _kappa, _cv1, _cv2, _cv3;
 
