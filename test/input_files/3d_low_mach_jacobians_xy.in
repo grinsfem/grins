@@ -64,6 +64,8 @@ pressure = 'p'
 
 enabled_qois = 'average_nusselt_number'
 
+adjoint_sensitivity_parameters = 'Physics/LowMachNavierStokes/p0 Physics/LowMachNavierStokes/T0 Physics/LowMachNavierStokes/R Materials/Viscosity/mu Materials/Conductivity/k Materials/SpecificHeat/cp QoI/NusseltNumber/thermal_conductivity'
+
 [./NusseltNumber]
 
 thermal_conductivity = '0.041801' #[W/m-K]

@@ -68,18 +68,18 @@ namespace GRINS
     virtual void solve( SolverContext& context )=0;
 
     virtual void adjoint_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities)
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
       const
     { libmesh_not_implemented(); }
 
     virtual void forward_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities)
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
       const
     { libmesh_not_implemented(); }
 

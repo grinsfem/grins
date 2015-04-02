@@ -38,7 +38,7 @@ namespace GRINS
   HeatTransferStabilizationBase<K>::HeatTransferStabilizationBase( const std::string& physics_name, 
                                                                 const GetPot& input )
     : HeatTransferBase<K>(physics_name,input),
-      _stab_helper(input),
+      _stab_helper(physics_name+"StabHelper", input),
       _k(input)
   {
     this->read_input_options(input);

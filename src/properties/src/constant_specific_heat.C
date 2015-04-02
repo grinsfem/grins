@@ -33,7 +33,8 @@ namespace GRINS
 {
 
   ConstantSpecificHeat::ConstantSpecificHeat( const GetPot& input )
-    : _cp( input( "Materials/SpecificHeat/cp", 0.0 ) )
+    : ParameterUser("ConstantSpecificHeat"),
+      _cp(0.0)
   {
     if( !input.have_variable("Materials/SpecificHeat/cp") )
       {
@@ -41,7 +42,8 @@ namespace GRINS
         libmesh_error();
       }
 
-    return;
+    this->set_parameter
+      (_cp, input, "Materials/SpecificHeat/cp", _cp);
   }
 
   ConstantSpecificHeat::~ConstantSpecificHeat()

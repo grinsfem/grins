@@ -41,8 +41,6 @@ namespace GRINS
   AveragedFan<Mu>::AveragedFan( const std::string& physics_name, const GetPot& input )
     : AveragedFanBase<Mu>(physics_name, input)
   {
-    this->read_input_options(input);
-
     return;
   }
 

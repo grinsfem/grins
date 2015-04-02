@@ -25,6 +25,9 @@
 #ifndef GRINS_STAB_HELPER_H
 #define GRINS_STAB_HELPER_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/vector_value.h"
 #include "libmesh/tensor_value.h"
@@ -36,10 +39,10 @@ namespace GRINS
   // GRINS forward declarations
   class AssemblyContext;
 
-  class StabilizationHelper
+  class StabilizationHelper : public ParameterUser
   {
   public:
-    StabilizationHelper();
+    StabilizationHelper( const std::string & helper_name );
     ~StabilizationHelper();
 
     /*! \todo Should we inline this? */

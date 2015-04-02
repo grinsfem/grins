@@ -39,7 +39,9 @@ namespace GRINS
   {
     param_variable = input(param_name, param_default);
 
-    libmesh_assert_equal_to (_my_parameters.count(param_name), 0);
+    libmesh_assert_msg(!_my_parameters.count(param_name),
+      "ERROR: " << _my_name << " double-registered parameter " <<
+      param_name);
 
     _my_parameters[param_name] = &param_variable;
   }

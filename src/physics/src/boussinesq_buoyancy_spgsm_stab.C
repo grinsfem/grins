@@ -40,14 +40,22 @@ namespace GRINS
   template<class Mu>
   BoussinesqBuoyancySPGSMStabilization<Mu>::BoussinesqBuoyancySPGSMStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
-      _flow_stab_helper(input),
-      _temp_stab_helper(input),
-      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
-      _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
-      _k( input("Physics/"+heat_transfer+"/k", 1.0) ),
+      _flow_stab_helper(physics_name+"FlowStabHelper", input),
+      _temp_stab_helper(physics_name+"TempStabHelper", input),
+      _rho(1.0),
+      _Cp(1.0),
+      _k(1.0),
       _mu(input)
   {
-    return;
+    this->set_parameter
+      (_rho, input,
+       "Physics/"+incompressible_navier_stokes+"/rho", _rho);
+
+    this->set_parameter
+      (_Cp, input, "Physics/"+heat_transfer+"/Cp", _Cp);
+
+    this->set_parameter
+      (_k, input, "Physics/"+heat_transfer+"/k", _k);
   }
 
   template<class Mu>
@@ -314,6 +322,17 @@ namespace GRINS
 
     return;
   }
+
+  template<class Mu>
+  void BoussinesqBuoyancySPGSMStabilization<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
+  }
+
 
 } // namespace GRINS
 

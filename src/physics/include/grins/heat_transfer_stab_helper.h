@@ -40,7 +40,8 @@ namespace GRINS
   {
   public:
 
-    HeatTransferStabilizationHelper( const GetPot& input );
+    HeatTransferStabilizationHelper( const std::string & helper_name,
+                                     const GetPot& input );
 
     ~HeatTransferStabilizationHelper();
 

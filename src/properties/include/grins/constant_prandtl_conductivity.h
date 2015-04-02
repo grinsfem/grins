@@ -26,6 +26,9 @@
 #ifndef GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
 #define GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -33,7 +36,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantPrandtlConductivity
+  class ConstantPrandtlConductivity : public ParameterUser
   {
   public:
 
@@ -44,7 +47,7 @@ namespace GRINS
 
   private:
 
-    const libMesh::Real _Pr;
+    libMesh::Real _Pr;
 
   };
   

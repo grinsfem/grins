@@ -26,7 +26,8 @@
 namespace GRINS
 {
 
-   ParsedViscosity::ParsedViscosity( const GetPot& input )    
+   ParsedViscosity::ParsedViscosity( const GetPot& input ) :
+     ParameterUser("ParsedViscosity")
     {
       if( !input.have_variable("Materials/Viscosity/mu") )
        {

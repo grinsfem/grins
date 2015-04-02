@@ -26,7 +26,8 @@
 namespace GRINS
 {
 
-   ParsedConductivity::ParsedConductivity( const GetPot& input )    
+   ParsedConductivity::ParsedConductivity( const GetPot& input ) :
+     ParameterUser("ParsedConductivity")
     {
       if( !input.have_variable("Materials/Conductivity/k") )
        {

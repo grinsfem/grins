@@ -76,6 +76,10 @@ pin_pressure = 'false'
 [QoI]
 enabled_qois = 'parsed_interior'
 
+# All sensitivities should be zero
+adjoint_sensitivity_parameters = 'Physics/IncompressibleNavierStokes/mu Physics/Stokes/rho'
+forward_sensitivity_parameters = 'Physics/IncompressibleNavierStokes/mu Physics/Stokes/rho'
+
 [./ParsedInterior]
 qoi_functional = 'u'
 

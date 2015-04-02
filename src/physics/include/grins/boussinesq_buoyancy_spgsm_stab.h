@@ -46,7 +46,9 @@ namespace GRINS
   {
   public:
     
-    BoussinesqBuoyancySPGSMStabilization( const std::string& physics_name, const GetPot& input );
+    BoussinesqBuoyancySPGSMStabilization
+      ( const std::string& physics_name,
+        const GetPot& input );
 
     ~BoussinesqBuoyancySPGSMStabilization();
 
@@ -61,6 +63,13 @@ namespace GRINS
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
                                 CachedValues& cache );
+
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
 
   protected:
 

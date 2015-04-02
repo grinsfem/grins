@@ -26,8 +26,9 @@
 #define GRINS_HOOKES_LAW_H
 
 // GRINS
-#include "grins/stress_strain_law.h"
 #include "grins/elasticity_tensor.h"
+#include "grins/parameter_user.h"
+#include "grins/stress_strain_law.h"
 
 // Forward declarations
 class GetPot;
@@ -42,7 +43,8 @@ namespace GRINS
    * working with curvilinear coordinate systems, the user should call the
    * set_deformation method before calling operator().
    */
-  class HookesLaw : public StressStrainLaw<HookesLaw>
+  class HookesLaw : public StressStrainLaw<HookesLaw>,
+                    public ParameterUser
   {
   public:
 

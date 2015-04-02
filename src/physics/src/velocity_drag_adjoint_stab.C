@@ -40,11 +40,12 @@ namespace GRINS
   template<class Mu>
   VelocityDragAdjointStabilization<Mu>::VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : VelocityDragBase<Mu>(physics_name, input),
-      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
+      _rho( 1.0 ),
       _mu( input ),
-      _stab_helper( input )
+      _stab_helper( physics_name+"StabHelper", input )
   {
-    return;
+    this->set_parameter
+      (_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", _rho);
   }
 
   template<class Mu>

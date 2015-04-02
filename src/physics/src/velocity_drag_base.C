@@ -55,7 +55,8 @@ namespace GRINS
   template<class Mu>
   void VelocityDragBase<Mu>::read_input_options( const GetPot& input )
   {
-    _exponent = input("Physics/"+velocity_drag+"/exponent", libMesh::Real(2));
+    this->set_parameter
+      (_exponent, input, "Physics/"+velocity_drag+"/exponent", 2);
 
     std::string coefficient_function =
       input("Physics/"+velocity_drag+"/coefficient",
