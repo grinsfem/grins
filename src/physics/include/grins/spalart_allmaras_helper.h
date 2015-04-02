@@ -28,49 +28,26 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "primitive_flow_variables.h"
+#include "grins/primitive_flow_variables.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 //Utils
 #include "grins/distance_function.h"
 
 namespace GRINS
 {
-  class SpalartAllmarasHelper
+  class SpalartAllmarasHelper : public SpalartAllmarasParameters
   {
   public:
 
     SpalartAllmarasHelper(const GetPot& input);
 
-    ~SpalartAllmarasHelper();
+    virtual ~SpalartAllmarasHelper(){};
 
     void init_variables( libMesh::FEMSystem* system );
 
     // The vorticity function
     libMesh::Real vorticity(AssemblyContext& context, unsigned int qp) const;
-
-    // The source function \tilde{S}
-    libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
-                             libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
-
-    // The destruction function f_w(nu)
-    libMesh::Real destruction_fn(libMesh::Number nu, libMesh::Real wall_distance,
-                                 libMesh::Real S_tilde) const;
-
-    //! Spalart Allmaras model constants
-    libMesh::Number _cb1, _sigma, _cb2, _cw1;
-
-    //! Constants specific to the calculation of the source function
-    libMesh::Number _kappa, _cv1, _cv2, _cv3;
-
-    //! Constants specific to the calculation of the destruction function
-    libMesh::Number _r_lin, _c_w2, _c_w3;
-
-    //! Constants specific to the calculation of the trip function (but used in
-    // the source and destruction term)
-    libMesh::Number _c_t3, _c_t4;
-
-    //! Constants specific to the calculation of the negative S-A model
-    libMesh::Number _c_n1;
 
   protected:
 
@@ -81,6 +58,7 @@ namespace GRINS
     PrimitiveFlowVariables _flow_vars;
 
   private:
+
     SpalartAllmarasHelper();
 
   };
