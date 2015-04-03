@@ -50,9 +50,4 @@ namespace GRINS
     return;
   }
 
-  SolverContext::~SolverContext()
-  {
-    return;
-  }
-
 }

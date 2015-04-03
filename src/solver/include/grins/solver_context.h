@@ -51,7 +51,7 @@ namespace GRINS
   public:
     
     SolverContext();
-    ~SolverContext();
+    ~SolverContext(){};
 
     GRINS::MultiphysicsSystem* system;
     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
