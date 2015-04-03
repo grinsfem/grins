@@ -512,7 +512,8 @@ namespace GRINS
     const CompositeQoI* qoi = dynamic_cast<const CompositeQoI*>( raw_qoi );
 
     // If we are trying to do an adjoint solve without a QoI, that's an error
-    if( _do_adjoint_solve && qoi->n_qois() == 0 )
+    // If there are no QoIs, the CompositeQoI never gets built and qoi will be NULL
+    if( _do_adjoint_solve && !qoi )
       {
         libmesh_error_msg("Error: Adjoint solve requested, but no QoIs detected.");
       }
