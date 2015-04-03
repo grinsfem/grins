@@ -98,12 +98,7 @@ namespace GRINS
         // At the moment output data is overwritten every mesh refinement step
         if( context.output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
           {
-            libMesh::NumericVector<libMesh::Number>& dual_solution = context.system->get_adjoint_solution(0);
-
-            // Swap primal and dual to write out dual solution
-            primal_solution.swap( dual_solution );          
-            context.vis->output( context.equation_system );
-            primal_solution.swap( dual_solution );          
+            context.vis->output_adjoint( context.equation_system, context.system );
           }
 
         if( context.output_residual )

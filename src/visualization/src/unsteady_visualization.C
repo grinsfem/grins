@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -125,6 +126,38 @@ namespace GRINS
       }
   }
 
+  void UnsteadyVisualization::output_adjoint
+    ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      MultiphysicsSystem* system,
+      const unsigned int time_step,
+      const libMesh::Real time )
+  {
+    std::stringstream suffix;
+    suffix << time_step;
+
+    const libMesh::DifferentiableQoI* raw_qoi = system->get_qoi();
+    const CompositeQoI* qoi = dynamic_cast<const CompositeQoI*>( raw_qoi );
+
+    unsigned int n_qois = qoi->n_qois();
+
+    for( unsigned int q = 0; q < n_qois; q++ )
+      {
+        libMesh::NumericVector<libMesh::Number>& dual_solution = system->get_adjoint_solution(q);
+
+        const std::string& qoi_name = qoi->get_qoi(q).name();
+        std::string filename = this->_vis_output_file_prefix+"_unsteady_adjoint_"+qoi_name;
+        filename+="."+suffix.str();
+
+        system->solution->swap( dual_solution );
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename, time );
+
+        // Now swap back and reupdate
+        system->solution->swap( dual_solution );
+        equation_system->update();
+      }
+  }
 
   void UnsteadyVisualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
