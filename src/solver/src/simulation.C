@@ -74,6 +74,8 @@ namespace GRINS
 
     this->init_params(input,sim_builder);
 
+    this->init_adjoint_solve(input,_output_adjoint);
+
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
@@ -118,6 +120,8 @@ namespace GRINS
     this->init_qois(input,sim_builder);
 
     this->init_params(input,sim_builder);
+
+    this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
