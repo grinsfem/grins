@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -38,7 +39,7 @@ namespace GRINS
 
   SteadyVisualization::SteadyVisualization
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm ) 
+      const libMesh::Parallel::Communicator &comm )
     : Visualization(input, comm)
   {
     return;
@@ -100,6 +101,33 @@ namespace GRINS
       }
   }
 
+  void SteadyVisualization::output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+                                            MultiphysicsSystem* system,
+                                            const unsigned int /*time_step*/,
+                                            const libMesh::Real /*time*/ )
+  {
+    const libMesh::DifferentiableQoI* raw_qoi = system->get_qoi();
+    const CompositeQoI* qoi = dynamic_cast<const CompositeQoI*>( raw_qoi );
+
+    unsigned int n_qois = qoi->n_qois();
+
+    for( unsigned int q = 0; q < n_qois; q++ )
+      {
+        libMesh::NumericVector<libMesh::Number>& dual_solution = system->get_adjoint_solution(q);
+
+        const std::string& qoi_name = qoi->get_qoi(q).name();
+        std::string filename = this->_vis_output_file_prefix+"_adjoint_"+qoi_name;
+
+        system->solution->swap( dual_solution );
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename, 0.0 );
+
+        // Now swap back and reupdate
+        system->solution->swap( dual_solution );
+        equation_system->update();
+      }
+  }
 
   void SteadyVisualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
