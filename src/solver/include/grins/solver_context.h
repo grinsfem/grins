@@ -59,12 +59,14 @@ namespace GRINS
     unsigned int timesteps_per_vis;
     unsigned int timesteps_per_perflog;
     bool output_vis;
+    bool output_adjoint;
     bool output_residual;
     bool output_residual_sensitivities;
     bool output_solution_sensitivities;
     bool print_perflog;
     bool print_scalars;
     bool print_qoi;
+    bool do_adjoint_solve;
 
     std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 

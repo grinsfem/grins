@@ -304,6 +304,7 @@ namespace GRINS
     context.system = _multiphysics_system;
     context.equation_system = _equation_system;
     context.vis = _vis;
+    context.output_adjoint = _output_adjoint;
     context.timesteps_per_vis = _timesteps_per_vis;
     context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
@@ -315,6 +316,7 @@ namespace GRINS
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
     context.print_qoi = _print_qoi;
+    context.do_adjoint_solve = _do_adjoint_solve;
 
     if (_output_residual_sensitivities &&
         !_forward_parameters.parameter_vector.size())
