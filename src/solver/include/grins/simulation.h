@@ -120,6 +120,9 @@ namespace GRINS
     //! Helper function
     bool check_for_adjoint_solve( const GetPot& input ) const;
 
+    //! Helper function
+    void init_adjoint_solve( const GetPot& input, bool output_adjoint );
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;

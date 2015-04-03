@@ -497,6 +497,28 @@ namespace GRINS
     return;
   }
 
+  void Simulation::init_adjoint_solve( const GetPot& input, bool output_adjoint )
+  {
+    // Check if we're doing an adjoint solve
+    _do_adjoint_solve = this->check_for_adjoint_solve(input);
+
+    const libMesh::DifferentiableQoI* raw_qoi = _multiphysics_system->get_qoi();
+    const CompositeQoI* qoi = dynamic_cast<const CompositeQoI*>( raw_qoi );
+
+    // If we are trying to do an adjoint solve without a QoI, that's an error
+    if( _do_adjoint_solve && qoi->n_qois() == 0 )
+      {
+        libmesh_error_msg("Error: Adjoint solve requested, but no QoIs detected.");
+      }
+
+    /* If we are not doing an adjoint solve, but adjoint output was requested:
+       that's an error. */
+    if( !_do_adjoint_solve && output_adjoint )
+      {
+        libmesh_error_msg("Error: Adjoint output requested, but no adjoint solve requested.");
+      }
+  }
+
   bool Simulation::check_for_adjoint_solve( const GetPot& input ) const
   {
     /*! \todo We need to collect these options into one spot */
