@@ -94,6 +94,38 @@ namespace GRINS
     return;
   }
 
+  void UnsteadyVisualization::output_residual_sensitivities
+    (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+     MultiphysicsSystem* system,
+     const libMesh::ParameterVector & params,
+     const unsigned int time_step,
+     const libMesh::Real time )
+  {
+    for (unsigned int p=0; p != params.size(); ++p)
+      {
+        std::stringstream suffix;
+        suffix << time_step;
+
+        std::stringstream pstr;
+        pstr << p;
+
+        std::string filename =
+          this->_vis_output_file_prefix + "_unsteady_dRdp" +
+          pstr.str() + '.' + suffix.str();
+
+        // Swap solution with precomputed sensitivity rhs
+        system->solution->swap(system->get_sensitivity_rhs(p));
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename, time );
+
+        // Now swap back and reupdate
+        system->solution->swap(system->get_sensitivity_rhs(p));
+        equation_system->update();
+      }
+  }
+
+
   void UnsteadyVisualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
      MultiphysicsSystem* system,
