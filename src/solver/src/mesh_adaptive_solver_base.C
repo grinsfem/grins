@@ -45,20 +45,16 @@ namespace GRINS
       _refine_fraction( input("MeshAdaptivity/refine_percentage", 0.2) ),
       _coarsen_fraction( input("MeshAdaptivity/coarsen_percentage", 0.2) ),
       _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
-      _output_adjoint_sol( input("MeshAdaptivity/output_adjoint_sol", false) ),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
       _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),
       _edge_level_mismatch_limit( input("MeshAdaptivity/edge_level_mismatch_limit", 0 ) ),
       _face_level_mismatch_limit( input("MeshAdaptivity/face_level_mismatch_limit", 1 ) ),
       _enforce_mismatch_limit_prior_to_refinement( input("MeshAdaptivity/enforce_mismatch_limit_prior_to_refinement", false ) ),
-      _do_adjoint_solve(false),
       _refinement_type(INVALID),
       _mesh_refinement(NULL)
   {
     this->set_refinement_type( input, _refinement_type );
-
-    _do_adjoint_solve = this->check_for_adjoint_solve( input );
 
     return;
   }
@@ -147,20 +143,6 @@ namespace GRINS
       }
 
     return;
-  }
-
-  bool MeshAdaptiveSolverBase::check_for_adjoint_solve( const GetPot& input ) const
-  {
-    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
-
-    bool do_adjoint_solve = false;
-
-    if( error_estimator.find("adjoint") != std::string::npos )
-      {
-        do_adjoint_solve = true;
-      }
-
-    return do_adjoint_solve;
   }
 
   bool MeshAdaptiveSolverBase::check_for_convergence( SolverContext& context,
