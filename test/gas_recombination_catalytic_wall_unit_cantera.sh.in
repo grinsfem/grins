@@ -4,4 +4,4 @@ PROG="@top_builddir@/test/gas_recombination_catalytic_wall_unit"
 
 INPUT="cantera @top_builddir@/test/input_files/cantera_chem_thermo.in"
 
-$PROG $INPUT $PETSC_OPTIONS 
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@
 #include "grins/grins_physics_names.h"
 #include "grins/nbc_container.h"
 #include "grins/dbc_container.h"
+#include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
 
 // libMesh
@@ -61,10 +62,16 @@ namespace GRINS
   class Simulation
   {
   public:
-    
+
     Simulation( const GetPot& input,
 		SimulationBuilder& sim_builder,
-                const libMesh::Parallel::Communicator &comm 
+                const libMesh::Parallel::Communicator &comm
+                LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+
+    Simulation( const GetPot& input,
+                GetPot& command_line, /* Has to be non-const for search() */
+		SimulationBuilder& sim_builder,
+                const libMesh::Parallel::Communicator &comm
                 LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     virtual ~Simulation();
@@ -76,6 +83,8 @@ namespace GRINS
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
     libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
+
+    const std::string& get_multiphysics_system_name() const;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -90,6 +99,23 @@ namespace GRINS
     
     void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
 				    GRINS::MultiphysicsSystem* system );
+
+    //! Helper function
+    void init_multiphysics_system( const GetPot& input,
+                                   SimulationBuilder& sim_builder );
+
+    //! Helper function
+    void init_qois( const GetPot& input, SimulationBuilder& sim_builder );
+
+    //! Helper function
+    void init_params( const GetPot& input, SimulationBuilder& sim_builder );
+
+    //! Helper function
+    void init_restart( const GetPot& input, SimulationBuilder& sim_builder,
+                       const libMesh::Parallel::Communicator &comm );
+
+    //! Helper function
+    void check_for_unused_vars( const GetPot& input, bool warning_only );
 
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
@@ -111,21 +137,34 @@ namespace GRINS
     bool _print_mesh_info;
     bool _print_log_info;
     bool _print_equation_system_info;
+    bool _print_perflog;
     bool _print_qoi;
     bool _print_scalars;
 
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+    bool _output_solution_sensitivities;
 
     unsigned int _timesteps_per_vis;
+    unsigned int _timesteps_per_perflog;
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
+
+    ParameterManager _adjoint_parameters;
+
+    ParameterManager _forward_parameters;
 
   private:
 
     Simulation();
 
   };
+
+  inline
+  const std::string& Simulation::get_multiphysics_system_name() const
+  {
+    return this->_system_name;
+  }
 }
 #endif // GRINS_SIMULATION_H

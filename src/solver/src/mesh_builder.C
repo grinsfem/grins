@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@
 #include "grins/mesh_builder.h"
 
 // libMesh
-#include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
 #include "libmesh/mesh_generation.h"
 #include "libmesh/mesh_modification.h"
@@ -58,133 +57,111 @@ namespace GRINS
     (const GetPot& input,
      const libMesh::Parallel::Communicator &comm)
   {
-    // First, read all needed variables
-    std::string mesh_option = input("mesh-options/mesh_option", "NULL");
-    std::string mesh_filename = input("mesh-options/mesh_filename", "NULL");
-
-    libMesh::Real domain_x1_min = input("mesh-options/domain_x1_min", 0.0);
-    libMesh::Real domain_x2_min = input("mesh-options/domain_x2_min", 0.0);
-    libMesh::Real domain_x3_min = input("mesh-options/domain_x3_min", 0.0);
-
-    libMesh::Real domain_x1_max = input("mesh-options/domain_x1_max", 1.0); 
-    libMesh::Real domain_x2_max = input("mesh-options/domain_x2_max", 1.0);
-    libMesh::Real domain_x3_max = input("mesh-options/domain_x3_max", 1.0);
-
-    int mesh_nx1 = input("mesh-options/mesh_nx1", -1);
-    int mesh_nx2 = input("mesh-options/mesh_nx2", -1);
-    int mesh_nx3 = input("mesh-options/mesh_nx3", -1);
-
-    std::string element_type = input("mesh-options/element_type", "NULL");
-
-    // Make sure the user told us what to do
-    if(mesh_option == "NULL")
+    // First check if the user has both old and new versions of mesh input
+    if( input.have_section("mesh-options/") &&
+        input.have_section("Mesh/") )
       {
-	std::cerr << " MeshBuilder::read_input_options :"
-		  << " mesh-options/mesh_option NOT specified "
-		  << std::endl;
-	libmesh_error();
+        libmesh_error_msg("Error: Detected illegal simulataneous use of [mesh-options] and [Mesh] in input!");
+      }
+
+    // User needs to tell us if we are generating or reading a mesh
+    // We infer this by checking and seeing if the use has a Mesh/Read
+    // or a Mesh/Generation section
+    if( !input.have_variable("mesh-options/mesh_option") &&
+        !input.have_section("Mesh/Read/") &&
+        !input.have_section("Mesh/Generation/") )
+      {
+        libmesh_error_msg("ERROR: Must specify either Mesh/Read or Mesh/Generation in input.");
+      }
+
+    // But you can't have it both ways
+    if( input.have_section("Mesh/Read/") && input.have_section("Mesh/Generation/") )
+      {
+        libmesh_error_msg("ERROR: Can only specify one of Mesh/Read and Mesh/Generation");
+      }
+
+    // Are we generating the mesh or are we reading one in from a file?
+    std::string mesh_build_type = "NULL";
+    if( input.have_section("Mesh/Read/") )
+      mesh_build_type = "read";
+
+    else if( input.have_section("Mesh/Generation/") )
+      mesh_build_type = "generate";
+
+    this->deprecated_option<std::string>( input, "mesh-options/mesh_option", "Mesh/Read or Mesh/Generation", "DIE!", mesh_build_type);
+
+    // Make sure the user gave a valid option
+    /*! \todo Can remove last 4 checks once mesh-options/mesh_option support is removed. */
+    if( mesh_build_type != std::string("generate") &&
+        mesh_build_type != std::string("read") &&
+        mesh_build_type != std::string("read_mesh_from_file") &&
+        mesh_build_type != std::string("create_1D_mesh") &&
+        mesh_build_type != std::string("create_2D_mesh") &&
+        mesh_build_type != std::string("create_3D_mesh") )
+      {
+        std::string error = "ERROR: Invalid value of "+mesh_build_type+" for Mesh/type.\n";
+          error += "       Valid values are: generate\n";
+          error += "                         read\n";
+          libmesh_error_msg(error);
       }
 
     // Create UnstructuredMesh object (defaults to dimension 1).
     libMesh::UnstructuredMesh* mesh;
 
     // Were we specifically asked to use a ParallelMesh or SerialMesh?
-    std::string mesh_class = input("mesh-options/mesh_class", "default");
+    {
+      std::string mesh_class = input("Mesh/class", "default");
 
-    if (mesh_class == "parallel")
-      mesh = new libMesh::ParallelMesh(comm);
-    else if (mesh_class == "serial")
-      mesh = new libMesh::SerialMesh(comm);
-    else if (mesh_class == "default")
-      mesh = new libMesh::Mesh(comm);
-    else
-      {
-        std::cerr << " MeshBuilder::build:"
-                  << " mesh-options/mesh_class had invalid value " << mesh_class
-                  << std::endl;
-        libmesh_error();
-      }
+      this->deprecated_option<std::string>( input, "mesh-options/mesh_class", "Mesh/class", "default", mesh_class);
 
-    if(mesh_option=="read_mesh_from_file")
+      if (mesh_class == "parallel")
+        mesh = new libMesh::ParallelMesh(comm);
+      else if (mesh_class == "serial")
+        mesh = new libMesh::SerialMesh(comm);
+      else if (mesh_class == "default")
+        mesh = new libMesh::Mesh(comm);
+      else
+        {
+          std::string error = "ERROR: Invalid class "+mesh_class+" input for Mesh/class.\n";
+            error += "       Valid choices are: serial, parallel.\n";
+            libmesh_error_msg(error);
+        }
+    }
+
+    // Read mesh from file
+    if(mesh_build_type =="read_mesh_from_file" /* This is deprecated */ ||
+       mesh_build_type == "read" )
       {
+        // Make sure the user set the filename to read
+        if( !input.have_variable("mesh-options/mesh_filename") /* This is deprecated */ &&
+            !input.have_variable("Mesh/Read/filename") )
+          {
+            libmesh_error_msg("ERROR: Must specify Mesh/Read/filename for reading mesh.");
+          }
+
+        std::string mesh_filename = input("Mesh/Read/filename", "DIE!");
+
+        this->deprecated_option<std::string>( input, "mesh-options/mesh_filename", "Mesh/Read/filename", "DIE!", mesh_filename);
+
 	// According to Roy Stogner, the only read format
 	// that won't properly reset the dimension is gmsh.
 	/*! \todo Need to a check a GMSH meshes */
 	mesh->read(mesh_filename);
       }
 
-    else if(mesh_option=="create_1D_mesh")
+    // Generate the mesh using built-in libMesh functions
+    else if(mesh_build_type=="create_1D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="create_2D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="create_3D_mesh" /* This is deprecated */ ||
+            mesh_build_type=="generate")
       {
-	if(element_type=="NULL")
-	  {
-	    element_type = "EDGE3";
-	  }
-      
-	GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
-      
-	libMesh::MeshTools::Generation::build_line(*mesh,
-						   mesh_nx1,
-						   domain_x1_min,
-						   domain_x1_max,
-						   element_enum_type);
-      }
-      
-    else if(mesh_option=="create_2D_mesh")
-      {
-	if(element_type=="NULL")
-	  {
-	    element_type = "TRI6";
-	  }
-
-	// Reset mesh dimension to 2.
-	mesh->set_mesh_dimension(2);
-
-	GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
-
-	libMesh::MeshTools::Generation::build_square(*mesh,
-						     mesh_nx1,
-						     mesh_nx2,
-						     domain_x1_min,
-						     domain_x1_max,
-						     domain_x2_min,
-						     domain_x2_max,
-						     element_enum_type);
-      }
-
-    else if(mesh_option=="create_3D_mesh")
-      {
-	if(element_type=="NULL")
-	  {
-	    element_type = "TET10";
-	  }
-
-	// Reset mesh dimension to 3.
-	mesh->set_mesh_dimension(3);
-
-	GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
-
-	libMesh::MeshTools::Generation::build_cube(*mesh,
-						   mesh_nx1,
-						   mesh_nx2,
-						   mesh_nx3,
-						   domain_x1_min,
-						   domain_x1_max,
-						   domain_x2_min,
-						   domain_x2_max,
-						   domain_x3_min,
-						   domain_x3_max,
-						   element_enum_type);
+        this->generate_mesh(mesh_build_type,input,mesh);
       }
 
     else
       {
-	std::cerr << " MeshBuilder::build_mesh :"
-		  << " mesh-options/mesh_option [" << mesh_option
-		  << "] NOT supported " << std::endl;
-	libmesh_error();
+        // Shouldn't have gotten here
+        libmesh_error();
       }
 
     /* Only do the mesh refinement here if we don't have a restart file.
@@ -198,12 +175,195 @@ namespace GRINS
     return std::tr1::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }
 
+  void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
+                                   libMesh::UnstructuredMesh* mesh )
+  {
+    unsigned int dimension = input("Mesh/Generation/dimension",0);
+
+    if( !input.have_variable("mesh-options/mesh_option") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/dimension") )
+      {
+        libmesh_error_msg("ERROR: Must specify Mesh/Generation/dimension for generating mesh.");
+      }
+
+    /* Remove these once suport for mesh-options/mesh_option is removed */
+    if( mesh_build_type == "create_1D_mesh" /* This is deprecated */ )
+      dimension = 1;
+
+    if( mesh_build_type=="create_2D_mesh" /* This is deprecated */ )
+      dimension = 2;
+
+    if( mesh_build_type=="create_3D_mesh" /* This is deprecated */ )
+      dimension = 3;
+
+    // Set the mesh dimension
+    mesh->set_mesh_dimension(dimension);
+
+    /* Now look for spatial extent of the grid that the user wants to generate. */
+
+    libMesh::Real x_min = input("Mesh/Generation/x_min", 0.0);
+    this->deprecated_option( input, "mesh-options/domain_x1_min", "Mesh/Generation/x_min", 0.0, x_min );
+
+    libMesh::Real x_max = input("Mesh/Generation/x_max", 1.0);
+    this->deprecated_option( input, "mesh-options/domain_x1_max", "Mesh/Generation/x_max", 1.0, x_max );
+
+
+    /* We only check the y_{min,max} input if dimension is > 1 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D grid. */
+    libMesh::Real y_min = 0.0;
+    libMesh::Real y_max = 0.0;
+
+    if( dimension > 1 )
+      {
+        y_min = input("Mesh/Generation/y_min", 0.0);
+        this->deprecated_option( input, "mesh-options/domain_x2_min", "Mesh/Generation/y_min", 0.0, y_min );
+
+        y_max = input("Mesh/Generation/y_max", 1.0);
+        this->deprecated_option( input, "mesh-options/domain_x2_max", "Mesh/Generation/y_max", 1.0, y_max );
+      }
+
+    /* We only check the z_{min,max} input if dimension is > 2 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D or 2D grid. */
+    libMesh::Real z_min = 0.0;
+    libMesh::Real z_max = 0.0;
+
+    if( dimension > 2 )
+      {
+        z_min = input("Mesh/Generation/z_min", 0.0);
+        this->deprecated_option( input, "mesh-options/domain_x3_min", "Mesh/Generation/z_min", 0.0, z_min );
+
+        z_max = input("Mesh/Generation/z_max", 1.0);
+        this->deprecated_option( input, "mesh-options/domain_x3_max", "Mesh/Generation/z_max", 1.0, z_max );
+      }
+
+    /* Now check for the number of elements in each direction */
+
+    // Make sure user gave us info about how many elements to use
+    if( !input.have_variable("mesh-options/mesh_nx1") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/n_elems_x") )
+      {
+        libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_x for mesh generation.");
+      }
+
+    unsigned int n_elems_x = input("Mesh/Generation/n_elems_x", 0);
+    this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx1", "Mesh/Generation/n_elems_x", 0, n_elems_x );
+
+    /* We only check n_elems_y input if dimension is > 1 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D grid. */
+    unsigned int n_elems_y = 0;
+    if( dimension > 1 )
+      {
+        if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/n_elems_y") )
+          {
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
+          }
+
+        n_elems_y = input("Mesh/Generation/n_elems_y", 0);
+        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx2", "Mesh/Generation/n_elems_y", 0, n_elems_y );
+      }
+
+    /* We only check n_elems_z input if dimension is > 2 so that GetPot
+       UFO detection will give us an error if we have this in the input file
+       and are only using a 1D or 2D grid. */
+    unsigned int n_elems_z = 0;
+    if( dimension > 2 )
+      {
+        if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
+        !input.have_variable("Mesh/Generation/n_elems_z") )
+          {
+            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
+          }
+
+        n_elems_z = input("Mesh/Generation/n_elems_z", 0);
+        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx3", "Mesh/Generation/n_elems_z", 0, n_elems_z );
+      }
+
+    /* Now grab the element_type the user wants for the mesh. */
+
+    std::string element_type = input("Mesh/Generation/element_type", "default");
+    this->deprecated_option<std::string>( input, "mesh-options/element_type", "Mesh/Generation/element_type", "default", element_type );
+
+    /* Now generate the mesh. */
+    if( dimension == 1 )
+      {
+        if(element_type=="default")
+	  {
+	    element_type = "EDGE3";
+	  }
+
+        GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+
+	libMesh::MeshTools::Generation::build_line(*mesh,
+                                                   n_elems_x,
+                                                   x_min,
+                                                   x_max,
+						   element_enum_type);
+      }
+
+    else if( dimension == 2 )
+      {
+	if(element_type=="default")
+	  {
+	    element_type = "TRI6";
+	  }
+
+        GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+
+	libMesh::MeshTools::Generation::build_square(*mesh,
+                                                     n_elems_x,
+                                                     n_elems_y,
+                                                     x_min,
+                                                     x_max,
+                                                     y_min,
+                                                     y_max,
+						     element_enum_type);
+      }
+
+    else if( dimension == 3 )
+      {
+	if(element_type=="default")
+	  {
+	    element_type = "TET10";
+	  }
+
+        GRINSEnums::ElemType element_enum_type =
+	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+
+	libMesh::MeshTools::Generation::build_cube(*mesh,
+                                                   n_elems_x,
+                                                   n_elems_y,
+                                                   n_elems_z,
+                                                   x_min,
+                                                   x_max,
+                                                   y_min,
+                                                   y_max,
+                                                   z_min,
+                                                   z_max,
+						   element_enum_type);
+      }
+
+    else
+      {
+        // This shouldn't have happened
+	libmesh_error();
+      }
+
+    return;
+  }
+
   void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
                                                    const libMesh::Parallel::Communicator &comm,
                                                    libMesh::UnstructuredMesh& mesh ) const
   {
     std::string redistribution_function_string =
-            input("mesh-options/redistribute", std::string("0"));
+            input("Mesh/Redistribution/function", std::string("0"));
+    this->deprecated_option<std::string>( input, "mesh-options/redistribute", "Mesh/Redistribution/function", "0", redistribution_function_string );
 
     if (redistribution_function_string != "0")
       {
@@ -230,15 +390,17 @@ namespace GRINS
           }
       }
 
-    int uniformly_refine = input("mesh-options/uniformly_refine", 0);
-    
+    int uniformly_refine = input("Mesh/Refinement/uniformly_refine", 0);
+    this->deprecated_option( input, "mesh-options/uniformly_refine", "Mesh/Refinement/uniformly_refine", 0, uniformly_refine );
+
     if( uniformly_refine > 0 )
       {
         libMesh::MeshRefinement(mesh).uniformly_refine(uniformly_refine);
       }
 
     std::string h_refinement_function_string =
-            input("mesh-options/locally_h_refine", std::string("0"));
+            input("Mesh/Refinement/locally_h_refine", std::string("0"));
+    this->deprecated_option<std::string>( input, "mesh-options/locally_h_refine", "Mesh/Refinement/locally_h_refine", "0", h_refinement_function_string );
 
     if (h_refinement_function_string != "0")
       { 

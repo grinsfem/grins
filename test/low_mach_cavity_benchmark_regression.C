@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   // Value after libMesh 7acb6fc9 bugfix
   const libMesh::Real exact_qoi = 4.8654229502012685;
 
-  const libMesh::Real tol = 1.0e-11;
+  const libMesh::Real tol = 1.0e-9;
 
   int return_flag = 0;
 

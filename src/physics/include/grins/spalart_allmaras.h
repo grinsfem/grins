@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,9 +31,17 @@
 #include "primitive_flow_fe_variables.h"
 #include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
+#include "grins/spalart_allmaras_helper.h"
+#include "grins/spalart_allmaras_parameters.h"
 
 //Utils
 #include "grins/distance_function.h"
+
+//libMesh
+#include "libmesh/mesh.h"
+#include "libmesh/boundary_info.h"
+#include "libmesh/serial_mesh.h"
+#include "libmesh/boundary_mesh.h"
 
 namespace GRINS
 {
@@ -44,7 +52,7 @@ namespace GRINS
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
-   */
+  */
   template<class Viscosity>
   class SpalartAllmaras : public TurbulenceModelsBase<Viscosity>
   {
@@ -53,51 +61,49 @@ namespace GRINS
     SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
     ~SpalartAllmaras();
-        
+
     virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );    
+    virtual void init_context( AssemblyContext& context );
 
     // Element time derivative
     virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
-    
-    // The vorticity function
-    libMesh::Real _vorticity(AssemblyContext& context, unsigned int qp);
-    
-    // The source function \tilde{S}
-    libMesh::Real _source_fn( libMesh::Number nu, libMesh::Real mu, libMesh::Real wall_distance, libMesh::Real _vorticity_value);
 
-    // The destruction function f_w(nu)
-    libMesh::Real _destruction_fn(libMesh::Number nu, libMesh::Real wall_distance, libMesh::Real _S_tilde);
+    // Mass matrix part(s)
+    virtual void mass_residual( bool compute_jacobian,
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
     // A distance function to get distances from boundaries to qps
     libMesh::AutoPtr<DistanceFunction> distance_function;
 
+    // Boundary mesh objected that will be updated using the wall ids
+    libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
+
   protected:
-
-    //! Spalart Allmaras model constants
-    libMesh::Number _cb1, _sigma, _cb2, _cw1;
-
-    //! Constants specific to the calculation of the source function
-    libMesh::Number _kappa, _cv1, _cv2, _cv3;
-
-    //! Constants specific to the calculation of the destruction function
-    libMesh::Number _r_lin, _c_w2, _c_w3;
-
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
 
     // The flow variables
     PrimitiveFlowFEVariables _flow_vars;
 
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;    
-    
+    TurbulenceFEVariables _turbulence_vars;
+
+    // Spalart Allmaras Helper object
+    SpalartAllmarasHelper _spalart_allmaras_helper;
+
+    //! Object handling the plethora of parameters
+    SpalartAllmarasParameters _sa_params;
+
+    // Wall ids set, to be read in, tells us which bc_id's correspond to walls
+    std::set<libMesh::boundary_id_type> _wall_ids;
+
+    // No of walls
+    unsigned int _no_of_walls;
+
   private:
     SpalartAllmaras();
 

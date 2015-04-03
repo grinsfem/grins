@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/parameter_vector.h"
 #include "libmesh/steady_solver.h"
 
 namespace GRINS
@@ -67,7 +68,7 @@ namespace GRINS
     // SteadySolver and reassemble the residual. Then, we'll need to swap
     // the solution and the rhs vector stashed in the system. Once we're done,
     // we'll reset the time solver pointer back to the original guy.
-  
+
     libMesh::AutoPtr<libMesh::TimeSolver> prev_time_solver(system->time_solver);
 
     libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
@@ -81,9 +82,9 @@ namespace GRINS
     system->solution->swap( *(system->rhs) );
     // Update equation systems
     equation_system->update();
-  
+
     this->dump_visualization( equation_system, filename, time );
-  
+
     // Now swap back and reupdate
     system->solution->swap( *(system->rhs) );
     equation_system->update();
@@ -92,5 +93,37 @@ namespace GRINS
 
     return;
   }
+
+  void UnsteadyVisualization::output_solution_sensitivities
+    (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+     MultiphysicsSystem* system,
+     const libMesh::ParameterVector & params,
+     const unsigned int time_step,
+     const libMesh::Real time )
+  {
+    for (unsigned int p=0; p != params.size(); ++p)
+      {
+        std::stringstream suffix;
+        suffix << time_step;
+
+        std::stringstream pstr;
+        pstr << p;
+
+        std::string filename =
+          this->_vis_output_file_prefix + "_unsteady_dudp" +
+          pstr.str() + '.' + suffix.str();
+
+        // Swap solution with precomputed sensitivity solution
+        system->solution->swap(system->get_sensitivity_solution(p));
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename, time );
+
+        // Now swap back and reupdate
+        system->solution->swap(system->get_sensitivity_solution(p));
+        equation_system->update();
+      }
+  }
+
 
 } // namespace GRINS

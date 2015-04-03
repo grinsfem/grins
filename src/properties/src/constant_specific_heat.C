@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -33,7 +33,8 @@ namespace GRINS
 {
 
   ConstantSpecificHeat::ConstantSpecificHeat( const GetPot& input )
-    : _cp( input( "Materials/SpecificHeat/cp", 0.0 ) )
+    : ParameterUser("ConstantSpecificHeat"),
+      _cp(0.0)
   {
     if( !input.have_variable("Materials/SpecificHeat/cp") )
       {
@@ -41,7 +42,8 @@ namespace GRINS
         libmesh_error();
       }
 
-    return;
+    this->set_parameter
+      (_cp, input, "Materials/SpecificHeat/cp", _cp);
   }
 
   ConstantSpecificHeat::~ConstantSpecificHeat()

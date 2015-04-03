@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -28,9 +28,6 @@
 
 // GRINS
 #include "grins/assembly_context.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/grins_physics_names.h"
 #include "grins/inc_nav_stokes_macro.h"
 
@@ -43,13 +40,17 @@
 namespace GRINS
 {
   template<class Mu>
-  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input),
-      _flow_vars(input, incompressible_navier_stokes),
-      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
+  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& my_physics_name,
+                                                                     const std::string& core_physics_name,
+                                                                     const GetPot& input )
+    : Physics(my_physics_name, input),
+      _flow_vars(input, core_physics_name),
+      _rho(1.0),
       _mu(input)
   {
-    return;
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+core_physics_name+"/rho", this->_rho);
   }
 
   template<class Mu>
@@ -64,7 +65,9 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     this->_flow_vars.init(system);
-
+    
+    this->_mu.init(system); 
+   
     return;
   }
 
@@ -105,6 +108,17 @@ namespace GRINS
 
     return;
   }
+
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
+  }
+
 
 } // namespace GRINS
 

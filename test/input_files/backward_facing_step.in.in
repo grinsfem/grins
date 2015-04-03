@@ -31,6 +31,12 @@ pin_pressure = 'false'
 rho = '1.0'
 mu = '1.0e-1'
 
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
 []
 
 [Stabilization]
@@ -49,28 +55,25 @@ tau_factor = '0.05'
 
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file' 
-mesh_filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = 'false' 
-theta = 1.0
-n_timesteps = 10
-deltat = 0.05
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations =  25 
-max_linear_iterations = 25000
+max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
-relative_step_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-11
 
-use_numerical_jacobians_only = 'true'
+use_numerical_jacobians_only = 'false'
 
 # Visualization options
 [vis-options]
@@ -94,13 +97,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

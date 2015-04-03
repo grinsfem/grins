@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -68,6 +68,13 @@ namespace GRINS
     virtual void add_qoi( const QoIBase& qoi );
 
     unsigned int n_qois() const;
+
+    //! Each QoI will register its copy(s) of an independent variable
+    //  named in this call.
+    void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer)
+    const;
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,

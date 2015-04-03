@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -32,8 +32,9 @@ namespace GRINS
 {
   MooneyRivlin::MooneyRivlin( const GetPot& input )
     : HyperelasticStrainEnergy<MooneyRivlin>(),
-      _C1( input("Physics/MooneyRivlin/C1", -1.0) ),
-      _C2( input("Physics/MooneyRivlin/C2", -1.0) )
+      ParameterUser("MooneyRivlin"),
+      _C1(-1),
+      _C2(-1)
   {
     //Force the user to specify C1 and C2
     if( !input.have_variable("Physics/MooneyRivlin/C1") ||
@@ -44,6 +45,11 @@ namespace GRINS
         libmesh_error();
       }
 
+    this->set_parameter
+      (_C1, input, "Physics/MooneyRivlin/C1", _C1);
+
+    this->set_parameter
+      (_C2, input, "Physics/MooneyRivlin/C2", _C2);
     return;
   }
    

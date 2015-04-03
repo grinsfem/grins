@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -54,10 +54,10 @@ namespace GRINS
     //! Builds PhysicsList. This is the primary function of this class.
     GRINS::PhysicsList build(const GetPot& input);
 
-  protected:
-
     typedef std::tr1::shared_ptr<Physics> PhysicsPtr;
     typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
+
+  protected:
 
     //! Figures out which GRINS::Physics pointer to create
     /*! This is the primary method to override if the user wants to extend
@@ -80,17 +80,6 @@ namespace GRINS
     //! Utility function
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required ) const;
-
-    void visc_cond_specheat_error( const std::string& physics,
-				   const std::string& conductivity,
-				   const std::string& viscosity,
-				   const std::string& specific_heat ) const;
-
-    void visc_error( const std::string& physics, 
-		     const std::string& viscosity ) const;
-
-    void conductivity_error( const std::string& physics, 
-			     const std::string& conductivity ) const;
 
     void add_reacting_low_mach( const GetPot& input,
                                 const std::string& physics_to_add,

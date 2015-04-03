@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -33,14 +33,17 @@ namespace GRINS
 {
 
   ConstantPrandtlConductivity::ConstantPrandtlConductivity( const GetPot& input )
-    : _Pr( input("Materials/Conductivity/Pr", 0.0) )
+    : ParameterUser("ConstantPrandtlConductivity"),
+      _Pr(0.0)
   {
     if( !input.have_variable("Materials/Conductivity/Pr") )
       {
         std::cerr << "Error: Must specify Prandtl number for constant_prandtl conductivity model!" << std::endl;
         libmesh_error();
       }
-    return;
+
+    this->set_parameter
+      (_Pr, input, "Materials/Conductivity/Pr", _Pr);
   }
 
   ConstantPrandtlConductivity::~ConstantPrandtlConductivity()

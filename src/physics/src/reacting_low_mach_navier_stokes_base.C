@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -42,23 +42,31 @@
 
 namespace GRINS
 {
-  ReactingLowMachNavierStokesBase::ReactingLowMachNavierStokesBase(const std::string& physics_name, 
+  template<typename Mixture, typename Evaluator>
+  ReactingLowMachNavierStokesBase<Mixture,Evaluator>::ReactingLowMachNavierStokesBase(const std::string& physics_name,
 									    const GetPot& input)
     : Physics(physics_name, input),
+      _gas_mixture(input),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
-      _fixed_rho_value( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 ) )
+      _fixed_rho_value(0.0)
   {
+    this->set_parameter
+      (_fixed_rho_value, input,
+       "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
+
     this->read_input_options(input);
     
     return;
   }
 
-  ReactingLowMachNavierStokesBase::~ReactingLowMachNavierStokesBase()
+  template<typename Mixture, typename Evaluator>
+  ReactingLowMachNavierStokesBase<Mixture,Evaluator>::~ReactingLowMachNavierStokesBase()
   {
     return;
   }
-  
-  void ReactingLowMachNavierStokesBase::read_input_options( const GetPot& input )
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::read_input_options( const GetPot& input )
   {
     // Read FE family info
     this->_species_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_FE_family", "LAGRANGE") );
@@ -96,7 +104,8 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", GRINS::T_var_name_default );
 
     // Read thermodynamic state info
-    _p0 = input("Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    this->set_parameter
+      (_p0, input, "Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
 
     _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
@@ -117,7 +126,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBase::init_variables( libMesh::FEMSystem* system )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -148,7 +158,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -172,7 +183,8 @@ namespace GRINS
     return;
   }
 
-  void ReactingLowMachNavierStokesBase::init_context( AssemblyContext& context )
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

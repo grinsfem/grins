@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -36,6 +36,10 @@
 
 // libMesh forward declarations
 class GetPot;
+namespace libMesh
+{
+  class ParameterVector;
+}
 
 namespace GRINS
 {
@@ -61,6 +65,17 @@ namespace GRINS
     virtual void output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step, const libMesh::Real time ) =0;
+
+    void output_solution_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params);
+
+    virtual void output_solution_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params,
+       const unsigned int time_step, const libMesh::Real time ) =0;
 
     void dump_visualization( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			     const std::string& filename_prefix, const libMesh::Real time );

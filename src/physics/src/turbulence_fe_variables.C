@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -38,7 +38,8 @@ namespace GRINS
 {
   TurbulenceFEVariables::TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
     :  TurbulenceVariables(input),
-       _TU_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) )
+       _TU_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
+       _TU_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) )
   {
     return;
   }
@@ -50,7 +51,7 @@ namespace GRINS
 
   void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
   {
-    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);    
+    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);     
     return;
   }
 

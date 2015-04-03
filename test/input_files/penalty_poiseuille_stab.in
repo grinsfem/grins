@@ -1,20 +1,18 @@
 # Mesh related options
-[mesh-options]
-mesh_class = serial
-mesh_option = create_2D_mesh
-element_type = QUAD9
-mesh_nx1 = 32
-mesh_nx2 = 16
+[Mesh]
+   class = 'serial'
 
-domain_x1_max = 5.0
-domain_x2_max = 1.0
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD9'
+      n_elems_x = '32'
+      n_elems_y = '16'
+      x_max = '5.0'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -33,7 +31,6 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = true
 vis_output_file_prefix = penalty_poiseuille_stab
 output_format = 'ExodusII xdr'
@@ -71,12 +68,19 @@ bc_values = '{(abs(y-.5)<.25)*(y-.25)*(.75-y)} {(abs(y-.5)<.25)*(y-.25)*(.75-y)}
 
 pin_pressure = true
 pin_value = 100.0
-pin_location = '2.5 0.5'
+pin_location = '2.5 0' # Must be on boundary!
 
 [../VelocityPenalty]
 
 penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
 #penalty_function = '{0}{0}{0}'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+w_velocity = 'w'
+pressure = 'p'
 
 []
 
@@ -84,16 +88,5 @@ penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
 
 tau_constant = '10'
 tau_factor = '0.05'
-
-[]
-
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

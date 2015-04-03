@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
+#include "grins/heat_transfer_macros.h"
 #include "grins/postprocessed_quantities.h"
 
 // libMesh
@@ -43,7 +44,8 @@ namespace GRINS
 
   template<class K>
   HeatTransfer<K>::HeatTransfer( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase<K>(physics_name, input)
+    : HeatTransferBase<K>(physics_name, input),
+    _k_index(0)
   {
     this->read_input_options(input);
 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -41,12 +41,12 @@ namespace GRINS
   {
     return;
   }
-  
+
   ElasticMembraneBase::~ElasticMembraneBase()
   {
     return;
   }
-  
+
   void ElasticMembraneBase::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true
@@ -67,20 +67,20 @@ namespace GRINS
 
   void ElasticMembraneBase::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(_disp_vars.u_var())->get_JxW();
-    context.get_element_fe(_disp_vars.u_var())->get_phi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphidxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dphideta();
+    this->get_fe(context)->get_JxW();
+    this->get_fe(context)->get_phi();
+    this->get_fe(context)->get_dphidxi();
+    this->get_fe(context)->get_dphideta();
 
     // Need for constructing metric tensors
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdxi();
-    context.get_element_fe(_disp_vars.u_var())->get_dxyzdeta();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidx();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidy();
-    context.get_element_fe(_disp_vars.u_var())->get_dxidz();
-    context.get_element_fe(_disp_vars.u_var())->get_detadx();
-    context.get_element_fe(_disp_vars.u_var())->get_detady();
-    context.get_element_fe(_disp_vars.u_var())->get_detadz();
+    this->get_fe(context)->get_dxyzdxi();
+    this->get_fe(context)->get_dxyzdeta();
+    this->get_fe(context)->get_dxidx();
+    this->get_fe(context)->get_dxidy();
+    this->get_fe(context)->get_dxidz();
+    this->get_fe(context)->get_detadx();
+    this->get_fe(context)->get_detady();
+    this->get_fe(context)->get_detadz();
 
     return;
   }

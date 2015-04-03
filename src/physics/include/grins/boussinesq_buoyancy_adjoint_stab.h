@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@ namespace GRINS
     Physics. Intended to be used with IncompressibleNavierStokesAdjointStabilization
     and HeatTransferStabilization.
    */
+  template<class Viscosity>
   class BoussinesqBuoyancyAdjointStabilization : public BoussinesqBuoyancyBase
   {
   public:
@@ -56,9 +57,19 @@ namespace GRINS
                                      AssemblyContext& context,
                                      CachedValues& cache );
 
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
-    libMesh::Number _rho, _mu;
+    libMesh::Number _rho;
+
+    //! Viscosity object
+    Viscosity _mu;
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -26,8 +26,9 @@
 #define GRINS_HOOKES_LAW_H
 
 // GRINS
-#include "grins/stress_strain_law.h"
 #include "grins/elasticity_tensor.h"
+#include "grins/parameter_user.h"
+#include "grins/stress_strain_law.h"
 
 // Forward declarations
 class GetPot;
@@ -42,7 +43,8 @@ namespace GRINS
    * working with curvilinear coordinate systems, the user should call the
    * set_deformation method before calling operator().
    */
-  class HookesLaw : public StressStrainLaw<HookesLaw>
+  class HookesLaw : public StressStrainLaw<HookesLaw>,
+                    public ParameterUser
   {
   public:
 

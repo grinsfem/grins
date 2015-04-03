@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -44,8 +44,12 @@ namespace GRINS
 				  const unsigned int time_step,
 				  const libMesh::Real time );
 
-  protected:
-
+    virtual void output_solution_sensitivities
+      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+       GRINS::MultiphysicsSystem* system,
+       const libMesh::ParameterVector & params,
+       const unsigned int time_step,
+       const libMesh::Real time );
   };
 }
 #endif

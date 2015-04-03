@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,9 +29,11 @@ namespace GRINS
 {
 
   ConstantSourceFunction::ConstantSourceFunction( const GetPot& input )
-    : _value( input("Physics/SourceFunction/value", 0.0) )
+    : ParameterUser("ConstantSourceFunction"),
+      _value(0.0)
   {
-    return;
+    this->set_parameter
+      (_value, input, "Physics/SourceFunction/value", _value);
   }
 
   ConstantSourceFunction::~ConstantSourceFunction()

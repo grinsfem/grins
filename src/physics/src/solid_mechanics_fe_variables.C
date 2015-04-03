@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -54,7 +54,7 @@ namespace GRINS
   {
     _u_var = system->add_variable( _u_var_name, this->_order, _FE_family);
 
-    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D )
+    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
       {
         _have_v = true;
         _v_var = system->add_variable( _v_var_name, this->_order, _FE_family);

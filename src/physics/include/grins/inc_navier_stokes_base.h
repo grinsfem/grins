@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -45,7 +45,9 @@ namespace GRINS
   {
   public:
 
-    IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input);
+    IncompressibleNavierStokesBase(const std::string& my_physics_name,
+                                   const std::string& core_physics_name,
+                                   const GetPot& input);
 
     ~IncompressibleNavierStokesBase();
     
@@ -63,6 +65,13 @@ namespace GRINS
     // Context initialization
     virtual void init_context( AssemblyContext& context );    
 
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
     //! Physical dimension of problem
@@ -77,7 +86,7 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
-    
+ 
   private:
     IncompressibleNavierStokesBase();
 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -113,6 +113,15 @@ namespace GRINS
       }
 
     return;
+  }
+
+  void CompositeQoI::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer )
+  const
+  {
+    for( unsigned int q = 0; q < _qois.size(); q++ )
+      (*_qois[q]).register_parameter(param_name, param_pointer);
   }
 
   void CompositeQoI::element_qoi( libMesh::DiffContext& context,

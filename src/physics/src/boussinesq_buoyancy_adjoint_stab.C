@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -38,23 +39,26 @@
 
 namespace GRINS
 {
-
-  BoussinesqBuoyancyAdjointStabilization::BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input )
+  template<class Mu>
+  BoussinesqBuoyancyAdjointStabilization<Mu>::BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
       /* \todo Do we want to have these come from a BoussinesqBuoyancyAdjointStabilization section instead? */
-      _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
-      _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
-      _stab_helper( input )
+      _rho(1.0),
+      _mu(input),
+      _stab_helper( physics_name+"StabHelper", input )
+  {
+    this->set_parameter
+      (_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", _rho);
+  }
+
+  template<class Mu>
+  BoussinesqBuoyancyAdjointStabilization<Mu>::~BoussinesqBuoyancyAdjointStabilization()
   {
     return;
   }
 
-  BoussinesqBuoyancyAdjointStabilization::~BoussinesqBuoyancyAdjointStabilization()
-  {
-    return;
-  }
-
-  void BoussinesqBuoyancyAdjointStabilization::init_context( AssemblyContext& context )
+  template<class Mu>
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -64,9 +68,10 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancyAdjointStabilization::element_time_derivative( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /*cache*/ )
+  template<class Mu>
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
+                                                                            AssemblyContext& context,
+                                                                            CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancyAdjointStabilization::element_time_derivative");
@@ -156,18 +161,21 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
+        // Compute the viscosity at this qp
+        libMesh::Real mu_qp = this->_mu(context, qp);
+
         libMesh::Real tau_M;
         libMesh::Real d_tau_M_d_rho;
         libMesh::Gradient d_tau_M_dU;
 
         if (compute_jacobian)
           this->_stab_helper.compute_tau_momentum_and_derivs
-            ( context, qp, g, G, this->_rho, U, this->_mu,
+            ( context, qp, g, G, this->_rho, U, mu_qp,
               tau_M, d_tau_M_d_rho, d_tau_M_dU,
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, this->_mu,
+                    ( context, qp, g, G, this->_rho, U, mu_qp,
                       this->_is_steady );
 
         // Compute the solution & its gradient at the old Newton iterate.
@@ -180,8 +188,8 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
-              this->_mu*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] +
+              mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             Fu(i) += -tau_M*residual(0)*test_func*JxW[qp];
 
             Fv(i) += -tau_M*residual(1)*test_func*JxW[qp];
@@ -250,9 +258,10 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancyAdjointStabilization::element_constraint( bool compute_jacobian,
-                                                                   AssemblyContext& context,
-                                                                   CachedValues& /*cache*/ )
+  template<class Mu>
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
+                                                                       AssemblyContext& context,
+                                                                       CachedValues& /*cache*/ )
   {
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->BeginTimer("BoussinesqBuoyancyAdjointStabilization::element_constraint");
@@ -314,18 +323,21 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
 
+        // Compute the viscosity at this qp
+        libMesh::Real mu_qp = this->_mu(context, qp);
+
         libMesh::Real tau_M;
         libMesh::Real d_tau_M_d_rho;
         libMesh::Gradient d_tau_M_dU;
 
         if (compute_jacobian)
           this->_stab_helper.compute_tau_momentum_and_derivs
-            ( context, qp, g, G, this->_rho, U, this->_mu,
+            ( context, qp, g, G, this->_rho, U, mu_qp,
               tau_M, d_tau_M_d_rho, d_tau_M_dU,
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, this->_mu,
+                    ( context, qp, g, G, this->_rho, U, mu_qp,
                       this->_is_steady );
 
         // Compute the solution & its gradient at the old Newton iterate.
@@ -371,4 +383,18 @@ namespace GRINS
     return;
   }
 
+  template<class Mu>
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
+  }
+
+
 } // namespace GRINS
+
+// Instantiate
+INSTANTIATE_INC_NS_SUBCLASS(BoussinesqBuoyancyAdjointStabilization);

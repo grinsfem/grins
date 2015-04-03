@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -34,6 +34,9 @@
 
 // libMesh
 #include "libmesh/dof_map.h"
+#include "libmesh/parameter_vector.h"
+#include "libmesh/qoi_set.h"
+#include "libmesh/sensitivity_data.h"
 
 namespace GRINS
 {
@@ -55,8 +58,82 @@ namespace GRINS
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
+    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
     _error_estimator() // effectively NULL
+  {
+    libmesh_deprecated();
+
+    this->init_multiphysics_system(input,sim_builder);
+
+    this->init_qois(input,sim_builder);
+
+    this->init_params(input,sim_builder);
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->init_restart(input,sim_builder,comm);
+      }
+
+    this->check_for_unused_vars(input, false /*warning only*/);
+
+    return;
+  }
+
+  Simulation::Simulation( const GetPot& input,
+                          GetPot& command_line,
+                          SimulationBuilder& sim_builder,
+                          const libMesh::Parallel::Communicator &comm )
+    :  _mesh( sim_builder.build_mesh(input, comm) ),
+       _equation_system( new libMesh::EquationSystems( *_mesh ) ),
+       _solver( sim_builder.build_solver(input) ),
+       _system_name( input("screen-options/system_name", "GRINS" ) ),
+       _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
+       _vis( sim_builder.build_vis(input, comm) ),
+       _postprocessing( sim_builder.build_postprocessing(input) ),
+    _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
+    _print_log_info( input("screen-options/print_log_info", false ) ),
+    _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+    _print_qoi( input("screen-options/print_qoi", false ) ),
+    _print_scalars( input("screen-options/print_scalars", false ) ),
+    _output_vis( input("vis-options/output_vis", false ) ),
+    _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
+    _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
+    _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+    _error_estimator() // effectively NULL
+  {
+    this->init_multiphysics_system(input,sim_builder);
+
+    this->init_qois(input,sim_builder);
+
+    this->init_params(input,sim_builder);
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+
+    if( input.have_variable("restart-options/restart_file") )
+      {
+        this->init_restart(input,sim_builder,comm);
+      }
+
+    bool warning_only = command_line.search("--warn-only-unused-var");
+    this->check_for_unused_vars(input, warning_only );
+
+    return;
+  }
+
+  Simulation::~Simulation()
+  {
+    return;
+  }
+
+  void Simulation::init_multiphysics_system( const GetPot& input,
+                                             SimulationBuilder& sim_builder )
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
@@ -73,7 +150,7 @@ namespace GRINS
     // This *must* be done before equation_system->init
     this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
 
-    /* Postprocessing needs to be initialized before the solver since that's 
+    /* Postprocessing needs to be initialized before the solver since that's
        where equation_system gets init'ed */
     _postprocessing->initialize( *_multiphysics_system, *_equation_system );
 
@@ -88,39 +165,128 @@ namespace GRINS
     // This *must* be done after equation_system->init in order to get variable indices
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
+    return;
+  }
+
+  void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
+  {
     // If the user actually asks for a QoI, then we add it.
     std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
     if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
         qois->init(input, *_multiphysics_system );
-      
+
         /* Note that we are effectively transfering ownership of the qoi pointer because
            it will be cloned in _multiphysics_system and all the calculations are done there. */
         _multiphysics_system->attach_qoi( qois.get() );
       }
-
-    // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
-
-    if( input.have_variable("restart-options/restart_file") )
+    else if (_print_qoi)
       {
-        this->read_restart( input );
-
-        /* We do this here only if there's a restart file. Otherwise, this was done
-           at mesh construction time */
-        sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
-
-        /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
-                 call reinit()? */
-        _equation_system->reinit();
+        std::cout << "Error: print_qoi is specified but\n" <<
+          "no QoIs have been specified.\n" << std::endl;
+        libmesh_error();
       }
 
     return;
   }
 
-  Simulation::~Simulation()
+  void Simulation::init_params( const GetPot& input,
+                                SimulationBuilder& /*sim_builder*/ )
   {
+    unsigned int n_adjoint_parameters =
+      input.vector_variable_size("QoI/adjoint_sensitivity_parameters");
+
+    unsigned int n_forward_parameters =
+      input.vector_variable_size("QoI/forward_sensitivity_parameters");
+
+    // If the user actually asks for parameter sensitivities, then we
+    // set up the parameter vectors to use.
+    if ( n_adjoint_parameters )
+      {
+        // If we're doing adjoint sensitivities, dq/dp only makes
+        // sense if we have q
+        CompositeQoI* qoi =
+          libMesh::cast_ptr<CompositeQoI*>
+            (this->_multiphysics_system->get_qoi());
+
+        if (!qoi)
+          {
+            std::cout <<
+              "Error: adjoint_sensitivity_parameters are specified but\n"
+              << "no QoIs have been specified.\n" << std::endl;
+            libmesh_error();
+          }
+
+        _adjoint_parameters.initialize
+          (input, "QoI/adjoint_sensitivity_parameters",
+           *this->_multiphysics_system, qoi);
+      }
+
+    if ( n_forward_parameters )
+      {
+        // If we're doing forward sensitivities, du/dp can make
+        // sense even with no q defined
+        CompositeQoI* qoi =
+          dynamic_cast<CompositeQoI*>
+            (this->_multiphysics_system->get_qoi());
+
+        // dynamic_cast returns NULL if our QoI isn't a CompositeQoI;
+        // i.e. if there were no QoIs that made us bother setting up
+        // the CompositeQoI object.  Passing NULL tells
+        // ParameterManager not to bother asking for qoi registration
+        // of parameters.
+
+        _forward_parameters.initialize
+          (input, "QoI/forward_sensitivity_parameters",
+           *this->_multiphysics_system, qoi);
+      }
+  }
+
+
+  void Simulation::init_restart( const GetPot& input, SimulationBuilder& sim_builder,
+                                 const libMesh::Parallel::Communicator &comm )
+  {
+    this->read_restart( input );
+
+    /* We do this here only if there's a restart file. Otherwise, this was done
+       at mesh construction time */
+    sim_builder.mesh_builder().do_mesh_refinement_from_input( input, comm, *_mesh );
+
+    /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
+       call reinit()? */
+    _equation_system->reinit();
+
+    return;
+  }
+
+  void Simulation::check_for_unused_vars( const GetPot& input, bool warning_only )
+  {
+    /* Everything should be set up now, so check if there's any unused variables
+       in the input file. If so, then tell the user what they were and error out. */
+    std::vector<std::string> unused_vars = input.unidentified_variables();
+
+    if( !unused_vars.empty() )
+      {
+        libMesh::err << "==========================================================" << std::endl;
+        if( warning_only )
+          libMesh::err << "Warning: ";
+        else
+          libMesh::err << "Error: ";
+
+        libMesh::err << "Found unused variables!" << std::endl;
+
+        for( std::vector<std::string>::const_iterator it = unused_vars.begin();
+             it != unused_vars.end(); ++it )
+          {
+            libMesh::err << *it << std::endl;
+          }
+        libMesh::err << "==========================================================" << std::endl;
+
+        if( !warning_only )
+          libmesh_error();
+      }
+
     return;
   }
 
@@ -133,19 +299,87 @@ namespace GRINS
     context.equation_system = _equation_system;
     context.vis = _vis;
     context.timesteps_per_vis = _timesteps_per_vis;
+    context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
+    context.output_solution_sensitivities = _output_solution_sensitivities;
     context.print_scalars = _print_scalars;
+    context.print_perflog = _print_log_info;
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
+    context.print_qoi = _print_qoi;
+
+    if (_output_solution_sensitivities &&
+        !_forward_parameters.parameter_vector.size())
+    {
+      std::cout <<
+        "Error: output_solution_sensitivities is specified but\n" <<
+        "no forward sensitivity parameters have been specified.\n" <<
+        std::endl;
+      libmesh_error();
+    }
 
     _solver->solve( context );
 
-    if( this->_print_qoi )
+    if ( this->_print_qoi )
       {
         _multiphysics_system->assemble_qoi();
         const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
+      }
+
+    if ( _adjoint_parameters.parameter_vector.size() )
+      {
+        // Default: "calculate sensitivities for all QoIs"
+        libMesh::QoISet qois;
+
+        const libMesh::ParameterVector & params =
+          _adjoint_parameters.parameter_vector;
+
+        libMesh::SensitivityData sensitivities
+          (qois, *this->_multiphysics_system, params);
+
+        _solver->adjoint_qoi_parameter_sensitivity
+          (context, qois, params, sensitivities);
+
+        std::cout << "Adjoint sensitivities:" << std::endl;
+
+        for (unsigned int q=0;
+             q != this->_multiphysics_system->qoi.size(); ++q)
+          {
+            for (unsigned int p=0; p != params.size(); ++p)
+              {
+                std::cout << "dq" << q << "/dp" << p << " = " <<
+                        sensitivities[q][p] << std::endl;
+              }
+          }
+      }
+
+    if ( _forward_parameters.parameter_vector.size() )
+      {
+        // Default: "calculate sensitivities for all QoIs"
+        libMesh::QoISet qois;
+
+        const libMesh::ParameterVector & params =
+          _forward_parameters.parameter_vector;
+
+        libMesh::SensitivityData sensitivities
+          (qois, *this->_multiphysics_system, params);
+
+        _solver->forward_qoi_parameter_sensitivity
+          (context, qois, params, sensitivities);
+
+        std::cout << "Forward sensitivities:" << std::endl;
+
+        for (unsigned int q=0;
+             q != this->_multiphysics_system->qoi.size(); ++q)
+          {
+            for (unsigned int p=0; p != params.size(); ++p)
+              {
+                std::cout << "dq" << q << "/dp" << p << " = " <<
+                        sensitivities[q][p] << std::endl;
+              }
+          }
       }
 
     return;

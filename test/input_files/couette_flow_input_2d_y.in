@@ -1,18 +1,18 @@
 # Mesh related options
-[mesh-options]
-mesh_option = create_2D_mesh
-element_type = QUAD9
-mesh_nx1 = 2 
-mesh_nx2 = 1
+[Mesh]
 
-domain_x1_max = 1.0
+   [./Generation]
+
+     dimension = '2'
+     element_type = 'QUAD9'
+     n_elems_x = '2'
+     n_elems_y = '1'
+
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -25,8 +25,6 @@ verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
-output_vis_flag = false
 vis_output_file_prefix = couette 
 
 # Options for print info to the screen
@@ -66,7 +64,6 @@ pin_pressure = false
 
 [../VariableNames]
 
-Temperature = 'T'
 u_velocity = 'u'
 v_velocity = 'v'
 w_velocity = 'w'

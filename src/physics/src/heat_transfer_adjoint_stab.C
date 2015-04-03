@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 // This class
 #include "grins/assembly_context.h"
 #include "grins/heat_transfer_adjoint_stab.h"
+#include "grins/heat_transfer_macros.h"
 
 // libMesh
 #include "libmesh/quadrature.h"

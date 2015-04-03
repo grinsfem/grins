@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -36,18 +36,22 @@ namespace GRINS
 {
 
   ConstantViscosity::ConstantViscosity( const GetPot& input )
-    : _mu( input( "Materials/Viscosity/mu", 1.0 ) )
+    : ParameterUser("ConstantViscosity"),
+      _mu(1.0)
   {
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
         libmesh_warning("No Materials/Viscosity/mu specified!\n");
 
 	// Try and get the viscosity from other specifications
-	_mu = input("Physics/"+incompressible_navier_stokes+"/mu", 1.0);
+        this->set_parameter
+	  (_mu, input,
+           "Physics/"+incompressible_navier_stokes+"/mu", _mu);
 	
       }
-
-    return;
+    else
+      this->set_parameter
+        (_mu, input, "Materials/Viscosity/mu", _mu);
   }
 
   ConstantViscosity::~ConstantViscosity()

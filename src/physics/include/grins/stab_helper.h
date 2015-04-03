@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -25,6 +25,9 @@
 #ifndef GRINS_STAB_HELPER_H
 #define GRINS_STAB_HELPER_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/vector_value.h"
 #include "libmesh/tensor_value.h"
@@ -36,10 +39,10 @@ namespace GRINS
   // GRINS forward declarations
   class AssemblyContext;
 
-  class StabilizationHelper
+  class StabilizationHelper : public ParameterUser
   {
   public:
-    StabilizationHelper();
+    StabilizationHelper( const std::string & helper_name );
     ~StabilizationHelper();
 
     /*! \todo Should we inline this? */

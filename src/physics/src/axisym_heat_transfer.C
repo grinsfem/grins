@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/axisym_heat_transfer_bc_handling.h"
-#include "grins/constant_conductivity.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/grins_enums.h"
+#include "grins/heat_transfer_macros.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -79,8 +79,14 @@ namespace GRINS
     this->_V_order =
       libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
-    this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
-    this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
+    //TODO: same as Incompressible NS
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+axisymmetric_heat_transfer+"/rho", 1.0);
+
+    this->set_parameter
+      (this->_Cp, input,
+       "Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
@@ -197,8 +203,7 @@ namespace GRINS
 	const libMesh::Number r = u_qpoint[qp](0);
       
 	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number T, u_r, u_z;
-	T = context.interior_value(_T_var, qp);
+	libMesh::Number u_r, u_z;
 	u_r = context.interior_value(_u_r_var, qp);
 	u_z = context.interior_value(_u_z_var, qp);
 
@@ -207,8 +212,11 @@ namespace GRINS
 
 	libMesh::NumberVectorValue U (u_r,u_z);
 
-	libMesh::Number k = this->_k( T );
-	libMesh::Number dk_dT = this->_k.deriv( T );
+	libMesh::Number k = this->_k( context, qp );
+
+        // FIXME - once we have T-dependent k, we'll need its
+        // derivatives in Jacobians
+	// libMesh::Number dk_dT = this->_k.deriv( T );
 
 	// First, an i-loop over the  degrees of freedom.
 	for (unsigned int i=0; i != n_T_dofs; i++)
@@ -231,7 +239,8 @@ namespace GRINS
 		       -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
 		  } // end of the inner dof (j) loop
 
-		//if( dk_dT != 0.0 )
+#if 0
+		if( dk_dT != 0.0 )
 		{
 		  for (unsigned int j=0; j != n_T_dofs; j++)
 		    {
@@ -239,6 +248,7 @@ namespace GRINS
 		      KTT(i,j) -= JxW[qp] * context.get_elem_solution_derivative() *r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
 		    }
 		}
+#endif
 
 		// Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
 		for (unsigned int j=0; j != n_u_dofs; j++)
@@ -357,6 +367,18 @@ namespace GRINS
     return;
   }
 
+  template< class Conductivity>
+  void AxisymmetricHeatTransfer<Conductivity>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _k.register_parameter(param_name, param_pointer);
+  }
+
+
 } // namespace GRINS
 
-template class GRINS::AxisymmetricHeatTransfer<GRINS::ConstantConductivity>;
+// Instantiate
+INSTANTIATE_HEAT_TRANSFER_SUBCLASS(AxisymmetricHeatTransfer);

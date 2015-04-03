@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -26,6 +26,9 @@
 #ifndef CONSTANT_SOURCE_FUNC_H
 #define CONSTANT_SOURCE_FUNC_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/point.h"
@@ -33,7 +36,7 @@
 
 namespace GRINS
 {
-  class ConstantSourceFunction
+  class ConstantSourceFunction : public ParameterUser
   {
   public:
 

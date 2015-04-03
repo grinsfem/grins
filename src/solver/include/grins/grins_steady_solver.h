@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -39,6 +39,18 @@ namespace GRINS
     virtual ~SteadySolver();
 
     virtual void solve( SolverContext& context );
+
+    virtual void adjoint_qoi_parameter_sensitivity
+      (SolverContext&                  context,
+       const libMesh::QoISet&          qoi_indices,
+       const libMesh::ParameterVector& parameters_in,
+       libMesh::SensitivityData&       sensitivities) const;
+
+    virtual void forward_qoi_parameter_sensitivity
+      (SolverContext&                  context,
+       const libMesh::QoISet&          qoi_indices,
+       const libMesh::ParameterVector& parameters_in,
+       libMesh::SensitivityData&       sensitivities) const;
 
   protected:
 

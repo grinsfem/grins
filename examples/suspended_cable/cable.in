@@ -1,0 +1,87 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'ElasticCable
+                   ElasticCableConstantGravity'
+
+# Options for Incompressible Navier-Stokes physics
+[./ElasticCable]
+
+A = '0.1'
+
+FE_family = 'LAGRANGE'
+order = 'FIRST'
+
+elasticity_model = 'HookesLaw'
+
+# Boundary ids:
+# j = left -> 0
+# j = right-> 1
+bc_ids = '0 1 1'
+bc_types = 'pinned roller_x constant_traction'
+
+traction_1 = '5.7735 0.0 0.0'
+
+#ic_ids = '1'
+#ic_types = 'parsed'
+#ic_variables = 'w'
+#ic_values = '-1*sin(pi*x)'
+
+[../ElasticCableConstantGravity]
+
+A = '0.1'
+rho='0.031056'
+gravity ='0 0 -32.2'
+
+[../HookesLaw]                                                                                                                                                                                                                               
+
+nu = '0.45'
+E = '1.0e6'
+
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '1'
+      x_min = '0.0'
+      x_max = '200.0'
+      n_elems_x = '10'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations =  '500' 
+max_linear_iterations = '2500'
+
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'false'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+
+vis_output_file_prefix = 'cable' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'SuspendedCable'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+print_element_residuals = 'false'
+[]

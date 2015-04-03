@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,9 +31,20 @@
 namespace GRINS
 {
   template<class NumericType>
-  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& /*input*/ )
+  PostProcessedQuantities<NumericType>::PostProcessedQuantities( const GetPot& input )
     : libMesh::FEMFunctionBase<NumericType>()
   {
+    if( input.have_variable("vis-options/output_vars") )
+      {
+
+        std::cerr << "================================================================================" << std::endl
+                  << "WARNING: Detected input variable 'vis-options/output_vars." << std::endl
+                  << "WARNING: THIS IS OUTDATED. output_vars is now input within" << std::endl
+                  << "WARNING: each Physics section." << std::endl
+                  << "         Erroring out to make you aware." << std::endl
+                  << "================================================================================" << std::endl;
+        libmesh_error();
+      }
     return;
   }
 
@@ -53,7 +64,10 @@ namespace GRINS
         libmesh_error();
       }
 
-    unsigned int new_index = _quantity_name_index_map.size();
+    /* We add 1 so that the locally cached indices in each of the Physics
+       can safely initialize the index to zero. In particular this ensures
+       we count starting from 1. */
+    unsigned int new_index = _quantity_name_index_map.size()+1;
 
     _quantity_name_index_map.insert( std::make_pair( name, new_index ) );
 
@@ -106,14 +120,33 @@ namespace GRINS
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
-    if( &(context.get_elem()) != &(_multiphysics_context->get_elem()) )
+    if(context.has_elem() && _multiphysics_context->has_elem())
       {
-	_multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
-	_multiphysics_context->elem_fe_reinit();
+        if( &(context.get_elem()) != &(_multiphysics_context->get_elem()) )
+          {
+            _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
+            _multiphysics_context->elem_fe_reinit();
+          }
       }
+    else if( !context.has_elem() && _multiphysics_context->has_elem() )
+      {
+        // Incoming context has NULL elem ==> SCALAR variables
+        _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,NULL);
+        _multiphysics_context->elem_fe_reinit();
+      }
+    else if( context.has_elem() && !_multiphysics_context->has_elem() )
+      {
+        _multiphysics_context->pre_fe_reinit(*_multiphysics_sys,&context.get_elem());
+        _multiphysics_context->elem_fe_reinit();
+      }
+    //else
+    /* If has_elem() is false for both contexts, we're still dealing with SCALAR variables
+       and therefore don't need to reinit. */
 
     libMesh::Real value = 0.0;
 
+    // Quantity we want had better be there.
+    libmesh_assert(_quantity_index_var_map.find(component) != _quantity_index_var_map.end());
     unsigned int quantity_index = _quantity_index_var_map.find(component)->second;
 
     _multiphysics_sys->compute_postprocessed_quantity( quantity_index,

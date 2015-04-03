@@ -1,0 +1,138 @@
+# This master example input file is for reference on specifying
+# various input parameters to GRINS. The GetPot parsing library
+# is used to parse the input files. Documentation about GetPot
+# can be found here:
+# http://getpot.sourceforge.net/documentation-index.html
+# The Doxygen documentation can be found here:
+# http://libmesh.github.io/doxygen/classGETPOT__NAMESPACE_1_1GetPot.html
+#
+# We heavily use GetPots sectioning system, particularly nested
+# sections. Discussion of this can be found here:
+# http://getpot.sourceforge.net/node13.html
+# Below we give examples of different uses for the various sections
+# GRINS uses. Note that the section names must be unique. We provide
+# multiple example usages of the sections below, but you must only use
+# one. E.g. we illustrate the different uses of [Mesh] below, but
+# there must only be one instance of the [Mesh] section in the input
+# file used.
+#
+# GRINS uses GetPot's UFO capability so that if there are variables in the
+# input file that are unused during your program, GRINS will throw
+# an error. This is to reduce the chance of errors in the input
+# file specification.
+#
+# The primary sections are:
+#    [Mesh] - all options related to the mesh used in the simulation
+
+
+# The block below is an example of using basic mesh generation
+# utilities in libMesh to construct a mesh. An example of reading
+# a mesh from a file is given below. Use only ONE of these sections.
+[Mesh]
+
+   # Specify whether you want to use libMesh::SerialMesh
+   # or libMesh::ParallelMesh.
+   # Optional. Defaults to libMesh::Mesh (which depends on the
+   #           libMesh build.
+   # Acceptable values: serial, parallel
+   class = 'serial'
+
+   # Since we are generating a mesh, all the generation
+   # options will be in the Generation subsection.
+   [./Generation]
+
+      # Specify the dimension of the mesh to build.
+      # Mandatory.
+      # Acceptable values: 1, 2, 3
+      dimension = '3'
+
+      # Specify the number of elements in the {x,y,z}-direction
+      # Mandatory:
+      #    dimension = 1: n_elems_x
+      #    dimension = 2: n_elems_x, n_elems_y
+      #    dimension = 3: n_elems_x, n_elems_y, n_elems_z
+      # Acceptable values: postive integer
+      n_elems_x = '10'
+      n_elems_y = '10'
+      n_elems_z = '10'
+
+      # Specify the spatial extents in the {x,y,z}-direction
+      # Optional. {x,y,z}_min defaults to 0.0, {x,y,z}_max defaults to 1.0
+      # Acceptable values: Real number
+      x_min = '0.0'
+      x_max = '1.0'
+
+      y_min = '0.0'
+      y_max = '1.0'
+
+      z_min = '0.0'
+      z_max = '1.0'
+
+      # Specify the geometric element type to use in the mesh
+      # Optional:
+      #    dimension = 1, defaults to EDGE3
+      #    dimension = 2, defaults to TRI6
+      #    dimension = 3, defaults to TET10
+      # Acceptable values:
+      #    See enum libMesh::ElemType at libmesh.github.io/doxygen/index.html
+      element_type = 'QUAD4'
+
+[]
+
+
+# The block below is an example of reading a mesh from a given
+# mesh file. An example of generating  a mesh using libMesh's basic
+# utilities is given above. Use only ONE of these sections.
+[Mesh]
+
+   # Specify whether you want to use libMesh::SerialMesh
+   # or libMesh::ParallelMesh.
+   # Optional. Defaults to libMesh::Mesh (which depends on the
+   #           libMesh build.
+   # Acceptable values: serial, parallel
+   class = 'serial'
+
+   # Since we are reading a mesh, all read options
+   # go in the Read subsection.
+   [./Read]
+
+       # Specify filename to be read. This can be a Unix path.
+       # libMesh decides which reader to use based on the suffix.
+       # Mandatory.
+       filename = 'meshfile.exo'
+
+[]
+
+# The block below illustrates two optional sections.
+# They can be used together, where redistribution will be done
+# before refinement, and can be used in conjunction with mesh
+# generation or reading a mesh from a file.
+[Mesh]
+
+   # Options related to doing input-based refinement. Adaptive refinement
+   # is controlled in the in solver section.
+   [./Refinement]
+
+       # Specify the number of uniform refinements to perform
+       # Optional. Defaults to 0.
+       uniformly_refine = '1'
+
+       # Specify a function of (x,y,z) suitable for libMesh::ParsedFunction.
+       # This function should return the number of refinements to be performed
+       # as a function of (x,y,z); element centroids are used to evaluate the
+       # spatial locations. Value from function will automatically be converted to int.
+       # If the value is less than zero, no refinements will be done.
+       locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
+
+   # Options related to input-based mesh redistribution
+   [../Redistribution]
+
+       # Specify a function of (x,y,z) suitable for libMesh::ParsedFunction.
+       # Nodal (x,y,z) locations will be mapped according to the function given.
+       # See libMesh::MeshTools::Modification::redistribute. Note each mapping componenet
+       # is in separated by {}. In the example given, the x-components of the node will be
+       # mapped by x+x*(x-30)/30, the y-compoenents of the nodes will by scaled by a factor of 2,
+       # and z-components remain unchanged.
+       function = '{x+x*(x-30)/30}{y*2}{z}'
+
+[]

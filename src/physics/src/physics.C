@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -41,7 +41,8 @@ namespace GRINS
 
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
-    : _physics_name( physics_name ),
+    : ParameterUser(physics_name),
+      _physics_name( physics_name ),
       _bc_handler(NULL),
       _ic_handler(new ICHandlingBase(physics_name)),
       _is_axisymmetric(false)
@@ -109,6 +110,11 @@ namespace GRINS
     return;
   }
 
+  void Physics::auxiliary_init( MultiphysicsSystem& /*system*/ )
+  {
+    return;
+  }
+
   void Physics::init_bcs( libMesh::FEMSystem* system )
   {
     // Only need to init BC's if the physics actually created a handler
@@ -125,7 +131,7 @@ namespace GRINS
 
 
   void Physics::init_ics( libMesh::FEMSystem* system,
-                          GRINS::CompositeFunction<libMesh::Number>& all_ics )
+                          libMesh::CompositeFunction<libMesh::Number>& all_ics )
   {
     if( _ic_handler )
       {

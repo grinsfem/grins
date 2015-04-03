@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -130,9 +130,11 @@ int main(int argc, char* argv[])
   double l2error = exact_sol.l2_error("GRINS", "u");
   double h1error = exact_sol.h1_error("GRINS", "u");
 
+  const double errortol = 1.0e-8;
+
   int return_flag = 0;
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  if( l2error > errortol || h1error > errortol )
     {
       return_flag = 1;
 
@@ -147,7 +149,7 @@ int main(int argc, char* argv[])
   l2error = exact_sol.l2_error("GRINS", "p");
   h1error = exact_sol.h1_error("GRINS", "p");
 
-  if( l2error > 1.0e-9 || h1error > 1.0e-9 )
+  if( l2error > errortol || h1error > errortol )
     {
       return_flag = 1;
 

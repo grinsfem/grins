@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ int main( int argc, char* argv[] )
     }
 
   int return_flag = 0;
-  double tol = std::numeric_limits<double>::epsilon()*10;
+  double tol = std::numeric_limits<double>::epsilon()*40;
 
   // Check that omega_dot sums to 1
   libMesh::Real sum = 0.0;

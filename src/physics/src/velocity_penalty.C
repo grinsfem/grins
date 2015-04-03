@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -27,8 +27,6 @@
 #include "grins/velocity_penalty.h"
 
 // GRINS
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 #include "grins/spalart_allmaras_viscosity.h"
 #include "grins/postprocessed_quantities.h"
@@ -41,7 +39,13 @@ namespace GRINS
 
   template<class Mu>
   VelocityPenalty<Mu>::VelocityPenalty( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase<Mu>(physics_name, input)
+    : VelocityPenaltyBase<Mu>(physics_name, input),
+    _velocity_penalty_x_index(0),
+    _velocity_penalty_y_index(0),
+    _velocity_penalty_z_index(0),
+    _velocity_penalty_base_x_index(0),
+    _velocity_penalty_base_y_index(0),
+    _velocity_penalty_base_z_index(0)
   {
     return;
   }
@@ -65,7 +69,14 @@ namespace GRINS
   void VelocityPenalty<Mu>::register_postprocessing_vars( const GetPot& input,
                                                           PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+velocity_penalty+"/output_vars";
+    std::string section = "Physics/"+this->_physics_name+"/output_vars";
+
+    std::string vel_penalty = "vel_penalty";
+    if (this->_physics_name == "VelocityPenalty2")
+      vel_penalty += '2';
+
+    if (this->_physics_name == "VelocityPenalty3")
+      vel_penalty += '3';
 
     if( input.have_variable(section) )
       {
@@ -77,19 +88,25 @@ namespace GRINS
 
             if( name == std::string("velocity_penalty") )
               {
-                _velocity_penalty_x_index = postprocessing.register_quantity( std::string("vel_penalty_x") );
+                _velocity_penalty_x_index =
+                  postprocessing.register_quantity( vel_penalty+"_x" );
 
-                _velocity_penalty_y_index = postprocessing.register_quantity( std::string("vel_penalty_y") );
+                _velocity_penalty_y_index =
+                  postprocessing.register_quantity( vel_penalty+"_y" );
 
-                _velocity_penalty_z_index = postprocessing.register_quantity( std::string("vel_penalty_z") );
+                _velocity_penalty_z_index =
+                  postprocessing.register_quantity( vel_penalty+"_z" );
               }
             else if( name == std::string("velocity_penalty_base") )
               {
-                _velocity_penalty_base_x_index = postprocessing.register_quantity( std::string("vel_penalty_base_x") );
+                _velocity_penalty_base_x_index =
+                  postprocessing.register_quantity( vel_penalty+"_base_x" );
 
-                _velocity_penalty_base_y_index = postprocessing.register_quantity( std::string("vel_penalty_base_y") );
+                _velocity_penalty_base_y_index =
+                  postprocessing.register_quantity( vel_penalty+"_base_y" );
 
-                _velocity_penalty_base_z_index = postprocessing.register_quantity( std::string("vel_penalty_base_z") );
+                _velocity_penalty_base_z_index =
+                  postprocessing.register_quantity( vel_penalty+"_base_z" );
               }
             else
               {

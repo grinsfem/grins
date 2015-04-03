@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -39,11 +39,18 @@ namespace GRINS
   const PhysicsName incompressible_navier_stokes_spgsm_stab = 
     "IncompressibleNavierStokesSPGSMStabilization";
   const PhysicsName velocity_drag = "VelocityDrag";
+  const PhysicsName velocity_drag_adjoint_stab = "VelocityDragAdjointStabilization";
   const PhysicsName velocity_penalty = "VelocityPenalty";
-  const PhysicsName velocity_penalty_adjoint_stab = "VelocityPenaltyAdjointStabilization";
+  const PhysicsName velocity_penalty2 = "VelocityPenalty2";
+  const PhysicsName velocity_penalty3 = "VelocityPenalty3";
+  const PhysicsName velocity_penalty_adjoint_stab  = "VelocityPenaltyAdjointStabilization";
+  const PhysicsName velocity_penalty2_adjoint_stab = "VelocityPenalty2AdjointStabilization";
+  const PhysicsName velocity_penalty3_adjoint_stab = "VelocityPenalty3AdjointStabilization";
   const PhysicsName averaged_fan = "AveragedFan";
+  const PhysicsName averaged_fan_adjoint_stab = "AveragedFanAdjointStabilization";
   const PhysicsName averaged_turbine = "AveragedTurbine";
   const PhysicsName spalart_allmaras = "SpalartAllmaras";
+  const PhysicsName spalart_allmaras_spgsm_stab = "SpalartAllmarasSPGSMStabilization";
   const PhysicsName scalar_ode = "ScalarODE";
   const PhysicsName heat_conduction = "HeatConduction";
   const PhysicsName heat_transfer = "HeatTransfer";
@@ -61,7 +68,11 @@ namespace GRINS
   const PhysicsName low_mach_navier_stokes_vms_stab = "LowMachNavierStokesVMSStabilization";
   const PhysicsName reacting_low_mach_navier_stokes = "ReactingLowMachNavierStokes";
   const PhysicsName elastic_membrane = "ElasticMembrane";
+  const PhysicsName elastic_cable = "ElasticCable";
   const PhysicsName elastic_membrane_constant_pressure = "ElasticMembraneConstantPressure";
+  const PhysicsName elastic_cable_constant_gravity = "ElasticCableConstantGravity";
+  const PhysicsName constant_source_term = "ConstantSourceTerm";
+  const PhysicsName parsed_source_term = "ParsedSourceTerm";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H

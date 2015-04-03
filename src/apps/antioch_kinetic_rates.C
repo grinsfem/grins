@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -59,9 +59,9 @@ int main(int argc, char* argv[])
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );
   libMesh::Real T_inc = input( "Conditions/T_increment", 100.0 );
-  
 
-  libMesh::Real rho = input( "Conditions/density", 1.0e-3 );
+
+  libMesh::Real p0 = input( "Conditions/pressure", 1.0e5 );
 
   const unsigned int n_species = antioch_mixture.n_species();
 
@@ -77,6 +77,9 @@ int main(int argc, char* argv[])
     {
       Y[s] = input( "Conditions/mass_fractions", 0.0, s );
     }
+
+  libMesh::Real R_mix = antioch_mixture.R_mix(Y);
+
 
   std::vector<libMesh::Real> omega_dot(n_species,0.0);
 
@@ -98,7 +101,9 @@ int main(int argc, char* argv[])
   while( T < T1 )
     { 
       Antioch::TempCache<libMesh::Real> T_cache(T);
-      
+
+      libMesh::Real rho = p0/(R_mix*T);
+
       antioch_kinetics.omega_dot( T_cache, rho, Y, omega_dot );
      
       output.open( "omega_dot.dat", std::ios::app );

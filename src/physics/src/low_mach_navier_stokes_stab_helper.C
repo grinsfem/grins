@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,8 +29,10 @@
 namespace GRINS
 {
 
-  LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper(const GetPot& input)
-    : IncompressibleNavierStokesStabilizationHelper(input)
+  LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper
+    (const std::string & helper_name,
+     const GetPot& input)
+    : IncompressibleNavierStokesStabilizationHelper(helper_name, input)
   {
     return;
   }

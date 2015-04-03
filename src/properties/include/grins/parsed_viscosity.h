@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/assembly_context.h"
+#include "grins/parameter_user.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -36,11 +37,13 @@
 #include "libmesh/auto_ptr.h"
 #include "libmesh/function_base.h"
 
+#include "libmesh/fem_system.h"
+
 class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity
+  class ParsedViscosity : public ParameterUser
   {
   public:
 
@@ -50,6 +53,8 @@ namespace GRINS
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
     libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
+
+    void init(libMesh::FEMSystem* /*system*/){};
 
   private:
 

@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@
 #include "grins/var_typedefs.h"
 #include "grins/grins_physics_names.h"
 #include "grins/cached_values.h"
+#include "grins/parameter_user.h"
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -49,8 +50,14 @@
 class GetPot;
 namespace libMesh
 {
+  template <typename Scalar>
+  class CompositeFunction;
+
   class FEMSystem;
   class Elem;
+
+  template <typename Scalar>
+  class ParameterMultiPointer;
 }
 
 //! GRINS namespace
@@ -62,12 +69,10 @@ namespace GRINS
   class NBCContainer;
   class DBCContainer;
   class AssemblyContext;
+  class MultiphysicsSystem;
 
   template <typename Scalar>
   class PostProcessedQuantities;
-
-  template <typename Scalar>
-  class CompositeFunction;
 
   //! Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem.
   /*!
@@ -98,7 +103,7 @@ namespace GRINS
   //  *_time_derivative correspond to calculating terms for F(u)
   //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
 
-  class Physics
+  class Physics : public ParameterUser
   {
 
   public:
@@ -131,6 +136,11 @@ namespace GRINS
       time evolving variables.
     */
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+    //! Any auxillary initialization a Physics class may need
+    /*! This is called after all variables are added, so this method can
+        safely query the MultiphysicsSystem about variable information. */
+    virtual void auxiliary_init( MultiphysicsSystem& system );
 
     //! Register name of postprocessed quantity with PostProcessedQuantities
     /*!
@@ -190,7 +200,7 @@ namespace GRINS
     void init_bcs( libMesh::FEMSystem* system );
 
     void init_ics( libMesh::FEMSystem* system,
-                   GRINS::CompositeFunction<libMesh::Number>& all_ics );
+                   libMesh::CompositeFunction<libMesh::Number>& all_ics );
 
     void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
 
@@ -238,7 +248,10 @@ namespace GRINS
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects
       in GRINS namespace */
-    const PhysicsName& _physics_name;
+    /*! No, we use a copy, because otherwise as soon as the memory in
+     * std::set<std::string> requested_physics gets overwritten we get
+     * in trouble. */
+    const PhysicsName _physics_name;
 
     GRINS::BCHandlingBase* _bc_handler;
 

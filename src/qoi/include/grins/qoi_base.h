@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -33,10 +33,17 @@
 #include "libmesh/diff_qoi.h"
 
 // GRINS
+#include "grins/parameter_user.h"
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
 class GetPot;
+
+namespace libMesh
+{
+  template <typename Scalar>
+  class ParameterMultiPointer;
+}
 
 namespace GRINS
 {
@@ -44,7 +51,7 @@ namespace GRINS
   class MultiphysicsSystem;
   class AssemblyContext;
 
-  class QoIBase
+  class QoIBase : public ParameterUser
   {
   public:
 

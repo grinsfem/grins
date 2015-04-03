@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ int test_generic( const libMesh::Real value, const libMesh::Real value_reg, cons
 {
   int return_flag = 0;
 
-  const double tol = std::numeric_limits<double>::epsilon()*10;
+  const double tol = std::numeric_limits<double>::epsilon()*40;
 
   const double rel_error = std::fabs( (value - value_reg)/value_reg );
 
@@ -196,7 +196,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
     }
 
   
-  double tol = std::numeric_limits<double>::epsilon()*10;
+  double tol = std::numeric_limits<double>::epsilon()*40;
 
   // Check that omega_dot sums to 1
   libMesh::Real sum = 0.0;

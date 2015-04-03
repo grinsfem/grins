@@ -24,11 +24,6 @@ bc_types = 'pinned constant_displacement'
 
 displacement_1 = '0.1 0.0 0.0'
 
-[../HookesLaw]                                                                                                                                                                                                                               
-
-nu = '0.45'
-E = '1.0e4'
-
 [../MooneyRivlin]
 
 C1 = '24'
@@ -49,17 +44,15 @@ n_increments = '50'
 []
 
 # Mesh related options
-[mesh-options]
-mesh_option = 'create_2D_mesh'
-element_type = 'QUAD4'
-                                                                                                                                                                                                                                           
-domain_x1_min = '0.0'
-domain_x1_max = '8.0'
-domain_x2_min = '0.0'
-domain_x2_max = '8.0'
-
-mesh_nx1 = '50'
-mesh_nx2 = '50'
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD4'
+      x_max = '8.0'
+      y_max = '8.0'
+      n_elems_x = '50'
+      n_elems_y = '50'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -69,8 +62,6 @@ max_linear_iterations = '2500'
 verify_analytic_jacobians = '0.0'
 
 initial_linear_tolerance = '1.0e-10'
-
-use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]

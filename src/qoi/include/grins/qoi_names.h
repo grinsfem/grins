@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,5 +29,6 @@ namespace GRINS
 {
   const std::string avg_nusselt = "average_nusselt_number";
   const std::string vorticity = "vorticity";
+  const std::string parsed_interior = "parsed_interior";
 }
 #endif //GRINS_QOI_NAMES_H

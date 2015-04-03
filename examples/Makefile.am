@@ -1,8 +1,9 @@
 EXTRA_DIST =
 
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
@@ -43,18 +44,6 @@ backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 EXTRA_DIST += $(backwardfacingstep_DATA)
 
 #=======================================================================
-# Toy heat conduction problem
-#=======================================================================
-toyprobdir = $(prefix)/examples/toyprob
-toyprob_PROGRAMS = toy
-toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
-
-toy_SOURCES = toyprob/toy.C
-toy_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(toyprob_DATA)
-
-#=======================================================================
 # Cavity Benchmark
 #=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
@@ -66,23 +55,6 @@ EXTRA_DIST += $(cavitybenchmark_DATA)
 
 cavity_SOURCES = cavity_benchmark/cavity.C
 cavity_LDADD = $(LIBGRINS_LIBS)
-
-#=======================================================================
-# Cavity Benchmark No Stability
-#=======================================================================
-cavitybenchmarknostabdir = $(prefix)/examples/cavity_benchmark_no_stab
-cavitybenchmarknostab_PROGRAMS = cavity_no_stab
-cavitybenchmarknostab_DATA  = $(top_srcdir)/examples/cavity_benchmark_no_stab/cavity_no_stab.in
-cavitybenchmarknostab_SCRIPTS = $(top_builddir)/examples/cavity_benchmark_no_stab/run.sh
-
-EXTRA_DIST += $(cavitybenchmarknostab_DATA)
-
-cavity_no_stab_SOURCES = cavity_benchmark_no_stab/cavity_no_stab.C
-cavity_no_stab_LDADD = $(LIBGRINS_LIBS)
-
-#=======================================================================
-# Heated Channel Example
-#=======================================================================
 
 
 #=======================================================================
@@ -151,34 +123,6 @@ stokesns_SCRIPTS = $(top_builddir)/examples/coupled_stokes_navierstokes/run.sh
 EXTRA_DIST += $(stokesns_DATA)
 
 #=======================================================================
-# Reacting Low Mach Navier Stokes Example
-#=======================================================================
-rlmnsexdir = $(prefix)/examples/reacting_flow
-rlmnsex_PROGRAMS = rlmns
-rlmnsex_DATA  = $(top_srcdir)/examples/reacting_flow/rlmns.in
-rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/elements.xml
-rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/air_2sp.xml
-
-rlmns_SOURCES = reacting_flow/rlmns.C
-rlmns_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(rlmnsex_DATA)
-
-#=======================================================================
-# Vortex Example
-#=======================================================================
-vortexexdir = $(prefix)/examples/thermal_vortex
-vortexex_PROGRAMS = vortex
-vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
-vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
-
-vortex_SOURCES = thermal_vortex/vortex.C
-
-vortex_LDADD = $(LIBGRINS_LIBS)
-
-EXTRA_DIST += $(vortexex_DATA)
-
-#=======================================================================
 # Averaged Fan/Turbine Examples
 #=======================================================================
 simplefandir = $(prefix)/examples/simple_fan
@@ -203,8 +147,8 @@ laminarflame_DATA  = $(top_srcdir)/examples/laminar_flame/bunsen.in
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/elements.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
 
 EXTRA_DIST += $(laminarflame_DATA)
@@ -234,6 +178,8 @@ inflatingsheetdir = $(prefix)/examples/inflating_sheet
 inflatingsheet_PROGRAMS = sheet
 inflatingsheet_DATA  = $(top_srcdir)/examples/inflating_sheet/sheet.in
 inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/sheet_coarse.e
+inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/inflating_sheet_solver_factory.h
+inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/pressure_continuation_solver.h
 inflatingsheet_SCRIPTS = $(top_builddir)/examples/inflating_sheet/run.sh
 
 EXTRA_DIST += $(inflatingsheet_DATA)
@@ -245,8 +191,44 @@ sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
 sheet_LDADD = $(LIBGRINS_LIBS)
 sheet_CPPFLAGS = -I$(top_srcdir)/examples/inflating_sheet $(AM_CPPFLAGS)
 
+#=======================================================================
+# Elastic Cable Example
+#=======================================================================
+cabledispdir = $(prefix)/examples/cable_displacement
+cabledisp_DATA = $(top_srcdir)/examples/cable_displacement/cable.in
+cabledisp_SCRIPTS = $(top_builddir)/examples/cable_displacement/run.sh
+
+EXTRA_DIST += $(cabledisp_DATA)
+
+#=======================================================================
+# Suspended Cable Example
+#=======================================================================
+suspendedcabledir = $(prefix)/examples/suspended_cable
+suspendedcable_PROGRAMS = cable
+suspendedcable_DATA  = $(top_srcdir)/examples/suspended_cable/cable.in
+suspendedcable_SCRIPTS = $(top_builddir)/examples/suspended_cable/run.sh
+
+EXTRA_DIST += $(suspendedcable_DATA)
+
+cable_SOURCES  = suspended_cable/suspended_cable.C
+
+cable_LDADD = $(LIBGRINS_LIBS)
+cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
+
+
+#=======================================================================
+# Inflating Quarter Sheet with 1D Stiffeners Example
+#=======================================================================
+mixeddiminflatingsheetdir = $(prefix)/examples/mixed_dim_inflating_sheet
+mixeddiminflatingsheet_DATA  = $(top_srcdir)/examples/mixed_dim_inflating_sheet/sheet.in
+mixeddiminflatingsheet_DATA += $(top_srcdir)/examples/mixed_dim_inflating_sheet/quarter_sheet.exo
+mixeddiminflatingsheet_DATA += $(top_srcdir)/examples/mixed_dim_inflating_sheet/README
+mixeddiminflatingsheet_SCRIPTS = $(top_builddir)/examples/mixed_dim_inflating_sheet/run.sh
+
+EXTRA_DIST += $(mixeddiminflatingsheet_DATA)
+
+
 
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
-

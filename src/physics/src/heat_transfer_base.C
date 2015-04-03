@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
+#include "grins/heat_transfer_macros.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -43,10 +44,18 @@ namespace GRINS
     : Physics(physics_name, input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho( input("Physics/"+heat_transfer+"/rho", 1.0) ),
-      _Cp( input("Physics/"+heat_transfer+"/Cp", 1.0) ),
+      _rho(1.0),
+      _Cp(1.0),
       _k(input)
   {
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+heat_transfer+"/rho", _rho);
+
+    this->set_parameter
+      (this->_Cp, input,
+       "Physics/"+heat_transfer+"/Cp", _Cp);
+
     this->read_input_options(input);
 
     return;
@@ -97,6 +106,17 @@ namespace GRINS
 
     return;
   }
+
+  template<class K>
+  void HeatTransferBase<K>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _k.register_parameter(param_name, param_pointer);
+  }
+
 
 } // namespace GRINS
 

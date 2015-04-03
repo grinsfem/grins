@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ namespace GRINS
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
       _p_pinning(input,physics_name),
-      _rho_index(2^30) // Initialize to absurd value
+      _rho_index(0) // Initialize to zero
   {
     this->read_input_options(input);
 

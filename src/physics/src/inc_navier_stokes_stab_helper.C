@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -34,12 +34,28 @@
 namespace GRINS
 {
 
-  IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper(const GetPot& input)
-    : StabilizationHelper(),
-      _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
+  IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper
+    (const std::string & helper_name,
+     const GetPot& input)
+    : StabilizationHelper(helper_name),
+      _C(1),
+      _tau_factor(0.5),
       _flow_vars(input)
   {
+    if (input.have_variable("Stabilization/tau_constant_vel"))
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant_vel", _C );
+    else
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant", _C );
+
+    if (input.have_variable("Stabilization/tau_factor_vel"))
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor_vel", _tau_factor );
+    else
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
+
     return;
   }
 
@@ -271,10 +287,11 @@ namespace GRINS
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
-    libMesh::RealGradient u_dot( context.interior_rate(this->_flow_vars.u_var(), qp), context.interior_rate(this->_flow_vars.v_var(), qp) );
-
+    libMesh::RealGradient u_dot;
+    context.interior_rate(this->_flow_vars.u_var(), qp, u_dot(0)); 
+    context.interior_rate(this->_flow_vars.v_var(), qp, u_dot(1));
     if(context.get_system().get_mesh().mesh_dimension() == 3)
-      u_dot(2) = context.interior_rate(this->_flow_vars.w_var(), qp);
+      context.interior_rate(this->_flow_vars.w_var(), qp, u_dot(2));
 
     return rho*u_dot;
   }
@@ -288,10 +305,11 @@ namespace GRINS
       libMesh::Real &d_res_Muvw_duvw
     ) const
   {
-    libMesh::RealGradient u_dot( context.interior_rate(this->_flow_vars.u_var(), qp), context.interior_rate(this->_flow_vars.v_var(), qp) );
-
+    libMesh::RealGradient u_dot;
+    context.interior_rate(this->_flow_vars.u_var(), qp, u_dot(0)); 
+    context.interior_rate(this->_flow_vars.v_var(), qp, u_dot(1));
     if(context.get_system().get_mesh().mesh_dimension() == 3)
-      u_dot(2) = context.interior_rate(this->_flow_vars.w_var(), qp);
+      context.interior_rate(this->_flow_vars.w_var(), qp, u_dot(2));
 
     res_M = rho*u_dot;
     d_res_Muvw_duvw = rho;

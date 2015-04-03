@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -34,14 +34,28 @@
 namespace GRINS
 {
 
-  HeatTransferStabilizationHelper::HeatTransferStabilizationHelper(const GetPot& input)
-    : StabilizationHelper(),
-      _C( input("Stabilization/tau_constant_T", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_T", input("Stabilization/tau_factor", 0.5 ) ) ),
+  HeatTransferStabilizationHelper::HeatTransferStabilizationHelper
+    (const std::string & helper_name,
+     const GetPot& input)
+    : StabilizationHelper(helper_name),
+      _C(1),
+      _tau_factor(0.5),
       _temp_vars(input),
       _flow_vars(input)
   {
-    return;
+    if (input.have_variable("Stabilization/tau_constant_T"))
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant_T", _C );
+    else
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant", _C );
+
+    if (input.have_variable("Stabilization/tau_factor_T"))
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor_T", _tau_factor );
+    else
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
   }
 
   HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
@@ -111,7 +125,8 @@ namespace GRINS
                                                                                const libMesh::Real rho,
                                                                                const libMesh::Real Cp ) const
   {
-    libMesh::Real T_dot = context.interior_rate(this->_temp_vars.T_var(), qp);
+    libMesh::Real T_dot;
+    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
 
     return rho*Cp*T_dot;
   }
@@ -126,7 +141,8 @@ namespace GRINS
       libMesh::Real &d_res_dTdot
     ) const
   {
-    libMesh::Real T_dot = context.interior_rate(this->_temp_vars.T_var(), qp);
+    libMesh::Real T_dot;
+    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
 
     res = rho*Cp*T_dot;
     d_res_dTdot = rho*Cp;

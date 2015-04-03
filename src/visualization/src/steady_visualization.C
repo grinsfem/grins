@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/parameter_vector.h"
 
 namespace GRINS
 {
@@ -62,14 +63,42 @@ namespace GRINS
     // Swap solution with computed residual
     system->solution->swap( *(system->rhs) );
     equation_system->update();
-  
+
     this->dump_visualization( equation_system, filename, 0.0 );
-  
+
     // Now swap back and reupdate
     system->solution->swap( *(system->rhs) );
     equation_system->update();
 
     return;
   }
+
+  void SteadyVisualization::output_solution_sensitivities
+    (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+     MultiphysicsSystem* system,
+     const libMesh::ParameterVector & params,
+     const unsigned int,
+     const libMesh::Real )
+  {
+    for (unsigned int p=0; p != params.size(); ++p)
+      {
+        std::stringstream pstr;
+        pstr << p;
+
+        std::string filename =
+          this->_vis_output_file_prefix+"_dudp"+pstr.str();
+
+        // Swap solution with precomputed sensitivity solution
+        system->solution->swap(system->get_sensitivity_solution(p));
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename, 0.0 );
+
+        // Now swap back and reupdate
+        system->solution->swap(system->get_sensitivity_solution(p));
+        equation_system->update();
+      }
+  }
+
 
 } // namespace GRINS

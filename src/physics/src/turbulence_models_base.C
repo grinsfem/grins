@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -48,6 +48,16 @@ namespace GRINS
       _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
       _mu(input)
   {
+    return;
+  }
+
+  template<class Mu>
+  void TurbulenceModelsBase<Mu>::init_variables( libMesh::FEMSystem* system )
+  {
+    this->_dim = system->get_mesh().mesh_dimension();
+        
+    this->_mu.init(system); 
+   
     return;
   }
 

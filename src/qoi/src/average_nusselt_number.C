@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -55,9 +55,11 @@ namespace GRINS
 
   void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
   {
-    _k = input( "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+    this->set_parameter
+      ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );
 
-    _scaling = input( "QoI/NusseltNumber/scaling", 1.0 );
+    this->set_parameter
+      ( _scaling, input, "QoI/NusseltNumber/scaling", 1.0 );
 
     if( this->_k < 0.0 )
       {

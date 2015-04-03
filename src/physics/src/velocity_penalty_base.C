@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -27,9 +27,6 @@
 #include "grins/velocity_penalty_base.h"
 
 // GRINS
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
@@ -41,7 +38,9 @@ namespace GRINS
 
   template<class Mu>
   VelocityPenaltyBase<Mu>::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input),
+    : IncompressibleNavierStokesBase<Mu>(physics_name,
+                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         input),
     _quadratic_scaling(false)
   {
     this->read_input_options(input);
@@ -58,8 +57,17 @@ namespace GRINS
   template<class Mu>  
   void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
   {
+    std::string base_physics_name = "VelocityPenalty";
+    if (this->_physics_name == velocity_penalty2 ||
+        this->_physics_name == velocity_penalty2_adjoint_stab)
+      base_physics_name.push_back('2');
+
+    if (this->_physics_name == velocity_penalty3 ||
+        this->_physics_name == velocity_penalty3_adjoint_stab)
+      base_physics_name.push_back('3');
+
     std::string penalty_function =
-      input("Physics/"+velocity_penalty+"/penalty_function",
+      input("Physics/"+base_physics_name+"/penalty_function",
         std::string("0"));
 
     if (penalty_function == "0")
@@ -70,7 +78,7 @@ namespace GRINS
         (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
 
     std::string base_function =
-      input("Physics/"+velocity_penalty+"/base_velocity",
+      input("Physics/"+base_physics_name+"/base_velocity",
         std::string("0"));
 
     if (penalty_function == "0" && base_function == "0")
@@ -84,7 +92,7 @@ namespace GRINS
         (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
     _quadratic_scaling = 
-      input("Physics/"+velocity_penalty+"/quadratic_scaling", false);
+      input("Physics/"+base_physics_name+"/quadratic_scaling", false);
   }
 
   template<class Mu>

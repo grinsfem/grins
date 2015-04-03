@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -45,6 +45,8 @@ class GetPot;
 namespace libMesh
 {
   class DiffSolver;
+  class ParameterVector;
+  class SensitivityData;
 }
 
 namespace GRINS
@@ -65,18 +67,40 @@ namespace GRINS
     
     virtual void solve( SolverContext& context )=0;
 
+    virtual void adjoint_qoi_parameter_sensitivity
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
+      const
+    { libmesh_not_implemented(); }
+
+    virtual void forward_qoi_parameter_sensitivity
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
+      const
+    { libmesh_not_implemented(); }
+
   protected:
 
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
     double _absolute_step_tolerance;
+
+    // _relative_residual_tolerance applies to both one of the
+    // stopping criteria for (nonlinear) forward solves and *the*
+    // stopping criterion for (linear) adjoint solves.
     double _relative_residual_tolerance;
+
     double _absolute_residual_tolerance;
     double _initial_linear_tolerance;
     double _minimum_linear_tolerance;
     unsigned int _max_linear_iterations;
     bool _continue_after_backtrack_failure;
+    bool _continue_after_max_iterations;
 
     // Screen display options
     bool _solver_quiet;

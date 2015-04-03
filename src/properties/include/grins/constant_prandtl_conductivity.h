@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -26,6 +26,9 @@
 #ifndef GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
 #define GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -33,7 +36,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantPrandtlConductivity
+  class ConstantPrandtlConductivity : public ParameterUser
   {
   public:
 
@@ -44,7 +47,7 @@ namespace GRINS
 
   private:
 
-    const libMesh::Real _Pr;
+    libMesh::Real _Pr;
 
   };
   

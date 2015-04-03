@@ -1,10 +1,13 @@
 # Mesh related options
-[mesh-options]
-mesh_class = serial
-mesh_option = create_2D_mesh
-element_type = QUAD9
-mesh_nx1 = 10
-mesh_nx2 = 10
+[Mesh]
+   class = 'serial'
+
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD9'
+      n_elems_x = '10'
+      n_elems_y = '10'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
@@ -20,11 +23,10 @@ max_linear_iterations = 2500
 
 verify_analytic_jacobians = 1.0e-6
 
-initial_linear_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis_time_series = false 
 output_vis = false
 timesteps_per_vis = 1
 vis_output_file_prefix = 'dirichlet_fem'
@@ -37,6 +39,7 @@ print_mesh_info = 'true'
 print_log_info = 'true'
 solver_verbose = 'true'
 solver_quiet = 'false'
+timesteps_per_perflog = 4
 
 echo_physics = 'true'
 
@@ -111,7 +114,3 @@ k = 1.0
 
 []
 
-
-[ExactSolution]
-
-solution_file = 'test_data/thermally_driven_2d.xdr'

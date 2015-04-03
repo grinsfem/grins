@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -51,6 +51,13 @@ namespace GRINS
   class CanteraMixture;
   class CachedValues;
   
+  //! Wrapper class for evaluating thermo properties using Cantera
+  /*!
+    This class is expected to be constructed *after* threads have been forked and will only
+    live during the lifetime of the thread. Note that this documentation will always
+    be built regardless if Cantera is included in the GRINS build or not. Check configure
+    output to confirm that Cantera was included in the build if you wish to use it.
+   */
   class CanteraThermodynamics
   {
   public:

@@ -27,7 +27,8 @@ Requirements
 
 In addition to a modern C++ compiler,
 GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git)
-finite element library (currently version 1.0.0 prerelease) as well as the Boost C++ library.
+finite element library. GRINS release 0.5.0 can use libMesh versions as old as 0.9.4. Subsequent to
+the 0.5.0 release requires at least libMesh 1.0.0. The Boost C++ library is also required (header only).
 
 Optional Packages
 -----------------

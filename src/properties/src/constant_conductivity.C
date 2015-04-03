@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -36,15 +36,20 @@ namespace GRINS
 {
 
   ConstantConductivity::ConstantConductivity( const GetPot& input )
-    : _k( input("Materials/Conductivity/k", 0.0) )
+    : ParameterUser("ConstantConductivity"),
+      _k(0.0)
   {
     if( !input.have_variable("Materials/Conductivity/k") )
       {
         libmesh_warning("No Materials/Conductivity/k specified!\n");
 
 	// Try and get the conductivity from other specifications
-	_k = input("Physics/"+incompressible_navier_stokes+"/k", 1.0);
+        this->set_parameter
+	  (_k, input, "Physics/"+incompressible_navier_stokes+"/k", _k);
       }
+    else
+      this->set_parameter
+        (_k, input, "Materials/Conductivity/k", _k);
     return;
   }
 

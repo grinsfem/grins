@@ -41,14 +41,6 @@ specific_heat_model = 'constant'
 vel_bc_ids = '0 1 2 3 4 5'
 vel_bc_types = 'no_slip no_slip no_slip no_slip no_slip no_slip'
 
-
-bc_ids = '4 2 0 5 1 3'
-bc_types = 'isothermal_wall isothermal_wall isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall'
-
-
-T_wall_1 = 1
-T_wall_3 = 5
-
 enable_thermo_press_calc = 'false'
 
 pin_pressure = true
@@ -56,6 +48,15 @@ pin_location = '0.0 0.01'
 pin_value = '0.0'
 
 output_vars = 'rho'
+
+[../VariableNames]
+
+Temperature = 'T'
+u_velocity = 'u'
+v_velocity = 'v'                                                                                                                                                                                                                              
+w_velocity = 'w'
+pressure = 'p'
+
 []
 
 
@@ -68,8 +69,6 @@ enabled_qois = 'average_nusselt_number'
 thermal_conductivity = '0.041801' #[W/m-K]
 
 bc_ids = '3'
-
-Pr_over_TwomuT = '20.025542438'
 
 scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierStokes/epsilon} }'
 
@@ -96,20 +95,18 @@ cp = '1.0' #[J/kg-K]
 
 
 # Mesh related options
-[mesh-options]
-mesh_option = create_3D_mesh
-element_type = HEX27
-
-mesh_nx1 = 3
-mesh_nx2 = 3
-mesh_nx3 = 3
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX27'
+      n_elems_x = '3'
+      n_elems_y = '3'
+      n_elems_z = '3'
+[]
 
 # Options for tiem solvers
 [unsteady-solver]
 transient = false 
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -122,7 +119,6 @@ initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'false'
 
-require_residual_reduction = 'true'
 
 # Visualization options
 [vis-options]
@@ -150,13 +146,5 @@ print_qoi = 'true'
 echo_qoi = 'true'
 
 print_element_jacobians = 'false'
-
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
 
 []

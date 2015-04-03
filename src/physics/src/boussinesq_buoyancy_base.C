@@ -1,9 +1,9 @@
 //-----------------------------------------------------------------------bl-
 //--------------------------------------------------------------------------
-// 
-// GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2014 Paul T. Bauman, Roy H. Stogner
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -39,10 +39,22 @@ namespace GRINS
     : Physics(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho_ref( input("Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0) ),
-      _T_ref( input("Physics/"+boussinesq_buoyancy+"/T_ref", 1.0) ),
-      _beta_T( input("Physics/"+boussinesq_buoyancy+"/beta_T", 1.0) )
+      _rho_ref(1.0),
+      _T_ref(1.0),
+      _beta_T(1.0)
   {
+    this->set_parameter
+      (_rho_ref, input,
+       "Physics/"+boussinesq_buoyancy+"/rho_ref", _rho_ref);
+
+    this->set_parameter
+      (_T_ref, input,
+       "Physics/"+boussinesq_buoyancy+"/T_ref", _T_ref);
+
+    this->set_parameter
+      (_beta_T, input,
+       "Physics/"+boussinesq_buoyancy+"/beta_T", _beta_T);
+
     unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
 
     _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
