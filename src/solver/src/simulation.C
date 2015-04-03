@@ -491,10 +491,33 @@ namespace GRINS
          it++ )
       {
         std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
-      
+
         physics->attach_dirichlet_bound_func( it->second );
       }
     return;
+  }
+
+  bool Simulation::check_for_adjoint_solve( const GetPot& input ) const
+  {
+    /*! \todo We need to collect these options into one spot */
+    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
+
+    bool do_adjoint_solve = false;
+
+    // First check if the error estimator requires an adjoint solve
+    if( error_estimator.find("adjoint") != std::string::npos )
+      {
+        do_adjoint_solve = true;
+      }
+
+    // Now check if the user requested to do an adjoint solve regardless
+    /*! \todo This option name WILL change at some point. */
+    if( input( "linear-nonlinear-solver/do_adjoint_solve", false ) )
+      {
+        do_adjoint_solve = true;
+      }
+
+    return do_adjoint_solve;
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

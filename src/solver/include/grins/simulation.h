@@ -117,6 +117,9 @@ namespace GRINS
     //! Helper function
     void check_for_unused_vars( const GetPot& input, bool warning_only );
 
+    //! Helper function
+    bool check_for_adjoint_solve( const GetPot& input ) const;
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
