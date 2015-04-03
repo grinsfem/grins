@@ -117,6 +117,12 @@ namespace GRINS
     //! Helper function
     void check_for_unused_vars( const GetPot& input, bool warning_only );
 
+    //! Helper function
+    bool check_for_adjoint_solve( const GetPot& input ) const;
+
+    //! Helper function
+    void init_adjoint_solve( const GetPot& input, bool output_adjoint );
+
     std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
 
     std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
@@ -143,6 +149,7 @@ namespace GRINS
 
     // Visualization options
     bool _output_vis;
+    bool _output_adjoint;
     bool _output_residual;
     bool _output_residual_sensitivities;
     bool _output_solution_sensitivities;
@@ -155,6 +162,9 @@ namespace GRINS
     ParameterManager _adjoint_parameters;
 
     ParameterManager _forward_parameters;
+
+    // Cache whether or not we do an adjoint solve
+    bool _do_adjoint_solve;
 
   private:
 

@@ -57,12 +57,14 @@ namespace GRINS
     _print_qoi( input("screen-options/print_qoi", false ) ),
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
+    _output_adjoint( input("vis-options/output_adjoint", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
     _output_residual_sensitivities( input( "vis-options/output_residual_sensitivities", false ) ),
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
-    _error_estimator() // effectively NULL
+    _error_estimator(), // effectively NULL
+    _do_adjoint_solve(false) // Helper function will set final value
   {
     libmesh_deprecated();
 
@@ -71,6 +73,8 @@ namespace GRINS
     this->init_qois(input,sim_builder);
 
     this->init_params(input,sim_builder);
+
+    this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
@@ -102,18 +106,22 @@ namespace GRINS
     _print_qoi( input("screen-options/print_qoi", false ) ),
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
+    _output_adjoint( input("vis-options/output_adjoint", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
     _output_residual_sensitivities( input( "vis-options/output_residual_sensitivities", false ) ),
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
-    _error_estimator() // effectively NULL
+    _error_estimator(), // effectively NULL
+    _do_adjoint_solve(false) // Helper function will set final value
   {
     this->init_multiphysics_system(input,sim_builder);
 
     this->init_qois(input,sim_builder);
 
     this->init_params(input,sim_builder);
+
+    this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
@@ -300,6 +308,7 @@ namespace GRINS
     context.system = _multiphysics_system;
     context.equation_system = _equation_system;
     context.vis = _vis;
+    context.output_adjoint = _output_adjoint;
     context.timesteps_per_vis = _timesteps_per_vis;
     context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
@@ -311,6 +320,7 @@ namespace GRINS
     context.postprocessing = _postprocessing;
     context.error_estimator = _error_estimator;
     context.print_qoi = _print_qoi;
+    context.do_adjoint_solve = _do_adjoint_solve;
 
     if (_output_residual_sensitivities &&
         !_forward_parameters.parameter_vector.size())
@@ -487,10 +497,56 @@ namespace GRINS
          it++ )
       {
         std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
-      
+
         physics->attach_dirichlet_bound_func( it->second );
       }
     return;
+  }
+
+  void Simulation::init_adjoint_solve( const GetPot& input, bool output_adjoint )
+  {
+    // Check if we're doing an adjoint solve
+    _do_adjoint_solve = this->check_for_adjoint_solve(input);
+
+    const libMesh::DifferentiableQoI* raw_qoi = _multiphysics_system->get_qoi();
+    const CompositeQoI* qoi = dynamic_cast<const CompositeQoI*>( raw_qoi );
+
+    // If we are trying to do an adjoint solve without a QoI, that's an error
+    // If there are no QoIs, the CompositeQoI never gets built and qoi will be NULL
+    if( _do_adjoint_solve && !qoi )
+      {
+        libmesh_error_msg("Error: Adjoint solve requested, but no QoIs detected.");
+      }
+
+    /* If we are not doing an adjoint solve, but adjoint output was requested:
+       that's an error. */
+    if( !_do_adjoint_solve && output_adjoint )
+      {
+        libmesh_error_msg("Error: Adjoint output requested, but no adjoint solve requested.");
+      }
+  }
+
+  bool Simulation::check_for_adjoint_solve( const GetPot& input ) const
+  {
+    /*! \todo We need to collect these options into one spot */
+    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
+
+    bool do_adjoint_solve = false;
+
+    // First check if the error estimator requires an adjoint solve
+    if( error_estimator.find("adjoint") != std::string::npos )
+      {
+        do_adjoint_solve = true;
+      }
+
+    // Now check if the user requested to do an adjoint solve regardless
+    /*! \todo This option name WILL change at some point. */
+    if( input( "linear-nonlinear-solver/do_adjoint_solve", false ) )
+      {
+        do_adjoint_solve = true;
+      }
+
+    return do_adjoint_solve;
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS
