@@ -143,6 +143,7 @@ namespace GRINS
 
     // Visualization options
     bool _output_vis;
+    bool _output_adjoint;
     bool _output_residual;
     bool _output_residual_sensitivities;
     bool _output_solution_sensitivities;
