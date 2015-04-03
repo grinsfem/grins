@@ -78,7 +78,6 @@ namespace GRINS
         // Solve the forward problem
         context.system->solve();
 
-        libMesh::NumericVector<libMesh::Number>& primal_solution = *(context.system->solution);
         if( context.output_vis )
           {
             context.postprocessing->update_quantities( *(context.equation_system) );
