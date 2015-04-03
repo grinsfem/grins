@@ -63,7 +63,8 @@ namespace GRINS
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
-    _error_estimator() // effectively NULL
+    _error_estimator(), // effectively NULL
+    _do_adjoint_solve(false) // Helper function will set final value
   {
     libmesh_deprecated();
 
@@ -109,7 +110,8 @@ namespace GRINS
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
-    _error_estimator() // effectively NULL
+    _error_estimator(), // effectively NULL
+    _do_adjoint_solve(false) // Helper function will set final value
   {
     this->init_multiphysics_system(input,sim_builder);
 

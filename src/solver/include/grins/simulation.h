@@ -157,6 +157,9 @@ namespace GRINS
 
     ParameterManager _forward_parameters;
 
+    // Cache whether or not we do an adjoint solve
+    bool _do_adjoint_solve;
+
   private:
 
     Simulation();
