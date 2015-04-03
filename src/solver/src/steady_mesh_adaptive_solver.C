@@ -124,8 +124,8 @@ namespace GRINS
         std::cout << "==========================================================" << std::endl
                   << "Checking convergence" << std::endl
                   << "==========================================================" << std::endl;
-        bool converged = this->check_for_convergence( error );
-        
+        bool converged = this->check_for_convergence( context, error );
+
         if( converged )
           {
             // Break out of adaptive loop

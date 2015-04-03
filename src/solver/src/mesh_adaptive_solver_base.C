@@ -27,6 +27,7 @@
 
 // This class
 #include "grins/mesh_adaptive_solver_base.h"
+#include "grins/solver_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -162,13 +163,14 @@ namespace GRINS
     return do_adjoint_solve;
   }
 
-  bool MeshAdaptiveSolverBase::check_for_convergence( const libMesh::ErrorVector& error ) const
+  bool MeshAdaptiveSolverBase::check_for_convergence( SolverContext& context,
+                                                      const libMesh::ErrorVector& error ) const
   {
     bool converged = false;
 
     libMesh::Real error_estimate = 0.0;
 
-    if( _do_adjoint_solve )
+    if( context.do_adjoint_solve )
       {
         error_estimate = std::accumulate( error.begin(), error.end(), 0.0 );
       }

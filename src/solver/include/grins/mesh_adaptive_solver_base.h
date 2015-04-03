@@ -94,7 +94,8 @@ namespace GRINS
 
     bool check_for_adjoint_solve( const GetPot& input ) const;
 
-    bool check_for_convergence( const libMesh::ErrorVector& error ) const;
+    bool check_for_convergence( SolverContext& context,
+                                const libMesh::ErrorVector& error ) const;
 
     void flag_elements_for_refinement( const libMesh::ErrorVector& error );
 
