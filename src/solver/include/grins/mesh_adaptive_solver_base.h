@@ -72,7 +72,6 @@ namespace GRINS
     libMesh::Real _refine_fraction;
     libMesh::Real _coarsen_fraction;
     libMesh::Real _coarsen_threshold;
-    bool _output_adjoint_sol;
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
@@ -80,8 +79,6 @@ namespace GRINS
     unsigned int _edge_level_mismatch_limit;
     unsigned int _face_level_mismatch_limit;
     bool _enforce_mismatch_limit_prior_to_refinement;
-
-    bool _do_adjoint_solve;
 
     RefinementFlaggingType _refinement_type;
 
@@ -92,9 +89,8 @@ namespace GRINS
     void set_refinement_type( const GetPot& input,
                               RefinementFlaggingType& refinement_type );
 
-    bool check_for_adjoint_solve( const GetPot& input ) const;
-
-    bool check_for_convergence( const libMesh::ErrorVector& error ) const;
+    bool check_for_convergence( SolverContext& context,
+                                const libMesh::ErrorVector& error ) const;
 
     void flag_elements_for_refinement( const libMesh::ErrorVector& error );
 

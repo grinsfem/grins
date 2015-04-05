@@ -126,6 +126,21 @@ namespace GRINS
     return;
   }
 
+  void Visualization::output_residual_sensitivities
+    (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+     MultiphysicsSystem* system,
+     const libMesh::ParameterVector & params)
+  {
+    this->output_residual_sensitivities
+      ( equation_system, system, params, 0, 0.0 );
+  }
+
+  void Visualization::output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+                                      MultiphysicsSystem* system )
+  {
+    this->output_adjoint( equation_system, system, 0, 0.0 );
+  }
+
   void Visualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
      MultiphysicsSystem* system,
@@ -137,7 +152,7 @@ namespace GRINS
 
   void Visualization::dump_visualization
     ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
-      const std::string& filename_prefix, 
+      const std::string& filename_prefix,
       const libMesh::Real time )
   {
     libMesh::MeshBase& mesh = equation_system->get_mesh();
@@ -145,8 +160,8 @@ namespace GRINS
     if( this->_vis_output_file_prefix == "unknown" )
       {
 	// TODO: Need consisent way to print warning messages.
-	std::cout << " WARNING in Visualization::dump_visualization :" 
-		  << " using 'unknown' as file prefix since it was not set " 
+	std::cout << " WARNING in Visualization::dump_visualization :"
+		  << " using 'unknown' as file prefix since it was not set "
 		  << std::endl;
       }
 
@@ -159,7 +174,7 @@ namespace GRINS
         if (mkdir(this->_vis_output_file_prefix.substr(0,pos).c_str(),
                   0777) != 0 && errno != EEXIST)
           libmesh_file_error(this->_vis_output_file_prefix.substr(0,pos));
-  
+
     for( std::vector<std::string>::const_iterator format = _output_format.begin();
 	 format != _output_format.end();
 	 format ++ )
@@ -194,9 +209,9 @@ namespace GRINS
 	else if ((*format) == "ExodusII")
 	  {
 	    std::string filename = filename_prefix+".exo";
-	  
+
 	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
-	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
+	    // it should be the number of timesteps within the file. Here, we are explicitly only doing
 	    // one timestep per file.
             libMesh::ExodusII_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );
@@ -204,9 +219,9 @@ namespace GRINS
 	else if ((*format) == "Nemesis")
 	  {
 	    std::string filename = filename_prefix+".nem";
-	  
+
 	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
-	    // it should be the number of timesteps within the file. Here, we are explicitly only doing 
+	    // it should be the number of timesteps within the file. Here, we are explicitly only doing
 	    // one timestep per file.
             libMesh::Nemesis_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );

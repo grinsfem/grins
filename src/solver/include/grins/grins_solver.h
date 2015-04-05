@@ -83,6 +83,11 @@ namespace GRINS
       const
     { libmesh_not_implemented(); }
 
+    //! Do steady version of adjoint solve
+    /*! We put this here since we may want to reuse this
+        in multiple different steady solves. */
+    void steady_adjoint_solve( SolverContext& context );
+
   protected:
 
     // Linear/Nonlinear solver options

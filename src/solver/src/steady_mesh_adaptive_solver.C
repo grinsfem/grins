@@ -78,7 +78,6 @@ namespace GRINS
         // Solve the forward problem
         context.system->solve();
 
-        libMesh::NumericVector<libMesh::Number>& primal_solution = *(context.system->solution);
         if( context.output_vis )
           {
             context.postprocessing->update_quantities( *(context.equation_system) );
@@ -86,25 +85,11 @@ namespace GRINS
           }
 
         // Solve adjoint system
-        if( _do_adjoint_solve )
-          {
-            std::cout << "==========================================================" << std::endl
-                      << "Solving adjoint problem." << std::endl
-                      << "==========================================================" << std::endl;
-            context.system->adjoint_solve();
-            context.system->set_adjoint_already_solved(true);
-          }
+        if(context.do_adjoint_solve)
+          this->steady_adjoint_solve(context);
 
-        // At the moment output data is overwritten every mesh refinement step
-        if( context.output_vis && this->_output_adjoint_sol && _do_adjoint_solve )
-          {
-            libMesh::NumericVector<libMesh::Number>& dual_solution = context.system->get_adjoint_solution(0);
-
-            // Swap primal and dual to write out dual solution
-            primal_solution.swap( dual_solution );          
-            context.vis->output( context.equation_system );
-            primal_solution.swap( dual_solution );          
-          }
+        if(context.output_adjoint)
+          context.vis->output_adjoint(context.equation_system, context.system);
 
         if( context.output_residual )
           {
@@ -129,8 +114,8 @@ namespace GRINS
         std::cout << "==========================================================" << std::endl
                   << "Checking convergence" << std::endl
                   << "==========================================================" << std::endl;
-        bool converged = this->check_for_convergence( error );
-        
+        bool converged = this->check_for_convergence( context, error );
+
         if( converged )
           {
             // Break out of adaptive loop
@@ -197,6 +182,10 @@ namespace GRINS
   {
     context.system->forward_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);
+
+    if( context.output_residual_sensitivities )
+      context.vis->output_residual_sensitivities
+        ( context.equation_system, context.system, parameters_in );
 
     if( context.output_solution_sensitivities )
       context.vis->output_solution_sensitivities
