@@ -54,7 +54,10 @@ namespace GRINS
     return new Vorticity( *this );
   }
 
-  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
+  void Vorticity::init
+    (const GetPot& input,
+     const MultiphysicsSystem& system,
+     unsigned int /*qoi_num*/ )
   {
     // Extract subdomain on which to compute to qoi
     int num_ids = input.vector_variable_size( "QoI/Vorticity/enabled_subdomains" );
