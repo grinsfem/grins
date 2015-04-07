@@ -58,6 +58,8 @@
 #include "grins/velocity_drag_adjoint_stab.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
+#include "grins/parsed_velocity_source.h"
+#include "grins/parsed_velocity_source_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
 #include "grins/elastic_cable.h"
 #include "grins/elastic_membrane_constant_pressure.h"
@@ -348,6 +350,18 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenaltyAdjointStabilization>
+            (physics_to_add, input);
+      }
+    else if( physics_to_add == parsed_velocity_source )
+      {
+	physics_list[physics_to_add] =
+          new_mu_class<ParsedVelocitySource>
+            (physics_to_add, input);
+      }
+    else if( physics_to_add == parsed_velocity_source_adjoint_stab )
+      {
+	physics_list[physics_to_add] =
+          new_mu_class<ParsedVelocitySourceAdjointStabilization>
             (physics_to_add, input);
       }
     else if( physics_to_add == averaged_fan )
