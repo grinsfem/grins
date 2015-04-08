@@ -39,32 +39,39 @@ namespace GRINS
 {
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : ElasticCableBase(physics_name,input),
-      _A( input("Physics/"+physics_name+"/A", 1.0 ) ),
-      _rho( input("Physics/"+physics_name+"/rho", 1.0 ) )
+      _A(1.0),
+      _rho(1.0)
   {
-    if( !input.have_variable("Physics/ElasticCableConstantGravity/A") )
+    if( !input.have_variable("Physics/"+physics_name+"/A") )
       {
-        std::cerr << "Error: Must input area for ElasticCableConstantGravity." << std::endl
-                  << "       Please set Physics/ElasticCableConstantGravity/A." << std::endl;
-        libmesh_error();
-      }
-    if( !input.have_variable("Physics/ElasticCableConstantGravity/rho") )
-      {
-        std::cerr << "Error: Must input density for ElasticCableConstantGravity." << std::endl
-                  << "       Please set Physics/ElasticCableConstantGravity/rho." << std::endl;
+        std::cerr << "Error: Must input area for "+physics_name+"." << std::endl
+                  << "       Please set Physics/"+physics_name+"/A." << std::endl;
         libmesh_error();
       }
 
-    int num_gravity =  input.vector_variable_size("Physics/ElasticCableConstantGravity/gravity");
+    this->set_parameter
+      (_A, input, "Physics/"+physics_name+"/A", _A );
+
+    if( !input.have_variable("Physics/"+physics_name+"/rho") )
+      {
+        std::cerr << "Error: Must input density for "+physics_name+"." << std::endl
+                  << "       Please set Physics/"+physics_name+"/rho." << std::endl;
+        libmesh_error();
+      }
+
+    this->set_parameter
+      (_rho, input, "Physics/"+physics_name+"/rho", _rho );
+
+    int num_gravity =  input.vector_variable_size("Physics/"+physics_name+"/gravity");
     if (num_gravity != 3)
       {
-        std::cerr << "Error: Must input three values for ElasticCableConstantGravity gravity." << std::endl
-                  << "       Please set Physics/ElasticCableConstantGravity/gravity." << std::endl;
+        std::cerr << "Error: Must input three values for "+physics_name+" gravity." << std::endl
+                  << "       Please set Physics/"+physics_name+"/gravity." << std::endl;
         libmesh_error();
       }
     for( int i = 0; i < num_gravity; i++ )
       {
-        _gravity(i)=( input("Physics/ElasticCableConstantGravity/gravity", 0.0 , i ) );
+        _gravity(i)=( input("Physics/"+physics_name+"/gravity", 0.0 , i ) );
       }
 
     return;

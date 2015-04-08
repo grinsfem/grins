@@ -48,8 +48,12 @@ namespace GRINS
     : Physics(physics_name, input),
       _gas_mixture(input),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
-      _fixed_rho_value( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 ) )
+      _fixed_rho_value(0.0)
   {
+    this->set_parameter
+      (_fixed_rho_value, input,
+       "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
+
     this->read_input_options(input);
     
     return;
@@ -100,7 +104,8 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", GRINS::T_var_name_default );
 
     // Read thermodynamic state info
-    _p0 = input("Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    this->set_parameter
+      (_p0, input, "Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
 
     _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 

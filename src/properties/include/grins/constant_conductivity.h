@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/assembly_context.h"
+#include "grins/parameter_user.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -36,7 +37,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantConductivity
+  class ConstantConductivity : public ParameterUser
   {
   public:
 

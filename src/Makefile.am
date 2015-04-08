@@ -31,6 +31,7 @@ libgrins_la_SOURCES += bc_handling/src/inc_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/low_mach_navier_stokes_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
 libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
+libgrins_la_SOURCES += bc_handling/src/spalart_allmaras_bc_handling.C
 
 # src/boundary_conditions files
 libgrins_la_SOURCES += boundary_conditions/src/boundary_conditions.C
@@ -88,6 +89,7 @@ libgrins_la_SOURCES += physics/src/low_mach_navier_stokes_vms_stab.C
 libgrins_la_SOURCES += physics/src/low_mach_navier_stokes_braack_stab.C
 libgrins_la_SOURCES += physics/src/stab_helper.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes_stab_helper.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras_stab_helper.C
 libgrins_la_SOURCES += physics/src/heat_transfer_stab_helper.C
 libgrins_la_SOURCES += physics/src/low_mach_navier_stokes_stab_helper.C
 libgrins_la_SOURCES += physics/src/heat_conduction.C
@@ -102,6 +104,8 @@ libgrins_la_SOURCES += physics/src/averaged_turbine_base.C
 libgrins_la_SOURCES += physics/src/scalar_ode.C
 libgrins_la_SOURCES += physics/src/primitive_flow_variables.C
 libgrins_la_SOURCES += physics/src/primitive_flow_fe_variables.C
+libgrins_la_SOURCES += physics/src/turbulence_variables.C
+libgrins_la_SOURCES += physics/src/turbulence_fe_variables.C
 libgrins_la_SOURCES += physics/src/primitive_temp_variables.C
 libgrins_la_SOURCES += physics/src/primitive_temp_fe_variables.C
 libgrins_la_SOURCES += physics/src/velocity_drag.C
@@ -110,6 +114,12 @@ libgrins_la_SOURCES += physics/src/velocity_drag_base.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_base.C
+libgrins_la_SOURCES += physics/src/turbulence_models_base.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras_parameters.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras_helper.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras_stab_base.C
+libgrins_la_SOURCES += physics/src/spalart_allmaras_spgsm_stab.C
 libgrins_la_SOURCES += physics/src/solid_mechanics_variables.C
 libgrins_la_SOURCES += physics/src/solid_mechanics_fe_variables.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
@@ -119,6 +129,9 @@ libgrins_la_SOURCES += physics/src/elastic_cable_base.C
 libgrins_la_SOURCES += physics/src/elastic_cable.C
 libgrins_la_SOURCES += physics/src/elastic_cable_constant_gravity.C
 libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
+libgrins_la_SOURCES += physics/src/source_term_base.C
+libgrins_la_SOURCES += physics/src/constant_source_term.C
+libgrins_la_SOURCES += physics/src/parsed_source_term.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -127,6 +140,7 @@ libgrins_la_SOURCES += properties/src/constant_prandtl_conductivity.C
 libgrins_la_SOURCES += properties/src/constant_specific_heat.C
 libgrins_la_SOURCES += properties/src/constant_viscosity.C
 libgrins_la_SOURCES += properties/src/parsed_viscosity.C
+libgrins_la_SOURCES += properties/src/spalart_allmaras_viscosity.C
 libgrins_la_SOURCES += properties/src/constant_source_func.C
 libgrins_la_SOURCES += properties/src/cantera_mixture.C
 libgrins_la_SOURCES += properties/src/cantera_thermo.C
@@ -153,6 +167,7 @@ libgrins_la_SOURCES += qoi/src/qoi_base.C
 libgrins_la_SOURCES += qoi/src/qoi_factory.C
 libgrins_la_SOURCES += qoi/src/vorticity.C
 libgrins_la_SOURCES += qoi/src/composite_qoi.C
+libgrins_la_SOURCES += qoi/src/parsed_interior_qoi.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/grins_solver.C
@@ -164,6 +179,8 @@ libgrins_la_SOURCES += solver/src/grins_unsteady_solver.C
 libgrins_la_SOURCES += solver/src/simulation_builder.C
 libgrins_la_SOURCES += solver/src/solver_context.C
 libgrins_la_SOURCES += solver/src/mesh_adaptive_solver_base.C
+libgrins_la_SOURCES += solver/src/parameter_manager.C
+libgrins_la_SOURCES += solver/src/parameter_user.C
 libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 
@@ -171,6 +188,7 @@ libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 libgrins_la_SOURCES += utilities/src/grins_version.C
 libgrins_la_SOURCES += utilities/src/input_utils.C
 libgrins_la_SOURCES += utilities/src/cached_values.C
+libgrins_la_SOURCES += utilities/src/distance_function.C
 
 # src/visualization files
 libgrins_la_SOURCES += visualization/src/steady_visualization.C
@@ -212,6 +230,7 @@ include_HEADERS += bc_handling/include/grins/inc_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/solid_mechanics_bc_handling.h
+include_HEADERS += bc_handling/include/grins/spalart_allmaras_bc_handling.h
 
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
@@ -279,7 +298,9 @@ include_HEADERS += physics/include/grins/low_mach_navier_stokes_vms_stab.h
 include_HEADERS += physics/include/grins/low_mach_navier_stokes_braack_stab.h
 include_HEADERS += physics/include/grins/stab_helper.h
 include_HEADERS += physics/include/grins/inc_nav_stokes_macro.h
+include_HEADERS += physics/include/grins/turbulence_models_macro.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_stab_helper.h
+include_HEADERS += physics/include/grins/spalart_allmaras_stab_helper.h
 include_HEADERS += physics/include/grins/heat_transfer_stab_helper.h
 include_HEADERS += physics/include/grins/low_mach_navier_stokes_stab_helper.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_base.h
@@ -294,6 +315,8 @@ include_HEADERS += physics/include/grins/averaged_turbine_base.h
 include_HEADERS += physics/include/grins/scalar_ode.h
 include_HEADERS += physics/include/grins/primitive_flow_variables.h
 include_HEADERS += physics/include/grins/primitive_flow_fe_variables.h
+include_HEADERS += physics/include/grins/turbulence_variables.h
+include_HEADERS += physics/include/grins/turbulence_fe_variables.h
 include_HEADERS += physics/include/grins/primitive_temp_variables.h
 include_HEADERS += physics/include/grins/primitive_temp_fe_variables.h
 include_HEADERS += physics/include/grins/velocity_drag.h
@@ -302,6 +325,12 @@ include_HEADERS += physics/include/grins/velocity_drag_base.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
 include_HEADERS += physics/include/grins/velocity_penalty_adjoint_stab.h
 include_HEADERS += physics/include/grins/velocity_penalty_base.h
+include_HEADERS += physics/include/grins/turbulence_models_base.h
+include_HEADERS += physics/include/grins/spalart_allmaras.h
+include_HEADERS += physics/include/grins/spalart_allmaras_parameters.h
+include_HEADERS += physics/include/grins/spalart_allmaras_helper.h
+include_HEADERS += physics/include/grins/spalart_allmaras_stab_base.h
+include_HEADERS += physics/include/grins/spalart_allmaras_spgsm_stab.h
 include_HEADERS += physics/include/grins/solid_mechanics_variables.h
 include_HEADERS += physics/include/grins/solid_mechanics_fe_variables.h
 include_HEADERS += physics/include/grins/elastic_membrane_base.h
@@ -310,6 +339,9 @@ include_HEADERS += physics/include/grins/elastic_cable_base.h
 include_HEADERS += physics/include/grins/elastic_cable.h
 include_HEADERS += physics/include/grins/elastic_membrane_constant_pressure.h
 include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
+include_HEADERS += physics/include/grins/source_term_base.h
+include_HEADERS += physics/include/grins/constant_source_term.h
+include_HEADERS += physics/include/grins/parsed_source_term.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
@@ -319,6 +351,8 @@ include_HEADERS += properties/include/grins/constant_prandtl_conductivity.h
 include_HEADERS += properties/include/grins/constant_specific_heat.h
 include_HEADERS += properties/include/grins/constant_viscosity.h
 include_HEADERS += properties/include/grins/parsed_viscosity.h
+include_HEADERS += properties/include/grins/spalart_allmaras_viscosity.h
+include_HEADERS += properties/include/grins/turbulent_viscosity_macro.h
 include_HEADERS += properties/include/grins/constant_source_func.h
 include_HEADERS += properties/include/grins/cantera_mixture.h
 include_HEADERS += properties/include/grins/cantera_thermo.h
@@ -349,6 +383,7 @@ include_HEADERS += qoi/include/grins/qoi_factory.h
 include_HEADERS += qoi/include/grins/qoi_names.h
 include_HEADERS += qoi/include/grins/vorticity.h
 include_HEADERS += qoi/include/grins/composite_qoi.h
+include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/grins_solver.h
@@ -360,6 +395,8 @@ include_HEADERS += solver/include/grins/grins_unsteady_solver.h
 include_HEADERS += solver/include/grins/simulation_builder.h
 include_HEADERS += solver/include/grins/solver_context.h
 include_HEADERS += solver/include/grins/mesh_adaptive_solver_base.h
+include_HEADERS += solver/include/grins/parameter_manager.h
+include_HEADERS += solver/include/grins/parameter_user.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/displacement_continuation_solver.h
 
@@ -372,6 +409,7 @@ include_HEADERS += utilities/include/grins/math_constants.h
 include_HEADERS += utilities/include/grins/cached_values.h
 include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
+include_HEADERS += utilities/include/grins/distance_function.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h
@@ -384,7 +422,7 @@ include_HEADERS += visualization/include/grins/postprocessing_factory.h
 if LIBMESH_LIBTOOL
    libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
 else
-   libgrins_la_LIBADD = $(LIBMESH_LDFLAGS)
+   libgrins_la_LIBADD = $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 if GRVY_ENABLED
@@ -398,13 +436,13 @@ endif
 grins_SOURCES = solver/src/grins.C
 grins_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
-grins_LDADD += $(LIBMESH_LDFLAGS)
+grins_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 grins_version_SOURCES = utilities/src/version.C
 grins_version_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
-grins_version_LDADD += $(LIBMESH_LDFLAGS)
+grins_version_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
 if CANTERA_ENABLED

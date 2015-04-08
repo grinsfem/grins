@@ -46,7 +46,7 @@ namespace GRINS
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
       _p_pinning(input,physics_name),
-      _rho_index(2^30) // Initialize to absurd value
+      _rho_index(0) // Initialize to zero
   {
     this->read_input_options(input);
 

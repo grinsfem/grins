@@ -36,15 +36,20 @@ namespace GRINS
 {
 
   ConstantConductivity::ConstantConductivity( const GetPot& input )
-    : _k( input("Materials/Conductivity/k", 0.0) )
+    : ParameterUser("ConstantConductivity"),
+      _k(0.0)
   {
     if( !input.have_variable("Materials/Conductivity/k") )
       {
         libmesh_warning("No Materials/Conductivity/k specified!\n");
 
 	// Try and get the conductivity from other specifications
-	_k = input("Physics/"+incompressible_navier_stokes+"/k", 1.0);
+        this->set_parameter
+	  (_k, input, "Physics/"+incompressible_navier_stokes+"/k", _k);
       }
+    else
+      this->set_parameter
+        (_k, input, "Materials/Conductivity/k", _k);
     return;
   }
 

@@ -39,7 +39,7 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
                                          input),
-      _stab_helper( input )
+      _stab_helper( physics_name+"StabHelper", input )
   {
     return;
   }

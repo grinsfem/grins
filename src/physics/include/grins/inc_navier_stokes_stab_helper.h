@@ -39,7 +39,9 @@ namespace GRINS
   {
   public:
 
-    IncompressibleNavierStokesStabilizationHelper( const GetPot& input );
+    IncompressibleNavierStokesStabilizationHelper
+      ( const std::string & helper_name,
+        const GetPot& input );
 
     ~IncompressibleNavierStokesStabilizationHelper();
 

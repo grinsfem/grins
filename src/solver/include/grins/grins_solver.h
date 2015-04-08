@@ -45,6 +45,8 @@ class GetPot;
 namespace libMesh
 {
   class DiffSolver;
+  class ParameterVector;
+  class SensitivityData;
 }
 
 namespace GRINS
@@ -65,13 +67,39 @@ namespace GRINS
     
     virtual void solve( SolverContext& context )=0;
 
+    virtual void adjoint_qoi_parameter_sensitivity
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
+      const
+    { libmesh_not_implemented(); }
+
+    virtual void forward_qoi_parameter_sensitivity
+      (SolverContext&                  /*context*/,
+       const libMesh::QoISet&          /*qoi_indices*/,
+       const libMesh::ParameterVector& /*parameters_in*/,
+       libMesh::SensitivityData&       /*sensitivities*/)
+      const
+    { libmesh_not_implemented(); }
+
+    //! Do steady version of adjoint solve
+    /*! We put this here since we may want to reuse this
+        in multiple different steady solves. */
+    void steady_adjoint_solve( SolverContext& context );
+
   protected:
 
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
     double _absolute_step_tolerance;
+
+    // _relative_residual_tolerance applies to both one of the
+    // stopping criteria for (nonlinear) forward solves and *the*
+    // stopping criterion for (linear) adjoint solves.
     double _relative_residual_tolerance;
+
     double _absolute_residual_tolerance;
     double _initial_linear_tolerance;
     double _minimum_linear_tolerance;

@@ -27,13 +27,15 @@
 
 // GRINS
 #include "grins/hyperelastic_strain_energy.h"
+#include "grins/parameter_user.h"
 
 // Forward declarations
 class GetPot;
 
 namespace GRINS
 {
-  class MooneyRivlin : public HyperelasticStrainEnergy<MooneyRivlin>
+  class MooneyRivlin : public HyperelasticStrainEnergy<MooneyRivlin>,
+                       public ParameterUser
   {
   public:
     MooneyRivlin( const GetPot& input );

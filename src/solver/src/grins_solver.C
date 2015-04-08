@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins/multiphysics_sys.h"
+#include "grins/solver_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -99,6 +100,16 @@ namespace GRINS
     solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
 
     return;
+  }
+
+  void Solver::steady_adjoint_solve( SolverContext& context )
+  {
+    libMesh::out << "==========================================================" << std::endl
+                 << "Solving adjoint problem." << std::endl
+                 << "==========================================================" << std::endl;
+
+    context.system->adjoint_solve();
+    context.system->set_adjoint_already_solved(true);
   }
 
 } // namespace GRINS

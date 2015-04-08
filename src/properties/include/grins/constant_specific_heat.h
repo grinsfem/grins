@@ -26,6 +26,9 @@
 #ifndef GRINS_CONSTANT_SPECIFIC_HEAT_H
 #define GRINS_CONSTANT_SPECIFIC_HEAT_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -33,7 +36,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ConstantSpecificHeat
+  class ConstantSpecificHeat : public ParameterUser
   {
   public:
 

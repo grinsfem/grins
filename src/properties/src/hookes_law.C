@@ -33,6 +33,7 @@ namespace GRINS
 {
   HookesLaw::HookesLaw(const GetPot& input)
     : StressStrainLaw<HookesLaw>(),
+      ParameterUser("HookesLaw"),
       _C(),
       _lambda(0.0),
       _mu(0.0)
@@ -61,14 +62,18 @@ namespace GRINS
       }
 
     if( input.have_variable("Physics/HookesLaw/lambda") )
-      _lambda = input("Physics/HookesLaw/lambda", 0.0 );
+      this->set_parameter
+        (_lambda, input, "Physics/HookesLaw/lambda", 0.0);
     
     if( input.have_variable("Physics/HookesLaw/mu") )
-      _mu = input("Physics/HookesLaw/mu", 0.0 );
+      this->set_parameter
+        (_mu, input, "Physics/HookesLaw/mu", 0.0);
         
     if( input.have_variable("Physics/HookesLaw/E") && 
         input.have_variable("Physics/HookesLaw/nu") )
       {
+        // FIXME - we'll need a special accessor to give parameter
+        // access to these
         libMesh::Real E  = input("Physics/HookesLaw/E", 0.0);
         libMesh::Real nu = input("Physics/HookesLaw/nu", 0.0);
         _lambda = nu*E/( (1+nu)*(1-2*nu) );

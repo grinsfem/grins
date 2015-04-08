@@ -63,12 +63,18 @@
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/elastic_cable_constant_gravity.h"
 #include "grins/grins_physics_names.h"
+#include "grins/constant_source_term.h"
+#include "grins/parsed_source_term.h"
+
+#include "grins/spalart_allmaras.h"
+#include "grins/spalart_allmaras_spgsm_stab.h"
 
 #include "grins/constant_conductivity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_conductivity.h"
 #include "grins/parsed_viscosity.h"
+#include "grins/spalart_allmaras_viscosity.h"
 
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
@@ -108,22 +114,22 @@ namespace GRINS
     libmesh_error();
   }
 
-  void visc_error( const std::string& physics,				  
+  void visc_error( const std::string& physics,
 		   const std::string& viscosity )
   {
     std::cerr << "================================================================" << std::endl
-	      << "Invalid combination of models for " << physics << std::endl	      
-	      << "Viscosity model     = " << viscosity << std::endl	      
+	      << "Invalid combination of models for " << physics << std::endl
+	      << "Viscosity model     = " << viscosity << std::endl
 	      << "================================================================" << std::endl;
     libmesh_error();
   }
 
-  void conductivity_error( const std::string& physics,				  
+  void conductivity_error( const std::string& physics,
 			   const std::string& conductivity )
   {
     std::cerr << "================================================================" << std::endl
-	      << "Invalid combination of models for " << physics << std::endl	      
-	      << "Conductivity model     = " << conductivity << std::endl	      
+	      << "Invalid combination of models for " << physics << std::endl
+	      << "Conductivity model     = " << conductivity << std::endl
 	      << "================================================================" << std::endl;
     libmesh_error();
   }
@@ -142,14 +148,50 @@ namespace GRINS
   {
     std::string viscosity =
       input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-	
+
     if( viscosity == "constant" )
       return PhysicsPtr
         (new Subclass<ConstantViscosity>(physics_to_add,input));
     else if( viscosity == "parsed" )
       return PhysicsPtr
         (new Subclass<ParsedViscosity>(physics_to_add,input));
- 
+    else if( viscosity == "spalartallmaras" )
+      return PhysicsPtr
+        (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+
+    visc_error(physics_to_add, viscosity);
+    return PhysicsPtr();
+  }
+
+  /* Specialize new_mu_class for SA since it is only valid for viscosity == "spalartallmaras"
+     AND *must* be instantiated with *physical* viscosity */
+  template <>
+  PhysicsPtr new_mu_class<SpalartAllmaras>(const std::string& physics_to_add,
+                                                                    const GetPot& input)
+  {
+    std::string viscosity =
+      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+    if( viscosity == "spalartallmaras" )
+      return PhysicsPtr
+        (new SpalartAllmaras<ConstantViscosity>(physics_to_add,input));
+
+    visc_error(physics_to_add, viscosity);
+    return PhysicsPtr();
+  }
+
+  // Instantiate classes whose only valid viscosity models are turbulent
+  template <template<typename> class Subclass>
+  PhysicsPtr new_turb_mu_class(const std::string& physics_to_add,
+                               const GetPot& input)
+  {
+    std::string viscosity =
+      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+    if( viscosity == "spalartallmaras" )
+      return PhysicsPtr
+        (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+
     visc_error(physics_to_add, viscosity);
     return PhysicsPtr();
   }
@@ -217,7 +259,7 @@ namespace GRINS
 	std::cerr << "Error: Must enable at least one physics model" << std::endl;
 	libmesh_error();
       }
-  
+
     std::set<std::string> requested_physics;
 
     // Go through and create a physics object for each physics we're enabling
@@ -252,7 +294,7 @@ namespace GRINS
     return physics_list;
   }
 
-  void PhysicsFactory::add_physics( const GetPot& input, 
+  void PhysicsFactory::add_physics( const GetPot& input,
 				    const std::string& physics_to_add,
 				    PhysicsList& physics_list )
   {
@@ -267,7 +309,7 @@ namespace GRINS
 	physics_list[physics_to_add] =
           new_mu_class<Stokes>
             (physics_to_add, input);
-      }      
+      }
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
 	physics_list[physics_to_add] =
@@ -326,9 +368,21 @@ namespace GRINS
           new_mu_class<AveragedTurbine>
             (physics_to_add, input);
       }
+    else if( physics_to_add == spalart_allmaras )
+      {
+        physics_list[physics_to_add] =
+          new_mu_class<SpalartAllmaras>
+            (physics_to_add, input);
+      }
+    else if( physics_to_add == spalart_allmaras_spgsm_stab )
+      {
+        physics_list[physics_to_add] =
+          new_turb_mu_class<SpalartAllmarasSPGSMStabilization>
+            (physics_to_add, input);
+      }
     else if( physics_to_add == scalar_ode )
       {
-	physics_list[physics_to_add] = 
+	physics_list[physics_to_add] =
 	  PhysicsPtr(new ScalarODE(physics_to_add,input));
       }
     else if( physics_to_add == heat_transfer )
@@ -354,7 +408,7 @@ namespace GRINS
 	std::string source_function = input( "Physics/"+physics_to_add+"/source_function", "constant" );
 	if( source_function == "constant")
 	  {
-	    physics_list[physics_to_add] = 
+	    physics_list[physics_to_add] =
 	      PhysicsPtr(new HeatTransferSource<ConstantSourceFunction>(physics_to_add,input));
 	  }
 	else
@@ -374,22 +428,24 @@ namespace GRINS
       }
     else if( physics_to_add == boussinesq_buoyancy )
       {
-	physics_list[physics_to_add] = 
+	physics_list[physics_to_add] =
 	  PhysicsPtr(new BoussinesqBuoyancy(physics_to_add,input));
       }
     else if( physics_to_add == boussinesq_buoyancy_adjoint_stab )
       {
-	physics_list[physics_to_add] = 
-	  PhysicsPtr(new BoussinesqBuoyancyAdjointStabilization(physics_to_add,input));
+        physics_list[physics_to_add] =
+          new_mu_class<BoussinesqBuoyancyAdjointStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
       {
         physics_list[physics_to_add] =
-          PhysicsPtr(new BoussinesqBuoyancySPGSMStabilization(physics_to_add,input));
+          new_mu_class<BoussinesqBuoyancySPGSMStabilization>
+            (physics_to_add, input);
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
-	physics_list[physics_to_add] = 
+	physics_list[physics_to_add] =
 	  PhysicsPtr(new AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
       }
     else if( physics_to_add == "HeatConduction" )
@@ -474,12 +530,22 @@ namespace GRINS
         physics_list[physics_to_add] =
           PhysicsPtr(new ElasticCableConstantGravity(physics_to_add,input));
       }
+    else if( physics_to_add == constant_source_term )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ConstantSourceTerm(physics_to_add,input));
+      }
+    else if( physics_to_add == parsed_source_term )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ParsedSourceTerm(physics_to_add,input));
+      }
     else
       {
         std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
         libmesh_error();
       }
-  
+
     return;
   }
 
@@ -492,7 +558,7 @@ namespace GRINS
     if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        physics_list[physics_to_add] = 
+        physics_list[physics_to_add] =
           PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<CanteraMixture,CanteraEvaluator>(physics_to_add,input));
 #else
         std::cerr << "Error: Cantera not enabled. Cannot use Cantera library."
@@ -518,7 +584,7 @@ namespace GRINS
                 (conductivity_model == std::string("eucken")) &&
                 (viscosity_model == std::string("sutherland")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
                              GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
                                                                  Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
@@ -534,7 +600,7 @@ namespace GRINS
                      (conductivity_model == std::string("eucken")) &&
                      (viscosity_model == std::string("blottner")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
                              GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
                                                                  Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
@@ -574,28 +640,28 @@ namespace GRINS
             if( (thermo_model == std::string("stat_mech")) &&
                 (conductivity_model == std::string("constant")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
                                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
               }
             else if( (thermo_model == std::string("cea")) &&
                      (conductivity_model == std::string("constant")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
                                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
               }
             else if( (thermo_model == std::string("stat_mech")) &&
                 (conductivity_model == std::string("constant_prandtl")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
                                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
               }
             else if( (thermo_model == std::string("cea")) &&
                      (conductivity_model == std::string("constant_prandtl")) )
               {
-                physics_list[physics_to_add] = 
+                physics_list[physics_to_add] =
                   PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
                                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
               }
@@ -674,14 +740,14 @@ namespace GRINS
 	      }
 	  }
 
-	/* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer 
+	/* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer
 	   and AxisymmetricIncompNavierStokes */
 	if( physics->first == axisymmetric_boussinesq_buoyancy )
 	  {
 
 	    if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
 	      {
-		this->physics_consistency_error( axisymmetric_boussinesq_buoyancy, 
+		this->physics_consistency_error( axisymmetric_boussinesq_buoyancy,
 						 axisymmetric_heat_transfer  );
 	      }
 	  }
@@ -767,7 +833,7 @@ namespace GRINS
 	      << physics_required << " not found in list of requested physics."
 	      << std::endl;
 
-    libmesh_error();	   
+    libmesh_error();
 
     return;
   }

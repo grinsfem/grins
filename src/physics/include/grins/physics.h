@@ -35,6 +35,7 @@
 #include "grins/var_typedefs.h"
 #include "grins/grins_physics_names.h"
 #include "grins/cached_values.h"
+#include "grins/parameter_user.h"
 
 //libMesh
 #include "libmesh/libmesh.h"
@@ -54,6 +55,9 @@ namespace libMesh
 
   class FEMSystem;
   class Elem;
+
+  template <typename Scalar>
+  class ParameterMultiPointer;
 }
 
 //! GRINS namespace
@@ -65,6 +69,7 @@ namespace GRINS
   class NBCContainer;
   class DBCContainer;
   class AssemblyContext;
+  class MultiphysicsSystem;
 
   template <typename Scalar>
   class PostProcessedQuantities;
@@ -98,7 +103,7 @@ namespace GRINS
   //  *_time_derivative correspond to calculating terms for F(u)
   //  *_mass_residual correspond to calculating terms for M(u)\dot{u}
 
-  class Physics
+  class Physics : public ParameterUser
   {
 
   public:
@@ -131,6 +136,11 @@ namespace GRINS
       time evolving variables.
     */
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+
+    //! Any auxillary initialization a Physics class may need
+    /*! This is called after all variables are added, so this method can
+        safely query the MultiphysicsSystem about variable information. */
+    virtual void auxiliary_init( MultiphysicsSystem& system );
 
     //! Register name of postprocessed quantity with PostProcessedQuantities
     /*!

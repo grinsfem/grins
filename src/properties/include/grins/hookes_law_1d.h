@@ -26,6 +26,7 @@
 #define GRINS_HOOKES_LAW_1D_H
 
 // GRINS
+#include "grins/parameter_user.h"
 #include "grins/stress_strain_law.h"
 
 // Forward declarations
@@ -39,7 +40,8 @@ namespace GRINS
    * General form is not conducive to one-dimensional problems
    * so this should be used in those cases.
    */
-  class HookesLaw1D : public StressStrainLaw<HookesLaw1D>
+  class HookesLaw1D : public StressStrainLaw<HookesLaw1D>,
+                      public ParameterUser
   {
   public:
 

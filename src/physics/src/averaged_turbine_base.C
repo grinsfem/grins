@@ -164,16 +164,20 @@ namespace GRINS
     this->torque_function.reset
       (new libMesh::ParsedFunction<libMesh::Number>(torque_function_string));
 
-    this->moment_of_inertia = input("Physics/"+averaged_turbine+"/moment_of_inertia",
-                                    libMesh::Number(0));
+    this->set_parameter
+      (this->moment_of_inertia, input,
+       "Physics/"+averaged_turbine+"/moment_of_inertia",
+       libMesh::Number(0));
 
     if (!moment_of_inertia)
       libmesh_error_msg(
         "Error! Zero AveragedTurbine moment of inertia specified!" <<
         std::endl);
 
-    this->initial_speed = input("Physics/"+averaged_turbine+"/initial_speed",
-                                libMesh::Number(0));
+    this->set_parameter
+      (this->initial_speed, input,
+       "Physics/"+averaged_turbine+"/initial_speed",
+       libMesh::Number(0));
 
     this->_fan_speed_var_name = input("Physics/VariableNames/fan_speed",
                                       fan_speed_var_name_default);

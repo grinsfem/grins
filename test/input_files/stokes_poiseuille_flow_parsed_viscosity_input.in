@@ -18,6 +18,7 @@ max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
+relative_step_tolerance = 1.0e-10
 
 verify_analytic_jacobians = 1.e-6
 

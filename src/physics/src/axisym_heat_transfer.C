@@ -79,8 +79,14 @@ namespace GRINS
     this->_V_order =
       libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
-    this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
-    this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
+    //TODO: same as Incompressible NS
+    this->set_parameter
+      (this->_rho, input,
+       "Physics/"+axisymmetric_heat_transfer+"/rho", 1.0);
+
+    this->set_parameter
+      (this->_Cp, input,
+       "Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
@@ -360,6 +366,17 @@ namespace GRINS
 
     return;
   }
+
+  template< class Conductivity>
+  void AxisymmetricHeatTransfer<Conductivity>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _k.register_parameter(param_name, param_pointer);
+  }
+
 
 } // namespace GRINS
 

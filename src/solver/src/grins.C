@@ -57,8 +57,13 @@ int main(int argc, char* argv[])
   // libMesh input file should be first argument
   std::string libMesh_input_filename = argv[1];
   
+  // Initialize libMesh library.
+  libMesh::LibMeshInit libmesh_init(argc, argv);
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
+
+  GetPot command_line(argc,argv);
 
   // GetPot doesn't throw an error for a nonexistent file?
   {
@@ -75,17 +80,24 @@ int main(int argc, char* argv[])
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
- 
-  libMesh::out << "Starting GRINS with command:\n";
+  /* Echo GRINS version, libMesh version, and command */
+  libMesh::out << "=========================================================="
+               << std::endl;
+  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
+               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
+               << "Running with command:\n";
+
   for (int i=0; i != argc; ++i)
     libMesh::out << argv[i] << ' ';
-  libMesh::out << std::endl;
+
+  libMesh::out << std::endl
+               << "=========================================================="
+               << std::endl;
 
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( libMesh_inputfile,
+                           command_line,
 			   sim_builder,
                            libmesh_init.comm() );
 

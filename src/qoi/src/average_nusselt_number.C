@@ -55,9 +55,11 @@ namespace GRINS
 
   void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
   {
-    _k = input( "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+    this->set_parameter
+      ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );
 
-    _scaling = input( "QoI/NusseltNumber/scaling", 1.0 );
+    this->set_parameter
+      ( _scaling, input, "QoI/NusseltNumber/scaling", 1.0 );
 
     if( this->_k < 0.0 )
       {

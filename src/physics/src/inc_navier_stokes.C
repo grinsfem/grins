@@ -44,7 +44,8 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
                                          input),
-      _p_pinning(input,physics_name)
+    _p_pinning(input,physics_name),
+    _mu_index(0)
   {
     this->read_input_options(input);
 

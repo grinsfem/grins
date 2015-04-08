@@ -41,7 +41,8 @@ namespace GRINS
 
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
-    : _physics_name( physics_name ),
+    : ParameterUser(physics_name),
+      _physics_name( physics_name ),
       _bc_handler(NULL),
       _ic_handler(new ICHandlingBase(physics_name)),
       _is_axisymmetric(false)
@@ -105,6 +106,11 @@ namespace GRINS
   }
 
   void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
+  {
+    return;
+  }
+
+  void Physics::auxiliary_init( MultiphysicsSystem& /*system*/ )
   {
     return;
   }

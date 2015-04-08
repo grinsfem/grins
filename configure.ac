@@ -332,9 +332,11 @@ AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity.sh])
 AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh, [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh])
+AC_CONFIG_FILES(test/sa_2d_turbulent_channel_regression.sh,               [chmod +x test/sa_2d_turbulent_channel_regression.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
 AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
 AC_CONFIG_FILES(test/convection_cell_regression.sh,                       [chmod +x test/convection_cell_regression.sh])
+AC_CONFIG_FILES(test/convection_cell_parsed_regression.sh,                [chmod +x test/convection_cell_parsed_regression.sh])
 AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
 AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
 AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])
@@ -344,7 +346,9 @@ AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod
 AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])
 AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,                   [chmod +x test/test_axi_thermally_driven_flow.sh])
 AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,                         [chmod +x test/test_axi_ns_con_cyl_flow.sh])
+AC_CONFIG_FILES(test/test_parsed_qoi.sh,                                  [chmod +x test/test_parsed_qoi.sh])
 AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                               [chmod +x test/test_vorticity_qoi.sh])
+AC_CONFIG_FILES(test/input_files/parsed_qoi.in)
 AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh,             [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,                  [chmod +x test/backward_facing_step_regression.sh])
@@ -421,6 +425,11 @@ AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners
 
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.in)
+
+AC_CONFIG_FILES(test/warn_only_ufo_unit.sh, [chmod +x test/warn_only_ufo_unit.sh])
+AC_CONFIG_FILES(test/error_ufo_unit.sh, [chmod +x test/error_ufo_unit.sh])
+
+AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace_parsed_source_regression.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

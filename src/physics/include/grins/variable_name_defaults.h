@@ -47,6 +47,9 @@ namespace GRINS
   //! z-velocity
   const std::string w_var_name_default = "w";
 
+  //! z-velocity
+  const std::string nu_var_name_default = "nu";
+
   //! r-velocity (axisymmetric case)
   const std::string u_r_var_name_default = "r_vel";
 

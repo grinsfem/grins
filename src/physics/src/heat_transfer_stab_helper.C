@@ -34,14 +34,28 @@
 namespace GRINS
 {
 
-  HeatTransferStabilizationHelper::HeatTransferStabilizationHelper(const GetPot& input)
-    : StabilizationHelper(),
-      _C( input("Stabilization/tau_constant_T", input("Stabilization/tau_constant", 1 ) ) ),
-      _tau_factor( input("Stabilization/tau_factor_T", input("Stabilization/tau_factor", 0.5 ) ) ),
+  HeatTransferStabilizationHelper::HeatTransferStabilizationHelper
+    (const std::string & helper_name,
+     const GetPot& input)
+    : StabilizationHelper(helper_name),
+      _C(1),
+      _tau_factor(0.5),
       _temp_vars(input),
       _flow_vars(input)
   {
-    return;
+    if (input.have_variable("Stabilization/tau_constant_T"))
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant_T", _C );
+    else
+      this->set_parameter
+        (_C, input, "Stabilization/tau_constant", _C );
+
+    if (input.have_variable("Stabilization/tau_factor_T"))
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor_T", _tau_factor );
+    else
+      this->set_parameter
+        (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
   }
 
   HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
