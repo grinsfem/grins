@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/generic_solution_regression"
+
+INPUT="@top_srcdir@/test/input_files/poisson_weighted_flux_regression.in"
+DATA="@top_srcdir@/test/test_data/poisson_weighted_flux_regression.xdr"
+
+${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='T' norms='L2 H1' tol='1.0e-10'
