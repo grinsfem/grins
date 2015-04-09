@@ -95,7 +95,18 @@ namespace GRINS
                                   hess_v(0,0) + hess_v(1,1) );
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_axi( libMesh::Real r,
+                                                                                      const libMesh::Gradient& U,
+                                                                                      const libMesh::Gradient& grad_u,
+                                                                                      const libMesh::Gradient& grad_v,
+                                                                                      const libMesh::RealTensor& hess_u,
+                                                                                      const libMesh::RealTensor& hess_v ) const
+  {
+    return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1) + (grad_u(0) - U(0)/r)/r,
+                                  hess_v(0,0) + hess_v(1,1) + grad_v(0)/r );
+  }
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u,
                                                                                   libMesh::RealTensor& hess_v,
                                                                                   libMesh::RealTensor& hess_w ) const
   {
@@ -108,7 +119,17 @@ namespace GRINS
                                                                                     libMesh::RealTensor& hess_v ) const
   {
     return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1),
-                                  hess_u(1,0) + hess_v(1,1) );
+                                  hess_u(1,0) + hess_v(1,1));
+  }
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T_axi( libMesh::Real r,
+                                                                                        const libMesh::Gradient& U,
+                                                                                        const libMesh::Gradient& grad_u,
+                                                                                        const libMesh::RealTensor& hess_u,
+                                                                                        const libMesh::RealTensor& hess_v ) const
+  {
+    return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1) + (grad_u(0) - U(0)/r)/r,
+                                  hess_u(1,0) + hess_v(1,1) + grad_u(1)/r );
   }
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u, 
@@ -120,11 +141,21 @@ namespace GRINS
                                   hess_u(2,0) + hess_v(2,1) + hess_w(2,2) );
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u,
                                                                                    libMesh::RealTensor& hess_v ) const
   {
     return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0),
                                   hess_u(0,1) + hess_v(1,1) );
+  }
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_divU_I_axi( libMesh::Real r,
+                                                                                       const libMesh::Gradient& U,
+                                                                                       const libMesh::Gradient& grad_u,
+                                                                                       const libMesh::RealTensor& hess_u,
+                                                                                       const libMesh::RealTensor& hess_v ) const
+  {
+    return libMesh::RealGradient( hess_u(0,0) + hess_v(1,0) + (grad_u(0) - U(0)/r)/r,
+                                  hess_u(0,1) + hess_v(1,1) + grad_u(1)/r );
   }
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_divU_I( libMesh::RealTensor& hess_u,
