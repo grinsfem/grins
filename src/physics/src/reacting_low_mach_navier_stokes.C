@@ -357,7 +357,7 @@ namespace GRINS
                       and do the if check once?*/
             if( this->_is_axisymmetric )
               {
-                Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
+                Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) - 2.0/3.0*divU/r )*jac;
               }
 
             Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]
