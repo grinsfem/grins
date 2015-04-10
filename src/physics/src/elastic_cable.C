@@ -91,33 +91,38 @@ namespace GRINS
 
             if( name == std::string("stress") )
               {
-                // sigma_xx, sigma_xy, sigma_yy, sigma_yx = sigma_xy
-                // sigma_zz = 0 by assumption of this Physics
-                _stress_indices.resize(3);
+                // sigma_xx only, i.e., locally normal to the cutting plane
+                // sigma_yy=sigma_zz = 0 by assumption of this Physics
+                _stress_indices.resize(1);
 
-                this->_stress_indices[0] = postprocessing.register_quantity("stress_xx");
+                this->_stress_indices[0] = postprocessing.register_quantity("cable_stress");
 
-                this->_stress_indices[1] = postprocessing.register_quantity("stress_xy");
-
-                this->_stress_indices[2] = postprocessing.register_quantity("stress_yy");
               }
             else if( name == std::string("strain") )
               {
-                // eps_xx, eps_xy, eps_yy, eps_yx = eps_xy
-                _strain_indices.resize(3);
+                // eps_xx only, i.e., locally normal to the cutting plane
+            	// eps_yy=eps_zz = 0 by assumption of this Physics
+                _strain_indices.resize(1);
 
-                this->_strain_indices[0] = postprocessing.register_quantity("strain_xx");
+                this->_strain_indices[0] = postprocessing.register_quantity("cable_strain");
 
-                this->_strain_indices[1] = postprocessing.register_quantity("strain_xy");
+              }
+            else if( name == std::string("force") )
+              {
+                // force_x only, i.e., locally normal to the cutting plane
+            	// force_y=force_z=0 by assumption of this Physics
+                _force_indices.resize(1);
 
-                this->_strain_indices[2] = postprocessing.register_quantity("strain_yy");
+                this->_force_indices[0] = postprocessing.register_quantity("cable_force");
+
               }
             else
               {
                 std::cerr << "Error: Invalue output_vars value for "+elastic_cable << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: stress" << std::endl
-                          << "                              strain" << std::endl;
+                          << "                              strain" << std::endl
+                          << "                              force " << std::endl;
                 libmesh_error();
               }
           }
@@ -309,7 +314,15 @@ namespace GRINS
     if( !_strain_indices.empty() )
       is_strain = ( _strain_indices[0] == quantity_index );
 
-    if( is_strain )
+    bool is_stress = false;
+    if( !_stress_indices.empty() )
+      is_stress = ( _stress_indices[0] == quantity_index );
+
+    bool is_force = false;
+    if( !_force_indices.empty() )
+      is_force = ( _force_indices[0] == quantity_index );
+
+    if( is_strain || is_stress || is_force )
       {
         const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
 
@@ -344,6 +357,14 @@ namespace GRINS
 
         this->compute_metric_tensors(0, *fe_new, context, grad_u, grad_v, grad_w, a_cov, a_contra, A_cov, A_contra, lambda_sq );
 
+        libMesh::Real det_a = a_cov(0,0)*a_cov(1,1) - a_cov(0,1)*a_cov(1,0);
+        libMesh::Real det_A = A_cov(0,0)*A_cov(1,1) - A_cov(0,1)*A_cov(1,0);
+
+        libMesh::Real I3 = lambda_sq*det_A/det_a;
+
+        libMesh::TensorValue<libMesh::Real> tau;
+        _stress_strain_law.compute_stress(1,a_contra,a_cov,A_contra,A_cov,tau);
+
         // We have everything we need for strain now, so check if we are computing strain
         if( is_strain )
           {
@@ -357,6 +378,32 @@ namespace GRINS
                 libmesh_error();
               }
             return;
+          }
+
+        if( is_stress )
+          {
+            if( _stress_indices[0] == quantity_index )
+              {
+                // Need to convert to Cauchy stress
+                value = tau(0,0)/std::sqrt(I3);
+              }
+            else
+              {
+                libmesh_error();
+              }
+          }
+        if( is_force )
+          {
+
+            if( _force_indices[0] == quantity_index )
+              {
+            	//This force is in deformed configuration and will be significantly influenced by large strains
+                value = tau(0,0)/std::sqrt(I3)*_A;
+              }
+            else
+              {
+                libmesh_error();
+              }
           }
       }
 
