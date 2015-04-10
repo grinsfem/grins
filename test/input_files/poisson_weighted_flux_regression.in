@@ -39,7 +39,8 @@ enabled_qois = 'weighted_flux'
 [./WeightedFlux]
 variables = 'T'
 bc_ids = '3' # Note that this spills over to 0+2 in the corners!
-weights = 'a:=1;2/15*(a-1+exp(-a))' # Only one variable == only one weight to specify
+weights = 'y*(1-y)' # Only one variable == only one weight to specify
+# Analytic value == '2/15*(a-1+exp(-a))' 
 
 []
 
@@ -66,6 +67,7 @@ weights = 'a:=1;2/15*(a-1+exp(-a))' # Only one variable == only one weight to sp
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
+   do_adjoint_solve = true
    max_nonlinear_iterations =  25
    max_linear_iterations = 2500
    relative_residual_tolerance = '1.0e-14'
@@ -75,6 +77,7 @@ weights = 'a:=1;2/15*(a-1+exp(-a))' # Only one variable == only one weight to sp
 # Visualization options
 [vis-options]
    output_vis = true
+   output_adjoint = true
    vis_output_file_prefix = 'poisson'
    output_format = 'ExodusII xdr'
 []
@@ -85,6 +88,7 @@ weights = 'a:=1;2/15*(a-1+exp(-a))' # Only one variable == only one weight to sp
    print_equation_system_info = 'true'
    print_mesh_info = 'true'
    print_log_info = 'true'
+   print_qoi = 'true'
    solver_verbose = 'true'
    solver_quiet = 'false'
 []
