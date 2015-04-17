@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/axisym_reacting_low_mach_regression"
+
+INPUT="@top_builddir@/test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in"
+DATA="@top_srcdir@/test/test_data/axisym_reacting_low_mach_antioch_cea_constant_regression.xdr"
+
+${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v T p w_N2 w_N' norms='L2 H1' tol='1.0e-9'
