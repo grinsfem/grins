@@ -36,6 +36,7 @@ check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
+check_PROGRAMS += axisym_reacting_low_mach_regression
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -119,6 +120,7 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
 ufo_unit_SOURCES = ufo_unit.C
 generic_solution_regression_SOURCES = generic_solution_regression.C
+axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
 
 #Define tests to actually be run
 TESTS =
@@ -182,6 +184,7 @@ XFAIL_TESTS += reacting_low_mach_cantera_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
+TESTS += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
@@ -251,6 +254,7 @@ shellfiles_src += gas_solid_catalytic_wall_unit_cantera.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_constant_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
 shellfiles_src += reacting_low_mach_antioch_cea_constant_regression.sh
+shellfiles_src += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
 shellfiles_src += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
