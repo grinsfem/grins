@@ -341,6 +341,7 @@ AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod
 AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
 AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])
 AC_CONFIG_FILES(test/test_2d_proptrick.sh,                                [chmod +x test/test_2d_proptrick.sh])
+AC_CONFIG_FILES(test/test_2d_vsource.sh,                                  [chmod +x test/test_2d_vsource.sh])
 AC_CONFIG_FILES(test/test_dirichlet_fem.sh,                               [chmod +x test/test_dirichlet_fem.sh])
 AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod +x test/test_dirichlet_nan.sh])
 AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])

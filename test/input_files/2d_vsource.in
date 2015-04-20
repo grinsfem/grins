@@ -1,0 +1,107 @@
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes ParsedVelocitySource'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+P_order = 'FIRST'
+
+rho = '1.77'
+mu = '1.846e-1'
+
+# Boundary ids:
+# imin,imax = 3, 1
+# jmin,jmax = 0, 2
+ bc_ids = '0'
+ bc_types = 'prescribed_vel'
+
+bound_vel_0 = '0.0 1.0 0.0'
+
+ic_ids = 0
+ic_variables = 'v'
+ic_types = constant
+ic_values = 1
+
+pin_pressure = 'true'
+pin_location = '-0.5 -0.5'
+pin_value = '0.0'
+
+[../ParsedVelocitySource]
+
+source_function = '{(abs(x)<.2)*(abs(y)<.2)*-1}{(abs(x)<.2)*(abs(y)<.2)}{0}'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
+
+# Mesh related options
+[Mesh]
+  class = 'serial'
+
+   [./Generation]
+     dimension = '2'
+     element_type = 'QUAD9'
+     n_elems_x = '10'
+     n_elems_y = '10'
+     x_min = '-0.5'
+     x_max = '0.5'
+     y_min = '-0.5'
+     y_max = '0.5'
+[]
+
+# Options for time solvers
+[unsteady-solver]
+transient = 'true' 
+theta = '1.0'
+n_timesteps = '10'
+deltat = '0.01'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = '7' 
+max_linear_iterations = '500'
+
+relative_residual_tolerance = '1.0e-10'
+absolute_residual_tolerance = '1.0e-12'
+
+verify_analytic_jacobians = '0.0'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'false'
+
+# Visualization options
+[vis-options]
+output_vis = 'false'
+
+vis_output_file_prefix = 'output/vsource' 
+
+output_residual = 'false'
+
+output_format = 'ExodusII xdr'
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'SimpleVSource'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+
+[]
