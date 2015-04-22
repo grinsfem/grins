@@ -76,7 +76,7 @@ namespace GRINS
           }
 
         this->parameter_vector.push_back
-          (UniquePtr<libMesh::ParameterAccessor<libMesh::Number> >
+          (libMesh::AutoPtr<libMesh::ParameterAccessor<libMesh::Number> >
            (next_param));
       }
   }
