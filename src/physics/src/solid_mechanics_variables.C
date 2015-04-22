@@ -37,9 +37,9 @@ namespace GRINS
   SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
     : _have_v(false),
       _have_w(false),
-      _u_var(2^30), // These are unsigned, so initialize to absurdly large value
-      _v_var(2^30),
-      _w_var(2^20),
+      _u_var(invalid_var_index), // These are unsigned, so initialize to absurdly large value
+      _v_var(invalid_var_index),
+      _w_var(invalid_var_index),
       _u_var_name( input("Physics/VariableNames/u_displacment", u_disp_name_default ) ),
       _v_var_name( input("Physics/VariableNames/v_displacment", v_disp_name_default ) ),
       _w_var_name( input("Physics/VariableNames/w_displacment", w_disp_name_default ) )
