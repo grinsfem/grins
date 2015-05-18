@@ -64,8 +64,8 @@ namespace GRINS
     bool _quadratic_scaling;
 
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
-
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > force_velocity_function;
 
   private:
 

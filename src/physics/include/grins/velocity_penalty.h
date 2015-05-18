@@ -94,6 +94,15 @@ namespace GRINS
     //! Index from registering this quantity
     unsigned int _velocity_penalty_base_z_index;
 
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_force_x_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_force_y_index;
+
+    //! Index from registering this quantity
+    unsigned int _velocity_penalty_force_z_index;
+
     VelocityPenalty();
   };
 

@@ -45,7 +45,10 @@ namespace GRINS
     _velocity_penalty_z_index(0),
     _velocity_penalty_base_x_index(0),
     _velocity_penalty_base_y_index(0),
-    _velocity_penalty_base_z_index(0)
+    _velocity_penalty_base_z_index(0),
+    _velocity_penalty_force_x_index(0),  
+    _velocity_penalty_force_y_index(0),  
+    _velocity_penalty_force_z_index(0)
   {
     return;
   }
@@ -96,6 +99,17 @@ namespace GRINS
 
                 _velocity_penalty_z_index =
                   postprocessing.register_quantity( vel_penalty+"_z" );
+
+		// adding force to postprocessing
+		//
+                _velocity_penalty_force_x_index =
+                  postprocessing.register_quantity( vel_penalty+"_force_x" );
+
+                _velocity_penalty_force_y_index =
+                  postprocessing.register_quantity( vel_penalty+"_force_y" );
+
+                _velocity_penalty_force_z_index =
+                  postprocessing.register_quantity( vel_penalty+"_force_z" );
               }
             else if( name == std::string("velocity_penalty_base") )
               {
@@ -279,6 +293,25 @@ namespace GRINS
     else if( quantity_index == this->_velocity_penalty_base_z_index )
       {
         (*this->base_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(2);
+      }
+    // adding forcing
+    else if( quantity_index == this->_velocity_penalty_force_x_index )
+      {
+        (*this->force_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_velocity_penalty_force_y_index )
+      {
+        (*this->force_velocity_function)(point, context.time, output_vec);
+
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_velocity_penalty_force_z_index )
+      {
+        (*this->force_velocity_function)(point, context.time, output_vec);
 
         value = output_vec(2);
       }
