@@ -79,6 +79,9 @@ namespace GRINS
     return ret;
   }
 
+  void split_string( const std::string& input,
+                     const std::string& delimiter,
+                     std::vector<std::string>& results );
 
   /*!
     Taken from FIN-S for XML parsing.
