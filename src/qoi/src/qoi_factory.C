@@ -53,7 +53,7 @@ namespace GRINS
 
     if( qoi_list != std::string("none") )
       {
-        SplitString( qoi_list, std::string(" "), qoi_names, false );
+        split_string( qoi_list, std::string(" "), qoi_names );
       }
 
     std::tr1::shared_ptr<CompositeQoI> qois( new CompositeQoI );

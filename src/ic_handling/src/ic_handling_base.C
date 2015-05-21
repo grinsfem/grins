@@ -173,7 +173,7 @@ namespace GRINS
 				      const std::string& ic_value_string, 
 				      const GetPot& /*input*/ )
   {
-    SplitString(ic_vars_string, ":", _subfunction_variables);
+    split_string(ic_vars_string, ":", _subfunction_variables);
 
     libmesh_assert(_subfunction_variables.size());
 

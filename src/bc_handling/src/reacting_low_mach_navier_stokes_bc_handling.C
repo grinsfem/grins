@@ -241,7 +241,7 @@ namespace GRINS
 
 	      // First, split each reaction into reactants and products
 	      std::vector<std::string> partners;
-	      SplitString(reaction, "->", partners);
+	      split_string(reaction, "->", partners);
 
 	      const std::string& reactant = partners[0];
 	      const std::string& product = partners[1];
@@ -307,13 +307,13 @@ namespace GRINS
                 figure out which is the gas species and which is the solid species. */
 
                 std::vector<std::string> partners;
-                SplitString(reaction, "->", partners);
+                split_string(reaction, "->", partners);
 
                 const std::string pre_split_reactants = partners[0];
                 const std::string& product = partners[1];
 
                 std::vector<std::string> split_reactants;
-                SplitString(pre_split_reactants, "+", split_reactants);
+                split_string(pre_split_reactants, "+", split_reactants);
 
                 // We can only handle two reactants currently
                 if( split_reactants.size() != 2 )
