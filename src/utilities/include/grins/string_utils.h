@@ -93,9 +93,8 @@ namespace GRINS
     using std::string;
     
     int iPos = 0;
-    int newPos = -1;
-    int sizeS2 = (int)delimiter.size();
-    int isize = (int)input.size();
+    const size_t sizeS2 = delimiter.size();
+    const size_t isize  = input.size();
     
     if( 
        ( isize == 0 )
@@ -108,7 +107,7 @@ namespace GRINS
 
     vector<int> positions;
 
-    newPos = input.find (delimiter, 0);
+    size_t newPos = input.find (delimiter, 0);
 
     /* We already checked if the input size was zero, so if we didn't
        find any delimiters, we assume that there is exactly one entry
@@ -122,17 +121,14 @@ namespace GRINS
         return 1;
       }
 
-    int numFound = 0;
-
-    while( newPos >= iPos )
+    while( newPos != input.npos )
       {
-	numFound++;
 	positions.push_back(newPos);
 	iPos = newPos;
 	newPos = input.find (delimiter, iPos+sizeS2);
       }
 
-    if( numFound == 0 )
+    if( !positions.size() )
       {
 	return 0;
       }
@@ -146,7 +142,7 @@ namespace GRINS
 	  }
 	else
 	  {
-	    int offset = positions[i-1] + sizeS2;
+	    const size_t offset = positions[i-1] + sizeS2;
 	    if( offset < isize )
 	      {
 		if( i == static_cast<int>(positions.size()) )
@@ -165,7 +161,7 @@ namespace GRINS
 	    results.push_back(s);
 	  }
       }
-    return numFound;
+    return positions.size();
   }
 
 
