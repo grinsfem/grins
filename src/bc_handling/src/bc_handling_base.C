@@ -415,7 +415,7 @@ namespace GRINS
 
           dirichlet_bc.add_bc_id(bc_id);
 
-          libMesh::Number bc_val_num = string_to_T<libMesh::Number>(bc_value);
+          libMesh::Number bc_val_num = StringUtilities::string_to_T<libMesh::Number>(bc_value);
 
           dirichlet_bc.set_func
             (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >

@@ -41,7 +41,7 @@ int main()
   test_1_split_exact[1] = std::string("N2");
 
   std::vector<std::string> str_1_split;
-  GRINS::split_string( str_1, "->", str_1_split);
+  GRINS::StringUtilities::split_string( str_1, "->", str_1_split);
   if( !test_string( str_1_split, test_1_split_exact ) )
       return_flag = 1;
 
@@ -51,7 +51,7 @@ int main()
   test_2_split_exact[1] = std::string("CN");
 
   std::vector<std::string> str_2_split;
-  GRINS::split_string( str_2, "->", str_2_split);
+  GRINS::StringUtilities::split_string( str_2, "->", str_2_split);
   if( !test_string( str_2_split, test_2_split_exact ) )
       return_flag = 1;
 
@@ -67,7 +67,7 @@ int main()
   test_3_split_exact[7] = std::string("p0");
 
   std::vector<std::string> str_3_split;
-  GRINS::split_string( str_3, ":", str_3_split);
+  GRINS::StringUtilities::split_string( str_3, ":", str_3_split);
   if( !test_string( str_3_split, test_3_split_exact ) )
       return_flag = 1;
 
@@ -83,7 +83,7 @@ int main()
   test_4_split_exact[7] = std::string("p0");
 
   std::vector<std::string> str_4_split;
-  GRINS::split_string( str_4, " ", str_4_split);
+  GRINS::StringUtilities::split_string( str_4, " ", str_4_split);
   if( !test_string( str_4_split, test_4_split_exact ) )
       return_flag = 1;
 

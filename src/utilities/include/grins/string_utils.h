@@ -36,53 +36,55 @@
 
 namespace GRINS
 {
-  template <typename T>
-  inline
-  T string_to_T(const std::string& input)
+  namespace StringUtilities
   {
-    std::istringstream converter(input);
-    T returnval;
-    converter >> returnval;
-    if (converter.fail())
-      libmesh_error();
-    return returnval;
-  }
+    template <typename T>
+    inline
+    T string_to_T(const std::string& input)
+    {
+      std::istringstream converter(input);
+      T returnval;
+      converter >> returnval;
+      if (converter.fail())
+        libmesh_error();
+      return returnval;
+    }
 
-  /*!
-    Split on colon, and return name, int value pair.
-    Taken from FIN-S for XML parsing.
-   */
-  inline
-  std::pair<std::string, int> split_string_int_on_colon(const std::string &token)
-  {
-    std::pair<std::string, int> ret = std::make_pair(std::string(), 0);
-    std::string::size_type colon_position = token.find(":");
-    libmesh_assert (colon_position != std::string::npos);
-    ret.first  = token.substr(0, colon_position);
-    ret.second = std::atoi(token.substr(colon_position + 1).c_str());
-    return ret;
-  }
+    /*!
+      Split on colon, and return name, int value pair.
+      Taken from FIN-S for XML parsing.
+    */
+    inline
+    std::pair<std::string, int> split_string_int_on_colon(const std::string &token)
+    {
+      std::pair<std::string, int> ret = std::make_pair(std::string(), 0);
+      std::string::size_type colon_position = token.find(":");
+      libmesh_assert (colon_position != std::string::npos);
+      ret.first  = token.substr(0, colon_position);
+      ret.second = std::atoi(token.substr(colon_position + 1).c_str());
+      return ret;
+    }
 
 
-  /*!
-    Split on colon, and return name, double value pair.
-    Taken from FIN-S for XML parsing.
-   */
-  inline
-  std::pair<std::string, double> split_string_double_on_colon(const std::string &token)
-  {
-    std::pair<std::string, double> ret = std::make_pair(std::string(), 0.0);
-    std::string::size_type colon_position = token.find(":");
-    libmesh_assert (colon_position != std::string::npos);
-    ret.first  = token.substr(0, colon_position);
-    ret.second = std::atof(token.substr(colon_position + 1).c_str());
-    return ret;
-  }
+    /*!
+      Split on colon, and return name, double value pair.
+      Taken from FIN-S for XML parsing.
+    */
+    inline
+    std::pair<std::string, double> split_string_double_on_colon(const std::string &token)
+    {
+      std::pair<std::string, double> ret = std::make_pair(std::string(), 0.0);
+      std::string::size_type colon_position = token.find(":");
+      libmesh_assert (colon_position != std::string::npos);
+      ret.first  = token.substr(0, colon_position);
+      ret.second = std::atof(token.substr(colon_position + 1).c_str());
+      return ret;
+    }
 
-  void split_string( const std::string& input,
-                     const std::string& delimiter,
-                     std::vector<std::string>& results );
-
-} // namespace GRINS
+    void split_string( const std::string& input,
+                       const std::string& delimiter,
+                       std::vector<std::string>& results );
+  } // end namespace StringUtilities
+} // end namespace GRINS
 
 #endif // GRINS_STRING_UTILS_H

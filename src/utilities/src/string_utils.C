@@ -26,26 +26,28 @@
 
 namespace GRINS
 {
-  void split_string( const std::string& input,
-                     const std::string& delimiter,
-                     std::vector<std::string>& results )
+  namespace StringUtilities
   {
-    // Skip delimiters at beginning.
-    std::string::size_type first_pos = input.find_first_not_of(delimiter, 0);
-
-    std::string::size_type pos     = input.find(delimiter, first_pos);
-
-    while (std::string::npos != pos || std::string::npos != first_pos)
+    void split_string( const std::string& input,
+                       const std::string& delimiter,
+                       std::vector<std::string>& results )
     {
-      // Found a token, add it to the vector.
-      results.push_back(input.substr(first_pos, pos - first_pos));
+      // Skip delimiters at beginning.
+      std::string::size_type first_pos = input.find_first_not_of(delimiter, 0);
 
-      // Skip delimiters.  Note the "not_of"
-      first_pos = input.find_first_not_of(delimiter, pos);
+      std::string::size_type pos     = input.find(delimiter, first_pos);
 
-      // Find next delimiter
-      pos = input.find(delimiter, first_pos);
+      while (std::string::npos != pos || std::string::npos != first_pos)
+        {
+          // Found a token, add it to the vector.
+          results.push_back(input.substr(first_pos, pos - first_pos));
+
+          // Skip delimiters.  Note the "not_of"
+          first_pos = input.find_first_not_of(delimiter, pos);
+
+          // Find next delimiter
+          pos = input.find(delimiter, first_pos);
+        }
     }
-  }
-
+  } // end namespace StringUtilities
 } // end namespace GRINS
