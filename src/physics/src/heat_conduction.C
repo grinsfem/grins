@@ -127,9 +127,6 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.get_element_fe(_temp_vars.T_var())->get_dphi();
 
-    const std::vector<libMesh::Point>& q_points = 
-      context.get_element_fe(_temp_vars.T_var())->get_xyz();
-
     // The subvectors and submatrices we need to fill:
     //
     // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
