@@ -37,6 +37,7 @@ check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
+check_PROGRAMS += split_string_unit
 
 AM_CPPFLAGS = 
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -121,6 +122,7 @@ suspended_cable_regression_SOURCES = suspended_cable_regression.C
 ufo_unit_SOURCES = ufo_unit.C
 generic_solution_regression_SOURCES = generic_solution_regression.C
 axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
+split_string_unit_SOURCES = split_string_unit.C
 
 #Define tests to actually be run
 TESTS =
@@ -145,6 +147,7 @@ TESTS += power_law_catalycity_unit
 TESTS += warn_only_ufo_unit.sh
 TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
+TESTS += split_string_unit
 
 TESTS += laplace_parsed_source_regression.sh
 TESTS += test_ns_couette_flow_2d_x.sh
