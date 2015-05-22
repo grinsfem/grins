@@ -108,41 +108,42 @@ namespace GRINS
   void AverageNusseltNumber::side_qoi( AssemblyContext& context,
                                        const unsigned int qoi_index )
   {
+    bool on_correct_side = false;
 
-    for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
-	 id != _bc_ids.end(); id++ )
+    for (std::set<libMesh::boundary_id_type>::const_iterator id =
+         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+      if( context.has_side_boundary_id( (*id) ) )
+        {
+          on_correct_side = true;
+          break;
+        }
+
+    if (!on_correct_side)
+      return;
+
+    libMesh::FEBase* side_fe;
+    context.get_side_fe<libMesh::Real>(this->_T_var, side_fe);
+
+    const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
+
+    const std::vector<libMesh::Point>& normals = side_fe->get_normals();
+
+    unsigned int n_qpoints = context.get_side_qrule().n_points();
+
+    libMesh::Number& qoi = context.get_qois()[qoi_index];
+
+    // Loop over quadrature points
+
+    for (unsigned int qp = 0; qp != n_qpoints; qp++)
       {
-	if( context.has_side_boundary_id( (*id) ) )
-	  {
-	    libMesh::FEBase* side_fe;
-	    context.get_side_fe<libMesh::Real>(this->_T_var, side_fe);
+	// Get the solution value at the quadrature point
+	libMesh::Gradient grad_T = 0.0;
+	context.side_gradient(this->_T_var, qp, grad_T);
 
-	    const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
-	    
-	    const std::vector<libMesh::Point>& normals = side_fe->get_normals();
+	// Update the elemental increment dR for each qp
+	qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 
-	    unsigned int n_qpoints = context.get_side_qrule().n_points();
-	    
-	    libMesh::Number& qoi = context.get_qois()[qoi_index];
-	    
-	    // Loop over quadrature points  
-	    
-	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
-	      {
-		// Get the solution value at the quadrature point
-		libMesh::Gradient grad_T = 0.0; 
-		context.side_gradient(this->_T_var, qp, grad_T);
-		
-		// Update the elemental increment dR for each qp
-		qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
-
-	      } // quadrature loop
-
-	  } // end check on boundary id
-
-      }
-
-    return;
+      } // quadrature loop
   }
 
   void AverageNusseltNumber::side_qoi_derivative( AssemblyContext& context,
