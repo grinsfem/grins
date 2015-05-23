@@ -39,7 +39,7 @@ check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
 check_PROGRAMS += split_string_unit
 
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
@@ -58,7 +58,7 @@ AM_CPPFLAGS += $(GRVY_CFLAGS)
 LIBS =
 LIBS += $(LIBGRINS_LIBS)
 
-AM_LDFLAGS = 
+AM_LDFLAGS =
 
 #----------------
 # Cantera support
@@ -281,7 +281,7 @@ if CODE_COVERAGE_ENABLED
 endif
 
 # If we have tests fail, libmesh_error() may leave output
-CLEANFILES += traceout*.txt temp_print_trace.*
+CLEANFILES += traceout*.txt temp_print_trace.* *.exo *.xdr
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@
