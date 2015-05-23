@@ -173,7 +173,7 @@ namespace GRINS
 				      const std::string& ic_value_string, 
 				      const GetPot& /*input*/ )
   {
-    SplitString(ic_vars_string, ":", _subfunction_variables);
+    StringUtilities::split_string(ic_vars_string, ":", _subfunction_variables);
 
     libmesh_assert(_subfunction_variables.size());
 
@@ -190,7 +190,7 @@ namespace GRINS
 	{
           _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
             (new libMesh::ConstFunction<libMesh::Number>
-              (string_to_T<libMesh::Number>(ic_value_string)));
+              (StringUtilities::string_to_T<libMesh::Number>(ic_value_string)));
 	}
 	break;
 

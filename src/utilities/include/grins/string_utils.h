@@ -36,139 +36,55 @@
 
 namespace GRINS
 {
-  template <typename T>
-  inline
-  T string_to_T(const std::string& input)
+  namespace StringUtilities
   {
-    std::istringstream converter(input);
-    T returnval;
-    converter >> returnval;
-    if (converter.fail())
-      libmesh_error();
-    return returnval;
-  }
+    template <typename T>
+    inline
+    T string_to_T(const std::string& input)
+    {
+      std::istringstream converter(input);
+      T returnval;
+      converter >> returnval;
+      if (converter.fail())
+        libmesh_error();
+      return returnval;
+    }
 
-  /*!
-    Split on colon, and return name, int value pair.
-    Taken from FIN-S for XML parsing.
-   */
-  inline
-  std::pair<std::string, int> split_string_int_on_colon(const std::string &token)
-  {
-    std::pair<std::string, int> ret = std::make_pair(std::string(), 0);
-    std::string::size_type colon_position = token.find(":");
-    libmesh_assert (colon_position != std::string::npos);
-    ret.first  = token.substr(0, colon_position);
-    ret.second = std::atoi(token.substr(colon_position + 1).c_str());
-    return ret;
-  }
-
-
-  /*!
-    Split on colon, and return name, double value pair.
-    Taken from FIN-S for XML parsing.
-   */
-  inline
-  std::pair<std::string, double> split_string_double_on_colon(const std::string &token)
-  {
-    std::pair<std::string, double> ret = std::make_pair(std::string(), 0.0);
-    std::string::size_type colon_position = token.find(":");
-    libmesh_assert (colon_position != std::string::npos);
-    ret.first  = token.substr(0, colon_position);
-    ret.second = std::atof(token.substr(colon_position + 1).c_str());
-    return ret;
-  }
+    /*!
+      Split on colon, and return name, int value pair.
+      Taken from FIN-S for XML parsing.
+    */
+    inline
+    std::pair<std::string, int> split_string_int_on_colon(const std::string &token)
+    {
+      std::pair<std::string, int> ret = std::make_pair(std::string(), 0);
+      std::string::size_type colon_position = token.find(":");
+      libmesh_assert (colon_position != std::string::npos);
+      ret.first  = token.substr(0, colon_position);
+      ret.second = std::atoi(token.substr(colon_position + 1).c_str());
+      return ret;
+    }
 
 
-  /*!
-    Taken from FIN-S for XML parsing.
-   */
-  inline
-  int SplitString(const std::string& input, 
-		  const std::string& delimiter, 
-		  std::vector<std::string>& results, 
-		  bool includeEmpties = true)
-  {
-    using std::vector;
-    using std::string;
-    
-    int iPos = 0;
-    int newPos = -1;
-    int sizeS2 = (int)delimiter.size();
-    int isize = (int)input.size();
-    
-    if( 
-       ( isize == 0 )
-       ||
-       ( sizeS2 == 0 )
-	)
-      {
-	return 0;
-      }
+    /*!
+      Split on colon, and return name, double value pair.
+      Taken from FIN-S for XML parsing.
+    */
+    inline
+    std::pair<std::string, double> split_string_double_on_colon(const std::string &token)
+    {
+      std::pair<std::string, double> ret = std::make_pair(std::string(), 0.0);
+      std::string::size_type colon_position = token.find(":");
+      libmesh_assert (colon_position != std::string::npos);
+      ret.first  = token.substr(0, colon_position);
+      ret.second = std::atof(token.substr(colon_position + 1).c_str());
+      return ret;
+    }
 
-    vector<int> positions;
-
-    newPos = input.find (delimiter, 0);
-
-    /* We already checked if the input size was zero, so if we didn't
-       find any delimiters, we assume that there is exactly one entry
-       in the input and just return that. */
-    /*! \todo We should probably try and trim white space in this case */
-    if( newPos == input.npos )
-      { 
-        results.push_back(input);
-
-        // We found 1 entry
-        return 1;
-      }
-
-    int numFound = 0;
-
-    while( newPos >= iPos )
-      {
-	numFound++;
-	positions.push_back(newPos);
-	iPos = newPos;
-	newPos = input.find (delimiter, iPos+sizeS2);
-      }
-
-    if( numFound == 0 )
-      {
-	return 0;
-      }
-
-    for( int i=0; i <= static_cast<int>(positions.size()); ++i )
-      {
-	string s("");
-	if( i == 0 ) 
-	  { 
-	    s = input.substr( i, positions[i] ); 
-	  }
-	else
-	  {
-	    int offset = positions[i-1] + sizeS2;
-	    if( offset < isize )
-	      {
-		if( i == static_cast<int>(positions.size()) )
-		  {
-		    s = input.substr(offset);
-		  }
-		else if( i > 0 )
-		  {
-		    s = input.substr( positions[i-1] + sizeS2, 
-				      positions[i] - positions[i-1] - sizeS2 );
-		  }
-	      }
-	  }
-	if( includeEmpties || ( s.size() > 0 ) )
-	  {
-	    results.push_back(s);
-	  }
-      }
-    return numFound;
-  }
-
-
-} // namespace GRINS
+    void split_string( const std::string& input,
+                       const std::string& delimiter,
+                       std::vector<std::string>& results );
+  } // end namespace StringUtilities
+} // end namespace GRINS
 
 #endif // GRINS_STRING_UTILS_H

@@ -192,6 +192,7 @@ libgrins_la_SOURCES += utilities/src/grins_version.C
 libgrins_la_SOURCES += utilities/src/input_utils.C
 libgrins_la_SOURCES += utilities/src/cached_values.C
 libgrins_la_SOURCES += utilities/src/distance_function.C
+libgrins_la_SOURCES += utilities/src/string_utils.C
 
 # src/visualization files
 libgrins_la_SOURCES += visualization/src/steady_visualization.C
