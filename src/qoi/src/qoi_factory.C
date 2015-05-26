@@ -31,6 +31,7 @@
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"
+#include "grins/parsed_boundary_qoi.h"
 #include "grins/parsed_interior_qoi.h"
 
 namespace GRINS
@@ -84,6 +85,11 @@ namespace GRINS
     if( qoi_name == avg_nusselt )
       {
         qoi = new AverageNusseltNumber( avg_nusselt );
+      }
+
+    else if( qoi_name == parsed_boundary )
+      {
+        qoi =  new ParsedBoundaryQoI( parsed_boundary );
       }
 
     else if( qoi_name == parsed_interior )
