@@ -39,12 +39,6 @@
 // libMesh forward declarations
 class GetPot;
 
-namespace libMesh
-{
-  template <typename Scalar>
-  class ParameterMultiPointer;
-}
-
 namespace GRINS
 {
   // Forward declarations

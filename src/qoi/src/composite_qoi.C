@@ -117,7 +117,7 @@ namespace GRINS
 
   void CompositeQoI::register_parameter
     ( const std::string & param_name,
-      libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer )
+      libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer )
   const
   {
     for( unsigned int q = 0; q < _qois.size(); q++ )
