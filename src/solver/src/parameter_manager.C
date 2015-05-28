@@ -34,7 +34,7 @@
 // libMesh
 #include "libmesh/auto_ptr.h"
 #include "libmesh/getpot.h"
-#include "libmesh/parameter_multipointer.h"
+#include "libmesh/parameter_multiaccessor.h"
 
 
 namespace GRINS
@@ -58,8 +58,8 @@ namespace GRINS
 
         this->parameter_name_list[i] = param_name;
 
-        libMesh::ParameterMultiPointer<libMesh::Number> *next_param =
-          new libMesh::ParameterMultiPointer<libMesh::Number>();
+        libMesh::ParameterMultiAccessor<libMesh::Number> *next_param =
+          new libMesh::ParameterMultiAccessor<libMesh::Number>();
 
         // We always have Physics solving for u
         system.register_parameter(param_name, *next_param);
