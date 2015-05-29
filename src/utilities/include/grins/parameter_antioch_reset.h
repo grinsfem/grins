@@ -81,6 +81,16 @@ public:
    */
   std::size_t size() const { return _reaction_sets.size(); }
 
+  /**
+   * Returns a new copy of the accessor.
+   */
+  virtual libMesh::UniquePtr<ParameterAccessor<libMesh::Number> > clone() const {
+    // Default shallow copy works for this class
+    ParameterAntiochReset *par = new ParameterAntiochReset(*this);
+
+    return libMesh::UniquePtr<ParameterAccessor<libMesh::Number> >(par);
+  }
+
 private:
   // The Antioch getter/setter APIs take a reaction ID and a set of
   // keywords to define which reaction parameter is of concern
