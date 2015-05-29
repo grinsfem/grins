@@ -36,7 +36,8 @@
 namespace GRINS
 {
   AntiochChemistry::AntiochChemistry( const GetPot& input )
-    : _antioch_gas(NULL)
+    : ParameterUser("AntiochChemistry"),
+      _antioch_gas(NULL)
   {
     if( !input.have_variable("Physics/Chemistry/species") )
       {
