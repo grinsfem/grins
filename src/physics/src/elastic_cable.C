@@ -200,11 +200,11 @@ namespace GRINS
           {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp] );
 
-            Fu(i) -= tau(0,0)*_A*( (grad_x(0) + grad_u(0))*u_gradphi(0) ) * jac;
+            Fu(i) += tau(0,0)*_A*( (grad_x(0) + grad_u(0))*u_gradphi(0) ) * jac;
 
-            Fv(i) -= tau(0,0)*_A*( (grad_y(0) + grad_v(0))*u_gradphi(0) ) * jac;
+            Fv(i) += tau(0,0)*_A*( (grad_y(0) + grad_v(0))*u_gradphi(0) ) * jac;
 
-            Fw(i) -= tau(0,0)*_A*( (grad_z(0) + grad_w(0))*u_gradphi(0) ) * jac;
+            Fw(i) += tau(0,0)*_A*( (grad_z(0) + grad_w(0))*u_gradphi(0) ) * jac;
 
           }
 
@@ -219,11 +219,11 @@ namespace GRINS
 
                     const libMesh::Real diag_term = _A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0));
 
-                    Kuu(i,j) -= diag_term;
+                    Kuu(i,j) += diag_term;
 
-                    Kvv(i,j) -= diag_term;
+                    Kvv(i,j) += diag_term;
 
-                    Kww(i,j) -= diag_term;
+                    Kww(i,j) += diag_term;
 
                     const libMesh::Real dgamma_du = ( u_gradphi_J(0)*(grad_x(0)+grad_u(0)) );
 
@@ -239,23 +239,23 @@ namespace GRINS
 
                     const libMesh::Real z_term = C1*( (grad_z(0)+grad_w(0))*u_gradphi_I(0) );
 
-                    Kuu(i,j) -= x_term*dgamma_du;
+                    Kuu(i,j) += x_term*dgamma_du;
 
-                    Kuv(i,j) -= x_term*dgamma_dv;
+                    Kuv(i,j) += x_term*dgamma_dv;
 
-                    Kuw(i,j) -= x_term*dgamma_dw;
+                    Kuw(i,j) += x_term*dgamma_dw;
 
-                    Kvu(i,j) -= y_term*dgamma_du;
+                    Kvu(i,j) += y_term*dgamma_du;
 
-                    Kvv(i,j) -= y_term*dgamma_dv;
+                    Kvv(i,j) += y_term*dgamma_dv;
 
-                    Kvw(i,j) -= y_term*dgamma_dw;
+                    Kvw(i,j) += y_term*dgamma_dw;
 
-                    Kwu(i,j) -= z_term*dgamma_du;
+                    Kwu(i,j) += z_term*dgamma_du;
 
-                    Kwv(i,j) -= z_term*dgamma_dv;
+                    Kwv(i,j) += z_term*dgamma_dv;
 
-                    Kww(i,j) -= z_term*dgamma_dw;
+                    Kww(i,j) += z_term*dgamma_dw;
 
                   }
               }
@@ -319,9 +319,9 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-            Fu(i) -= this->_rho*_A*u_ddot*u_phi[i][qp]*jac;
-            Fv(i) -= this->_rho*_A*v_ddot*u_phi[i][qp]*jac;
-            Fw(i) -= this->_rho*_A*w_ddot*u_phi[i][qp]*jac;
+            Fu(i) += this->_rho*_A*u_ddot*u_phi[i][qp]*jac;
+            Fv(i) += this->_rho*_A*v_ddot*u_phi[i][qp]*jac;
+            Fw(i) += this->_rho*_A*w_ddot*u_phi[i][qp]*jac;
 
             if( compute_jacobian )
               {
@@ -330,9 +330,9 @@ namespace GRINS
                     libMesh::Real jac_term = this->_rho*_A*u_phi[i][qp]*u_phi[j][qp]*jac;
                     jac_term *= context.get_elem_solution_accel_derivative();
 
-                    Kuu(i,j) -= jac_term;
-                    Kvv(i,j) -= jac_term;
-                    Kww(i,j) -= jac_term;
+                    Kuu(i,j) += jac_term;
+                    Kvv(i,j) += jac_term;
+                    Kww(i,j) += jac_term;
                   }
               }
           }

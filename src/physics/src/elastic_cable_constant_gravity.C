@@ -83,11 +83,11 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += _gravity(0)*_A*_rho*u_phi[i][qp]*jac;
+            Fu(i) -= _gravity(0)*_A*_rho*u_phi[i][qp]*jac;
 
-            Fv(i) += _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
+            Fv(i) -= _gravity(1)*_A*_rho*u_phi[i][qp]*jac;
 
-            Fw(i) += _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
+            Fw(i) -= _gravity(2)*_A*_rho*u_phi[i][qp]*jac;
           }
       }
 

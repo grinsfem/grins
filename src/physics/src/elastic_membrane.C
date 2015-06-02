@@ -244,13 +244,13 @@ namespace GRINS
               {
                 for( unsigned int beta = 0; beta < dim; beta++ )
                   {
-                    Fu(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) +
+                    Fu(i) += 0.5*tau(alpha,beta)*_h0*( (grad_x(beta) + grad_u(beta))*u_gradphi(alpha) +
                                                        (grad_x(alpha) + grad_u(alpha))*u_gradphi(beta) )*jac;
 
-                    Fv(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
+                    Fv(i) += 0.5*tau(alpha,beta)*_h0*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
                                                        (grad_y(alpha) + grad_v(alpha))*u_gradphi(beta) )*jac;
 
-                    Fw(i) -= 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
+                    Fw(i) += 0.5*tau(alpha,beta)*_h0*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
                                                        (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) )*jac;
                   }
               }
@@ -272,11 +272,11 @@ namespace GRINS
                           {
                             const libMesh::Real diag_term = 0.5*_h0*jac*tau(alpha,beta)*( u_gradphi_j(beta)*u_gradphi_i(alpha) +
                                                                                           u_gradphi_j(alpha)*u_gradphi_i(beta) );
-                            Kuu(i,j) -= diag_term;
+                            Kuu(i,j) += diag_term;
 
-                            Kvv(i,j) -= diag_term;
+                            Kvv(i,j) += diag_term;
 
-                            Kww(i,j) -= diag_term;
+                            Kww(i,j) += diag_term;
 
                             for( unsigned int lambda = 0; lambda < dim; lambda++ )
                               {
@@ -302,23 +302,23 @@ namespace GRINS
                                     const libMesh::Real z_term = C1*( (grad_z(beta)+grad_w(beta))*u_gradphi_i(alpha) +
                                                                       (grad_z(alpha)+grad_w(alpha))*u_gradphi_i(beta) );
 
-                                    Kuu(i,j) -= x_term*dgamma_du;
+                                    Kuu(i,j) += x_term*dgamma_du;
 
-                                    Kuv(i,j) -= x_term*dgamma_dv;
+                                    Kuv(i,j) += x_term*dgamma_dv;
 
-                                    Kuw(i,j) -= x_term*dgamma_dw;
+                                    Kuw(i,j) += x_term*dgamma_dw;
 
-                                    Kvu(i,j) -= y_term*dgamma_du;
+                                    Kvu(i,j) += y_term*dgamma_du;
 
-                                    Kvv(i,j) -= y_term*dgamma_dv;
+                                    Kvv(i,j) += y_term*dgamma_dv;
 
-                                    Kvw(i,j) -= y_term*dgamma_dw;
+                                    Kvw(i,j) += y_term*dgamma_dw;
 
-                                    Kwu(i,j) -= z_term*dgamma_du;
+                                    Kwu(i,j) += z_term*dgamma_du;
 
-                                    Kwv(i,j) -= z_term*dgamma_dv;
+                                    Kwv(i,j) += z_term*dgamma_dv;
 
-                                    Kww(i,j) -= z_term*dgamma_dw;
+                                    Kww(i,j) += z_term*dgamma_dw;
                                   }
                               }
                           }
@@ -457,20 +457,20 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-            Fu(i) -= this->_rho*u_ddot*u_phi[i][qp]*jac;
-            Fv(i) -= this->_rho*v_ddot*u_phi[i][qp]*jac;
-            Fw(i) -= this->_rho*w_ddot*u_phi[i][qp]*jac;
+            Fu(i) += this->_rho*_h0*u_ddot*u_phi[i][qp]*jac;
+            Fv(i) += this->_rho*_h0*v_ddot*u_phi[i][qp]*jac;
+            Fw(i) += this->_rho*_h0*w_ddot*u_phi[i][qp]*jac;
 
             if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
-                    libMesh::Real jac_term = this->_rho*u_phi[i][qp]*u_phi[j][qp]*jac;
+                    libMesh::Real jac_term = this->_rho*_h0*u_phi[i][qp]*u_phi[j][qp]*jac;
                     jac_term *= context.get_elem_solution_accel_derivative();
 
-                    Kuu(i,j) -= jac_term;
-                    Kvv(i,j) -= jac_term;
-                    Kww(i,j) -= jac_term;
+                    Kuu(i,j) += jac_term;
+                    Kvv(i,j) += jac_term;
+                    Kww(i,j) += jac_term;
                   }
               }
           }
