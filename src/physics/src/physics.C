@@ -252,7 +252,14 @@ namespace GRINS
 				     CachedValues& /*cache*/ )
   {
     return;
-  }   
+  }
+
+  void Physics::damping_residual( bool /*compute_jacobian*/,
+                                  AssemblyContext& /*context*/,
+                                  CachedValues& /*cache*/ )
+  {
+    return;
+  }
 
   void Physics::mass_residual( bool /*compute_jacobian*/,
 			       AssemblyContext& /*context*/,
