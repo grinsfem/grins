@@ -200,6 +200,12 @@ namespace GRINS
     return;
   }
 
+  void Physics::compute_damping_residual_cache( const AssemblyContext& /*context*/,
+                                                CachedValues& /*cache*/ )
+  {
+    return;
+  }
+
   void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
 					     CachedValues& /*cache*/ )
   {

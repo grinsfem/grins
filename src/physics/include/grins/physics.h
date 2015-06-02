@@ -229,6 +229,9 @@ namespace GRINS
     virtual void compute_nonlocal_constraint_cache( const AssemblyContext& context,
                                                     CachedValues& cache );
 
+    virtual void compute_damping_residual_cache( const AssemblyContext& context,
+                                                 CachedValues& cache );
+
     virtual void compute_mass_residual_cache( const AssemblyContext& context,
                                               CachedValues& cache );
 
