@@ -1,0 +1,12 @@
+<map id="src/physics/src/axisym_boussinesq_buoyancy.C" name="src/physics/src/axisym_boussinesq_buoyancy.C">
+<area shape="rect" id="node2" href="$axisym__boussinesq__buoyancy_8h.html" title="grins/axisym_boussinesq\l_buoyancy.h" alt="" coords="727,95,897,136"/>
+<area shape="rect" id="node4" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="395,184,538,211"/>
+<area shape="rect" id="node24" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="922,102,1094,129"/>
+<area shape="rect" id="node5" href="$physics_8h.html" title="grins/physics.h" alt="" coords="678,184,789,211"/>
+<area shape="rect" id="node8" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="395,259,538,300"/>
+<area shape="rect" id="node9" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="177,266,319,293"/>
+<area shape="rect" id="node14" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="613,259,749,300"/>
+<area shape="rect" id="node15" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1109,266,1264,293"/>
+<area shape="rect" id="node20" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="824,266,984,293"/>
+<area shape="rect" id="node19" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="1340,348,1503,389"/>
+</map>

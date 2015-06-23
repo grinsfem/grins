@@ -1,0 +1,9 @@
+<map id="src/physics/src/heat_transfer_stab_helper.C" name="src/physics/src/heat_transfer_stab_helper.C">
+<area shape="rect" id="node2" href="$heat__transfer__stab__helper_8h.html" title="grins/heat_transfer\l_stab_helper.h" alt="" coords="361,95,494,136"/>
+<area shape="rect" id="node3" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="439,191,575,218"/>
+<area shape="rect" id="node13" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="777,191,949,218"/>
+<area shape="rect" id="node15" href="$primitive__temp__variables_8h.html" title="grins/primitive_temp\l_variables.h" alt="" coords="98,184,239,225"/>
+<area shape="rect" id="node20" href="$primitive__flow__variables_8h.html" title="grins/primitive_flow\l_variables.h" alt="" coords="274,184,410,225"/>
+<area shape="rect" id="node4" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="597,273,757,300"/>
+<area shape="rect" id="node16" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="92,273,235,300"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="GRINS::HeatTransfer&lt; Conductivity &gt;" name="GRINS::HeatTransfer&lt; Conductivity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1HeatTransferBase.html" title="Physics class for Heat Transfer. " alt="" coords="5,155,185,196"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="37,80,154,107"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="14,5,177,32"/>
+</map>

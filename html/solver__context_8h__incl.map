@@ -1,0 +1,12 @@
+<map id="src/solver/include/grins/solver_context.h" name="src/solver/include/grins/solver_context.h">
+<area shape="rect" id="node3" href="$visualization_8h.html" title="grins/visualization.h" alt="" coords="113,102,252,129"/>
+<area shape="rect" id="node7" href="$postprocessed__quantities_8h.html" title="grins/postprocessed\l_quantities.h" alt="" coords="391,95,532,136"/>
+<area shape="rect" id="node10" href="$multiphysics__sys_8h.html" title="grins/multiphysics\l_sys.h" alt="" coords="435,184,562,225"/>
+<area shape="rect" id="node12" href="$physics_8h.html" title="grins/physics.h" alt="" coords="839,273,950,300"/>
+<area shape="rect" id="node14" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="271,348,414,389"/>
+<area shape="rect" id="node15" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="650,355,793,382"/>
+<area shape="rect" id="node19" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="439,348,575,389"/>
+<area shape="rect" id="node20" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="817,355,972,382"/>
+<area shape="rect" id="node24" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1132,355,1292,382"/>
+<area shape="rect" id="node23" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="1005,437,1168,479"/>
+</map>

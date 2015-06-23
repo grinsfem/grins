@@ -1,0 +1,16 @@
+<map id="src/physics/include/grins/inc_navier_stokes_stab_base.h" name="src/physics/include/grins/inc_navier_stokes_stab_base.h">
+<area shape="rect" id="node2" href="$inc__navier__stokes__base_8h.html" title="grins/inc_navier_stokes\l_base.h" alt="" coords="814,109,976,151"/>
+<area shape="rect" id="node26" href="$inc__navier__stokes__stab__helper_8h.html" title="grins/inc_navier_stokes\l_stab_helper.h" alt="" coords="1172,199,1333,240"/>
+<area shape="rect" id="node3" href="$physics_8h.html" title="grins/physics.h" alt="" coords="421,295,532,322"/>
+<area shape="rect" id="node21" href="$primitive__flow__fe__variables_8h.html" title="grins/primitive_flow\l_fe_variables.h" alt="" coords="827,199,963,240"/>
+<area shape="rect" id="node7" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="26,377,169,419"/>
+<area shape="rect" id="node8" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="405,385,548,411"/>
+<area shape="rect" id="node13" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="194,377,330,419"/>
+<area shape="rect" id="node14" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="807,385,962,411"/>
+<area shape="rect" id="node19" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="572,385,732,411"/>
+<area shape="rect" id="node18" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="1062,467,1224,508"/>
+<area shape="rect" id="node22" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="556,295,698,322"/>
+<area shape="rect" id="node23" href="$primitive__flow__variables_8h.html" title="grins/primitive_flow\l_variables.h" alt="" coords="1104,288,1240,329"/>
+<area shape="rect" id="node27" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="1264,295,1400,322"/>
+<area shape="rect" id="node30" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="1504,295,1676,322"/>
+</map>

@@ -1,0 +1,27 @@
+<map id="src/physics/src/heat_conduction.C" name="src/physics/src/heat_conduction.C">
+<area shape="rect" id="node2" href="$heat__conduction_8h.html" title="grins/heat_conduction.h" alt="" coords="2110,102,2274,129"/>
+<area shape="rect" id="node13" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="3183,273,3319,315"/>
+<area shape="rect" id="node26" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="3761,281,3933,307"/>
+<area shape="rect" id="node28" href="$generic__ic__handler_8h.html" title="grins/generic_ic_handler.h" alt="" coords="2299,102,2477,129"/>
+<area shape="rect" id="node34" href="$heat__transfer__bc__handling_8h.html" title="grins/heat_transfer\l_bc_handling.h" alt="" coords="1684,95,1817,136"/>
+<area shape="rect" id="node42" href="$heat__transfer__macros_8h.html" title="grins/heat_transfer\l_macros.h" alt="" coords="3369,95,3503,136"/>
+<area shape="rect" id="node3" href="$physics_8h.html" title="grins/physics.h" alt="" coords="2602,191,2713,218"/>
+<area shape="rect" id="node21" href="$primitive__temp__fe__variables_8h.html" title="grins/primitive_temp\l_fe_variables.h" alt="" coords="347,184,488,225"/>
+<area shape="rect" id="node7" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="2426,273,2569,315"/>
+<area shape="rect" id="node8" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1341,452,1483,479"/>
+<area shape="rect" id="node14" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="2095,281,2249,307"/>
+<area shape="rect" id="node19" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="2796,281,2956,307"/>
+<area shape="rect" id="node18" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="2036,363,2199,404"/>
+<area shape="rect" id="node22" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="423,281,566,307"/>
+<area shape="rect" id="node23" href="$primitive__temp__variables_8h.html" title="grins/primitive_temp\l_variables.h" alt="" coords="5,273,147,315"/>
+<area shape="rect" id="node29" href="$bc__types_8h.html" title="grins/bc_types.h" alt="" coords="1431,281,1550,307"/>
+<area shape="rect" id="node31" href="$ic__handling__base_8h.html" title="grins/ic_handling_base.h" alt="" coords="2181,191,2350,218"/>
+<area shape="rect" id="node30" href="$neumann__func__obj_8h.html" title="grins/neumann_func\l_obj.h" alt="" coords="1341,363,1483,404"/>
+<area shape="rect" id="node35" href="$bc__handling__base_8h.html" title="grins/bc_handling_base.h" alt="" coords="1664,191,1837,218"/>
+<area shape="rect" id="node36" href="$dbc__container_8h.html" title="grins/dbc_container.h" alt="" coords="1676,281,1825,307"/>
+<area shape="rect" id="node38" href="$pbc__container_8h.html" title="grins/pbc_container.h" alt="" coords="871,281,1020,307"/>
+<area shape="rect" id="node39" href="$nbc__container_8h.html" title="grins/nbc_container.h" alt="" coords="1257,281,1407,307"/>
+<area shape="rect" id="node40" href="$boundary__conditions_8h.html" title="grins/boundary_conditions.h" alt="" coords="1044,281,1233,307"/>
+<area shape="rect" id="node43" href="$constant__conductivity_8h.html" title="grins/constant_conductivity.h" alt="" coords="3339,191,3533,218"/>
+<area shape="rect" id="node45" href="$parsed__conductivity_8h.html" title="grins/parsed_conductivity.h" alt="" coords="3568,191,3752,218"/>
+</map>

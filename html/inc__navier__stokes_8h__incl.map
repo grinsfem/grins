@@ -1,0 +1,14 @@
+<map id="src/physics/include/grins/inc_navier_stokes.h" name="src/physics/include/grins/inc_navier_stokes.h">
+<area shape="rect" id="node2" href="$inc__navier__stokes__base_8h.html" title="grins/inc_navier_stokes\l_base.h" alt="" coords="1035,95,1197,136"/>
+<area shape="rect" id="node26" href="$pressure__pinning_8h.html" title="grins/pressure_pinning.h" alt="" coords="1485,281,1653,307"/>
+<area shape="rect" id="node3" href="$physics_8h.html" title="grins/physics.h" alt="" coords="642,281,753,307"/>
+<area shape="rect" id="node21" href="$primitive__flow__fe__variables_8h.html" title="grins/primitive_flow\l_fe_variables.h" alt="" coords="1048,184,1184,225"/>
+<area shape="rect" id="node7" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="903,363,1046,404"/>
+<area shape="rect" id="node8" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1231,370,1374,397"/>
+<area shape="rect" id="node13" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="1071,363,1207,404"/>
+<area shape="rect" id="node14" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="287,370,441,397"/>
+<area shape="rect" id="node19" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="617,370,777,397"/>
+<area shape="rect" id="node18" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="272,452,435,493"/>
+<area shape="rect" id="node22" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="777,281,919,307"/>
+<area shape="rect" id="node23" href="$primitive__flow__variables_8h.html" title="grins/primitive_flow\l_variables.h" alt="" coords="1325,273,1461,315"/>
+</map>

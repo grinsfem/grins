@@ -1,0 +1,19 @@
+<map id="src/physics/include/grins/heat_transfer_adjoint_stab.h" name="src/physics/include/grins/heat_transfer_adjoint_stab.h">
+<area shape="rect" id="node2" href="$heat__transfer__stab__base_8h.html" title="grins/heat_transfer\l_stab_base.h" alt="" coords="733,109,866,151"/>
+<area shape="rect" id="node3" href="$heat__transfer__base_8h.html" title="grins/heat_transfer\l_base.h" alt="" coords="842,199,975,240"/>
+<area shape="rect" id="node29" href="$heat__transfer__stab__helper_8h.html" title="grins/heat_transfer\l_stab_helper.h" alt="" coords="402,288,535,329"/>
+<area shape="rect" id="node4" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1323,385,1433,411"/>
+<area shape="rect" id="node22" href="$primitive__flow__fe__variables_8h.html" title="primitive_flow_fe_variables.h" alt="" coords="923,295,1116,322"/>
+<area shape="rect" id="node27" href="$primitive__temp__fe__variables_8h.html" title="primitive_temp_fe_variables.h" alt="" coords="700,295,899,322"/>
+<area shape="rect" id="node8" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1583,467,1725,508"/>
+<area shape="rect" id="node9" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="575,474,717,501"/>
+<area shape="rect" id="node14" href="$grins__physics__names_8h.html" title="grins/grins_physics\l_names.h" alt="" coords="1371,467,1507,508"/>
+<area shape="rect" id="node15" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="771,474,926,501"/>
+<area shape="rect" id="node20" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1001,474,1161,501"/>
+<area shape="rect" id="node19" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="785,556,947,597"/>
+<area shape="rect" id="node23" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="775,385,917,411"/>
+<area shape="rect" id="node24" href="$primitive__flow__variables_8h.html" title="grins/primitive_flow\l_variables.h" alt="" coords="563,377,699,419"/>
+<area shape="rect" id="node28" href="$primitive__temp__variables_8h.html" title="grins/primitive_temp\l_variables.h" alt="" coords="398,377,539,419"/>
+<area shape="rect" id="node30" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="238,385,374,411"/>
+<area shape="rect" id="node33" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="12,385,184,411"/>
+</map>

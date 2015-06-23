@@ -1,0 +1,6 @@
+<map id="GRINS::QoIBase" name="GRINS::QoIBase">
+<area shape="rect" id="node3" href="$classGRINS_1_1AverageNusseltNumber.html" title="GRINS::AverageNusseltNumber" alt="" coords="5,155,219,181"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1ParsedInteriorQoI.html" title="Parsed Interior QoI. " alt="" coords="243,155,421,181"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1Vorticity.html" title="Vorticity QoI. " alt="" coords="445,155,563,181"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="251,5,413,32"/>
+</map>

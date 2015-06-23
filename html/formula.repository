@@ -1,0 +1,24 @@
+\form#0:$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } $
+\form#1:$ \sqrt{ \frac{R_s}{2\pi} } $
+\form#2:$ u_0 \frac{ \log( r_1/r) }{\log( r_1/r_0)} $
+\form#3:$ r_0 $
+\form#4:$ r_1 $
+\form#5:$ 2.0 \frac{ \log( 2.0/r) }{\log(2.0)} $
+\form#6:$ f= a \exp \left\{ -\frac{(r-\mu)^2}{2*\sigma^2} \right\} - b$
+\form#7:$ b $
+\form#8:$ f $
+\form#9:$ r > b, f = 0 $
+\form#10:$ r $
+\form#11:$ r = \sqrt{x^2 + y^2} $
+\form#12:$ ax^2 + bxy + cy^2 + dx + ey + f $
+\form#13:$ 4y(1-y) $
+\form#14:$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} $
+\form#15:$ \rho_0 = $
+\form#16:$ T_0 = $
+\form#17:$ \beta_T = $
+\form#18:$ \mathbf{g} = $
+\form#19:$M(u)\dot{u} = F(u)$
+\form#20:$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0$
+\form#21:$F(u)$
+\form#22:$M(u)\dot{u}$
+\form#23:$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}$

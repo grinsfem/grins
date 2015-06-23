@@ -1,0 +1,15 @@
+<map id="GRINS::HeatTransferAdjointStabilization&lt; Conductivity &gt;" name="GRINS::HeatTransferAdjointStabilization&lt; Conductivity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1HeatTransferStabilizationBase.html" title="GRINS::HeatTransferStabilization\lBase\&lt; Conductivity \&gt;" alt="" coords="1377,165,1599,206"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1HeatTransferBase.html" title="Physics class for Heat Transfer. " alt="" coords="1047,201,1227,242"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="731,273,848,300"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="362,196,525,223"/>
+<area shape="rect" id="node14" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="698,172,881,199"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1ICHandlingBase.html" title="Base class for reading and handling initial conditions for physics classes. " alt="" coords="359,321,527,348"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1BCHandlingBase.html" title="Base class for reading and handling boundary conditions for physics classes. " alt="" coords="357,271,530,297"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1BoundaryConditions.html" title="Class to hold typical boundary condition methods. " alt="" coords="5,271,197,297"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="675,223,904,249"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1PrimitiveTempVariables.html" title="GRINS::PrimitiveTempVariables" alt="" coords="337,140,549,167"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1HeatTransferStabilizationHelper.html" title="GRINS::HeatTransferStabilization\lHelper" alt="" coords="1027,133,1248,174"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1PrimitiveFlowFEVariables.html" title="GRINS::PrimitiveFlowFEVariables" alt="" coords="677,59,901,85"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1PrimitiveFlowVariables.html" title="GRINS::PrimitiveFlowVariables" alt="" coords="340,15,547,41"/>
+</map>
