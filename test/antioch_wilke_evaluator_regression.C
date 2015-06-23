@@ -56,7 +56,7 @@ int test_generic( const libMesh::Real value, const libMesh::Real value_reg, cons
                 << name+"_reg = " << value_reg << std::endl
                 << "rel_error = " << rel_error << std::endl;
     }
-  
+
   return return_flag;
 }
 
@@ -94,7 +94,7 @@ int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
            Antioch::ConstantLewisDiffusivity<libMesh::Real> >( const std::vector<libMesh::Real>& D )
 {
   std::vector<libMesh::Real> D_reg(5);
-  D_reg[0] = 9.1105330096162743e-02;
+  D_reg[0] = 4.6482311273552429e-02;
   D_reg[1] = D_reg[0];
   D_reg[2] = D_reg[0];
   D_reg[3] = D_reg[0];
@@ -161,7 +161,7 @@ int test_evaluator( const GetPot& input )
 
   for( unsigned int i = 0; i < n_species; i++ )
     {
-      std::cout << std::scientific << std::setprecision(16) 
+      std::cout << std::scientific << std::setprecision(16)
                 << "D(" << mixture.species_name(i) << ") = " << D [i] << std::endl;
     }
 
@@ -180,10 +180,10 @@ int test_evaluator( const GetPot& input )
 
   return_flag_temp = test_k<Thermo,Conductivity>( k2 );
   if( return_flag_temp != 0 ) return_flag = 1;
-  
+
   return_flag_temp = test_D<Thermo,Viscosity,Conductivity,Diffusivity>( D );
   if( return_flag_temp != 0 ) return_flag = 1;
- 
+
   return return_flag;
 }
 
