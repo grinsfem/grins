@@ -38,8 +38,8 @@ namespace GRINS
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
     : AntiochEvaluator<Thermo>( mixture ),
-      _wilke_evaluator( new Antioch::WilkeEvaluator<Viscosity,Conductivity>( mixture.wilke_mixture(), mixture.viscosity(), mixture.conductivity() ) ),
-      _diffusivity( mixture.diffusivity() )
+    _wilke_evaluator( new Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real>( mixture.wilke_mixture(), mixture.diffusivity(), mixture.viscosity(), mixture.conductivity() ) ),
+    _diffusivity( mixture.diffusivity() )
   {
     return;
   }
@@ -80,21 +80,6 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename D>
-  void AntiochWilkeTransportEvaluator<Th,V,C,D>::D( const CachedValues& cache, unsigned int qp,
-                                                    std::vector<libMesh::Real>& D )
-  {
-    const libMesh::Real rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
-    
-    /*! \todo Find a way to cache these so we don't have to recompute them */
-    const libMesh::Real cp = this->cp(cache,qp);
-    const libMesh::Real k = this->k(cache,qp);
-
-    this->D(rho,cp,k,D);
-    
-    return;
-  }
-
-  template<typename Th, typename V, typename C, typename D>
   libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
                                                               const std::vector<libMesh::Real>& Y )
   {
@@ -108,14 +93,26 @@ namespace GRINS
     return _wilke_evaluator->k( T, Y );
   }
 
-  template<typename Th, typename V, typename C, typename D>
-  void AntiochWilkeTransportEvaluator<Th,V,C,D>::D( const libMesh::Real rho, const libMesh::Real cp,
-                                                    const libMesh::Real k,
-                                                    std::vector<libMesh::Real>& D )
+  template<typename Th, typename V, typename C, typename Diff>
+  void AntiochWilkeTransportEvaluator<Th,V,C,Diff>::D( const libMesh::Real T,
+                                                       const libMesh::Real rho,
+                                                       const libMesh::Real cp,
+                                                       const std::vector<libMesh::Real>& Y,
+                                                       std::vector<libMesh::Real>& D )
   {
-    std::fill( D.begin(), D.end(), _diffusivity.D(rho,cp,k) );
+    libMesh::Real dummy = 0.0;
+    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, dummy, dummy, D );
+  }
 
-    return;
+  template<typename Th, typename V, typename C, typename Diff>
+  void AntiochWilkeTransportEvaluator<Th,V,C,Diff>::mu_and_k_and_D( const libMesh::Real T,
+                                                                    const libMesh::Real rho,
+                                                                    const libMesh::Real cp,
+                                                                    const std::vector<libMesh::Real>& Y,
+                                                                    libMesh::Real& mu, libMesh::Real& k,
+                                                                    std::vector<libMesh::Real>& D )
+  {
+    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
   }
 
 } // end namespace GRINS

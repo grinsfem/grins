@@ -91,6 +91,16 @@
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
+// Antioch
+#ifdef GRINS_HAVE_ANTIOCH
+#include "antioch/sutherland_viscosity.h"
+#include "antioch/blottner_viscosity.h"
+#include "antioch/sutherland_parsing.h"
+#include "antioch/blottner_parsing.h"
+#include "antioch/eucken_thermal_conductivity.h"
+#include "antioch/constant_lewis_diffusivity.h"
+#endif // GRINS_HAVE_ANTIOCH
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -273,11 +283,11 @@ namespace GRINS
                 (viscosity_model == std::string("sutherland")) )
               {
                 return PhysicsPtr(new Subclass<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                   Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                   Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                     Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                     Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                      Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
               }
@@ -287,11 +297,11 @@ namespace GRINS
                      (viscosity_model == std::string("blottner")) )
               {
                 return PhysicsPtr(new Subclass<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                   Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                     Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                     Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                      Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
               }

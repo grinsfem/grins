@@ -50,38 +50,38 @@ template class GRINS::ReactingLowMachNavierStokes<GRINS::CanteraMixture,GRINS::C
 
 /* -------------------- ReactingLowMachNavierStokes -------------------- */
 template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                      Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                      Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                       Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                       Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                   GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                        Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                        Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                         Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                         Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
 
 template class GRINS::ReactingLowMachNavierStokes<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                      Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                      Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                       Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                       Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                   GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                        Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                        Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                         Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                         Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
 
 template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                          Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                          Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                           Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                           Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                       GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                            Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                                                            Antioch::SutherlandViscosity<libMesh::Real>,
                                                                                             Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                             Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
 
 template class GRINS::ReactingLowMachNavierStokesBase<GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                          Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                          Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                           Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                           Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
                                                       GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                                            Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                                                            Antioch::BlottnerViscosity<libMesh::Real>,
                                                                                             Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                                                             Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;
 

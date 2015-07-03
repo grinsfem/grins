@@ -38,7 +38,8 @@ namespace GRINS
   template<typename T, typename V, typename C, typename D>
   AntiochWilkeTransportMixture<T,V,C,D>::AntiochWilkeTransportMixture( const GetPot& input )
     : AntiochMixture(input),
-      _wilke_mixture(*(this->_antioch_gas.get())),
+      _trans_mixture( *(_antioch_gas.get()) ),
+      _wilke_mixture(_trans_mixture),
       _thermo(NULL),
       _viscosity(NULL),
       _conductivity(NULL),

@@ -37,12 +37,12 @@
 #include "antioch_wilke_transport_mixture.C"
 
 template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                   Antioch::SutherlandViscosity<libMesh::Real>,
                                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
 
 template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                   Antioch::BlottnerViscosity<libMesh::Real>,
                                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
 

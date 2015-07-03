@@ -38,7 +38,7 @@
 #include "libmesh/libmesh_common.h"
 
 // Antioch
-#include "antioch/wilke_evaluator.h"
+#include "antioch/mixture_averaged_transport_evaluator.h"
 
 namespace GRINS
 {
@@ -66,24 +66,31 @@ namespace GRINS
     void mu_and_k( const CachedValues& cache, unsigned int qp,
                    libMesh::Real& mu, libMesh::Real& k );
 
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D );
-
     libMesh::Real mu( const libMesh::Real T,
                       const std::vector<libMesh::Real>& Y );
 
     libMesh::Real k( const libMesh::Real T,
                      const std::vector<libMesh::Real>& Y );
 
-    void D( const libMesh::Real rho, const libMesh::Real cp,
-            const libMesh::Real k,
-	    std::vector<libMesh::Real>& D );
-    
+    void D( const libMesh::Real T,
+            const libMesh::Real rho,
+            const libMesh::Real cp,
+            const std::vector<libMesh::Real>& Y,
+            std::vector<libMesh::Real>& D );
+
+    void mu_and_k_and_D( const libMesh::Real T,
+                         const libMesh::Real rho,
+                         const libMesh::Real cp,
+                         const std::vector<libMesh::Real>& Y,
+                         libMesh::Real& mu, libMesh::Real& k,
+                         std::vector<libMesh::Real>& D );
+
+
   protected:
 
-    boost::scoped_ptr<Antioch::WilkeEvaluator<Viscosity,Conductivity> > _wilke_evaluator;
+    boost::scoped_ptr<Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real> > _wilke_evaluator;
 
-    const Diffusivity& _diffusivity;
+    const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& _diffusivity;
 
   private:
 

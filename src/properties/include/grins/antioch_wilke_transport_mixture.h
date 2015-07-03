@@ -43,21 +43,19 @@
 #include "antioch/vector_utils.h"
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
-#include "antioch/wilke_mixture.h"
+#include "antioch/mixture_averaged_transport_mixture.h"
 #include "antioch/mixture_viscosity.h"
+#include "antioch/mixture_conductivity.h"
+#include "antioch/mixture_diffusion.h"
 #include "antioch/sutherland_viscosity.h"
 #include "antioch/blottner_viscosity.h"
-#include "antioch/sutherland_parsing.h"
-#include "antioch/blottner_parsing.h"
 #include "antioch/eucken_thermal_conductivity.h"
 #include "antioch/constant_lewis_diffusivity.h"
 
-// These are "dummy" types to help force operator overloading
-namespace GRINS
-{
-  
-}
-
+#include "antioch/sutherland_parsing.h"
+#include "antioch/blottner_parsing.h"
+#include "antioch/eucken_thermal_conductivity_building.h"
+#include "antioch/constant_lewis_diffusivity_building.h"
 namespace GRINS
 {
   //! Wrapper class for storing state for computing Wilke transport properties using Antioch
@@ -77,27 +75,29 @@ namespace GRINS
 
     virtual ~AntiochWilkeTransportMixture();
 
-    const Antioch::WilkeMixture<libMesh::Real>& wilke_mixture() const;
+    const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& wilke_mixture() const;
 
-    const Viscosity& viscosity() const;
-    
-    const Conductivity& conductivity() const;
+    const Antioch::MixtureViscosity<Viscosity,libMesh::Real>& viscosity() const;
 
-    const Diffusivity& diffusivity() const;
+    const Antioch::MixtureConductivity<Conductivity,libMesh::Real>& conductivity() const;
+
+    const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& diffusivity() const;
 
     typedef AntiochChemistry ChemistryParent;
-    
+
   protected:
 
-    Antioch::WilkeMixture<libMesh::Real> _wilke_mixture;
+    Antioch::TransportMixture<libMesh::Real> _trans_mixture;
+
+    Antioch::MixtureAveragedTransportMixture<libMesh::Real> _wilke_mixture;
 
     boost::scoped_ptr<Thermo> _thermo;
 
-    boost::scoped_ptr<Viscosity> _viscosity;
+    boost::scoped_ptr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
 
-    boost::scoped_ptr<Conductivity> _conductivity;
+    boost::scoped_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > _conductivity;
 
-    boost::scoped_ptr<Diffusivity> _diffusivity;
+    boost::scoped_ptr<Antioch::MixtureDiffusion<Diffusivity,libMesh::Real> > _diffusivity;
 
     /* Below we will specialize the specialized_build_* functions to the appropriate type.
        This way, we can control how the cached transport objects get constructed
@@ -136,35 +136,36 @@ namespace GRINS
     }
 
     void specialized_build_viscosity( const GetPot& /*input*/,
-                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> > >& viscosity,
-                                      viscosity_type<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> > > )
+                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
     {
-      viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
-      
-      Antioch::read_sutherland_data_ascii_default( *(viscosity.get()) );
+      viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >(_trans_mixture) );
+
+      Antioch::read_sutherland_data_ascii( *(viscosity.get()), Antioch::DefaultFilename::sutherland_data() );
       return;
     }
 
     void specialized_build_viscosity( const GetPot& /*input*/,
-                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > >& viscosity,
-                                      viscosity_type<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > > )
+                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
     {
-      viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >( *(this->_antioch_gas.get()) ) );
+      viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >(_trans_mixture) );
 
-      Antioch::read_blottner_data_ascii_default( *(viscosity.get()) );
+      Antioch::read_blottner_data_ascii( *(viscosity.get()), Antioch::DefaultFilename::blottner_data() );
       return;
     }
 
     void specialized_build_conductivity( const GetPot& /*input*/,
-                                         boost::scoped_ptr<Antioch::EuckenThermalConductivity<Thermo> >& conductivity,
+                                         boost::scoped_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >& conductivity,
                                          conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
     {
-      conductivity.reset( new Antioch::EuckenThermalConductivity<Thermo>( *_thermo.get() ) );
+      conductivity.reset( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(_trans_mixture) );
+      Antioch::build_eucken_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()),*(_thermo.get()));
       return;
     }
 
     void specialized_build_diffusivity( const GetPot& input,
-                                        boost::scoped_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >& diffusivity,
+                                        boost::scoped_ptr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
     {
       if( !input.have_variable( "Physics/Antioch/Le" ) )
@@ -176,9 +177,10 @@ namespace GRINS
         }
        
       const libMesh::Real Le = input( "Physics/Antioch/Le", 0.0 );
-       
-      diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( Le ) );
-       
+
+      diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real>(_trans_mixture) );
+
+      Antioch::build_constant_lewis_diffusivity<libMesh::Real>( *(diffusivity.get()), Le);
       return;
     }
 
@@ -187,28 +189,28 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
   template<typename T, typename V, typename C, typename D>
   inline
-  const Antioch::WilkeMixture<libMesh::Real>& AntiochWilkeTransportMixture<T,V,C,D>::wilke_mixture() const
+  const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& AntiochWilkeTransportMixture<T,V,C,D>::wilke_mixture() const
   {
     return _wilke_mixture;
   }
 
   template<typename T, typename Viscosity, typename C, typename D>
   inline
-  const Viscosity& AntiochWilkeTransportMixture<T,Viscosity,C,D>::viscosity() const
+  const Antioch::MixtureViscosity<Viscosity,libMesh::Real>& AntiochWilkeTransportMixture<T,Viscosity,C,D>::viscosity() const
   {
     return *_viscosity.get();
   }
 
   template<typename T, typename V, typename Conductivity, typename D>
   inline
-  const Conductivity& AntiochWilkeTransportMixture<T,V,Conductivity,D>::conductivity() const
+  const Antioch::MixtureConductivity<Conductivity,libMesh::Real>& AntiochWilkeTransportMixture<T,V,Conductivity,D>::conductivity() const
   {
     return *_conductivity.get();
   }
 
   template<typename T, typename V, typename C, typename Diffusivity>
   inline
-  const Diffusivity& AntiochWilkeTransportMixture<T,V,C,Diffusivity>::diffusivity() const
+  const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& AntiochWilkeTransportMixture<T,V,C,Diffusivity>::diffusivity() const
   {
     return *_diffusivity.get();
   }
