@@ -75,7 +75,7 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
-    _wilke_evaluator->mu_and_k( T, Y, mu, k );
+    //_wilke_evaluator->mu_and_k( T, Y, mu, k );
     return;
   }
 
@@ -90,7 +90,7 @@ namespace GRINS
   libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
                                                              const std::vector<libMesh::Real>& Y )
   {
-    return _wilke_evaluator->k( T, Y );
+    return 0.0;//_wilke_evaluator->k( T, Y );
   }
 
   template<typename Th, typename V, typename C, typename Diff>

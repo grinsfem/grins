@@ -31,6 +31,7 @@
 #include "grins/antioch_wilke_transport_evaluator.h"
 
 // Antioch
+#include "antioch_config.h"
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
 #include "antioch/sutherland_viscosity.h"
@@ -52,5 +53,13 @@ template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodyna
                                                      Antioch::BlottnerViscosity<libMesh::Real>,
                                                      Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+
+#ifdef ANTIOCH_HAVE_GSL
+template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                     Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                     Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>,
+                                                     Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >;
+#endif // ANTIOCH_HAVE_GSL
+
 
 #endif //GRINS_HAVE_ANTIOCH
