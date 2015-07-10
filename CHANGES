@@ -1,4 +1,13 @@
-Version 0.6.0 (In progress)
+Version 0.6.1
+https://github.com/grinsfem/grins/releases/tag/v0.6.1
+   * Updated regression tests for Antioch 0.2.1 critical bugfix
+     in constant Lewis diffusion model
+   * GRINS now requires at least Antioch 0.2.1 (although Antioch
+     is still optional)
+
+Version 0.6.0
+https://github.com/grinsfem/grins/releases/tag/v0.6.0
+ 
    * Refactored SplitString function and renamed split_string.
      String utilities now in StringUtilities namespace.
    * Bugfix for variable index initialization. Now if a variable
