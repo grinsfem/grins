@@ -37,21 +37,12 @@
 // This class
 #include "antioch_wilke_transport_mixture.C"
 
-template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::SutherlandViscosity<libMesh::Real>,
-                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+#include "grins/antioch_instantiation_macro.h"
 
-template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::BlottnerViscosity<libMesh::Real>,
-                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+INSTANTIATE_ANTIOCH_TRANSPORT(AntiochWilkeTransportMixture);
 
 #ifdef ANTIOCH_HAVE_GSL
-template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
-                                                   Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>,
-                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >;
+INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochWilkeTransportMixture);
 #endif // ANTIOCH_HAVE_GSL
 
 
