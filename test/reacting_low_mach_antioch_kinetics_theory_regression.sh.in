@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PROG="@top_builddir@/test/reacting_low_mach_regression"
+
+INPUT="@top_builddir@/test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in @top_srcdir@/test/test_data/reacting_low_mach_antioch_kinetics_theory_regression.xdr"
+
+# A MOAB preconditioner
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_levels 10"
+
+${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 

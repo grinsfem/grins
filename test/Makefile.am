@@ -195,6 +195,8 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catal
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
+TESTS += reacting_low_mach_antioch_kinetics_theory_regression.sh
+
 TESTS += composite_function_unit
 TESTS += 3d_low_mach_jacobians_xy.sh
 TESTS += 3d_low_mach_jacobians_xz.sh
