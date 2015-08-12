@@ -101,7 +101,10 @@ namespace GRINS
                                                        std::vector<libMesh::Real>& D )
   {
     libMesh::Real dummy = 0.0;
-    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, dummy, dummy, D );
+    typename Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType
+      diff_type = Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType::MASS_FLUX_MASS_FRACTION;
+
+    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, dummy, dummy, D, diff_type);
   }
 
   template<typename Th, typename V, typename C, typename Diff>
@@ -112,7 +115,10 @@ namespace GRINS
                                                                     libMesh::Real& mu, libMesh::Real& k,
                                                                     std::vector<libMesh::Real>& D )
   {
-    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
+    typename Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType
+      diff_type = Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType::MASS_FLUX_MASS_FRACTION;
+
+    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, mu, k, D, diff_type );
   }
 
 } // end namespace GRINS
