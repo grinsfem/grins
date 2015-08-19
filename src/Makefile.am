@@ -438,6 +438,10 @@ if GRVY_ENABLED
    libgrins_la_LIBADD += $(GRVY_PREFIX)/lib/libgrvy.la
 endif
 
+if ANTIOCH_ENABLED
+   libgrins_la_LIBADD += $(ANTIOCH_LDFLAGS) $(ANTIOCH_LIBS)
+endif
+
 #------------------------------------
 # Source for stand alone GRINS driver
 #------------------------------------
