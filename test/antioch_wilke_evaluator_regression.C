@@ -114,9 +114,9 @@ int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int test_evaluator( const GetPot& input )
 {
-  GRINS::AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
 
-  GRINS::AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   const libMesh::Real T = 1000;
 

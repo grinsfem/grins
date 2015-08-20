@@ -42,9 +42,9 @@
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )
 {
-  GRINS::AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
 
-  GRINS::AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );

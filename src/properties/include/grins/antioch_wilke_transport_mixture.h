@@ -79,13 +79,13 @@ namespace GRINS
     output to confirm that Antioch was included in the build.
    */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  class AntiochWilkeTransportMixture : public AntiochMixture
+  class AntiochMixtureAveragedTransportMixture : public AntiochMixture
   {
   public:
 
-    AntiochWilkeTransportMixture( const GetPot& input );
+    AntiochMixtureAveragedTransportMixture( const GetPot& input );
 
-    virtual ~AntiochWilkeTransportMixture();
+    virtual ~AntiochMixtureAveragedTransportMixture();
 
     const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& wilke_mixture() const;
 
@@ -129,7 +129,7 @@ namespace GRINS
 
   private:
 
-    AntiochWilkeTransportMixture();
+    AntiochMixtureAveragedTransportMixture();
 
     void specialized_build_thermo( const GetPot& /*input*/,
                                    boost::scoped_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
@@ -232,28 +232,28 @@ namespace GRINS
   /* ------------------------- Inline Functions -------------------------*/
   template<typename T, typename V, typename C, typename D>
   inline
-  const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& AntiochWilkeTransportMixture<T,V,C,D>::wilke_mixture() const
+  const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,C,D>::wilke_mixture() const
   {
     return _wilke_mixture;
   }
 
   template<typename T, typename Viscosity, typename C, typename D>
   inline
-  const Antioch::MixtureViscosity<Viscosity,libMesh::Real>& AntiochWilkeTransportMixture<T,Viscosity,C,D>::viscosity() const
+  const Antioch::MixtureViscosity<Viscosity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,Viscosity,C,D>::viscosity() const
   {
     return *_viscosity.get();
   }
 
   template<typename T, typename V, typename Conductivity, typename D>
   inline
-  const Antioch::MixtureConductivity<Conductivity,libMesh::Real>& AntiochWilkeTransportMixture<T,V,Conductivity,D>::conductivity() const
+  const Antioch::MixtureConductivity<Conductivity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,Conductivity,D>::conductivity() const
   {
     return *_conductivity.get();
   }
 
   template<typename T, typename V, typename C, typename Diffusivity>
   inline
-  const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& AntiochWilkeTransportMixture<T,V,C,Diffusivity>::diffusivity() const
+  const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,C,Diffusivity>::diffusivity() const
   {
     return *_diffusivity.get();
   }

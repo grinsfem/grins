@@ -39,10 +39,10 @@
 
 #include "grins/antioch_instantiation_macro.h"
 
-INSTANTIATE_ANTIOCH_TRANSPORT(AntiochWilkeTransportMixture);
+INSTANTIATE_ANTIOCH_TRANSPORT(AntiochMixtureAveragedTransportMixture);
 
 #ifdef ANTIOCH_HAVE_GSL
-INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochWilkeTransportMixture);
+INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochMixtureAveragedTransportMixture);
 #endif // ANTIOCH_HAVE_GSL
 
 

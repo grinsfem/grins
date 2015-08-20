@@ -36,7 +36,7 @@
 namespace GRINS
 {
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
+  AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
     : AntiochEvaluator<Thermo>( mixture ),
     _wilke_evaluator( new Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real>( mixture.wilke_mixture(), mixture.diffusivity(), mixture.viscosity(), mixture.conductivity() ) ),
     _diffusivity( mixture.diffusivity() )
@@ -45,13 +45,13 @@ namespace GRINS
   }
 
   template<typename T, typename V, typename C, typename D>
-  AntiochWilkeTransportEvaluator<T,V,C,D>::~AntiochWilkeTransportEvaluator()
+  AntiochMixtureAveragedTransportEvaluator<T,V,C,D>::~AntiochMixtureAveragedTransportEvaluator()
   {
     return;
   }
 
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::mu( const CachedValues& cache, unsigned int qp )
+  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const CachedValues& cache, unsigned int qp )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -60,7 +60,7 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::k( const CachedValues& cache, unsigned int qp )
+  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const CachedValues& cache, unsigned int qp )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -69,8 +69,8 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename D>
-  void AntiochWilkeTransportEvaluator<Th,V,C,D>::mu_and_k( const CachedValues& cache, unsigned int qp,
-                                                           libMesh::Real& mu, libMesh::Real& k ) 
+  void AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu_and_k( const CachedValues& cache, unsigned int qp,
+                                                                     libMesh::Real& mu, libMesh::Real& k )
   {
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
@@ -80,25 +80,25 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
-                                                              const std::vector<libMesh::Real>& Y )
+  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
+                                                                        const std::vector<libMesh::Real>& Y )
   {
     return _wilke_evaluator->mu( T, Y );
   }
-  
+
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochWilkeTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
-                                                             const std::vector<libMesh::Real>& Y )
+  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
+                                                                       const std::vector<libMesh::Real>& Y )
   {
     return 0.0;//_wilke_evaluator->k( T, Y );
   }
 
   template<typename Th, typename V, typename C, typename Diff>
-  void AntiochWilkeTransportEvaluator<Th,V,C,Diff>::D( const libMesh::Real T,
-                                                       const libMesh::Real rho,
-                                                       const libMesh::Real cp,
-                                                       const std::vector<libMesh::Real>& Y,
-                                                       std::vector<libMesh::Real>& D )
+  void AntiochMixtureAveragedTransportEvaluator<Th,V,C,Diff>::D( const libMesh::Real T,
+                                                                 const libMesh::Real rho,
+                                                                 const libMesh::Real cp,
+                                                                 const std::vector<libMesh::Real>& Y,
+                                                                 std::vector<libMesh::Real>& D )
   {
     libMesh::Real dummy = 0.0;
     typename Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType
@@ -108,12 +108,12 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename Diff>
-  void AntiochWilkeTransportEvaluator<Th,V,C,Diff>::mu_and_k_and_D( const libMesh::Real T,
-                                                                    const libMesh::Real rho,
-                                                                    const libMesh::Real cp,
-                                                                    const std::vector<libMesh::Real>& Y,
-                                                                    libMesh::Real& mu, libMesh::Real& k,
-                                                                    std::vector<libMesh::Real>& D )
+  void AntiochMixtureAveragedTransportEvaluator<Th,V,C,Diff>::mu_and_k_and_D( const libMesh::Real T,
+                                                                              const libMesh::Real rho,
+                                                                              const libMesh::Real cp,
+                                                                              const std::vector<libMesh::Real>& Y,
+                                                                              libMesh::Real& mu, libMesh::Real& k,
+                                                                              std::vector<libMesh::Real>& D )
   {
     typename Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType
       diff_type = Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType::MASS_FLUX_MASS_FRACTION;

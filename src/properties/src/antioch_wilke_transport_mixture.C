@@ -36,7 +36,7 @@
 namespace GRINS
 {
   template<typename T, typename V, typename C, typename D>
-  AntiochWilkeTransportMixture<T,V,C,D>::AntiochWilkeTransportMixture( const GetPot& input )
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input )
     : AntiochMixture(input),
       _trans_mixture( *(_antioch_gas.get()) ),
       _wilke_mixture(_trans_mixture),
@@ -57,7 +57,7 @@ namespace GRINS
   }
 
   template<typename T, typename V, typename C, typename D>
-  AntiochWilkeTransportMixture<T,V,C,D>::~AntiochWilkeTransportMixture()
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::~AntiochMixtureAveragedTransportMixture()
   {
     return;
   }

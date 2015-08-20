@@ -51,14 +51,14 @@ namespace GRINS
     output to confirm that Antioch was included in the build.
    */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  class AntiochWilkeTransportEvaluator : public AntiochEvaluator<Thermo>
+  class AntiochMixtureAveragedTransportEvaluator : public AntiochEvaluator<Thermo>
   {
   public:
-    
-    AntiochWilkeTransportEvaluator( const AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
 
-    virtual ~AntiochWilkeTransportEvaluator();
-    
+    AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
+
+    virtual ~AntiochMixtureAveragedTransportEvaluator();
+
     libMesh::Real mu( const CachedValues& cache, unsigned int qp );
 
     libMesh::Real k( const CachedValues& cache, unsigned int qp );
@@ -94,7 +94,7 @@ namespace GRINS
 
   private:
 
-    AntiochWilkeTransportEvaluator();
+    AntiochMixtureAveragedTransportEvaluator();
 
   };
 
