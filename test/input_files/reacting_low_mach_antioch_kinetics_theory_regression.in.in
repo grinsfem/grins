@@ -10,7 +10,7 @@ chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
 [../Antioch]
 
-mixing_model = 'mixture_averaged'
+transport_model = 'mixture_averaged'
 viscosity_model = 'kinetics_theory'
 conductivity_model = 'kinetics_theory'
 diffusivity_model = 'kinetics_theory'
