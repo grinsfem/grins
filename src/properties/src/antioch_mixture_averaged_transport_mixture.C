@@ -27,30 +27,41 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_wilke_transport_evaluator.h"
-
-// Antioch
-#include "antioch_config.h"
-#include "antioch/vector_utils_decl.h"
-#include "antioch/vector_utils.h"
-#include "antioch/sutherland_viscosity.h"
-#include "antioch/blottner_viscosity.h"
-#include "antioch/sutherland_parsing.h"
-#include "antioch/blottner_parsing.h"
-#include "antioch/eucken_thermal_conductivity.h"
-#include "antioch/constant_lewis_diffusivity.h"
-
 // This class
-#include "antioch_wilke_transport_evaluator.C"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
 
-#include "grins/antioch_instantiation_macro.h"
+// libMesh
+#include "libmesh/getpot.h"
 
-INSTANTIATE_ANTIOCH_TRANSPORT(AntiochMixtureAveragedTransportEvaluator);
+namespace GRINS
+{
+  template<typename T, typename V, typename C, typename D>
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input )
+    : AntiochMixture(input),
+      _trans_mixture( *(_antioch_gas.get()) ),
+      _wilke_mixture(_trans_mixture),
+      _thermo(NULL),
+      _viscosity(NULL),
+      _conductivity(NULL),
+      _diffusivity(NULL)
+  {
+    this->build_thermo( input );
 
-#ifdef ANTIOCH_HAVE_GSL
-INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochMixtureAveragedTransportEvaluator);
-#endif // ANTIOCH_HAVE_GSL
+    this->build_viscosity( input );
 
+    this->build_conductivity( input );
 
-#endif //GRINS_HAVE_ANTIOCH
+    this->build_diffusivity( input );
+
+    return;
+  }
+
+  template<typename T, typename V, typename C, typename D>
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::~AntiochMixtureAveragedTransportMixture()
+  {
+    return;
+  }
+
+} // end namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH

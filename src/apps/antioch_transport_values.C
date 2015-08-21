@@ -37,7 +37,7 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )

@@ -28,7 +28,7 @@
 #ifdef GRINS_HAVE_ANTIOCH
 
 // This class
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 
 // GRINS
 #include "grins/cached_values.h"

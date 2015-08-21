@@ -82,7 +82,7 @@
 #include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
 
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
 

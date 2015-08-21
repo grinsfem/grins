@@ -22,46 +22,28 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// GRINS
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
+
+// Antioch
+#include "antioch_config.h"
+#include "antioch/vector_utils_decl.h"
+#include "antioch/vector_utils.h"
+
 // This class
-#include "grins/antioch_wilke_transport_mixture.h"
+#include "antioch_mixture_averaged_transport_mixture.C"
 
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/antioch_instantiation_macro.h"
 
-namespace GRINS
-{
-  template<typename T, typename V, typename C, typename D>
-  AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input )
-    : AntiochMixture(input),
-      _trans_mixture( *(_antioch_gas.get()) ),
-      _wilke_mixture(_trans_mixture),
-      _thermo(NULL),
-      _viscosity(NULL),
-      _conductivity(NULL),
-      _diffusivity(NULL)
-  {
-    this->build_thermo( input );
+INSTANTIATE_ANTIOCH_TRANSPORT(AntiochMixtureAveragedTransportMixture);
 
-    this->build_viscosity( input );
+#ifdef ANTIOCH_HAVE_GSL
+INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochMixtureAveragedTransportMixture);
+#endif // ANTIOCH_HAVE_GSL
 
-    this->build_conductivity( input );
 
-    this->build_diffusivity( input );
-
-    return;
-  }
-
-  template<typename T, typename V, typename C, typename D>
-  AntiochMixtureAveragedTransportMixture<T,V,C,D>::~AntiochMixtureAveragedTransportMixture()
-  {
-    return;
-  }
-
-} // end namespace GRINS
-
-#endif // GRINS_HAVE_ANTIOCH
+#endif //GRINS_HAVE_ANTIOCH

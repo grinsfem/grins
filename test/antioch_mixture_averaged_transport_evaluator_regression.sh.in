@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="@top_builddir@/test/antioch_wilke_evaluator_regression"
+PROG="@top_builddir@/test/antioch_mixture_averaged_transport_evaluator_regression"
 
 INPUT="@top_builddir@/test/input_files/antioch.in"
 

@@ -32,7 +32,7 @@
 
 // GRINS
 #include "grins/antioch_evaluator.h"
-#include "grins/antioch_wilke_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"

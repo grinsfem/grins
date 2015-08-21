@@ -77,7 +77,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   class AntiochMixtureAveragedTransportMixture : public AntiochMixture
   {
@@ -138,7 +138,7 @@ namespace GRINS
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
       return;
     }
-    
+
     void specialized_build_thermo( const GetPot& /*input*/,
                                    boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
@@ -206,10 +206,10 @@ namespace GRINS
         {
           std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
                     << std::endl;
-           
+
           libmesh_error();
         }
-       
+
       const libMesh::Real Le = input( "Physics/Antioch/Le", 0.0 );
 
       diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real>(_trans_mixture) );

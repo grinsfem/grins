@@ -33,8 +33,8 @@
 #include <vector>
 
 // GRINS
-#include "grins/antioch_wilke_transport_mixture.h"
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 #include "grins/cached_values.h"
 
 // libMesh
