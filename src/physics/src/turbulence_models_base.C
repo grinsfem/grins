@@ -48,16 +48,16 @@ namespace GRINS
       _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
       _mu(input)
   {
-    return;
+    this->set_parameter(this->_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", this->_rho);
   }
 
   template<class Mu>
   void TurbulenceModelsBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();
-        
-    this->_mu.init(system); 
-   
+
+    this->_mu.init(system);
+
     return;
   }
 
@@ -65,8 +65,18 @@ namespace GRINS
   TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
   {
     return;
-  }  
-     
+  }
+
+  template<class Mu>
+  void TurbulenceModelsBase<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
+  }
+
 } // namespace GRINS
 
 // Instantiate

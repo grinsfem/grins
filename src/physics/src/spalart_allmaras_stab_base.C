@@ -37,7 +37,7 @@ namespace GRINS
 {
 
   template<class Mu>
-  SpalartAllmarasStabilizationBase<Mu>::SpalartAllmarasStabilizationBase( const std::string& physics_name, 
+  SpalartAllmarasStabilizationBase<Mu>::SpalartAllmarasStabilizationBase( const std::string& physics_name,
                                                                                             const GetPot& input )
     : SpalartAllmaras<Mu>(physics_name,input),
       _stab_helper( physics_name+"StabHelper", input )
@@ -56,7 +56,7 @@ namespace GRINS
   {
     // First call base class
     SpalartAllmaras<Mu>::init_context(context);
-      
+
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_turbulence_vars.nu_var())->get_d2phi();
 
@@ -72,6 +72,16 @@ namespace GRINS
     _stab_helper.init(*system);
 
     return;
+  }
+
+   template<class Mu>
+  void SpalartAllmarasStabilizationBase<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    SpalartAllmaras<Mu>::register_parameter(param_name, param_pointer);
+    this->_stab_helper.register_parameter(param_name, param_pointer);
   }
 
 } // namespace GRINS

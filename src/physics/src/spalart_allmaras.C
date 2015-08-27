@@ -50,7 +50,8 @@ namespace GRINS
     _turbulence_vars(input, spalart_allmaras),
     _spalart_allmaras_helper(input),
     _sa_params(input),
-    _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0))
+    _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0)),
+    _infinite_distance(input("Physics/"+spalart_allmaras+"/infinite_distance", false))
   {
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
@@ -223,13 +224,13 @@ namespace GRINS
           U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
         //The source term
-        libMesh::Real S_tilde = this->_sa_params.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp);
+        libMesh::Real S_tilde = this->_sa_params.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp, _infinite_distance);
 
         // The ft2 function needed for the negative S-A model
         libMesh::Real chi = nu/mu_qp;
         libMesh::Real f_t2 = this->_sa_params.get_c_t3()*exp(-this->_sa_params.get_c_t4()*chi*chi);
 
-        libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
+        libMesh::Real source_term = this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
@@ -237,17 +238,26 @@ namespace GRINS
           }
 
         // The wall destruction term
-        libMesh::Real fw = this->_sa_params.destruction_fn(nu, (*distance_qp)(qp), S_tilde);
+        libMesh::Real fw = this->_sa_params.destruction_fn(nu, (*distance_qp)(qp), S_tilde, _infinite_distance);
 
-        libMesh::Real nud = nu/(*distance_qp)(qp);
+	libMesh::Real nud = 0.0;
+	if(_infinite_distance)
+	{
+	  nud = 0.0;
+	}
+	else
+	{
+	  nud = nu/(*distance_qp)(qp);
+	}
         libMesh::Real nud2 = nud*nud;
         libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
-        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
+	libMesh::Real cw1 = this->_sa_params.get_cb1()/kappa2 + (1.0 + this->_sa_params.get_cb2())/this->_sa_params.get_sigma();
+        libMesh::Real destruction_term = (cw1*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
-            destruction_term = -this->_sa_params.get_cw1()*nud2;
+            destruction_term = -cw1*nud2;
           }
 
         libMesh::Real fn1 = 1.0;
@@ -341,6 +351,17 @@ namespace GRINS
 #endif
 
     return;
+  }
+
+  template<class Mu>
+  void SpalartAllmaras<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    this->_mu.register_parameter(param_name, param_pointer);
+    this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
 } // namespace GRINS

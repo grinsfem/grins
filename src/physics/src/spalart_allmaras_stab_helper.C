@@ -37,14 +37,23 @@ namespace GRINS
   SpalartAllmarasStabilizationHelper::SpalartAllmarasStabilizationHelper(const std::string& helper_name,
                                                                          const GetPot& input)
     : StabilizationHelper(helper_name),
-      _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1 ) ) ),
+      _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1.0 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(input),
       _turbulence_vars(input),
       _spalart_allmaras_helper(input),
       _sa_params(input)
   {
-    return;
+    this->set_parameter(this->_C ,input, "Stabilization/tau_constant_vel" , this->_C );
+    this->set_parameter(this->_tau_factor ,input, "Stabilization/tau_factor_sa", this->_tau_factor );
+  }
+
+  void SpalartAllmarasStabilizationHelper::register_parameter
+  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
+  const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
   SpalartAllmarasStabilizationHelper::~SpalartAllmarasStabilizationHelper()
@@ -66,7 +75,7 @@ namespace GRINS
   }
 
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
-                                                                                unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp ) const
+                                                                                unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp, const bool infinite_distance) const
   {
     // The flow velocity
     libMesh::Number u,v;
@@ -94,12 +103,23 @@ namespace GRINS
 
     // The source term
     libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
-    libMesh::Real S_tilde = this->_sa_params.source_fn(nu_value, mu, distance_qp, vorticity_value_qp);
+    libMesh::Real S_tilde = this->_sa_params.source_fn(nu_value, mu, distance_qp, vorticity_value_qp, infinite_distance);
     libMesh::Real source_term = this->_sa_params.get_cb1()*S_tilde*nu_value;
 
+    libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
+    libMesh::Real cw1 = this->_sa_params.get_cb1()/kappa2 + (1.0 + this->_sa_params.get_cb2())/this->_sa_params.get_sigma();
+
     // The destruction term
-    libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde);
-    libMesh::Real destruction_term =  this->_sa_params.get_cw1()*fw*pow(nu_value/distance_qp, 2.);
+    libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde, infinite_distance);
+    libMesh::Real destruction_term = 0.0;
+    if(infinite_distance)
+    {
+      destruction_term = 0.0;
+    }
+    else
+    {
+     destruction_term =  cw1*fw*pow(nu_value/distance_qp, 2.);
+    }
 
     return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }

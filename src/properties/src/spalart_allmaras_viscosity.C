@@ -45,6 +45,17 @@ namespace GRINS
   }
 
   template<class Mu>
+  void SpalartAllmarasViscosity<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    this->_mu.register_parameter(param_name, param_pointer);
+    this->_sa_params.register_parameter(param_name, param_pointer);
+  }
+
+  template<class Mu>
   void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
   {
     this->_turbulence_vars.init(system);

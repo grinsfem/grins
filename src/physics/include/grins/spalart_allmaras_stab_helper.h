@@ -32,6 +32,7 @@
 #include "grins/turbulence_variables.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"
+#include "grins/parameter_user.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -99,7 +100,8 @@ namespace GRINS
                                               unsigned int qp,
                                               const libMesh::Real rho,
                                               const libMesh::Real mu,
-                                              const libMesh::Real distance_qp) const;
+                                              const libMesh::Real distance_qp,
+					      const bool infinite_distance) const;
 
     void compute_res_spalart_steady_and_derivs( AssemblyContext& context,
                                                 unsigned int qp,
@@ -122,6 +124,13 @@ namespace GRINS
                                                    libMesh::RealGradient &res_M,
                                                    libMesh::Real &d_res_Muvw_duvw
                                                    ) const;
+
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
 
   protected:
 

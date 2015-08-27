@@ -69,7 +69,7 @@ bc_types = 'no_slip prescribed_vel general_velocity general_velocity'
 bound_vel_3 = '0.0 2.0 0.0'
 
 pin_pressure = true 
-pin_value = 100.0
+pin_value = 1.0
 pin_location = '1.5 0.5'
 
 [../VariableNames]
