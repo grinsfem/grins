@@ -49,6 +49,11 @@ GRINS uses an Autotools build system, so typical GNU build commands are used.
 4. make check (note parallel-tests are supported)
 5. make install
 
+LD_LIBRARY_PATH
+---------------
+
+If you've compiled libMesh with PETSc or other external libraries and have compiled GRINS with Antioch, Cantera, or other external libraries, you will need to add them to your LD_LIBRARY_PATH as we do not use -rpath when linking to the libraries.
+
 METHOD
 ------
 
