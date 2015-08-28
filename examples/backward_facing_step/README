@@ -1,0 +1,3 @@
+The DEFAULT_SOLVER_OPTIONS are set for a serial run with PETSc.
+If using more than one processor, set GRINS_SOLVER_OPTIONS to
+more appropriate solver options.
