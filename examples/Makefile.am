@@ -44,6 +44,16 @@ backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
 EXTRA_DIST += $(backwardfacingstep_DATA)
 
 #=======================================================================
+# SA Airfoil
+#=======================================================================
+saairfoildir = $(prefix)/examples/sa_airfoil
+saairfoil_SCRIPTS = $(top_builddir)/examples/sa_airfoil/run.sh
+saairfoil_DATA  = $(top_srcdir)/examples/sa_airfoil/sa_airfoil.in
+saairfoil_DATA += $(top_srcdir)/examples/sa_airfoil/naca_0012_medium_boundary_id.xda
+
+EXTRA_DIST += $(saairfoil_DATA)
+
+#=======================================================================
 # Cavity Benchmark
 #=======================================================================
 cavitybenchmarkdir = $(prefix)/examples/cavity_benchmark
