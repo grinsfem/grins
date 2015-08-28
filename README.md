@@ -67,3 +67,8 @@ their own CXXFLAGS variable by passing
 </code>
 </pre>
 to configure.
+
+Examples
+========
+
+Upon running `make install`, there are several examples in the `/path/to/install/examples` directory. Each example can be run with the local `ruh.sh` script. You may set the environment variable `GRINS_RUN` to run with more than one processor, e.g. `export GRINS_DIR="mpiexec -np 4`. Additionally, you can set the environment variable `GRINS_SOLVER_OPTIONS` to pass solver options, e.g. to use MUMPS through PETSc (if you built libMesh with PETSc and built PETSc with MUMPS), `export GRINS_SOLVER_OPTIONS="-ksp_type preonly -pc_type lu -pc_factor_mat_solver_package mumps"`.
