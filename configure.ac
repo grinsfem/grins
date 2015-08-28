@@ -379,7 +379,7 @@ AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_antioch.sh,            [chmod
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
-AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
+AC_CONFIG_FILES(test/antioch_mixture_averaged_transport_evaluator_regression.sh,               [chmod +x test/antioch_mixture_averaged_transport_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
@@ -434,6 +434,9 @@ AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace
 
 AC_CONFIG_FILES(test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_kinetics_theory_regression.sh, [chmod +x test/reacting_low_mach_antioch_kinetics_theory_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

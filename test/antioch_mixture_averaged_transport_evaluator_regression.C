@@ -33,8 +33,8 @@
 #include <vector>
 
 // GRINS
-#include "grins/antioch_wilke_transport_mixture.h"
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 #include "grins/cached_values.h"
 
 // libMesh
@@ -71,7 +71,7 @@ template<typename Thermo, typename Viscosity, typename Conductivity, typename Di
 int test_D( const std::vector<libMesh::Real>& D );
 
 template<>
-int test_mu<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> > >( const libMesh::Real mu )
+int test_mu<Antioch::BlottnerViscosity<libMesh::Real> >( const libMesh::Real mu )
 {
   double mu_reg = 4.5123309407810213e-05;
 
@@ -89,7 +89,7 @@ int test_k<Antioch::StatMechThermodynamics<libMesh::Real>,
 
 template<>
 int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
-           Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+           Antioch::BlottnerViscosity<libMesh::Real>,
            Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
            Antioch::ConstantLewisDiffusivity<libMesh::Real> >( const std::vector<libMesh::Real>& D )
 {
@@ -114,9 +114,9 @@ int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int test_evaluator( const GetPot& input )
 {
-  GRINS::AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
 
-  GRINS::AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   const libMesh::Real T = 1000;
 
@@ -126,32 +126,11 @@ int test_evaluator( const GetPot& input )
 
   std::vector<libMesh::Real> Y(n_species,0.2);
 
-  GRINS::CachedValues cache;
-
-  cache.add_quantity(GRINS::Cache::TEMPERATURE);
-  std::vector<double> Tqp(1,T);
-  cache.set_values(GRINS::Cache::TEMPERATURE, Tqp);
-
-  cache.add_quantity(GRINS::Cache::MIXTURE_DENSITY);
-  std::vector<double> rhoqp(1,rho);
-  cache.set_values(GRINS::Cache::MIXTURE_DENSITY, rhoqp);
-
-  cache.add_quantity(GRINS::Cache::MASS_FRACTIONS);
-  std::vector<std::vector<double> > Yqp(1,Y);
-  cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
-
-  libMesh::Real mu = evaluator.mu( cache, 0 );
-
-  libMesh::Real k = evaluator.k( cache, 0 );
-
-  libMesh::Real mu2 = 0.0;
-  libMesh::Real k2 = 0.0;
-
-  evaluator.mu_and_k( cache, 0, mu2, k2 );
-
+  libMesh::Real mu = 0.0;
+  libMesh::Real k = 0.0;
   std::vector<libMesh::Real> D(n_species,0.0);
 
-  evaluator.D( cache, 0, D );
+  evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,Y), Y, mu, k, D );
 
   std::cout << std::scientific << std::setprecision(16)
             << "mu = " << mu << std::endl;
@@ -173,12 +152,6 @@ int test_evaluator( const GetPot& input )
   if( return_flag_temp != 0 ) return_flag = 1;
 
   return_flag_temp = test_k<Thermo,Conductivity>( k );
-  if( return_flag_temp != 0 ) return_flag = 1;
-
-  return_flag_temp = test_mu<Viscosity>( mu2 );
-  if( return_flag_temp != 0 ) return_flag = 1;
-
-  return_flag_temp = test_k<Thermo,Conductivity>( k2 );
   if( return_flag_temp != 0 ) return_flag = 1;
 
   return_flag_temp = test_D<Thermo,Viscosity,Conductivity,Diffusivity>( D );
@@ -204,7 +177,7 @@ int main( int argc, char* argv[] )
 
   std::cout << std::endl <<  "Running StatMesh, Blottner, Eucken, Constant Lewis regression test." << std::endl;
   return_flag = test_evaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-    Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+    Antioch::BlottnerViscosity<libMesh::Real>,
     Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
     Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
 

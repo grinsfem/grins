@@ -22,28 +22,35 @@
 //
 //-----------------------------------------------------------------------el-
 
+
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
 // GRINS
-#include "grins/antioch_wilke_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 
 // Antioch
+#include "antioch_config.h"
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
+#include "antioch/sutherland_viscosity.h"
+#include "antioch/blottner_viscosity.h"
+#include "antioch/sutherland_parsing.h"
+#include "antioch/blottner_parsing.h"
+#include "antioch/eucken_thermal_conductivity.h"
+#include "antioch/constant_lewis_diffusivity.h"
 
 // This class
-#include "antioch_wilke_transport_mixture.C"
+#include "antioch_mixture_averaged_transport_evaluator.C"
 
-template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
-                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+#include "grins/antioch_instantiation_macro.h"
 
-template class GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
-                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+INSTANTIATE_ANTIOCH_TRANSPORT(AntiochMixtureAveragedTransportEvaluator);
+
+#ifdef ANTIOCH_HAVE_GSL
+INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochMixtureAveragedTransportEvaluator);
+#endif // ANTIOCH_HAVE_GSL
+
 
 #endif //GRINS_HAVE_ANTIOCH
