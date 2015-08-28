@@ -40,6 +40,7 @@ backwardfacingstepdir = $(prefix)/examples/backward_facing_step
 backwardfacingstep_SCRIPTS = $(top_builddir)/examples/backward_facing_step/run.sh
 backwardfacingstep_DATA  = $(top_srcdir)/examples/backward_facing_step/backward_facing_step.in
 backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/mesh.e
+backwardfacingstep_DATA += $(top_srcdir)/examples/backward_facing_step/README
 
 EXTRA_DIST += $(backwardfacingstep_DATA)
 
