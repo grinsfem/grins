@@ -100,7 +100,8 @@ namespace GRINS
                                               unsigned int qp,
                                               const libMesh::Real rho,
                                               const libMesh::Real mu,
-                                              const libMesh::Real distance_qp) const;
+                                              const libMesh::Real distance_qp,
+					      const bool infinite_distance) const;
 
     void compute_res_spalart_steady_and_derivs( AssemblyContext& context,
                                                 unsigned int qp,
