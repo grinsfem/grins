@@ -1,0 +1,6 @@
+#!/bin/sh
+LIBMESH_OPTIONS="-pc_type asm -pc_asm_overlap 8 -sub_pc_factor_mat_ordering_type 1wd -sub_pc_type ilu -sub_pc_factor_levels 6"
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/sa_airfoil/sa_airfoil.in $GRINS_SOLVER_OPTIONS
