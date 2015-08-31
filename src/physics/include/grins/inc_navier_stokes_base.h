@@ -72,6 +72,9 @@ namespace GRINS
         libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
     const;
 
+    // A getter function for the Viscosity object
+    libMesh::Real get_viscosity_value(AssemblyContext& context, unsigned int qp) const;
+
   protected:
 
     //! Physical dimension of problem
@@ -86,7 +89,7 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
- 
+
   private:
     IncompressibleNavierStokesBase();
 
