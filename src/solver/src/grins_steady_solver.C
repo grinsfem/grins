@@ -35,7 +35,7 @@
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
-
+#include "libmesh/linear_solver.h"
 
 namespace GRINS
 {
@@ -93,7 +93,19 @@ namespace GRINS
           }
 
     if( context.do_adjoint_solve )
-      this->steady_adjoint_solve(context);
+      {
+	// Get the linear solver
+	libMesh::LinearSolver<libMesh::Number> *linear_solver = context.system->get_linear_solver();
+
+	// Set ourselves to reuse the preconditioner
+	linear_solver->reuse_preconditioner(true);
+
+	// Solve the adjoint problem
+	this->steady_adjoint_solve(context);
+
+	// Go back to not reusing the preconditioner
+	linear_solver->reuse_preconditioner(false);
+      }
 
     if( context.output_adjoint )
       context.vis->output_adjoint( context.equation_system, context.system );
@@ -115,8 +127,17 @@ namespace GRINS
      const libMesh::ParameterVector& parameters_in,
      libMesh::SensitivityData&       sensitivities) const
   {
+    // Get the linear solver
+    libMesh::LinearSolver<libMesh::Number> *linear_solver = context.system->get_linear_solver();
+
+    // Set ourselves to reuse the preconditioner
+    linear_solver->reuse_preconditioner(true);
+
     context.system->adjoint_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);
+
+    // Go back to not reusing the preconditioner
+    linear_solver->reuse_preconditioner(false);
   }
 
   void SteadySolver::forward_qoi_parameter_sensitivity
