@@ -47,11 +47,11 @@ namespace GRINS
 
     // The source function \f$ \tilde{S} \f$
     libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
-                             libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
+                             libMesh::Real wall_distance, libMesh::Real vorticity_value, bool infinite_distance) const;
 
     // The destruction function \f$ f_w(\nu) \f$
     libMesh::Real destruction_fn( libMesh::Number nu, libMesh::Real wall_distance,
-                                  libMesh::Real S_tilde) const;
+                                  libMesh::Real S_tilde, bool infinite_distance) const;
 
     //! Helper function
     /*! This expression appears in a couple of places so we provide a function for it*/
