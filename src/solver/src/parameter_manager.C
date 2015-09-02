@@ -40,7 +40,7 @@
 namespace GRINS
 {
   void ParameterManager::initialize
-    ( const GetPot& input, 
+    ( const GetPot& input,
       const std::string & parameters_varname,
       MultiphysicsSystem & system,
       CompositeQoI * qoi)

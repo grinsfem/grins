@@ -35,22 +35,36 @@
 namespace GRINS
 {
   SpalartAllmarasParameters::SpalartAllmarasParameters(const GetPot& input )
-    : _kappa(input("Physics/"+spalart_allmaras+"/Parameters/kappa",0.41)),
+    : ParameterUser("SpalartAllmarasParameters"),
+      _kappa(input("Physics/"+spalart_allmaras+"/Parameters/kappa",0.41)),
       _cv1(input("Physics/"+spalart_allmaras+"/Parameters/cv1",7.1)),
       _cv2(input("Physics/"+spalart_allmaras+"/Parameters/cv2",0.7)),
       _cv3(input("Physics/"+spalart_allmaras+"/Parameters/cv3",0.9)),
       _cb1(input("Physics/"+spalart_allmaras+"/Parameters/cb1",0.1355)),
       _sigma(input("Physics/"+spalart_allmaras+"/Parameters/sigma",2./3.)),
       _cb2(input("Physics/"+spalart_allmaras+"/Parameters/cb2",0.622)),
-      _cw1( _cb1/(_kappa*_kappa) + (1.0+_cb2)/_sigma ),
+      //_cw1( _cb1/(_kappa*_kappa) + (1.0+_cb2)/_sigma ),
       _r_lin(input("Physics/"+spalart_allmaras+"/Parameters/r_lin",10.0)),
       _c_w2(input("Physics/"+spalart_allmaras+"/Parameters/c_w2",0.3)),
       _c_w3(input("Physics/"+spalart_allmaras+"/Parameters/c_w3",2.0)),
       _c_t3(input("Physics/"+spalart_allmaras+"/Parameters/c_t3",1.2)),
       _c_t4(input("Physics/"+spalart_allmaras+"/Parameters/c_t4",0.5)),
       _c_n1(input("Physics/"+spalart_allmaras+"/Parameters/c_n1",16.0))
-  {}
-
+  {
+    this->set_parameter(this->_kappa ,input, "Physics/"+spalart_allmaras+"/Parameters/kappa" , this->_kappa );
+    this->set_parameter(this->_cv1 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv1", this->_cv1 );
+    this->set_parameter(this->_cv2 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv2", this->_cv2 );
+    this->set_parameter(this->_cv3 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv3", this->_cv3 );
+    this->set_parameter(this->_cb1 ,input, "Physics/"+spalart_allmaras+"/Parameters/cb1", this->_cb1 );
+    this->set_parameter(this->_sigma ,input, "Physics/"+spalart_allmaras+"/Parameters/sigma", this->_sigma );
+    this->set_parameter(this->_cb2 ,input, "Physics/"+spalart_allmaras+"/Parameters/cb2" , this->_cb2 );
+    this->set_parameter(this->_r_lin ,input, "Physics/"+spalart_allmaras+"/Parameters/r_lin", this->_r_lin );
+    this->set_parameter(this->_c_w2 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_w2", this->_c_w2 );
+    this->set_parameter(this->_c_w3 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_w3", this->_c_w3 );
+    this->set_parameter(this->_c_t3 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_t3", this->_c_t3 );
+    this->set_parameter(this->_c_t4 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_t4", this->_c_t4 );
+    this->set_parameter(this->_c_n1 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_n1", this->_c_n1 );
+  }
 
   libMesh::Real SpalartAllmarasParameters::source_fn(libMesh::Number nu, libMesh::Real mu,
                                                      libMesh::Real wall_distance, libMesh::Real vorticity_value) const
