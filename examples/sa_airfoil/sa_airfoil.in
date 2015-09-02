@@ -1,0 +1,127 @@
+# Mesh related options
+[Mesh]
+   [./Read]
+      filename = 'naca_0012_medium_boundary_id.xda'
+[]
+
+[restart-options]
+   # Use the coarser mesh to give us a good initial guess for the solution
+   restart_file = '/workspace/vikram/grins_libmesh_master_opt/examples/sa_airfoil/AoA_0/turbulent_airfoil_Re_6000000.xda'
+
+[]
+
+# Options for time solvers
+[unsteady-solver]
+transient = false
+#theta = '0.5'
+#n_timesteps = '10'
+#deltat = '0.5'
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 50
+max_linear_iterations = 10000
+
+relative_step_tolerance = 1e-6
+
+#verify_analytic_jacobians = 1.e-6
+use_numerical_jacobians_only = 'true'
+
+do_adjoint_solve = 'true'
+[]
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+output_adjoint = 'true'
+#output_solution_sensitivities = true
+vis_output_file_prefix = 'turbulent_airfoil_Re_6000000_adjoint_sens'
+output_format = 'ExodusII xda'
+
+[Materials]
+
+[./Viscosity]
+
+mu = '0.000000167' # mu = 1/Re, really nu the kinematic viscosity
+
+[]
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+echo_physics = 'true'
+echo_qoi = 'true' # which QoIs activated
+print_qoi = 'true' # print numerical values of QoIs
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
+
+# Options for Incompressible Navier-Stokes physics
+[./IncompressibleNavierStokes]
+
+FE_family = LAGRANGE
+V_order = FIRST
+P_order = FIRST
+
+viscosity_model = 'spalartallmaras'
+#viscosity_model = 'constant'
+rho = 1.0
+
+bc_ids = '0 2'
+bc_types = 'no_slip prescribed_vel'
+
+bound_vel_2 = '1.0 0.0 0.0'
+
+#ic_ids = '0'
+#ic_types = 'parsed'
+#ic_variables = 'u'
+#ic_values = '0.0'
+
+pin_pressure = true
+pin_value = 1.0
+pin_location = '0.0 5.0'
+
+[../VariableNames]
+
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+turbulent_viscosity = 'nu'
+
+# Options for Spalart Allmaras physics
+[../SpalartAllmaras]
+
+TU_order = FIRST
+
+bc_ids = '0 2'
+bc_types = 'constant_dirichlet constant_dirichlet'
+bc_variables = 'nu nu'
+bc_values = '0.0 0.000000333'
+no_of_walls = 1
+wall_ids = '0'
+
+#ic_ids = '0'
+#ic_types = 'parsed'
+#ic_variables = 'nu'
+#ic_values = '2.0'
+
+# Options for adaptivity
+[QoI]
+enabled_qois = 'parsed_interior'
+
+# Sensitivity analysis
+#adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+#forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+
+[./ParsedInterior]
+qoi_functional = 'u * (x > 1.2) * (x < 2.2) * (y > -1.0) * (y < 1.0) '
+
+[]

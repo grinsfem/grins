@@ -64,6 +64,15 @@ namespace GRINS
   }
 
   template<class Mu>
+  void SpalartAllmarasSPGSMStabilization<Mu>::register_parameter
+  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
+  const
+  {
+    // Register base class parameters
+    SpalartAllmarasStabilizationBase<Mu>::register_parameter(param_name, param_pointer);
+  }
+
+  template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                        AssemblyContext& context,
                                                                        CachedValues& /*cache*/ )
@@ -136,7 +145,7 @@ namespace GRINS
 
         libMesh::Real tau_spalart = this->_stab_helper.compute_tau_spalart( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
 
-        libMesh::Number RM_spalart = this->_stab_helper.compute_res_spalart_steady( context, qp, this->_rho, _mu_qp, (*distance_qp)(qp) );
+        libMesh::Number RM_spalart = this->_stab_helper.compute_res_spalart_steady( context, qp, this->_rho, _mu_qp, (*distance_qp)(qp), this->_infinite_distance );
 
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {

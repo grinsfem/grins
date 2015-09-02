@@ -38,7 +38,7 @@ namespace GRINS
 
   //! Physics class for Turbulence Models
   /*!
-    This physics class implements the various turbulence models that can be used alongside 
+    This physics class implements the various turbulence models that can be used alongside
     NS to model turbulent flows.
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
@@ -54,20 +54,27 @@ namespace GRINS
     virtual void init_variables( libMesh::FEMSystem* system );
 
     ~TurbulenceModelsBase();
-       
+
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
-    
+
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
 
     //! Viscosity object
     Viscosity _mu;
-        
+
   private:
     TurbulenceModelsBase();
 
