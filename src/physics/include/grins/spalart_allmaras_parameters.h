@@ -25,6 +25,9 @@
 #ifndef GRINS_SPALART_ALLMARAS_PARAMETERS_H
 #define GRINS_SPALART_ALLMARAS_PARAMETERS_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh.h"
 class GetPot;
@@ -34,7 +37,7 @@ namespace GRINS
   //! Encapsulate Spalart-Allmaras model parameters
   /*! This is mostly a container class, but there are a few helper functions
       here that are used in different places in SpalartAllmaras classes. */
-  class SpalartAllmarasParameters
+  class SpalartAllmarasParameters : public ParameterUser
   {
   public:
 
@@ -44,11 +47,11 @@ namespace GRINS
 
     // The source function \f$ \tilde{S} \f$
     libMesh::Real source_fn( libMesh::Number nu, libMesh::Real mu,
-                             libMesh::Real wall_distance, libMesh::Real vorticity_value) const;
+                             libMesh::Real wall_distance, libMesh::Real vorticity_value, bool infinite_distance) const;
 
     // The destruction function \f$ f_w(\nu) \f$
     libMesh::Real destruction_fn( libMesh::Number nu, libMesh::Real wall_distance,
-                                  libMesh::Real S_tilde) const;
+                                  libMesh::Real S_tilde, bool infinite_distance) const;
 
     //! Helper function
     /*! This expression appears in a couple of places so we provide a function for it*/
@@ -75,9 +78,6 @@ namespace GRINS
     libMesh::Real get_sigma() const
     { return _sigma;}
 
-    libMesh::Real get_cw1() const
-    { return _cw1;}
-
     libMesh::Real get_c_w2() const
     { return _c_w2;}
 
@@ -101,8 +101,8 @@ namespace GRINS
     //! Constants specific to the calculation of the source function
     libMesh::Real _kappa, _cv1, _cv2, _cv3;
 
-    //! Spalart Allmaras model constants
-    libMesh::Real _cb1, _sigma, _cb2, _cw1;
+    //! Spalart Allmaras model constants, the constant _cw1 are calculated, not cached
+    libMesh::Real _cb1, _sigma, _cb2;
 
     //! Constants specific to the calculation of the destruction function
     libMesh::Real _r_lin, _c_w2, _c_w3;
