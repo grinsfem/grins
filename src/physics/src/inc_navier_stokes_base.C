@@ -72,6 +72,12 @@ namespace GRINS
   }
 
   template<class Mu>
+  libMesh::Real IncompressibleNavierStokesBase<Mu>::get_viscosity_value(AssemblyContext& context, unsigned int qp) const
+  {
+    return this->_mu(context, qp);
+  }
+
+  template<class Mu>
   void IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
