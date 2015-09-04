@@ -56,6 +56,8 @@ namespace GRINS
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
+    bool _require_residual_reduction;
+
   };
 } // namespace GRINS
 #endif // GRINS_STEADY_SOLVER_H
