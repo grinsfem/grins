@@ -36,12 +36,14 @@
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
 #include "libmesh/linear_solver.h"
+#include "libmesh/newton_solver.h"
 
 namespace GRINS
 {
 
   SteadySolver::SteadySolver( const GetPot& input )
-    : Solver( input )
+    : Solver( input ),
+      _require_residual_reduction( input("linear-nonlinear-solver/require_residual_reduction", false))
   {
     return;
   }
@@ -55,6 +57,10 @@ namespace GRINS
   {
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
+    libMesh::NewtonSolver* newton_solver = new libMesh::NewtonSolver( *(system) );
+    newton_solver->require_residual_reduction = _require_residual_reduction;
+    time_solver->diff_solver() = libMesh::UniquePtr<libMesh::DiffSolver>(newton_solver);
+
     system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
     return;
   }
@@ -63,7 +69,7 @@ namespace GRINS
   {
     libmesh_assert( context.system );
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
