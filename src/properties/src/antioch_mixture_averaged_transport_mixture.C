@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_mixture_averaged_transport_mixture.h"
 
+// Antioch
+#include "antioch/default_filename.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -38,13 +41,26 @@ namespace GRINS
   template<typename T, typename V, typename C, typename D>
   AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input )
     : AntiochMixture(input),
-      _trans_mixture( *(_antioch_gas.get()) ),
-      _wilke_mixture(_trans_mixture),
+      _trans_mixture(NULL),
+      _wilke_mixture(NULL),
       _thermo(NULL),
       _viscosity(NULL),
       _conductivity(NULL),
       _diffusivity(NULL)
   {
+    std::string transport_data_filename = input( "Physics/Antioch/transport_data", "default" );
+    if( transport_data_filename == std::string("default") )
+      transport_data_filename = Antioch::DefaultInstallFilename::transport_mixture();
+
+    bool verbose_transport_read = input( "Physics/Antioch/verbose_transport_read", false );
+
+    _trans_mixture.reset( new Antioch::TransportMixture<libMesh::Real>( *(_antioch_gas.get()),
+                                                                        transport_data_filename,
+                                                                        verbose_transport_read,
+                                                                        Antioch::ParsingType::ASCII ) );
+
+    _wilke_mixture.reset( new Antioch::MixtureAveragedTransportMixture<libMesh::Real>(*(_trans_mixture.get()) ) );
+
     this->build_thermo( input );
 
     this->build_viscosity( input );
