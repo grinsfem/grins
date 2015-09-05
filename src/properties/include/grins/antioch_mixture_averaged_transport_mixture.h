@@ -160,14 +160,17 @@ namespace GRINS
       Antioch::read_sutherland_data_ascii( *(viscosity.get()), sutherland_data );
     }
 
-    void specialized_build_viscosity( const GetPot& /*input*/,
+    void specialized_build_viscosity( const GetPot& input,
                                       boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
-      Antioch::read_blottner_data_ascii( *(viscosity.get()), Antioch::DefaultFilename::blottner_data() );
-      return;
+      std::string blottner_data = input("Physics/Antioch/blottner_data", "default");
+      if( blottner_data == "default" )
+        blottner_data = Antioch::DefaultInstallFilename::blottner_data();
+
+      Antioch::read_blottner_data_ascii( *(viscosity.get()), blottner_data );
     }
 
 #ifdef ANTIOCH_HAVE_GSL
