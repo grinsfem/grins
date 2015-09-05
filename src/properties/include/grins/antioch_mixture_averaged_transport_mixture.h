@@ -147,14 +147,17 @@ namespace GRINS
       return;
     }
 
-    void specialized_build_viscosity( const GetPot& /*input*/,
+    void specialized_build_viscosity( const GetPot& input,
                                       boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
-      Antioch::read_sutherland_data_ascii( *(viscosity.get()), Antioch::DefaultFilename::sutherland_data() );
-      return;
+      std::string sutherland_data = input("Physics/Antioch/sutherland_data", "default");
+      if( sutherland_data == "default" )
+        sutherland_data = Antioch::DefaultInstallFilename::sutherland_data();
+
+      Antioch::read_sutherland_data_ascii( *(viscosity.get()), sutherland_data );
     }
 
     void specialized_build_viscosity( const GetPot& /*input*/,
