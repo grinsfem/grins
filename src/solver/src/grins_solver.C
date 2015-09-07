@@ -37,6 +37,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/diff_solver.h"
+#include "libmesh/newton_solver.h"
 
 namespace GRINS
 {
@@ -52,7 +53,7 @@ namespace GRINS
       _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
       _continue_after_backtrack_failure( input("linear-nonlinear-solver/continue_after_backtrack_failure", false ) ),
       _continue_after_max_iterations( input("linear-nonlinear-solver/continue_after_max_iterations", false ) ),
-      require_residual_reduction( input("linear-nonlinear-solver/require_residual_reduction", false ) ),
+      _require_residual_reduction( input("linear-nonlinear-solver/require_residual_reduction", true ) ),
       _solver_quiet( input("screen-options/solver_quiet", false ) ),
       _solver_verbose( input("screen-options/solver_verbose", false ) )
   {
@@ -99,7 +100,11 @@ namespace GRINS
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
     solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
-    solver.require_residual_reduction = this->_require_residual_reduction;
+    if(&dynamic_cast<libMesh::NewtonSolver&>(solver) != NULL)
+      dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
+    else
+      libmesh_error();
+
 
     return;
   }
