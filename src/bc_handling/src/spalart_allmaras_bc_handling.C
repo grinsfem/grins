@@ -36,7 +36,7 @@ namespace GRINS
 {
 
   SpalartAllmarasBCHandling::SpalartAllmarasBCHandling(const std::string& physics_name,
-						 const GetPot& input)
+                                                       const GetPot& input)
     : BCHandlingBase(physics_name),
       _turb_vars(input)
   {
@@ -46,7 +46,7 @@ namespace GRINS
     std::string val_str = "Physics/"+_physics_name+"/bc_values";
 
     this->read_bc_data( input, id_str, bc_str, var_str, val_str );
-    
+
     return;
   }
 
@@ -61,12 +61,12 @@ namespace GRINS
 
     if( bc_type == "general_viscosity" )
       {
-	bc_type_out = GENERAL_VISCOSITY;
+        bc_type_out = GENERAL_VISCOSITY;
       }
     else
       {
-	// Call base class to detect any physics-common boundary conditions
-	bc_type_out = BCHandlingBase::string_to_int( bc_type );
+        // Call base class to detect any physics-common boundary conditions
+        bc_type_out = BCHandlingBase::string_to_int( bc_type );
       }
 
     return bc_type_out;
@@ -78,49 +78,49 @@ namespace GRINS
 
     return;
   }
-  
-  void SpalartAllmarasBCHandling::init_bc_types( const BoundaryID bc_id, 
-					      const std::string& bc_id_string, 
-					      const int bc_type, 
-					      const std::string& bc_vars, 
-					      const std::string& bc_value, 
-					      const GetPot& input )
-  { 
+
+  void SpalartAllmarasBCHandling::init_bc_types( const BoundaryID bc_id,
+                                                 const std::string& bc_id_string,
+                                                 const int bc_type,
+                                                 const std::string& bc_vars,
+                                                 const std::string& bc_value,
+                                                 const GetPot& input )
+  {
     switch(bc_type)
       {
       case(GENERAL_VISCOSITY):
-	{
-	  this->set_dirichlet_bc_type( bc_id, bc_type);
-	}
-	break;
-	
+        {
+          this->set_dirichlet_bc_type( bc_id, bc_type);
+        }
+        break;
+
       default:
-	{
-	  // Call base class to detect any physics-common boundary conditions
-	  BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
-                                         bc_vars, bc_value, input );	
-	}
+        {
+          // Call base class to detect any physics-common boundary conditions
+          BCHandlingBase::init_bc_types( bc_id, bc_id_string, bc_type,
+                                         bc_vars, bc_value, input );
+        }
       } // End switch(bc_type)
     return;
   }
-  
-   void SpalartAllmarasBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* system,
-								      libMesh::DofMap& dof_map,
-								      BoundaryID bc_id,
-								      BCType bc_type ) const
+
+  void SpalartAllmarasBCHandling::user_init_dirichlet_bcs( libMesh::FEMSystem* /*system*/,
+                                                           libMesh::DofMap& /*dof_map*/,
+                                                           BoundaryID /*bc_id*/,
+                                                           BCType bc_type ) const
   {
     switch( bc_type )
       {
-	case(GENERAL_VISCOSITY):
-	// This case is handled in the init_dirichlet_bc_func_objs
-	break;
-	
+      case(GENERAL_VISCOSITY):
+        // This case is handled in the init_dirichlet_bc_func_objs
+        break;
+
       default:
-	{
-	  std::cerr << "Invalid BCType " << bc_type << std::endl;
-	  libmesh_error();
-	}
-      
+        {
+          std::cerr << "Invalid BCType " << bc_type << std::endl;
+          libmesh_error();
+        }
+
       }// end switch
   }
 

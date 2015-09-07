@@ -22,7 +22,7 @@ check_PROGRAMS += reacting_low_mach_regression
 check_PROGRAMS += antioch_mixture_unit
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_evaluator_regression
-check_PROGRAMS += antioch_wilke_evaluator_regression
+check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
 check_PROGRAMS += composite_function_unit
 check_PROGRAMS += gas_recombination_catalytic_wall_unit
 check_PROGRAMS += gas_solid_catalytic_wall_unit
@@ -36,8 +36,10 @@ check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
+check_PROGRAMS += axisym_reacting_low_mach_regression
+check_PROGRAMS += split_string_unit
 
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
@@ -56,7 +58,7 @@ AM_CPPFLAGS += $(GRVY_CFLAGS)
 LIBS =
 LIBS += $(LIBGRINS_LIBS)
 
-AM_LDFLAGS = 
+AM_LDFLAGS =
 
 #----------------
 # Cantera support
@@ -105,7 +107,7 @@ reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
 antioch_mixture_unit_SOURCES = antioch_mixture_unit.C
 antioch_kinetics_regression_SOURCES = antioch_kinetics_regression.C
 antioch_evaluator_regression_SOURCES = antioch_evaluator_regression.C
-antioch_wilke_evaluator_regression_SOURCES = antioch_wilke_evaluator_regression.C
+antioch_mixture_averaged_transport_evaluator_regression_SOURCES = antioch_mixture_averaged_transport_evaluator_regression.C
 composite_function_unit_SOURCES = composite_function_unit.C
 gas_recombination_catalytic_wall_unit_SOURCES = gas_recombination_catalytic_wall_unit.C
 gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
@@ -119,6 +121,8 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
 ufo_unit_SOURCES = ufo_unit.C
 generic_solution_regression_SOURCES = generic_solution_regression.C
+axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
+split_string_unit_SOURCES = split_string_unit.C
 
 #Define tests to actually be run
 TESTS =
@@ -132,7 +136,7 @@ TESTS += cantera_evaluator_regression.sh
 TESTS += antioch_mixture_unit.sh
 TESTS += antioch_kinetics_regression.sh
 TESTS += antioch_evaluator_regression.sh
-TESTS += antioch_wilke_evaluator_regression.sh
+TESTS += antioch_mixture_averaged_transport_evaluator_regression.sh
 TESTS += gas_recombination_catalytic_wall_unit_antioch.sh
 TESTS += gas_recombination_catalytic_wall_unit_cantera.sh
 TESTS += gas_solid_catalytic_wall_unit_antioch.sh
@@ -143,6 +147,7 @@ TESTS += power_law_catalycity_unit
 TESTS += warn_only_ufo_unit.sh
 TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
+TESTS += split_string_unit
 
 TESTS += laplace_parsed_source_regression.sh
 TESTS += test_ns_couette_flow_2d_x.sh
@@ -163,6 +168,7 @@ TESTS += test_2d_pseudofan.sh
 TESTS += test_2d_pseudoprop.sh
 TESTS += test_2d_fantrick.sh
 TESTS += test_2d_proptrick.sh
+TESTS += test_2d_vsource.sh
 TESTS += test_dirichlet_fem.sh
 TESTS += test_dirichlet_nan.sh
 TESTS += test_simple_ode.sh
@@ -182,12 +188,15 @@ XFAIL_TESTS += reacting_low_mach_cantera_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
+TESTS += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
 TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
+TESTS += reacting_low_mach_antioch_kinetics_theory_regression.sh
+
 TESTS += composite_function_unit
 TESTS += 3d_low_mach_jacobians_xy.sh
 TESTS += 3d_low_mach_jacobians_xz.sh
@@ -223,6 +232,7 @@ shellfiles_src += test_2d_pseudofan.sh
 shellfiles_src += test_2d_pseudoprop.sh
 shellfiles_src += test_2d_fantrick.sh
 shellfiles_src += test_2d_proptrick.sh
+shellfiles_src += test_2d_vsource.sh
 shellfiles_src += test_dirichlet_fem.sh
 shellfiles_src += test_dirichlet_nan.sh
 shellfiles_src += test_simple_ode.sh
@@ -243,7 +253,7 @@ shellfiles_src += cantera_evaluator_regression.sh
 shellfiles_src += antioch_mixture_unit.sh
 shellfiles_src += antioch_kinetics_regression.sh
 shellfiles_src += antioch_evaluator_regression.sh
-shellfiles_src += antioch_wilke_evaluator_regression.sh
+shellfiles_src += antioch_mixture_averaged_transport_evaluator_regression.sh
 shellfiles_src += gas_recombination_catalytic_wall_unit_antioch.sh
 shellfiles_src += gas_recombination_catalytic_wall_unit_cantera.sh
 shellfiles_src += gas_solid_catalytic_wall_unit_antioch.sh
@@ -251,6 +261,7 @@ shellfiles_src += gas_solid_catalytic_wall_unit_cantera.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_constant_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
 shellfiles_src += reacting_low_mach_antioch_cea_constant_regression.sh
+shellfiles_src += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
 shellfiles_src += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
 shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
@@ -272,7 +283,7 @@ if CODE_COVERAGE_ENABLED
 endif
 
 # If we have tests fail, libmesh_error() may leave output
-CLEANFILES += traceout*.txt temp_print_trace.*
+CLEANFILES += traceout*.txt temp_print_trace.* *.exo *.xdr
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

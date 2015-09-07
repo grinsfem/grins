@@ -22,29 +22,28 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
 // GRINS
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
 
 // Antioch
+#include "antioch_config.h"
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
 
 // This class
-#include "antioch_wilke_transport_evaluator.C"
+#include "antioch_mixture_averaged_transport_mixture.C"
 
-template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                     Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
-                                                     Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+#include "grins/antioch_instantiation_macro.h"
 
-template class GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                     Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
-                                                     Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> >;
+INSTANTIATE_ANTIOCH_TRANSPORT(AntiochMixtureAveragedTransportMixture);
+
+#ifdef ANTIOCH_HAVE_GSL
+INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(AntiochMixtureAveragedTransportMixture);
+#endif // ANTIOCH_HAVE_GSL
+
 
 #endif //GRINS_HAVE_ANTIOCH

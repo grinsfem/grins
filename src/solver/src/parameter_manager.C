@@ -40,7 +40,7 @@
 namespace GRINS
 {
   void ParameterManager::initialize
-    ( const GetPot& input, 
+    ( const GetPot& input,
       const std::string & parameters_varname,
       MultiphysicsSystem & system,
       CompositeQoI * qoi)
@@ -76,7 +76,7 @@ namespace GRINS
           }
 
         this->parameter_vector.push_back
-          (UniquePtr<libMesh::ParameterAccessor<libMesh::Number> >
+          (libMesh::AutoPtr<libMesh::ParameterAccessor<libMesh::Number> >
            (next_param));
       }
   }

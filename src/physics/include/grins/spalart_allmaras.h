@@ -84,6 +84,13 @@ namespace GRINS
     // Boundary mesh objected that will be updated using the wall ids
     libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
 
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
     // The flow variables
@@ -103,6 +110,9 @@ namespace GRINS
 
     // No of walls
     unsigned int _no_of_walls;
+
+    // Infinite distance case
+    bool _infinite_distance;
 
   private:
     SpalartAllmaras();

@@ -35,7 +35,8 @@
 namespace GRINS
 {
   PrimitiveTempVariables::PrimitiveTempVariables( const GetPot& input )
-    : _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
+    : _T_var(invalid_var_index),
+      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
     return;
   }

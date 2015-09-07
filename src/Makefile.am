@@ -114,6 +114,9 @@ libgrins_la_SOURCES += physics/src/velocity_drag_base.C
 libgrins_la_SOURCES += physics/src/velocity_penalty.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/velocity_penalty_base.C
+libgrins_la_SOURCES += physics/src/parsed_velocity_source.C
+libgrins_la_SOURCES += physics/src/parsed_velocity_source_adjoint_stab.C
+libgrins_la_SOURCES += physics/src/parsed_velocity_source_base.C
 libgrins_la_SOURCES += physics/src/turbulence_models_base.C
 libgrins_la_SOURCES += physics/src/spalart_allmaras_parameters.C
 libgrins_la_SOURCES += physics/src/spalart_allmaras_helper.C
@@ -151,8 +154,8 @@ libgrins_la_SOURCES += properties/src/antioch_chemistry.C
 libgrins_la_SOURCES += properties/src/antioch_mixture.C
 libgrins_la_SOURCES += properties/src/antioch_kinetics.C
 libgrins_la_SOURCES += properties/src/antioch_evaluator_instantiate.C
-libgrins_la_SOURCES += properties/src/antioch_wilke_transport_mixture_instantiate.C
-libgrins_la_SOURCES += properties/src/antioch_wilke_transport_evaluator_instantiate.C
+libgrins_la_SOURCES += properties/src/antioch_mixture_averaged_transport_mixture_instantiate.C
+libgrins_la_SOURCES += properties/src/antioch_mixture_averaged_transport_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_constant_transport_instantiate.C
 libgrins_la_SOURCES += properties/src/hookes_law.C
 libgrins_la_SOURCES += properties/src/hookes_law_1d.C
@@ -167,6 +170,7 @@ libgrins_la_SOURCES += qoi/src/qoi_base.C
 libgrins_la_SOURCES += qoi/src/qoi_factory.C
 libgrins_la_SOURCES += qoi/src/vorticity.C
 libgrins_la_SOURCES += qoi/src/composite_qoi.C
+libgrins_la_SOURCES += qoi/src/parsed_boundary_qoi.C
 libgrins_la_SOURCES += qoi/src/parsed_interior_qoi.C
 
 # src/solver files
@@ -189,6 +193,7 @@ libgrins_la_SOURCES += utilities/src/grins_version.C
 libgrins_la_SOURCES += utilities/src/input_utils.C
 libgrins_la_SOURCES += utilities/src/cached_values.C
 libgrins_la_SOURCES += utilities/src/distance_function.C
+libgrins_la_SOURCES += utilities/src/string_utils.C
 
 # src/visualization files
 libgrins_la_SOURCES += visualization/src/steady_visualization.C
@@ -211,8 +216,8 @@ sfiles_DATA += boundary_conditions/src/gas_solid_catalytic_wall.C
 sfiles_DATA += physics/src/reacting_low_mach_navier_stokes_base.C
 sfiles_DATA += physics/src/reacting_low_mach_navier_stokes.C
 sfiles_DATA += properties/src/antioch_evaluator.C
-sfiles_DATA += properties/src/antioch_wilke_transport_mixture.C
-sfiles_DATA += properties/src/antioch_wilke_transport_evaluator.C
+sfiles_DATA += properties/src/antioch_mixture_averaged_transport_mixture.C
+sfiles_DATA += properties/src/antioch_mixture_averaged_transport_evaluator.C
 sfiles_DATA += properties/src/antioch_constant_transport_mixture.C
 sfiles_DATA += properties/src/antioch_constant_transport_evaluator.C
 
@@ -325,6 +330,9 @@ include_HEADERS += physics/include/grins/velocity_drag_base.h
 include_HEADERS += physics/include/grins/velocity_penalty.h
 include_HEADERS += physics/include/grins/velocity_penalty_adjoint_stab.h
 include_HEADERS += physics/include/grins/velocity_penalty_base.h
+include_HEADERS += physics/include/grins/parsed_velocity_source.h
+include_HEADERS += physics/include/grins/parsed_velocity_source_adjoint_stab.h
+include_HEADERS += physics/include/grins/parsed_velocity_source_base.h
 include_HEADERS += physics/include/grins/turbulence_models_base.h
 include_HEADERS += physics/include/grins/spalart_allmaras.h
 include_HEADERS += physics/include/grins/spalart_allmaras_parameters.h
@@ -363,8 +371,8 @@ include_HEADERS += properties/include/grins/antioch_chemistry.h
 include_HEADERS += properties/include/grins/antioch_kinetics.h
 include_HEADERS += properties/include/grins/antioch_mixture.h
 include_HEADERS += properties/include/grins/antioch_evaluator.h
-include_HEADERS += properties/include/grins/antioch_wilke_transport_mixture.h
-include_HEADERS += properties/include/grins/antioch_wilke_transport_evaluator.h
+include_HEADERS += properties/include/grins/antioch_mixture_averaged_transport_mixture.h
+include_HEADERS += properties/include/grins/antioch_mixture_averaged_transport_evaluator.h
 include_HEADERS += properties/include/grins/antioch_constant_transport_mixture.h
 include_HEADERS += properties/include/grins/antioch_constant_transport_evaluator.h
 include_HEADERS += properties/include/grins/elasticity_tensor.h
@@ -383,6 +391,7 @@ include_HEADERS += qoi/include/grins/qoi_factory.h
 include_HEADERS += qoi/include/grins/qoi_names.h
 include_HEADERS += qoi/include/grins/vorticity.h
 include_HEADERS += qoi/include/grins/composite_qoi.h
+include_HEADERS += qoi/include/grins/parsed_boundary_qoi.h
 include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
 
 # src/solver headers
@@ -427,6 +436,10 @@ endif
 
 if GRVY_ENABLED
    libgrins_la_LIBADD += $(GRVY_PREFIX)/lib/libgrvy.la
+endif
+
+if ANTIOCH_ENABLED
+   libgrins_la_LIBADD += $(ANTIOCH_LDFLAGS) $(ANTIOCH_LIBS)
 endif
 
 #------------------------------------

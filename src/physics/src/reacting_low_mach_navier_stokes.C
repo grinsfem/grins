@@ -357,7 +357,7 @@ namespace GRINS
                       and do the if check once?*/
             if( this->_is_axisymmetric )
               {
-                Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) )*jac;
+                Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) - 2.0/3.0*mu*divU/r )*jac;
               }
 
             Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]
@@ -565,14 +565,15 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	gas_evaluator.mu_and_k(cache,qp,mu[qp],k[qp]);
-	cp[qp] = gas_evaluator.cp(cache,qp);
+        cp[qp] = gas_evaluator.cp(cache,qp);
+
+        D_s[qp].resize(this->_n_species);
+
+        gas_evaluator.mu_and_k_and_D( T[qp], rho[qp], cp[qp], mass_fractions[qp],
+                                      mu[qp], k[qp], D_s[qp] );
 
 	h_s[qp].resize(this->_n_species);
 	gas_evaluator.h_s( cache, qp, h_s[qp] );
-
-	D_s[qp].resize(this->_n_species);
-	gas_evaluator.D( cache, qp, D_s[qp] );
 
 	omega_dot_s[qp].resize(this->_n_species);
 	gas_evaluator.omega_dot( cache, qp, omega_dot_s[qp] );

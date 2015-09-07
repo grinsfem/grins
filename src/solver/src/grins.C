@@ -41,6 +41,20 @@
 
 int main(int argc, char* argv[])
 {
+  /* Echo GRINS version, libMesh version, and command */
+  libMesh::out << "=========================================================="
+               << std::endl;
+  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
+               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
+               << "Running with command:\n";
+
+  for (int i=0; i != argc; ++i)
+    std::cout << argv[i] << ' ';
+
+  std::cout << std::endl
+            << "=========================================================="
+            << std::endl;
+
 #ifdef GRINS_USE_GRVY_TIMERS
   GRVY::GRVY_Timer_Class grvy_timer;
   grvy_timer.Init("GRINS Timer");
@@ -79,20 +93,6 @@ int main(int argc, char* argv[])
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
-
-  /* Echo GRINS version, libMesh version, and command */
-  libMesh::out << "=========================================================="
-               << std::endl;
-  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
-               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
-               << "Running with command:\n";
-
-  for (int i=0; i != argc; ++i)
-    libMesh::out << argv[i] << ' ';
-
-  libMesh::out << std::endl
-               << "=========================================================="
-               << std::endl;
 
   GRINS::SimulationBuilder sim_builder;
 

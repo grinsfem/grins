@@ -92,6 +92,13 @@ namespace GRINS
     void D( const CachedValues& cache, unsigned int qp,
 	    std::vector<libMesh::Real>& D ) const;
 
+    void mu_and_k_and_D( const libMesh::Real T,
+                         const libMesh::Real rho,
+                         const libMesh::Real cp,
+                         const std::vector<libMesh::Real>& Y,
+                         libMesh::Real& mu, libMesh::Real& k,
+                         std::vector<libMesh::Real>& D );
+
     // Kinetics
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;
@@ -246,7 +253,6 @@ namespace GRINS
   {
     mu = _transport.mu(cache,qp);
     k = _transport.k(cache,qp);
-    return;
   }
 
   inline
@@ -254,6 +260,22 @@ namespace GRINS
                             std::vector<libMesh::Real>& D ) const
   {
     return _transport.D(cache,qp,D);
+  }
+
+  inline
+  void CanteraEvaluator::mu_and_k_and_D( const libMesh::Real T,
+                                         const libMesh::Real rho,
+                                         const libMesh::Real /*cp*/,
+                                         const std::vector<libMesh::Real>& Y,
+                                         libMesh::Real& mu, libMesh::Real& k,
+                                         std::vector<libMesh::Real>& D )
+  {
+    /*! \todo We're assuming an ideal gas here. Fix this when the API becomes stable, i.e
+              when we only need to pass a GRINS::AssemblyContext. */
+    libMesh::Real R_mix = this->R_mix(Y);
+    libMesh::Real P = rho*R_mix*T;
+
+    _transport.mu_and_k_and_D( T, P, Y, mu, k, D );
   }
 
   inline

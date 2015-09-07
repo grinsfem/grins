@@ -28,6 +28,7 @@
 // C++
 #include <string>
 #include <map>
+#include <limits>
 #include "boost/tr1/memory.hpp"
 
 // libMesh
@@ -40,6 +41,11 @@ namespace GRINS
 
   //! More descriptive name of the type used for variable indices
   typedef unsigned int VariableIndex;
+
+  //! Invalid varaible index id.
+  /*! We can't use negative values, so we use the max to be able to initialize VariableIndex quantities
+    since we're much more unlikely to hit the max than 0. */
+  const unsigned int invalid_var_index = std::numeric_limits<unsigned int>::max();
 
   typedef std::string VariableName;
 

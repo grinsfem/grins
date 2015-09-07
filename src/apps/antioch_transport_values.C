@@ -37,14 +37,14 @@
 #include "libmesh/getpot.h"
 
 // GRINS
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )
 {
-  GRINS::AntiochWilkeTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
 
-  GRINS::AntiochWilkeTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );
@@ -87,18 +87,17 @@ int do_transport_eval( const GetPot& input )
       output.open( "transport.dat", std::ios::app );
       output << std::scientific << std::setprecision(16);
       output << T << " ";
-     
-      libMesh::Real mu = evaluator.mu(T,Y);
-      libMesh::Real k = evaluator.k(T,Y);
+
+      libMesh::Real mu;
+      libMesh::Real k;
+      std::vector<libMesh::Real> D(n_species);
+      evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,Y), Y, mu, k, D );
 
       output <<  mu << " ";
       output << k << " ";
-      
-      std::vector<libMesh::Real> D(n_species);
+
       for( unsigned int s = 0; s< n_species; s++ )
         {
-          evaluator.D(rho, evaluator.cp(T,Y), k, D);
-
           output << D[s] << " ";
         }
       output << std::endl;
@@ -141,14 +140,14 @@ int main(int argc, char* argv[])
                   if( viscosity_model == std::string("sutherland") )
                     {
                       return_flag = do_transport_eval<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                      Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
+                                                      Antioch::SutherlandViscosity<libMesh::Real>,
                                                       Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                       Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
                     }
                   else if( viscosity_model == std::string("blottner") )
                     {
                       return_flag = do_transport_eval<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                      Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
+                                                      Antioch::BlottnerViscosity<libMesh::Real>,
                                                       Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                                       Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
                     }

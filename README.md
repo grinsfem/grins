@@ -49,6 +49,11 @@ GRINS uses an Autotools build system, so typical GNU build commands are used.
 4. make check (note parallel-tests are supported)
 5. make install
 
+LD_LIBRARY_PATH
+---------------
+
+If you've compiled libMesh with PETSc or other external libraries and have compiled GRINS with Antioch, Cantera, or other external libraries, you will need to add them to your LD_LIBRARY_PATH as we do not use -rpath when linking to the libraries.
+
 METHOD
 ------
 
@@ -62,3 +67,8 @@ their own CXXFLAGS variable by passing
 </code>
 </pre>
 to configure.
+
+Examples
+========
+
+Upon running `make install`, there are several examples in the `/path/to/install/examples` directory. Each example can be run with the local `ruh.sh` script. You may set the environment variable `GRINS_RUN` to run with more than one processor, e.g. `export GRINS_DIR="mpiexec -np 4`. Additionally, you can set the environment variable `GRINS_SOLVER_OPTIONS` to pass solver options, e.g. to use MUMPS through PETSc (if you built libMesh with PETSc and built PETSc with MUMPS), `export GRINS_SOLVER_OPTIONS="-ksp_type preonly -pc_type lu -pc_factor_mat_solver_package mumps"`.

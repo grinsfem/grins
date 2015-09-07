@@ -34,7 +34,7 @@
 #include "libmesh/getpot.h"
 
 // Antioch
-#include "antioch/read_reaction_set_data_xml.h"
+#include "antioch/read_reaction_set_data.h"
 #include "antioch/cea_mixture_ascii_parsing.h"
 #include "antioch/stat_mech_thermo.h"
 

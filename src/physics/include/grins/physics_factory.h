@@ -81,10 +81,6 @@ namespace GRINS
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required ) const;
 
-    void add_reacting_low_mach( const GetPot& input,
-                                const std::string& physics_to_add,
-                                GRINS::PhysicsList& physics_list );
-
   }; // class PhysicsFactory
 
 } // namespace GRINS

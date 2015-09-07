@@ -80,13 +80,17 @@ pin_location = '2.5 0' # Must be on boundary!
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'parsed_interior'
+enabled_qois = 'parsed_interior parsed_boundary'
 
 # All sensitivities should be zero
 adjoint_sensitivity_parameters = 'Physics/IncompressibleNavierStokes/mu Physics/Stokes/rho'
 forward_sensitivity_parameters = 'Physics/IncompressibleNavierStokes/mu Physics/Stokes/rho'
 
-[./ParsedInterior]
+[./ParsedBoundary]
+bc_ids = '3'
+qoi_functional = 'u'
+
+[../ParsedInterior]
 qoi_functional = 'u'
 
 []

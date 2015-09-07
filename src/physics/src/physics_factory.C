@@ -58,6 +58,8 @@
 #include "grins/velocity_drag_adjoint_stab.h"
 #include "grins/velocity_penalty.h"
 #include "grins/velocity_penalty_adjoint_stab.h"
+#include "grins/parsed_velocity_source.h"
+#include "grins/parsed_velocity_source_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
 #include "grins/elastic_cable.h"
 #include "grins/elastic_membrane_constant_pressure.h"
@@ -80,7 +82,7 @@
 #include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
 
-#include "grins/antioch_wilke_transport_evaluator.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
 
@@ -88,6 +90,17 @@
 #include "grins/hookes_law_1d.h"
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
+
+// Antioch
+#ifdef GRINS_HAVE_ANTIOCH
+#include "antioch_config.h"
+#include "antioch/sutherland_viscosity.h"
+#include "antioch/blottner_viscosity.h"
+#include "antioch/sutherland_parsing.h"
+#include "antioch/blottner_parsing.h"
+#include "antioch/eucken_thermal_conductivity.h"
+#include "antioch/constant_lewis_diffusivity.h"
+#endif // GRINS_HAVE_ANTIOCH
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -180,17 +193,17 @@ namespace GRINS
     return PhysicsPtr();
   }
 
-  // Instantiate classes whose only valid viscosity models are turbulent
+  // Instantiate classes whose only valid viscosity models are constant
   template <template<typename> class Subclass>
-  PhysicsPtr new_turb_mu_class(const std::string& physics_to_add,
+  PhysicsPtr new_constant_mu_class(const std::string& physics_to_add,
                                const GetPot& input)
   {
     std::string viscosity =
-      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+      input( "Physics/"+spalart_allmaras+"/viscosity_model", "constant" );
 
-    if( viscosity == "spalartallmaras" )
+    if( viscosity == "constant" )
       return PhysicsPtr
-        (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+        (new Subclass<ConstantViscosity>(physics_to_add,input));
 
     visc_error(physics_to_add, viscosity);
     return PhysicsPtr();
@@ -235,6 +248,188 @@ namespace GRINS
                              viscosity, specific_heat);
     return PhysicsPtr();
   }
+
+  template <template<typename,typename> class Subclass>
+  PhysicsPtr new_reacting_low_mach_class(const std::string& physics_to_add,
+                                         const GetPot& input)
+  {
+    std::string thermochem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );
+
+    if( thermochem_lib == "cantera" )
+      {
+#ifdef GRINS_HAVE_CANTERA
+        return PhysicsPtr(new Subclass<CanteraMixture,CanteraEvaluator>(physics_to_add,input));
+#else
+        std::cerr << "Error: Cantera not enabled. Cannot use Cantera library."
+                  << std::endl;
+        libmesh_error();
+
+#endif // GRINS_HAVE_CANTERA
+      }
+    else if( thermochem_lib == "antioch" )
+      {
+#ifdef GRINS_HAVE_ANTIOCH
+
+        std::string transport_model = input( "Physics/Antioch/transport_model" , "mixture_averaged" );
+
+        // mixing_model option is now deprecated in favor of transport_model
+        if( input.have_variable("Physics/Antioch/mixing_model") )
+          {
+            libMesh::err << "WARNING: Option Physics/Antioch/mixing_model is deprecated!" << std::endl
+                         << "         Use Physics/Antioch/transport_model instead!" << std::endl;
+
+            transport_model = input( "Physics/Antioch/mixing_model" , "mixture_averaged" );
+          }
+
+        // transport_model = wilke is deprecated
+        if( transport_model == std::string("wilke") )
+          {
+            libMesh::err << "WARNING: Physics/Antioch/transport_model value of 'wilke' is deprecated!" << std::endl
+                         << "         Replace Physics/Antioch/transport_model value with 'mixture_averaged'"
+                         << std::endl;
+
+            transport_model = "mixture_averaged";
+          }
+
+        std::string thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
+        std::string viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
+        std::string conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
+        std::string diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+
+        if( transport_model == std::string("mixture_averaged") )
+          {
+            if( (thermo_model == std::string("stat_mech")) &&
+                (diffusivity_model == std::string("constant_lewis")) &&
+                (conductivity_model == std::string("eucken")) &&
+                (viscosity_model == std::string("sutherland")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                             Antioch::SutherlandViscosity<libMesh::Real>,
+                                                                                             Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                             Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                                               GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                               Antioch::SutherlandViscosity<libMesh::Real>,
+                                                                                               Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                               Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("stat_mech")) &&
+                     (diffusivity_model == std::string("constant_lewis")) &&
+                     (conductivity_model == std::string("eucken")) &&
+                     (viscosity_model == std::string("blottner")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                             Antioch::BlottnerViscosity<libMesh::Real>,
+                                                                                             Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                             Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                                               GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                               Antioch::BlottnerViscosity<libMesh::Real>,
+                                                                                               Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                                                               Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("stat_mech")) &&
+                     (diffusivity_model == std::string("kinetics_theory")) &&
+                     (conductivity_model == std::string("kinetics_theory")) &&
+                     (viscosity_model == std::string("kinetics_theory")) )
+              {
+#ifdef ANTIOCH_HAVE_GSL
+                return PhysicsPtr(new Subclass<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                   Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>,
+                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >,
+                                               GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                                                     Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                     Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>,
+                                                                                     Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >(physics_to_add,input) );
+#else
+                libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
+#endif // ANTIOCH_HAVE_GSL
+              }
+            else
+              {
+                            std::cerr << "Error: Unknown Antioch model combination: "
+                                      << "viscosity_model    = " << viscosity_model << std::endl
+                                      << "conductivity_model = " << conductivity_model << std::endl
+                                      << "diffusivity_model  = " << diffusivity_model << std::endl
+                                      << "thermo_model       = " << thermo_model << std::endl;
+                            libmesh_error();
+              }
+          }
+        else if( transport_model == std::string("constant") )
+          {
+            if( viscosity_model != std::string("constant") )
+              {
+                std::cerr << "Error: For constant transport_model, viscosity model must be constant!"
+                          << std::endl;
+                libmesh_error();
+              }
+
+            if( diffusivity_model != std::string("constant_lewis") )
+              {
+                std::cerr << "Error: For constant transport_model, diffusivity model must be constant_lewis!"
+                          << std::endl;
+                libmesh_error();
+              }
+
+            if( (thermo_model == std::string("stat_mech")) &&
+                (conductivity_model == std::string("constant")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                               GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (conductivity_model == std::string("constant")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
+                                               GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("stat_mech")) &&
+                (conductivity_model == std::string("constant_prandtl")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                               GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (conductivity_model == std::string("constant_prandtl")) )
+              {
+                return PhysicsPtr(new Subclass<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
+                                               GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
+              }
+            else
+              {
+                std::cerr << "Error: Unknown Antioch model combination: "
+                          << "viscosity_model    = " << viscosity_model << std::endl
+                          << "conductivity_model = " << conductivity_model << std::endl
+                          << "diffusivity_model  = " << diffusivity_model << std::endl
+                          << "thermo_model       = " << thermo_model << std::endl;
+                libmesh_error();
+              }
+          }
+        else // transport_model
+          {
+            std::cerr << "Error: Unknown Antioch transport_model "
+                      << transport_model << "!" << std::endl
+                      << "       Valid values are: constant" << std::endl
+                      << "                         mixture_averaged" << std::endl;
+            libmesh_error();
+          }
+#else
+        std::cerr << "Error: Antioch not enabled. Cannot use Antioch library."
+                  << std::endl;
+        libmesh_error();
+
+#endif // GRINS_HAVE_ANTIOCH
+      }
+    else
+      {
+        std::cerr << "Error: Invalid thermo-chemistry library" << std::endl
+                  << "       for ReactingLowMachNavierStokes physics." << std::endl
+                  << "       thermochemistry_library = " << thermochem_lib << std::endl;
+        libmesh_error();
+      }
+
+    return PhysicsPtr();
+  }
+
 
   // And now PhysicsFactory methods
 
@@ -350,6 +545,18 @@ namespace GRINS
           new_mu_class<VelocityPenaltyAdjointStabilization>
             (physics_to_add, input);
       }
+    else if( physics_to_add == parsed_velocity_source )
+      {
+	physics_list[physics_to_add] =
+          new_mu_class<ParsedVelocitySource>
+            (physics_to_add, input);
+      }
+    else if( physics_to_add == parsed_velocity_source_adjoint_stab )
+      {
+	physics_list[physics_to_add] =
+          new_mu_class<ParsedVelocitySourceAdjointStabilization>
+            (physics_to_add, input);
+      }
     else if( physics_to_add == averaged_fan )
       {
 	physics_list[physics_to_add] =
@@ -377,7 +584,7 @@ namespace GRINS
     else if( physics_to_add == spalart_allmaras_spgsm_stab )
       {
         physics_list[physics_to_add] =
-          new_turb_mu_class<SpalartAllmarasSPGSMStabilization>
+          new_constant_mu_class<SpalartAllmarasSPGSMStabilization>
             (physics_to_add, input);
       }
     else if( physics_to_add == scalar_ode )
@@ -480,7 +687,9 @@ namespace GRINS
       }
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
-        this->add_reacting_low_mach( input, physics_to_add, physics_list );
+        physics_list[physics_to_add] =
+          new_reacting_low_mach_class<ReactingLowMachNavierStokes>
+             (physics_to_add, input);
       }
     else if( physics_to_add == elastic_membrane )
       {
@@ -543,156 +752,6 @@ namespace GRINS
     else
       {
         std::cerr << "Error: Invalid physics name " << physics_to_add << std::endl;
-        libmesh_error();
-      }
-
-    return;
-  }
-
-  void PhysicsFactory::add_reacting_low_mach( const GetPot& input,
-                                              const std::string& physics_to_add,
-                                              GRINS::PhysicsList& physics_list )
-  {
-    std::string thermochem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );;
-
-    if( thermochem_lib == "cantera" )
-      {
-#ifdef GRINS_HAVE_CANTERA
-        physics_list[physics_to_add] =
-          PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<CanteraMixture,CanteraEvaluator>(physics_to_add,input));
-#else
-        std::cerr << "Error: Cantera not enabled. Cannot use Cantera library."
-                  << std::endl;
-        libmesh_error();
-
-#endif // GRINS_HAVE_CANTERA
-      }
-    else if( thermochem_lib == "antioch" )
-      {
-#ifdef GRINS_HAVE_ANTIOCH
-        std::string mixing_model = input( "Physics/Antioch/mixing_model" , "wilke" );
-
-        std::string thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
-        std::string viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
-        std::string conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
-        std::string diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
-
-        if( mixing_model == std::string("wilke") )
-          {
-            if( (thermo_model == std::string("stat_mech")) &&
-                (diffusivity_model == std::string("constant_lewis")) &&
-                (conductivity_model == std::string("eucken")) &&
-                (viscosity_model == std::string("sutherland")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
-                             GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                 Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
-                                                                 Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                 Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
-                             GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                  Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real> >,
-                                                                  Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                  Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
-              }
-            else if( (thermo_model == std::string("stat_mech")) &&
-                     (diffusivity_model == std::string("constant_lewis")) &&
-                     (conductivity_model == std::string("eucken")) &&
-                     (viscosity_model == std::string("blottner")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<
-                             GRINS::AntiochWilkeTransportMixture<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                 Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
-                                                                 Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                 Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
-                             GRINS::AntiochWilkeTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                                   Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real> >,
-                                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> > >(physics_to_add,input) );
-              }
-            else
-              {
-                            std::cerr << "Error: Unknown Antioch model combination: "
-                                      << "viscosity_model    = " << viscosity_model << std::endl
-                                      << "conductivity_model = " << conductivity_model << std::endl
-                                      << "diffusivity_model  = " << diffusivity_model << std::endl
-                                      << "thermo_model       = " << thermo_model << std::endl;
-                            libmesh_error();
-              }
-          }
-        else if( mixing_model == std::string("constant") )
-          {
-            if( viscosity_model != std::string("constant") )
-              {
-                std::cerr << "Error: For constant mixing_model, viscosity model must be constant!"
-                          << std::endl;
-                libmesh_error();
-              }
-
-            if( diffusivity_model != std::string("constant_lewis") )
-              {
-                std::cerr << "Error: For constant mixing_model, diffusivity model must be constant_lewis!"
-                          << std::endl;
-                libmesh_error();
-              }
-
-            if( (thermo_model == std::string("stat_mech")) &&
-                (conductivity_model == std::string("constant")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
-                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
-              }
-            else if( (thermo_model == std::string("cea")) &&
-                     (conductivity_model == std::string("constant")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
-                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >(physics_to_add,input) );
-              }
-            else if( (thermo_model == std::string("stat_mech")) &&
-                (conductivity_model == std::string("constant_prandtl")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
-                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
-              }
-            else if( (thermo_model == std::string("cea")) &&
-                     (conductivity_model == std::string("constant_prandtl")) )
-              {
-                physics_list[physics_to_add] =
-                  PhysicsPtr(new GRINS::ReactingLowMachNavierStokes<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
-                                                                    GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >(physics_to_add,input) );
-              }
-            else
-              {
-                std::cerr << "Error: Unknown Antioch model combination: "
-                          << "viscosity_model    = " << viscosity_model << std::endl
-                          << "conductivity_model = " << conductivity_model << std::endl
-                          << "diffusivity_model  = " << diffusivity_model << std::endl
-                          << "thermo_model       = " << thermo_model << std::endl;
-                libmesh_error();
-              }
-          }
-        else // mixing_model
-          {
-            std::cerr << "Error: Unknown Antioch mixing_model "
-                      << mixing_model << "!" << std::endl;
-            libmesh_error();
-          }
-#else
-        std::cerr << "Error: Antioch not enabled. Cannot use Antioch library."
-                  << std::endl;
-        libmesh_error();
-
-#endif // GRINS_HAVE_ANTIOCH
-      }
-    else
-      {
-        std::cerr << "Error: Invalid thermo-chemistry library" << std::endl
-                  << "       for ReactingLowMachNavierStokes physics." << std::endl
-                  << "       thermochemistry_library = " << thermochem_lib << std::endl;
         libmesh_error();
       }
 

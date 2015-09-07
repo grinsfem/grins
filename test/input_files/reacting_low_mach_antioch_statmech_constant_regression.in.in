@@ -23,7 +23,7 @@ chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
 [../Antioch]
 
-mixing_model = 'constant'
+transport_model = 'constant'
 thermo_model = 'stat_mech'
 viscosity_model = 'constant'
 conductivity_model = 'constant'

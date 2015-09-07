@@ -100,6 +100,9 @@ namespace GRINS
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _strain_indices;
 
+    //! Index from registering this quantity. Each component will have it's own index.
+    std::vector<unsigned int> _force_indices;
+
   };
 
 } // end namespace GRINS

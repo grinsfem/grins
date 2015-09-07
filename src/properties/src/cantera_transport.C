@@ -151,6 +151,31 @@ namespace GRINS
     return;
   }
 
+  void CanteraTransport::mu_and_k_and_D( const libMesh::Real T,
+                                         const libMesh::Real P,
+                                         const std::vector<libMesh::Real>& Y,
+                                         libMesh::Real& mu, libMesh::Real& k,
+                                         std::vector<libMesh::Real>& D )
+  {
+      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+
+      /*! \todo Need to make sure this will work in a threaded environment.
+	Not sure if we will get thread lock here or not. */
+      try
+	{
+	  _cantera_gas.setState_TPY(T, P, &Y[0]);
+
+          mu =  _cantera_transport.viscosity();
+          k =  _cantera_transport.thermalConductivity();
+	  _cantera_transport.getMixDiffCoeffsMass(&D[0]);
+	}
+      catch(Cantera::CanteraError)
+	{
+	  Cantera::showErrors(std::cerr);
+	  libmesh_error();
+	}
+  }
+
 } // namespace GRINS
 
 #endif //GRINS_HAVE_CANTERA

@@ -28,7 +28,7 @@
 #ifdef GRINS_HAVE_ANTIOCH
 
 // This class
-#include "grins/antioch_wilke_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -36,9 +36,10 @@
 namespace GRINS
 {
   template<typename T, typename V, typename C, typename D>
-  AntiochWilkeTransportMixture<T,V,C,D>::AntiochWilkeTransportMixture( const GetPot& input )
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input )
     : AntiochMixture(input),
-      _wilke_mixture(*(this->_antioch_gas.get())),
+      _trans_mixture( *(_antioch_gas.get()) ),
+      _wilke_mixture(_trans_mixture),
       _thermo(NULL),
       _viscosity(NULL),
       _conductivity(NULL),
@@ -56,7 +57,7 @@ namespace GRINS
   }
 
   template<typename T, typename V, typename C, typename D>
-  AntiochWilkeTransportMixture<T,V,C,D>::~AntiochWilkeTransportMixture()
+  AntiochMixtureAveragedTransportMixture<T,V,C,D>::~AntiochMixtureAveragedTransportMixture()
   {
     return;
   }

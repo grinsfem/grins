@@ -35,7 +35,8 @@
 namespace GRINS
 {
   TurbulenceVariables::TurbulenceVariables( const GetPot& input )
-    :  _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
+    :  _nu_var(invalid_var_index),
+       _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
   {
     return;
   }

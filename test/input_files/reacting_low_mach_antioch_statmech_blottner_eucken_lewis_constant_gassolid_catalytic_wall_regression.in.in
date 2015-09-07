@@ -10,7 +10,7 @@ chem_file = '@abs_top_builddir@/test/input_files/air_4sp.xml'
 
 [../Antioch]
 
-mixing_model = 'wilke'
+transport_model = 'mixture_averaged'
 viscosity_model = 'blottner'
 conductivity_model = 'eucken'
 diffusivity_model = 'constant_lewis'

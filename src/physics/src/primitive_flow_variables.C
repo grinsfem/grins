@@ -35,7 +35,11 @@
 namespace GRINS
 {
   PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
-    :  _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
+    :  _u_var(invalid_var_index),
+       _v_var(invalid_var_index),
+       _w_var(invalid_var_index),
+       _p_var(invalid_var_index),
+       _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
        _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
        _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
        _p_var_name( input("Physics/VariableNames/pressure",   p_var_name_default ) )

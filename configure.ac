@@ -2,7 +2,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(grins, 0.6.0, grins-users@googlegroups.com)
+AC_INIT(grins, 0.7.0, grins-users@googlegroups.com)
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADER(grins_config.h.tmp)
@@ -266,7 +266,7 @@ AC_SUBST(HAVE_CANTERA)
 AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 
-AX_PATH_ANTIOCH(0.2.0,no)
+AX_PATH_ANTIOCH(0.4.0,no)
 
 
 dnl-------------------
@@ -341,6 +341,7 @@ AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod
 AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
 AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])
 AC_CONFIG_FILES(test/test_2d_proptrick.sh,                                [chmod +x test/test_2d_proptrick.sh])
+AC_CONFIG_FILES(test/test_2d_vsource.sh,                                  [chmod +x test/test_2d_vsource.sh])
 AC_CONFIG_FILES(test/test_dirichlet_fem.sh,                               [chmod +x test/test_dirichlet_fem.sh])
 AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod +x test/test_dirichlet_nan.sh])
 AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])
@@ -378,7 +379,7 @@ AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_antioch.sh,            [chmod
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
-AC_CONFIG_FILES(test/antioch_wilke_evaluator_regression.sh,               [chmod +x test/antioch_wilke_evaluator_regression.sh])
+AC_CONFIG_FILES(test/antioch_mixture_averaged_transport_evaluator_regression.sh,               [chmod +x test/antioch_mixture_averaged_transport_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
@@ -431,6 +432,12 @@ AC_CONFIG_FILES(test/error_ufo_unit.sh, [chmod +x test/error_ufo_unit.sh])
 
 AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace_parsed_source_regression.sh])
 
+AC_CONFIG_FILES(test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh])
+AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_kinetics_theory_regression.sh, [chmod +x test/reacting_low_mach_antioch_kinetics_theory_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
@@ -447,6 +454,7 @@ AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/
 AC_CONFIG_FILES(examples/elastic_sheet/run.sh,               [chmod +x examples/elastic_sheet/run.sh])
 AC_CONFIG_FILES(examples/cable_displacement/run.sh,          [chmod +x examples/cable_displacement/run.sh])
 AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/inflating_sheet/run.sh])
+AC_CONFIG_FILES(examples/sa_airfoil/run.sh,         [chmod +x examples/sa_airfoil/run.sh])
 AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/suspended_cable/run.sh])
 AC_CONFIG_FILES(examples/mixed_dim_inflating_sheet/run.sh,   [chmod +x examples/mixed_dim_inflating_sheet/run.sh])
 

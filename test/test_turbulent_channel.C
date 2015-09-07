@@ -280,7 +280,10 @@ int main(int argc, char* argv[])
 
   // Filename of file where comparison solution is stashed
   std::string solution_file = command_line("soln-data", "DIE!");
-  es_ref.read( solution_file );
+  es_ref.read( solution_file, libMesh::XdrMODE::DECODE,
+               libMesh::EquationSystems::READ_HEADER |
+               libMesh::EquationSystems::READ_DATA |
+               libMesh::EquationSystems::READ_ADDITIONAL_DATA);
 
   exact_sol.attach_reference_solution( &es_ref );
 

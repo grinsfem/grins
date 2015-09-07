@@ -120,8 +120,21 @@ namespace GRINS
                                                                   std::vector<libMesh::Real>& D )
   {
     std::fill( D.begin(), D.end(), _diffusivity.D(rho,cp,k) );
+  }
 
-    return;
+  template<typename Thermo, typename Conductivity>
+  void AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu_and_k_and_D( const libMesh::Real /*T*/,
+                                                                               const libMesh::Real rho,
+                                                                               const libMesh::Real cp,
+                                                                               const std::vector<libMesh::Real>& /*Y*/,
+                                                                               libMesh::Real& mu, libMesh::Real& k,
+                                                                               std::vector<libMesh::Real>& D )
+  {
+    mu = _mu;
+
+    k = _conductivity( _mu, cp );
+
+    std::fill( D.begin(), D.end(), _diffusivity.D(rho,cp,k) );
   }
 
 } // end namespace GRINS
