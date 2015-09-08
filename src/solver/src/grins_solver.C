@@ -103,7 +103,7 @@ namespace GRINS
     if(&dynamic_cast<libMesh::NewtonSolver&>(solver) != NULL)
       dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
     else
-      libmesh_warning("User provided setting for require residual reduction, but we are not using a Newton Solver!");
+      libmesh_warning("Dont have a NewtonSolver!");
 
 
     return;
