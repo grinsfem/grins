@@ -102,16 +102,16 @@ namespace GRINS
     solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
     if(&dynamic_cast<libMesh::NewtonSolver&>(solver) != NULL)
       {
-	dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
+        dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
       }
     else
       {
-	// If the user tried to set require_residual_reduction flag to false
-	// despite not having a NewtonSolver spit out a warning
-	if(this->_require_residual_reduction == false)
-	  {
-	    libmesh_warning("Dont have a NewtonSolver!");
-	  }
+        // If the user tried to set require_residual_reduction flag to false
+        // despite not having a NewtonSolver spit out a warning
+        if(this->_require_residual_reduction == false)
+          {
+            libmesh_warning("Dont have a NewtonSolver!");
+          }
       }
 
     return;
