@@ -110,7 +110,7 @@ namespace GRINS
         // despite not having a NewtonSolver spit out a warning
         if(this->_require_residual_reduction == false)
           {
-            libmesh_warning("Dont have a NewtonSolver!");
+            libmesh_warning("GRINS can't change require_residual_reduction when not using NewtonSolver!");
           }
       }
 
