@@ -100,7 +100,7 @@ namespace GRINS
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
     solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
-    if(&dynamic_cast<libMesh::NewtonSolver&>(solver) != NULL)
+    if(dynamic_cast<libMesh::NewtonSolver*>(&solver))
       {
         dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
       }
