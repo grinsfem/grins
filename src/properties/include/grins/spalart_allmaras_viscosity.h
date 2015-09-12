@@ -53,6 +53,10 @@ namespace GRINS
   {
   public:
 
+    //! Constructor with specified material
+    SpalartAllmarasViscosity( const GetPot& input, const std::string& material );
+
+    //! Deprecated constructor
     SpalartAllmarasViscosity( const GetPot& input );
     ~SpalartAllmarasViscosity(){};
 
