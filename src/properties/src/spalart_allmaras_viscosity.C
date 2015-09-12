@@ -19,6 +19,7 @@
 #include "grins/parsed_viscosity.h"
 
 //GRINS
+#include "grins/common.h"
 #include "grins/grins_physics_names.h"
 #include "grins/turbulent_viscosity_macro.h"
 
@@ -35,6 +36,13 @@ namespace GRINS
     _turbulence_vars(input, spalart_allmaras),
     _sa_params(input)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     if( !input.have_variable("Materials/Viscosity/mu") )
       {
         std::cerr<<"No viscosity has been specified."<<std::endl;
