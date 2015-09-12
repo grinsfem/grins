@@ -46,7 +46,7 @@ namespace GRINS
   TurbulenceModelsBase<Mu>::TurbulenceModelsBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
-      _mu(input)
+      _mu(input,input("Physics/"+incompressible_navier_stokes+"/material", "NoMaterial!"))
   {
     this->set_parameter(this->_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", this->_rho);
   }

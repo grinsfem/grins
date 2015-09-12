@@ -53,6 +53,14 @@ namespace GRINS
   }
 
   template<class Mu>
+  SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input, const std::string& material ):
+    ParameterUser("SpalartAllmarasViscosity"),
+    _mu(input,material),
+    _turbulence_vars(input, spalart_allmaras),
+    _sa_params(input)
+  {}
+
+  template<class Mu>
   void SpalartAllmarasViscosity<Mu>::register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
