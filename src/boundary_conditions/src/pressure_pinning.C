@@ -102,6 +102,10 @@ namespace GRINS
 				   const VariableIndex var, 
 				   const double penalty )
   {
+    // Make sure we've called check_pin_location() and that pin location
+    // is in the mesh somewhere
+    libmesh_assert( _pin_location_found );
+
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
     AssemblyContext &c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
 
