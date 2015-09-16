@@ -49,6 +49,8 @@ namespace GRINS
 
     ~IncompressibleNavierStokes();
 
+    virtual void auxiliary_init( MultiphysicsSystem& system );
+
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 

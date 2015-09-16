@@ -70,8 +70,15 @@ namespace GRINS
 
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", false );
-  
+
     return;
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokes<Mu,SH,TC>::auxiliary_init( MultiphysicsSystem& system )
+  {
+    if( _pin_pressure )
+      _p_pinning.check_pin_location(system.get_mesh());
   }
 
   template<class Mu, class SH, class TC>

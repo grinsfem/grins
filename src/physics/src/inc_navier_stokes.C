@@ -69,6 +69,13 @@ namespace GRINS
   }
 
   template<class Mu>
+  void IncompressibleNavierStokes<Mu>::auxiliary_init( MultiphysicsSystem& system )
+  {
+    if( _pin_pressure )
+      _p_pinning.check_pin_location(system.get_mesh());
+  }
+
+  template<class Mu>
   void IncompressibleNavierStokes<Mu>::read_input_options( const GetPot& input )
   {
     // Other quantities read in base class
