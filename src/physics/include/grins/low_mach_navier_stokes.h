@@ -65,9 +65,9 @@ namespace GRINS
 				       AssemblyContext& context,
 				       CachedValues& cache );
 
-    virtual void side_constraint( bool compute_jacobian,
-                                  AssemblyContext& context,
-                                  CachedValues& cache );
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
