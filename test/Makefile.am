@@ -149,6 +149,13 @@ TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
 TESTS += split_string_unit
 
+TESTS += stokes_invalid_pin_location_unit.sh
+TESTS += ins_invalid_pin_location_unit.sh
+TESTS += lmns_invalid_pin_location_unit.sh
+XFAIL_TESTS += stokes_invalid_pin_location_unit.sh
+XFAIL_TESTS += ins_invalid_pin_location_unit.sh
+XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
+
 TESTS += laplace_parsed_source_regression.sh
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
