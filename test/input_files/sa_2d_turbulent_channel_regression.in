@@ -81,9 +81,7 @@ ic_types = 'parsed'
 ic_variables = 'u'
 ic_values = '4*y*(1.0-y)'
 
-pin_pressure = true
-pin_value = 1.0
-pin_location = '2.5 0.5'
+pin_pressure = 'false'
 
 [../VariableNames]
 
