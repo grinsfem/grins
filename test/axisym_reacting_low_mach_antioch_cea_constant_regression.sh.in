@@ -5,7 +5,7 @@ PROG="@top_builddir@/test/axisym_reacting_low_mach_regression"
 INPUT="@top_builddir@/test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in"
 DATA="@top_srcdir@/test/test_data/axisym_reacting_low_mach_antioch_cea_constant_regression.xdr"
 
-# A MOAB preconditioner
-PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_levels 10"
+# This problem does *not* like much additive Schwarz overlap...
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type ilu -sub_pc_factor_levels 10"
 
-${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v T p w_N2 w_N' norms='L2 H1' tol='1.0e-9' $PETSC_OPTIONS
+${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v T p w_N2 w_N' norms='L2 H1' tol='2.0e-8' $PETSC_OPTIONS
