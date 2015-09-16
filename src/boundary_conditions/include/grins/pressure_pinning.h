@@ -39,6 +39,7 @@ class Getpot;
 namespace libMesh
 {
   class DiffContext;
+  class MeshBase;
 }
 
 namespace GRINS
@@ -56,6 +57,13 @@ namespace GRINS
 		     const std::string& physics_name );
     ~PressurePinning();
 
+    //! Check the mesh to ensure pin location is found
+    /*! We are assuming here that the pin location is on the boundary
+        so we only check the boundary. If the pin location is found, we
+        set _pin_location_found to true (for assertion later). If not found,
+        we throw an error. */
+    void check_pin_location( const libMesh::MeshBase& mesh );
+
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
     void pin_value( libMesh::DiffContext& context,
@@ -70,6 +78,8 @@ namespace GRINS
 
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
+
+    bool _pin_location_found;
 
   };
 }

@@ -33,12 +33,15 @@
 #include "libmesh/getpot.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_interface.h"
+#include "libmesh/mesh_base.h"
+#include "libmesh/parallel.h"
 
 namespace GRINS
 {
 
   PressurePinning::PressurePinning( const GetPot& input,
 				    const std::string& physics_name )
+    : _pin_location_found(false)
   {
     _pin_value = input("Physics/"+physics_name+"/pin_value", 0.0 );
 
@@ -66,7 +69,35 @@ namespace GRINS
     return;
   }
 
-  void PressurePinning::pin_value( libMesh::DiffContext &context, 
+  void PressurePinning::check_pin_location( const libMesh::MeshBase& mesh )
+  {
+    libMesh::MeshBase::const_element_iterator el = mesh.active_local_elements_begin();
+    const libMesh::MeshBase::const_element_iterator end_el = mesh.active_local_elements_end();
+
+    for ( ; el != end_el; ++el)
+      {
+        const libMesh::Elem* elem = *el;
+
+        if( elem->contains_point(_pin_location) )
+          {
+            _pin_location_found = true;
+            break;
+          }
+      }
+
+    // If we found the point on one of the processors, then we need
+    // to tell all the others
+    mesh.comm().max( _pin_location_found );
+
+    if( !_pin_location_found )
+      {
+        libMesh::err << "ERROR: Could not locate point " << _pin_location
+                     << " in mesh!" << std::endl;
+        libmesh_error();
+      }
+  }
+
+  void PressurePinning::pin_value( libMesh::DiffContext &context,
 				   const bool request_jacobian,
 				   const VariableIndex var, 
 				   const double penalty )
