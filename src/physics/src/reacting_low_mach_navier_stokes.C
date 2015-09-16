@@ -417,9 +417,9 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_constraint( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /* cache */ )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_constraint( bool compute_jacobian,
+                                                                           AssemblyContext& context,
+                                                                           CachedValues& /* cache */ )
   {
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
