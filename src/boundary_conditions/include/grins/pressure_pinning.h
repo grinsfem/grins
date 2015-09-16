@@ -58,10 +58,8 @@ namespace GRINS
     ~PressurePinning();
 
     //! Check the mesh to ensure pin location is found
-    /*! We are assuming here that the pin location is on the boundary
-        so we only check the boundary. If the pin location is found, we
-        set _pin_location_found to true (for assertion later). If not found,
-        we throw an error. */
+    /*! If the pin location is found, we set _pin_location_found to true
+        (for assertion later). If not found, we throw an error. */
     void check_pin_location( const libMesh::MeshBase& mesh );
 
     /*! The idea here is to pin a variable to a particular value if there is
