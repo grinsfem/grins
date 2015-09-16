@@ -29,9 +29,7 @@ ic_variables = 'v'
 ic_types = constant
 ic_values = 1
 
-pin_pressure = 'true'
-pin_location = '-0.5 -0.5'
-pin_value = '0.0'
+pin_pressure = 'false'
 
 [../ParsedVelocitySource]
 
