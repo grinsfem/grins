@@ -33,6 +33,8 @@
 
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
 
   //! Physics class for Stokes
   /*!
@@ -46,7 +48,9 @@ namespace GRINS
     Stokes(const std::string& physics_name, const GetPot& input);
 
     ~Stokes();
-    
+
+    virtual void auxiliary_init( MultiphysicsSystem& system );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 

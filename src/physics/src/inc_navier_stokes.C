@@ -69,6 +69,13 @@ namespace GRINS
   }
 
   template<class Mu>
+  void IncompressibleNavierStokes<Mu>::auxiliary_init( MultiphysicsSystem& system )
+  {
+    if( _pin_pressure )
+      _p_pinning.check_pin_location(system.get_mesh());
+  }
+
+  template<class Mu>
   void IncompressibleNavierStokes<Mu>::read_input_options( const GetPot& input )
   {
     // Other quantities read in base class
@@ -453,27 +460,15 @@ namespace GRINS
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
 
-
-    
-  
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
-#endif
-
-    return;
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::side_constraint( bool compute_jacobian,
-                                                    AssemblyContext& context,
-                                                    CachedValues& /* cache */)
-  {
     // Pin p = p_value at p_point
     if( _pin_pressure )
       {
         _p_pinning.pin_value( context, compute_jacobian, this->_flow_vars.p_var() );
       }
+
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
+#endif
 
     return;
   }

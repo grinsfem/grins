@@ -31,6 +31,7 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/assembly_context.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/multiphysics_sys.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -59,7 +60,14 @@ namespace GRINS
   {
     return;
   }
-  
+
+  template<class Mu>
+  void Stokes<Mu>::auxiliary_init( MultiphysicsSystem& system )
+  {
+    if( _pin_pressure )
+      _p_pinning.check_pin_location(system.get_mesh());
+  }
+
   template<class Mu>
   void Stokes<Mu>::element_time_derivative( bool compute_jacobian,
                                         AssemblyContext& context,

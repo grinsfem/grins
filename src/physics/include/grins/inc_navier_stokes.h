@@ -49,6 +49,8 @@ namespace GRINS
 
     ~IncompressibleNavierStokes();
 
+    virtual void auxiliary_init( MultiphysicsSystem& system );
+
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
@@ -68,10 +70,6 @@ namespace GRINS
     virtual void element_constraint( bool compute_jacobian,
 				     AssemblyContext& context,
 				     CachedValues& cache );
-
-    virtual void side_constraint( bool compute_jacobian,
-                                  AssemblyContext& context,
-                                  CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
