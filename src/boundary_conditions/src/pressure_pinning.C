@@ -71,6 +71,9 @@ namespace GRINS
 
   void PressurePinning::check_pin_location( const libMesh::MeshBase& mesh )
   {
+    // We need to reset to invalid_id since this may not be the first time called
+    _pinned_elem_id = libMesh::DofObject::invalid_id;
+
     libMesh::MeshBase::const_element_iterator el = mesh.active_local_elements_begin();
     const libMesh::MeshBase::const_element_iterator end_el = mesh.active_local_elements_end();
 
