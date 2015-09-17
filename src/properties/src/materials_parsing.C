@@ -40,4 +40,19 @@ namespace GRINS
     return;
   }
 
+  void MaterialsParsing::thermal_conductivity_model( const GetPot& input,
+                                                     const std::string& physics,
+                                                     const std::string& material,
+                                                     std::string& model )
+  {
+    if( !input.have_variable("Materials/"+material+"/ThermalConductivity/model") )
+      {
+        libmesh_error_msg("Error: Could not find Materials/"+material+"/ThermalConductivity/model in input file.");
+      }
+
+    model = input( "Materials/"+material+"/ThermalConductivity/model", "DIE!" );
+
+    return;
+  }
+
 } // end namespace GRINS

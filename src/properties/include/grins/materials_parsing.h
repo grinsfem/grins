@@ -54,6 +54,10 @@ namespace GRINS
     static void viscosity_model( const GetPot& input, const std::string& physics,
                                  const std::string& material, std::string& model );
 
+    //! Parse the conductivity model for the given material
+    static void thermal_conductivity_model( const GetPot& input, const std::string& physics,
+                                            const std::string& material, std::string& model );
+
   };
 
   inline
