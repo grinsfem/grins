@@ -41,7 +41,7 @@ namespace GRINS
 
   PressurePinning::PressurePinning( const GetPot& input,
 				    const std::string& physics_name )
-    : _pin_location_found(false)
+    : _pinned_elem_id(libMesh::DofObject::invalid_id)
   {
     _pin_value = input("Physics/"+physics_name+"/pin_value", 0.0 );
 
@@ -80,16 +80,17 @@ namespace GRINS
 
         if( elem->contains_point(_pin_location) )
           {
-            _pin_location_found = true;
+            _pinned_elem_id = elem->id();
             break;
           }
       }
 
     // If we found the point on one of the processors, then we need
-    // to tell all the others
-    mesh.comm().max( _pin_location_found );
+    // to tell all the others. invalid_id is exceedingly large,
+    // so if we found an element, that id should be the smallest
+    mesh.comm().min( _pinned_elem_id );
 
-    if( !_pin_location_found )
+    if( _pinned_elem_id == libMesh::DofObject::invalid_id )
       {
         libMesh::err << "ERROR: Could not locate point " << _pin_location
                      << " in mesh!" << std::endl;
@@ -104,13 +105,21 @@ namespace GRINS
   {
     // Make sure we've called check_pin_location() and that pin location
     // is in the mesh somewhere
-    libmesh_assert( _pin_location_found );
+    libmesh_assert_not_equal_to( _pinned_elem_id, libMesh::DofObject::invalid_id );
 
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
     AssemblyContext &c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
 
-    if (c.get_elem().contains_point(_pin_location))
+    if( c.get_elem().id() == _pinned_elem_id )
       {
+        // This is redundant for vast majority of cases, but we trying to
+        // be prepared for cases involving, e.g. mesh motion that we're not
+        // currently handling.
+        if( !c.get_elem().contains_point(_pin_location) )
+          {
+            libmesh_error_msg("ERROR: _pin_location not in the current element!");
+          }
+
 	libMesh::DenseSubVector<libMesh::Number> &F_var = c.get_elem_residual(var); // residual
 	libMesh::DenseSubMatrix<libMesh::Number> &K_var = c.get_elem_jacobian(var, var); // jacobian
 

@@ -77,7 +77,11 @@ namespace GRINS
     //! Location we want to pin the pressure
     libMesh::Point _pin_location;
 
-    bool _pin_location_found;
+    //! Cache element id for element that contains _pin_location
+    /*! We will initalize this to libMesh::DofObject::invalid_id
+        and use that to check whether or not we located an element
+        that contains the _pin_location. */
+    libMesh::dof_id_type _pinned_elem_id;
 
   };
 }
