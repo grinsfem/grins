@@ -61,6 +61,36 @@ namespace GRINS
     return;
   }
 
+  ConstantConductivity::ConstantConductivity( const GetPot& input, const std::string& material )
+  : ParameterUser("ConstantConductivity"),
+    _k(0.0)
+  {
+    if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") &&
+        input.have_variable("Materials/Conductivity/k") )
+      {
+        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/ThermalConductivity/value and Materials/Conductivity/k");
+      }
+    // If we have the "new" version, then parse it
+    if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") )
+      {
+        this->set_parameter
+          (_k, input, "Materials/"+material+"/ThermalConductivity/value", _k);
+      }
+    // If instead we have the old version, use that.
+    else if( input.have_variable("Materials/Conductivity/k") )
+      {
+        std::string warning = "WARNING: Specifying Materials/Conductivity/k is\n";
+        warning += "         DEPRECATED. Please update to instead use\n";
+        warning += "         Materials/MATERIAL_NAME/ThermalConductivity/value,\n";
+        warning += "         where MATERIAL_NAME is given by Physics/PHYSICS_CLASS/material.\n";
+        grins_warning(warning);
+
+        this->set_parameter
+          (_k, input, "Materials/Conductivity/k", _k);
+      }
+
+  }
+
   ConstantConductivity::~ConstantConductivity()
   {
     return;
