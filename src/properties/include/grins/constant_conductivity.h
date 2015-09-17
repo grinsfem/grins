@@ -41,6 +41,7 @@ namespace GRINS
   {
   public:
 
+    //! Deprecated constructor
     ConstantConductivity( const GetPot& input );
     ~ConstantConductivity();
 

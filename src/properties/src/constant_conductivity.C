@@ -27,6 +27,7 @@
 #include "grins/constant_conductivity.h"
 
 //GRINS
+#include "grins/common.h"
 #include "grins/grins_physics_names.h"
 
 // libMesh
@@ -39,6 +40,13 @@ namespace GRINS
     : ParameterUser("ConstantConductivity"),
       _k(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     if( !input.have_variable("Materials/Conductivity/k") )
       {
         libmesh_warning("No Materials/Conductivity/k specified!\n");
