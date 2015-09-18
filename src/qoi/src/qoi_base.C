@@ -50,8 +50,8 @@ namespace GRINS
   }
 
   void QoIBase::init
-    (const GetPot& input,
-     const MultiphysicsSystem& system,
+    (const GetPot& /*input*/,
+     const MultiphysicsSystem& /*system*/,
      unsigned int /*qoi_num*/ )
   {
   }
