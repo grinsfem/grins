@@ -12,11 +12,8 @@
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization'
 
-[./IncompressibleNavierStokesAdjointStabilization]
-material = 'TestMaterial'
-
 # Options for Incompressible Navier-Stokes physics
-[../IncompressibleNavierStokes]
+[./IncompressibleNavierStokes]
 
 material = 'TestMaterial'
 

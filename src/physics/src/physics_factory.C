@@ -156,12 +156,14 @@ namespace GRINS
   // This needs to be fixed, but carefully to avoid breaking old input
   // files.
 
+  // We use the core_physics to look for the material model
   template <template<typename> class Subclass>
   PhysicsPtr new_mu_class(const std::string& physics_to_add,
+                          const std::string& core_physics,
                           const GetPot& input)
   {
     std::string viscosity;
-    PhysicsFactoryHelper::parse_viscosity_model(input,physics_to_add,viscosity);
+    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
 
     if( viscosity == "constant" )
       return PhysicsPtr
@@ -181,10 +183,11 @@ namespace GRINS
      AND *must* be instantiated with *physical* viscosity */
   template <>
   PhysicsPtr new_mu_class<SpalartAllmaras>(const std::string& physics_to_add,
-                                                                    const GetPot& input)
+                                           const std::string& core_physics,
+                                           const GetPot& input)
   {
-    std::string viscosity =
-      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
 
     if( viscosity == "spalartallmaras" )
       return PhysicsPtr
@@ -210,12 +213,14 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  // core_physics is used to determine material model
   template <template<typename> class Subclass>
   PhysicsPtr new_k_class(const std::string& physics_to_add,
+                         const std::string& core_physics,
                          const GetPot& input)
   {
     std::string conductivity;
-    PhysicsFactoryHelper::parse_conductivity_model(input,physics_to_add,conductivity);
+    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
 
     if( conductivity == "constant" )
       return PhysicsPtr
@@ -500,37 +505,37 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokes>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == stokes )
       {
 	physics_list[physics_to_add] =
           new_mu_class<Stokes>
-            (physics_to_add, input);
+          (physics_to_add, stokes, input);
       }
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokesAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokesSPGSMStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == velocity_drag )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityDrag>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == velocity_drag_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityDragAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == velocity_penalty  ||
              physics_to_add == velocity_penalty2 ||
@@ -538,7 +543,7 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenalty>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab  ||
              physics_to_add == velocity_penalty2_adjoint_stab ||
@@ -546,49 +551,49 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenaltyAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == parsed_velocity_source )
       {
 	physics_list[physics_to_add] =
           new_mu_class<ParsedVelocitySource>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == parsed_velocity_source_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<ParsedVelocitySourceAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == averaged_fan )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedFan>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == averaged_fan_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedFanAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == averaged_turbine )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedTurbine>
-            (physics_to_add, input);
+          (physics_to_add, incompressible_navier_stokes, input);
       }
     else if( physics_to_add == spalart_allmaras )
       {
         physics_list[physics_to_add] =
           new_mu_class<SpalartAllmaras>
-            (physics_to_add, input);
+          (physics_to_add, spalart_allmaras, input);
       }
     else if( physics_to_add == spalart_allmaras_spgsm_stab )
       {
         physics_list[physics_to_add] =
           new_constant_mu_class<SpalartAllmarasSPGSMStabilization>
-            (physics_to_add, input);
+          (physics_to_add, input);
       }
     else if( physics_to_add == scalar_ode )
       {
@@ -599,19 +604,19 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransfer>
-            (physics_to_add, input);
+          (physics_to_add, heat_transfer, input);
       }
     else if( physics_to_add == heat_transfer_adjoint_stab )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransferAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, heat_transfer, input);
       }
     else if( physics_to_add == heat_transfer_spgsm_stab )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransferSPGSMStabilization>
-            (physics_to_add, input);
+          (physics_to_add, heat_transfer, input);
       }
     else if( physics_to_add == heat_transfer_source )
       {
@@ -634,7 +639,7 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_k_class<AxisymmetricHeatTransfer>
-            (physics_to_add, input);
+          (physics_to_add, axisymmetric_heat_transfer, input);
       }
     else if( physics_to_add == boussinesq_buoyancy )
       {
@@ -645,24 +650,24 @@ namespace GRINS
       {
         physics_list[physics_to_add] =
           new_mu_class<BoussinesqBuoyancyAdjointStabilization>
-            (physics_to_add, input);
+          (physics_to_add, boussinesq_buoyancy, input);
       }
     else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
       {
         physics_list[physics_to_add] =
           new_mu_class<BoussinesqBuoyancySPGSMStabilization>
-            (physics_to_add, input);
+          (physics_to_add, boussinesq_buoyancy, input);
       }
     else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
       {
 	physics_list[physics_to_add] =
 	  PhysicsPtr(new AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
       }
-    else if( physics_to_add == "HeatConduction" )
+    else if( physics_to_add == heat_conduction )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatConduction>
-            (physics_to_add, input);
+          (physics_to_add, heat_conduction, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes )
       {
