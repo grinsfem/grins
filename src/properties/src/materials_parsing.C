@@ -55,4 +55,17 @@ namespace GRINS
     return;
   }
 
+  void MaterialsParsing::turb_viscosity_model( const GetPot& input,
+                                               const std::string& /*physics*/,
+                                               const std::string& material,
+                                               std::string& model )
+  {
+    if( !input.have_variable("Materials/"+material+"/Viscosity/turb_visc_model") )
+      {
+        libmesh_error_msg("Error: Could not find Materials/"+material+"/Viscosity/turb_visc_model in input file.");
+      }
+
+    model = input( "Materials/"+material+"/Viscosity/turb_visc_model", "DIE!" );
+  }
+
 } // end namespace GRINS
