@@ -39,14 +39,14 @@
 
 namespace GRINS
 {
-  
+
   template<class K>
   HeatConduction<K>::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _temp_vars(input,heat_conduction),
       _rho(1.0),
       _Cp(1.0),
-      _k(input)
+      _k(input,input("Physics/"+heat_conduction+"/material", "NoMaterial!"))
   {
     // \todo same as Incompressible NS
     this->set_parameter

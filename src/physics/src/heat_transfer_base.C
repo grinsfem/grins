@@ -46,7 +46,7 @@ namespace GRINS
       _temp_vars(input,heat_transfer),
       _rho(1.0),
       _Cp(1.0),
-      _k(input)
+      _k(input,input("Physics/"+heat_transfer+"/material", "NoMaterial!"))
   {
     this->set_parameter
       (this->_rho, input,
