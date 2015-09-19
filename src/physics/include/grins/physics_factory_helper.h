@@ -56,6 +56,11 @@ namespace GRINS
                                            const std::string& physics,
                                            std::string& model );
 
+    //! Determine viscosity model used by turblence classes
+    static void parse_turb_viscosity_model( const GetPot& input,
+                                            const std::string& physics,
+                                            std::string& model );
+
   private:
 
     static void deprecated_visc_model_parsing( bool have_viscosity_model,
