@@ -171,39 +171,29 @@ namespace GRINS
     else if( viscosity == "parsed" )
       return PhysicsPtr
         (new Subclass<ParsedViscosity>(physics_to_add,input));
+    // For SA viscosity model, we need to parse what the "sub" viscosity model is
     else if( viscosity == "spalartallmaras" )
-      return PhysicsPtr
-        (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+      {
+        std::string turb_viscosity;
+        PhysicsFactoryHelper::parse_turb_viscosity_model(input,core_physics,turb_viscosity);
+        if( turb_viscosity == "constant" )
+          return PhysicsPtr
+            (new Subclass<SpalartAllmarasViscosity<ConstantViscosity> >(physics_to_add,input));
+        visc_error(physics_to_add, turb_viscosity);
+      }
 
     visc_error(physics_to_add, viscosity);
     return PhysicsPtr();
   }
 
-  /* Specialize new_mu_class for SA since it is only valid for viscosity == "spalartallmaras"
-     AND *must* be instantiated with *physical* viscosity */
-  template <>
-  PhysicsPtr new_mu_class<SpalartAllmaras>(const std::string& physics_to_add,
-                                           const std::string& core_physics,
-                                           const GetPot& input)
-  {
-    std::string viscosity;
-    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
-
-    if( viscosity == "spalartallmaras" )
-      return PhysicsPtr
-        (new SpalartAllmaras<ConstantViscosity>(physics_to_add,input));
-
-    visc_error(physics_to_add, viscosity);
-    return PhysicsPtr();
-  }
-
-  // Instantiate classes whose only valid viscosity models are constant
+  // Parse viscosity model for turbulence classes
   template <template<typename> class Subclass>
-  PhysicsPtr new_constant_mu_class(const std::string& physics_to_add,
+  PhysicsPtr new_turb_mu_class(const std::string& physics_to_add,
+                               const std::string& core_physics,
                                const GetPot& input)
   {
-    std::string viscosity =
-      input( "Physics/"+spalart_allmaras+"/viscosity_model", "constant" );
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_turb_viscosity_model(input,core_physics,viscosity);
 
     if( viscosity == "constant" )
       return PhysicsPtr
@@ -586,14 +576,14 @@ namespace GRINS
     else if( physics_to_add == spalart_allmaras )
       {
         physics_list[physics_to_add] =
-          new_mu_class<SpalartAllmaras>
+          new_turb_mu_class<SpalartAllmaras>
           (physics_to_add, spalart_allmaras, input);
       }
     else if( physics_to_add == spalart_allmaras_spgsm_stab )
       {
         physics_list[physics_to_add] =
-          new_constant_mu_class<SpalartAllmarasSPGSMStabilization>
-          (physics_to_add, input);
+          new_turb_mu_class<SpalartAllmarasSPGSMStabilization>
+          (physics_to_add, spalart_allmaras, input);
       }
     else if( physics_to_add == scalar_ode )
       {
