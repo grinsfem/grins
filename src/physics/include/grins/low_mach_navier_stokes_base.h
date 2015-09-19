@@ -48,7 +48,7 @@ namespace GRINS
   {
   public:
 
-    LowMachNavierStokesBase(const PhysicsName& physics_name, const GetPot& input);
+    LowMachNavierStokesBase(const PhysicsName& physics_name, const std::string& core_physics_name, const GetPot& input);
 
     ~LowMachNavierStokesBase();
 

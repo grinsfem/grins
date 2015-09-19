@@ -42,7 +42,9 @@ namespace GRINS
 {
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
+  LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name,
+                                                             const std::string& core_physics_name,
+                                                             const GetPot& input)
     : Physics(physics_name, input),
       _mu(input),
       _cp(input),

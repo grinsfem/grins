@@ -44,7 +44,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
-    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
+    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,low_mach_navier_stokes,input),
       _p_pinning(input,physics_name),
       _rho_index(0) // Initialize to zero
   {
