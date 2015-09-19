@@ -49,6 +49,46 @@ namespace GRINS
       }
   }
 
+  ParsedConductivity::ParsedConductivity( const GetPot& input, const std::string& material )
+    : ParsedPropertyBase(),
+      ParameterUser("ParsedConductivity")
+  {
+    std::string conductivity_function;
+
+    // If we have the new version, we parse that
+    if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") )
+      {
+        this->set_parameter(this->_func, input,
+                            "Materials/"+material+"/ThermalConductivity/value",
+                            "DIE!");
+
+        conductivity_function = input("Materials/"+material+"/ThermalConductivity/value",std::string("0"));
+      }
+    // If we have the old DEPRECATED version, use that
+    else if( input.have_variable("Materials/Conductivity/k") )
+      {
+        std::string warning = "WARNING: Use of the option Materials/Conductivity/k is DEPRECATED.\n";
+        warning += "         Materials/MATERIAL_NAME/ThermalConductivity/value\n";
+        grins_warning(warning);
+
+        this->set_parameter(this->_func, input,
+                            "Materials/Conductivity/k",
+                            "DIE!");
+
+        conductivity_function = input("Materials/Conductivity/k",std::string("0"));
+      }
+    // If we don't have either, that's an error
+    else
+      {
+        libmesh_error_msg("Error: Could not find either Materials/"+material+"/ThermalConductivity/value or Materials/Conductivity/k");
+      }
+
+    if( !this->check_func_nonzero(conductivity_function) )
+      {
+        libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
+      }
+  }
+
   ParsedConductivity::~ParsedConductivity()
   {
     return;
