@@ -35,11 +35,10 @@
 namespace GRINS
 {
   template<class K>
-  HeatTransferStabilizationBase<K>::HeatTransferStabilizationBase( const std::string& physics_name, 
+  HeatTransferStabilizationBase<K>::HeatTransferStabilizationBase( const std::string& physics_name,
                                                                 const GetPot& input )
     : HeatTransferBase<K>(physics_name,input),
-      _stab_helper(physics_name+"StabHelper", input),
-      _k(input)
+      _stab_helper(physics_name+"StabHelper", input)
   {
     this->read_input_options(input);
 
