@@ -45,32 +45,11 @@ namespace GRINS
     // Old deprecated version
     bool have_viscosity_model = input.have_variable("Physics/"+incompressible_navier_stokes+"/viscosity_model");
 
-    if( have_material && have_viscosity_model )
-      {
-        libmesh_error_msg("Error: Cannot specify both viscosity_model and material.");
-      }
-
-    /* If the user hasn't specified the material or the viscosity_model,
-       we're assuming they're using the old version. */
-    if( !have_viscosity_model && !have_material )
-      {
-        std::string warning = "Warning: Neither viscosity_model nor material were specified.\n";
-        warning += "      We are assuming a constant viscosity model.\n";
-        warning += "      This case is DEPRECATED.\n";
-        warning += "      Please update and specify Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-      }
-
-    if( have_viscosity_model )
-      {
-        std::string warning = "Warning: Option Physics/"+incompressible_navier_stokes+"/viscosity_model is DEPRECATED.\n";
-        warning += "         Please update to use Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-      }
+    PhysicsFactoryHelper::deprecated_visc_model_parsing(  have_viscosity_model,
+                                                          have_material,
+                                                          input,
+                                                          physics,
+                                                          model );
 
     if( have_material )
       {
@@ -78,8 +57,6 @@ namespace GRINS
         MaterialsParsing::material_name( input, physics, material );
         MaterialsParsing::viscosity_model( input, physics, material, model );
       }
-
-    return;
   }
 
   void PhysicsFactoryHelper::parse_conductivity_model( const GetPot& input,
@@ -138,6 +115,40 @@ namespace GRINS
   {
     model = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
     return;
+  }
+
+  void PhysicsFactoryHelper::deprecated_visc_model_parsing( bool have_viscosity_model,
+                                                            bool have_material,
+                                                            const GetPot& input,
+                                                            const std::string& physics,
+                                                            std::string& model)
+  {
+    if( have_material && have_viscosity_model )
+      {
+        libmesh_error_msg("Error: Cannot specify both viscosity_model and material.");
+      }
+
+    /* If the user hasn't specified the material or the viscosity_model,
+       we're assuming they're using the old version. */
+    if( !have_viscosity_model && !have_material )
+      {
+        std::string warning = "Warning: Neither viscosity_model nor material were specified.\n";
+        warning += "      We are assuming a constant viscosity model.\n";
+        warning += "      This case is DEPRECATED.\n";
+        warning += "      Please update and specify Physics/"+physics+"/material.\n";
+        grins_warning(warning);
+
+        model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+      }
+
+    if( have_viscosity_model )
+      {
+        std::string warning = "Warning: Option Physics/"+incompressible_navier_stokes+"/viscosity_model is DEPRECATED.\n";
+        warning += "         Please update to use Physics/"+physics+"/material.\n";
+        grins_warning(warning);
+
+        model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+      }
   }
 
 } // end namespace GRINS

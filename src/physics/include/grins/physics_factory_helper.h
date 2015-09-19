@@ -56,6 +56,14 @@ namespace GRINS
                                            const std::string& physics,
                                            std::string& model );
 
+  private:
+
+    static void deprecated_visc_model_parsing( bool have_viscosity_model,
+                                               bool have_material,
+                                               const GetPot& input,
+                                               const std::string& physics,
+                                               std::string& model );
+
   };
 
 } // end namespace GRINS
