@@ -225,13 +225,17 @@ namespace GRINS
 
   template <template<typename,typename,typename> class Subclass>
   PhysicsPtr new_mu_cp_k_class(const std::string& physics_to_add,
+                               const std::string& core_physics,
                                const GetPot& input)
   {
-    std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
-    std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
+    std::string conductivity;
+    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
+
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
 
     std::string specific_heat;
-    PhysicsFactoryHelper::parse_specific_heat_model(input,physics_to_add,specific_heat);
+    PhysicsFactoryHelper::parse_specific_heat_model(input,core_physics,specific_heat);
 
     if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
       {
@@ -663,25 +667,25 @@ namespace GRINS
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokes>
-            (physics_to_add, input);
+          (physics_to_add, low_mach_navier_stokes, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_spgsm_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesSPGSMStabilization>
-            (physics_to_add, input);
+          (physics_to_add, low_mach_navier_stokes, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_vms_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesVMSStabilization>
-            (physics_to_add, input);
+            (physics_to_add, low_mach_navier_stokes, input);
       }
     else if(  physics_to_add == low_mach_navier_stokes_braack_stab )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesBraackStabilization>
-            (physics_to_add, input);
+            (physics_to_add, low_mach_navier_stokes, input);
       }
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
