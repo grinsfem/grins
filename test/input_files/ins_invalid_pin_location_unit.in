@@ -22,6 +22,18 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
+[]
+
+# Materials
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0'
+      [../ThermalConductivity]
+         model = 'constant'
+         value = '1.0'
+[]
 
 # Options related to all Physics
 [Physics]
@@ -31,12 +43,13 @@ enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'TestMaterial'
+
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
 
 rho = 1.0
-mu = 1.0
 
 # Boundary ids:
 # k = bottom -> 0
@@ -55,6 +68,8 @@ pin_value = '100.0'
 pin_location = '-0.5 -0.5'
 
 [../HeatTransfer]
+
+material = 'TestMaterial'
 
 FE_family = LAGRANGE
 T_order = SECOND
@@ -86,12 +101,3 @@ w_velocity = 'w'
 pressure = 'p'
 
 []
-
-[Materials]
-
-[./Conductivity]
-
-k = 1.0
-
-[]
-

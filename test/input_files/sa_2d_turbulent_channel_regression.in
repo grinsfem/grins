@@ -36,12 +36,11 @@ vis_output_file_prefix = 'turbulent_channel'
 output_format = 'ExodusII xdr'
 
 [Materials]
-
-[./Viscosity]
-
-#mu = '2.95456e-5' #[kg/m-s]
-mu = '2.434e-5'
-
+  [./TestMaterial]
+    [./Viscosity]
+      model = 'spalartallmaras'
+      turb_visc_model = 'constant'
+      value = '2.434e-5'
 []
 
 # Options for print info to the screen
@@ -58,20 +57,17 @@ echo_physics = 'true'
 [Physics]
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
-#enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
+
+material = 'TestMaterial'
 
 FE_family = LAGRANGE
 V_order = FIRST
 P_order = FIRST
 
-viscosity_model = 'spalartallmaras'
 rho = 1.0
-
-#bc_ids = '3 2 0'
-#bc_types = 'parabolic_profile no_slip no_slip '
 
 bc_ids = '3 2 0'
 bc_types = 'general_velocity no_slip no_slip '
@@ -92,6 +88,8 @@ turbulent_viscosity = 'nu'
 
 # Options for Spalart Allmaras physics
 [../SpalartAllmaras]
+
+material = 'TestMaterial'
 
 TU_order = FIRST
 
