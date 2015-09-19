@@ -98,7 +98,8 @@ namespace GRINS
       }
 
     /* If the user hasn't specified the material or the conductivity_model,
-       we're assuming they're using the old version. */
+       we're assuming they're using the old version.
+       This is deprecated.*/
     if( !have_conductivity_model && !have_material )
       {
         std::string warning = "Warning: Neither conductivity_model nor material were specified.\n";
@@ -110,6 +111,7 @@ namespace GRINS
         model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
       }
 
+    // Deprecated
     if( have_conductivity_model )
       {
         std::string warning = "Warning: Option Physics/"+heat_transfer+"/conductivity_model is DEPRECATED.\n";
@@ -117,6 +119,14 @@ namespace GRINS
         grins_warning(warning);
 
         model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+      }
+
+    // Preferred
+    if( have_material )
+      {
+        std::string material;
+        MaterialsParsing::material_name( input, physics, material );
+        MaterialsParsing::thermal_conductivity_model( input, physics, material, model );
       }
 
     return;
