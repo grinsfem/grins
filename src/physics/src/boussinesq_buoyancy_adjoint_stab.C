@@ -44,7 +44,7 @@ namespace GRINS
     : BoussinesqBuoyancyBase(physics_name,input),
       /* \todo Do we want to have these come from a BoussinesqBuoyancyAdjointStabilization section instead? */
       _rho(1.0),
-      _mu(input),
+      _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!")),
       _stab_helper( physics_name+"StabHelper", input )
   {
     this->set_parameter

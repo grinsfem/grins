@@ -45,7 +45,7 @@ namespace GRINS
       _rho(1.0),
       _Cp(1.0),
       _k(1.0),
-      _mu(input)
+      _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!"))
   {
     this->set_parameter
       (_rho, input,
