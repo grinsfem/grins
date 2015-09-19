@@ -27,8 +27,10 @@
 
 namespace GRINS
 {
-  void MaterialsParsing::viscosity_model( const GetPot& input, const std::string& physics,
-                                          const std::string& material, std::string& model )
+  void MaterialsParsing::viscosity_model( const GetPot& input,
+                                          const std::string& /*physics*/,
+                                          const std::string& material,
+                                          std::string& model )
   {
     if( !input.have_variable("Materials/"+material+"/Viscosity/model") )
       {
@@ -41,7 +43,7 @@ namespace GRINS
   }
 
   void MaterialsParsing::thermal_conductivity_model( const GetPot& input,
-                                                     const std::string& physics,
+                                                     const std::string& /*physics*/,
                                                      const std::string& material,
                                                      std::string& model )
   {
