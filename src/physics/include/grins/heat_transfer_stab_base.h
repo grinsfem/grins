@@ -50,8 +50,6 @@ namespace GRINS
   protected:
 
     HeatTransferStabilizationHelper _stab_helper;
-    
-    Conductivity _k;
 
   private:
 
