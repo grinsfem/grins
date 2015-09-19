@@ -28,8 +28,9 @@ verify_analytic_jacobians = 1.e-6
           model = 'parsed'
           value = '1.0'
 
-   [../../Conductivity]
-      k = '1.0'
+      [../ThermalConductivity]
+          model = 'parsed'
+          value = '1.0'
 []
 
 # Visualization options
@@ -53,12 +54,8 @@ echo_physics = 'true'
 
 enabled_physics = 'Stokes HeatConduction'
 
-# This is a hack for the way we are currently parsing conductivity models
-[./HeatTransfer]
-conductivity_model = 'parsed'
-
 # Options for Stokes physics
-[../Stokes]
+[./Stokes]
 
 material = 'TestMaterial'
 
@@ -84,6 +81,8 @@ pin_location = '2.5 0.5'
 
 
 [../HeatConduction]
+
+material = 'TestMaterial'
 
 rho = 1.0
 Cp = 1.0

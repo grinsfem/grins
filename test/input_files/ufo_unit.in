@@ -6,11 +6,14 @@
 
 # Material section
 [Materials]
-
-[./Conductivity]
-
-k = '1.0'
-
+   [./TestMaterial]
+     [./ThermalConductivity]
+        model = 'constant'
+        value = '1.0'
+     [../Viscosity]
+        model = 'constant'
+        value = '1.846e-5'
+[]
 
 # Options related to all Physics
 [Physics]
@@ -20,6 +23,8 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'TestMaterial'
+
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 
@@ -27,7 +32,6 @@ V_order = 'FIRST'
 P_order = 'FIRST'
 
 rho = '1.77'
-mu = '1.846e-5'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -48,6 +52,8 @@ ic_variables = 'v'
 ic_values = '(abs(x)<=2)*0.001'
 
 [../HeatTransfer]
+
+material = 'TestMaterial'
 
 T_FE_family = 'LAGRANGE'
 T_order = 'FIRST'
@@ -73,9 +79,9 @@ ic_values = '300.0'
 rho = '1.77'
 Cp = '1004.9'
 
-conductivity_model = 'constant'
-
 [../BoussinesqBuoyancy]
+
+material = 'TestMaterial'
 
 # Reference temperature
 T_ref = '300' #[K]

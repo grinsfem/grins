@@ -1,7 +1,9 @@
 # Materials
 [Materials]
-   [./Conductivity]
-      k = '1.0'
+   [./TestMaterial]
+      [./ThermalConductivity]
+          model = 'constant'
+          value = '1.0'
 []
 
 # Options related to all Physics
@@ -18,6 +20,8 @@
       bc_types = 'constant_dirichlet'
       bc_variables = 'T'
       bc_values = '0.0'
+
+      material = 'TestMaterial'
 
       rho = '1.0'
       Cp = '1.0'

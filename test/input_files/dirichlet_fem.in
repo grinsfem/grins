@@ -43,6 +43,16 @@ timesteps_per_perflog = 4
 
 echo_physics = 'true'
 
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0'
+      [../ThermalConductivity]
+         model = 'constant'
+         value = '1.0'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -57,12 +67,13 @@ enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy He
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'TestMaterial'
+
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
 
 rho = 1.0
-mu = 1.0
 
 bc_ids = '2 3 0'
 bc_types = 'prescribed_vel no_slip no_slip'
@@ -72,6 +83,8 @@ bound_vel_2 = '1.0 0.0 0.0'
 pin_pressure = 'false'
 
 [../HeatTransfer]
+
+material = 'TestMaterial'
 
 rho = 1.0
 Cp = 1.0
@@ -105,12 +118,3 @@ w_velocity = 'w'
 pressure = 'p'
 
 []
-
-[Materials]
-
-[./Conductivity]
-
-k = 1.0
-
-[]
-
