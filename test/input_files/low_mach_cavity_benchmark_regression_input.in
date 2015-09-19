@@ -1,3 +1,17 @@
+# Materials
+[Materials]
+  [./TestMaterial]
+    [./Viscosity]
+      model = 'constant'
+      value = '2.95456e-5' #[kg/m-s]
+    [../ThermalConductivity]
+      model = 'constant'
+      value = '.041801' #[W/m-K]
+
+  [../../SpecificHeat]
+    cp = '1004.5' #[J/kg-K]
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -5,6 +19,8 @@ enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
+
+material = 'TestMaterial'
 
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
@@ -29,8 +45,6 @@ g = '0.0 -9.81' #[m/s^2]
 # Ratio of wall temp differences
 epsilon = '0.6'
 
-conductivity_model = 'constant'
-viscosity_model = 'constant'
 specific_heat_model = 'constant'
 
 # Boundary ids:
@@ -95,24 +109,6 @@ tau_factor = '0.05'
 #restart_file = 'cavity.xdr'
 
 []
-
-[Materials]
-
-[./Viscosity]
-
-mu = '2.95456e-5' #[kg/m-s]
-
-[../Conductivity]
-
-k = '.041801' #[W/m-K]
-
-[../SpecificHeat]
-
-cp = '1004.5' #[J/kg-K]
-
-[]
-
-
 
 # Mesh related options
 [Mesh]
