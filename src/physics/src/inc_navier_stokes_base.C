@@ -27,6 +27,7 @@
 #include "grins/inc_navier_stokes_base.h"
 
 // GRINS
+#include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/grins_physics_names.h"
 #include "grins/inc_nav_stokes_macro.h"
@@ -45,12 +46,10 @@ namespace GRINS
                                                                      const GetPot& input )
     : Physics(my_physics_name, input),
       _flow_vars(input, core_physics_name),
-      _rho(1.0),
+      _rho(0.0),
       _mu(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
   {
-    this->set_parameter
-      (this->_rho, input,
-       "Physics/"+core_physics_name+"/rho", this->_rho);
+    this->read_density( core_physics_name, input );
   }
 
   template<class Mu>
@@ -125,6 +124,56 @@ namespace GRINS
     _mu.register_parameter(param_name, param_pointer);
   }
 
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::read_density( const std::string& core_physics_name,
+                                                         const GetPot& input )
+  {
+    std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
+
+    // Error if both material/Density and rho are specified
+    if( input.have_variable("Physics/"+core_physics_name+"/rho") &&
+        input.have_variable("Materials/"+material+"/Density") )
+      {
+        libmesh_error_msg("ERROR: Can't specify both rho and Density!");
+      }
+
+    // It's deprecated to have nothing and default to 1.0
+    if( !input.have_variable("Physics/"+core_physics_name+"/rho") &&
+        ( !input.have_variable("Physics/"+core_physics_name+"/material") ||
+          !input.have_variable("Materials/"+material+"/Density") ) )
+      {
+        std::string warning = "WARNING: neither Physics/"+core_physics_name+"/rho nor\n";
+        warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
+        warning += "         We are assuming a density value of 1.0. This is DEPRECATED.\n";
+        warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
+        grins_warning(warning);
+
+        this->set_parameter
+          (this->_rho, input,
+           "Physics/"+core_physics_name+"/rho", 1.0 /*default*/);
+      }
+
+    // It's deprecated to use rho as the density input
+    if( input.have_variable("Physics/"+core_physics_name+"/rho") )
+      {
+        std::string warning = "WARNING: Using input option Physics/"+core_physics_name+"/rho is DEPRECATED.\n";
+        warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
+        grins_warning(warning);
+
+        this->set_parameter
+          (this->_rho, input,
+           "Physics/"+core_physics_name+"/rho", 1.0 /*default*/);
+      }
+
+    // This is the preferred version
+    if( input.have_variable("Physics/"+core_physics_name+"/material") &&
+        input.have_variable("Materials/"+material+"/Density") )
+      {
+        this->set_parameter
+          (this->_rho, input,
+           "Materials/"+material+"/Density/value", 0.0 /*default*/);
+      }
+  }
 
 } // namespace GRINS
 
