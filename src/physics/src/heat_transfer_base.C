@@ -40,21 +40,23 @@
 namespace GRINS
 {
   template<class K>
-  HeatTransferBase<K>::HeatTransferBase( const std::string& physics_name, const GetPot& input )
+  HeatTransferBase<K>::HeatTransferBase( const std::string& physics_name,
+                                         const std::string& core_physics_name,
+                                         const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
       _rho(1.0),
       _Cp(1.0),
-      _k(input,input("Physics/"+heat_transfer+"/material", "NoMaterial!"))
+      _k(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
   {
     this->set_parameter
       (this->_rho, input,
-       "Physics/"+heat_transfer+"/rho", _rho);
+       "Physics/"+core_physics_name+"/rho", _rho);
 
     this->set_parameter
       (this->_Cp, input,
-       "Physics/"+heat_transfer+"/Cp", _Cp);
+       "Physics/"+core_physics_name+"/Cp", _Cp);
 
     this->read_input_options(input);
 
