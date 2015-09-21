@@ -25,6 +25,7 @@
 
 // This class
 #include "grins/physics_factory.h"
+#include "grins/physics_factory_helper.h"
 
 // GRINS
 #include "grins/cantera_mixture.h"
@@ -159,8 +160,8 @@ namespace GRINS
   PhysicsPtr new_mu_class(const std::string& physics_to_add,
                           const GetPot& input)
   {
-    std::string viscosity =
-      input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_viscosity_model(input,physics_to_add,viscosity);
 
     if( viscosity == "constant" )
       return PhysicsPtr
@@ -213,8 +214,8 @@ namespace GRINS
   PhysicsPtr new_k_class(const std::string& physics_to_add,
                          const GetPot& input)
   {
-    std::string conductivity =
-      input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+    std::string conductivity;
+    PhysicsFactoryHelper::parse_conductivity_model(input,physics_to_add,conductivity);
 
     if( conductivity == "constant" )
       return PhysicsPtr
@@ -233,7 +234,9 @@ namespace GRINS
   {
     std::string conductivity  = input( "Physics/"+low_mach_navier_stokes+"/conductivity_model", "constant" );
     std::string viscosity     = input( "Physics/"+low_mach_navier_stokes+"/viscosity_model", "constant" );
-    std::string specific_heat = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+
+    std::string specific_heat;
+    PhysicsFactoryHelper::parse_specific_heat_model(input,physics_to_add,specific_heat);
 
     if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
       {

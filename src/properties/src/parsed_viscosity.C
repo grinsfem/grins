@@ -18,6 +18,7 @@
 
 //GRINS
 #include "grins/grins_physics_names.h"
+#include "grins/common.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -27,8 +28,17 @@ namespace GRINS
 {
 
    ParsedViscosity::ParsedViscosity( const GetPot& input ) :
-     ParameterUser("ParsedViscosity")
+     ParameterUser("ParsedViscosity"),
+     ViscosityBase()
     {
+
+      // Warning about this constructor being deprecated
+      {
+        std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+        warning += "         Please update to use constructor with input material name.\n";
+        grins_warning(warning);
+      }
+
       if( !input.have_variable("Materials/Viscosity/mu") )
        {
          std::cerr<<"No viscosity has been specified."<<std::endl;
@@ -38,22 +48,56 @@ namespace GRINS
       else
        {
          std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
+         this->check_mu_nonzero(viscosity_function);
 
-         mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-         if (viscosity_function == "0")
-            {
-              std::cerr << "Warning! Zero Viscosity specified!" << std::endl;
-
-              libmesh_error();
-            }
+         _mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
        }
 
       return;
       }
 
+  ParsedViscosity::ParsedViscosity( const GetPot& input, const std::string& material )
+    : ViscosityBase()
+  {
+    this->check_input_consistency(input,material);
+
+    std::string viscosity_function = "0";
+
+    // If we have the new version, we parse that
+    if( input.have_variable("Materials/"+material+"/Viscosity/value") )
+      {
+        viscosity_function = input("Materials/"+material+"/Viscosity/value",std::string("0"));
+      }
+    // If we have the old DEPRECATED version, use that
+    else if( input.have_variable("Materials/Viscosity/mu") )
+      {
+        this->old_mu_warning();
+
+        viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
+      }
+    // If we don't have either, that's an error
+    else
+      {
+        libmesh_error_msg("Error: Could not find either Materials/"+material+"/Viscosity/value or Materials/Viscosity/mu");
+      }
+
+    this->check_mu_nonzero(viscosity_function);
+    _mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
+
+    return;
+  }
+
   ParsedViscosity::~ParsedViscosity()
   {
+    return;
+  }
+
+  void ParsedViscosity::check_mu_nonzero( const std::string& function ) const
+  {
+    if (function == std::string("0"))
+      {
+        libmesh_error_msg("ERROR: Found '0' for parsed viscosity function.");
+      }
     return;
   }
 

@@ -46,7 +46,7 @@ namespace GRINS
     : Physics(my_physics_name, input),
       _flow_vars(input, core_physics_name),
       _rho(1.0),
-      _mu(input)
+      _mu(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
   {
     this->set_parameter
       (this->_rho, input,

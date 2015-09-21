@@ -27,6 +27,7 @@
 #define GRINS_PARSED_VISCOSITY_H
 
 //GRINS
+#include "grins/viscosity_base.h"
 #include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
 
@@ -43,13 +44,20 @@ class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity : public ParameterUser
+  class ParsedViscosity : public ParameterUser,
+                          public ViscosityBase
   {
   public:
 
+    //! Constructor with specified material
+    /*! Will look in the input file for [Materials/material/Viscosity/value]
+        for the value of viscosity. */
+    ParsedViscosity( const GetPot& input, const std::string& material );
+
+    //! Deprecated constructor
     ParsedViscosity( const GetPot& input );
-    ~ParsedViscosity();
-    
+    virtual ~ParsedViscosity();
+
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
     libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 );
@@ -59,9 +67,12 @@ namespace GRINS
   private:
 
     ParsedViscosity();
-    
+
+    //! Helper function to ensure parsed function is non-zero
+    void check_mu_nonzero( const std::string& function ) const;
+
     // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _mu;
 
   };
 
@@ -75,15 +86,15 @@ namespace GRINS
 
     const libMesh::Point& x_qp = x[qp];
 
-    libMesh::Number _mu_value = (*mu)(x_qp,context.time);
+    libMesh::Number mu_value = (*_mu)(x_qp,context.time);
 
-    return _mu_value;
+    return mu_value;
   }
 
   inline
   libMesh::Real ParsedViscosity::operator()( const libMesh::Point& p, const libMesh::Real time )
   {
-    return (*mu)(p,time);
+    return (*_mu)(p,time);
   }
 
 } // end namespace GRINS
