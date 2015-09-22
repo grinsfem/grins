@@ -32,8 +32,10 @@
          # Forcing function corresponding to \Delta u,
          # where u = 4*(1-exp(-a*x)-(1-exp(-a))*x)*y*(1-y)
          value = 'a:=1;-a*(((-4*a*a)*exp(-a*x)*y*(1-y))+(-8+(8*exp(-a*x))+(8*(1-exp(-a))*x)))'
-         # or where u = x*(1-x)
-         # value = '2'
+         # or where u = x*(1-x) (with 1D BCs)
+#         value = '2'
+         # or where u = sin(pi*x) * sin(pi*y)
+#         value = '2*pi*pi*sin(pi*x)*sin(pi*y)'
       [../Variables]
          names = 'T'
          FE_types = 'LAGRANGE'
@@ -45,12 +47,14 @@ enabled_qois = 'weighted_flux'
 
 [./WeightedFlux]
 variables = 'T'
-bc_ids = '3' # Note that this spills over to 0+2 in the corners!
-weights = 'y*(1-y)' # Only one variable == only one weight to specify
-#weights = '1'
+bc_ids = '3'        # Note that this spills over to 0+2 in the corners!
+weights = 'y*(1-y)' # This 'fixes' the spill
 # Analytic value == '2/15*(a-1+exp(-a))' 
-# or value == 1/6
-# or value == 1
+
+# Or, with u = sin(pi*x) * sin(pi*y)
+# du/dx = pi * cos(pi*x) * sin(pi*y)
+# integral ( du/dx * y * (1-y) )
+# Analytic value = 4 / pi^2 ~= 0.405284734569351
 
 []
 
