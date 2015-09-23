@@ -60,7 +60,9 @@ namespace GRINS
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
         here. For example, variable indices. */
-    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
+    virtual void init( const GetPot& input,
+                       const MultiphysicsSystem& system,
+                       unsigned int qoi_num );
 
     virtual void init_context( AssemblyContext& context );
 

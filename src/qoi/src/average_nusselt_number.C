@@ -53,7 +53,10 @@ namespace GRINS
     return new AverageNusseltNumber( *this );
   }
 
-  void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
+  void AverageNusseltNumber::init
+    (const GetPot& input,
+     const MultiphysicsSystem& system,
+     unsigned int /*qoi_num*/ )
   {
     this->set_parameter
       ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );

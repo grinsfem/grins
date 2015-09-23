@@ -56,7 +56,9 @@ namespace GRINS
     return new ParsedBoundaryQoI( *this );
   }
 
-  void ParsedBoundaryQoI::init( const GetPot& input, const MultiphysicsSystem& system )
+  void ParsedBoundaryQoI::init( const GetPot& input,
+                                const MultiphysicsSystem& system,
+                                unsigned int /*qoi_num*/ )
   {
     // Read boundary ids on which we want to compute qoi
     int num_bcs =  input.vector_variable_size("QoI/ParsedBoundary/bc_ids");

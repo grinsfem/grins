@@ -56,7 +56,10 @@ namespace GRINS
     return new ParsedInteriorQoI( *this );
   }
 
-  void ParsedInteriorQoI::init( const GetPot& input, const MultiphysicsSystem& system )
+  void ParsedInteriorQoI::init
+    (const GetPot& input,
+     const MultiphysicsSystem& system,
+     unsigned int /*qoi_num*/ )
   {
     std::string qoi_functional_string =
       input("QoI/ParsedInterior/qoi_functional", std::string("0"));

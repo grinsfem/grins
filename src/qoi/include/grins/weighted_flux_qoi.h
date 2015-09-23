@@ -23,22 +23,31 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_AVERAGE_NUSSELT_NUMBER_H
-#define GRINS_AVERAGE_NUSSELT_NUMBER_H
+#ifndef GRINS_WEIGHTED_FLUX_QOI_H
+#define GRINS_WEIGHTED_FLUX_QOI_H
 
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
+// libMesh
+#include "libmesh/auto_ptr.h"
+#include "libmesh/function_base.h"
+
+// C++
+#include <set>
+#include <string>
+#include <vector>
+
 namespace GRINS
 {
-  class AverageNusseltNumber : public QoIBase
+  class WeightedFluxQoI : public QoIBase
   {
   public:
 
-    AverageNusseltNumber( const std::string& qoi_name );
+    WeightedFluxQoI( const std::string& qoi_name );
 
-    virtual ~AverageNusseltNumber();
+    virtual ~WeightedFluxQoI();
 
     virtual QoIBase* clone() const;
 
@@ -46,48 +55,47 @@ namespace GRINS
 
     virtual bool assemble_on_sides() const;
 
-    virtual void side_qoi( AssemblyContext& context,
-                           const unsigned int qoi_index );
-
-    virtual void side_qoi_derivative( AssemblyContext& context,
-                                      const unsigned int qoi_index );
-
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num );
 
-    virtual void init_context( AssemblyContext& context );
-
   protected:
 
-    //! Thermal conductivity
-    libMesh::Real _k;
+    //! List of variables which we want to contribute to fluxes
+    std::vector<std::string> _var_names;
 
-    //! Temperature variable index
-    VariableIndex _T_var;
-
-    //! List of boundary ids for which we want to compute this QoI
+    //! List of boundary ids on which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;
 
-    //! Scaling constant
-    libMesh::Real _scaling;
+    //! Boundary condition functor
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
+      _adjoint_bc;
+
+    //! Manual copy constructor due to the AutoPtr
+    WeightedFluxQoI(const WeightedFluxQoI& original);
 
   private:
 
-    AverageNusseltNumber();
+    WeightedFluxQoI();
 
   };
 
   inline
-  bool AverageNusseltNumber::assemble_on_interior() const
+  bool WeightedFluxQoI::assemble_on_interior() const
   {
+    // Although we are technically evaluating a lift-function-weighted
+    // residual on the interior, our evaluation gets done by the
+    // FEMSystem
     return false;
   }
 
   inline
-  bool AverageNusseltNumber::assemble_on_sides() const
+  bool WeightedFluxQoI::assemble_on_sides() const
   {
-    return true;
+    // Although our QoI is a boundary integral, it doesn't get
+    // evaluated directly as such; FEMSystem uses a superconvergent
+    // flux calculation based on the adjoint BC we added.
+    return false;
   }
 }
-#endif //GRINS_AVERAGE_NUSSELT_NUMBER_H
+#endif //GRINS_WEIGHTED_FLUX_QOI_H

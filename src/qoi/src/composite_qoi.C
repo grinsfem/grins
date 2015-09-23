@@ -93,13 +93,8 @@ namespace GRINS
 
   void CompositeQoI::init( const GetPot& input, const MultiphysicsSystem& system )
   {
-    for( std::vector<QoIBase*>::iterator qoi = _qois.begin();
-         qoi != _qois.end(); ++qoi )
-      {
-        (*qoi)->init(input,system);
-      }
-
-    return;
+    for( unsigned int q = 0; q < _qois.size(); q++ )
+      _qois[q]->init(input,system,q);
   }
 
   void CompositeQoI::init_context( libMesh::DiffContext& context )

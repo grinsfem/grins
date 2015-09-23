@@ -156,8 +156,15 @@ namespace GRINS
               }
           }
         }
+
+        // Nonlinear Dirichlet constraints change as the solution does
         if (have_nonlinear_dirichlet_bc)
-          context.system->get_equation_systems().reinit();
+          {
+            context.system->reinit_constraints();
+            context.system->get_dof_map().enforce_constraints_exactly(*context.system);
+            context.system->get_dof_map().enforce_constraints_exactly(*context.system,
+                                                                      dynamic_cast<libMesh::UnsteadySolver*>(context.system->time_solver.get())->old_local_nonlinear_solution.get());
+          }
 
 	// GRVY timers contained in here (if enabled)
 	context.system->solve();

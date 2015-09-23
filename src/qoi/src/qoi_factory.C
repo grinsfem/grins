@@ -33,6 +33,7 @@
 #include "grins/vorticity.h"
 #include "grins/parsed_boundary_qoi.h"
 #include "grins/parsed_interior_qoi.h"
+#include "grins/weighted_flux_qoi.h"
 
 namespace GRINS
 {
@@ -100,6 +101,11 @@ namespace GRINS
     else if( qoi_name == vorticity )
       {
         qoi =  new Vorticity( vorticity );
+      }
+
+    else if( qoi_name == weighted_flux )
+      {
+        qoi =  new WeightedFluxQoI( weighted_flux );
       }
 
     else
