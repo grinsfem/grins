@@ -47,6 +47,8 @@ namespace GRINS
   {
     if (original.qoi_functional.get())
       this->qoi_functional = original.qoi_functional->clone();
+
+    this->_bc_ids = original._bc_ids;
   }
 
   ParsedBoundaryQoI::~ParsedBoundaryQoI() {}
