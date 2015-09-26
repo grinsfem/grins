@@ -30,6 +30,7 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -43,12 +44,11 @@ namespace GRINS
   BoussinesqBuoyancyAdjointStabilization<Mu>::BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
       /* \todo Do we want to have these come from a BoussinesqBuoyancyAdjointStabilization section instead? */
-      _rho(1.0),
+      _rho(0.0),
       _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!")),
       _stab_helper( physics_name+"StabHelper", input )
   {
-    this->set_parameter
-      (_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", _rho);
+    MaterialsParsing::read_density( boussinesq_buoyancy, input, (*this), this->_rho );
   }
 
   template<class Mu>

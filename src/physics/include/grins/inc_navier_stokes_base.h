@@ -77,11 +77,6 @@ namespace GRINS
 
   protected:
 
-    //! Helper function to reading density from input
-    /*! In particular, we want to handle backward compatibility before
-        the introduction of material names in the input. */
-    void read_density( const std::string& core_physics_name, const GetPot& input );
-
     //! Physical dimension of problem
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;

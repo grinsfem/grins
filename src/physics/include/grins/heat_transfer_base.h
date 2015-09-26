@@ -70,11 +70,6 @@ namespace GRINS
 
   protected:
 
-    //! Helper function to reading density from input
-    /*! In particular, we want to handle backward compatibility before
-        the introduction of material names in the input. */
-    void read_density( const std::string& core_physics_name, const GetPot& input );
-
     //! Physical dimension of problem
     /*! \todo Make this static member of base class? */
     unsigned int _dim;

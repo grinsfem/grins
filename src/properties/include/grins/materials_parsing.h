@@ -33,6 +33,8 @@
 
 namespace GRINS
 {
+  // Forward declarations
+  class ParameterUser;
 
   //! Helper functions for parsing material properties
   /*! There's no state needed for these functions so we put them in
@@ -63,6 +65,14 @@ namespace GRINS
                                       const std::string& physics,
                                       const std::string& material,
                                       std::string& model );
+
+    //! Helper function to reading density from input
+    /*! In particular, we want to handle backward compatibility before
+        the introduction of material names in the input. */
+    static void read_density( const std::string& core_physics_name,
+                              const GetPot& input,
+                              ParameterUser& params,
+                              libMesh::Real& rho );
 
   };
 

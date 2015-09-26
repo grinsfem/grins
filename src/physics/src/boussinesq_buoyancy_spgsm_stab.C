@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -42,14 +43,12 @@ namespace GRINS
     : BoussinesqBuoyancyBase(physics_name,input),
       _flow_stab_helper(physics_name+"FlowStabHelper", input),
       _temp_stab_helper(physics_name+"TempStabHelper", input),
-      _rho(1.0),
+      _rho(0.0),
       _Cp(1.0),
       _k(1.0),
       _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!"))
   {
-    this->set_parameter
-      (_rho, input,
-       "Physics/"+incompressible_navier_stokes+"/rho", _rho);
+    MaterialsParsing::read_density( boussinesq_buoyancy, input, (*this), this->_rho );
 
     this->set_parameter
       (_Cp, input, "Physics/"+heat_transfer+"/Cp", _Cp);
