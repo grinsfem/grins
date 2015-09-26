@@ -7,9 +7,9 @@
     [../ThermalConductivity]
       model = 'constant'
       value = '.041801' #[W/m-K]
-
-  [../../SpecificHeat]
-    cp = '1004.5' #[J/kg-K]
+    [../SpecificHeat]
+      model = 'constant'
+      value = '1004.5' #[J/kg-K]
 []
 
 # Options related to all Physics
@@ -44,8 +44,6 @@ g = '0.0 -9.81' #[m/s^2]
 
 # Ratio of wall temp differences
 epsilon = '0.6'
-
-specific_heat_model = 'constant'
 
 # Boundary ids:
 # j = bottom -> 0

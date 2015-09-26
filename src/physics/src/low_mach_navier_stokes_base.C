@@ -47,7 +47,7 @@ namespace GRINS
                                                              const GetPot& input)
     : Physics(physics_name, input),
       _mu(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!")),
-      _cp(input),
+      _cp(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!")),
       _k(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
   {
     this->read_input_options(input);
