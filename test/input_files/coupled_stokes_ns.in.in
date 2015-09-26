@@ -44,6 +44,8 @@ echo_physics = 'true'
       [./Viscosity]
          model = 'constant'
          value = '1.0e-3'
+      [../Density]
+         value = '1.0'
 []
 
 
@@ -80,8 +82,6 @@ enabled_subdomains = '1'
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = '1.0'
 
 bc_ids = '1 2 3'
 bc_types = 'no_slip no_slip no_slip'

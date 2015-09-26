@@ -31,6 +31,8 @@ verify_analytic_jacobians = 1.e-6
       [../ThermalConductivity]
           model = 'parsed'
           value = '1.0'
+    [../Density]
+      value = '1.0'
 []
 
 # Visualization options
@@ -59,8 +61,6 @@ enabled_physics = 'Stokes HeatConduction'
 
 material = 'TestMaterial'
 
-rho = '1.0'
-
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
@@ -84,7 +84,6 @@ pin_location = '2.5 0.5'
 
 material = 'TestMaterial'
 
-rho = 1.0
 Cp = 1.0
 
 bc_ids = '3 0 2 1'

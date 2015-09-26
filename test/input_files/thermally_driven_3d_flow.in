@@ -45,6 +45,8 @@ echo_physics = 'true'
       [../ThermalConductivity]
           model = 'constant'
           value = '1.0'
+    [../Density]
+      value = '1.0'
 []
 
 # Options related to all Physics
@@ -61,7 +63,6 @@ FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
 
-rho = 1.0
 
 # Boundary ids:
 # k = bottom -> 0
@@ -85,7 +86,6 @@ material = 'TestMaterial'
 FE_family = LAGRANGE
 T_order = SECOND
 
-rho = 1.0
 Cp = 1.0
 
 bc_ids = '4 2 0 5 1 3'

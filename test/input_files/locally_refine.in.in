@@ -30,8 +30,6 @@ parabolic_profile_fix_1 = 'v'
 
 pin_pressure = 'false'
 
-rho = '1.0'
-
 [../VariableNames]
 
 u_velocity = 'u'
@@ -45,6 +43,8 @@ pressure = 'p'
     [./Viscosity]
       model = 'constant'
       value = '1.0e-1'
+    [../Density]
+         value = '1.0'
 []
 
 [Stabilization]

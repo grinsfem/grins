@@ -45,6 +45,8 @@ echo_physics = 'true'
       [../ThermalConductivity]
          model = 'constant'
          value = '1.0'
+      [../Density]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -67,9 +69,6 @@ P_order = FIRST
 
 material = 'TestMaterial'
 
-rho = 1.0
-
-
 bc_ids = '2 3 1 0'
 bc_types = 'no_slip axisymmetric no_slip no_slip'
 
@@ -81,7 +80,6 @@ pin_value = 0.0
 
 material = 'TestMaterial'
 
-rho = 1.0
 Cp = 1.0
 
 bc_ids = '3 0 2 1'

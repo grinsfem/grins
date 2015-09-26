@@ -41,6 +41,8 @@ output_format = 'ExodusII xdr'
       model = 'spalartallmaras'
       turb_visc_model = 'constant'
       value = '2.434e-5'
+    [../Density]
+      value = '1.0'
 []
 
 # Options for print info to the screen
@@ -66,8 +68,6 @@ material = 'TestMaterial'
 FE_family = LAGRANGE
 V_order = FIRST
 P_order = FIRST
-
-rho = 1.0
 
 bc_ids = '3 2 0'
 bc_types = 'general_velocity no_slip no_slip '

@@ -41,6 +41,8 @@ print_qoi = 'true' # print numerical values of QoIs
       [./Viscosity]
          model = 'constant'
          value = '1.0'
+    [../Density]
+      value = '1.0'
 []
 
 # Options related to all Physics
@@ -59,8 +61,6 @@ pressure = 'p'
 [../Stokes]
 
 material = 'TestMaterial'
-
-rho = '1.0'
 
 FE_family = LAGRANGE
 V_order = SECOND

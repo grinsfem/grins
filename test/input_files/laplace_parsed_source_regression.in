@@ -4,6 +4,8 @@
       [./ThermalConductivity]
           model = 'constant'
           value = '1.0'
+      [../Density]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -23,7 +25,6 @@
 
       material = 'TestMaterial'
 
-      rho = '1.0'
       Cp = '1.0'
 
    [../ParsedSourceTerm]

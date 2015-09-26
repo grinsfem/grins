@@ -13,6 +13,8 @@
      [../Viscosity]
         model = 'constant'
         value = '1.846e-5'
+    [../Density]
+      value = '1.77'
 []
 
 # Options related to all Physics
@@ -30,8 +32,6 @@ P_FE_family = 'LAGRANGE'
 
 V_order = 'FIRST'
 P_order = 'FIRST'
-
-rho = '1.77'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -76,7 +76,6 @@ ic_types = 'constant'
 ic_variables = 'T'
 ic_values = '300.0'
 
-rho = '1.77'
 Cp = '1004.9'
 
 [../BoussinesqBuoyancy]
