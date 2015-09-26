@@ -56,6 +56,40 @@ namespace GRINS
       (_cp, input, "Materials/SpecificHeat/cp", _cp);
   }
 
+  ConstantSpecificHeat::ConstantSpecificHeat( const GetPot& input,
+                                              const std::string& material )
+    : ParameterUser("ConstantSpecificHeat"),
+      _cp(0.0)
+  {
+    // It's an error to have both the old and new version
+    if( input.have_variable("Materials/"+material+"/SpecificHeat/value") &&
+        input.have_variable("Materials/SpecificHeat/cp") )
+      {
+        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/SpecificHeat/value and Materials/SpecificHeat/cp");
+      }
+
+    // If we have the "new" version, then parse it
+    if( input.have_variable("Materials/"+material+"/SpecificHeat/value") )
+      {
+        this->set_parameter
+          (_cp, input, "Materials/"+material+"/SpecificHeat/value", _cp);
+      }
+    // If instead we have the old version, use that.
+    else if( input.have_variable("Materials/SpecificHeat/cp") )
+      {
+        std::string warning = "WARNING: Use of Materials/SpecificHeat/cp is DEPRECATED!\n";
+        warning +="         Please update your input to use Materials/"+material+"/SpecificHeat/value\n";
+        grins_warning(warning);
+
+        this->set_parameter
+          (_cp, input, "Materials/SpecificHeat/cp", _cp);
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Could not find valid input for ConstantSpecificHeat! Please set Materials/"+material+"/SpecificHeat/value");
+      }
+  }
+
   ConstantSpecificHeat::~ConstantSpecificHeat()
   {
     return;
