@@ -355,6 +355,108 @@ namespace GRINS
   }
 
   template<class Mu>
+  void IncompressibleNavierStokes<Mu>::side_time_derivative( bool compute_jacobian,
+							 AssemblyContext& context,
+							 CachedValues& /*cache*/ )
+  {
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->BeginTimer("IncompressibleNavierStokes::side_time_derivative");
+#endif
+
+    // We integrated (-grad(p),v)_\Omega by parts.
+    // This equals (p,div(v))_\Omega - (div(pv),1)_\Omega
+    // Which latter term equals (p,v*n)_d\Omega
+    // In cases where v*n is not constrained away on the boundary we
+    // need to include this term, so we integrate it here.
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
+    // Check number of dofs is same for _flow_vars.u_var(), v_var and w_var.
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v_var()).size());
+    if (this->_dim == 3)
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w_var()).size());
+    // We get some references to cell-specific data that
+    // will be used to assemble the linear system.
+    // Element Jacobian * quadrature weights for side integration.
+    const std::vector<libMesh::Real> &JxW =
+      context.get_side_fe(this->_flow_vars.u_var())->get_JxW();
+    // The velocity shape functions (in global coords.)
+    // at side quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      context.get_side_fe(this->_flow_vars.u_var())->get_phi();
+    // The pressure shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> >& p_phi =
+      context.get_side_fe(this->_flow_vars.p_var())->get_phi();
+    const std::vector<libMesh::Point>& u_qpoint =
+      context.get_side_fe(this->_flow_vars.u_var())->get_xyz();
+    // Normal vectors on the side
+    const std::vector<libMesh::Point> &normals =
+      context.get_side_fe(this->_flow_vars.u_var())->get_normals();
+    // The subvectors and submatrices we need to fill:
+    //
+    // K_{\alpha \beta} = R_{\alpha},{\beta} = \partial{ R_{\alpha} } / \partial{ {\beta} } (where R denotes residual)
+    // e.g., for \alpha = v and \beta = u we get: K{vu} = R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kup = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.p_var()); // R_{u},{p}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.p_var()); // R_{v},{p}
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwp = NULL;
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
+    if( this->_dim == 3 )
+      {
+	Kwp = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.p_var()); // R_{w},{p}
+	Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+      }
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+	libMesh::Number p = context.side_value(this->_flow_vars.p_var(), qp);
+	const libMesh::Number r = u_qpoint[qp](0);
+	libMesh::Real jac = JxW[qp];
+	if( this->_is_axisymmetric )
+	  {
+	    jac *= r;
+	  }
+	// First, an i-loop over the velocity degrees of freedom.
+	// We know that n_u_dofs == n_v_dofs so we can compute contributions
+	// for both at the same time.
+	for (unsigned int i=0; i != n_u_dofs; i++)
+	  {
+	    Fu(i) += jac *
+	      p*u_phi[i][qp]*normals[qp](0); // pressure term
+	    Fv(i) += jac *
+	      p*u_phi[i][qp]*normals[qp](1); // pressure term
+	    if (this->_dim == 3)
+	      {
+		(*Fw)(i) += jac *
+		  p*u_phi[i][qp]*normals[qp](2); // pressure term
+	      }
+	    /*! \todo Are we done in the axisymmetric case?*/
+	    if (compute_jacobian)
+	      {
+		for (unsigned int j=0; j != n_p_dofs; j++)
+		  {
+		    Kup(i,j) += jac *
+		      p_phi[j][qp]*u_phi[i][qp]*normals[qp](0); // pressure term
+		    Kvp(i,j) += jac *
+		      p_phi[j][qp]*u_phi[i][qp]*normals[qp](1); // pressure term
+		    if (this->_dim == 3)
+		      {
+			(*Kwp)(i,j) += jac *
+			  p_phi[j][qp]*u_phi[i][qp]*normals[qp](2); // pressure term
+		      }
+		  } // end of the inner dof (j) loop
+	      } // end - if (compute_jacobian)
+	  } // end of the outer dof (i) loop
+      } // end of the quadrature point (qp) loop
+
+#ifdef GRINS_USE_GRVY_TIMERS
+    this->_timer->EndTimer("IncompressibleNavierStokes::side_time_derivative");
+#endif
+    return;
+  }
+
+  template<class Mu>
   void IncompressibleNavierStokes<Mu>::element_constraint( bool compute_jacobian,
                                                        AssemblyContext& context,
                                                        CachedValues& /*cache*/ )
