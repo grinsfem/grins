@@ -33,6 +33,8 @@ verify_analytic_jacobians = 1.e-6
           value = '1.0'
     [../Density]
       value = '1.0'
+    [../SpecificHeat]
+      value = '1.0'
 []
 
 # Visualization options
@@ -83,8 +85,6 @@ pin_location = '2.5 0.5'
 [../HeatConduction]
 
 material = 'TestMaterial'
-
-Cp = 1.0
 
 bc_ids = '3 0 2 1'
 

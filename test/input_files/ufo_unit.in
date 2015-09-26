@@ -15,6 +15,8 @@
         value = '1.846e-5'
     [../Density]
       value = '1.77'
+    [../SpecificHeat]
+      value = '1004.9'
 []
 
 # Options related to all Physics
@@ -75,8 +77,6 @@ ic_ids = '0'
 ic_types = 'constant'
 ic_variables = 'T'
 ic_values = '300.0'
-
-Cp = '1004.9'
 
 [../BoussinesqBuoyancy]
 

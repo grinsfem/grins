@@ -47,6 +47,8 @@ echo_physics = 'true'
           value = '1.0'
     [../Density]
       value = '1.0'
+      [../SpecificHeat]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -77,8 +79,6 @@ pin_pressure = 'true'
 [../HeatTransfer]
 
 material = 'TestMaterial'
-
-Cp = 1.0
 
 bc_ids = '3 0 2 1'
 

@@ -35,6 +35,8 @@ echo_physics = 'true'
          value = '1.0'
       [../Density]
          value = '1.0'
+      [../SpecificHeat]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -73,8 +75,6 @@ material = 'TestMaterial'
 
 FE_family = LAGRANGE
 T_order = SECOND
-
-Cp = 1.0
 
 bc_ids = '4 2 0 5 1 3'
 
