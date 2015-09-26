@@ -26,6 +26,9 @@
 // This class
 #include "grins/constant_specific_heat.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -36,6 +39,13 @@ namespace GRINS
     : ParameterUser("ConstantSpecificHeat"),
       _cp(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     if( !input.have_variable("Materials/SpecificHeat/cp") )
       {
         std::cerr << "Error: Must specify cp value for constant specific heat model!" << std::endl;

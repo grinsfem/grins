@@ -40,8 +40,9 @@ namespace GRINS
   {
   public:
 
+    //! Deprecated constructor
     ConstantSpecificHeat( const GetPot& input );
-    ~ConstantSpecificHeat();
+    virtual ~ConstantSpecificHeat();
 
     libMesh::Real operator()() const;
 
