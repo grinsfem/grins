@@ -16,9 +16,6 @@
 // This class
 #include "grins/parsed_conductivity.h"
 
-//GRINS
-#include "grins/grins_physics_names.h"
-
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/parsed_function.h"
@@ -26,31 +23,26 @@
 namespace GRINS
 {
 
-   ParsedConductivity::ParsedConductivity( const GetPot& input ) :
-     ParameterUser("ParsedConductivity")
-    {
-      if( !input.have_variable("Materials/Conductivity/k") )
-       {
-         std::cerr<<"No conductivity has been specified."<<std::endl;
-      
-         libmesh_error();
-       }
-      else
-       {
-         std::string conductivity_function = input("Materials/Conductivity/k",std::string("0"));
-
-         k.reset(new libMesh::ParsedFunction<libMesh::Number>(conductivity_function));
-
-         if (conductivity_function == "0")
-            {
-              std::cerr << "Warning! Zero Conductivity specified!" << std::endl;
-
-              libmesh_error();
-            }
-       }
-
-      return;
+  ParsedConductivity::ParsedConductivity( const GetPot& input )
+    : ParsedPropertyBase(),
+      ParameterUser("ParsedConductivity")
+  {
+    if( !input.have_variable("Materials/Conductivity/k") )
+      {
+        libmesh_error_msg("ERROR: No conductivity has been specified!");
       }
+    else
+      {
+        std::string conductivity_function = input("Materials/Conductivity/k",std::string("0"));
+
+        if( !this->check_func_nonzero(conductivity_function) )
+          {
+            libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
+          }
+
+        this->_func.reset(new libMesh::ParsedFunction<libMesh::Number>(conductivity_function));
+      }
+  }
 
   ParsedConductivity::~ParsedConductivity()
   {

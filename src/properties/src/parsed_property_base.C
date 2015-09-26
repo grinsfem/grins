@@ -22,32 +22,20 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_PARSED_VISCOSITY_H
-#define GRINS_PARSED_VISCOSITY_H
-
-//GRINS
-#include "grins/parameter_user.h"
+// This class
 #include "grins/parsed_property_base.h"
-
-class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity : public ParsedPropertyBase,
-                          public ParameterUser
+  bool ParsedPropertyBase::check_func_nonzero( const std::string& function ) const
   {
-  public:
+    bool is_nonzero = true;
 
-    ParsedViscosity( const GetPot& input );
+    if (function == std::string("0"))
+      {
+        is_nonzero = false;
+      }
 
-    ~ParsedViscosity();
-
-  private:
-
-    ParsedViscosity();
-  };
-
+    return is_nonzero;
+  }
 } // end namespace GRINS
-
-#endif // GRINS_CONSTANT_VISCOSITY_H
