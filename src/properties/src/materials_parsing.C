@@ -153,4 +153,82 @@ namespace GRINS
       }
   }
 
+  void MaterialsParsing::read_specific_heat( const std::string& core_physics_name,
+                                             const GetPot& input,
+                                             ParameterUser& params,
+                                             libMesh::Real& cp )
+  {
+    std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
+
+    // Error if both material/SpecificHeat and Cp are specified
+    if( input.have_variable("Physics/"+core_physics_name+"/Cp") &&
+        input.have_variable("Materials/"+material+"/SpecificHeat/value") )
+      {
+        libmesh_error_msg("ERROR: Can't specify both Cp and SpecificHeat!");
+      }
+
+    // It's deprecated to have nothing and default to 1.0
+    if( !input.have_variable("Physics/"+core_physics_name+"/Cp") &&
+        ( !input.have_variable("Physics/"+core_physics_name+"/material") ||
+          !input.have_variable("Materials/"+material+"/SpecificHeat/value") ) )
+      {
+        // For some insane reason, we'd originally tied Cp specifically
+        // to heat_transfer, so we'll check for that first.
+        if( input.have_variable("Physics/"+heat_transfer+"/Cp") )
+          {
+            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
+            warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
+            warning += "         But we found Physics/"+heat_transfer+"/Cp so we using that.\n";
+            warning += "        This behavior is DEPRECATED.\n";
+            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
+            grins_warning(warning);
+
+            params.set_parameter
+              (cp, input,
+               "Physics/"+heat_transfer+"/Cp", 1.0 /*default*/);
+          }
+        // Otherwise, the insanity continued and we defaulted to 1.0
+        else
+          {
+            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
+            warning += "         Physics/"+core_physics_name+"/material  nor\n";
+            warning += "         Physics/"+heat_transfer+"/Cp options were detected.\n";
+            warning += "         We are assuming a specific heat value of 1.0. This is DEPRECATED.\n";
+            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
+            grins_warning(warning);
+
+            params.set_parameter
+              (cp, input,
+               "Physics/"+core_physics_name+"/Cp", 1.0 /*default*/);
+          }
+      }
+
+    // It's deprecated to use rho as the density input
+    if( input.have_variable("Physics/"+core_physics_name+"/Cp") )
+      {
+        std::string warning = "WARNING: Using input option Physics/"+core_physics_name+"/Cp is DEPRECATED.\n";
+        warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
+        grins_warning(warning);
+
+        params.set_parameter
+          (cp, input,
+           "Physics/"+core_physics_name+"/Cp", 1.0 /*default*/);
+      }
+
+    // This is the preferred version
+    if( input.have_variable("Physics/"+core_physics_name+"/material") &&
+        input.have_variable("Materials/"+material+"/SpecificHeat/value") )
+      {
+        params.set_parameter
+          (cp, input,
+           "Materials/"+material+"/SpecificHeat/value", 0.0 /*default*/);
+      }
+
+    // Let's make sure we actually got a valid density value
+    if( cp <= 0.0 )
+      {
+        libmesh_error_msg("ERROR: Detected non-positive value of cp!");
+      }
+  }
+
 } // end namespace GRINS

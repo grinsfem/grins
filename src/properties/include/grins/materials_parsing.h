@@ -74,6 +74,14 @@ namespace GRINS
                               ParameterUser& params,
                               libMesh::Real& rho );
 
+    //! Helper function to reading scalar specific heat from input
+    /*! In particular, we want to handle backward compatibility before
+        the introduction of material names in the input. */
+    static void read_specific_heat( const std::string& core_physics_name,
+                                    const GetPot& input,
+                                    ParameterUser& params,
+                                    libMesh::Real& cp );
+
   };
 
   inline
