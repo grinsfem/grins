@@ -44,14 +44,13 @@ namespace GRINS
       _flow_stab_helper(physics_name+"FlowStabHelper", input),
       _temp_stab_helper(physics_name+"TempStabHelper", input),
       _rho(0.0),
-      _Cp(1.0),
+      _Cp(0.0),
       _k(1.0),
       _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!"))
   {
     MaterialsParsing::read_density( boussinesq_buoyancy, input, (*this), this->_rho );
 
-    this->set_parameter
-      (_Cp, input, "Physics/"+heat_transfer+"/Cp", _Cp);
+    MaterialsParsing::read_specific_heat( boussinesq_buoyancy, input, (*this), this->_Cp );
 
     this->set_parameter
       (_k, input, "Physics/"+heat_transfer+"/k", _k);

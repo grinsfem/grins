@@ -47,13 +47,12 @@ namespace GRINS
     : Physics(physics_name,input),
       _temp_vars(input,heat_conduction),
       _rho(0.0),
-      _Cp(1.0),
+      _Cp(0.0),
       _k(input,input("Physics/"+heat_conduction+"/material", "NoMaterial!"))
   {
     MaterialsParsing::read_density( heat_conduction, input, (*this), this->_rho );
 
-    this->set_parameter
-      (_Cp, input, "Physics/"+heat_conduction+"/Cp", _Cp );
+    MaterialsParsing::read_specific_heat( heat_conduction, input, (*this), this->_Cp );
 
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );

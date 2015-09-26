@@ -49,14 +49,12 @@ namespace GRINS
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
       _rho(0.0),
-      _Cp(1.0),
+      _Cp(0.0),
       _k(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
   {
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 
-    this->set_parameter
-      (this->_Cp, input,
-       "Physics/"+core_physics_name+"/Cp", _Cp);
+    MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
 
     this->read_input_options(input);
 

@@ -81,10 +81,9 @@ namespace GRINS
       libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
 
-    this->set_parameter
-      (this->_Cp, input,
-       "Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
     MaterialsParsing::read_density( axisymmetric_heat_transfer, input, (*this), this->_rho );
+
+    MaterialsParsing::read_specific_heat( axisymmetric_heat_transfer, input, (*this), this->_Cp );
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
