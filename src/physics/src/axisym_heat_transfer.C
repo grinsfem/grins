@@ -32,6 +32,7 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/grins_enums.h"
 #include "grins/heat_transfer_macros.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -79,14 +80,11 @@ namespace GRINS
     this->_V_order =
       libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
-    //TODO: same as Incompressible NS
-    this->set_parameter
-      (this->_rho, input,
-       "Physics/"+axisymmetric_heat_transfer+"/rho", 1.0);
 
     this->set_parameter
       (this->_Cp, input,
        "Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
+    MaterialsParsing::read_density( axisymmetric_heat_transfer, input, (*this), this->_rho );
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
