@@ -86,14 +86,16 @@ namespace GRINS
     virtual void set_parameter
       ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
         const GetPot & input,
-        const std::string & func_param_name);
+        const std::string & func_param_name,
+        const std::string & param_default);
 
     //! Each subclass can simultaneously read a parsed function from
     //file and prepare its inline variables for registration with this call.
     virtual void set_parameter
       ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
         const GetPot & input,
-        const std::string & func_param_name);
+        const std::string & func_param_name,
+        const std::string & param_default);
 
     // FIXME: add set_parameter for vectors
 

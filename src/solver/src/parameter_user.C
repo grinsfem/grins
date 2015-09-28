@@ -52,7 +52,8 @@ namespace GRINS
   void ParameterUser::set_parameter
     ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
       const GetPot & input,
-      const std::string & func_param_name)
+      const std::string & func_param_name,
+      const std::string & param_default)
   {
     if( !input.have_variable(func_param_name) )
       {
@@ -62,8 +63,7 @@ namespace GRINS
         libmesh_error();
       }
 
-    static const std::string die("DIE!");
-    func.reparse(input(func_param_name, die));
+    func.reparse(input(func_param_name, param_default));
 
     libmesh_assert_msg(!_my_parsed_functions.count(func_param_name),
       "ERROR: " << _my_name << " double-registered parameter " <<
@@ -75,7 +75,8 @@ namespace GRINS
   void ParameterUser::set_parameter
     ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
       const GetPot & input,
-      const std::string & func_param_name)
+      const std::string & func_param_name,
+      const std::string & param_default)
   {
     if( !input.have_variable(func_param_name) )
       {
@@ -85,8 +86,7 @@ namespace GRINS
         libmesh_error();
       }
 
-    static const std::string die("DIE!");
-    func.reparse(input(func_param_name, die));
+    func.reparse(input(func_param_name, param_default));
 
     libmesh_assert_msg(!_my_parsed_fem_functions.count(func_param_name),
       "ERROR: " << _my_name << " double-registered parameter " <<
