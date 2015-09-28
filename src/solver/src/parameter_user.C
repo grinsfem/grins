@@ -28,7 +28,8 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parameter_multipointer.h"
+#include "libmesh/parameter_multiaccessor.h"
+#include "libmesh/parameter_pointer.h"
 
 namespace GRINS
 {
@@ -48,7 +49,7 @@ namespace GRINS
 
   void ParameterUser::register_parameter
     ( const std::string & param_name,
-      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     std::map<std::string, libMesh::Number*>::const_iterator it =
@@ -58,7 +59,8 @@ namespace GRINS
       {
         std::cout << _my_name << " uses parameter " << param_name
                   << std::endl;
-        param_pointer.push_back(it->second);
+        param_pointer.push_back
+          (libMesh::ParameterPointer<libMesh::Number>(it->second));
       }
   }
 

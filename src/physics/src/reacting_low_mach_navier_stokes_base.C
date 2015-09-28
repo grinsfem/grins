@@ -210,4 +210,15 @@ namespace GRINS
     return;
   }
 
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _gas_mixture.register_parameter(param_name, param_pointer);
+  }
+
+
 } // end namespace GRINS
