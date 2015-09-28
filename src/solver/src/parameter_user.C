@@ -55,7 +55,8 @@ namespace GRINS
       const std::string & func_param_name,
       const std::string & param_default)
   {
-    if( !input.have_variable(func_param_name) )
+    if((param_default == "DIE!") &&
+       (!input.have_variable(func_param_name)))
       {
         libMesh::err << "Error: Must specify parsed function for " <<
                         _my_name << std::endl
@@ -78,7 +79,8 @@ namespace GRINS
       const std::string & func_param_name,
       const std::string & param_default)
   {
-    if( !input.have_variable(func_param_name) )
+    if((param_default == "DIE!") &&
+       (!input.have_variable(func_param_name)))
       {
         libMesh::err << "Error: Must specify parsed (fem) function for " <<
                         _my_name << std::endl

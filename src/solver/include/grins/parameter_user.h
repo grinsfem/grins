@@ -74,7 +74,7 @@ namespace GRINS
     virtual ~ParameterUser() {}
 
     //! Each subclass can simultaneously read a parameter value from
-    //file and prepare it for registration with this call.
+    // file and prepare it for registration with this call.
     virtual void set_parameter
       ( libMesh::Number & param_variable,
         const GetPot & input,
@@ -82,7 +82,10 @@ namespace GRINS
         libMesh::Number param_default );
 
     //! Each subclass can simultaneously read a parsed function from
-    //file and prepare its inline variables for registration with this call.
+    // file and prepare its inline variables for registration with this call.
+    //
+    // Pass a default value of "DIE!" to assert that the input file
+    // contains a value for this parameter.
     virtual void set_parameter
       ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
         const GetPot & input,
@@ -90,7 +93,10 @@ namespace GRINS
         const std::string & param_default);
 
     //! Each subclass can simultaneously read a parsed function from
-    //file and prepare its inline variables for registration with this call.
+    // file and prepare its inline variables for registration with this call.
+    //
+    // Pass a default value of "DIE!" to assert that the input file
+    // contains a value for this parameter.
     virtual void set_parameter
       ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
         const GetPot & input,
