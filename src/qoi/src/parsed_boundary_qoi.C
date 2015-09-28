@@ -47,6 +47,8 @@ namespace GRINS
   {
     if (original.qoi_functional.get())
       this->qoi_functional = original.qoi_functional->clone();
+
+    this->_bc_ids = original._bc_ids;
   }
 
   ParsedBoundaryQoI::~ParsedBoundaryQoI() {}
@@ -101,6 +103,19 @@ namespace GRINS
   void ParsedBoundaryQoI::side_qoi( AssemblyContext& context,
                                     const unsigned int qoi_index )
   {
+    bool on_correct_side = false;
+
+    for (std::set<libMesh::boundary_id_type>::const_iterator id =
+         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+      if( context.has_side_boundary_id( (*id) ) )
+        {
+          on_correct_side = true;
+          break;
+        }
+
+    if (!on_correct_side)
+      return;
+
     libMesh::FEBase* side_fe;
     context.get_side_fe<libMesh::Real>(0, side_fe);
     const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
