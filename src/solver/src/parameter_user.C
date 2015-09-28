@@ -30,6 +30,8 @@
 #include "libmesh/getpot.h"
 #include "libmesh/parameter_multiaccessor.h"
 #include "libmesh/parameter_pointer.h"
+#include "libmesh/parsed_fem_function.h"
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -45,6 +47,52 @@ namespace GRINS
       param_name);
 
     _my_parameters[param_name] = &param_variable;
+  }
+
+  void ParameterUser::set_parameter
+    ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
+      const GetPot & input,
+      const std::string & func_param_name)
+  {
+    if( !input.have_variable(func_param_name) )
+      {
+        libMesh::err << "Error: Must specify parsed function for " <<
+                        _my_name << std::endl
+                     << "       Please specify " << func_param_name << std::endl;
+        libmesh_error();
+      }
+
+    static const std::string die("DIE!");
+    func.reparse(input(func_param_name, die));
+
+    libmesh_assert_msg(!_my_parsed_functions.count(func_param_name),
+      "ERROR: " << _my_name << " double-registered parameter " <<
+      func_param_name);
+
+    _my_parsed_functions[func_param_name] = &func;
+  }
+
+  void ParameterUser::set_parameter
+    ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
+      const GetPot & input,
+      const std::string & func_param_name)
+  {
+    if( !input.have_variable(func_param_name) )
+      {
+        libMesh::err << "Error: Must specify parsed (fem) function for " <<
+                        _my_name << std::endl
+                     << "       Please specify " << func_param_name << std::endl;
+        libmesh_error();
+      }
+
+    static const std::string die("DIE!");
+    func.reparse(input(func_param_name, die));
+
+    libmesh_assert_msg(!_my_parsed_fem_functions.count(func_param_name),
+      "ERROR: " << _my_name << " double-registered parameter " <<
+      func_param_name);
+
+    _my_parsed_fem_functions[func_param_name] = &func;
   }
 
   void ParameterUser::register_parameter

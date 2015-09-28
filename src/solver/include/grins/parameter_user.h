@@ -34,6 +34,7 @@
 
 //libMesh
 #include "libmesh/libmesh.h"
+#include "libmesh/vector_value.h" // forward declare Gradient instead?
 
 //C++
 #include <map>
@@ -45,6 +46,12 @@ namespace libMesh
 {
   template <typename Scalar>
   class ParameterMultiAccessor;
+
+  template <typename Output, typename OutputGradient>
+  class ParsedFunction;
+
+  template <typename Output>
+  class ParsedFEMFunction;
 }
 
 //! GRINS namespace
@@ -74,12 +81,25 @@ namespace GRINS
         const std::string & param_name,
         libMesh::Number param_default );
 
+    //! Each subclass can simultaneously read a parsed function from
+    //file and prepare its inline variables for registration with this call.
+    virtual void set_parameter
+      ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
+        const GetPot & input,
+        const std::string & func_param_name);
+
+    //! Each subclass can simultaneously read a parsed function from
+    //file and prepare its inline variables for registration with this call.
+    virtual void set_parameter
+      ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
+        const GetPot & input,
+        const std::string & func_param_name);
+
     // FIXME: add set_parameter for vectors
 
     //! Each subclass will register its copy of an independent
     //  variable when the library makes this call.
-    //  If the subclass has more than one copy to register, or if the
-    //  subclass needs to register a parameter which was not
+    //  If the subclass needs to register a parameter which was not
     //  previously assigned with set_parameter, then this method will
     //  need to be overridden.
     virtual void register_parameter
@@ -89,6 +109,14 @@ namespace GRINS
 
   private:
     std::map<std::string, libMesh::Number*> _my_parameters;
+
+    std::map<std::string,
+             libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient>*>
+      _my_parsed_functions;
+
+    std::map<std::string,
+             libMesh::ParsedFEMFunction<libMesh::Number>*>
+      _my_parsed_fem_functions;
 
     // This could be more efficient as a reference now, but we'd
     // probably inadvertently break it later.
