@@ -28,31 +28,18 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
 
-   ParsedViscosity::ParsedViscosity( const GetPot& input )
-     : ParsedPropertyBase(),
-       ParameterUser("ParsedViscosity")
-   {
-     if( !input.have_variable("Materials/Viscosity/mu") )
-       {
-         libmesh_error_msg("ERROR: No viscosity has been specified!");
-       }
-     else
-       {
-         std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
-
-         this->_func.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-         if( !this->check_func_nonzero(viscosity_function) )
-           {
-             libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
-           }
-       }
-   }
+  ParsedViscosity::ParsedViscosity( const GetPot& input )
+    : ParsedPropertyBase(),
+      ParameterUser("ParsedViscosity")
+  {
+    this->set_parameter(this->_func, input,
+                        "Materials/Viscosity/mu",
+                        "DIE!");
+  }
 
   ParsedViscosity::~ParsedViscosity()
   {

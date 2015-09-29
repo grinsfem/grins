@@ -18,7 +18,6 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -27,21 +26,9 @@ namespace GRINS
     : ParsedPropertyBase(),
       ParameterUser("ParsedConductivity")
   {
-    if( !input.have_variable("Materials/Conductivity/k") )
-      {
-        libmesh_error_msg("ERROR: No conductivity has been specified!");
-      }
-    else
-      {
-        std::string conductivity_function = input("Materials/Conductivity/k",std::string("0"));
-
-        if( !this->check_func_nonzero(conductivity_function) )
-          {
-            libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
-          }
-
-        this->_func.reset(new libMesh::ParsedFunction<libMesh::Number>(conductivity_function));
-      }
+    this->set_parameter(this->_func, input,
+                        "Materials/Conductivity/k",
+                        "DIE!");
   }
 
   ParsedConductivity::~ParsedConductivity()

@@ -59,10 +59,7 @@ namespace GRINS
 
     source_function_string =
       input("Physics/"+base_physics_name+"/source_function",
-        std::string("0"));
-
-    if (source_function_string == "0")
-      std::cout << "Warning! Zero ParsedVelocitySource specified!" << std::endl;
+        "DIE!");
   }
 
   template<class Mu>  

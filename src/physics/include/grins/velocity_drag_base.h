@@ -31,8 +31,8 @@
 #include "grins/inc_navier_stokes_base.h"
 
 // libMesh
-#include "libmesh/function_base.h"
 #include "libmesh/getpot.h"
+#include "libmesh/parsed_function.h"
 #include "libmesh/tensor_value.h"
 
 // C++
@@ -62,7 +62,7 @@ namespace GRINS
   protected:
 
     libMesh::Real _exponent;
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _coefficient;
+    libMesh::ParsedFunction<libMesh::Number> _coefficient;
 
   private:
 

@@ -29,10 +29,6 @@
 // GRINS
 #include "grins/inc_nav_stokes_macro.h"
 
-// libMesh
-#include "libmesh/parsed_function.h"
-#include "libmesh/zero_function.h"
-
 namespace GRINS
 {
 
@@ -41,7 +37,9 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
                                          input),
-    _quadratic_scaling(false)
+    _quadratic_scaling(false),
+    normal_vector_function(""),
+    base_velocity_function("")
   {
     this->read_input_options(input);
 
@@ -66,30 +64,17 @@ namespace GRINS
         this->_physics_name == velocity_penalty3_adjoint_stab)
       base_physics_name.push_back('3');
 
-    std::string penalty_function =
-      input("Physics/"+base_physics_name+"/penalty_function",
-        std::string("0"));
+    this->set_parameter(normal_vector_function, input,
+                        "Physics/"+base_physics_name+"/penalty_function",
+                        this->zero_vector_function);
 
-    if (penalty_function == "0")
-      this->normal_vector_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->normal_vector_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
+    this->set_parameter(base_velocity_function, input,
+                        "Physics/"+base_physics_name+"/base_velocity",
+                        this->zero_vector_function);
 
-    std::string base_function =
-      input("Physics/"+base_physics_name+"/base_velocity",
-        std::string("0"));
-
-    if (penalty_function == "0" && base_function == "0")
+    if ((normal_vector_function.expression() == this->zero_vector_function) &&
+        (base_velocity_function.expression() == this->zero_vector_function))
       std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
-
-    if (base_function == "0")
-      this->base_velocity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->base_velocity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
 
     _quadratic_scaling = 
       input("Physics/"+base_physics_name+"/quadratic_scaling", false);
@@ -106,20 +91,15 @@ namespace GRINS
     // Velocity discrepancy (current velocity minus base velocity)
     // normal to constraint plane, scaled by constraint penalty
     // value
-    libmesh_assert(normal_vector_function.get());
-    libmesh_assert(base_velocity_function.get());
-
     libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-    (*normal_vector_function)(point, time,
-                              output_vec);
+    normal_vector_function(point, time, output_vec);
 
     libMesh::NumberVectorValue U_N(output_vec(0),
                                    output_vec(1),
                                    output_vec(2));
 
-    (*base_velocity_function)(point, time,
-                              output_vec);
+    base_velocity_function(point, time, output_vec);
 
     const libMesh::NumberVectorValue U_B(output_vec(0),
                                          output_vec(1),

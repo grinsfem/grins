@@ -31,7 +31,7 @@
 #include "grins/inc_navier_stokes_base.h"
 
 // libMesh
-#include "libmesh/function_base.h"
+#include "libmesh/parsed_function.h"
 #include "libmesh/getpot.h"
 #include "libmesh/tensor_value.h"
 
@@ -63,9 +63,9 @@ namespace GRINS
 
     bool _quadratic_scaling;
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
+    libMesh::ParsedFunction<libMesh::Number> normal_vector_function;
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
+    libMesh::ParsedFunction<libMesh::Number> base_velocity_function;
 
   private:
 
