@@ -31,7 +31,9 @@
 #include "libmesh/parameter_multiaccessor.h"
 #include "libmesh/parameter_pointer.h"
 #include "libmesh/parsed_fem_function.h"
+#include "libmesh/parsed_fem_function_parameter.h"
 #include "libmesh/parsed_function.h"
+#include "libmesh/parsed_function_parameter.h"
 
 namespace GRINS
 {
@@ -114,12 +116,75 @@ namespace GRINS
     std::map<std::string, libMesh::Number*>::const_iterator it =
       _my_parameters.find(param_name);
 
+    // Make sure we don't find duplicate parameters - a Number
+    // parameter shouldn't have the same name as a ParsedFunction or
+    // ParsedFEMFunction parameter.
+#ifndef NDEBUG
+    bool found_parameter = false;
+#endif
+
+    // First search for simple Number parameters
     if (it != _my_parameters.end())
       {
-        std::cout << _my_name << " uses parameter " << param_name
+        std::cout << _my_name << " has Number parameter " << param_name
                   << std::endl;
         param_pointer.push_back
           (libMesh::ParameterPointer<libMesh::Number>(it->second));
+
+#ifndef NDEBUG
+        found_parameter = true;
+#else
+        return;
+#endif
+      }
+
+    // Next search for inline variable parameters in parsed functions
+    std::size_t last_slash_i = param_name.rfind('/');
+
+    if (last_slash_i != std::string::npos)
+      {
+        std::string search_name = param_name.substr(0, last_slash_i);
+
+        std::string var_name = param_name.substr(last_slash_i+1);
+
+        std::map
+          <std::string, libMesh::ParsedFunction
+            <libMesh::Number,libMesh::Gradient>*>::const_iterator
+            pf_it = _my_parsed_functions.find(search_name);
+
+        if (pf_it != _my_parsed_functions.end())
+          {
+            std::cout << _my_name << " has ParsedFunction for " <<
+                         search_name << " / " << var_name << std::endl;
+            param_pointer.push_back
+              (libMesh::ParsedFunctionParameter<libMesh::Number>
+                 (*pf_it->second, var_name));
+
+#ifndef NDEBUG
+            libmesh_assert(!found_parameter);
+            found_parameter = true;
+#else
+            return;
+#endif
+          }
+
+        std::map
+          <std::string, libMesh::ParsedFEMFunction
+            <libMesh::Number>*>::const_iterator
+            pff_it = _my_parsed_fem_functions.find(search_name);
+
+        if (pff_it != _my_parsed_fem_functions.end())
+          {
+            std::cout << _my_name << " has ParsedFEMFunction for " <<
+                         search_name << " / " << var_name << std::endl;
+            param_pointer.push_back
+              (libMesh::ParsedFEMFunctionParameter<libMesh::Number>
+                 (*pff_it->second, var_name));
+
+#ifndef NDEBUG
+            libmesh_assert(!found_parameter);
+#endif
+          }
       }
   }
 
