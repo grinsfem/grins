@@ -108,6 +108,63 @@ namespace GRINS
     _my_parsed_fem_functions[func_param_name] = &func;
   }
 
+  void ParameterUser::move_parameter
+    (const libMesh::Number & old_parameter,
+     libMesh::Number & new_parameter)
+    {
+      std::map<std::string, libMesh::Number*>::iterator it =
+              _my_parameters.begin();
+      const std::map<std::string, libMesh::Number*>::iterator end =
+              _my_parameters.end();
+      for (; it != end; ++it)
+        if (it->second == &old_parameter)
+          {
+            it->second = &new_parameter;
+            break;
+          }
+    }
+
+  void ParameterUser::move_parameter
+    (const libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & old_func,
+     libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & new_func)
+    {
+      std::map
+        <std::string,
+         libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> *
+        >::iterator it = _my_parsed_functions.begin();
+      const std::map
+        <std::string,
+         libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> *
+        >::iterator end = _my_parsed_functions.end();
+      for (; it != end; ++it)
+        if (it->second == &old_func)
+          {
+            it->second = &new_func;
+            break;
+          }
+    }
+
+  void ParameterUser::move_parameter
+    (const libMesh::ParsedFEMFunction<libMesh::Number> & old_func,
+     libMesh::ParsedFEMFunction<libMesh::Number> & new_func)
+    {
+      std::map
+        <std::string,
+         libMesh::ParsedFEMFunction<libMesh::Number> *
+        >::iterator it = _my_parsed_fem_functions.begin();
+      const std::map
+        <std::string,
+         libMesh::ParsedFEMFunction<libMesh::Number> *
+        >::iterator end = _my_parsed_fem_functions.end();
+      for (; it != end; ++it)
+        if (it->second == &old_func)
+          {
+            it->second = &new_func;
+            break;
+          }
+    }
+
+
   void ParameterUser::register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )

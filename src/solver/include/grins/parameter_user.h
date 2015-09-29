@@ -103,6 +103,24 @@ namespace GRINS
         const std::string & func_param_name,
         const std::string & param_default);
 
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::Number & old_parameter,
+       libMesh::Number & new_parameter);
+
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & old_func,
+       libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & new_func);
+
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::ParsedFEMFunction<libMesh::Number> & old_func,
+       libMesh::ParsedFEMFunction<libMesh::Number> & new_func);
+
     //! A parseable function string with LIBMESH_DIM components, all 0
     static std::string zero_vector_function;
 
