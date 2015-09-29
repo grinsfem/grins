@@ -35,6 +35,15 @@
 
 namespace GRINS
 {
+#if LIBMESH_DIM == 3
+  std::string ParameterUser::zero_vector_function = std::string("{0}{0}{0}");
+#elif LIBMESH_DIM == 2
+  std::string ParameterUser::zero_vector_function = std::string("{0}{0}");
+#else
+  std::string ParameterUser::zero_vector_function = std::string("{0}");
+#endif
+
+
   void ParameterUser::set_parameter( libMesh::Number & param_variable,
                                      const GetPot& input,
                                      const std::string & param_name,

@@ -103,7 +103,10 @@ namespace GRINS
         const std::string & func_param_name,
         const std::string & param_default);
 
-    // FIXME: add set_parameter for vectors
+    //! A parseable function string with LIBMESH_DIM components, all 0
+    static std::string zero_vector_function;
+
+    // FIXME: add set_parameter overloads for vectors
 
     //! Each subclass will register its copy of an independent
     //  variable when the library makes this call.
