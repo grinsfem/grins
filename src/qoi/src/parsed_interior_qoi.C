@@ -61,16 +61,13 @@ namespace GRINS
      const MultiphysicsSystem& system,
      unsigned int /*qoi_num*/ )
   {
-    std::string qoi_functional_string =
-      input("QoI/ParsedInterior/qoi_functional", std::string("0"));
-
-    if (qoi_functional_string == "0")
-      libmesh_error_msg("Error! Zero ParsedInteriorQoI specified!" <<
-                        std::endl);
-
-    this->qoi_functional.reset
+    libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, qoi_functional_string));
+         (system, ""));
+    this->qoi_functional.reset(qf);
+
+    this->set_parameter(*qf, input,
+                        "QoI/ParsedInterior/qoi_functional", "DIE!");
   }
 
   void ParsedInteriorQoI::init_context( AssemblyContext& context )

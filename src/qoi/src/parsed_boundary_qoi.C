@@ -78,16 +78,13 @@ namespace GRINS
         _bc_ids.insert( input("QoI/ParsedBoundary/bc_ids", -1, i ) );
       }
 
-    std::string qoi_functional_string =
-      input("QoI/ParsedBoundary/qoi_functional", std::string("0"));
-
-    if (qoi_functional_string == "0")
-      libmesh_error_msg("Error! Zero ParsedBoundaryQoI specified!" <<
-                        std::endl);
-
-    this->qoi_functional.reset
+    libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, qoi_functional_string));
+         (system, ""));
+    this->qoi_functional.reset(qf);
+
+    this->set_parameter(*qf, input,
+                        "QoI/ParsedBoundary/qoi_functional", "DIE!");
   }
 
   void ParsedBoundaryQoI::init_context( AssemblyContext& context )
