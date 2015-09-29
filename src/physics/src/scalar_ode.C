@@ -38,7 +38,10 @@ namespace GRINS
 {
 
   ScalarODE::ScalarODE( const std::string& physics_name, const GetPot& input )
-    : Physics(physics_name, input), _order(1), _epsilon(1e-6)
+    : Physics(physics_name, input),
+      _order(1),
+      _epsilon(1e-6),
+      _input(input)
   {
     this->read_input_options(input);
 
@@ -67,43 +70,40 @@ namespace GRINS
     // we've clearly got a System to grab hold of with all it's
     // variables initialized.
 
-    this->time_deriv_function.reset
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (*system, this->time_deriv_function_string));
+    libMesh::ParsedFEMFunction<libMesh::Number> *tdf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->time_deriv_function.reset(tdf);
 
-    this->mass_residual_function.reset
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (*system, this->mass_residual_function_string));
+    if (tdf->expression() == "0")
+      std::cout << "Warning! Zero time_deriv function specified!" << std::endl;
 
-    this->constraint_function.reset
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (*system, this->constraint_function_string));
+    this->set_parameter(*tdf, _input,
+                        "Physics/"+scalar_ode+"/time_deriv",
+                        std::string("0"));
+
+    libMesh::ParsedFEMFunction<libMesh::Number> *mrf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->mass_residual_function.reset(mrf);
+
+    if (mrf->expression() == "0")
+      std::cout << "Warning! Zero mass_residual function specified!" << std::endl;
+
+    this->set_parameter(*mrf, _input,
+                        "Physics/"+scalar_ode+"/mass_residual",
+                        std::string("0"));
+
+    libMesh::ParsedFEMFunction<libMesh::Number> *cf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->constraint_function.reset(cf);
+
+    this->set_parameter(*cf, _input,
+                        "Physics/"+scalar_ode+"/constraint",
+                        std::string("0"));
   }
 
 
   void ScalarODE::read_input_options( const GetPot& input )
   {
-    this->time_deriv_function_string =
-      input("Physics/"+scalar_ode+"/time_deriv",
-        std::string("0"));
-
-    if (this->time_deriv_function_string == "0")
-      std::cout << "Warning! Zero time_deriv function specified!" << std::endl;
-
-    this->mass_residual_function_string =
-      input("Physics/"+scalar_ode+"/mass_residual",
-        std::string("0"));
-
-    if (this->mass_residual_function_string == "0")
-      std::cout << "Warning! Zero mass_residual function specified!" << std::endl;
-
-    this->constraint_function_string =
-      input("Physics/"+scalar_ode+"/constraint",
-        std::string("0"));
-
-    if (this->constraint_function_string == "0")
-      std::cout << "Warning! Zero constraint function specified!" << std::endl;
-
     this->_epsilon = input("Physics/"+scalar_ode+"/epsilon", 1e-6);
 
     this->_order = input("Physics/"+scalar_ode+"/order", 1);
