@@ -50,7 +50,10 @@ namespace GRINS
 
   QoIBase* AverageNusseltNumber::clone() const
   {
-    return new AverageNusseltNumber( *this );
+    AverageNusseltNumber *returnval = new AverageNusseltNumber( *this );
+    returnval->move_parameter(_k, returnval->_k);
+    returnval->move_parameter(_scaling, returnval->_scaling);
+    return returnval;
   }
 
   void AverageNusseltNumber::init
