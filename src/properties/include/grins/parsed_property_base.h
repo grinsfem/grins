@@ -32,8 +32,8 @@
 // libMesh
 #include "libmesh/libmesh_common.h"
 #include "libmesh/fem_system.h"
+#include "libmesh/parsed_function.h"
 #include "libmesh/point.h"
-#include "libmesh/function_base.h"
 
 // C++
 #include <string>
@@ -48,7 +48,7 @@ namespace GRINS
   {
   public:
 
-    ParsedPropertyBase(){};
+    ParsedPropertyBase() : _func("") {};
     virtual ~ParsedPropertyBase(){};
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
@@ -66,7 +66,7 @@ namespace GRINS
     bool check_func_nonzero( const std::string& function ) const;
 
     // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _func;
+    libMesh::ParsedFunction<libMesh::Number> _func;
 
   };
 
@@ -80,7 +80,10 @@ namespace GRINS
 
     const libMesh::Point& x_qp = x[qp];
 
-    libMesh::Number value = (*_func)(x_qp,context.time);
+    // libMesh API here sucks - RHS
+    libMesh::ParsedFunction<libMesh::Number> & mutable_func =
+      const_cast<libMesh::ParsedFunction<libMesh::Number> &>(_func);
+    libMesh::Number value = mutable_func(x_qp,context.time);
 
     return value;
   }
@@ -88,7 +91,7 @@ namespace GRINS
   inline
   libMesh::Real ParsedPropertyBase::operator()( const libMesh::Point& p, const libMesh::Real time )
   {
-    return (*_func)(p,time);
+    return _func(p,time);
   }
 
 } // end namespace GRINS

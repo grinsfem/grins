@@ -248,37 +248,37 @@ namespace GRINS
 
     if( quantity_index == this->_velocity_penalty_x_index )
       {
-        (*this->normal_vector_function)(point, context.time, output_vec);
+        this->normal_vector_function(point, context.time, output_vec);
 
         value = output_vec(0);
       }
     else if( quantity_index == this->_velocity_penalty_y_index )
       {
-        (*this->normal_vector_function)(point, context.time, output_vec);
+        this->normal_vector_function(point, context.time, output_vec);
 
         value = output_vec(1);
       }
     else if( quantity_index == this->_velocity_penalty_z_index )
       {
-        (*this->normal_vector_function)(point, context.time, output_vec);
+        this->normal_vector_function(point, context.time, output_vec);
 
         value = output_vec(2);
       }
     else if( quantity_index == this->_velocity_penalty_base_x_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        this->base_velocity_function(point, context.time, output_vec);
 
         value = output_vec(0);
       }
     else if( quantity_index == this->_velocity_penalty_base_y_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        this->base_velocity_function(point, context.time, output_vec);
 
         value = output_vec(1);
       }
     else if( quantity_index == this->_velocity_penalty_base_z_index )
       {
-        (*this->base_velocity_function)(point, context.time, output_vec);
+        this->base_velocity_function(point, context.time, output_vec);
 
         value = output_vec(2);
       }

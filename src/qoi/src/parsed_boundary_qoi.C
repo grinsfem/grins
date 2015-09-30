@@ -43,10 +43,17 @@ namespace GRINS
     : QoIBase(qoi_name) {}
 
   ParsedBoundaryQoI::ParsedBoundaryQoI( const ParsedBoundaryQoI& original )
-    : QoIBase(original.name())
+    : QoIBase(original)
   {
     if (original.qoi_functional.get())
-      this->qoi_functional = original.qoi_functional->clone();
+      {
+        this->qoi_functional = original.qoi_functional->clone();
+        this->move_parameter
+          (*libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+             (original.qoi_functional.get()),
+           *libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+             (this->qoi_functional.get()));
+      }
 
     this->_bc_ids = original._bc_ids;
   }
@@ -78,16 +85,13 @@ namespace GRINS
         _bc_ids.insert( input("QoI/ParsedBoundary/bc_ids", -1, i ) );
       }
 
-    std::string qoi_functional_string =
-      input("QoI/ParsedBoundary/qoi_functional", std::string("0"));
-
-    if (qoi_functional_string == "0")
-      libmesh_error_msg("Error! Zero ParsedBoundaryQoI specified!" <<
-                        std::endl);
-
-    this->qoi_functional.reset
+    libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, qoi_functional_string));
+         (system, ""));
+    this->qoi_functional.reset(qf);
+
+    this->set_parameter(*qf, input,
+                        "QoI/ParsedBoundary/qoi_functional", "DIE!");
   }
 
   void ParsedBoundaryQoI::init_context( AssemblyContext& context )

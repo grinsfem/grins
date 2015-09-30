@@ -39,11 +39,9 @@ namespace GRINS
   ParsedVelocitySourceBase<Mu>::ParsedVelocitySourceBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
-                                         input)
+                                         input),
+      _input(input)
   {
-    this->read_input_options(input);
-
-    return;
   }
 
   template<class Mu>
@@ -53,24 +51,17 @@ namespace GRINS
   }
   
   template<class Mu>  
-  void ParsedVelocitySourceBase<Mu>::read_input_options( const GetPot& input )
+  void ParsedVelocitySourceBase<Mu>::set_time_evolving_vars ( libMesh::FEMSystem* system)
   {
     std::string base_physics_name = "ParsedVelocitySource";
 
-    source_function_string =
-      input("Physics/"+base_physics_name+"/source_function",
-        std::string("0"));
+    libMesh::ParsedFEMFunction<libMesh::Number> *vsf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->velocity_source_function.reset(vsf);
 
-    if (source_function_string == "0")
-      std::cout << "Warning! Zero ParsedVelocitySource specified!" << std::endl;
-  }
-
-  template<class Mu>  
-  void ParsedVelocitySourceBase<Mu>::set_time_evolving_vars ( libMesh::FEMSystem* system)
-  {
-    this->velocity_source_function.reset
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-        (*system, this->source_function_string));
+    this->set_parameter(*vsf, _input,
+                        "Physics/"+base_physics_name+"/source_function",
+                        "DIE!");
   }
 
   template<class Mu>
