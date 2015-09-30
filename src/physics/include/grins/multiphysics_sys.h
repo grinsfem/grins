@@ -50,7 +50,7 @@ namespace libMesh
   class DiffContext;
 
   template <typename Scalar>
-  class ParameterMultiPointer;
+  class ParameterMultiAccessor;
 }
 
 namespace GRINS
@@ -112,7 +112,7 @@ namespace GRINS
     //  named in this call.
     void register_parameter
       ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer );
+        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
