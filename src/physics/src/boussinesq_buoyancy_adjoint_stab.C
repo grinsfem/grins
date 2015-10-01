@@ -43,13 +43,9 @@ namespace GRINS
   template<class Mu>
   BoussinesqBuoyancyAdjointStabilization<Mu>::BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
-      /* \todo Do we want to have these come from a BoussinesqBuoyancyAdjointStabilization section instead? */
-      _rho(0.0),
       _mu(input,input("Physics/"+boussinesq_buoyancy+"/material", "NoMaterial!")),
       _stab_helper( physics_name+"StabHelper", input )
-  {
-    MaterialsParsing::read_density( boussinesq_buoyancy, input, (*this), this->_rho );
-  }
+  {}
 
   template<class Mu>
   BoussinesqBuoyancyAdjointStabilization<Mu>::~BoussinesqBuoyancyAdjointStabilization()
@@ -182,7 +178,7 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient d_residual_dT = _rho_ref*_beta_T*_g;
+        libMesh::RealGradient d_residual_dT = _rho*_beta_T*_g;
         // d_residual_dU = 0
         libMesh::RealGradient residual = (T-_T_ref)*d_residual_dT;
 
@@ -344,7 +340,7 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient d_residual_dT = _rho_ref*_beta_T*_g;
+        libMesh::RealGradient d_residual_dT = _rho*_beta_T*_g;
         // d_residual_dU = 0
         libMesh::RealGradient residual = (T-_T_ref)*d_residual_dT;
 

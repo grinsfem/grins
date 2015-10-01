@@ -52,8 +52,8 @@ namespace GRINS
     PrimitiveFlowFEVariables _flow_vars;
     PrimitiveTempFEVariables _temp_vars;
 
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
+    //! \f$ \rho = \f$ density
+    libMesh::Number _rho;
 
     //! \f$ T_0 = \f$ reference temperature 
     libMesh::Number _T_ref;

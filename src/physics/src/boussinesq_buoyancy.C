@@ -108,24 +108,24 @@ namespace GRINS
         // for both at the same time.
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
-            Fv(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
+            Fu(i) += -_rho*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
+            Fv(i) += -_rho*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
 
             if (_dim == 3)
-              (*Fw)(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
+              (*Fw)(i) += -_rho*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
                     KuT(i,j) += context.get_elem_solution_derivative() *
-                      -_rho_ref*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                      -_rho*_beta_T*_g(0)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
                     KvT(i,j) += context.get_elem_solution_derivative() *
-                      -_rho_ref*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                      -_rho*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                     if (_dim == 3)
                       (*KwT)(i,j) += context.get_elem_solution_derivative() *
-                        -_rho_ref*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
+                        -_rho*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
                   } // End j dof loop
               } // End compute_jacobian check

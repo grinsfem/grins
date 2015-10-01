@@ -44,7 +44,7 @@ namespace GRINS
     Namely:
     \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
     where
-    \f$ \rho_0 = \f$ reference density, 
+    \f$ \rho = \f$ density,
     \f$ T_0 = \f$ reference temperature,
     \f$ \beta_T = \f$ coefficient of thermal expansion, and
     \f$ \mathbf{g} = \f$ the gravitional vector.
@@ -106,8 +106,8 @@ namespace GRINS
     //! Name of temperature
     std::string _T_var_name;
 
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
+    //! \f$ \rho = \f$ density
+    libMesh::Number _rho;
 
     //! \f$ T_0 = \f$ reference temperature 
     libMesh::Number _T_ref;

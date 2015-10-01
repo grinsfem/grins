@@ -39,13 +39,13 @@ namespace GRINS
     : Physics(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho_ref(1.0),
+      _rho(0.0),
       _T_ref(1.0),
       _beta_T(1.0)
   {
     this->set_parameter
-      (_rho_ref, input,
-       "Physics/"+boussinesq_buoyancy+"/rho_ref", _rho_ref);
+      (_rho, input,
+       "Physics/"+boussinesq_buoyancy+"/rho_ref", _rho);
 
     this->set_parameter
       (_T_ref, input,

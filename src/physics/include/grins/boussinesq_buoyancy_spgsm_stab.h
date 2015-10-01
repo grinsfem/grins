@@ -76,7 +76,7 @@ namespace GRINS
     IncompressibleNavierStokesStabilizationHelper _flow_stab_helper;
     HeatTransferStabilizationHelper _temp_stab_helper;
 
-    libMesh::Number _rho, _Cp, _k;
+    libMesh::Number _Cp, _k;
 
     //! Viscosity object
     Viscosity _mu;
