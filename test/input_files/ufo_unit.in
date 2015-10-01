@@ -85,8 +85,6 @@ material = 'TestMaterial'
 # Reference temperature
 T_ref = '300' #[K]
 
-rho_ref = '1.77'
-
 beta_T = '0.003333333333'
 
 # Gravity vector

@@ -22,10 +22,14 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "grins_config.h"
 
 // This class
-#include "grins_config.h"
 #include "grins/boussinesq_buoyancy_base.h"
+
+// GRINS
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -43,9 +47,7 @@ namespace GRINS
       _T_ref(1.0),
       _beta_T(1.0)
   {
-    this->set_parameter
-      (_rho, input,
-       "Physics/"+boussinesq_buoyancy+"/rho_ref", _rho);
+    this->read_density(input);
 
     this->set_parameter
       (_T_ref, input,
@@ -82,4 +84,60 @@ namespace GRINS
     return;
   }
 
+  void BoussinesqBuoyancyBase::read_density( const GetPot& input )
+  {
+    std::string material = "DIE!";
+    MaterialsParsing::material_name(input,boussinesq_buoyancy,material);
+
+    // Can't specify both material and rho_ref
+    if( MaterialsParsing::have_material(input,boussinesq_buoyancy) )
+      {
+        if( input.have_variable("Physics/"+boussinesq_buoyancy+"/rho_ref") &&
+            input.have_variable("Materials/"+material+"/Density/value" ) )
+          {
+            libmesh_error_msg("ERROR: Can't specify both Physics/"+boussinesq_buoyancy+"/rho_ref and Materials/"+material+"/Density/value!");
+          }
+      }
+
+    // Deprecated
+    if( input.have_variable("Physics/"+boussinesq_buoyancy+"/rho_ref") )
+      {
+        {
+          std::string warning = "WARNING: Input option Physics/"+boussinesq_buoyancy+"/rho_ref is DEPRECATED!\n";
+          warning += "         Please update to use Material/MATERIAL_NAME/Density/value\n";
+          grins_warning(warning);
+        }
+
+        this->set_parameter
+          (_rho, input,
+           "Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0 /*Old default*/);
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/Density/value" ) )
+      {
+        this->set_parameter
+          (_rho, input,
+           "Materials/"+material+"/Density/value", 0.0 /*default*/);
+      }
+    // If nothing was set, we default to 1.0. Deprecated, what was I thinking
+    else
+      {
+        {
+          std::string warning = "WARNING: Neither Physics/"+boussinesq_buoyancy+"/rho_ref\n";
+          warning += "         nor Materials/"+material+"/Density/value was detected in input\n";
+          warning +  "         Density is defaulting to 1.0. This behavior is DEPRECATED!\n";
+          warning += "         Please update to use Material/MATERIAL_NAME/Density/value\n";
+          grins_warning(warning);
+        }
+        this->set_parameter
+          (_rho, input,
+           "Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0 /*default*/);
+      }
+
+    // Make sure density is positive
+    if( _rho <= 0.0 )
+      {
+        libmesh_error_msg("ERROR: Detected non-positive input density!");
+      }
+  }
 } // namespace GRINS

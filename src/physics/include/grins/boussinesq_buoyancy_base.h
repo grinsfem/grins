@@ -49,6 +49,9 @@ namespace GRINS
 
   protected:
 
+    // Helper function for parsing/maintaing backward compatibility
+    void read_density( const GetPot& input );
+
     PrimitiveFlowFEVariables _flow_vars;
     PrimitiveTempFEVariables _temp_vars;
 

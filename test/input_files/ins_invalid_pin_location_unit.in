@@ -85,7 +85,6 @@ T_wall_2 = 10
 
 [../BoussinesqBuoyancy]
 
-rho_ref = 1.0
 T_ref = 1.0
 beta_T = 1.0
 
