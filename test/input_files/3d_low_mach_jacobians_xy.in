@@ -16,15 +16,6 @@ V_order = 'SECOND'
 T_order = 'SECOND'
 P_order = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '1' #[Pa]
-
-# Reference temperature
-T0 = '1' #[K]
-
-# Gas constant
-R = '1.0' #[J/kg-K]
-
 # Gravity vector
 g = '0 -9.8 0' #[m/s^2]
 
@@ -62,7 +53,7 @@ pressure = 'p'
 
 enabled_qois = 'average_nusselt_number'
 
-adjoint_sensitivity_parameters = 'Physics/LowMachNavierStokes/p0 Physics/LowMachNavierStokes/T0 Physics/LowMachNavierStokes/R Materials/TestMaterial/Viscosity/value Materials/TestMaterial/ThermalConductivity/value Materials/TestMaterial/SpecificHeat/value QoI/NusseltNumber/thermal_conductivity'
+adjoint_sensitivity_parameters = 'Materials/TestMaterial/ThermodynamicPressure/value Materials/TestMaterial/ReferenceTemperature/value Materials/TestMaterial/GasConstant/value Materials/TestMaterial/Viscosity/value Materials/TestMaterial/ThermalConductivity/value Materials/TestMaterial/SpecificHeat/value QoI/NusseltNumber/thermal_conductivity'
 
 [./NusseltNumber]
 
@@ -87,6 +78,12 @@ scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierSt
     [../SpecificHeat]
        model = 'constant'
        value = '1.0' #[J/kg-K]
+    [../ReferenceTemperature]
+       value = '1.0'
+    [../ThermodynamicPressure]
+       value = '1.0'
+    [../GasConstant]
+       value = '1.0'
 []
 
 
