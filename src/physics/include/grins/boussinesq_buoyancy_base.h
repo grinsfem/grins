@@ -56,11 +56,6 @@ namespace GRINS
                         libMesh::Real& value );
 
     //! Helper function for parsing/maintaing backward compatibility
-    void duplicate_input_test( const GetPot& input,
-                               const std::string& option1,
-                               const std::string& option2 );
-
-    //! Helper function for parsing/maintaing backward compatibility
     void no_input_warning( const GetPot& input,
                            const std::string& old_option,
                            const std::string& material,

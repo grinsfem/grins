@@ -250,4 +250,15 @@ namespace GRINS
     grins_warning(warning);
   }
 
+  void MaterialsParsing::duplicate_input_test( const GetPot& input,
+                                               const std::string& option1,
+                                               const std::string& option2 )
+  {
+    if( input.have_variable(option1) &&
+        input.have_variable(option2) )
+      {
+        libmesh_error_msg("ERROR: Can't specify both "+option1+" and "+option2+"!");
+      }
+  }
+
 } // end namespace GRINS

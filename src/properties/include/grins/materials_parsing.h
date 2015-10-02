@@ -90,6 +90,11 @@ namespace GRINS
     static void dep_input_warning( const std::string& old_option,
                                    const std::string& property );
 
+    //! Helper function for parsing/maintaing backward compatibility
+    static void duplicate_input_test( const GetPot& input,
+                                      const std::string& option1,
+                                      const std::string& option2 );
+
   };
 
   inline

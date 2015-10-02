@@ -99,9 +99,9 @@ namespace GRINS
     MaterialsParsing::material_name(input,boussinesq_buoyancy,material);
 
     // Can't specify both material and rho_ref
-    this->duplicate_input_test(input,
-                               old_option,
-                               "Materials/"+material+"/"+property+"/value" );
+    MaterialsParsing::duplicate_input_test(input,
+                                           old_option,
+                                           "Materials/"+material+"/"+property+"/value" );
 
     // Deprecated
     if( input.have_variable(old_option) )
@@ -134,21 +134,6 @@ namespace GRINS
     if( value <= 0.0 )
       {
         libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
-      }
-  }
-
-  void BoussinesqBuoyancyBase::duplicate_input_test( const GetPot& input,
-                                                     const std::string& option1,
-                                                     const std::string& option2 )
-  {
-    // Can't specify both option1 and option2
-    if( MaterialsParsing::have_material(input,boussinesq_buoyancy) )
-      {
-        if( input.have_variable(option1) &&
-            input.have_variable(option2) )
-          {
-            libmesh_error_msg("ERROR: Can't specify both "+option1+" and "+option2+"!");
-          }
       }
   }
 
