@@ -147,6 +147,12 @@ namespace GRINS
 	// that won't properly reset the dimension is gmsh.
 	/*! \todo Need to a check a GMSH meshes */
 	mesh->read(mesh_filename);
+
+        // If we have a first order mesh file but we need second order
+        // elements we should fix that.
+        bool all_second_order = input("Mesh/all_second_order", false);
+        if (all_second_order)
+          mesh->all_second_order();
       }
 
     // Generate the mesh using built-in libMesh functions
