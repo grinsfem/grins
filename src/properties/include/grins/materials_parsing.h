@@ -87,6 +87,18 @@ namespace GRINS
                                     libMesh::Real& cp );
 
     //! Helper function for parsing/maintaing backward compatibility
+    /*! This function assumes that one of the old_option or the material-based
+        property input must be specified. If that's not the case, this function
+        should'nt be used. This also assumes that the property value should
+        be positive and will error out if it's not.*/
+    static void read_property( const GetPot& input,
+                               const std::string& old_option,
+                               const std::string& property,
+                               const std::string& core_physics,
+                               ParameterUser& param_user,
+                               libMesh::Real& value );
+
+    //! Helper function for parsing/maintaing backward compatibility
     static void dep_input_warning( const std::string& old_option,
                                    const std::string& property );
 

@@ -238,6 +238,47 @@ namespace GRINS
       }
   }
 
+  void MaterialsParsing::read_property( const GetPot& input,
+                                        const std::string& old_option,
+                                        const std::string& property,
+                                        const std::string& core_physics,
+                                        ParameterUser& param_user,
+                                        libMesh::Real& value )
+  {
+    std::string material = "DIE!";
+    MaterialsParsing::material_name(input,core_physics,material);
+
+    // Can't specify both old_option and property
+    MaterialsParsing::duplicate_input_test(input,
+                                           old_option,
+                                           "Materials/"+material+"/"+property+"/value" );
+
+    // Deprecated
+    if( input.have_variable(old_option) )
+      {
+        MaterialsParsing::dep_input_warning( old_option,property );
+
+        param_user.set_parameter(value, input, old_option, 0.0 /*default*/);
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/"+property+"/value" ) )
+      {
+        param_user.set_parameter
+          (value, input, "Materials/"+material+"/"+property+"/value", 0.0 /*default*/);
+      }
+    // If nothing was set, that's an error
+    else
+      {
+        libmesh_error_msg("ERROR: No valid input found for "+property+"!");
+      }
+
+    // Make sure value is positive
+    if( value <= 0.0 )
+      {
+        libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
+      }
+  }
+
   void MaterialsParsing::dep_input_warning( const std::string& old_option,
                                             const std::string& property )
   {
