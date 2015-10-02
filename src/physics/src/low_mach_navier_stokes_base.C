@@ -92,21 +92,20 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
     // Read thermodynamic state info
-    this->set_parameter
-      (_p0, input, "Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-    this->set_parameter
-      (_T0, input, "Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
-    this->set_parameter
-      (_R, input, "Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
+    this->read_property( input,
+                         "Physics/"+low_mach_navier_stokes+"/p0",
+                         "ThermodynamicPressure",
+                         _p0 );
 
-    if( _R <= 0.0 )
-      {
-	std::cerr << "=========================================" << std::endl
-		  << " Error: Gas constant R must be positive. " << std::endl
-		  << " Detected value R = " << _R << std::endl
-		  << "=========================================" << std::endl;
-	libmesh_error();
-      }
+    this->read_property( input,
+                         "Physics/"+low_mach_navier_stokes+"/T0",
+                         "ReferenceTemperature",
+                         _T0 );
+
+    this->read_property( input,
+                         "Physics/"+low_mach_navier_stokes+"/R",
+                         "GasConstant",
+                         _R );
 
     _p0_over_R = _p0/_R;
 
