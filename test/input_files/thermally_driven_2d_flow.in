@@ -49,6 +49,8 @@ echo_physics = 'true'
       value = '1.0'
       [../SpecificHeat]
          value = '1.0'
+      [../ReferenceTemperature]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -89,7 +91,8 @@ T_wall_3 = 10
 
 [../BoussinesqBuoyancy]
 
-T_ref = 1.0
+material = 'TestMaterial'
+
 beta_T = 1.0
 
 g = '0 -9.8'

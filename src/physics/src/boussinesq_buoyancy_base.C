@@ -52,9 +52,10 @@ namespace GRINS
                         "Density",
                         _rho);
 
-    this->set_parameter
-      (_T_ref, input,
-       "Physics/"+boussinesq_buoyancy+"/T_ref", _T_ref);
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/T_ref",
+                        "ReferenceTemperature",
+                        _T_ref);
 
     this->set_parameter
       (_beta_T, input,

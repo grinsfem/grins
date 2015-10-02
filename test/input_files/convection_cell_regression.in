@@ -12,6 +12,8 @@
          value = '1.77'
     [../SpecificHeat]
        value = '1004.9'
+    [../ReferenceTemperature]
+       value = '300'
 []
 
 # Options related to all Physics
@@ -76,9 +78,6 @@ ic_values = '300.0'
 [../BoussinesqBuoyancy]
 
 material = 'TestMaterial'
-
-# Reference temperature
-T_ref = '300' #[K]
 
 beta_T = '0.003333333333'
 
