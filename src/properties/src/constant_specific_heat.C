@@ -63,11 +63,9 @@ namespace GRINS
       _cp(0.0)
   {
     // It's an error to have both the old and new version
-    if( input.have_variable("Materials/"+material+"/SpecificHeat/value") &&
-        input.have_variable("Materials/SpecificHeat/cp") )
-      {
-        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/SpecificHeat/value and Materials/SpecificHeat/cp");
-      }
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/SpecificHeat/value",
+                                           "Materials/SpecificHeat/cp");
 
     // If we have the "new" version, then parse it
     if( input.have_variable("Materials/"+material+"/SpecificHeat/value") )

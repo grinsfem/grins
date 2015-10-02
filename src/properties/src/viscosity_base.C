@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -36,11 +37,9 @@ namespace GRINS
   void ViscosityBase::check_input_consistency( const GetPot& input, const std::string& material ) const
   {
     // We can't have both the materials version and the old versions
-    if( input.have_variable("Materials/"+material+"/Viscosity/value") &&
-        input.have_variable("Materials/Viscosity/mu") )
-      {
-        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/Viscosity/value and Materials/Viscosity/mu");
-      }
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/Viscosity/value",
+                                           "Materials/Viscosity/mu" );
 
     // If the material section exists, but not the variable, this is an error
     if( input.have_section("Materials/"+material+"/Viscosity") &&

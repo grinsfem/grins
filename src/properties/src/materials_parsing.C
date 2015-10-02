@@ -96,11 +96,9 @@ namespace GRINS
     std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
 
     // Error if both material/Density and rho are specified
-    if( input.have_variable("Physics/"+core_physics_name+"/rho") &&
-        input.have_variable("Materials/"+material+"/Density/value") )
-      {
-        libmesh_error_msg("ERROR: Can't specify both rho and Density!");
-      }
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Physics/"+core_physics_name+"/rho",
+                                           "Materials/"+material+"/Density/value" );
 
     // It's deprecated to have nothing and default to 1.0
     if( !input.have_variable("Physics/"+core_physics_name+"/rho") &&
@@ -173,11 +171,9 @@ namespace GRINS
     std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
 
     // Error if both material/SpecificHeat and Cp are specified
-    if( input.have_variable("Physics/"+core_physics_name+"/Cp") &&
-        input.have_variable("Materials/"+material+"/SpecificHeat/value") )
-      {
-        libmesh_error_msg("ERROR: Can't specify both Cp and SpecificHeat!");
-      }
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Physics/"+core_physics_name+"/Cp",
+                                           "Materials/"+material+"/SpecificHeat/value" );
 
     // It's deprecated to have nothing and default to 1.0
     if( !input.have_variable("Physics/"+core_physics_name+"/Cp") &&

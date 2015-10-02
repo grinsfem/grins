@@ -66,11 +66,10 @@ namespace GRINS
   : ParameterUser("ConstantConductivity"),
     _k(0.0)
   {
-    if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") &&
-        input.have_variable("Materials/Conductivity/k") )
-      {
-        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/ThermalConductivity/value and Materials/Conductivity/k");
-      }
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/ThermalConductivity/value",
+                                           "Materials/Conductivity/k");
+
     // If we have the "new" version, then parse it
     if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") )
       {

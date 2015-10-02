@@ -54,6 +54,10 @@ namespace GRINS
     : ParsedPropertyBase(),
       ParameterUser("ParsedConductivity")
   {
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/ThermalConductivity/value",
+                                           "Materials/Conductivity/k");
+
     std::string conductivity_function;
 
     // If we have the new version, we parse that
