@@ -57,9 +57,11 @@ namespace GRINS
                         "ReferenceTemperature",
                         _T_ref);
 
-    this->set_parameter
-      (_beta_T, input,
-       "Physics/"+boussinesq_buoyancy+"/beta_T", _beta_T);
+
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/beta_T",
+                        "ThermalExpansionCoeff",
+                        _beta_T);
 
     unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
 
