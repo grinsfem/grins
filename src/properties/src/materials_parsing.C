@@ -244,4 +244,12 @@ namespace GRINS
       }
   }
 
+  void MaterialsParsing::dep_input_warning( const std::string& old_option,
+                                            const std::string& property )
+  {
+    std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
+    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+    grins_warning(warning);
+  }
+
 } // end namespace GRINS

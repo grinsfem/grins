@@ -106,7 +106,7 @@ namespace GRINS
     // Deprecated
     if( input.have_variable(old_option) )
       {
-        this->dep_input_warning( old_option,property );
+        MaterialsParsing::dep_input_warning( old_option,property );
 
         this->set_parameter
           (value, input,
@@ -176,12 +176,6 @@ namespace GRINS
     grins_warning(warning);
   }
 
-  void BoussinesqBuoyancyBase::dep_input_warning( const std::string& old_option,
-                                                  const std::string& property )
-  {
-    std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
-    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
-    grins_warning(warning);
-  }
+
 
 } // namespace GRINS
