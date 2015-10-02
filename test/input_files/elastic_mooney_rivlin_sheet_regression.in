@@ -1,4 +1,11 @@
 
+# Materials options
+[Materials]
+   [./TestMaterial]
+     [./MembraneThickness]
+        value = '0.05'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -7,7 +14,7 @@ enabled_physics = 'ElasticMembrane'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticMembrane]
 
-h0 = '0.05'
+material = 'TestMaterial'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
