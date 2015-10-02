@@ -50,7 +50,10 @@ namespace GRINS
   protected:
 
     //! Helper function for parsing/maintaing backward compatibility
-    void read_density( const GetPot& input );
+    void read_property( const GetPot& input,
+                        const std::string& old_option,
+                        const std::string& property,
+                        libMesh::Real& value );
 
     //! Helper function for parsing/maintaing backward compatibility
     void duplicate_input_test( const GetPot& input,

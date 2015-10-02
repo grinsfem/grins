@@ -47,7 +47,10 @@ namespace GRINS
       _T_ref(1.0),
       _beta_T(1.0)
   {
-    this->read_density(input);
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                        "Density",
+                        _rho);
 
     this->set_parameter
       (_T_ref, input,
@@ -84,49 +87,50 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancyBase::read_density( const GetPot& input )
+  void BoussinesqBuoyancyBase::read_property( const GetPot& input,
+                                              const std::string& old_option,
+                                              const std::string& property,
+                                              libMesh::Real& value )
   {
     std::string material = "DIE!";
     MaterialsParsing::material_name(input,boussinesq_buoyancy,material);
 
     // Can't specify both material and rho_ref
     this->duplicate_input_test(input,
-                               "Physics/"+boussinesq_buoyancy+"/rho_ref",
-                               "Materials/"+material+"/Density/value" );
+                               old_option,
+                               "Materials/"+material+"/"+property+"/value" );
 
     // Deprecated
-    if( input.have_variable("Physics/"+boussinesq_buoyancy+"/rho_ref") )
+    if( input.have_variable(old_option) )
       {
-        this->dep_input_warning( "Physics/"+boussinesq_buoyancy+"/rho_ref",
-                                 "Density" );
+        this->dep_input_warning( old_option,property );
 
         this->set_parameter
-          (_rho, input,
-           "Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0 /*Old default*/);
+          (value, input,
+           old_option, 1.0 /*Old default*/);
       }
     // Preferred
-    else if( input.have_variable("Materials/"+material+"/Density/value" ) )
+    else if( input.have_variable("Materials/"+material+"/"+property+"/value" ) )
       {
         this->set_parameter
-          (_rho, input,
-           "Materials/"+material+"/Density/value", 0.0 /*default*/);
+          (value, input,
+           "Materials/"+material+"/"+property+"/value", 0.0 /*default*/);
       }
     // If nothing was set, we default to 1.0. Deprecated, what was I thinking
     else
       {
         this->no_input_warning( input,
-                                "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                                old_option,
                                 material,
-                                "Density" );
+                                property );
         this->set_parameter
-          (_rho, input,
-           "Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0 /*default*/);
+          (value, input, old_option, 1.0 /*default*/);
       }
 
     // Make sure density is positive
-    if( _rho <= 0.0 )
+    if( value <= 0.0 )
       {
-        libmesh_error_msg("ERROR: Detected non-positive input density!");
+        libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
       }
   }
 
