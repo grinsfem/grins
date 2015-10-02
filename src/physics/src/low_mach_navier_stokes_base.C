@@ -92,20 +92,26 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
     // Read thermodynamic state info
-    this->read_property( input,
-                         "Physics/"+low_mach_navier_stokes+"/p0",
-                         "ThermodynamicPressure",
-                         _p0 );
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/p0",
+                                     "ThermodynamicPressure",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _p0 );
 
-    this->read_property( input,
-                         "Physics/"+low_mach_navier_stokes+"/T0",
-                         "ReferenceTemperature",
-                         _T0 );
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/T0",
+                                     "ReferenceTemperature",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _T0 );
 
-    this->read_property( input,
-                         "Physics/"+low_mach_navier_stokes+"/R",
-                         "GasConstant",
-                         _R );
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/R",
+                                     "GasConstant",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _R );
 
     _p0_over_R = _p0/_R;
 
@@ -205,49 +211,6 @@ namespace GRINS
     _mu.register_parameter(param_name, param_pointer);
     _cp.register_parameter(param_name, param_pointer);
     _k.register_parameter(param_name, param_pointer);
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBase<Mu,SH,TC>::read_property( const GetPot& input,
-                                                         const std::string& old_option,
-                                                         const std::string& property,
-                                                         libMesh::Real& value )
-  {
-    std::string material = "DIE!";
-    MaterialsParsing::material_name(input,low_mach_navier_stokes,material);
-
-    // Can't specify both old_option and property
-    MaterialsParsing::duplicate_input_test(input,
-                                           old_option,
-                                           "Materials/"+material+"/"+property+"/value" );
-
-    // Deprecated
-    if( input.have_variable(old_option) )
-      {
-        MaterialsParsing::dep_input_warning( old_option,property );
-
-        this->set_parameter
-          (value, input,
-           old_option, 0.0 /*default*/);
-      }
-    // Preferred
-    else if( input.have_variable("Materials/"+material+"/"+property+"/value" ) )
-      {
-        this->set_parameter
-          (value, input,
-           "Materials/"+material+"/"+property+"/value", 0.0 /*default*/);
-      }
-    // If nothing was set, that's an error
-    else
-      {
-        libmesh_error_msg("ERROR: No valid input found for "+property+"!");
-      }
-
-    // Make sure value is positive
-    if( value <= 0.0 )
-      {
-        libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
-      }
   }
 
 } // namespace GRINS

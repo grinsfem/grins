@@ -86,12 +86,6 @@ namespace GRINS
 
   protected:
 
-    //! Helper function for parsing/maintaining backward compatibility
-    void read_property( const GetPot& input,
-                        const std::string& old_option,
-                        const std::string& property,
-                        libMesh::Real& value );
-
     //! Thermodynamic pressure divided by gas constant
     libMesh::Number _p0_over_R;
 
