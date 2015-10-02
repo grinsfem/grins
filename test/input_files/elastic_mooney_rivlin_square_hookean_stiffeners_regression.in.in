@@ -48,6 +48,7 @@ pressure = '1.0'
 enabled_subdomains = '2'
 
 A = '0.1'
+rho = '1.0'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'

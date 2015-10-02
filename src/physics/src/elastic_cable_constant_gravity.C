@@ -38,30 +38,8 @@
 namespace GRINS
 {
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : ElasticCableBase(physics_name,input),
-      _A(1.0),
-      _rho(1.0)
+    : ElasticCableBase(physics_name,input)
   {
-    if( !input.have_variable("Physics/"+physics_name+"/A") )
-      {
-        std::cerr << "Error: Must input area for "+physics_name+"." << std::endl
-                  << "       Please set Physics/"+physics_name+"/A." << std::endl;
-        libmesh_error();
-      }
-
-    this->set_parameter
-      (_A, input, "Physics/"+physics_name+"/A", _A );
-
-    if( !input.have_variable("Physics/"+physics_name+"/rho") )
-      {
-        std::cerr << "Error: Must input density for "+physics_name+"." << std::endl
-                  << "       Please set Physics/"+physics_name+"/rho." << std::endl;
-        libmesh_error();
-      }
-
-    this->set_parameter
-      (_rho, input, "Physics/"+physics_name+"/rho", _rho );
-
     int num_gravity =  input.vector_variable_size("Physics/"+physics_name+"/gravity");
     if (num_gravity != 3)
       {
