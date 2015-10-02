@@ -90,23 +90,15 @@ namespace GRINS
     MaterialsParsing::material_name(input,boussinesq_buoyancy,material);
 
     // Can't specify both material and rho_ref
-    if( MaterialsParsing::have_material(input,boussinesq_buoyancy) )
-      {
-        if( input.have_variable("Physics/"+boussinesq_buoyancy+"/rho_ref") &&
-            input.have_variable("Materials/"+material+"/Density/value" ) )
-          {
-            libmesh_error_msg("ERROR: Can't specify both Physics/"+boussinesq_buoyancy+"/rho_ref and Materials/"+material+"/Density/value!");
-          }
-      }
+    this->duplicate_input_test(input,
+                               "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                               "Materials/"+material+"/Density/value" );
 
     // Deprecated
     if( input.have_variable("Physics/"+boussinesq_buoyancy+"/rho_ref") )
       {
-        {
-          std::string warning = "WARNING: Input option Physics/"+boussinesq_buoyancy+"/rho_ref is DEPRECATED!\n";
-          warning += "         Please update to use Material/MATERIAL_NAME/Density/value\n";
-          grins_warning(warning);
-        }
+        this->dep_input_warning( "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                                 "Density" );
 
         this->set_parameter
           (_rho, input,
@@ -122,13 +114,10 @@ namespace GRINS
     // If nothing was set, we default to 1.0. Deprecated, what was I thinking
     else
       {
-        {
-          std::string warning = "WARNING: Neither Physics/"+boussinesq_buoyancy+"/rho_ref\n";
-          warning += "         nor Materials/"+material+"/Density/value was detected in input\n";
-          warning +  "         Density is defaulting to 1.0. This behavior is DEPRECATED!\n";
-          warning += "         Please update to use Material/MATERIAL_NAME/Density/value\n";
-          grins_warning(warning);
-        }
+        this->no_input_warning( input,
+                                "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                                material,
+                                "Density" );
         this->set_parameter
           (_rho, input,
            "Physics/"+boussinesq_buoyancy+"/rho_ref", 1.0 /*default*/);
@@ -140,4 +129,52 @@ namespace GRINS
         libmesh_error_msg("ERROR: Detected non-positive input density!");
       }
   }
+
+  void BoussinesqBuoyancyBase::duplicate_input_test( const GetPot& input,
+                                                     const std::string& option1,
+                                                     const std::string& option2 )
+  {
+    // Can't specify both option1 and option2
+    if( MaterialsParsing::have_material(input,boussinesq_buoyancy) )
+      {
+        if( input.have_variable(option1) &&
+            input.have_variable(option2) )
+          {
+            libmesh_error_msg("ERROR: Can't specify both "+option1+" and "+option2+"!");
+          }
+      }
+  }
+
+  void BoussinesqBuoyancyBase::no_input_warning( const GetPot& input,
+                                                 const std::string& old_option,
+                                                 const std::string& material,
+                                                 const std::string& property )
+  {
+    std::string warning;
+    if( !MaterialsParsing::have_material(input,boussinesq_buoyancy) )
+      {
+        warning = "WARNING: Neither "+old_option+"\n";
+        warning += "         nor a material_name was detected in input\n";
+        warning +  "         "+property+" is defaulting to 1.0. This behavior is DEPRECATED!\n";
+        warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+      }
+    else
+      {
+        warning = "WARNING: Neither "+old_option+"\n";
+        warning += "         nor Material/"+material+"/"+property+"/value\n";
+        warning +  "         "+property+" is defaulting to 1.0. This behavior is DEPRECATED!\n";
+        warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+      }
+
+    grins_warning(warning);
+  }
+
+  void BoussinesqBuoyancyBase::dep_input_warning( const std::string& old_option,
+                                                  const std::string& property )
+  {
+    std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
+    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+    grins_warning(warning);
+  }
+
 } // namespace GRINS
