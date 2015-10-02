@@ -29,6 +29,7 @@
 //GRINS
 #include "grins/common.h"
 #include "grins/grins_physics_names.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -79,11 +80,8 @@ namespace GRINS
     // If instead we have the old version, use that.
     else if( input.have_variable("Materials/Conductivity/k") )
       {
-        std::string warning = "WARNING: Specifying Materials/Conductivity/k is\n";
-        warning += "         DEPRECATED. Please update to instead use\n";
-        warning += "         Materials/MATERIAL_NAME/ThermalConductivity/value,\n";
-        warning += "         where MATERIAL_NAME is given by Physics/PHYSICS_CLASS/material.\n";
-        grins_warning(warning);
+        MaterialsParsing::dep_input_warning( "Materials/Conductivity/k",
+                                             "ThermalConductivity" );
 
         this->set_parameter
           (_k, input, "Materials/Conductivity/k", _k);

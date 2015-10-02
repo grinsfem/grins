@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -77,9 +78,8 @@ namespace GRINS
     // If instead we have the old version, use that.
     else if( input.have_variable("Materials/SpecificHeat/cp") )
       {
-        std::string warning = "WARNING: Use of Materials/SpecificHeat/cp is DEPRECATED!\n";
-        warning +="         Please update your input to use Materials/"+material+"/SpecificHeat/value\n";
-        grins_warning(warning);
+        MaterialsParsing::dep_input_warning( "Materials/SpecificHeat/cp",
+                                             "SpecificHeat" );
 
         this->set_parameter
           (_cp, input, "Materials/SpecificHeat/cp", _cp);

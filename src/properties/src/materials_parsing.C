@@ -141,9 +141,8 @@ namespace GRINS
     // It's deprecated to use rho as the density input
     if( input.have_variable("Physics/"+core_physics_name+"/rho") )
       {
-        std::string warning = "WARNING: Using input option Physics/"+core_physics_name+"/rho is DEPRECATED.\n";
-        warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-        grins_warning(warning);
+        MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/rho",
+                                             "Density" );
 
         params.set_parameter
           (rho, input,
@@ -216,12 +215,11 @@ namespace GRINS
           }
       }
 
-    // It's deprecated to use rho as the density input
+    // It's deprecated to use Cp as the specific heat input
     if( input.have_variable("Physics/"+core_physics_name+"/Cp") )
       {
-        std::string warning = "WARNING: Using input option Physics/"+core_physics_name+"/Cp is DEPRECATED.\n";
-        warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-        grins_warning(warning);
+        MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/Cp",
+                                             "SpecificHeat" );
 
         params.set_parameter
           (cp, input,

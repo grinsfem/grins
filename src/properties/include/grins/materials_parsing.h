@@ -86,6 +86,10 @@ namespace GRINS
                                     ParameterUser& params,
                                     libMesh::Real& cp );
 
+    //! Helper function for parsing/maintaing backward compatibility
+    static void dep_input_warning( const std::string& old_option,
+                                   const std::string& property );
+
   };
 
   inline
