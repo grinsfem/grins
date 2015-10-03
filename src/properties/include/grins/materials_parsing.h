@@ -70,6 +70,13 @@ namespace GRINS
                                       const std::string& material,
                                       std::string& model );
 
+    //! Parse the stress-strain model for the given material
+    static void stress_strain_model( const GetPot& input,
+                                     const std::string& /*physics*/,
+                                     const std::string& material,
+                                     std::string& model,
+                                     std::string& strain_energy );
+
     //! Helper function to reading density from input
     /*! In particular, we want to handle backward compatibility before
         the introduction of material names in the input. */
