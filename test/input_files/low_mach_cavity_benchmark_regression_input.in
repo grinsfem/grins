@@ -142,6 +142,9 @@ relative_step_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
 
+numerical_jacobian_h_variables = 'u v'
+numerical_jacobian_h_values = '1e-6 1e-6'
+
 # Visualization options
 [vis-options]
 output_vis = 'false' 
