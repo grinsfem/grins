@@ -196,6 +196,64 @@ namespace GRINS
     return;
   }
 
+  void PhysicsFactoryHelper::parse_stress_strain_model( const GetPot& input,
+                                                        const std::string& physics,
+                                                        std::string& model,
+                                                        std::string& strain_energy )
+  {
+    // Newer, preferred version
+    std::string material;
+    MaterialsParsing::material_name( input, physics, material );
+
+    // Old deprecated version
+    bool have_elasticity_model = input.have_variable("Physics/"+physics+"/elasticity_model");
+
+    // It's an error to specify both the old and the new version
+    if( have_elasticity_model &&
+        input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
+      {
+        libmesh_error_msg("ERROR: Cannot specify both Materials/"+material+"/StressStrainLaw/model and Physics/"+physics+"/elasticity_model!");
+      }
+
+    // It's an error if don't specify at least one of them
+    if( !have_elasticity_model &&
+        !input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
+      {
+         // But since the old is deprecated, we'll just them to supply the new
+        libmesh_error_msg("ERROR: Must specify Materials/"+material+"/StressStrainLaw/model!");
+      }
+
+    // Deprecated
+    if( have_elasticity_model )
+      {
+        std::string warning = "Warning: Option Physics/"+physics+"/elasticity_model is DEPRECATED.\n";
+        warning += "         Please update to use Materials/MATERIAL_NAME/StressStrainLaw/model.\n";
+        grins_warning(warning);
+
+        model = input( "Physics/"+physics+"/elasticity_model", "DIE!" );
+
+        if( model == std::string("HookesLaw") )
+          model = "hookes_law";
+        if( model == std::string("MooneyRivlin") )
+          {
+            model = "incompressible_hyperelasticity";
+            strain_energy = "mooney_rivlin";
+          }
+
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
+      {
+        MaterialsParsing::stress_strain_model( input, physics, material,
+                                               model, strain_energy );
+      }
+    // Wat?
+    else
+      {
+        libmesh_error();
+      }
+  }
+
   void PhysicsFactoryHelper::deprecated_visc_model_parsing( bool have_ins_viscosity_model,
                                                             bool have_material,
                                                             const GetPot& input,
