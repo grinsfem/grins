@@ -1,3 +1,19 @@
+
+# Materials options
+[Materials]
+  [./Membrane]
+    [./MembraneThickness]
+      value = '0.05'
+    [../StressStrainLaw]
+      model = 'incompressible_hyperelasticity'
+      strain_energy = 'mooney_rivlin'
+  [../../Cable]
+    [./Density]
+      value = '1.0'
+    [../CrossSectionalArea]
+      value = '0.1'
+[]
+
 ##### Mesh related options #####
 [Mesh]
    [./Read]
@@ -14,12 +30,12 @@ enabled_physics = 'ElasticMembrane
 ##### Options for Elastic Membrane Physics #####
 [./ElasticMembrane]
 
+material = 'Membrane'
+
 enabled_subdomains = '1'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-elasticity_model = 'MooneyRivlin'
 
 bc_ids   = '1 2 3'
 bc_types = 'pinned yz_symmetry xz_symmetry'
@@ -28,8 +44,6 @@ ic_ids       = '1'
 ic_types     = 'parsed'
 ic_variables = 'w'
 ic_values    = '0.1*(x+0.5)*x*(x-1.5)*(y+0.5)*(y-1.5)'
-
-h0 = '0.05'
 
 [../MooneyRivlin]
 
@@ -45,15 +59,12 @@ pressure = '1.0'
 ##### Options for Elastic Cable Physics #####
 [../ElasticCable]
 
-enabled_subdomains = '2'
+material = 'Cable'
 
-A = '0.1'
-rho = '1.0'
+enabled_subdomains = '2'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-elasticity_model = 'HookesLaw'
 
 [../HookesLaw]
 

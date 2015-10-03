@@ -4,6 +4,9 @@
    [./TestMaterial]
      [./MembraneThickness]
         value = '0.05'
+     [../StressStrainLaw]
+        model = 'incompressible_hyperelasticity'
+        strain_energy = 'mooney_rivlin'
 []
 
 # Options related to all Physics
@@ -18,8 +21,6 @@ material = 'TestMaterial'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-elasticity_model = 'MooneyRivlin'
 
 # Boundary ids:
 # j = bottom -> 0
