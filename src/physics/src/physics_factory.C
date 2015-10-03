@@ -251,6 +251,36 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  template <template<typename> class Subclass>
+  PhysicsPtr new_plane_stress_class(const std::string& physics_to_add,
+                                    const std::string& core_physics,
+                                    const GetPot& input)
+  {
+    std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "HookesLaw" );
+
+    if( elasticity_model == std::string("HookesLaw") )
+      {
+        return PhysicsPtr
+          (new Subclass<HookesLaw>
+           (physics_to_add,input, false /*is_compressible*/));
+      }
+    else if( elasticity_model == std::string("MooneyRivlin") )
+      {
+        return PhysicsPtr
+          (new Subclass<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >
+           (physics_to_add,input,false /*is_compressible*/));
+      }
+    else
+      {
+        std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
+                  << "       Valid selections are: Hookean" << std::endl;
+        libmesh_error();
+      }
+
+    // dummy
+    return PhysicsPtr();
+  }
+
   template <template<typename,typename> class Subclass>
   PhysicsPtr new_reacting_low_mach_class(const std::string& physics_to_add,
                                          const GetPot& input)
@@ -695,25 +725,9 @@ namespace GRINS
       }
     else if( physics_to_add == elastic_membrane )
       {
-        std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "HookesLaw" );
-
-        if( elasticity_model == std::string("HookesLaw") )
-          {
-            physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticMembrane<HookesLaw>(physics_to_add,input,false /*is_compressible*/));
-          }
-        else if( elasticity_model == std::string("MooneyRivlin") )
-          {
-            physics_list[physics_to_add] =
-              // \lambda determined from incompressiblity
-              PhysicsPtr(new ElasticMembrane<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >(physics_to_add,input,false /*is_compressible*/));
-          }
-        else
-          {
-            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
-                      << "       Valid selections are: Hookean" << std::endl;
-            libmesh_error();
-          }
+        physics_list[physics_to_add] =
+          new_plane_stress_class<ElasticMembrane>
+          (physics_to_add, elastic_membrane, input);
       }
     else if( physics_to_add == elastic_membrane_constant_pressure )
       {
