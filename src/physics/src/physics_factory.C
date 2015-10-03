@@ -256,25 +256,42 @@ namespace GRINS
                                     const std::string& core_physics,
                                     const GetPot& input)
   {
-    std::string elasticity_model = input("Physics/"+elastic_membrane+"/elasticity_model", "HookesLaw" );
+    std::string model = "none";
+    std::string strain_energy = "none";
 
-    if( elasticity_model == std::string("HookesLaw") )
+    PhysicsFactoryHelper::parse_stress_strain_model( input,
+                                                     core_physics,
+                                                     model,
+                                                     strain_energy );
+
+    if( model == std::string("hookes_law") )
       {
         return PhysicsPtr
           (new Subclass<HookesLaw>
            (physics_to_add,input, false /*is_compressible*/));
       }
-    else if( elasticity_model == std::string("MooneyRivlin") )
+    else if( model == std::string("incompressible_hyperelasticity") )
       {
-        return PhysicsPtr
-          (new Subclass<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >
-           (physics_to_add,input,false /*is_compressible*/));
+        if( strain_energy == std::string("mooney_rivlin") )
+          {
+            return PhysicsPtr
+              (new Subclass<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >
+               (physics_to_add,input,false /*is_compressible*/));
+          }
+        else
+          {
+            std::string error = "ERROR: Invalid strain_energy "+strain_energy+"!\n";
+            error += "       Valid values are: mooney_rivlin\n";
+            libmesh_error_msg(error);
+          }
+
       }
     else
       {
-        std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
-                  << "       Valid selections are: Hookean" << std::endl;
-        libmesh_error();
+        std::string error = "Error: Invalid stress-strain model: "+model+"!\n";
+        error += "       Valid values are: hookes_law\n";
+        error += "                         incompressible_hyperelasticity\n";
+        libmesh_error_msg(error);
       }
 
     // dummy
