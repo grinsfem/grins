@@ -298,6 +298,36 @@ namespace GRINS
     return PhysicsPtr();
   }
 
+  template <template<typename> class Subclass>
+  PhysicsPtr new_one_d_stress_class(const std::string& physics_to_add,
+                                    const std::string& core_physics,
+                                    const GetPot& input)
+  {
+    std::string model = "none";
+    std::string strain_energy = "none";
+
+    PhysicsFactoryHelper::parse_stress_strain_model( input,
+                                                     core_physics,
+                                                     model,
+                                                     strain_energy );
+
+    if( model == std::string("hookes_law") )
+      {
+        return PhysicsPtr
+          (new Subclass<HookesLaw1D>
+           (physics_to_add,input, false /*is_compressible*/));
+      }
+    else
+      {
+        std::string error = "Error: Invalid stress-strain model: "+model+"!\n";
+        error += "       Valid values are: hookes_law\n";
+        libmesh_error_msg(error);
+      }
+
+    // dummy
+    return PhysicsPtr();
+  }
+
   template <template<typename,typename> class Subclass>
   PhysicsPtr new_reacting_low_mach_class(const std::string& physics_to_add,
                                          const GetPot& input)
@@ -753,19 +783,9 @@ namespace GRINS
       }
     else if( physics_to_add == elastic_cable )
       {
-        std::string elasticity_model = input("Physics/"+elastic_cable+"/elasticity_model", "HookesLaw" );
-
-        if( elasticity_model == std::string("HookesLaw") )
-          {
-            physics_list[physics_to_add] =
-              PhysicsPtr(new ElasticCable<HookesLaw1D>(physics_to_add,input,false /*is_compressible*/));
-          }
-        else
-          {
-            std::cerr << "Error: Invalid elasticity_model: " << elasticity_model << std::endl
-                      << "       Valid selections are: Hookean" << std::endl;
-            libmesh_error();
-          }
+        physics_list[physics_to_add] =
+          new_one_d_stress_class<ElasticCable>
+          (physics_to_add, elastic_cable, input);
       }
     else if( physics_to_add == elastic_cable_constant_gravity )
       {

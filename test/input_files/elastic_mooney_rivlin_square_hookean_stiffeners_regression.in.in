@@ -12,6 +12,8 @@
       value = '1.0'
     [../CrossSectionalArea]
       value = '0.1'
+    [../StressStrainLaw]
+      model = 'hookes_law'
 []
 
 ##### Mesh related options #####
