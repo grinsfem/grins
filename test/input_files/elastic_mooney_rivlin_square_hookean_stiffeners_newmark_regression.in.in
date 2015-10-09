@@ -4,6 +4,30 @@
       filename = '@abs_top_srcdir@/test/input_files/mixed_dim_symmetric_square.exo'
 []
 
+[Materials]
+   [./Membrane]
+      [./Density]
+        value = '1.0'
+      [../MembraneThickness]
+        value = '0.05'
+      [../StressStrainLaw]
+        model = 'incompressible_hyperelasticity'
+        strain_energy = 'mooney_rivlin'
+        [./MooneyRivlin]
+           C1 = '24'
+           C2 = '3.0'
+   [../../Cable]
+      [./Density]
+         value = '1.0'
+      [../CrossSectionalArea]
+         value = '0.1'
+      [../StressStrainLaw]
+         model = 'hookes_law'
+         [./HookesLaw]
+            E = '10000'
+            nu = '0.3'
+[]
+
 ##### Options related to all Physics #####
 [Physics]
 enabled_physics = 'ElasticMembrane
@@ -13,24 +37,15 @@ enabled_physics = 'ElasticMembrane
 ##### Options for Elastic Membrane Physics #####
 [./ElasticMembrane]
 
+material = 'Membrane'
+
 enabled_subdomains = '1'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
 
-elasticity_model = 'MooneyRivlin'
-
 bc_ids   = '1 2 3'
 bc_types = 'pinned yz_symmetry xz_symmetry'
-
-h0 = '0.05'
-rho = '1.0'
-
-
-[../MooneyRivlin]
-
-C1 = '24'
-C2 = '3.0'
 
 [../ElasticMembraneConstantPressure]
 
@@ -41,21 +56,12 @@ pressure = '1.0'
 ##### Options for Elastic Cable Physics #####
 [../ElasticCable]
 
+material = 'Cable'
+
 enabled_subdomains = '2'
-
-A = '0.1'
-
-rho = '1.0'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-elasticity_model = 'HookesLaw'
-
-[../HookesLaw]
-
-E = '10000'
-nu = '0.3'
 
 []
 

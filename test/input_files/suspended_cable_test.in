@@ -6,6 +6,11 @@
         value = '0.1'
      [../Density]
         value = '0.031056'
+     [../StressStrainLaw]
+        model = 'hookes_law'
+        [./HookesLaw]
+           nu = '0.45'
+           E = '1.0e6'
 []
 
 
@@ -23,8 +28,6 @@ material = 'TestMaterial'
 FE_family = 'LAGRANGE'
 order = 'FIRST'
 
-elasticity_model = 'HookesLaw'
-
 # Boundary ids:
 # j = left -> 0
 # j = right-> 1
@@ -41,11 +44,6 @@ traction_1 = '5.7735 0.0 0.0'
 [../ElasticCableConstantGravity]
 
 gravity ='0 0 -32.2'
-
-[../HookesLaw]                                                                                                                                                                                                                               
-
-nu = '0.45'
-E = '1.0e6'
 
 []
 

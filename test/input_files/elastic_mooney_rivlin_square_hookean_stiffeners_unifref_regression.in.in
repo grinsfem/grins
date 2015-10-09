@@ -7,13 +7,19 @@
     [../StressStrainLaw]
       model = 'incompressible_hyperelasticity'
       strain_energy = 'mooney_rivlin'
-  [../../Cable]
+      [./MooneyRivlin]
+         C1 = '24'
+         C2 = '3.0'
+  [../../../Cable]
     [./Density]
       value = '1.0'
     [../CrossSectionalArea]
       value = '0.1'
     [../StressStrainLaw]
       model = 'hookes_law'
+      [./HookesLaw]
+         E = '10000'
+         nu = '0.3'
 []
 
 ##### Mesh related options #####
@@ -50,11 +56,6 @@ order = 'FIRST'
 bc_ids   = '1 2 3'
 bc_types = 'pinned yz_symmetry xz_symmetry'
 
-[../MooneyRivlin]
-
-C1 = '24'
-C2 = '3.0'
-
 [../ElasticMembraneConstantPressure]
 
 enabled_subdomains = '1'
@@ -70,11 +71,6 @@ enabled_subdomains = '2'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-[../HookesLaw]
-
-E = '10000'
-nu = '0.3'
 
 []
 
