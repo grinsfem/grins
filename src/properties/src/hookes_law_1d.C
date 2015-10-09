@@ -27,6 +27,8 @@
 
 // GRINS
 #include "grins/elasticity_tensor.h"
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -40,6 +42,13 @@ namespace GRINS
     _E(0.0),
     _nu(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     this->read_input_options(input);
 
     return;

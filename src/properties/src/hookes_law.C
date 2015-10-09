@@ -25,6 +25,10 @@
 // This class
 #include "grins/hookes_law.h"
 
+// GRINS
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/tensor_value.h"
@@ -38,6 +42,13 @@ namespace GRINS
       _lambda(0.0),
       _mu(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     this->read_input_options(input);
 
     return;

@@ -25,6 +25,10 @@
 // This class
 #include "grins/mooney_rivlin.h"
 
+// GRINS
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -36,6 +40,13 @@ namespace GRINS
       _C1(-1),
       _C2(-1)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     //Force the user to specify C1 and C2
     if( !input.have_variable("Physics/MooneyRivlin/C1") ||
         !input.have_variable("Physics/MooneyRivlin/C2")    )
