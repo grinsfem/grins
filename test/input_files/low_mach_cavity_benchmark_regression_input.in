@@ -83,7 +83,7 @@ enabled_qois = 'average_nusselt_number'
 
 [./NusseltNumber]
 
-thermal_conductivity = '0.041801' #[W/m-K]
+material = 'TestMaterial'
 
 bc_ids = '3'
 
