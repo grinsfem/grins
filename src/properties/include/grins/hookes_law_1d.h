@@ -46,6 +46,9 @@ namespace GRINS
   public:
 
     HookesLaw1D( const GetPot& input );
+
+    HookesLaw1D( const GetPot& input, const std::string& material );
+
     virtual ~HookesLaw1D();
 
     // So we can make implementations private
