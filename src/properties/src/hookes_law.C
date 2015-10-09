@@ -54,6 +54,89 @@ namespace GRINS
     return;
   }
 
+  HookesLaw::HookesLaw(const GetPot& input, const std::string& material)
+    : StressStrainLaw<HookesLaw>(),
+      ParameterUser("HookesLaw"),
+      _C(),
+      _lambda(0.0),
+      _mu(0.0)
+  {
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/HookesLaw/lambda",
+                                           "Physics/HookesLaw/lambda");
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/HookesLaw/mu",
+                                           "Physics/HookesLaw/mu");
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/HookesLaw/E",
+                                           "Physics/HookesLaw/E");
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/HookesLaw/nu",
+                                           "Physics/HookesLaw/nu");
+
+    // Parse the new version
+    if( input.have_variable("Materials/"+material+"/StressStrainLaw/HookesLaw/lambda") &&
+        input.have_variable("Materials/"+material+"/StressStrainLaw/HookesLaw/mu") )
+      {
+        this->set_parameter
+          (_lambda, input, "Materials/"+material+"/StressStrainLaw/HookesLaw/lambda", 0.0);
+        this->set_parameter
+          (_mu, input, "Materials/"+material+"/StressStrainLaw/HookesLaw/mu", 0.0);
+      }
+    else if( input.have_variable("Materials/"+material+"/StressStrainLaw/HookesLaw/E") &&
+             input.have_variable("Materials/"+material+"/StressStrainLaw/HookesLaw/nu") )
+      {
+        /*! \todo we'll need a special accessor to give ParameterUser access to these */
+        libMesh::Real E  = input("Materials/"+material+"/StressStrainLaw/HookesLaw/E", 0.0);
+        libMesh::Real nu = input("Materials/"+material+"/StressStrainLaw/HookesLaw/nu", 0.0);
+        _lambda = nu*E/( (1+nu)*(1-2*nu) );
+        _mu = E/(2*(1+nu));
+      }
+    // Parse the old version
+    else if( input.have_variable("Physics/HookesLaw/lambda") &&
+             input.have_variable("Physics/HookesLaw/mu") )
+      {
+        MaterialsParsing::dep_input_warning( "Physics/HookesLaw/lambda",
+                                             "StressStrainLaw/HookesLaw/lambda" );
+        MaterialsParsing::dep_input_warning( "Physics/HookesLaw/mu",
+                                             "StressStrainLaw/HookesLaw/mu" );
+
+        this->set_parameter
+          (_lambda, input, "Physics/HookesLaw/lambda", 0.0);
+        this->set_parameter
+          (_mu, input, "Physics/HookesLaw/mu", 0.0);
+      }
+    else if( input.have_variable("Physics/HookesLaw/E") &&
+              input.have_variable("Physics/HookesLaw/nu") )
+      {
+        MaterialsParsing::dep_input_warning( "Physics/HookesLaw/E",
+                                             "StressStrainLaw/HookesLaw/E" );
+        MaterialsParsing::dep_input_warning( "Physics/HookesLaw/nu",
+                                             "StressStrainLaw/HookesLaw/nu" );
+
+        /*! \todo we'll need a special accessor to give ParameterUser access to these */
+        libMesh::Real E  = input("Physics/HookesLaw/E", 0.0);
+        libMesh::Real nu = input("Physics/HookesLaw/nu", 0.0);
+        _lambda = nu*E/( (1+nu)*(1-2*nu) );
+        _mu = E/(2*(1+nu));
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Could not find consistent HookesLaw input!");
+      }
+
+    // mu should be positive
+    if( _mu <= 0.0 )
+      libmesh_error_msg("ERROR: Detected non-positive shear modulus!");
+
+    // Technically, lambda can be negative, but it's weird. Let's warn about it.
+    if( _lambda <= 0.0 )
+      {
+        std::string warning = "WARNING: Detected non-positive Lame parameter";
+        grins_warning(warning);
+      }
+  }
+
   HookesLaw::~HookesLaw()
   {
     return;
