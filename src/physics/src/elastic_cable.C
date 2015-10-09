@@ -47,7 +47,7 @@ namespace GRINS
   ElasticCable<StressStrainLaw>::ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                                                bool is_compressible )
     : ElasticCableBase(physics_name,input),
-      _stress_strain_law(input),
+      _stress_strain_law(input,input("Physics/"+elastic_cable+"/material", "NoMaterial!")),
       _is_compressible(is_compressible)
   {
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
