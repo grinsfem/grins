@@ -77,7 +77,7 @@ namespace GRINS
     else if( input.have_variable("Materials/SpecificHeat/cp") )
       {
         MaterialsParsing::dep_input_warning( "Materials/SpecificHeat/cp",
-                                             "SpecificHeat" );
+                                             "SpecificHeat/value" );
 
         this->set_parameter
           (_cp, input, "Materials/SpecificHeat/cp", _cp);

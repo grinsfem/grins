@@ -106,7 +106,7 @@ namespace GRINS
     // Deprecated
     if( input.have_variable(old_option) )
       {
-        MaterialsParsing::dep_input_warning( old_option,property );
+        MaterialsParsing::dep_input_warning( old_option,property+"/value" );
 
         this->set_parameter
           (value, input,

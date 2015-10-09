@@ -73,7 +73,7 @@ namespace GRINS
     else if( input.have_variable("Materials/Conductivity/k") )
       {
         MaterialsParsing::dep_input_warning( "Materials/Conductivity/k",
-                                             "ThermalConductivity" );
+                                             "ThermalConductivity/value" );
 
         this->set_parameter(this->_func, input,
                             "Materials/Conductivity/k",

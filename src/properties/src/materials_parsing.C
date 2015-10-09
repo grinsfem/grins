@@ -175,7 +175,7 @@ namespace GRINS
     if( input.have_variable("Physics/"+core_physics_name+"/rho") )
       {
         MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/rho",
-                                             "Density" );
+                                             "Density/value" );
 
         params.set_parameter
           (rho, input,
@@ -250,7 +250,7 @@ namespace GRINS
     if( input.have_variable("Physics/"+core_physics_name+"/Cp") )
       {
         MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/Cp",
-                                             "SpecificHeat" );
+                                             "SpecificHeat/value" );
 
         params.set_parameter
           (cp, input,
@@ -291,7 +291,7 @@ namespace GRINS
     // Deprecated
     if( input.have_variable(old_option) )
       {
-        MaterialsParsing::dep_input_warning( old_option,property );
+        MaterialsParsing::dep_input_warning( old_option,property+"/value" );
 
         param_user.set_parameter(value, input, old_option, 0.0 /*default*/);
       }
@@ -318,7 +318,7 @@ namespace GRINS
                                             const std::string& property )
   {
     std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
-    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"\n";
     grins_warning(warning);
   }
 
