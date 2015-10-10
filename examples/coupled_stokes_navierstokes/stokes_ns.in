@@ -1,3 +1,13 @@
+# Material properties
+[Materials]
+   [./Gas]
+     [./Density]
+        value = '1.0'
+     [../Viscosity]
+        model = 'constant'
+        value = '1.0e-3' 
+[]
+
 # Mesh related options
 [Mesh]
    [./Read]
@@ -43,13 +53,14 @@ enabled_physics = 'IncompressibleNavierStokes Stokes'
 
 # Options for Stokes physics
 [./Stokes]
+
+material = 'Gas'
+
 enabled_subdomains = '2'
 
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = '1.0'
 
 bc_ids = '4 6 7 8'
 bc_types = 'no_slip no_slip parabolic_profile no_slip'
@@ -60,14 +71,13 @@ parabolic_profile_fix_7 = 'v'
 
 # Options for Navier Stokes physics
 [../IncompressibleNavierStokes]
+
+material = 'Gas'
 enabled_subdomains = '1'
 
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = '1.0'
-mu = '1.0e-3'
 
 bc_ids = '1 2 3'
 bc_types = 'no_slip no_slip no_slip'

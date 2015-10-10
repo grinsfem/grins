@@ -1,6 +1,8 @@
 #!/bin/sh
 
 GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
-GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+
+DEFAULT_SOLVER_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:-$DEFAULT_SOLVER_OPTIONS}
 
 $GRINS_RUN @prefix@/bin/grins @prefix@/examples/coupled_stokes_navierstokes/stokes_ns.in $GRINS_SOLVER_OPTIONS

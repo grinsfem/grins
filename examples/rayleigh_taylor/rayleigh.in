@@ -1,13 +1,32 @@
+# Material properties
+[Materials]
+   [./Fluid]
+      [./ThermodynamicPressure]
+          value = '2.0'
+      [../GasConstant]
+          value = '1.0'
+      [../ThermalConductivity]
+          model = 'constant'
+          value = '1.0e-3' #[W/m-K]
+      [../Viscosity]
+          model = 'constant'
+          value = '1.0e-2' #[kg/m-s]
+      [../SpecificHeat]
+          model = 'constant'
+          value = '2.5' #[J/kg-K]
+      [../ReferenceTemperature]
+          value = '1.0' 
+[]
 
 # Options related to all Physics
 [Physics]
 
 enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 
-
-
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
+
+material = 'Fluid'
 
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
@@ -17,19 +36,8 @@ V_order = 'FIRST'
 T_order = 'FIRST'
 P_order = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '2.0'
-
-# Gas constant
-R = '1.0'
-
 # Gravity vector
 g = '0.0 10.0'
-
-
-conductivity_model = 'constant'
-viscosity_model = 'constant'
-specific_heat_model = 'constant'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -67,22 +75,6 @@ output_vars = 'rho'
 tau_constant = '10'
 tau_factor = '0.05'
 
-
-[]
-
-[Materials]
-
-[./Viscosity]
-
-mu = '1.0e-2' #[kg/m-s]
-
-[../Conductivity]
-
-k = '1.0e-3' #[W/m-K]
-
-[../SpecificHeat]
-
-cp = '2.5' #[J/kg-K]
 
 []
 

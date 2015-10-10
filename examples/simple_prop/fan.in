@@ -1,3 +1,12 @@
+# Material properties
+[Materials]
+   [./Fluid]
+      [./Density]
+         value = '1.77'
+      [../Viscosity]
+         model = 'constant'
+         value = '1.846e-1'
+[]
 
 # Options related to all Physics
 [Physics]
@@ -7,14 +16,13 @@ enabled_physics = 'IncompressibleNavierStokes AveragedTurbine'
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'Fluid'
+
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 
 V_order = 'SECOND'
 P_order = 'FIRST'
-
-rho = '1.77'
-mu = '1.846e-1'
 
 # Boundary ids:
 # imin,imax = 4, 2
