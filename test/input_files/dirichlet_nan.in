@@ -51,6 +51,7 @@ echo_physics = 'true'
       [../Density]
          value = '1.0'
       [../SpecificHeat]
+         model = 'constant'
          value = '1.0'
       [../ReferenceTemperature]
          value = '1.0'

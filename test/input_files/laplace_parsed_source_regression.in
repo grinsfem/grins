@@ -7,6 +7,7 @@
       [../Density]
          value = '1.0'
       [../SpecificHeat]
+         model = 'constant'
          value = '1.0'
 []
 

@@ -11,6 +11,7 @@
       [../Density]
          value = '1.77'
       [../SpecificHeat]
+         model = 'constant'
          value = '1004.9'
       [../ReferenceTemperature]
          value = '300'

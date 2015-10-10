@@ -63,7 +63,7 @@ namespace GRINS
   }
 
   void MaterialsParsing::specific_heat_model( const GetPot& input,
-                                              const std::string& physics,
+                                              const std::string& /*physics*/,
                                               const std::string& material,
                                               std::string& model )
   {
@@ -261,6 +261,11 @@ namespace GRINS
     if( input.have_variable("Physics/"+core_physics_name+"/material") &&
         input.have_variable("Materials/"+material+"/SpecificHeat/value") )
       {
+        // This function only supports reading a constant
+        if( input("Materials/"+material+"/SpecificHeat/model", "DIE!") !=
+            std::string("constant") )
+          libmesh_error_msg("ERROR: Only constant SpecificHeat model supported!");
+
         params.set_parameter
           (cp, input,
            "Materials/"+material+"/SpecificHeat/value", 0.0 /*default*/);
