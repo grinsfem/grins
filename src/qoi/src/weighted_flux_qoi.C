@@ -47,14 +47,6 @@ namespace GRINS
     return;
   }
 
-  WeightedFluxQoI::WeightedFluxQoI( const WeightedFluxQoI& original )
-    : QoIBase(original.name())
-  {
-    if (original._adjoint_bc.get())
-      this->_adjoint_bc = original._adjoint_bc->clone();
-  }
-
-
   WeightedFluxQoI::~WeightedFluxQoI()
   {
     return;
@@ -76,69 +68,84 @@ namespace GRINS
     if( num_vars <= 0 )
       {
 	std::cerr << "Error: Must specify at least one variable to compute"
-		  << " weighted fluxes." << std::endl
-		  << "Found: " << num_vars << std::endl;
+                  << " weighted fluxes." << std::endl
+                  << "Found: " << num_vars << std::endl;
 	libmesh_error();
-      }
-
-    for( int i = 0; i < num_vars; i++ )
-      {
-	_var_names.push_back
-          ( input("QoI/WeightedFlux/variables", std::string(""), i ) );
       }
 
     // Read boundary ids on which we want to compute fluxes
-    int num_bcs =  input.vector_variable_size("QoI/WeightedFlux/bc_ids");
+    int num_bcs =
+      input.vector_variable_size("QoI/WeightedFlux/bc_ids");
 
-    if( num_bcs <= 0 )
+    if( num_bcs != num_vars )
       {
-	std::cerr << "Error: Must specify at least one boundary id to compute"
-		  << " weighted fluxes." << std::endl
-		  << "Found: " << num_bcs << std::endl;
+        std::cerr << "Error: Must specify exactly one boundary id"
+                  << " for each specified weighted flux variable."
+                  << std::endl
+                  << "Found: " << num_bcs << std::endl;
 	libmesh_error();
       }
+
+    std::vector<libMesh::boundary_id_type> bc_ids;
 
     for( int i = 0; i < num_bcs; i++ )
+      bc_ids.push_back( input("QoI/WeightedFlux/bc_ids", -1, i ) );
+
+    // Read weight functions with which to compute fluxes
+    int num_weights =
+      input.vector_variable_size("QoI/WeightedFlux/weights");
+
+    if( num_weights != num_vars )
       {
-	_bc_ids.insert( input("QoI/WeightedFlux/bc_ids", -1, i ) );
-      }
-
-
-    std::string func_string =
-      input( "QoI/WeightedFlux/weights", std::string(""));
-
-    if ( func_string == "" )
-      {
-	std::cerr << "Error: Must specify a weights function for"
-		  << " WeightedFlux QoI" << std::endl;
+        std::cerr << "Error: Must specify exactly one weight function"
+                  << " for each specified weighted flux variable."
+                  << std::endl
+                  << "Found: " << num_weights << std::endl;
 	libmesh_error();
       }
 
-    libMesh::ParsedFunction<libMesh::Number> raw_func (func_string);
-
-    std::vector<unsigned int> var_indices;
-    for( std::vector<VariableName>::const_iterator name = _var_names.begin();
-         name != _var_names.end();
-         name++ )
+    for( int i = 0; i < num_weights; i++ )
       {
-        var_indices.push_back( system.variable_number( *name ) );
+        const libMesh::boundary_id_type bc_id =
+          input("QoI/WeightedFlux/bc_ids", -1, i );
+
+        libmesh_assert_not_equal_to (bc_id, -1);
+
+        const std::string var_name =
+          ( input("QoI/WeightedFlux/variables", std::string(""), i ) );
+
+        libmesh_assert_not_equal_to (var_name, std::string(""));
+
+        const std::string func_string =
+          input("QoI/WeightedFlux/weights", std::string(""), i);
+
+        libmesh_assert_not_equal_to (func_string, std::string(""));
+
+        std::set<libMesh::boundary_id_type> bc_id_set;
+        bc_id_set.insert(bc_id);
+
+        libMesh::ParsedFunction<libMesh::Number> raw_func (func_string);
+
+        std::vector<unsigned int> var_indices;
+        var_indices.push_back( system.variable_number( var_name ) );
+
+        libMesh::CompositeFunction<libMesh::Number>* remapped_func =
+          new libMesh::CompositeFunction<libMesh::Number>();
+
+        remapped_func->attach_subfunction(raw_func, var_indices);
+
+        libMesh::DirichletBoundary adjoint_bc
+          (bc_id_set, var_indices, remapped_func);
+
+        // FIXME: this is an ugly hack
+        MultiphysicsSystem & hacked_system =
+          const_cast<MultiphysicsSystem&>(system);
+        hacked_system.get_dof_map().add_adjoint_dirichlet_boundary
+          (adjoint_bc, qoi_num);
       }
 
-    libMesh::CompositeFunction<libMesh::Number>* remapped_func =
-      new libMesh::CompositeFunction<libMesh::Number>();
-
-    remapped_func->attach_subfunction(raw_func, var_indices);
-
-    _adjoint_bc.reset(remapped_func);
-
-    libMesh::DirichletBoundary adjoint_bc
-      (_bc_ids, var_indices, _adjoint_bc.get());
-
-    // FIXME: this is an ugly hack
     MultiphysicsSystem & hacked_system =
       const_cast<MultiphysicsSystem&>(system);
-    hacked_system.get_dof_map().add_adjoint_dirichlet_boundary
-      (adjoint_bc, qoi_num);
     hacked_system.reinit_constraints();
   }
 
