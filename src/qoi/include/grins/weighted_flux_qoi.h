@@ -59,21 +59,6 @@ namespace GRINS
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num );
 
-  protected:
-
-    //! List of variables which we want to contribute to fluxes
-    std::vector<std::string> _var_names;
-
-    //! List of boundary ids on which we want to compute this QoI
-    std::set<libMesh::boundary_id_type> _bc_ids;
-
-    //! Boundary condition functor
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
-      _adjoint_bc;
-
-    //! Manual copy constructor due to the AutoPtr
-    WeightedFluxQoI(const WeightedFluxQoI& original);
-
   private:
 
     WeightedFluxQoI();
