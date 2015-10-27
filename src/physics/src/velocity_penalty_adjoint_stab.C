@@ -171,7 +171,7 @@ namespace GRINS
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
           compute_jacobian ? &dFdU : NULL;
-        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+        if (!this->compute_force(u_qpoint[qp], context, U, F, dFdU_ptr))
           continue;
 
         for (unsigned int i=0; i != n_u_dofs; i++)
@@ -324,7 +324,7 @@ namespace GRINS
         libMesh::NumberTensorValue dFdU;
         libMesh::NumberTensorValue* dFdU_ptr =
           compute_jacobian ? &dFdU : NULL;
-        if (!this->compute_force(u_qpoint[qp], context.time, U, F, dFdU_ptr))
+        if (!this->compute_force(u_qpoint[qp], context, U, F, dFdU_ptr))
           continue;
 
         // First, an i-loop over the velocity degrees of freedom.
