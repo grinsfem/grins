@@ -27,61 +27,26 @@
 #define GRINS_PARSED_CONDUCTIVITY_H
 
 //GRINS
-#include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
-
-// libMesh
-#include "libmesh/libmesh_common.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/auto_ptr.h"
-#include "libmesh/function_base.h"
+#include "grins/parsed_property_base.h"
 
 class GetPot;
 
 namespace GRINS
 {
-  class ParsedConductivity : public ParameterUser
+  class ParsedConductivity : public ParsedPropertyBase,
+                             public ParameterUser
   {
   public:
 
     ParsedConductivity( const GetPot& input );
     ~ParsedConductivity();
-    
-    libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-
-    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
 
   private:
 
      ParsedConductivity();
-    
-    // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > k;
 
   };
-
-  /* ------------------------- Inline Functions -------------------------*/  
-  inline
-    libMesh::Real ParsedConductivity::operator()(AssemblyContext& context, unsigned int qp) const
-  {
-    // FIXME: We should be getting the variable index to get the qps from the context
-    // not hardcode it to be 0
-    const std::vector<libMesh::Point>& x = context.get_element_fe(0)->get_xyz();
-
-    const libMesh::Point& x_qp = x[qp];
-
-    libMesh::Number _k_value = (*k)(x_qp,context.time);
-
-    return _k_value;
-  }
-
-  inline
-  libMesh::Real ParsedConductivity::operator()( const libMesh::Point& p, const libMesh::Real time )
-  {
-    return (*k)(p,time);
-  }
-
 } // end namespace GRINS
 
 #endif // GRINS_PARSED_CONDUCTIVITY_H

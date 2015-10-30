@@ -32,7 +32,7 @@
 // libMesh
 #include "libmesh/composite_function.h"
 #include "libmesh/getpot.h"
-#include "libmesh/parameter_multipointer.h"
+#include "libmesh/parameter_multiaccessor.h"
 
 namespace GRINS
 {
@@ -83,6 +83,35 @@ namespace GRINS
     numerical_jacobian_h =
       input("linear-nonlinear-solver/numerical_jacobian_h",
             numerical_jacobian_h);
+
+    const unsigned int n_numerical_jacobian_h_values =
+      input.vector_variable_size
+        ("linear-nonlinear-solver/numerical_jacobian_h_values");
+
+    if (n_numerical_jacobian_h_values !=
+        input.vector_variable_size
+          ("linear-nonlinear-solver/numerical_jacobian_h_variables"))
+      {
+        std::cerr << "Error: found " << n_numerical_jacobian_h_values
+                  << " numerical_jacobian_h_values" << std::endl;
+        std::cerr << "  but "
+                  << input.vector_variable_size
+                       ("linear-nonlinear-solver/numerical_jacobian_h_variables")
+                << " numerical_jacobian_h_variables" << std::endl;
+        libmesh_error();
+      }
+
+    _numerical_jacobian_h_variables.resize(n_numerical_jacobian_h_values);
+    _numerical_jacobian_h_values.resize(n_numerical_jacobian_h_values);
+    for (unsigned int i=0; i != n_numerical_jacobian_h_values; ++i)
+      {
+        _numerical_jacobian_h_variables[i] =
+          input("linear-nonlinear-solver/numerical_jacobian_h_variables",
+                "", i);
+        _numerical_jacobian_h_values[i] =
+          input("linear-nonlinear-solver/numerical_jacobian_h_values",
+                libMesh::Real(0), i);
+      }
   }
 
   void MultiphysicsSystem::init_data()
@@ -102,6 +131,16 @@ namespace GRINS
 	 physics_iter++ )
       {
 	(physics_iter->second)->init_variables( this );
+      }
+
+    // If any variables need custom numerical_jacobian_h, we can set those
+    // values now that variable names are all registered with the System
+    for (unsigned int i=0; i != _numerical_jacobian_h_values.size(); ++i)
+      {
+        unsigned int var_num =
+          this->variable_number(_numerical_jacobian_h_variables[i]);
+        this->set_numerical_jacobian_h_for_var
+          (var_num, _numerical_jacobian_h_values[i]);
       }
 
     // Now set time_evolving variables
@@ -195,7 +234,7 @@ namespace GRINS
 
   void MultiphysicsSystem::register_parameter
       ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer )
+        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer )
   {
     //Loop over each physics to ask each for the requested parameter
     for( PhysicsListIter physics_iter = _physics_list.begin();

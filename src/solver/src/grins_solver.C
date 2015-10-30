@@ -37,6 +37,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/diff_solver.h"
+#include "libmesh/newton_solver.h"
 
 namespace GRINS
 {
@@ -52,6 +53,7 @@ namespace GRINS
       _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
       _continue_after_backtrack_failure( input("linear-nonlinear-solver/continue_after_backtrack_failure", false ) ),
       _continue_after_max_iterations( input("linear-nonlinear-solver/continue_after_max_iterations", false ) ),
+      _require_residual_reduction( input("linear-nonlinear-solver/require_residual_reduction", true ) ),
       _solver_quiet( input("screen-options/solver_quiet", false ) ),
       _solver_verbose( input("screen-options/solver_verbose", false ) )
   {
@@ -64,11 +66,11 @@ namespace GRINS
     return;
   }
 
-  void Solver::initialize( const GetPot& /*input*/, 
+  void Solver::initialize( const GetPot& /*input*/,
 			   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			   MultiphysicsSystem* system )
   {
- 
+
     // Defined in subclasses depending on the solver used.
     this->init_time_solver(system);
 
@@ -98,6 +100,19 @@ namespace GRINS
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
     solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
+    if(dynamic_cast<libMesh::NewtonSolver*>(&solver))
+      {
+        dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
+      }
+    else
+      {
+        // If the user tried to set require_residual_reduction flag to false
+        // despite not having a NewtonSolver spit out a warning
+        if(this->_require_residual_reduction == false)
+          {
+            libmesh_warning("GRINS can't change require_residual_reduction when not using NewtonSolver!");
+          }
+      }
 
     return;
   }

@@ -91,12 +91,6 @@ namespace GRINS
 
   private:
 
-    // strings describing the mass, time derivative, and
-    // constraint components of an ODE.
-    std::string time_deriv_function_string,
-                constraint_function_string,
-                mass_residual_function_string;
-
     // ParsedFEMFunctions evaluating the mass, time derivative, and
     // constraint components of an ODE.
     libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
@@ -114,6 +108,8 @@ namespace GRINS
     VariableIndex _scalar_ode_var; /* Index for turbine speed scalar */
 
     std::string _scalar_ode_var_name;
+
+    const GetPot & _input;
 
     ScalarODE();
   };

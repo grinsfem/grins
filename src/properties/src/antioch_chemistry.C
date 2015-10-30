@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_chemistry.h"
 
+// Antioch
+#include "antioch/default_filename.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -52,7 +55,26 @@ namespace GRINS
         species_list[s] = input( "Physics/Chemistry/species", "DIE!", s );
       }
 
-    _antioch_gas.reset( new Antioch::ChemicalMixture<libMesh::Real>( species_list ) );
+    bool verbose_antioch_read = input("Physics/Antioch/verbose_read",false);
+
+    std::string species_data_filename = input("Physics/Antioch/species_data", "default" );
+    if( species_data_filename == std::string("default") )
+      species_data_filename = Antioch::DefaultInstallFilename::chemical_mixture();
+
+    std::string vibration_data_filename = input("Physics/Antioch/vibration_data", "default" );
+    if( vibration_data_filename == std::string("default") )
+      vibration_data_filename = Antioch::DefaultInstallFilename::vibrational_data();
+
+    std::string electronic_data_filename = input("Physics/Antioch/electronic_data", "default" );
+    if( electronic_data_filename == std::string("default") )
+      electronic_data_filename = Antioch::DefaultInstallFilename::electronic_data();
+
+    // By default, Antioch is using its ASCII parser. We haven't added more options yet.
+    _antioch_gas.reset( new Antioch::ChemicalMixture<libMesh::Real>( species_list,
+                                                                     verbose_antioch_read,
+                                                                     species_data_filename,
+                                                                     vibration_data_filename,
+                                                                     electronic_data_filename ) );
 
     return;
   }

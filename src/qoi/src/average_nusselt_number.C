@@ -50,10 +50,16 @@ namespace GRINS
 
   QoIBase* AverageNusseltNumber::clone() const
   {
-    return new AverageNusseltNumber( *this );
+    AverageNusseltNumber *returnval = new AverageNusseltNumber( *this );
+    returnval->move_parameter(_k, returnval->_k);
+    returnval->move_parameter(_scaling, returnval->_scaling);
+    return returnval;
   }
 
-  void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
+  void AverageNusseltNumber::init
+    (const GetPot& input,
+     const MultiphysicsSystem& system,
+     unsigned int /*qoi_num*/ )
   {
     this->set_parameter
       ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );

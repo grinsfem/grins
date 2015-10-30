@@ -50,9 +50,6 @@ namespace GRINS
 
     ~ParsedVelocitySourceBase();
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     void set_time_evolving_vars (libMesh::FEMSystem* system);
 
     bool compute_force ( const libMesh::Point& point,
@@ -63,12 +60,12 @@ namespace GRINS
    
   protected:
 
-    std::string source_function_string;
-
     libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
       velocity_source_function;
 
   private:
+
+    const GetPot & _input;
 
     ParsedVelocitySourceBase();
   };

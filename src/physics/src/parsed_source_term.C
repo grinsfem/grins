@@ -37,16 +37,11 @@ namespace GRINS
 {
   ParsedSourceTerm::ParsedSourceTerm( const std::string& physics_name, const GetPot& input )
     : SourceTermBase(physics_name,input),
-      _value( input("Physics/"+physics_name+"/Function/value","DIE!") )
+      _value("")
   {
-    if( !input.have_variable("Physics/"+physics_name+"/Function/value") )
-      {
-        libMesh::err << "Error: Must specify value for ParsedSourceTerm." << std::endl
-                     << "       Please specify Physics/"+physics_name+"/Function/value" << std::endl;
-        libmesh_error();
-      }
-
-    return;
+    this->set_parameter(_value, input,
+                        "Physics/"+physics_name+"/Function/value",
+                        "DIE!");
   }
 
   ParsedSourceTerm::~ParsedSourceTerm()

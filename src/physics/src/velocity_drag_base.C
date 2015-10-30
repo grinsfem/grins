@@ -39,7 +39,8 @@ namespace GRINS
   VelocityDragBase<Mu>::VelocityDragBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
-                                         input)
+                                         input),
+      _coefficient("")
   {
     this->read_input_options(input);
 
@@ -58,15 +59,13 @@ namespace GRINS
     this->set_parameter
       (_exponent, input, "Physics/"+velocity_drag+"/exponent", 2);
 
-    std::string coefficient_function =
-      input("Physics/"+velocity_drag+"/coefficient",
-        std::string("0"));
+    this->set_parameter(_coefficient, input,
+                        "Physics/"+velocity_drag+"/coefficient",
+                        "0");
 
-    this->_coefficient.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(coefficient_function));
-
-    if (coefficient_function == "0")
-      std::cout << "Warning! Zero VelocityDrag specified!" << std::endl;
+    if (_coefficient.expression() == "0")
+      libmesh_error_msg("Warning! Zero VelocityDrag specified!" <<
+                        std::endl);
   }
 
   template<class Mu>
@@ -77,11 +76,9 @@ namespace GRINS
       libMesh::NumberVectorValue& F,
       libMesh::NumberTensorValue *dFdU)
   {
-    libmesh_assert(_coefficient.get());
-
     const libMesh::Number Umag = U.size();
 
-    const libMesh::Number coeff_val = (*_coefficient)(point, time);
+    const libMesh::Number coeff_val = _coefficient(point, time);
 
     if (coeff_val == 0)
       return false;

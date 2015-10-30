@@ -57,7 +57,7 @@ namespace libMesh
   class Elem;
 
   template <typename Scalar>
-  class ParameterMultiPointer;
+  class ParameterMultiAccessor;
 }
 
 //! GRINS namespace

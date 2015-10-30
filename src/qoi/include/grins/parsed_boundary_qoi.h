@@ -59,7 +59,9 @@ namespace GRINS
     virtual bool assemble_on_sides() const;
 
     //! Initialize local variables
-    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
+    virtual void init( const GetPot& input,
+                       const MultiphysicsSystem& system,
+                       unsigned int qoi_num );
 
     virtual void init_context( AssemblyContext& context );
 

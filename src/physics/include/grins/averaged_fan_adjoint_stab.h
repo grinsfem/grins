@@ -65,10 +65,6 @@ namespace GRINS
 
   protected:
 
-    libMesh::Number _rho;
-
-    Viscosity _mu;
-
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
   private:

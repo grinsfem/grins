@@ -265,7 +265,7 @@ namespace GRINS
       context.get_system().current_solution(dof_indices[0]);
 
     const libMesh::Number output_torque =
-      (*this->torque_function)(libMesh::Point(0), fan_speed);
+      this->torque_function(libMesh::Point(0), fan_speed);
 
     Fs(0) += output_torque;
 
@@ -274,8 +274,8 @@ namespace GRINS
         // FIXME: we should replace this FEM with a hook to the AD fparser stuff
         const libMesh::Number epsilon = 1e-6;
         const libMesh::Number output_torque_deriv =
-          ((*this->torque_function)(libMesh::Point(0), fan_speed+epsilon) -
-           (*this->torque_function)(libMesh::Point(0), fan_speed-epsilon)) / (2*epsilon);
+          (this->torque_function(libMesh::Point(0), fan_speed+epsilon) -
+           this->torque_function(libMesh::Point(0), fan_speed-epsilon)) / (2*epsilon);
 
         Kss(0,0) += output_torque_deriv * context.get_elem_solution_derivative();
       }

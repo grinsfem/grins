@@ -49,10 +49,11 @@ namespace GRINS
     return;
   }
 
-  void QoIBase::init( const GetPot& /*input*/,
-                      const MultiphysicsSystem& /*system*/ )
+  void QoIBase::init
+    (const GetPot& /*input*/,
+     const MultiphysicsSystem& /*system*/,
+     unsigned int /*qoi_num*/ )
   {
-    return;
   }
 
   void QoIBase::init_context( AssemblyContext& /*context*/ )

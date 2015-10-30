@@ -69,7 +69,7 @@ bc_types = 'prescribed_vel no_slip no_slip'
 
 bound_vel_2 = '1.0 0.0 0.0'
 
-pin_pressure = 'true'
+pin_pressure = 'false'
 
 [../HeatTransfer]
 

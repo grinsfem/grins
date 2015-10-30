@@ -137,6 +137,7 @@ libgrins_la_SOURCES += physics/src/constant_source_term.C
 libgrins_la_SOURCES += physics/src/parsed_source_term.C
 
 # src/properties files
+libgrins_la_SOURCES += properties/src/parsed_property_base.C
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
 libgrins_la_SOURCES += properties/src/parsed_conductivity.C
 libgrins_la_SOURCES += properties/src/constant_prandtl_conductivity.C
@@ -172,6 +173,7 @@ libgrins_la_SOURCES += qoi/src/vorticity.C
 libgrins_la_SOURCES += qoi/src/composite_qoi.C
 libgrins_la_SOURCES += qoi/src/parsed_boundary_qoi.C
 libgrins_la_SOURCES += qoi/src/parsed_interior_qoi.C
+libgrins_la_SOURCES += qoi/src/weighted_flux_qoi.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/grins_solver.C
@@ -353,6 +355,7 @@ include_HEADERS += physics/include/grins/parsed_source_term.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
+include_HEADERS += properties/include/grins/parsed_property_base.h
 include_HEADERS += properties/include/grins/constant_conductivity.h
 include_HEADERS += properties/include/grins/parsed_conductivity.h
 include_HEADERS += properties/include/grins/constant_prandtl_conductivity.h
@@ -393,6 +396,7 @@ include_HEADERS += qoi/include/grins/vorticity.h
 include_HEADERS += qoi/include/grins/composite_qoi.h
 include_HEADERS += qoi/include/grins/parsed_boundary_qoi.h
 include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
+include_HEADERS += qoi/include/grins/weighted_flux_qoi.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/grins_solver.h

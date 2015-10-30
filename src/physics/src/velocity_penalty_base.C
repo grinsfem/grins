@@ -30,8 +30,7 @@
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
-#include "libmesh/parsed_function.h"
-#include "libmesh/zero_function.h"
+#include "libmesh/parsed_fem_function.h"
 
 namespace GRINS
 {
@@ -41,23 +40,10 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
                                          input),
-    _quadratic_scaling(false)
+    base_physics_name("VelocityPenalty"),
+    _quadratic_scaling(false),
+    _input(input)
   {
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  VelocityPenaltyBase<Mu>::~VelocityPenaltyBase()
-  {
-    return;
-  }
-  
-  template<class Mu>  
-  void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
-  {
-    std::string base_physics_name = "VelocityPenalty";
     if (this->_physics_name == velocity_penalty2 ||
         this->_physics_name == velocity_penalty2_adjoint_stab)
       base_physics_name.push_back('2');
@@ -66,39 +52,51 @@ namespace GRINS
         this->_physics_name == velocity_penalty3_adjoint_stab)
       base_physics_name.push_back('3');
 
-    std::string penalty_function =
-      input("Physics/"+base_physics_name+"/penalty_function",
-        std::string("0"));
+    this->read_input_options(input);
+  }
 
-    if (penalty_function == "0")
-      this->normal_vector_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->normal_vector_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(penalty_function));
+  template<class Mu>
+  VelocityPenaltyBase<Mu>::~VelocityPenaltyBase()
+  {
+    return;
+  }
 
-    std::string base_function =
-      input("Physics/"+base_physics_name+"/base_velocity",
-        std::string("0"));
-
-    if (penalty_function == "0" && base_function == "0")
-      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
-
-    if (base_function == "0")
-      this->base_velocity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->base_velocity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
-
-    _quadratic_scaling = 
+  template<class Mu>
+  void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
+  {
+    _quadratic_scaling =
       input("Physics/"+base_physics_name+"/quadratic_scaling", false);
   }
 
   template<class Mu>
+  void VelocityPenaltyBase<Mu>::set_time_evolving_vars ( libMesh::FEMSystem* system)
+  {
+    libMesh::ParsedFEMFunction<libMesh::Number> *nvf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->normal_vector_function.reset(nvf);
+
+    this->set_parameter(*nvf, _input,
+                        "Physics/"+base_physics_name+"/penalty_function",
+                        this->zero_vector_function);
+
+    libMesh::ParsedFEMFunction<libMesh::Number> *bvf
+      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
+    this->base_velocity_function.reset(bvf);
+
+    this->set_parameter(*bvf, _input,
+                        "Physics/"+base_physics_name+"/base_velocity",
+                        this->zero_vector_function);
+
+    if ((nvf->expression() == this->zero_vector_function) &&
+        (bvf->expression() == this->zero_vector_function))
+      std::cout << "Warning! Zero VelocityPenalty specified!" << std::endl;
+  }
+
+
+  template<class Mu>
   bool VelocityPenaltyBase<Mu>::compute_force
     ( const libMesh::Point& point,
-      const libMesh::Real time,
+      const AssemblyContext& context,
       const libMesh::NumberVectorValue& U,
       libMesh::NumberVectorValue& F,
       libMesh::NumberTensorValue *dFdU)
@@ -106,20 +104,15 @@ namespace GRINS
     // Velocity discrepancy (current velocity minus base velocity)
     // normal to constraint plane, scaled by constraint penalty
     // value
-    libmesh_assert(normal_vector_function.get());
-    libmesh_assert(base_velocity_function.get());
-
     libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-    (*normal_vector_function)(point, time,
-                              output_vec);
+    (*this->normal_vector_function)(context, point, context.time, output_vec);
 
     libMesh::NumberVectorValue U_N(output_vec(0),
                                    output_vec(1),
                                    output_vec(2));
 
-    (*base_velocity_function)(point, time,
-                              output_vec);
+    (*this->base_velocity_function)(context, point, context.time, output_vec);
 
     const libMesh::NumberVectorValue U_B(output_vec(0),
                                          output_vec(1),

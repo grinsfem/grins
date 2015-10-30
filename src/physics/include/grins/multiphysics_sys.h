@@ -50,7 +50,7 @@ namespace libMesh
   class DiffContext;
 
   template <typename Scalar>
-  class ParameterMultiPointer;
+  class ParameterMultiAccessor;
 }
 
 namespace GRINS
@@ -112,7 +112,7 @@ namespace GRINS
     //  named in this call.
     void register_parameter
       ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number>& param_pointer );
+        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
@@ -181,6 +181,13 @@ namespace GRINS
     PhysicsList _physics_list;
 
     bool _use_numerical_jacobians_only;
+
+    // A list of names of variables who need their own numerical
+    // jacobian deltas
+    std::vector<std::string> _numerical_jacobian_h_variables;
+
+    // A list of values for per-variable numerical jacobian deltas
+    std::vector<libMesh::Real> _numerical_jacobian_h_values;
     
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

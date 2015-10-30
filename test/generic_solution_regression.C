@@ -161,6 +161,34 @@ int main(int argc, char* argv[])
         }
     }
 
+  // Now grab any "gold" QoI values
+  unsigned int n_qoi_vals = command_line.vector_variable_size("qoi_values");
+  for( unsigned int n = 0; n < n_qoi_vals; n++ )
+    {
+
+      std::cout << "==========================================================" << std::endl
+                << "Checking qoi " << n << " with tol " << tol << "...";
+
+      libMesh::Number gold_qoi = command_line("qois", libMesh::Number(0), n);
+
+      libMesh::Number computed_qoi =
+        grins.get_multiphysics_system()->qoi[n];
+
+      double error = computed_qoi - gold_qoi;
+
+      if (std::abs(error) > tol)
+        std::cerr << "Tolerance exceeded for generic regression test!" << std::endl
+                  << "tolerance     = " << tol << std::endl
+                  << "error         = " << error << std::endl
+                  << "qoi index     = " << n << std::endl;
+      else
+        std::cout << "PASSED!" << std::endl
+                  << "==========================================================" << std::endl;
+
+      return_flag = 1;
+    }
+
+
   return return_flag;
 }
 

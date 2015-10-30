@@ -1,3 +1,13 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2010-2013 The PECOS Development Team
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
 // This library is distributed in the hope that it will be useful,
@@ -16,41 +26,20 @@
 // This class
 #include "grins/parsed_viscosity.h"
 
-//GRINS
-#include "grins/grins_physics_names.h"
-
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
 
-   ParsedViscosity::ParsedViscosity( const GetPot& input ) :
-     ParameterUser("ParsedViscosity")
-    {
-      if( !input.have_variable("Materials/Viscosity/mu") )
-       {
-         std::cerr<<"No viscosity has been specified."<<std::endl;
-      
-         libmesh_error();
-       }
-      else
-       {
-         std::string viscosity_function = input("Materials/Viscosity/mu",std::string("0"));
-
-         mu.reset(new libMesh::ParsedFunction<libMesh::Number>(viscosity_function));
-
-         if (viscosity_function == "0")
-            {
-              std::cerr << "Warning! Zero Viscosity specified!" << std::endl;
-
-              libmesh_error();
-            }
-       }
-
-      return;
-      }
+  ParsedViscosity::ParsedViscosity( const GetPot& input )
+    : ParsedPropertyBase(),
+      ParameterUser("ParsedViscosity")
+  {
+    this->set_parameter(this->_func, input,
+                        "Materials/Viscosity/mu",
+                        "DIE!");
+  }
 
   ParsedViscosity::~ParsedViscosity()
   {

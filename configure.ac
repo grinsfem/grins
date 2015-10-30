@@ -434,9 +434,14 @@ AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace
 
 AC_CONFIG_FILES(test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)
+AC_CONFIG_FILES(test/poisson_weighted_flux_regression.sh, [chmod +x test/poisson_weighted_flux_regression.sh])
 
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_kinetics_theory_regression.sh, [chmod +x test/reacting_low_mach_antioch_kinetics_theory_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in)
+
+AC_CONFIG_FILES(test/stokes_invalid_pin_location_unit.sh, [chmod +x test/stokes_invalid_pin_location_unit.sh])
+AC_CONFIG_FILES(test/ins_invalid_pin_location_unit.sh, [chmod +x test/ins_invalid_pin_location_unit.sh])
+AC_CONFIG_FILES(test/lmns_invalid_pin_location_unit.sh, [chmod +x test/lmns_invalid_pin_location_unit.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

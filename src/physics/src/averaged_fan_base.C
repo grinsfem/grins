@@ -30,8 +30,6 @@
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
-#include "libmesh/parsed_function.h"
-#include "libmesh/zero_function.h"
 
 namespace GRINS
 {
@@ -40,7 +38,14 @@ namespace GRINS
   AveragedFanBase<Mu>::AveragedFanBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
-                                         input)
+                                         input),
+      base_velocity_function(""),
+      local_vertical_function(""),
+      lift_function(""),
+      drag_function(""),
+      chord_function(""),
+      area_swept_function(""),
+      aoa_function("")
   {
     this->read_input_options(input);
 
@@ -56,84 +61,59 @@ namespace GRINS
   template<class Mu>
   void AveragedFanBase<Mu>::read_input_options( const GetPot& input )
   {
-    std::string base_function =
-      input("Physics/"+averaged_fan+"/base_velocity",
-        std::string("0"));
+    this->set_parameter(base_velocity_function, input,
+                        "Physics/"+averaged_fan+"/base_velocity",
+                        this->zero_vector_function);
 
-    if (base_function == "0")
+    if (base_velocity_function.expression() == this->zero_vector_function)
       libmesh_error_msg("Error! Zero AveragedFan specified!" <<
                         std::endl);
 
-    if (base_function == "0")
-      this->base_velocity_function.reset
-        (new libMesh::ZeroFunction<libMesh::Number>());
-    else
-      this->base_velocity_function.reset
-        (new libMesh::ParsedFunction<libMesh::Number>(base_function));
+    this->set_parameter(local_vertical_function, input,
+                        "Physics/"+averaged_fan+"/local_vertical",
+                        this->zero_vector_function);
 
-    std::string vertical_function =
-      input("Physics/"+averaged_fan+"/local_vertical",
-        std::string("0"));
-
-    if (vertical_function == "0")
-      libmesh_error_msg("Warning! Zero LocalVertical specified!" <<
+    if (local_vertical_function.expression() == this->zero_vector_function)
+      libmesh_error_msg("Error! Zero LocalVertical specified!" <<
                         std::endl);
 
-    this->local_vertical_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(vertical_function));
+    this->set_parameter(lift_function, input,
+                        "Physics/"+averaged_fan+"/lift",
+                        "0");
 
-    std::string lift_function_string =
-      input("Physics/"+averaged_fan+"/lift",
-        std::string("0"));
-
-    if (lift_function_string == "0")
+    if (lift_function.expression() == "0")
       std::cout << "Warning! Zero lift function specified!" << std::endl;
 
-    this->lift_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(lift_function_string));
+    this->set_parameter(drag_function, input,
+                        "Physics/"+averaged_fan+"/drag",
+                        "0");
 
-    std::string drag_function_string =
-      input("Physics/"+averaged_fan+"/drag",
-        std::string("0"));
-
-    if (drag_function_string == "0")
+    if (drag_function.expression() == "0")
       std::cout << "Warning! Zero drag function specified!" << std::endl;
 
-    this->drag_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(drag_function_string));
+    this->set_parameter(chord_function, input,
+                        "Physics/"+averaged_fan+"/chord_length",
+                        "0");
 
-    std::string chord_function_string =
-      input("Physics/"+averaged_fan+"/chord_length",
-        std::string("0"));
-
-    if (chord_function_string == "0")
-      libmesh_error_msg("Warning! Zero chord function specified!" <<
+    if (chord_function.expression() == "0")
+      libmesh_error_msg("Error! Zero chord function specified!" <<
                         std::endl);
 
-    this->chord_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(chord_function_string));
+    this->set_parameter(area_swept_function, input,
+                        "Physics/"+averaged_fan+"/area_swept",
+                        "0");
 
-    std::string area_function_string =
-      input("Physics/"+averaged_fan+"/area_swept",
-        std::string("0"));
-
-    if (area_function_string == "0")
-      libmesh_error_msg("Warning! Zero area_swept_function specified!" <<
+    if (area_swept_function.expression() == "0")
+      libmesh_error_msg("Error! Zero area_swept_function specified!" <<
                         std::endl);
 
-    this->area_swept_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(area_function_string));
+    this->set_parameter(aoa_function, input,
+                        "Physics/"+averaged_fan+"/angle_of_attack",
+                        "00000");
 
-    std::string aoa_function_string =
-      input("Physics/"+averaged_fan+"/angle_of_attack",
-        std::string("00000"));
-
-    if (aoa_function_string == "00000")
-      libmesh_error_msg("Warning! No angle-of-attack specified!" <<
+    if (aoa_function.expression() == "00000")
+      libmesh_error_msg("Error! No angle-of-attack specified!" <<
                         std::endl);
-
-    this->aoa_function.reset
-      (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
   }
 
   template<class Mu>
@@ -145,12 +125,10 @@ namespace GRINS
       libMesh::NumberTensorValue *dFdU)
   {
     // Find base velocity of moving fan at this point
-    libmesh_assert(base_velocity_function.get());
-
     libMesh::DenseVector<libMesh::Number> output_vec(3);
 
-    (*base_velocity_function)(point, time,
-                              output_vec);
+    base_velocity_function(point, time,
+                           output_vec);
 
     const libMesh::NumberVectorValue U_B(output_vec(0),
                                          output_vec(1),
@@ -166,8 +144,8 @@ namespace GRINS
     const libMesh::NumberVectorValue N_B =
       libMesh::NumberVectorValue(U_B/U_B_size);
 
-    (*local_vertical_function)(point, time,
-                               output_vec);
+    local_vertical_function(point, time,
+                            output_vec);
 
     // Normal in fan vertical direction
     const libMesh::NumberVectorValue N_V(output_vec(0),
@@ -211,13 +189,13 @@ namespace GRINS
 
     // Angle WRT fan chord
     const libMesh::Number angle = part_angle +
-      (*aoa_function)(point, time);
+      aoa_function(point, time);
 
-    const libMesh::Number C_lift  = (*lift_function)(point, angle);
-    const libMesh::Number C_drag  = (*drag_function)(point, angle);
+    const libMesh::Number C_lift  = lift_function(point, angle);
+    const libMesh::Number C_drag  = drag_function(point, angle);
 
-    const libMesh::Number chord = (*chord_function)(point, time);
-    const libMesh::Number area  = (*area_swept_function)(point, time);
+    const libMesh::Number chord = chord_function(point, time);
+    const libMesh::Number area  = area_swept_function(point, time);
 
     const libMesh::Number v_sq = U_P*U_P;
 

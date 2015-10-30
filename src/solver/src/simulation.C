@@ -535,9 +535,11 @@ namespace GRINS
 
     // First check if the error estimator requires an adjoint solve
     if( error_estimator.find("adjoint") != std::string::npos )
-      {
-        do_adjoint_solve = true;
-      }
+      do_adjoint_solve = true;
+
+    // Next check if parameter sensitivies require an adjoint solve
+    if ( _adjoint_parameters.parameter_vector.size() )
+      do_adjoint_solve = true;
 
     // Now check if the user requested to do an adjoint solve regardless
     /*! \todo This option name WILL change at some point. */

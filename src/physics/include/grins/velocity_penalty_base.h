@@ -31,7 +31,7 @@
 #include "grins/inc_navier_stokes_base.h"
 
 // libMesh
-#include "libmesh/function_base.h"
+#include "libmesh/fem_function_base.h"
 #include "libmesh/getpot.h"
 #include "libmesh/tensor_value.h"
 
@@ -53,21 +53,30 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
+    // Hack to read ParsedFEMFunction options after System init
+    void set_time_evolving_vars (libMesh::FEMSystem* system);
+
     bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
+                         const AssemblyContext& context,
                          const libMesh::NumberVectorValue& U,
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL);
    
   protected:
 
+    std::string base_physics_name;
+
     bool _quadratic_scaling;
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > normal_vector_function;
+    libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
+      normal_vector_function;
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > base_velocity_function;
+    libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
+      base_velocity_function;
 
   private:
+
+    const GetPot & _input;
 
     VelocityPenaltyBase();
   };

@@ -77,8 +77,15 @@ namespace GRINS
 
     // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+reacting_low_mach_navier_stokes+"/pin_pressure", false );
-  
+
     return;
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::auxiliary_init( MultiphysicsSystem& system )
+  {
+    if( _pin_pressure )
+      _p_pinning.check_pin_location(system.get_mesh());
   }
 
   template<typename Mixture, typename Evaluator>
@@ -417,9 +424,9 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_constraint( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /* cache */ )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_constraint( bool compute_jacobian,
+                                                                           AssemblyContext& context,
+                                                                           CachedValues& /* cache */ )
   {
     // Pin p = p_value at p_point
     if( this->_pin_pressure )

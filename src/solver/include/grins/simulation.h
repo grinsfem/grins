@@ -81,6 +81,9 @@ namespace GRINS
     void print_sim_info();
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
+    MultiphysicsSystem* get_multiphysics_system();
+
+    const MultiphysicsSystem* get_multiphysics_system() const;
 
     libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
 
@@ -171,6 +174,20 @@ namespace GRINS
     Simulation();
 
   };
+
+  inline
+  const MultiphysicsSystem*
+  Simulation::get_multiphysics_system() const
+  {
+    return this->_multiphysics_system;
+  }
+
+  inline
+  MultiphysicsSystem*
+  Simulation::get_multiphysics_system()
+  {
+    return this->_multiphysics_system;
+  }
 
   inline
   const std::string& Simulation::get_multiphysics_system_name() const

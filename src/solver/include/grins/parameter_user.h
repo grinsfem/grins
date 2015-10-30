@@ -34,6 +34,7 @@
 
 //libMesh
 #include "libmesh/libmesh.h"
+#include "libmesh/vector_value.h" // forward declare Gradient instead?
 
 //C++
 #include <map>
@@ -44,7 +45,13 @@ class GetPot;
 namespace libMesh
 {
   template <typename Scalar>
-  class ParameterMultiPointer;
+  class ParameterMultiAccessor;
+
+  template <typename Output, typename OutputGradient>
+  class ParsedFunction;
+
+  template <typename Output>
+  class ParsedFEMFunction;
 }
 
 //! GRINS namespace
@@ -67,28 +74,78 @@ namespace GRINS
     virtual ~ParameterUser() {}
 
     //! Each subclass can simultaneously read a parameter value from
-    //file and prepare it for registration with this call.
+    // file and prepare it for registration with this call.
     virtual void set_parameter
       ( libMesh::Number & param_variable,
         const GetPot & input,
         const std::string & param_name,
         libMesh::Number param_default );
 
-    // FIXME: add set_parameter for vectors
+    //! Each subclass can simultaneously read a parsed function from
+    // file and prepare its inline variables for registration with this call.
+    //
+    // Pass a default value of "DIE!" to assert that the input file
+    // contains a value for this parameter.
+    virtual void set_parameter
+      ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
+        const GetPot & input,
+        const std::string & func_param_name,
+        const std::string & param_default);
+
+    //! Each subclass can simultaneously read a parsed function from
+    // file and prepare its inline variables for registration with this call.
+    //
+    // Pass a default value of "DIE!" to assert that the input file
+    // contains a value for this parameter.
+    virtual void set_parameter
+      ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
+        const GetPot & input,
+        const std::string & func_param_name,
+        const std::string & param_default);
+
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::Number & old_parameter,
+       libMesh::Number & new_parameter);
+
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & old_func,
+       libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & new_func);
+
+    //! When cloning an object, we need to update parameter pointers
+    //to point to the clone
+    virtual void move_parameter
+      (const libMesh::ParsedFEMFunction<libMesh::Number> & old_func,
+       libMesh::ParsedFEMFunction<libMesh::Number> & new_func);
+
+    //! A parseable function string with LIBMESH_DIM components, all 0
+    static std::string zero_vector_function;
+
+    // FIXME: add set_parameter overloads for vectors
 
     //! Each subclass will register its copy of an independent
     //  variable when the library makes this call.
-    //  If the subclass has more than one copy to register, or if the
-    //  subclass needs to register a parameter which was not
+    //  If the subclass needs to register a parameter which was not
     //  previously assigned with set_parameter, then this method will
     //  need to be overridden.
     virtual void register_parameter
       ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const;
 
   private:
     std::map<std::string, libMesh::Number*> _my_parameters;
+
+    std::map<std::string,
+             libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient>*>
+      _my_parsed_functions;
+
+    std::map<std::string,
+             libMesh::ParsedFEMFunction<libMesh::Number>*>
+      _my_parsed_fem_functions;
 
     // This could be more efficient as a reference now, but we'd
     // probably inadvertently break it later.

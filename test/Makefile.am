@@ -149,7 +149,15 @@ TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
 TESTS += split_string_unit
 
+TESTS += stokes_invalid_pin_location_unit.sh
+TESTS += ins_invalid_pin_location_unit.sh
+TESTS += lmns_invalid_pin_location_unit.sh
+XFAIL_TESTS += stokes_invalid_pin_location_unit.sh
+XFAIL_TESTS += ins_invalid_pin_location_unit.sh
+XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
+
 TESTS += laplace_parsed_source_regression.sh
+TESTS += poisson_weighted_flux_regression.sh
 TESTS += test_ns_couette_flow_2d_x.sh
 TESTS += test_ns_couette_flow_2d_y.sh
 TESTS += test_stokes_poiseuille_flow.sh
@@ -275,6 +283,7 @@ shellfiles_src += suspended_cable_test.sh
 shellfiles_src += warn_only_ufo_unit.sh
 shellfiles_src += error_ufo_unit.sh
 shellfiles_src += laplace_parsed_source_regression.sh
+shellfiles_src += poisson_weighted_flux_regression.sh
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 

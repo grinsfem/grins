@@ -65,7 +65,7 @@ namespace GRINS
 
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::register_parameter
-  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
+  ( const std::string &param_name, libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer)
   const
   {
     // Register base class parameters

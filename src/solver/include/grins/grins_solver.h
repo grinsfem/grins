@@ -61,10 +61,10 @@ namespace GRINS
     Solver( const GetPot& input );
     virtual ~Solver();
 
-    virtual void initialize( const GetPot& input, 
+    virtual void initialize( const GetPot& input,
 			     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			     GRINS::MultiphysicsSystem* system );
-    
+
     virtual void solve( SolverContext& context )=0;
 
     virtual void adjoint_qoi_parameter_sensitivity
@@ -106,11 +106,12 @@ namespace GRINS
     unsigned int _max_linear_iterations;
     bool _continue_after_backtrack_failure;
     bool _continue_after_max_iterations;
+    bool _require_residual_reduction;
 
     // Screen display options
     bool _solver_quiet;
-    bool _solver_verbose;    
-    
+    bool _solver_verbose;
+
     /* Keep copies of the boundary conditions around
        in case they need to be updated during a solve;
        for example parameter continuation. */

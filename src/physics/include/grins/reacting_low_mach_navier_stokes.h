@@ -42,6 +42,8 @@ namespace GRINS
     //! Read options from GetPot input file.
     virtual void read_input_options( const GetPot& input );
 
+    virtual void auxiliary_init( MultiphysicsSystem& system );
+
     //! Register postprocessing variables for ReactingLowMachNavierStokes
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
@@ -58,9 +60,9 @@ namespace GRINS
 				       AssemblyContext& context,
 				       CachedValues& cache );
 
-    virtual void side_constraint( bool compute_jacobian,
-                                  AssemblyContext& context,
-                                  CachedValues& cache );
+    virtual void element_constraint( bool compute_jacobian,
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,

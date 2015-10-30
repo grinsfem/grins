@@ -43,10 +43,19 @@ namespace GRINS
     : QoIBase(qoi_name) {}
 
   ParsedBoundaryQoI::ParsedBoundaryQoI( const ParsedBoundaryQoI& original )
-    : QoIBase(original.name())
+    : QoIBase(original)
   {
     if (original.qoi_functional.get())
-      this->qoi_functional = original.qoi_functional->clone();
+      {
+        this->qoi_functional = original.qoi_functional->clone();
+        this->move_parameter
+          (*libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+             (original.qoi_functional.get()),
+           *libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+             (this->qoi_functional.get()));
+      }
+
+    this->_bc_ids = original._bc_ids;
   }
 
   ParsedBoundaryQoI::~ParsedBoundaryQoI() {}
@@ -56,7 +65,9 @@ namespace GRINS
     return new ParsedBoundaryQoI( *this );
   }
 
-  void ParsedBoundaryQoI::init( const GetPot& input, const MultiphysicsSystem& system )
+  void ParsedBoundaryQoI::init( const GetPot& input,
+                                const MultiphysicsSystem& system,
+                                unsigned int /*qoi_num*/ )
   {
     // Read boundary ids on which we want to compute qoi
     int num_bcs =  input.vector_variable_size("QoI/ParsedBoundary/bc_ids");
@@ -74,16 +85,13 @@ namespace GRINS
         _bc_ids.insert( input("QoI/ParsedBoundary/bc_ids", -1, i ) );
       }
 
-    std::string qoi_functional_string =
-      input("QoI/ParsedBoundary/qoi_functional", std::string("0"));
-
-    if (qoi_functional_string == "0")
-      libmesh_error_msg("Error! Zero ParsedBoundaryQoI specified!" <<
-                        std::endl);
-
-    this->qoi_functional.reset
+    libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, qoi_functional_string));
+         (system, ""));
+    this->qoi_functional.reset(qf);
+
+    this->set_parameter(*qf, input,
+                        "QoI/ParsedBoundary/qoi_functional", "DIE!");
   }
 
   void ParsedBoundaryQoI::init_context( AssemblyContext& context )
@@ -99,6 +107,19 @@ namespace GRINS
   void ParsedBoundaryQoI::side_qoi( AssemblyContext& context,
                                     const unsigned int qoi_index )
   {
+    bool on_correct_side = false;
+
+    for (std::set<libMesh::boundary_id_type>::const_iterator id =
+         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+      if( context.has_side_boundary_id( (*id) ) )
+        {
+          on_correct_side = true;
+          break;
+        }
+
+    if (!on_correct_side)
+      return;
+
     libMesh::FEBase* side_fe;
     context.get_side_fe<libMesh::Real>(0, side_fe);
     const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
