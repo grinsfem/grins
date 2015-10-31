@@ -82,7 +82,7 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-
+    
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
