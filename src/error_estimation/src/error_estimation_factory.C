@@ -109,7 +109,7 @@ namespace GRINS
           adjoint_error_estimator->qoi_set() = qoi_set;
 
           adjoint_error_estimator->number_h_refinements = input( "MeshAdaptivity/arefee_h_refs", 1 );
-          adjoint_error_estimator->number_p_refinements = input( "MeshAdaptivity/arefee_h_refs", 0 );
+          adjoint_error_estimator->number_p_refinements = input( "MeshAdaptivity/arefee_p_refs", 0 );
         }
         break;
 
