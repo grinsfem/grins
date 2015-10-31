@@ -46,7 +46,7 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input, 
+  std::tr1::shared_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactory::build( const GetPot& input,
                                                                               const libMesh::QoISet& qoi_set )
   {
     std::string estimator_type = input("MeshAdaptivity/estimator_type", "patch_recovery");
@@ -54,31 +54,31 @@ namespace GRINS
     ErrorEstimatorEnum estimator_enum = this->string_to_enum( estimator_type );
 
     std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
-    
+
     switch( estimator_enum )
       {
       case(ADJOINT_RESIDUAL):
         {
           error_estimator.reset( new libMesh::AdjointResidualErrorEstimator );
-    
+
           libMesh::AdjointResidualErrorEstimator*
             adjoint_error_estimator =
               libMesh::libmesh_cast_ptr<libMesh::AdjointResidualErrorEstimator*>
                 ( error_estimator.get() );
-          
+
           adjoint_error_estimator->qoi_set() = qoi_set;
 
           libMesh::PatchRecoveryErrorEstimator *p1 = new libMesh::PatchRecoveryErrorEstimator;
           adjoint_error_estimator->primal_error_estimator().reset( p1 );
-      
+
           libMesh::PatchRecoveryErrorEstimator *p2 = new libMesh::PatchRecoveryErrorEstimator;
-          adjoint_error_estimator->dual_error_estimator().reset( p2 );   
-      
+          adjoint_error_estimator->dual_error_estimator().reset( p2 );
+
           bool patch_reuse = input( "MeshAdaptivity/patch_reuse", false );
           adjoint_error_estimator->primal_error_estimator()->error_norm.set_type
             ( 0, libMesh::H1_SEMINORM );
           p1->set_patch_reuse( patch_reuse );
-      
+
           adjoint_error_estimator->dual_error_estimator()->error_norm.set_type
             ( 0, libMesh::H1_SEMINORM );
           p2->set_patch_reuse( patch_reuse );
@@ -108,8 +108,8 @@ namespace GRINS
 
           adjoint_error_estimator->qoi_set() = qoi_set;
 
-          adjoint_error_estimator->number_h_refinements = 1;
-          adjoint_error_estimator->number_p_refinements = 0;
+          adjoint_error_estimator->number_h_refinements = input( "MeshAdaptivity/arefee_h_refs", 1 );
+          adjoint_error_estimator->number_p_refinements = input( "MeshAdaptivity/arefee_h_refs", 0 );
         }
         break;
 
@@ -127,7 +127,7 @@ namespace GRINS
         }
 
       } // switch( estimator_enum )
-    
+
     return error_estimator;
   }
 

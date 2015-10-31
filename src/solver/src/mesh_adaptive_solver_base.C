@@ -45,6 +45,7 @@ namespace GRINS
       _refine_fraction( input("MeshAdaptivity/refine_percentage", 0.2) ),
       _coarsen_fraction( input("MeshAdaptivity/coarsen_percentage", 0.2) ),
       _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
+      compute_QoI_error_estimate( input("MeshAdaptivity/compute_QoI_error_estimate", false)),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
       _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),
@@ -58,7 +59,7 @@ namespace GRINS
 
     return;
   }
-  
+
   MeshAdaptiveSolverBase::~MeshAdaptiveSolverBase()
   {
     return;
@@ -71,27 +72,27 @@ namespace GRINS
     _mesh_refinement->absolute_global_tolerance() = _absolute_global_tolerance;
     _mesh_refinement->nelem_target() = _nelem_target;
     _mesh_refinement->refine_fraction() = _refine_fraction;
-    _mesh_refinement->coarsen_fraction() = _coarsen_fraction;  
+    _mesh_refinement->coarsen_fraction() = _coarsen_fraction;
     _mesh_refinement->coarsen_threshold() = _coarsen_threshold;
     _mesh_refinement->node_level_mismatch_limit() = _node_level_mismatch_limit;
     _mesh_refinement->edge_level_mismatch_limit() = _edge_level_mismatch_limit;
     _mesh_refinement->face_level_mismatch_limit() = _face_level_mismatch_limit;
     _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_enforce_mismatch_limit_prior_to_refinement);
 
-    return; 
+    return;
   }
 
   void MeshAdaptiveSolverBase::set_refinement_type( const GetPot& input,
                                                     MeshAdaptiveSolverBase::RefinementFlaggingType& refinement_type )
   {
-    std::string refinement_stategy = input("MeshAdaptivity/refinement_strategy", "elem_fraction" ); 
+    std::string refinement_stategy = input("MeshAdaptivity/refinement_strategy", "elem_fraction" );
 
     if( !input.have_variable("MeshAdaptivity/absolute_global_tolerance" ) )
       {
         std::cerr << "Error: Must specify absolute_global_tolerance for" << std::endl
                   << "       adaptive refinement algorithms."
                   << std::endl;
-        
+
         libmesh_error();
       }
 
@@ -113,7 +114,7 @@ namespace GRINS
             libmesh_error();
           }
       }
-    
+
     else if( refinement_stategy == std::string("error_fraction") )
       {
         refinement_type = ERROR_FRACTION;
@@ -173,7 +174,7 @@ namespace GRINS
 
     return converged;
   }
-  
+
   void MeshAdaptiveSolverBase::flag_elements_for_refinement( const libMesh::ErrorVector& error )
   {
     switch(_refinement_type)
@@ -189,13 +190,13 @@ namespace GRINS
           _mesh_refinement->flag_elements_by_nelem_target( error );
         }
         break;
-        
+
       case( ERROR_FRACTION ):
         {
           _mesh_refinement->flag_elements_by_error_fraction( error );
         }
         break;
-        
+
       case( ELEM_FRACTION ):
         {
           _mesh_refinement->flag_elements_by_elem_fraction( error );
