@@ -72,6 +72,7 @@ namespace GRINS
     libMesh::Real _refine_fraction;
     libMesh::Real _coarsen_fraction;
     libMesh::Real _coarsen_threshold;
+    bool _compute_qoi_error_estimate;
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 

@@ -29,10 +29,12 @@
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/composite_qoi.h"
+#include "grins/common.h"
 
 // libMesh
 #include "libmesh/error_vector.h"
 #include "libmesh/steady_solver.h"
+#include "libmesh/adjoint_refinement_estimator.h"
 
 namespace GRINS
 {
@@ -57,8 +59,25 @@ namespace GRINS
     return;
   }
 
+  void SteadyMeshAdaptiveSolver::check_qoi_error_option_consistency(SolverContext& context)
+  {
+    // If we are computing QoI error estimates, we have to be using
+    // the Adjoint Refinement Error Estimator
+    if( this->_compute_qoi_error_estimate )
+      if(context.error_estimator->type() != libMesh::ADJOINT_REFINEMENT)
+      {
+	std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
+	error_message += "Please use the ADJOINT_REFINEMENT option for the estimator_type if you want QoI error estimates.\n";
+	std::cout<<error_message<<std::endl;
+	 libmesh_error();
+      }
+  }
+
   void SteadyMeshAdaptiveSolver::solve( SolverContext& context )
   {
+    // Check that our error estimator options are consistent
+    this->check_qoi_error_option_consistency(context);
+
     // Mesh and mesh refinement
     libMesh::MeshBase& mesh = context.equation_system->get_mesh();
     this->build_mesh_refinement( mesh );
@@ -96,9 +115,9 @@ namespace GRINS
             context.vis->output_residual( context.equation_system, context.system );
           }
 
-        // Now we construct the data structures for the mesh refinement process 
+        // Now we construct the data structures for the mesh refinement process
         libMesh::ErrorVector error;
-        
+
         std::cout << "==========================================================" << std::endl
                   << "Estimating error" << std::endl
                   << "==========================================================" << std::endl;
@@ -109,6 +128,14 @@ namespace GRINS
           {
             error.plot_error( this->_error_plot_prefix+".exo", mesh );
           }
+
+	// Get the global error estimate if you can and are asked to
+	if( this->_compute_qoi_error_estimate )
+	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
+	  {
+	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
+	    std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
+	  }
 
         // Check for convergence of error
         std::cout << "==========================================================" << std::endl
@@ -135,15 +162,15 @@ namespace GRINS
 
                 this->flag_elements_for_refinement( error );
                 _mesh_refinement->refine_and_coarsen_elements();
-    
+
                 // Dont forget to reinit the system after each adaptive refinement!
                 context.equation_system->reinit();
 
                 // This output cannot be toggled in the input file.
                 std::cout << "==========================================================" << std::endl
-                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem() 
+                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
                           << " active elements" << std::endl
-                          << "            " << std::setw(16) << context.system->n_active_dofs() 
+                          << "            " << std::setw(16) << context.system->n_active_dofs()
                           << " active dofs" << std::endl
                           << "==========================================================" << std::endl;
 
