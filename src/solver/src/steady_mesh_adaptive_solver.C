@@ -63,7 +63,7 @@ namespace GRINS
   {
     // If we are computing QoI error estimates, we have to be using
     // the Adjoint Refinement Error Estimator
-    if( this->_compute_QoI_error_estimate )
+    if( this->_compute_qoi_error_estimate )
       if(context.error_estimator->type() != libMesh::ADJOINT_REFINEMENT)
       {
 	std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
@@ -130,7 +130,7 @@ namespace GRINS
           }
 
 	// Get the global error estimate if you can and are asked to
-	if( this->_compute_QoI_error_estimate )
+	if( this->_compute_qoi_error_estimate )
 	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
 	  {
 	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
