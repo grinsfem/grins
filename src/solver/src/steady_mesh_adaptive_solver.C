@@ -59,8 +59,25 @@ namespace GRINS
     return;
   }
 
+  void SteadyMeshAdaptiveSolver::check_qoi_error_option_consistency(SolverContext& context)
+  {
+    // If we are computing QoI error estimates, we have to be using
+    // the Adjoint Refinement Error Estimator
+    if( this->_compute_QoI_error_estimate )
+      if(context.error_estimator->type() != libMesh::ADJOINT_REFINEMENT)
+      {
+	std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
+	error_message += "Please use the ADJOINT_REFINEMENT option for the estimator_type if you want QoI error estimates.\n";
+	std::cout<<error_message<<std::endl;
+	 libmesh_error();
+      }
+  }
+
   void SteadyMeshAdaptiveSolver::solve( SolverContext& context )
   {
+    // Check that our error estimator options are consistent
+    this->check_qoi_error_option_consistency(context);
+
     // Mesh and mesh refinement
     libMesh::MeshBase& mesh = context.equation_system->get_mesh();
     this->build_mesh_refinement( mesh );
@@ -113,26 +130,12 @@ namespace GRINS
           }
 
 	// Get the global error estimate if you can and are asked to
-	if( this->compute_QoI_error_estimate )
-	{
-	  // First check if we are using the Adjoint Refinement Error Estimator
-	  if(context.error_estimator->type() == libMesh::ADJOINT_REFINEMENT)
+	if( this->_compute_QoI_error_estimate )
+	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
 	  {
-	    // Loop over QoIs and print error error estimates
-	    for(unsigned int i = 0; i != context.system->qoi.size(); i++)
-	    {
-	      libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
-	      std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
-	    }
-
+	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
+	    std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
 	  }
-	  else
-	  {
-	    std::string warning = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
-	    warning += "Please use the ADJOINT_REFINEMENT option for the estimator_type if you want QoI error estimates.\n";
-	    grins_warning(warning);
-	  }
-	}
 
         // Check for convergence of error
         std::cout << "==========================================================" << std::endl

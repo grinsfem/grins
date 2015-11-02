@@ -45,7 +45,7 @@ namespace GRINS
       _refine_fraction( input("MeshAdaptivity/refine_percentage", 0.2) ),
       _coarsen_fraction( input("MeshAdaptivity/coarsen_percentage", 0.2) ),
       _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
-      compute_QoI_error_estimate( input("MeshAdaptivity/compute_QoI_error_estimate", false)),
+      _compute_QoI_error_estimate( input("MeshAdaptivity/compute_QoI_error_estimate", false)),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
       _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),

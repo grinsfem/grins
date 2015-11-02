@@ -437,7 +437,7 @@ namespace GRINS
     // Most of this was pulled from FIN-S
     if (restart_file != "none")
       {
-        std::cout << " ====== Restarting from " << restart_file << std::endl;      
+        std::cout << " ====== Restarting from " << restart_file << std::endl;
 
         // Must have correct file type to restart
         if (restart_file.rfind(".xdr") < restart_file.size())
@@ -445,7 +445,7 @@ namespace GRINS
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
                                  libMesh::EquationSystems::READ_DATA |
                                  libMesh::EquationSystems::READ_ADDITIONAL_DATA);
-      
+
         else if  (restart_file.rfind(".xda") < restart_file.size())
           _equation_system->read(restart_file,GRINSEnums::READ,
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
@@ -457,10 +457,10 @@ namespace GRINS
             std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
             libmesh_error();
           }
-      
+
         const std::string system_name = input("screen-options/system_name", "GRINS" );
 
-        MultiphysicsSystem& system = 
+        MultiphysicsSystem& system =
           _equation_system->get_system<MultiphysicsSystem>(system_name);
 
         // Update the old data
@@ -534,7 +534,7 @@ namespace GRINS
     bool do_adjoint_solve = false;
 
     // First check if the error estimator requires an adjoint solve
-    if( error_estimator.find("adjoint") != std::string::npos )
+    if( error_estimator.find("adjoint") != std::string::npos || error_estimator.find("ADJOINT") != std::string::npos )
       do_adjoint_solve = true;
 
     // Next check if parameter sensitivies require an adjoint solve

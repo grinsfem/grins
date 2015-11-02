@@ -60,6 +60,8 @@ namespace GRINS
 
     virtual void init_time_solver( MultiphysicsSystem* system );
 
+    void check_qoi_error_option_consistency( SolverContext& context );
+
   };
 
 } // end namespace GRINS
