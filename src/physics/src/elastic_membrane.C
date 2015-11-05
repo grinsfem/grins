@@ -40,6 +40,7 @@
 #include "libmesh/boundary_info.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/fe_interface.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {
