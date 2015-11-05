@@ -35,6 +35,7 @@
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/fe_base.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {

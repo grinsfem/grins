@@ -36,13 +36,13 @@
 #include "libmesh/dense_matrix.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
+#include "libmesh/elem.h"
 
 // Forward Declarations
 namespace libMesh {
   class EquationSystems;
   class BoundaryMesh;
   class Node;
-  class Elem;
 }
 
 

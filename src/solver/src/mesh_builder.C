@@ -38,7 +38,7 @@
 #include "libmesh/parallel_mesh.h"
 #include "libmesh/parsed_function.h"
 #include "libmesh/serial_mesh.h"
-
+#include "libmesh/elem.h"
 
 namespace GRINS
 {
