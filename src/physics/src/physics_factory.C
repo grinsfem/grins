@@ -332,7 +332,10 @@ namespace GRINS
   PhysicsPtr new_reacting_low_mach_class(const std::string& physics_to_add,
                                          const GetPot& input)
   {
-    std::string thermochem_lib = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );
+    std::string thermochem_lib;
+    PhysicsFactoryHelper::parse_thermochemistry_model( input,
+                                                       physics_to_add,
+                                                       thermochem_lib );
 
     if( thermochem_lib == "cantera" )
       {
