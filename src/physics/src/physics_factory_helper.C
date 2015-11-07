@@ -254,6 +254,51 @@ namespace GRINS
       }
   }
 
+  void PhysicsFactoryHelper::parse_thermochemistry_model( const GetPot& input,
+                                                          const std::string& physics,
+                                                          std::string& model )
+  {
+    // Newer, preferred version
+    std::string material;
+    MaterialsParsing::material_name( input, physics, material );
+
+    bool have_thermochem_lib = input.have_variable( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library" );
+
+    // It's an error to specify both the old and the new version
+    if( have_thermochem_lib &&
+        input.have_variable("Materials/"+material+"/GasMixture/thermochemistry_library") )
+      {
+        libmesh_error_msg("ERROR: Cannot specify both Materials/"+material+"/GasMixture/thermochemistry_library and Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library!");
+      }
+
+    //Deprecated
+    if( have_thermochem_lib )
+      {
+        model = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/GasMixture/thermochemistry_library") )
+      {
+        model = input("Materials/"+material+"/GasMixture/thermochemistry_library", "DIE!");
+      }
+    // Fail
+    else
+      {
+        libmesh_error_msg("ERROR! Could not find valid thermochemistry_library input!");
+      }
+
+    // Make sure we have a valid model
+    if( model != std::string("antioch") &&
+        model != std::string("cantera") )
+      {
+        std::string error = "ERROR! Invalid thermochemistry library value "+model+"!\n";
+        error += "       Valid selections are: antioch\n";
+        error += "                             cantera\n";
+
+        libmesh_error_msg(error);
+      }
+  }
+
   void PhysicsFactoryHelper::deprecated_visc_model_parsing( bool have_ins_viscosity_model,
                                                             bool have_material,
                                                             const GetPot& input,

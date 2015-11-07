@@ -67,6 +67,11 @@ namespace GRINS
                                            std::string& model,
                                            std::string& strain_energy );
 
+    //! Determine thermochemistry model type
+    static void parse_thermochemistry_model( const GetPot& input,
+                                             const std::string& physics,
+                                             std::string& model );
+
   private:
 
     static void deprecated_visc_model_parsing( bool have_viscosity_model,
