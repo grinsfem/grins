@@ -40,11 +40,19 @@ namespace GRINS
 #ifdef LIBMESH_HAVE_CXX11_SHARED_PTR
   template<typename T>
   class SharedPtr : public std::shared_ptr<T>
-  {};
+  {
+  public:
+    SharedPtr() : std::shared_ptr<T>() {};
+    SharedPtr( T* ptr ) : std::shared_ptr<T>(ptr) {};
+  };
 #elif GRINS_HAVE_BOOST_SHARED_PTR_HPP
   template<typename T>
   class SharedPtr : public boost::shared_ptr<T>
-  {};
+  {
+  public:
+    SharedPtr() : boost::shared_ptr<T>() {};
+    SharedPtr( T* ptr ) : boost::shared_ptr<T>(ptr) {};
+  };
 #else
 #     error "No valid definition for shared_ptr found!"
 #endif
