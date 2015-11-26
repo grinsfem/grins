@@ -416,6 +416,7 @@ include_HEADERS += solver/include/grins/displacement_continuation_solver.h
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
 include_HEADERS += utilities/include/grins/grins_enums.h
+include_HEADERS += utilities/include/grins/shared_ptr.h
 include_HEADERS += utilities/include/grins/physical_constants.h
 include_HEADERS += utilities/include/grins/input_utils.h
 include_HEADERS += utilities/include/grins/math_constants.h
