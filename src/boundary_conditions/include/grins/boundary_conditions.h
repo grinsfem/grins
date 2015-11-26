@@ -93,7 +93,7 @@ namespace GRINS
 			const bool request_jacobian,
 			const VariableIndex var,
 			const libMesh::Real sign,
-			std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
+			SharedPtr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*! This function must also be aware of the Jacobian with respect to other variables. */
@@ -103,7 +103,7 @@ namespace GRINS
 				     const bool request_jacobian,
 				     const VariableIndex var,
 				     const libMesh::Real sign,
-				     const std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
+				     const SharedPtr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*!  This method is for the case where Neumann boundary condition is
@@ -115,7 +115,7 @@ namespace GRINS
 			       const bool request_jacobian,
 			       const VariableIndex var,
 			       const libMesh::Real sign,
-			       std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
+			       SharedPtr<NeumannFuncObj> neumann_func  ) const;
 
     //! Applies Neumann boundary conditions using a user-supplied function.
     /*!  This method is for the case where Neumann boundary condition is
@@ -127,7 +127,7 @@ namespace GRINS
                                             const bool request_jacobian,
                                             const VariableIndex var,
                                             const libMesh::Real sign,
-                                            std::tr1::shared_ptr<NeumannFuncObj> neumann_func  ) const;
+                                            SharedPtr<NeumannFuncObj> neumann_func  ) const;
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */

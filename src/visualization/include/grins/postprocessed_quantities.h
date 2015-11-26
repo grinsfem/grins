@@ -89,7 +89,7 @@ namespace GRINS
     std::map<VariableIndex, unsigned int> _quantity_index_var_map;
     
     MultiphysicsSystem* _multiphysics_sys;
-    std::tr1::shared_ptr<AssemblyContext> _multiphysics_context;
+    SharedPtr<AssemblyContext> _multiphysics_context;
 
   private:
 

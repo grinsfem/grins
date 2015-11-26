@@ -85,7 +85,7 @@ namespace GRINS
   }
 
   void DisplacementContinuationSolver::initialize( const GetPot& input, 
-                                                   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+                                                   SharedPtr<libMesh::EquationSystems> equation_system,
                                                    GRINS::MultiphysicsSystem* system )
   {
     // First init everything on the base class side, which will reinit equation_system

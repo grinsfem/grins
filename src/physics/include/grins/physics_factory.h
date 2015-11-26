@@ -48,13 +48,13 @@ namespace GRINS
     
     PhysicsFactory();
 
-    //! Destructor does not need to delete std::tr1::shared_ptr's.
+    //! Destructor does not need to delete SharedPtr's.
     virtual ~PhysicsFactory();
     
     //! Builds PhysicsList. This is the primary function of this class.
     GRINS::PhysicsList build(const GetPot& input);
 
-    typedef std::tr1::shared_ptr<Physics> PhysicsPtr;
+    typedef SharedPtr<Physics> PhysicsPtr;
     typedef std::pair< std::string, PhysicsPtr > PhysicsPair;
 
   protected:

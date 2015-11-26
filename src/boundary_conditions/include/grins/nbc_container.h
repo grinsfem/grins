@@ -49,16 +49,16 @@ namespace GRINS
 
     //! Add boundary id and corresponding functor object to be applied on that boundary
     void add_var_func_pair( VariableIndex var, 
-			    std::tr1::shared_ptr<NeumannFuncObj> func );
+			    SharedPtr<NeumannFuncObj> func );
 
     BoundaryID get_bc_id() const;
 
-    std::tr1::shared_ptr<NeumannFuncObj> get_func( VariableIndex var ) const;
+    SharedPtr<NeumannFuncObj> get_func( VariableIndex var ) const;
 
   protected:
     
     BoundaryID _bc_id;
-    std::map<VariableIndex,std::tr1::shared_ptr<NeumannFuncObj> > _funcs;
+    std::map<VariableIndex,SharedPtr<NeumannFuncObj> > _funcs;
 
   };
 

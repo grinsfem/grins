@@ -33,8 +33,8 @@ namespace GRINS
 {
   SolverContext::SolverContext()
     : system(NULL),
-      equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
+      equation_system( SharedPtr<libMesh::EquationSystems>() ),
+      vis( SharedPtr<GRINS::Visualization>() ),
       timesteps_per_vis( 1 ),
       timesteps_per_perflog( 1 ),
       output_vis( false ),
@@ -45,7 +45,7 @@ namespace GRINS
       print_perflog( false ),
       print_scalars( false ),
       do_adjoint_solve(false),
-      postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >() )
+      postprocessing( SharedPtr<PostProcessedQuantities<libMesh::Real> >() )
   {
     return;
   }

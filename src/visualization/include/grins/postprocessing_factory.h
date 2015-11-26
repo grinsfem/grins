@@ -47,7 +47,7 @@ namespace GRINS
     PostprocessingFactory();
     virtual ~PostprocessingFactory();
 
-    virtual std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> >
+    virtual SharedPtr<PostProcessedQuantities<libMesh::Real> >
     build(const GetPot& input);
 
   };

@@ -33,11 +33,11 @@
 
 namespace GRINS
 {
-  std::tr1::shared_ptr<Solver> InflatingSheetSolverFactory::build(const GetPot& input)
+  GRINS::SharedPtr<Solver> InflatingSheetSolverFactory::build(const GetPot& input)
   {
     std::string solver_type = input("SolverOptions/solver_type", "DIE!");
-    
-    std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
+
+    GRINS::SharedPtr<Solver> solver;  // Effectively NULL
 
     if( solver_type == std::string("pressure_continuation") )
       {

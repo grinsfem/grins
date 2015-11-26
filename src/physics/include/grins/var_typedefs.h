@@ -29,10 +29,12 @@
 #include <string>
 #include <map>
 #include <limits>
-#include "boost/tr1/memory.hpp"
 
 // libMesh
 #include "libmesh/id_types.h"
+
+// GRINS
+#include "grins/shared_ptr.h"
 
 namespace GRINS
 {
@@ -54,10 +56,10 @@ namespace GRINS
   typedef libMesh::boundary_id_type BoundaryID;
 
   //! Container for GRINS::Physics object pointers
-  typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> > PhysicsList;
+  typedef std::map< std::string,SharedPtr<GRINS::Physics> > PhysicsList;
 
   //! Iterator for PhysicsList
-  typedef std::map< std::string,std::tr1::shared_ptr<GRINS::Physics> >::const_iterator PhysicsListIter;
+  typedef std::map< std::string,SharedPtr<GRINS::Physics> >::const_iterator PhysicsListIter;
 
 }
 #endif //GRINS_VAR_TYPEDEFS_H

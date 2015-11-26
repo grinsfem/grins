@@ -47,7 +47,7 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<CompositeQoI> QoIFactory::build(const GetPot& input)
+  SharedPtr<CompositeQoI> QoIFactory::build(const GetPot& input)
   {
     std::string qoi_list = input("QoI/enabled_qois", "none" );
 
@@ -58,7 +58,7 @@ namespace GRINS
         StringUtilities::split_string( qoi_list, std::string(" "), qoi_names );
       }
 
-    std::tr1::shared_ptr<CompositeQoI> qois( new CompositeQoI );
+    SharedPtr<CompositeQoI> qois( new CompositeQoI );
     
     if( !qoi_names.empty() )
       {
@@ -79,7 +79,7 @@ namespace GRINS
     return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& /*input*/, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
+  void QoIFactory::add_qoi( const GetPot& /*input*/, const std::string& qoi_name, SharedPtr<CompositeQoI>& qois )
   {
     QoIBase* qoi = NULL;
 
@@ -150,7 +150,7 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois )
+  void QoIFactory::echo_qoi_list( SharedPtr<CompositeQoI>& qois )
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl

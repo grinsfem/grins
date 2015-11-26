@@ -32,7 +32,7 @@ namespace GRINS
   DBCContainer::DBCContainer()
     : _var_names( std::vector<VariableName>() ),
       _bc_ids( std::set<BoundaryID>() ),
-      _func( std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >() ),
+      _func( NULL ),
       _parsed_fem_func_string()
   {
     return;
@@ -55,7 +55,7 @@ namespace GRINS
     return;
   }
 
-  void DBCContainer::set_func( std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func )
+  void DBCContainer::set_func( SharedPtr<libMesh::FunctionBase<libMesh::Number> > func )
   {
     _func = func;
     return;
@@ -83,7 +83,7 @@ namespace GRINS
     return _parsed_fem_func_string;
   }
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > DBCContainer::get_func() const
+  SharedPtr<libMesh::FunctionBase<libMesh::Number> > DBCContainer::get_func() const
   {
     return _func;
   }

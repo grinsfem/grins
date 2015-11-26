@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<AxiParabolicBCFactory> bc_factory( new AxiParabolicBCFactory );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new AxiParabolicBCFactory );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 #endif
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Do solve here
   grins.run();
@@ -169,10 +169,10 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiParabolicBCFactory::
   cont.add_var_name( "z_vel" );
   cont.add_bc_id( 0 );
   cont.add_bc_id( 2 );
-  
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
-    vel_func( new GRINS::ParabolicProfile( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ) ); 
-    
+
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
+    vel_func( new GRINS::ParabolicProfile( -100.0/4.0, 0.0, 0.0, 0.0, 0.0, 100.0/4.0 ) );
+
   cont.set_func( vel_func );
     
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;

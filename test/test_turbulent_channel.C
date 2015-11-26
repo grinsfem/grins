@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
 
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<TurbulentBCFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
   grins.run();
 
 // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   //libMesh::ExactSolution exact_sol(*es);
@@ -387,9 +387,9 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
 {
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_u( new TurbulentBdyFunctionU(this->turbulent_bc_values) );
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_u( new TurbulentBdyFunctionU(this->turbulent_bc_values) );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_nu( new TurbulentBdyFunctionNu(this->turbulent_bc_values) );
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_nu( new TurbulentBdyFunctionNu(this->turbulent_bc_values) );
 
   GRINS::DBCContainer cont_u;
   cont_u.add_var_name( "u" );

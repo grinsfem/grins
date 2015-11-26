@@ -26,7 +26,7 @@
 #define GRINS_REACTING_LOW_MACH_NAVIER_STOKES_BC_HANDLING_H
 
 // shared_ptr
-#include "boost/tr1/memory.hpp"
+#include "grins/shared_ptr.h"
 
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
@@ -95,7 +95,7 @@ namespace GRINS
     std::vector<std::string> _species_var_names;
     std::vector<GRINS::VariableIndex> _species_vars;
 
-    std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > > _catalytic_walls;
+    std::multimap<BoundaryID, SharedPtr<CatalyticWallBase<Chemistry> > > _catalytic_walls;
 
     const Chemistry& _chemistry;
 

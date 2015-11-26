@@ -388,7 +388,7 @@ namespace GRINS
        &GRINS::Physics::compute_nonlocal_mass_residual_cache);
   }
 
-  std::tr1::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
+  SharedPtr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
   {
     if( _physics_list.find( physics_name ) == _physics_list.end() )
       {

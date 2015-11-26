@@ -26,9 +26,6 @@
 #ifndef GRINS_MESH_BUILDER_H
 #define GRINS_MESH_BUILDER_H
 
-// C++
-#include "boost/tr1/memory.hpp"
-
 // libMesh
 #include "libmesh/mesh.h"
 #include "libmesh/getpot.h"
@@ -36,6 +33,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/shared_ptr.h"
 
 namespace GRINS
 {
@@ -53,7 +51,7 @@ namespace GRINS
     void read_input_options( const GetPot& input );
 
     //! Builds the libMesh::Mesh according to input options.
-    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build
+    SharedPtr<libMesh::UnstructuredMesh> build
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );

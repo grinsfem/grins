@@ -32,7 +32,7 @@
 #include "grins/composite_qoi.h"
 
 // shared_ptr
-#include "boost/tr1/memory.hpp"
+#include "grins/shared_ptr.h"
 
 namespace GRINS
 {
@@ -44,18 +44,18 @@ namespace GRINS
     
     virtual ~QoIFactory();
 
-    virtual std::tr1::shared_ptr<CompositeQoI> build(const GetPot& input);
+    virtual SharedPtr<CompositeQoI> build(const GetPot& input);
 
   protected:
 
     virtual void add_qoi( const GetPot& input,
                           const std::string& qoi_name,
-                          std::tr1::shared_ptr<CompositeQoI>& qois );
+                          SharedPtr<CompositeQoI>& qois );
 
     virtual void check_qoi_physics_consistency( const GetPot& input,
 						const std::string& qoi_name );
 
-    virtual void echo_qoi_list( std::tr1::shared_ptr<CompositeQoI>& qois );
+    virtual void echo_qoi_list( SharedPtr<CompositeQoI>& qois );
 
     void consistency_helper( const std::set<std::string>& requested_physics,
 			     const std::set<std::string>& required_physics, 

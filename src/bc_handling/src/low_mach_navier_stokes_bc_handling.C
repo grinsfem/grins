@@ -202,7 +202,7 @@ namespace GRINS
 	  cont.add_var_name( var );
 	  cont.add_bc_id( bc_id );
 
-          std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+          SharedPtr<libMesh::FunctionBase<libMesh::Number> >
             func( new GRINS::ParabolicProfile(a,b,c,d,e,f) );
 	  cont.set_func( func );
 	  this->attach_dirichlet_bound_func( cont );
@@ -214,7 +214,7 @@ namespace GRINS
 	  cont_fix.add_var_name( fix_var );
 	  cont_fix.add_bc_id( bc_id );
 
-          std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+          SharedPtr<libMesh::FunctionBase<libMesh::Number> >
             func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
 	  cont_fix.set_func( func_fix );
 	  this->attach_dirichlet_bound_func( cont_fix );
@@ -233,7 +233,7 @@ namespace GRINS
 	  cont_fix.add_var_name( fix_var );
 	  cont_fix.add_bc_id( bc_id );
 
-          std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+          SharedPtr<libMesh::FunctionBase<libMesh::Number> >
             func_fix( new libMesh::ZeroFunction<libMesh::Number>() );
 	  cont_fix.set_func( func_fix );
 	  this->attach_dirichlet_bound_func( cont_fix );

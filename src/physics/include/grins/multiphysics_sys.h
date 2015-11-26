@@ -159,9 +159,9 @@ namespace GRINS
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
 
-    std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
+    SharedPtr<GRINS::Physics> get_physics( const std::string physics_name );
 
-    std::tr1::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
+    SharedPtr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
@@ -205,7 +205,7 @@ namespace GRINS
   };
 
   inline
-  std::tr1::shared_ptr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
+  SharedPtr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
   {
     libmesh_assert(_physics_list.find( physics_name ) != _physics_list.end());
 

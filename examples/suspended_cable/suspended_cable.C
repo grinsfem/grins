@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 
 	GRINS::SimulationBuilder sim_builder;
 
-//std::tr1::shared_ptr<GRINS::SuspendedCableSolverFactory> cable_factory( new GRINS::SuspendedCableSolverFactory );
+        //GRINS::SharedPtr<GRINS::SuspendedCableSolverFactory> cable_factory( new GRINS::SuspendedCableSolverFactory );
 
 //sim_builder.attach_solver_factory( cable_factory );
 
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 						     libmesh_init.comm() );
 
 	std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
-	std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+	GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 	const libMesh::System& system = es->get_system(system_name);
 
 	libMesh::Parameters &params = es->parameters;

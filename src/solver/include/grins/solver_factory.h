@@ -47,7 +47,7 @@ namespace GRINS
     //! Builds GRINS::Solver object.
     /*! Users should override this method to construct 
         their own solvers. */
-    virtual std::tr1::shared_ptr<GRINS::Solver> build(const GetPot& input);
+    virtual SharedPtr<GRINS::Solver> build(const GetPot& input);
 
   };
 } // namespace GRINS

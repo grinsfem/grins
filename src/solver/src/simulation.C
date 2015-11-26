@@ -181,7 +181,7 @@ namespace GRINS
   void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
   {
     // If the user actually asks for a QoI, then we add it.
-    std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
+    SharedPtr<CompositeQoI> qois = sim_builder.build_qoi( input );
     if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
@@ -419,7 +419,7 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<libMesh::EquationSystems> Simulation::get_equation_system()
+  SharedPtr<libMesh::EquationSystems> Simulation::get_equation_system()
   {
     return _equation_system;
   }
@@ -481,7 +481,7 @@ namespace GRINS
              bc != neumann_bcs.end();
              bc++ )
           {
-            std::tr1::shared_ptr<Physics> physics = system->get_physics( bc->first );
+            SharedPtr<Physics> physics = system->get_physics( bc->first );
             physics->attach_neumann_bound_func( bc->second );
           }
       }
@@ -496,7 +496,7 @@ namespace GRINS
          it != dbc_map.end();
          it++ )
       {
-        std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
+        SharedPtr<Physics> physics = system->get_physics( it->first );
 
         physics->attach_dirichlet_bound_func( it->second );
       }

@@ -73,9 +73,9 @@ int main(int argc, char* argv[])
       
       GRINS::SimulationBuilder sim_builder;
 
-std::tr1::shared_ptr<GRINS::InflatingSheetSolverFactory> sheet_factory( new GRINS::InflatingSheetSolverFactory );
+      GRINS::SharedPtr<GRINS::SolverFactory> sheet_factory( new GRINS::InflatingSheetSolverFactory );
 
-sim_builder.attach_solver_factory( sheet_factory );
+      sim_builder.attach_solver_factory( sheet_factory );
 
       GRINS::Simulation grins( libMesh_inputfile,
                                sim_builder,

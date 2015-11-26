@@ -46,16 +46,16 @@ namespace GRINS
     SimulationBuilder();
     virtual ~SimulationBuilder();
 
-    std::tr1::shared_ptr<libMesh::UnstructuredMesh> build_mesh
+    SharedPtr<libMesh::UnstructuredMesh> build_mesh
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     GRINS::PhysicsList build_physics( const GetPot& input );
 
-    std::tr1::shared_ptr<GRINS::Solver> build_solver( const GetPot& input );
+    SharedPtr<GRINS::Solver> build_solver( const GetPot& input );
 
-    std::tr1::shared_ptr<GRINS::Visualization> build_vis
+    SharedPtr<GRINS::Visualization> build_vis
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
@@ -64,41 +64,41 @@ namespace GRINS
 
     std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
 
-    std::tr1::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
+    SharedPtr<CompositeQoI> build_qoi( const GetPot& input );
 
-    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
+    SharedPtr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
 
     SharedPtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
                                                               const libMesh::QoISet& qoi_set );
 
-    void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
+    void attach_physics_factory( SharedPtr<PhysicsFactory> physics_factory );
 
-    void attach_solver_factory( std::tr1::shared_ptr<SolverFactory> solver_factory );
+    void attach_solver_factory( SharedPtr<SolverFactory> solver_factory );
 
-    void attach_mesh_builder( std::tr1::shared_ptr<MeshBuilder> mesh_builder );
+    void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
     
-    void attach_vis_factory( std::tr1::shared_ptr<VisualizationFactory> vis_factory );
+    void attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory );
 
-    void attach_bc_factory( std::tr1::shared_ptr<BoundaryConditionsFactory> bc_factory );
+    void attach_bc_factory( SharedPtr<BoundaryConditionsFactory> bc_factory );
 
-    void attach_qoi_factory( std::tr1::shared_ptr<QoIFactory> qoi_factory );
+    void attach_qoi_factory( SharedPtr<QoIFactory> qoi_factory );
 
-    void attach_postprocessing_factory( std::tr1::shared_ptr<PostprocessingFactory> postprocessing_factory );
+    void attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory );
 
-    void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
+    void attach_error_estimator_factory( SharedPtr<ErrorEstimatorFactory> error_estimator_factory );
 
     const MeshBuilder& mesh_builder() const;
 
   protected:
     
-    std::tr1::shared_ptr<PhysicsFactory> _physics_factory;
-    std::tr1::shared_ptr<MeshBuilder> _mesh_builder;
-    std::tr1::shared_ptr<SolverFactory> _solver_factory;
-    std::tr1::shared_ptr<VisualizationFactory> _vis_factory;
-    std::tr1::shared_ptr<BoundaryConditionsFactory> _bc_factory;
-    std::tr1::shared_ptr<QoIFactory> _qoi_factory;
-    std::tr1::shared_ptr<PostprocessingFactory> _postprocessing_factory;
-    std::tr1::shared_ptr<ErrorEstimatorFactory> _error_estimator_factory;
+    SharedPtr<PhysicsFactory> _physics_factory;
+    SharedPtr<MeshBuilder> _mesh_builder;
+    SharedPtr<SolverFactory> _solver_factory;
+    SharedPtr<VisualizationFactory> _vis_factory;
+    SharedPtr<BoundaryConditionsFactory> _bc_factory;
+    SharedPtr<QoIFactory> _qoi_factory;
+    SharedPtr<PostprocessingFactory> _postprocessing_factory;
+    SharedPtr<ErrorEstimatorFactory> _error_estimator_factory;
       
   }; //class SimulationBuilder
 } // namespace GRINS

@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   //es->write("foobar.xdr");
 

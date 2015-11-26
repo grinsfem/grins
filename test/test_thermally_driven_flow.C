@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
-  sim_builder.attach_bc_factory( std::tr1::shared_ptr<GRINS::BoundaryConditionsFactory>( new GRINS::ThermallyDrivenFlowTestBCFactory( libMesh_inputfile ) ) );
+  sim_builder.attach_bc_factory( GRINS::SharedPtr<GRINS::BoundaryConditionsFactory>( new GRINS::ThermallyDrivenFlowTestBCFactory( libMesh_inputfile ) ) );
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder,
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   //es->write("foobar.xdr");
 
@@ -214,7 +214,7 @@ std::map< GRINS::PhysicsName, GRINS::NBCContainer > GRINS::ThermallyDrivenFlowTe
       const libMesh::System& system = es.get_system("GRINS");
       const GRINS::VariableIndex T_var = system.variable_number("T");
 
-      std::tr1::shared_ptr<GRINS::NeumannFuncObj> func( new ZeroFluxBC );
+      GRINS::SharedPtr<GRINS::NeumannFuncObj> func( new ZeroFluxBC );
 
       GRINS::NBCContainer nbc_container;
       nbc_container.set_bc_id(0);
