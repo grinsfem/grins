@@ -29,6 +29,7 @@
 #include "boost/tr1/memory.hpp"
 
 // GRINS
+#include "grins/shared_ptr.h"
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
 
@@ -70,7 +71,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
-    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
+    SharedPtr<libMesh::ErrorEstimator> error_estimator;
 
   };
 

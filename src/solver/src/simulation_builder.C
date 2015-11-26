@@ -140,7 +140,7 @@ namespace GRINS
     return (this->_postprocessing_factory)->build(input);
   }
 
-  std::tr1::shared_ptr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input,
+  SharedPtr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input,
                                                                                           const libMesh::QoISet& qoi_set)
    {
      return (this->_error_estimator_factory)->build(input,qoi_set);

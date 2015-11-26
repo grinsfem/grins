@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/shared_ptr.h"
 #include "grins/grins_solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
@@ -160,7 +161,7 @@ namespace GRINS
     unsigned int _timesteps_per_vis;
     unsigned int _timesteps_per_perflog;
 
-    std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
+    SharedPtr<libMesh::ErrorEstimator> _error_estimator;
 
     ParameterManager _adjoint_parameters;
 

@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/qoi_base.h"
+#include "grins/shared_ptr.h"
 
 // libMesh
 #include "libmesh/error_estimator.h"
@@ -44,8 +45,8 @@ namespace GRINS
 
     virtual ~ErrorEstimatorFactory();
 
-    virtual std::tr1::shared_ptr<libMesh::ErrorEstimator> build( const GetPot& input, 
-                                                                 const libMesh::QoISet& qoi_set );
+    virtual SharedPtr<libMesh::ErrorEstimator> build( const GetPot& input,
+                                                      const libMesh::QoISet& qoi_set );
 
   protected:
 
