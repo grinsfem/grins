@@ -26,8 +26,6 @@
 #ifndef GRINS_POSTPROCESSING_FACTORY_H
 #define GRINS_POSTPROCESSING_FACTORY_H
 
-#include "boost/tr1/memory.hpp"
-
 // libMesh
 #include "libmesh/getpot.h"
 

@@ -26,9 +26,6 @@
 #ifndef GRINS_VISUALIZATION_FACTORY_H
 #define GRINS_VISUALIZATION_FACTORY_H
 
-// C++
-#include "boost/tr1/memory.hpp"
-
 // GRINS
 #include "grins/visualization.h"
 

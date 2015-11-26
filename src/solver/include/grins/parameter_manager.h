@@ -32,9 +32,6 @@
 #include "libmesh/getpot.h"
 #include "libmesh/parameter_vector.h"
 
-// C++
-#include "boost/tr1/memory.hpp"
-
 namespace GRINS
 {
   // Forward declarations

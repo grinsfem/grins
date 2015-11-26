@@ -281,7 +281,7 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-        // boost::shared_ptr gets confused by operator->*
+        // shared_ptr gets confused by operator->*
 	((*(physics_iter->second)).*cachefunc)( c, cache );
       }
 

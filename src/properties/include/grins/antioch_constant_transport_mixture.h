@@ -74,9 +74,9 @@ namespace GRINS
 
     libMesh::Real _mu;
 
-    boost::scoped_ptr<Conductivity> _conductivity;
+    libMesh::UniquePtr<Conductivity> _conductivity;
 
-    boost::scoped_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > _diffusivity;
+    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > _diffusivity;
 
     /* Below we will specialize the specialized_build_* functions to the appropriate type.
        This way, we can control how the cached transport objects get constructed
@@ -90,7 +90,7 @@ namespace GRINS
     AntiochConstantTransportMixture();
 
     void specialized_build_conductivity( const GetPot& input,
-                                         boost::scoped_ptr<ConstantConductivity>& conductivity,
+                                         libMesh::UniquePtr<ConstantConductivity>& conductivity,
                                          conductivity_type<ConstantConductivity> )
     {
       conductivity.reset( new ConstantConductivity(input) );
@@ -98,7 +98,7 @@ namespace GRINS
     }
 
     void specialized_build_conductivity( const GetPot& input,
-                                         boost::scoped_ptr<ConstantPrandtlConductivity>& conductivity,
+                                         libMesh::UniquePtr<ConstantPrandtlConductivity>& conductivity,
                                          conductivity_type<ConstantPrandtlConductivity> )
     {
       conductivity.reset( new ConstantPrandtlConductivity(input) );

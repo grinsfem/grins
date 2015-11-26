@@ -26,9 +26,6 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
-// C++
-#include "boost/tr1/memory.hpp"
-
 // GRINS
 #include "grins/nbc_container.h"
 

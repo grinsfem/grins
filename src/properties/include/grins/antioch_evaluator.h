@@ -41,9 +41,6 @@
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
 
-// Boost
-#include <boost/scoped_ptr.hpp>
-
 namespace GRINS
 {
   //! Wrapper class for evaluating chemistry and thermo properties using Antioch
@@ -106,13 +103,13 @@ namespace GRINS
   protected:
 
     const AntiochMixture& _chem;
-    
+
     // This is a template type
-    boost::scoped_ptr<Thermo> _thermo;
+    libMesh::UniquePtr<Thermo> _thermo;
 
-    boost::scoped_ptr<AntiochKinetics> _kinetics;
+    libMesh::UniquePtr<AntiochKinetics> _kinetics;
 
-    boost::scoped_ptr<Antioch::TempCache<libMesh::Real> > _temp_cache;
+    libMesh::UniquePtr<Antioch::TempCache<libMesh::Real> > _temp_cache;
 
     //! Helper method for managing _temp_cache
     /*! T *MUST* be pass-by-reference because of the structure
@@ -131,7 +128,7 @@ namespace GRINS
     AntiochEvaluator();
 
     void specialized_build_thermo( const AntiochMixture& mixture,
-                                   boost::scoped_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
+                                   libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
@@ -139,7 +136,7 @@ namespace GRINS
     }
     
     void specialized_build_thermo( const AntiochMixture& mixture,
-                                   boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
+                                   libMesh::UniquePtr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
     {
       thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( mixture.cea_mixture() ) );
