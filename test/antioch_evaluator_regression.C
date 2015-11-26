@@ -38,14 +38,12 @@
 #include "grins/cached_values.h"
 
 // libMesh
+#include "libmesh/libmesh_common.h"
 #include "libmesh/getpot.h"
 
 // Antioch
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
-
-// Boost
-#include "boost/math/special_functions/fpclassify.hpp" //isnan
 
 int test_generic( const libMesh::Real value, const libMesh::Real value_reg, const std::string& name )
 {
@@ -63,7 +61,7 @@ int test_generic( const libMesh::Real value, const libMesh::Real value_reg, cons
                 << name+"_reg = " << value_reg << std::endl
                 << "rel_error = " << rel_error << std::endl;
     }
-  
+
   return return_flag;
 }
 
@@ -183,7 +181,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 
   return_flag_temp = test_cv<Thermo>( cv );
   if( return_flag_temp != 0 ) return_flag = 1;
-  
+
   return_flag_temp = test_h_s<Thermo>( h_s );
   if( return_flag_temp != 0 ) return_flag = 1;
 
@@ -191,11 +189,11 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 
   for( unsigned int i = 0; i < n_species; i++ )
     {
-      std::cout << std::scientific << std::setprecision(16) 
+      std::cout << std::scientific << std::setprecision(16)
                 << "omega_dot(" << i << ") = " << omega_dot[i] << std::endl;
     }
 
-  
+
   double tol = std::numeric_limits<double>::epsilon()*40;
 
   // Check that omega_dot sums to 1
@@ -215,7 +213,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
   bool omega_is_nan = false;
   for( unsigned int s = 0; s < n_species; s++ )
     {
-      if( boost::math::isnan(omega_dot[s]) )
+      if( libMesh::libmesh_isnan(omega_dot[s]) )
         {
           omega_is_nan = true;
           return_flag = 1;
@@ -263,7 +261,7 @@ int main( int argc, char* argv[] )
     }
 
   GetPot input( argv[1] );
-  
+
   GRINS::AntiochMixture antioch_mixture(input);
 
   int return_flag = 0;
