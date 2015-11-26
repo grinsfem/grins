@@ -51,15 +51,21 @@ if test "x$HAVE_BOOST" = "x1"; then
 else
   echo '   'Boost......................... : no
 fi
-if test "$HAVE_ANTIOCH" = "0"; then
-  echo '   'Link with Antioch............. : no
+if test "x$HAVE_ANTIOCH" = "x1"; then
+  echo '   'Antioch....................... : yes
+  echo '     'ANTIOCH_CPPFLAGS............ : $ANTIOCH_CPPFLAGS
+  echo '     'ANTIOCH_LDFLAGS............. : $ANTIOCH_LDFLAGS
+  echo '     'ANTIOCH_LIBS................ : $ANTIOCH_LIBS
 else
-  echo '   'Link with Antioch............. : $ANTIOCH_PREFIX
+  echo '   'Antioch....................... : no
 fi
-if test "$HAVE_CANTERA" = "0"; then
-  echo '   'Link with Cantera............. : no
+if test "x$HAVE_CANTERA" = "x1"; then
+  echo '   'Cantera....................... : yes
+  echo '     'CANTERA_CPPFLAGS............ : $CANTERA_CPPFLAGS
+  echo '     'CANTERA_LDFLAGS............. : $CANTERA_LDFLAGS
+  echo '     'CANTERA_LIBS................ : $CANTERA_LIBS
 else
-  echo '   'Link with Cantera............. : $CANTERA_PREFIX
+  echo '   'Cantera....................... : no
 fi
 if test "$HAVE_GRVY" = "0"; then
   echo '   'Link with GRVY................ : no
