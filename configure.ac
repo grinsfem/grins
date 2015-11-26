@@ -136,7 +136,7 @@ dnl----------------
 dnl Check for boost
 dnl----------------
 BOOST_REQUIRE([1.39.0])
-
+BOOST_FIND_HEADER([boost/shared_ptr.hpp])
 
 dnl-------------------------------------
 dnl Check for GNU Linear Programming kit
