@@ -132,11 +132,49 @@ dnl----------------
 dnl### AX_PATH_GSL(1.10,AM_CONDITIONAL([UQBT_GSL], [test 'TRUE']),AC_MSG_ERROR([Could not find required GSL version.]))
 dnl AC_CACHE_SAVE
 
-dnl----------------
-dnl Check for boost
-dnl----------------
-BOOST_REQUIRE([1.39.0])
-BOOST_FIND_HEADER([boost/shared_ptr.hpp])
+
+dnl------------------------------------------
+dnl Check if libMesh detected std::shared_ptr
+dnl------------------------------------------
+AC_MSG_CHECKING([for C++11 std::shared_ptr support from libMesh])
+grins_save_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$LIBMESH_CPPFLAGS $CPPFLAGS"
+libmesh_have_cxx11_shared_ptr=no
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+                                      @%:@include <libmesh/libmesh_config.h>
+                                   ]],
+                                   [[
+                                      #if LIBMESH_HAVE_CXX11_SHARED_PTR
+                                      #else
+                                      #error "libMesh shared_ptr support not found!"
+                                      #endif
+                                   ]])
+                  ],
+                                   [
+                libmesh_have_cxx11_shared_ptr=yes
+                AC_MSG_RESULT(yes)
+            ],[
+                libmesh_have_cxx11_shared_ptr=no
+                AC_MSG_RESULT(no)
+])
+CPPFLAGS=$grins_save_CPPFLAGS
+
+dnl----------------------------------------------------------
+dnl Check for boost, only if libMesh didn't detect shared_ptr
+dnl----------------------------------------------------------
+if test "x$libmesh_have_cxx11_shared_ptr" != xyes; then
+   AC_MSG_WARN([libMesh did not detect std::shared_ptr, now searching for Boost for shared_ptr support!])
+   BOOST_REQUIRE([1.39.0])
+   BOOST_FIND_HEADER([boost/shared_ptr.hpp])
+
+   dnl If we made it this far, we found boost
+   dnl But the boost.m4 doesn't AC_SUBST(HAVE_BOOST)
+   dnl so we do it here so we can report in config_summary.m4
+   AC_SUBST(HAVE_BOOST,[1])
+else
+   dnl We didn't need Boost so we're not using it
+   AC_SUBST(HAVE_BOOST,[0])
+fi
 
 dnl-------------------------------------
 dnl Check for GNU Linear Programming kit

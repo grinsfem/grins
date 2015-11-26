@@ -41,11 +41,16 @@ echo libMesh LIBS.................. : $LIBMESH_LIBS
 #echo HDF5.......................... : $HDF5_PREFIX
 #echo GSL........................... : $GSL_PREFIX
 #echo GLPK.......................... : $GLPK_PREFIX
-echo Boost......................... : $BOOST_ROOT
 
 # masa optional check:
 echo
 echo Optional Features:
+if test "x$HAVE_BOOST" = "x1"; then
+  echo '   'Boost......................... : yes
+  echo '     'BOOST_CPPFLAGS.............. : $BOOST_CPPFLAGS
+else
+  echo '   'Boost......................... : no
+fi
 if test "$HAVE_ANTIOCH" = "0"; then
   echo '   'Link with Antioch............. : no
 else
