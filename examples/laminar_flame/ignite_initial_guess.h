@@ -82,7 +82,7 @@ namespace Bunsen
   protected:
 
     GRINS::MultiphysicsSystem& _restart_system;
-    std::tr1::shared_ptr<libMesh::FEMContext> _restart_context;
+    GRINS::SharedPtr<libMesh::FEMContext> _restart_context;
 
     //! Map from init system variable number to restart system variable number
     std::map<GRINS::VariableIndex,GRINS::VariableIndex> _var_map;

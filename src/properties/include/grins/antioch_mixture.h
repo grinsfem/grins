@@ -44,9 +44,6 @@
 #include "antioch/cea_mixture.h"
 #include "antioch/reaction_set.h"
 
-// Boost
-#include "boost/scoped_ptr.hpp"
-
 // libMesh forward declarations
 class GetPot;
 
@@ -76,9 +73,9 @@ namespace GRINS
 
   protected:
 
-    boost::scoped_ptr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
-    boost::scoped_ptr<Antioch::CEAThermoMixture<libMesh::Real> > _cea_mixture;
+    libMesh::UniquePtr<Antioch::CEAThermoMixture<libMesh::Real> > _cea_mixture;
 
     std::vector<libMesh::Real> _h_stat_mech_ref_correction;
 

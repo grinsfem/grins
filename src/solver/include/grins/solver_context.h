@@ -26,9 +26,10 @@
 #ifndef GRINS_SOLVER_CONTEXT_H
 #define GRINS_SOLVER_CONTEXT_H
 
-#include "boost/tr1/memory.hpp"
+#include "grins/shared_ptr.h"
 
 // GRINS
+#include "grins/shared_ptr.h"
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
 
@@ -54,8 +55,8 @@ namespace GRINS
     ~SolverContext(){};
 
     GRINS::MultiphysicsSystem* system;
-    std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
-    std::tr1::shared_ptr<GRINS::Visualization> vis;
+    SharedPtr<libMesh::EquationSystems> equation_system;
+    SharedPtr<GRINS::Visualization> vis;
     unsigned int timesteps_per_vis;
     unsigned int timesteps_per_perflog;
     bool output_vis;
@@ -68,9 +69,9 @@ namespace GRINS
     bool print_qoi;
     bool do_adjoint_solve;
 
-    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
+    SharedPtr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
-    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
+    SharedPtr<libMesh::ErrorEstimator> error_estimator;
 
   };
 

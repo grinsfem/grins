@@ -26,9 +26,6 @@
 #ifndef GRINS_VISUALIZATION_FACTORY_H
 #define GRINS_VISUALIZATION_FACTORY_H
 
-// C++
-#include "boost/tr1/memory.hpp"
-
 // GRINS
 #include "grins/visualization.h"
 
@@ -41,7 +38,7 @@ namespace GRINS
     VisualizationFactory();
     virtual ~VisualizationFactory();
 
-    virtual std::tr1::shared_ptr<GRINS::Visualization> build
+    virtual SharedPtr<GRINS::Visualization> build
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );

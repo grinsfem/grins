@@ -25,14 +25,13 @@
 #ifndef GRINS_CATALYTIC_WALL_BASE_H
 #define GRINS_CATALYTIC_WALL_BASE_H
 
-// Boost
-#include "boost/scoped_ptr.hpp"
-
 // GRINS
 #include "grins/catalycity_base.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+
 namespace libMesh
 {
   class FEMSystem;
@@ -78,7 +77,7 @@ namespace GRINS
 
     const Chemistry& _chemistry;
 
-    boost::scoped_ptr<CatalycityBase> _gamma_s;
+    libMesh::UniquePtr<CatalycityBase> _gamma_s;
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi} } \f$
     const libMesh::Real _C;

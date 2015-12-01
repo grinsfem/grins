@@ -39,8 +39,8 @@
 #include "cantera/transport.h"
 #include "libmesh/restore_warnings.h"
 
-// Boost
-#include <boost/scoped_ptr.hpp>
+// libMesh
+#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
 
 // libMesh forward declarations
 class GetPot;
@@ -97,9 +97,9 @@ namespace GRINS
 
   protected:
 
-    boost::scoped_ptr<Cantera::IdealGasMix> _cantera_gas;
+    libMesh::UniquePtr<Cantera::IdealGasMix> _cantera_gas;
 
-    boost::scoped_ptr<Cantera::Transport> _cantera_transport;
+    libMesh::UniquePtr<Cantera::Transport> _cantera_transport;
 
   private:
 

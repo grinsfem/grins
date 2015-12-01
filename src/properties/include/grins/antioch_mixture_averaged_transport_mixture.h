@@ -99,17 +99,17 @@ namespace GRINS
 
   protected:
 
-    boost::scoped_ptr<Antioch::TransportMixture<libMesh::Real> > _trans_mixture;
+    libMesh::UniquePtr<Antioch::TransportMixture<libMesh::Real> > _trans_mixture;
 
-    boost::scoped_ptr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > _wilke_mixture;
+    libMesh::UniquePtr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > _wilke_mixture;
 
-    boost::scoped_ptr<Thermo> _thermo;
+    libMesh::UniquePtr<Thermo> _thermo;
 
-    boost::scoped_ptr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
+    libMesh::UniquePtr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
 
-    boost::scoped_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > _conductivity;
+    libMesh::UniquePtr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > _conductivity;
 
-    boost::scoped_ptr<Antioch::MixtureDiffusion<Diffusivity,libMesh::Real> > _diffusivity;
+    libMesh::UniquePtr<Antioch::MixtureDiffusion<Diffusivity,libMesh::Real> > _diffusivity;
 
     /* Below we will specialize the specialized_build_* functions to the appropriate type.
        This way, we can control how the cached transport objects get constructed
@@ -132,7 +132,7 @@ namespace GRINS
     AntiochMixtureAveragedTransportMixture();
 
     void specialized_build_thermo( const GetPot& /*input*/,
-                                   boost::scoped_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
+                                   libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
@@ -140,7 +140,7 @@ namespace GRINS
     }
 
     void specialized_build_thermo( const GetPot& /*input*/,
-                                   boost::scoped_ptr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
+                                   libMesh::UniquePtr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
     {
       thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( this->cea_mixture() ) );
@@ -148,7 +148,7 @@ namespace GRINS
     }
 
     void specialized_build_viscosity( const GetPot& input,
-                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -161,7 +161,7 @@ namespace GRINS
     }
 
     void specialized_build_viscosity( const GetPot& input,
-                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -175,7 +175,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_viscosity( const GetPot& /*input*/,
-                                      boost::scoped_ptr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -185,7 +185,7 @@ namespace GRINS
 #endif // ANTIOCH_HAVE_GSL
 
     void specialized_build_conductivity( const GetPot& /*input*/,
-                                         boost::scoped_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >& conductivity,
+                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >& conductivity,
                                          conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
     {
       conductivity.reset( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -195,7 +195,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_conductivity( const GetPot& /*input*/,
-                                         boost::scoped_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >& conductivity,
+                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >& conductivity,
                                          conductivity_type<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real> > )
     {
       conductivity.reset( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -205,7 +205,7 @@ namespace GRINS
 #endif // ANTIOCH_HAVE_GSL
 
     void specialized_build_diffusivity( const GetPot& input,
-                                        boost::scoped_ptr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
+                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
     {
       if( !input.have_variable( "Physics/Antioch/Le" ) )
@@ -226,7 +226,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_diffusivity( const GetPot& /*input*/,
-                                        boost::scoped_ptr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& diffusivity,
+                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > )
     {
       diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );

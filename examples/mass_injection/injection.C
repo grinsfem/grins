@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<InjectionBCFactory> bc_factory( new InjectionBCFactory );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new InjectionBCFactory );
 
   sim_builder.attach_bc_factory( bc_factory );
 
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     {
       // Asssign initial temperature value
       std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
-      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
       libMesh::Parameters &params = es->parameters;
@@ -178,9 +178,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > InjectionBCFactory::bui
   const libMesh::Real factor = 6.0*mdot/(l*l)/rho;
 
   std::cout << "factor = " << factor << std::endl;
-  
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ParabolicProfile( -factor, 0.0, 0.0, 0.0, 0.0, factor*l*l/4.0 ) );
-    
+
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ParabolicProfile( -factor, 0.0, 0.0, 0.0, 0.0, factor*l*l/4.0 ) );
+
   cont.set_func( vel_func );
 
 
@@ -188,7 +188,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > InjectionBCFactory::bui
   cont2.add_var_name( "u" );
   cont2.add_bc_id( 1 );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
     vel_func2( new libMesh::ZeroFunction<libMesh::Number> );
 
   cont2.set_func( vel_func2 );

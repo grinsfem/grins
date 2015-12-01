@@ -41,20 +41,31 @@ echo libMesh LIBS.................. : $LIBMESH_LIBS
 #echo HDF5.......................... : $HDF5_PREFIX
 #echo GSL........................... : $GSL_PREFIX
 #echo GLPK.......................... : $GLPK_PREFIX
-echo Boost......................... : $BOOST_ROOT
 
 # masa optional check:
 echo
 echo Optional Features:
-if test "$HAVE_ANTIOCH" = "0"; then
-  echo '   'Link with Antioch............. : no
+if test "x$HAVE_BOOST" = "x1"; then
+  echo '   'Boost......................... : yes
+  echo '     'BOOST_CPPFLAGS.............. : $BOOST_CPPFLAGS
 else
-  echo '   'Link with Antioch............. : $ANTIOCH_PREFIX
+  echo '   'Boost......................... : no
 fi
-if test "$HAVE_CANTERA" = "0"; then
-  echo '   'Link with Cantera............. : no
+if test "x$HAVE_ANTIOCH" = "x1"; then
+  echo '   'Antioch....................... : yes
+  echo '     'ANTIOCH_CPPFLAGS............ : $ANTIOCH_CPPFLAGS
+  echo '     'ANTIOCH_LDFLAGS............. : $ANTIOCH_LDFLAGS
+  echo '     'ANTIOCH_LIBS................ : $ANTIOCH_LIBS
 else
-  echo '   'Link with Cantera............. : $CANTERA_PREFIX
+  echo '   'Antioch....................... : no
+fi
+if test "x$HAVE_CANTERA" = "x1"; then
+  echo '   'Cantera....................... : yes
+  echo '     'CANTERA_CPPFLAGS............ : $CANTERA_CPPFLAGS
+  echo '     'CANTERA_LDFLAGS............. : $CANTERA_LDFLAGS
+  echo '     'CANTERA_LIBS................ : $CANTERA_LIBS
+else
+  echo '   'Cantera....................... : no
 fi
 if test "$HAVE_GRVY" = "0"; then
   echo '   'Link with GRVY................ : no

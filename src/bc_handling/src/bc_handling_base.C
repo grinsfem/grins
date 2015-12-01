@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
+#include "grins/shared_ptr.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -141,7 +142,7 @@ namespace GRINS
 	std::set<BoundaryID> bc_ids = (*it).get_bc_ids();
       
 	// Get Dirichlet bc functor
-        std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+        SharedPtr<libMesh::FunctionBase<libMesh::Number> >
           func = (*it).get_func();
 
         // Remap indices as necessary
@@ -418,7 +419,7 @@ namespace GRINS
           libMesh::Number bc_val_num = StringUtilities::string_to_T<libMesh::Number>(bc_value);
 
           dirichlet_bc.set_func
-            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+            (SharedPtr<libMesh::FunctionBase<libMesh::Number> >
               (new libMesh::ConstFunction<libMesh::Number>(bc_val_num)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);
@@ -434,7 +435,7 @@ namespace GRINS
           dirichlet_bc.add_bc_id(bc_id);
 
           dirichlet_bc.set_func
-            (std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+            (SharedPtr<libMesh::FunctionBase<libMesh::Number> >
               (new libMesh::ParsedFunction<libMesh::Number>(bc_value)));
 
           this->attach_dirichlet_bound_func(dirichlet_bc);

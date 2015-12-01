@@ -99,10 +99,10 @@ namespace GRINS
 
     const libMesh::Point& get_neumann_bc_value( GRINS::BoundaryID bc_id ) const;
 
-    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
+    SharedPtr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id ) const;
 
-    std::tr1::shared_ptr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
+    SharedPtr< GRINS::NeumannFuncObj > get_neumann_bound_func( GRINS::BoundaryID bc_id,
 									  GRINS::VariableIndex var_id );
 
     virtual void init_dirichlet_bcs( libMesh::FEMSystem* system ) const;
@@ -188,7 +188,7 @@ namespace GRINS
   }
 
   inline
-  std::tr1::shared_ptr< GRINS::NeumannFuncObj >
+  SharedPtr< GRINS::NeumannFuncObj >
   BCHandlingBase::get_neumann_bound_func( GRINS::BoundaryID bc_id,
 					  GRINS::VariableIndex var_id ) const
   {
@@ -196,7 +196,7 @@ namespace GRINS
   }
 
   inline
-  std::tr1::shared_ptr< GRINS::NeumannFuncObj >
+  SharedPtr< GRINS::NeumannFuncObj >
   BCHandlingBase::get_neumann_bound_func( GRINS::BoundaryID bc_id,
 					  GRINS::VariableIndex var_id )
   {

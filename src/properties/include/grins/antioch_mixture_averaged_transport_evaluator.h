@@ -88,7 +88,7 @@ namespace GRINS
 
   protected:
 
-    boost::scoped_ptr<Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real> > _wilke_evaluator;
+    libMesh::UniquePtr<Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real> > _wilke_evaluator;
 
     const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& _diffusivity;
 

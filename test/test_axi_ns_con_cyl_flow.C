@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<AxiConCylBCFactory> bc_factory( new AxiConCylBCFactory );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new AxiConCylBCFactory );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
@@ -173,9 +173,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
   cont.add_var_name( "z_vel" );
   cont.add_bc_id( 0 );
   cont.add_bc_id( 2 );
-  
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ConcentricCylinderProfile );
-    
+
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > vel_func( new GRINS::ConcentricCylinderProfile );
+
   cont.set_func( vel_func );
 
 
@@ -184,7 +184,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
   cont2.add_bc_id( 0 );
   cont2.add_bc_id( 2 );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
     vel_func2( new libMesh::ZeroFunction<libMesh::Number> );
 
   cont2.set_func( vel_func2 );

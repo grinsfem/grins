@@ -46,13 +46,13 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
+  SharedPtr<Solver> SolverFactory::build(const GetPot& input)
   {
     bool mesh_adaptive = input("MeshAdaptivity/mesh_adaptive", false );
 
     bool transient = input("unsteady-solver/transient", false );
 
-    std::tr1::shared_ptr<Solver> solver;  // Effectively NULL
+    SharedPtr<Solver> solver;  // Effectively NULL
 
     std::string solver_type = input("SolverOptions/solver_type", "DIE!");
 

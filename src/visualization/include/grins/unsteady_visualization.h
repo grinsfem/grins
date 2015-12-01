@@ -40,25 +40,25 @@ namespace GRINS
                           LIBMESH_CAN_DEFAULT_TO_COMMWORLD);
     ~UnsteadyVisualization();
 
-    virtual void output_residual( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+    virtual void output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step,
 				  const libMesh::Real time);
 
     virtual void output_residual_sensitivities
-      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      (SharedPtr<libMesh::EquationSystems> equation_system,
        GRINS::MultiphysicsSystem* system,
        const libMesh::ParameterVector & params,
        const unsigned int time_step,
        const libMesh::Real time);
     
-    virtual void output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+    virtual void output_adjoint( SharedPtr<libMesh::EquationSystems> equation_system,
                                  GRINS::MultiphysicsSystem* system,
                                  const unsigned int time_step,
                                  const libMesh::Real time );
 
     virtual void output_solution_sensitivities
-      (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      (SharedPtr<libMesh::EquationSystems> equation_system,
        GRINS::MultiphysicsSystem* system,
        const libMesh::ParameterVector & params,
        const unsigned int time_step,

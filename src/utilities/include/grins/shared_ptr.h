@@ -22,34 +22,40 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SHARED_PTR_H
+#define GRINS_SHARED_PTR_H
 
-#ifndef GRINS_POSTPROCESSING_FACTORY_H
-#define GRINS_POSTPROCESSING_FACTORY_H
+#include "grins_config.h"
+#include "libmesh/libmesh_config.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-
-// GRINS
-#include "grins/postprocessed_quantities.h"
+// Here, we just piggy back on libMesh's test for shared_ptr
+#ifdef LIBMESH_HAVE_CXX11_SHARED_PTR
+#include <memory>
+#elif GRINS_HAVE_BOOST_SHARED_PTR_HPP
+#include <boost/shared_ptr.hpp>
+#endif
 
 namespace GRINS
 {
-
-  //! This object handles constructing the postprocessing object to be used.
-  /*! To allow the user to easily extend the postprocesing capabilities,
-      the postprocessing construction is handled in this object. */
-  class PostprocessingFactory
+#ifdef LIBMESH_HAVE_CXX11_SHARED_PTR
+  template<typename T>
+  class SharedPtr : public std::shared_ptr<T>
   {
   public:
-    
-    PostprocessingFactory();
-    virtual ~PostprocessingFactory();
-
-    virtual SharedPtr<PostProcessedQuantities<libMesh::Real> >
-    build(const GetPot& input);
-
+    SharedPtr() : std::shared_ptr<T>() {};
+    SharedPtr( T* ptr ) : std::shared_ptr<T>(ptr) {};
   };
+#elif GRINS_HAVE_BOOST_SHARED_PTR_HPP
+  template<typename T>
+  class SharedPtr : public boost::shared_ptr<T>
+  {
+  public:
+    SharedPtr() : boost::shared_ptr<T>() {};
+    SharedPtr( T* ptr ) : boost::shared_ptr<T>(ptr) {};
+  };
+#else
+#     error "No valid definition for shared_ptr found!"
+#endif
+}
 
-} // namespace GRINS
-
-#endif // GRINS_POSTPROCESSING_FACTORY_H
+#endif // GRINS_SHARED_PTR_H

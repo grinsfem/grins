@@ -49,7 +49,7 @@ namespace GRINS
   }
 
   void NBCContainer::add_var_func_pair( VariableIndex var, 
-					std::tr1::shared_ptr<NeumannFuncObj> func )
+					SharedPtr<NeumannFuncObj> func )
   {
     if( _funcs.find(var) != _funcs.end() )
       {
@@ -61,7 +61,7 @@ namespace GRINS
     return;
   }
 
-  std::tr1::shared_ptr<NeumannFuncObj> NBCContainer::get_func( VariableIndex var ) const
+  SharedPtr<NeumannFuncObj> NBCContainer::get_func( VariableIndex var ) const
   {
     libmesh_assert( _funcs.find(var) != _funcs.end() );
     return _funcs.find(var)->second;

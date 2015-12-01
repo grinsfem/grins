@@ -35,14 +35,12 @@
 
 // libMesh
 #include "libmesh/libmesh_common.h"
+#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
 
 // Antioch
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
-
-// Boost
-#include "boost/scoped_ptr.hpp"
 
 // libMesh forward declarations
 class GetPot;
@@ -109,7 +107,7 @@ namespace GRINS
 
   protected:
 
-    boost::scoped_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
+    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
 
   private:
 

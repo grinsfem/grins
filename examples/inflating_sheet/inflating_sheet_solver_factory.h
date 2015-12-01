@@ -38,7 +38,7 @@ namespace GRINS
     InflatingSheetSolverFactory(){};
     virtual ~InflatingSheetSolverFactory(){};
 
-    virtual std::tr1::shared_ptr<GRINS::Solver> build(const GetPot& input);
+    virtual GRINS::SharedPtr<GRINS::Solver> build(const GetPot& input);
   };
 
 } // end namespace GRINS

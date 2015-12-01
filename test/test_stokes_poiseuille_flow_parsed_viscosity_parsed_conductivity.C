@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new ParabolicBCFactory );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
@@ -167,8 +167,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::bui
   cont.add_var_name( "u" );
   cont.add_bc_id( 1 );
   cont.add_bc_id( 3 );
-  
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
+
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
 
   cont.set_func( u_func );
 

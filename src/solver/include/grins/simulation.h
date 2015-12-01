@@ -27,10 +27,11 @@
 #define GRINS_SIMULATION_H
 
 // C++
-#include "boost/tr1/memory.hpp"
+#include "grins/shared_ptr.h"
 
 // GRINS
 #include "grins_config.h"
+#include "grins/shared_ptr.h"
 #include "grins/grins_solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
@@ -80,7 +81,7 @@ namespace GRINS
 
     void print_sim_info();
 
-    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
+    SharedPtr<libMesh::EquationSystems> get_equation_system();
     MultiphysicsSystem* get_multiphysics_system();
 
     const MultiphysicsSystem* get_multiphysics_system() const;
@@ -126,11 +127,11 @@ namespace GRINS
     //! Helper function
     void init_adjoint_solve( const GetPot& input, bool output_adjoint );
 
-    std::tr1::shared_ptr<libMesh::UnstructuredMesh> _mesh;
+    SharedPtr<libMesh::UnstructuredMesh> _mesh;
 
-    std::tr1::shared_ptr<libMesh::EquationSystems> _equation_system;
+    SharedPtr<libMesh::EquationSystems> _equation_system;
 
-    std::tr1::shared_ptr<GRINS::Solver> _solver;
+    SharedPtr<GRINS::Solver> _solver;
 
     //! GRINS::Multiphysics system name
     std::string _system_name;
@@ -138,9 +139,9 @@ namespace GRINS
     // This needs to be a standard pointer, as _equation_system will own and destroy the object.
     GRINS::MultiphysicsSystem* _multiphysics_system;
 
-    std::tr1::shared_ptr<GRINS::Visualization> _vis;
+    SharedPtr<GRINS::Visualization> _vis;
 
-    std::tr1::shared_ptr<PostProcessedQuantities<libMesh::Real> > _postprocessing;
+    SharedPtr<PostProcessedQuantities<libMesh::Real> > _postprocessing;
 
     // Screen display options
     bool _print_mesh_info;
@@ -160,7 +161,7 @@ namespace GRINS
     unsigned int _timesteps_per_vis;
     unsigned int _timesteps_per_perflog;
 
-    std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
+    SharedPtr<libMesh::ErrorEstimator> _error_estimator;
 
     ParameterManager _adjoint_parameters;
 

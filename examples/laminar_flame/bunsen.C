@@ -119,10 +119,10 @@ int main(int argc, char* argv[])
  
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<BunsenBCFactory> bc_factory( new BunsenBCFactory );
+  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new BunsenBCFactory );
   sim_builder.attach_bc_factory( bc_factory );
 
-  std::tr1::shared_ptr<GRINS::PhysicsFactory> physics_factory( new BunsenPhysicsFactory );
+  GRINS::SharedPtr<GRINS::PhysicsFactory> physics_factory( new BunsenPhysicsFactory );
   sim_builder.attach_physics_factory( physics_factory );
 
   GRINS::Simulation grins( libMesh_inputfile,
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
     {
       // Asssign initial temperature value
       std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
-      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
       libMesh::Parameters &params = es->parameters;
@@ -201,12 +201,12 @@ int main(int argc, char* argv[])
       
       GRINS::Simulation restart_sim( restart_input,
 				     sim_builder );
-      std::tr1::shared_ptr<libMesh::EquationSystems> restart_es = restart_sim.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> restart_es = restart_sim.get_equation_system();
       libMesh::System& restart_system = restart_es->get_system(system_name);
       GRINS::MultiphysicsSystem& restart_ms_system = libMesh::libmesh_cast_ref<GRINS::MultiphysicsSystem&>( restart_system );
       */
 
-      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
       libMesh::System& system = es->get_system(system_name);
       GRINS::MultiphysicsSystem& ms_system =
         libMesh::libmesh_cast_ref<GRINS::MultiphysicsSystem&>( system );
@@ -337,7 +337,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     const libMesh::Real factor = 1.0;
     const libMesh::Real r0 = 0.002;
 
-    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
       vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     
     cont.set_func( vel_func );
@@ -348,8 +348,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     cont2.add_var_name( "u" );
     cont2.add_bc_id( 1 );
     cont2.add_bc_id( 3 );
-    
-    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+
+    GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
       vel_func( new libMesh::ZeroFunction<libMesh::Number> );
 
     cont2.set_func( vel_func );
@@ -363,7 +363,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
     const libMesh::Real factor = -1.0;
     const libMesh::Real r0 = 0.0025;
 
-    std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> >
+    GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> >
       vel_func( new GRINS::ConstantWithExponentialLayer( u0, factor, r0, delta ) );
     
     cont3.set_func( vel_func );
@@ -386,8 +386,8 @@ void BunsenPhysicsFactory::add_physics( const GetPot& input,
 {
   if( physics_to_add == "BunsenSource" )
     {
-      physics_list[physics_to_add] = 
-	std::tr1::shared_ptr<GRINS::Physics>( new Bunsen::BunsenSource(physics_to_add,input) );
+      physics_list[physics_to_add] =
+	GRINS::SharedPtr<GRINS::Physics>( new Bunsen::BunsenSource(physics_to_add,input) );
     }
   else
     {

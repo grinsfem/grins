@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   grvy_timer.Finalize();
 #endif
 
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);

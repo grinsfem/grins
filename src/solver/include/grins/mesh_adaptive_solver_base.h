@@ -28,9 +28,6 @@
 // C++
 #include <string>
 
-// Boost
-#include <boost/scoped_ptr.hpp>
-
 // GRINS
 #include "grins/grins_solver.h"
 
@@ -83,7 +80,7 @@ namespace GRINS
 
     RefinementFlaggingType _refinement_type;
 
-    boost::scoped_ptr<libMesh::MeshRefinement> _mesh_refinement;
+    libMesh::UniquePtr<libMesh::MeshRefinement> _mesh_refinement;
 
     void build_mesh_refinement( libMesh::MeshBase& mesh );
 

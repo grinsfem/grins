@@ -281,7 +281,7 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
-        // boost::shared_ptr gets confused by operator->*
+        // shared_ptr gets confused by operator->*
 	((*(physics_iter->second)).*cachefunc)( c, cache );
       }
 
@@ -388,7 +388,7 @@ namespace GRINS
        &GRINS::Physics::compute_nonlocal_mass_residual_cache);
   }
 
-  std::tr1::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
+  SharedPtr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
   {
     if( _physics_list.find( physics_name ) == _physics_list.end() )
       {

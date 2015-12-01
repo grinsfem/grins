@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     {
       // Asssign initial temperature value
       std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
-      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
       
       libMesh::Parameters &params = es->parameters;

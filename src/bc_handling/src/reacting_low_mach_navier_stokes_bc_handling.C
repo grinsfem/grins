@@ -40,9 +40,6 @@
 #include "libmesh/const_function.h"
 #include "libmesh/dirichlet_boundaries.h"
 
-// Boost
-#include "boost/scoped_ptr.hpp"
-
 namespace GRINS
 {
   template<typename Chemistry>
@@ -256,14 +253,14 @@ namespace GRINS
                   /* ------------- Parse and construct the corresponding catalyticities ------------- */
 
                   // These are temporary and will be cloned, so let them be destroyed when we're done
-                  boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                  libMesh::UniquePtr<CatalycityBase> gamma_r(NULL);
 
                   this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r );
 
                   /* ------------- Now cache the CatalyticWall functions to init later ------------- */
                   libmesh_assert( gamma_r );
 
-                  std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasRecombinationCatalyticWall<Chemistry>( _chemistry, *gamma_r, r_species, p_species ) );
+                  SharedPtr<CatalyticWallBase<Chemistry> > wall_ptr( new GasRecombinationCatalyticWall<Chemistry>( _chemistry, *gamma_r, r_species, p_species ) );
 
                   _catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
 
@@ -368,13 +365,13 @@ namespace GRINS
                 const unsigned int p_species  = _chemistry.species_index( product );
 
                 // This is temporary and will be cloned, so let it be destroyed when we're done
-                boost::scoped_ptr<CatalycityBase> gamma_r(NULL);
+                libMesh::UniquePtr<CatalycityBase> gamma_r(NULL);
 
                 this->build_catalycities( input, gas_reactant, bc_id_string, bc_id, gamma_r );
 
                 libmesh_assert( gamma_r );
 
-                std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > wall_ptr( new GasSolidCatalyticWall<Chemistry>( _chemistry, *gamma_r, rg_species, rs_species, p_species ) );
+                SharedPtr<CatalyticWallBase<Chemistry> > wall_ptr( new GasSolidCatalyticWall<Chemistry>( _chemistry, *gamma_r, rg_species, rs_species, p_species ) );
 
                 _catalytic_walls.insert( std::make_pair(bc_id, wall_ptr ) );
 
@@ -415,7 +412,7 @@ namespace GRINS
         if( bc_type == GAS_RECOMBINATION_CATALYTIC_WALL ||
             bc_type == GAS_SOLID_CATALYTIC_WALL )
           {
-            typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::iterator it_type;
+            typedef typename std::multimap<BoundaryID, SharedPtr<CatalyticWallBase<Chemistry> > >::iterator it_type;
 
             std::pair< it_type, it_type > it_range = _catalytic_walls.equal_range( bc_id );
 
@@ -552,7 +549,7 @@ namespace GRINS
       case( GAS_RECOMBINATION_CATALYTIC_WALL ):
       case( GAS_SOLID_CATALYTIC_WALL ):
         {
-          typedef typename std::multimap<BoundaryID, std::tr1::shared_ptr<CatalyticWallBase<Chemistry> > >::const_iterator it_type;
+          typedef typename std::multimap<BoundaryID, SharedPtr<CatalyticWallBase<Chemistry> > >::const_iterator it_type;
 
           std::pair< it_type, it_type > it_range = _catalytic_walls.equal_range( bc_id );
 
@@ -579,7 +576,7 @@ namespace GRINS
                                                                              const std::string& reactant,
                                                                              const std::string& bc_id_string,
                                                                              const BoundaryID bc_id,
-                                                                             boost::scoped_ptr<CatalycityBase>& gamma_r )
+                                                                             libMesh::UniquePtr<CatalycityBase>& gamma_r )
   {
     std::string catalycity_type = input("Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string+"_type", "none");
 

@@ -144,7 +144,7 @@ int run( int argc, char* argv[], const GetPot& input, GetPot& command_line )
     {
       // Asssign initial temperature value
       std::string system_name = input( "screen-options/system_name", "GRINS" );
-      std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
 
       libMesh::Parameters &params = es->parameters;
@@ -161,7 +161,7 @@ int run( int argc, char* argv[], const GetPot& input, GetPot& command_line )
   grins.run();
 
   // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
 
    // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
