@@ -299,6 +299,40 @@ namespace GRINS
       }
   }
 
+  void PhysicsFactoryHelper::parse_antioch_models( const GetPot& input,
+                                                   std::string& transport_model,
+                                                   std::string& thermo_model,
+                                                   std::string& viscosity_model,
+                                                   std::string& conductivity_model,
+                                                   std::string& diffusivity_model )
+  {
+    transport_model = input( "Physics/Antioch/transport_model" , "mixture_averaged" );
+
+    // mixing_model option is now deprecated in favor of transport_model
+    if( input.have_variable("Physics/Antioch/mixing_model") )
+      {
+        libMesh::err << "WARNING: Option Physics/Antioch/mixing_model is deprecated!" << std::endl
+                     << "         Use Physics/Antioch/transport_model instead!" << std::endl;
+
+        transport_model = input( "Physics/Antioch/mixing_model" , "mixture_averaged" );
+      }
+
+    // transport_model = wilke is deprecated
+    if( transport_model == std::string("wilke") )
+      {
+        libMesh::err << "WARNING: Physics/Antioch/transport_model value of 'wilke' is deprecated!" << std::endl
+                     << "         Replace Physics/Antioch/transport_model value with 'mixture_averaged'"
+                     << std::endl;
+
+        transport_model = "mixture_averaged";
+      }
+
+    thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
+    viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
+    conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
+    diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+  }
+
   void PhysicsFactoryHelper::deprecated_visc_model_parsing( bool have_ins_viscosity_model,
                                                             bool have_material,
                                                             const GetPot& input,

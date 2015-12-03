@@ -72,6 +72,13 @@ namespace GRINS
                                              const std::string& physics,
                                              std::string& model );
 
+    static void parse_antioch_models( const GetPot& input,
+                                      std::string& transport_model,
+                                      std::string& thermo_model,
+                                      std::string& viscosity_model,
+                                      std::string& conductivity_model,
+                                      std::string& diffusivity_model );
+
   private:
 
     static void deprecated_visc_model_parsing( bool have_viscosity_model,
