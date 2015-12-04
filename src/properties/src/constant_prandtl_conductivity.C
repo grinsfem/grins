@@ -26,6 +26,9 @@
 // This class
 #include "grins/constant_prandtl_conductivity.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -36,10 +39,16 @@ namespace GRINS
     : ParameterUser("ConstantPrandtlConductivity"),
       _Pr(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     if( !input.have_variable("Materials/Conductivity/Pr") )
       {
-        std::cerr << "Error: Must specify Prandtl number for constant_prandtl conductivity model!" << std::endl;
-        libmesh_error();
+        libmesh_error_msg("Error: Must specify Prandtl number for constant_prandtl conductivity model!");
       }
 
     this->set_parameter
