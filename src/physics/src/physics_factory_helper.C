@@ -53,8 +53,7 @@ namespace GRINS
 
     if( have_material )
       {
-        std::string material;
-        MaterialsParsing::material_name( input, physics, material );
+        std::string material = MaterialsParsing::material_name( input, physics );
         MaterialsParsing::viscosity_model( input, physics, material, model );
       }
   }
@@ -114,8 +113,7 @@ namespace GRINS
     // Preferred
     if( have_material )
       {
-        std::string material;
-        MaterialsParsing::material_name( input, physics, material );
+        std::string material = MaterialsParsing::material_name( input, physics );
         MaterialsParsing::thermal_conductivity_model( input, physics, material, model );
       }
 
@@ -149,8 +147,7 @@ namespace GRINS
     // Preferred
     if( have_material )
       {
-        std::string material;
-        MaterialsParsing::material_name( input, physics, material );
+        std::string material = MaterialsParsing::material_name( input, physics );
         MaterialsParsing::specific_heat_model( input, physics, material, model );
       }
   }
@@ -188,8 +185,7 @@ namespace GRINS
 
     if( have_material )
       {
-        std::string material;
-        MaterialsParsing::material_name( input, physics, material );
+        std::string material = MaterialsParsing::material_name( input, physics );
         MaterialsParsing::turb_viscosity_model( input, physics, material, model );
       }
 
@@ -202,8 +198,7 @@ namespace GRINS
                                                         std::string& strain_energy )
   {
     // Newer, preferred version
-    std::string material;
-    MaterialsParsing::material_name( input, physics, material );
+    std::string material = MaterialsParsing::material_name( input, physics );
 
     // Old deprecated version
     bool have_elasticity_model = input.have_variable("Physics/"+physics+"/elasticity_model");
@@ -259,8 +254,7 @@ namespace GRINS
                                                           std::string& model )
   {
     // Newer, preferred version
-    std::string material;
-    MaterialsParsing::material_name( input, physics, material );
+    std::string material = MaterialsParsing::material_name( input, physics );
 
     bool have_thermochem_lib = input.have_variable( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library" );
 
@@ -308,8 +302,7 @@ namespace GRINS
                                                    std::string& diffusivity_model )
   {
     // Newer, preferred version
-    std::string material;
-    MaterialsParsing::material_name( input, physics, material );
+    std::string material = MaterialsParsing::material_name( input, physics );
 
     bool have_transport_model = input.have_variable( "Physics/Antioch/transport_model" );
 

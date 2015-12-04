@@ -49,8 +49,7 @@ namespace GRINS
     static bool have_material( const GetPot& input, const std::string& physics );
 
     //! Get the name of the material in the Physics/physics section
-    static void material_name( const GetPot& input, const std::string& physics,
-                               std::string& material );
+    static std::string material_name( const GetPot& input, const std::string& physics );
 
     //! Parse the viscosity model for the given material
     static void viscosity_model( const GetPot& input, const std::string& physics,
@@ -123,11 +122,9 @@ namespace GRINS
   }
 
   inline
-  void MaterialsParsing::material_name( const GetPot& input, const std::string& physics,
-                                        std::string& material )
+  std::string MaterialsParsing::material_name( const GetPot& input, const std::string& physics )
   {
-    material = input("Physics/"+physics+"/material", "DIE!");
-    return;
+    return input("Physics/"+physics+"/material", "DIE!");
   }
 
 } // end namespace GRINS

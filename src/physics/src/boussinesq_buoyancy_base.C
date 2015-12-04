@@ -95,8 +95,7 @@ namespace GRINS
                                               const std::string& property,
                                               libMesh::Real& value )
   {
-    std::string material = "DIE!";
-    MaterialsParsing::material_name(input,boussinesq_buoyancy,material);
+    std::string material = MaterialsParsing::material_name(input,boussinesq_buoyancy);
 
     // Can't specify both material and rho_ref
     MaterialsParsing::duplicate_input_test(input,

@@ -285,8 +285,7 @@ namespace GRINS
                                         ParameterUser& param_user,
                                         libMesh::Real& value )
   {
-    std::string material = "DIE!";
-    MaterialsParsing::material_name(input,core_physics,material);
+    std::string material = MaterialsParsing::material_name(input,core_physics);
 
     // Can't specify both old_option and property
     MaterialsParsing::duplicate_input_test(input,
