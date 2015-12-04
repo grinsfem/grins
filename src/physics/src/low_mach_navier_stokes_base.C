@@ -47,9 +47,9 @@ namespace GRINS
                                                              const std::string& core_physics_name,
                                                              const GetPot& input)
     : Physics(physics_name, input),
-      _mu(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!")),
-      _cp(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!")),
-      _k(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
+      _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
+      _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
+      _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
     this->read_input_options(input);
 

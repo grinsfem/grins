@@ -48,7 +48,7 @@ namespace GRINS
       _temp_vars(input,heat_conduction),
       _rho(0.0),
       _Cp(0.0),
-      _k(input,input("Physics/"+heat_conduction+"/material", "NoMaterial!"))
+      _k(input,MaterialsParsing::material_name(input,heat_conduction))
   {
     MaterialsParsing::read_density( heat_conduction, input, (*this), this->_rho );
 

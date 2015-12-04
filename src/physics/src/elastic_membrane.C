@@ -49,7 +49,7 @@ namespace GRINS
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
                                                      bool is_compressible )
     : ElasticMembraneBase(physics_name,input),
-      _stress_strain_law(input,input("Physics/"+elastic_membrane+"/material", "NoMaterial!")),
+      _stress_strain_law(input,MaterialsParsing::material_name(input,elastic_membrane)),
       _h0(0.0),
       _is_compressible(is_compressible)
   {

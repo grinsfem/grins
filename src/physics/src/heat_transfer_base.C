@@ -50,7 +50,7 @@ namespace GRINS
       _temp_vars(input,heat_transfer),
       _rho(0.0),
       _Cp(0.0),
-      _k(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
+      _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 

@@ -33,6 +33,7 @@
 #include "grins/spalart_allmaras_viscosity.h"
 #include "grins/grins_physics_names.h"
 #include "grins/turbulence_models_macro.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -46,7 +47,7 @@ namespace GRINS
   TurbulenceModelsBase<Mu>::TurbulenceModelsBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
-      _mu(input,input("Physics/"+incompressible_navier_stokes+"/material", "NoMaterial!"))
+      _mu(input,MaterialsParsing::material_name(input,incompressible_navier_stokes))
   {
     this->set_parameter(this->_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", this->_rho);
   }

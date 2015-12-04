@@ -48,7 +48,7 @@ namespace GRINS
     : Physics(my_physics_name, input),
       _flow_vars(input, core_physics_name),
       _rho(0.0),
-      _mu(input,input("Physics/"+core_physics_name+"/material", "NoMaterial!"))
+      _mu(input,MaterialsParsing::material_name(input,core_physics_name))
   {
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
   }

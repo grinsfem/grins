@@ -48,7 +48,7 @@ namespace GRINS
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 								    const GetPot& input)
     : Physics(physics_name, input),
-      _k(input,input("Physics/"+axisymmetric_heat_transfer+"/material", "NoMaterial!"))
+      _k(input,MaterialsParsing::material_name(input,axisymmetric_heat_transfer))
   {
     this->read_input_options(input);
   

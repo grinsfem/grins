@@ -32,6 +32,7 @@
 #include "grins/elasticity_tensor.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/physics.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -47,7 +48,7 @@ namespace GRINS
   ElasticCable<StressStrainLaw>::ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                                                bool is_compressible )
     : ElasticCableBase(physics_name,input),
-      _stress_strain_law(input,input("Physics/"+elastic_cable+"/material", "NoMaterial!")),
+      _stress_strain_law(input,MaterialsParsing::material_name(input,elastic_cable)),
       _is_compressible(is_compressible)
   {
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
