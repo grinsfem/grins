@@ -300,21 +300,53 @@ namespace GRINS
   }
 
   void PhysicsFactoryHelper::parse_antioch_models( const GetPot& input,
+                                                   const std::string& physics,
                                                    std::string& transport_model,
                                                    std::string& thermo_model,
                                                    std::string& viscosity_model,
                                                    std::string& conductivity_model,
                                                    std::string& diffusivity_model )
   {
-    transport_model = input( "Physics/Antioch/transport_model" , "mixture_averaged" );
+    // Newer, preferred version
+    std::string material;
+    MaterialsParsing::material_name( input, physics, material );
 
-    // mixing_model option is now deprecated in favor of transport_model
-    if( input.have_variable("Physics/Antioch/mixing_model") )
+    bool have_transport_model = input.have_variable( "Physics/Antioch/transport_model" );
+
+    // It's an error to specify both the old and the new version
+    if( have_transport_model &&
+        input.have_variable("Materials/"+material+"/GasMixture/Antioch/transport_model") )
       {
-        libMesh::err << "WARNING: Option Physics/Antioch/mixing_model is deprecated!" << std::endl
-                     << "         Use Physics/Antioch/transport_model instead!" << std::endl;
+        libmesh_error_msg("ERROR: Cannot specify both Materials/"+material+"/GasMixture/Antioch/transport_model and Physics/Antioch/transport_model!");
+      }
+
+    //Deprecated
+    if( have_transport_model )
+      {
+        std::string warning = "Warning: Option Physics/Antioch/transport_model is DEPRECATED.\n";
+        warning += "         Please update to use Use Materials/MATERIAL_NAME/GasMixture/Antioch/transport_model.\n";
+        grins_warning(warning);
+
+        transport_model = input( "Physics/Antioch/transport_model", "mixture_averaged" );
+      }
+    // mixing_model option is now deprecated in favor of transport_model
+    else if( input.have_variable("Physics/Antioch/mixing_model") )
+      {
+         std::string warning = "Warning: Option Physics/Antioch/mixing_model is DEPRECATED.\n";
+        warning += "         Please update to use Use Materials/MATERIAL_NAME/GasMixture/Antioch/transport_model.\n";
+        grins_warning(warning);
 
         transport_model = input( "Physics/Antioch/mixing_model" , "mixture_averaged" );
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/GasMixture/Antioch/transport_model") )
+      {
+        transport_model = input("Materials/"+material+"/GasMixture/Antioch/transport_model", "DIE!");
+      }
+    // Fail
+    else
+      {
+        libmesh_error_msg("ERROR! Could not find valid transport_model input!");
       }
 
     // transport_model = wilke is deprecated
@@ -327,10 +359,50 @@ namespace GRINS
         transport_model = "mixture_averaged";
       }
 
-    thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
-    viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
-    conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
-    diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+    // Now parse the remaining models
+    //Deprecated
+    if( have_transport_model || input.have_variable("Physics/Antioch/mixing_model") )
+      {
+        // We're tying all the other option specifications to transport_model.
+        thermo_model = input( "Physics/Antioch/thermo_model", "stat_mech");
+        viscosity_model = input( "Physics/Antioch/viscosity_model", "blottner");
+        conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
+        diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+
+        // So they'd better not have the other version specified.
+        if( input.have_variable("Materials/"+material+"/GasMixture/Antioch/thermo_model")       ||
+            input.have_variable("Materials/"+material+"/GasMixture/Antioch/viscosity_model")    ||
+            input.have_variable("Materials/"+material+"/GasMixture/Antioch/conductivity_model") ||
+            input.have_variable("Materials/"+material+"/GasMixture/Antioch/diffusivity_model") )
+          {
+            libmesh_error_msg("ERROR: Cannot specifiy Physics/Antioch/transport_model and then specify Materials/"+material+"/GasMixture/Antioch/<thermo,viscosity,conductivity,diffusivity>_model!");
+          }
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/GasMixture/Antioch/transport_model") )
+      {
+        // We're tying all the other option specifications to transport_model.
+        // For the newer cases, we don't support a default, the user must specify
+        thermo_model = input( "Materials/"+material+"/GasMixture/Antioch/thermo_model", "DIE!");
+        viscosity_model = input( "Materials/"+material+"/GasMixture/Antioch/viscosity_model", "DIE!");
+        conductivity_model = input( "Materials/"+material+"/GasMixture/Antioch/conductivity_model", "DIE!");
+        diffusivity_model = input( "Materials/"+material+"/GasMixture/Antioch/diffusivity_model", "DIE!");
+
+        // So they'd better not have the other version specified.
+        if( input.have_variable("Physics/Antioch/thermo_model")       ||
+            input.have_variable("Physics/Antioch/viscosity_model")    ||
+            input.have_variable("Physics/Antioch/conductivity_model") ||
+            input.have_variable("Physics/Antioch/diffusivity_model") )
+          {
+            libmesh_error_msg("ERROR: Cannot specifiy Materials/"+material+"/GasMixture/Antioch/transport_model and then specify Physics/Antioch/<thermo,viscosity,conductivity,diffusivity>_model!");
+          }
+      }
+    // Fail
+    else
+      {
+        libmesh_error_msg("ERROR! Could not find valid transport_model input!");
+      }
+
   }
 
   void PhysicsFactoryHelper::deprecated_visc_model_parsing( bool have_ins_viscosity_model,

@@ -73,6 +73,7 @@ namespace GRINS
                                              std::string& model );
 
     static void parse_antioch_models( const GetPot& input,
+                                      const std::string& physics,
                                       std::string& transport_model,
                                       std::string& thermo_model,
                                       std::string& viscosity_model,

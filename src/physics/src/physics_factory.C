@@ -359,6 +359,7 @@ namespace GRINS
         std::string diffusivity_model;
 
         PhysicsFactoryHelper::parse_antioch_models( input,
+                                                    physics_to_add,
                                                     transport_model,
                                                     thermo_model,
                                                     viscosity_model,
