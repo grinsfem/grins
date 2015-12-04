@@ -38,6 +38,7 @@
 #include "grins/property_types.h"
 #include "grins/constant_conductivity.h"
 #include "grins/constant_prandtl_conductivity.h"
+#include "grins/constant_viscosity.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -72,8 +73,13 @@ namespace GRINS
 
   protected:
 
-    libMesh::Real _mu;
+    //! Viscosity
+    /*! \todo Template on viscosity model, as we did for conductivity,
+         to support parsed versions. This is going to require we update the
+         API for the transport wrappers. */
+    libMesh::UniquePtr<ConstantViscosity> _mu;
 
+    //! Thermal conductivity
     libMesh::UniquePtr<Conductivity> _conductivity;
 
     libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > _diffusivity;
@@ -106,13 +112,13 @@ namespace GRINS
     }
 
   };
-  
+
   /* ------------------------- Inline Functions -------------------------*/
   template<typename Conductivity>
   inline
   libMesh::Real AntiochConstantTransportMixture<Conductivity>::mu() const
   {
-    return _mu;
+    return (*_mu)();
   }
 
   template<typename Conductivity>
