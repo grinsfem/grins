@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -53,6 +54,32 @@ namespace GRINS
 
     this->set_parameter
       (_Pr, input, "Materials/Conductivity/Pr", _Pr);
+  }
+
+  ConstantPrandtlConductivity::ConstantPrandtlConductivity( const GetPot& input, const std::string& material )
+    : ParameterUser("ConstantPrandtlConductivity"),
+      _Pr(0.0)
+  {
+    // We can't have both the materials version and the old versions
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/ThermalConductivity/Pr",
+                                           "Materials/Conductivity/Pr" );
+
+    // If we have the "new" version, then parse it
+    if( input.have_variable("Materials/"+material+"/ThermalConductivity/Pr") )
+      {
+        this->set_parameter
+          (_Pr, input, "Materials/"+material+"/ThermalConductivity/Pr", _Pr);
+      }
+    // If instead we have the old version, use that.
+    else if( input.have_variable("Materials/Conductivity/Pr") )
+      {
+        MaterialsParsing::dep_input_warning( "Materials/Conductivity/Pr",
+                                             "ThermalConductivity/Pr" );
+
+        this->set_parameter
+          (_Pr, input, "Materials/Conductivity/Pr", _Pr);
+      }
   }
 
   ConstantPrandtlConductivity::~ConstantPrandtlConductivity()
