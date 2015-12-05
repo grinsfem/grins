@@ -113,6 +113,9 @@ namespace GRINS
                                       const std::string& option1,
                                       const std::string& option2 );
 
+    //! Helper function to check for option and error out if it's not found.
+    static void check_for_input_option( const GetPot& input, const std::string& option );
+
     //! Helper function for parsing the chemical species
     /*! The user-provided vector will populated with the chemical
         species names in the input file. "Physics/Chemistry/species" is
@@ -141,6 +144,13 @@ namespace GRINS
   std::string MaterialsParsing::material_name( const GetPot& input, const std::string& physics )
   {
     return input("Physics/"+physics+"/material", "DIE!");
+  }
+
+  inline
+  void MaterialsParsing::check_for_input_option( const GetPot& input, const std::string& option )
+  {
+    if( !input.have_variable(option) )
+      libmesh_error_msg("ERROR: Could not find required input parameter "+option+"!");
   }
 
 } // end namespace GRINS
