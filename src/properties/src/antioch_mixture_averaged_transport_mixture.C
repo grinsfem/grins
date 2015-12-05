@@ -68,7 +68,7 @@ namespace GRINS
 
     this->build_conductivity( input );
 
-    this->build_diffusivity( input );
+    this->build_diffusivity( input, material );
 
     return;
   }

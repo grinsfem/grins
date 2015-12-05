@@ -370,10 +370,31 @@ namespace GRINS
       }
   }
 
-  libMesh::Real MaterialsParsing::parse_lewis_number( const GetPot& input )
+  libMesh::Real MaterialsParsing::parse_lewis_number( const GetPot& input,
+                                                      const std::string& material )
   {
-    MaterialsParsing::check_for_input_option(input,"Physics/Antioch/Le");
-    return input("Physics/Antioch/Le", 0.0);
+
+    // Can't specify both old_option and property
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Physics/Antioch/Le",
+                                           "Materials/"+material+"/LewisNumber/value");
+
+    libMesh::Real Le = 0.0;
+    if( input.have_variable("Physics/Antioch/Le") )
+      {
+        MaterialsParsing::dep_input_warning("Physics/Antioch/Le", "LewisNumber/value" );
+        Le = input("Physics/Antioch/Le", 0.0);
+      }
+    else if( input.have_variable("Materials/"+material+"/LewisNumber/value") )
+      {
+        Le = input("Materials/"+material+"/LewisNumber/value", 0.0);
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Could not find value input for LewisNumber!");
+      }
+
+    return Le;
   }
 
   void MaterialsParsing::dep_input_warning( const std::string& old_option,

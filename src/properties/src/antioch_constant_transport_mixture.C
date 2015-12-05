@@ -43,7 +43,7 @@ namespace GRINS
       _conductivity(NULL),
       _diffusivity(NULL)
   {
-    libMesh::Real Le = MaterialsParsing::parse_lewis_number(input);
+    libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
     _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     _mu.reset( new ConstantViscosity(input,material) );
     this->build_conductivity(input,material);

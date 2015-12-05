@@ -125,8 +125,8 @@ namespace GRINS
     void build_conductivity( const GetPot& input )
     { specialized_build_conductivity( input, _conductivity, conductivity_type<Conductivity>() ); }
 
-    void build_diffusivity( const GetPot& input )
-    { specialized_build_diffusivity( input, _diffusivity, diffusivity_type<Diffusivity>() ); }
+    void build_diffusivity( const GetPot& input, const std::string& material )
+    { specialized_build_diffusivity( input, material,_diffusivity, diffusivity_type<Diffusivity>() ); }
 
   private:
 
@@ -206,10 +206,11 @@ namespace GRINS
 #endif // ANTIOCH_HAVE_GSL
 
     void specialized_build_diffusivity( const GetPot& input,
+                                        const std::string& material,
                                         libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
     {
-      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input);
+      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
 
       diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
@@ -219,6 +220,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_diffusivity( const GetPot& /*input*/,
+                                        const std::string& /*material*/,
                                         libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > )
     {
