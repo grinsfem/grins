@@ -46,8 +46,8 @@ namespace GRINS
         libmesh_error();
       }
 
-    _mu.reset( new ConstantViscosity(input) );
-    this->build_conductivity(input);
+    _mu.reset( new ConstantViscosity(input,material) );
+    this->build_conductivity(input,material);
 
     return;
   }

@@ -88,26 +88,26 @@ namespace GRINS
        This way, we can control how the cached transport objects get constructed
        based on the template type. This is achieved by the dummy types forcing operator
        overloading for each of the specialized types. */
-    void build_conductivity( const GetPot& input )
-    { specialized_build_conductivity( input, _conductivity, conductivity_type<Conductivity>() ); }
+    void build_conductivity( const GetPot& input, const std::string& material )
+    { specialized_build_conductivity( input, material, _conductivity, conductivity_type<Conductivity>() ); }
 
   private:
 
     AntiochConstantTransportMixture();
 
-    void specialized_build_conductivity( const GetPot& input,
+    void specialized_build_conductivity( const GetPot& input, const std::string& material,
                                          libMesh::UniquePtr<ConstantConductivity>& conductivity,
                                          conductivity_type<ConstantConductivity> )
     {
-      conductivity.reset( new ConstantConductivity(input) );
+      conductivity.reset( new ConstantConductivity(input,material) );
       return;
     }
 
-    void specialized_build_conductivity( const GetPot& input,
+    void specialized_build_conductivity( const GetPot& input, const std::string& material,
                                          libMesh::UniquePtr<ConstantPrandtlConductivity>& conductivity,
                                          conductivity_type<ConstantPrandtlConductivity> )
     {
-      conductivity.reset( new ConstantPrandtlConductivity(input) );
+      conductivity.reset( new ConstantPrandtlConductivity(input,material) );
       return;
     }
 
