@@ -55,6 +55,7 @@ namespace GRINS
       (_fixed_rho_value, input,
        "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
 
+    this->parse_species(input);
     this->read_input_options(input);
     
     return;
@@ -87,17 +88,6 @@ namespace GRINS
 
     this->_T_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_order", "SECOND") );
 
-    // Read variable naming info
-    this->_n_species = input.vector_variable_size("Physics/Chemistry/species");
-
-    _species_var_names.reserve(this->_n_species);
-    for( unsigned int i = 0; i < this->_n_species; i++ )
-      {
-	/*! \todo Make this prefix string an input option */
-	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", i ));
-	_species_var_names.push_back( var_name );
-      }
-
     this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
     this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
     this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
@@ -129,6 +119,21 @@ namespace GRINS
       _g(2) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 2 );
   
     return;
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::parse_species( const GetPot& input )
+  {
+    // Read variable naming info
+    this->_n_species = input.vector_variable_size("Physics/Chemistry/species");
+
+    _species_var_names.reserve(this->_n_species);
+    for( unsigned int i = 0; i < this->_n_species; i++ )
+      {
+	/*! \todo Make this prefix string an input option */
+	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", i ));
+	_species_var_names.push_back( var_name );
+      }
   }
 
   template<typename Mixture, typename Evaluator>
