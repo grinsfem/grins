@@ -113,6 +113,22 @@ namespace GRINS
                                       const std::string& option1,
                                       const std::string& option2 );
 
+    //! Helper function for parsing the chemical species
+    /*! The user-provided vector will populated with the chemical
+        species names in the input file. "Physics/Chemistry/species" is
+        deprecated in favor of "Material/"+material+"/GasMixture/species" */
+    static void parse_chemical_species( const GetPot& input,
+                                        std::vector<std::string>& species_names );
+
+    //! Helper function for parsing the chemical species and setting variable name
+    /*! The user-provided vector will populated with the chemical
+        species variable names based on the species name the input file. The variable
+        name will used for adding the variable to the libMesh System.
+        "Physics/Chemistry/species" is deprecated in favor of
+        "Material/"+material+"/GasMixture/species" */
+    static void parse_species_varnames( const GetPot& input,
+                                        std::vector<std::string>& species_names );
+
   };
 
   inline

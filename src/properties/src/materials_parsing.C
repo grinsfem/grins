@@ -318,11 +318,63 @@ namespace GRINS
       }
   }
 
+  void MaterialsParsing::parse_chemical_species( const GetPot& input, std::vector<std::string>& species_names )
+  {
+    // Clear out anything the user might've put in there.
+    species_names.clear();
+
+    std::string material = MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes);
+
+    MaterialsParsing::duplicate_input_test( input,
+                                            "Physics/Chemistry/species",
+                                            "Materials/"+material+"/GasMixture/species");
+
+    std::string species_input;
+    if( input.have_variable("Physics/Chemistry/species") )
+      {
+        MaterialsParsing::dep_input_warning("Physics/Chemistry/species","GasMixture/species");
+        species_input = "Physics/Chemistry/species";
+      }
+    else if( input.have_variable("Materials/"+material+"/GasMixture/species") )
+      {
+        species_input = "Materials/"+material+"/GasMixture/species";
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Valid input for species not found!");
+      }
+
+    // Read variable naming info
+    unsigned int n_species = input.vector_variable_size(species_input);
+
+    species_names.reserve(n_species);
+    for( unsigned int i = 0; i < n_species; i++ )
+      {
+	/*! \todo Make this prefix string an input option */
+
+	species_names.push_back( input( species_input, "DIE!", i ) );
+      }
+  }
+
+  void MaterialsParsing::parse_species_varnames( const GetPot& input, std::vector<std::string>& species_varnames )
+  {
+    std::vector<std::string> species_names;
+    MaterialsParsing::parse_chemical_species(input,species_names);
+    unsigned int n_species = species_names.size();
+    species_varnames.reserve(n_species);
+
+    for( unsigned int i = 0; i < n_species; i++ )
+      {
+        std::string var_name = "w_"+species_names[i];
+        species_varnames.push_back(var_name);
+      }
+  }
+
   void MaterialsParsing::dep_input_warning( const std::string& old_option,
                                             const std::string& property )
   {
     std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
-    warning += "         Please update to use Material/MATERIAL_NAME/"+property+"\n";
+    warning += "         Please update to use Materials/MATERIAL_NAME/"+property+"\n";
     grins_warning(warning);
   }
 
