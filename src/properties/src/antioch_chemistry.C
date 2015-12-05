@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_chemistry.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+
 // Antioch
 #include "antioch/default_filename.h"
 
@@ -41,19 +44,8 @@ namespace GRINS
   AntiochChemistry::AntiochChemistry( const GetPot& input )
     : _antioch_gas(NULL)
   {
-    if( !input.have_variable("Physics/Chemistry/species") )
-      {
-        std::cerr << "Error: Must specify species list to use Antioch." << std::endl;
-        libmesh_error();
-      }
-
-    unsigned int n_species = input.vector_variable_size("Physics/Chemistry/species");
-    std::vector<std::string> species_list(n_species);
-
-    for( unsigned int s = 0; s < n_species; s++ )
-      {
-        species_list[s] = input( "Physics/Chemistry/species", "DIE!", s );
-      }
+    std::vector<std::string> species_list;
+    MaterialsParsing::parse_chemical_species(input,species_list);
 
     bool verbose_antioch_read = input("Physics/Antioch/verbose_read",false);
 
@@ -75,15 +67,13 @@ namespace GRINS
                                                                      species_data_filename,
                                                                      vibration_data_filename,
                                                                      electronic_data_filename ) );
-
-    return;
   }
 
   AntiochChemistry::~AntiochChemistry()
   {
     return;
   }
-  
+
   std::string AntiochChemistry::species_name( unsigned int species_index ) const
   {
     libmesh_assert_less(species_index, _antioch_gas->n_species());

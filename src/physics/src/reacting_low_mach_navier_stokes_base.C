@@ -55,9 +55,12 @@ namespace GRINS
       (_fixed_rho_value, input,
        "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
 
-    this->parse_species(input);
+    // Parse species and setup variable names
+    MaterialsParsing::parse_species_varnames(input,_species_var_names);
+    this->_n_species = _species_var_names.size();
+
     this->read_input_options(input);
-    
+
     return;
   }
 
@@ -114,26 +117,11 @@ namespace GRINS
 
     _g(0) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 1 );
-  
+
     if( g_dim == 3)
       _g(2) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 2 );
-  
+
     return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::parse_species( const GetPot& input )
-  {
-    // Read variable naming info
-    this->_n_species = input.vector_variable_size("Physics/Chemistry/species");
-
-    _species_var_names.reserve(this->_n_species);
-    for( unsigned int i = 0; i < this->_n_species; i++ )
-      {
-	/*! \todo Make this prefix string an input option */
-	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", i ));
-	_species_var_names.push_back( var_name );
-      }
   }
 
   template<typename Mixture, typename Evaluator>

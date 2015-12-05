@@ -118,8 +118,6 @@ namespace GRINS
 
     ReactingLowMachNavierStokesBase();
 
-    void parse_species( const GetPot& input );
-
   }; // class ReactingLowMachNavierStokesBase
 
   template<typename Mixture, typename Evaluator>
