@@ -104,9 +104,13 @@ namespace GRINS
     this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
     this->_T_var_name = input("Physics/VariableNames/temperature", GRINS::T_var_name_default );
 
-    // Read thermodynamic state info
-    this->set_parameter
-      (_p0, input, "Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    // Read thermodynamic pressure info
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+reacting_low_mach_navier_stokes+"/p0",
+                                     "ThermodynamicPressure",
+                                     reacting_low_mach_navier_stokes,
+                                     (*this),
+                                     _p0 );
 
     _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
