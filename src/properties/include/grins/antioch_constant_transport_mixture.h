@@ -59,7 +59,7 @@ namespace GRINS
   {
   public:
 
-    AntiochConstantTransportMixture( const GetPot& input );
+    AntiochConstantTransportMixture( const GetPot& input, const std::string& material );
 
     virtual ~AntiochConstantTransportMixture();
 

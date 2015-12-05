@@ -34,6 +34,7 @@
 #include "grins/cantera_mixture.h"
 #include "grins/grins_enums.h"
 #include "grins/antioch_mixture.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -46,7 +47,7 @@ namespace GRINS
   ReactingLowMachNavierStokesBase<Mixture,Evaluator>::ReactingLowMachNavierStokesBase(const std::string& physics_name,
 									    const GetPot& input)
     : Physics(physics_name, input),
-      _gas_mixture(input),
+      _gas_mixture(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes)),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
       _fixed_rho_value(0.0)
   {
@@ -135,7 +136,7 @@ namespace GRINS
     _species_vars.reserve(this->_n_species);
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
-	_species_vars.push_back( system->add_variable( _species_var_names[i], 
+	_species_vars.push_back( system->add_variable( _species_var_names[i],
 						       this->_species_order, _species_FE_family) );
       }
 

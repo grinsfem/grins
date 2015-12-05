@@ -30,6 +30,8 @@
 
 // GRINS
 #include "grins/cantera_mixture.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -49,7 +51,7 @@ int main( int argc, char* argv[] )
 
 
 
-  GRINS::CanteraMixture cantera(input);
+  GRINS::CanteraMixture cantera(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

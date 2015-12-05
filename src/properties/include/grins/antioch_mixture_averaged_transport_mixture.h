@@ -83,7 +83,7 @@ namespace GRINS
   {
   public:
 
-    AntiochMixtureAveragedTransportMixture( const GetPot& input );
+    AntiochMixtureAveragedTransportMixture( const GetPot& input, const std::string& material );
 
     virtual ~AntiochMixtureAveragedTransportMixture();
 

@@ -35,7 +35,7 @@
 
 namespace GRINS
 {
-  CanteraMixture::CanteraMixture( const GetPot& input )
+  CanteraMixture::CanteraMixture( const GetPot& input, const std::string& material )
     : _cantera_gas(NULL),
       _cantera_transport(NULL)
   {

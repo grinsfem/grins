@@ -35,6 +35,8 @@
 // GRINS
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_kinetics.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -52,7 +54,7 @@ int main(int argc, char* argv[])
 
   GetPot input( argv[1] );
 
-  GRINS::CanteraMixture mixture( input );
+  GRINS::CanteraMixture mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
 
   GRINS::CanteraKinetics kinetics( mixture );
 

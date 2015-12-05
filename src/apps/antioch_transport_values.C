@@ -38,11 +38,13 @@
 
 // GRINS
 #include "grins/antioch_mixture_averaged_transport_evaluator.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )
 {
-  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input);
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
 
   GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 

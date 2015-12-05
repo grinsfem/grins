@@ -31,6 +31,8 @@
 #include "grins/cantera_thermo.h"
 #include "grins/cantera_kinetics.h"
 #include "grins/cached_values.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -55,7 +57,7 @@ int main(int argc, char* argv[])
   species[3] = input( "Physics/Chemistry/species", "DIE!", 3 );
   species[4] = input( "Physics/Chemistry/species", "DIE!", 4 );
 
-  GRINS::CanteraMixture cantera_mixture(input);
+  GRINS::CanteraMixture cantera_mixture(input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
 
   Cantera::IdealGasMix& cantera = cantera_mixture.get_chemistry();
 

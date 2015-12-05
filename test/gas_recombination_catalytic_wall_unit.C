@@ -32,6 +32,8 @@
 #include "grins/constant_catalycity.h"
 #include "grins/cantera_mixture.h"
 #include "grins/antioch_chemistry.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -144,7 +146,7 @@ int main(int argc, char* argv[])
   if( test_type == "cantera" )
     {
 #ifdef GRINS_HAVE_CANTERA
-      GRINS::CanteraMixture chem_mixture( input );
+      GRINS::CanteraMixture chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
 #else
       return_flag = 77;
