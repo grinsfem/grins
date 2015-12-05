@@ -365,8 +365,8 @@ namespace GRINS
         // So they'd better not have the other version specified.
         if( input.have_variable("Materials/"+material+"/GasMixture/Antioch/thermo_model")       ||
             input.have_variable("Materials/"+material+"/GasMixture/Antioch/viscosity_model")    ||
-            input.have_variable("Materials/"+material+"/GasMixture/Antioch/conductivity_model") ||
-            input.have_variable("Materials/"+material+"/GasMixture/Antioch/diffusivity_model") )
+            input.have_variable("Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model") ||
+            input.have_variable("Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model") )
           {
             libmesh_error_msg("ERROR: Cannot specifiy Physics/Antioch/transport_model and then specify Materials/"+material+"/GasMixture/Antioch/<thermo,viscosity,conductivity,diffusivity>_model!");
           }
@@ -378,8 +378,8 @@ namespace GRINS
         // For the newer cases, we don't support a default, the user must specify
         thermo_model = input( "Materials/"+material+"/GasMixture/Antioch/thermo_model", "DIE!");
         viscosity_model = input( "Materials/"+material+"/GasMixture/Antioch/viscosity_model", "DIE!");
-        conductivity_model = input( "Materials/"+material+"/GasMixture/Antioch/conductivity_model", "DIE!");
-        diffusivity_model = input( "Materials/"+material+"/GasMixture/Antioch/diffusivity_model", "DIE!");
+        conductivity_model = input( "Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model", "DIE!");
+        diffusivity_model = input( "Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model", "DIE!");
 
         // So they'd better not have the other version specified.
         if( input.have_variable("Physics/Antioch/thermo_model")       ||
