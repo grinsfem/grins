@@ -27,7 +27,11 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// This class
 #include "grins/antioch_constant_transport_mixture.h"
+
+// GRINS
+#include "grins/materials_parsing.h"
 
 namespace GRINS
 {
@@ -37,15 +41,10 @@ namespace GRINS
     : AntiochMixture(input),
       _mu(NULL),
       _conductivity(NULL),
-      _diffusivity( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( input("Physics/Antioch/Le", 0.0) ) )
+      _diffusivity(NULL)
   {
-    if( !input.have_variable("Physics/Antioch/Le") )
-      {
-        std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
-                  << std::endl;
-        libmesh_error();
-      }
-
+    libMesh::Real Le = MaterialsParsing::parse_lewis_number(input);
+    _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     _mu.reset( new ConstantViscosity(input,material) );
     this->build_conductivity(input,material);
 

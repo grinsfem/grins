@@ -33,6 +33,7 @@
 // GRINS
 #include "grins/antioch_mixture.h"
 #include "grins/property_types.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -208,15 +209,7 @@ namespace GRINS
                                         libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
     {
-      if( !input.have_variable( "Physics/Antioch/Le" ) )
-        {
-          std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
-                    << std::endl;
-
-          libmesh_error();
-        }
-
-      const libMesh::Real Le = input( "Physics/Antioch/Le", 0.0 );
+      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input);
 
       diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
