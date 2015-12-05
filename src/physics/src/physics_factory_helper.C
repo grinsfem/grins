@@ -376,6 +376,12 @@ namespace GRINS
       {
         // We're tying all the other option specifications to transport_model.
         // For the newer cases, we don't support a default, the user must specify
+        // We're tying all the other option specifications to transport_model.
+        MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/thermo_model");
+        MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/viscosity_model");
+        MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model");
+        MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model");
+
         thermo_model = input( "Materials/"+material+"/GasMixture/Antioch/thermo_model", "DIE!");
         viscosity_model = input( "Materials/"+material+"/GasMixture/Antioch/viscosity_model", "DIE!");
         conductivity_model = input( "Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model", "DIE!");
