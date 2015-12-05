@@ -18,6 +18,8 @@
       Pr = '0.7'
    [../ThermodynamicPressure]
       value = '10' #[Pa]
+   [../LewisNumber]
+      value = '1.4'
 []
 
 
@@ -27,11 +29,7 @@ enabled_physics = 'ReactingLowMachNavierStokes'
 
 [./Chemistry]
 
-
 chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
-
-[../Antioch]
-Le = '1.4'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
