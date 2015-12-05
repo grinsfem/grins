@@ -1,14 +1,19 @@
 # Options related to all Physics
 [Materials]
+  [./2SpeciesNGas]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
 
-[./Viscosity]
-
-mu = '1.0e-5'
-
-[../Conductivity]
-
-Pr = '0.7'
-
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'cea'
+           viscosity_model = 'constant'
+           conductivity_model = 'constant_prandtl'
+           diffusivity_model = 'constant_lewis'
+   [../../Viscosity]
+      value = '1.0e-5'
+   [../ThermalConductivity]
+      Pr = '0.7'
 []
 
 
@@ -22,17 +27,12 @@ species   = 'N2 N'
 chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
 [../Antioch]
-
-transport_model = 'constant'
-thermo_model = 'cea'
-viscosity_model = 'constant'
-conductivity_model = 'constant_prandtl'
-diffusivity_model = 'constant_lewis'
-
 Le = '1.4'
 
 # Options for Incompressible Navier-Stokes physics
 [../ReactingLowMachNavierStokes]
+
+material = '2SpeciesNGas'
 
 species_FE_family = 'LAGRANGE'
 V_FE_family       = 'LAGRANGE'
@@ -50,7 +50,7 @@ p0 = '10' #[Pa]
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
 
-thermochemistry_library = 'antioch'
+
 
 # Boundary ids:
 # j = bottom -> 0
@@ -92,10 +92,6 @@ pressure = 'p'
 
 []
 
-[restart-options]
-
-#restart_file = 'cavity.xdr'
-
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -124,6 +120,7 @@ initial_linear_tolerance = 1.0e-10
 relative_step_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
+[]
 
 # Visualization options
 [vis-options]
@@ -136,6 +133,8 @@ output_residual = 'false'
 output_format = 'ExodusII xdr'
 
 #output_vars = 'rho_mix mole_fractions'
+
+[]
 
 # Options for print info to the screen
 [screen-options]
