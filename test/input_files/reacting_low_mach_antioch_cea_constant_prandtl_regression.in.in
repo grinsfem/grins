@@ -14,6 +14,8 @@
       value = '1.0e-5'
    [../ThermalConductivity]
       Pr = '0.7'
+   [../ThermodynamicPressure]
+      value = '10' #[Pa]
 []
 
 
@@ -43,9 +45,6 @@ species_order = 'SECOND'
 V_order       = 'SECOND'
 T_order       = 'SECOND'
 P_order       = 'FIRST'
-
-# Thermodynamic pressure
-p0 = '10' #[Pa]
 
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
