@@ -370,6 +370,12 @@ namespace GRINS
       }
   }
 
+  libMesh::Real MaterialsParsing::parse_lewis_number( const GetPot& input )
+  {
+    MaterialsParsing::check_for_input_option(input,"Physics/Antioch/Le");
+    return input("Physics/Antioch/Le", 0.0);
+  }
+
   void MaterialsParsing::dep_input_warning( const std::string& old_option,
                                             const std::string& property )
   {

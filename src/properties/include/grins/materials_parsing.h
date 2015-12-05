@@ -132,6 +132,8 @@ namespace GRINS
     static void parse_species_varnames( const GetPot& input,
                                         std::vector<std::string>& species_names );
 
+    static libMesh::Real parse_lewis_number( const GetPot& input );
+
   };
 
   inline
