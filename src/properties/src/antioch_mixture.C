@@ -55,7 +55,7 @@ namespace GRINS
 
     Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *_reaction_set.get() );
 
-    std::string cea_data_filename = input( "Physics/Antioch/cea_data", "default" );
+    std::string cea_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/cea_data", "default" );
     if( cea_data_filename == std::string("default") )
       cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
