@@ -101,6 +101,8 @@ namespace GRINS
 
     libMesh::UniquePtr<Cantera::Transport> _cantera_transport;
 
+    std::string parse_mixture( const GetPot& input, const std::string& material );
+
   private:
 
     CanteraMixture();
