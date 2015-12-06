@@ -4,6 +4,7 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species   = 'N2 N'
+        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
         [./Antioch]
            transport_model = 'constant'
@@ -27,12 +28,8 @@
 
 enabled_physics = 'ReactingLowMachNavierStokes'
 
-[./Chemistry]
-
-chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
-
 # Options for Incompressible Navier-Stokes physics
-[../ReactingLowMachNavierStokes]
+[./ReactingLowMachNavierStokes]
 
 material = '2SpeciesNGas'
 
