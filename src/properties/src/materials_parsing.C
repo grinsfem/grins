@@ -397,6 +397,13 @@ namespace GRINS
     return Le;
   }
 
+  std::string MaterialsParsing::parse_chemical_kinetics_datafile_name( const GetPot& input,
+                                                                       const std::string& material )
+  {
+    MaterialsParsing::check_for_input_option(input,"Physics/Chemistry/chem_file");
+    return input( "Physics/Chemistry/chem_file", "DIE!");
+  }
+
   void MaterialsParsing::dep_input_warning( const std::string& old_option,
                                             const std::string& property )
   {

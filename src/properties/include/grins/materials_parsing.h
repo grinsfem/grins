@@ -135,6 +135,9 @@ namespace GRINS
     static libMesh::Real parse_lewis_number( const GetPot& input,
                                              const std::string& material );
 
+    static std::string parse_chemical_kinetics_datafile_name( const GetPot& input,
+                                                              const std::string& material );
+
   };
 
   inline
