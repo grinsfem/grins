@@ -41,7 +41,7 @@ namespace GRINS
   template<typename T, typename V, typename C, typename D>
   AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input,
                                                                                            const std::string& material )
-    : AntiochMixture(input),
+    : AntiochMixture(input,material),
       _trans_mixture(NULL),
       _wilke_mixture(NULL),
       _thermo(NULL),

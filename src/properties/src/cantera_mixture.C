@@ -30,6 +30,9 @@
 // This class
 #include "grins/cantera_mixture.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -39,7 +42,7 @@ namespace GRINS
     : _cantera_gas(NULL),
       _cantera_transport(NULL)
   {
-    const std::string cantera_chem_file = input( "Physics/Chemistry/chem_file", "DIE!" );
+    const std::string cantera_chem_file = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
     const std::string mixture = input( "Physics/Chemistry/mixture", "DIE!" );
 
     try

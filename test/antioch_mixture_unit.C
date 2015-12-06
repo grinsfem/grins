@@ -32,6 +32,8 @@
 
 // GRINS
 #include "grins/antioch_mixture.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -48,8 +50,8 @@ int main( int argc, char* argv[] )
     }
 
   GetPot input( argv[1] );
-  
-  GRINS::AntiochMixture antioch(input);
+
+  GRINS::AntiochMixture antioch(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

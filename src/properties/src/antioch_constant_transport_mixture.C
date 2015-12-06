@@ -38,7 +38,7 @@ namespace GRINS
   template<typename Thermo>
   AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input,
                                                                             const std::string& material )
-    : AntiochMixture(input),
+    : AntiochMixture(input,material),
       _mu(NULL),
       _conductivity(NULL),
       _diffusivity(NULL)
