@@ -119,14 +119,14 @@ namespace GRINS
     void build_thermo( const GetPot& input )
     { specialized_build_thermo( input, _thermo, thermo_type<Thermo>() ); }
 
-    void build_viscosity( const GetPot& input )
-    { specialized_build_viscosity( input, _viscosity, viscosity_type<Viscosity>() ); }
+    void build_viscosity( const GetPot& input, const std::string& material )
+    { specialized_build_viscosity( input, material, _viscosity, viscosity_type<Viscosity>() ); }
 
     void build_conductivity( const GetPot& input )
     { specialized_build_conductivity( input, _conductivity, conductivity_type<Conductivity>() ); }
 
     void build_diffusivity( const GetPot& input, const std::string& material )
-    { specialized_build_diffusivity( input, material,_diffusivity, diffusivity_type<Diffusivity>() ); }
+    { specialized_build_diffusivity( input, material, _diffusivity, diffusivity_type<Diffusivity>() ); }
 
   private:
 
@@ -149,12 +149,13 @@ namespace GRINS
     }
 
     void specialized_build_viscosity( const GetPot& input,
+                                      const std::string& material,
                                       libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
-      std::string sutherland_data = input("Physics/Antioch/sutherland_data", "default");
+      std::string sutherland_data = input("Materials/"+material+"/GasMixture/Antioch/sutherland_data", "default");
       if( sutherland_data == "default" )
         sutherland_data = Antioch::DefaultInstallFilename::sutherland_data();
 
@@ -162,12 +163,13 @@ namespace GRINS
     }
 
     void specialized_build_viscosity( const GetPot& input,
+                                      const std::string& material,
                                       libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
-      std::string blottner_data = input("Physics/Antioch/blottner_data", "default");
+      std::string blottner_data = input("Materials/"+material+"/GasMixture/Antioch/blottner_data", "default");
       if( blottner_data == "default" )
         blottner_data = Antioch::DefaultInstallFilename::blottner_data();
 
@@ -176,6 +178,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_viscosity( const GetPot& /*input*/,
+                                      const std::string& /*material*/,
                                       libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& viscosity,
                                       viscosity_type<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> > )
     {
