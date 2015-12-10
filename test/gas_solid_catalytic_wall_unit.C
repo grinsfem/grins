@@ -58,7 +58,7 @@ int test( ChemicalMixture& chem_mixture )
 
   const double T = 620.1;
   const double R_N = chem_mixture.R( chem_mixture.species_index("N") );
-  
+
   const double R = 30.1;
 
   const double omega_dot_exact = rho_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) );
@@ -182,7 +182,7 @@ int test( ChemicalMixture& chem_mixture )
 	return_flag = 1;
       }
   }
-    
+
   return return_flag;
 }
 
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
   else if( test_type == "antioch" )
     {
 #ifdef GRINS_HAVE_ANTIOCH
-      GRINS::AntiochChemistry chem_mixture( input );
+      GRINS::AntiochChemistry chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
       return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
 #else
       return_flag = 77;

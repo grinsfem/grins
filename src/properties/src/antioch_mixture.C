@@ -45,7 +45,7 @@ namespace GRINS
 {
   AntiochMixture::AntiochMixture( const GetPot& input,
                                   const std::string& material )
-    : AntiochChemistry(input),
+    : AntiochChemistry(input,material),
       _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
       _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) )
   {
@@ -76,12 +76,12 @@ namespace GRINS
     Antioch::StatMechThermodynamics<libMesh::Real> thermo( *(this->_antioch_gas.get()) );
 
     _h_stat_mech_ref_correction.resize(this->n_species());
-    
+
     for( unsigned int s = 0; s < this->n_species(); s++ )
       {
         _h_stat_mech_ref_correction[s] = -thermo.h_tot( s, 298.15 ) + thermo.e_0(s);
       }
-    
+
     return;
   }
 
