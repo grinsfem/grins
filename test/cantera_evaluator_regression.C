@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
   GetPot input( argv[1] );
 
-  GRINS::CanteraMixture mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
+  GRINS::CanteraMixture mixture( input, "TestMaterial" );
   GRINS::CanteraEvaluator gas(mixture);
 
   double T = 1500.0;

@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
   if( test_type == "cantera" )
     {
 #ifdef GRINS_HAVE_CANTERA
-      GRINS::CanteraMixture chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
+      GRINS::CanteraMixture chem_mixture( input, "TestMaterial" );
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
 #else
       return_flag = 77;

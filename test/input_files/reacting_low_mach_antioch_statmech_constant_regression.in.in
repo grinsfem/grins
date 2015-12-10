@@ -1,14 +1,26 @@
 # Options related to all Physics
 [Materials]
+  [./2SpeciesNGas]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
+        species   = 'N2 N'
+        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
 
-[./Viscosity]
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'stat_mech'
+           viscosity_model = 'constant'
+           thermal_conductivity_model = 'constant'
+           mass_diffusivity_model = 'constant_lewis'
 
-mu = '1.0e-5'
-
-[../Conductivity]
-
-k = '0.02'
-
+   [../../Viscosity]
+      value = '1.0e-5'
+   [../ThermalConductivity]
+      value = '0.02'
+   [../ThermodynamicPressure]
+      value = '10' #[Pa]
+   [../LewisNumber]
+      value = '1.4'
 []
 
 
@@ -16,23 +28,10 @@ k = '0.02'
 
 enabled_physics = 'ReactingLowMachNavierStokes'
 
-[./Chemistry]
-
-species   = 'N2 N'
-chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
-
-[../Antioch]
-
-transport_model = 'constant'
-thermo_model = 'stat_mech'
-viscosity_model = 'constant'
-conductivity_model = 'constant'
-diffusivity_model = 'constant_lewis'
-
-Le = '1.4'
-
 # Options for Incompressible Navier-Stokes physics
-[../ReactingLowMachNavierStokes]
+[./ReactingLowMachNavierStokes]
+
+material = '2SpeciesNGas'
 
 species_FE_family = 'LAGRANGE'
 V_FE_family       = 'LAGRANGE'
@@ -44,13 +43,8 @@ V_order       = 'SECOND'
 T_order       = 'SECOND'
 P_order       = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '10' #[Pa]
-
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
-
-thermochemistry_library = 'antioch'
 
 # Boundary ids:
 # j = bottom -> 0

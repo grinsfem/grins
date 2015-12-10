@@ -51,7 +51,7 @@ int main( int argc, char* argv[] )
 
 
 
-  GRINS::CanteraMixture cantera(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
+  GRINS::CanteraMixture cantera(input,"TestMaterial");
 
   std::vector<double> mass_fractions( 5, 0.2 );
 
