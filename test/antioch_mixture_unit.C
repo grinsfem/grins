@@ -51,7 +51,7 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture antioch(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
+  GRINS::AntiochMixture antioch(input,"TestMaterial");
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

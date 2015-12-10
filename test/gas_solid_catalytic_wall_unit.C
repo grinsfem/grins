@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
   if( test_type == "cantera" )
     {
 #ifdef GRINS_HAVE_CANTERA
-      GRINS::CanteraMixture chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
+      GRINS::CanteraMixture chem_mixture( input, "CanteraMaterial" );
       return_flag = test<GRINS::CanteraMixture>( chem_mixture );
 #else
       return_flag = 77;
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
   else if( test_type == "antioch" )
     {
 #ifdef GRINS_HAVE_ANTIOCH
-      GRINS::AntiochChemistry chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
+      GRINS::AntiochChemistry chem_mixture( input, "AntiochMaterial" );
       return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
 #else
       return_flag = 77;

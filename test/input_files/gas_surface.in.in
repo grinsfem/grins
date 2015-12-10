@@ -1,17 +1,23 @@
 #
-# Defines any systems that will be solved
-[Physics]
+[Materials]
+  [./CanteraMaterial]
+     [./GasMixture]
+        thermochemistry_library = 'cantera'
+        species = 'N2 N C CN'
+        kinetics_data = '@abs_top_builddir@/test/input_files/air_4sp.xml'
 
-  [./Chemistry]
+        [./Cantera]
+           gas_mixture = 'air4sp'
 
-     mixture        = 'air4sp'
-     species        = 'N2 N C CN'
-     chem_file      = '@abs_top_builddir@/test/input_files/air_4sp.xml'
-     mass_fractions = '0.8 0.2 0.0 0.0'
+   [../../../AntiochMaterial]
+      [./GasMixture]
+         thermochemistry_library = 'antioch'
+         species = 'N2 N C CN'
+         kinetics_data = '@abs_top_builddir@/test/input_files/air_4sp.xml'
 
-   [../Antioch]
+       [../LewisNumber]
+         value = '1.4'
 
-     Le = '1.4'
 []
 
 [screen-options]

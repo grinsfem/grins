@@ -1,15 +1,14 @@
 #
-# Defines any systems that will be solved
-[Physics]
+# Options related to all Physics
+[Materials]
+  [./TestMaterial]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
+        species = 'N2 O2 NO N O'
+        kinetics_data = '@abs_top_srcdir@/test/input_files/air.xml'
 
-  [./Chemistry]
-
-     species        = 'N2   O2   NO N  O'
-     chem_file      = '@abs_top_srcdir@/test/input_files/air.xml'
-
-   [../Antioch]
-
-     Le = '1.4'
+      [../LewisNumber]
+        value = '1.4'
 []
 
 [screen-options]

@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
   else if( test_type == "antioch" )
     {
 #ifdef GRINS_HAVE_ANTIOCH
-      GRINS::AntiochChemistry chem_mixture( input, GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes) );
+      GRINS::AntiochChemistry chem_mixture( input, "TestMaterial" );
       return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
 #else
       return_flag = 77;

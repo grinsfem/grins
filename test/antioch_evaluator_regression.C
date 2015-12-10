@@ -264,7 +264,7 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture antioch_mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
+  GRINS::AntiochMixture antioch_mixture(input,"TestMaterial");
 
   int return_flag = 0;
 
