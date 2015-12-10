@@ -34,6 +34,7 @@
 #include "grins/arrhenius_catalycity.h"
 #include "grins/power_law_catalycity.h"
 #include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -50,7 +51,7 @@ namespace GRINS
     : LowMachNavierStokesBCHandling(physics_name,input),
       _chemistry(chemistry)
   {
-    MaterialsParsing::parse_species_varnames(input,_species_var_names);
+    MaterialsParsing::parse_species_varnames(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes),_species_var_names);
     _n_species = _species_var_names.size();
     _species_vars.resize(_n_species);
 

@@ -318,12 +318,12 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::parse_chemical_species( const GetPot& input, std::vector<std::string>& species_names )
+  void MaterialsParsing::parse_chemical_species( const GetPot& input,
+                                                 const std::string& material,
+                                                 std::vector<std::string>& species_names )
   {
     // Clear out anything the user might've put in there.
     species_names.clear();
-
-    std::string material = MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes);
 
     MaterialsParsing::duplicate_input_test( input,
                                             "Physics/Chemistry/species",
@@ -356,10 +356,12 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::parse_species_varnames( const GetPot& input, std::vector<std::string>& species_varnames )
+  void MaterialsParsing::parse_species_varnames( const GetPot& input,
+                                                 const std::string& material,
+                                                 std::vector<std::string>& species_varnames )
   {
     std::vector<std::string> species_names;
-    MaterialsParsing::parse_chemical_species(input,species_names);
+    MaterialsParsing::parse_chemical_species(input,material,species_names);
     unsigned int n_species = species_names.size();
     species_varnames.reserve(n_species);
 

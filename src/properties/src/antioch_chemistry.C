@@ -46,7 +46,7 @@ namespace GRINS
     : _antioch_gas(NULL)
   {
     std::vector<std::string> species_list;
-    MaterialsParsing::parse_chemical_species(input,species_list);
+    MaterialsParsing::parse_chemical_species(input,material,species_list);
 
     bool verbose_antioch_read = input("Materials/"+material+"/GasMixture/Antioch/verbose_read",false);
 

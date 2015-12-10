@@ -121,6 +121,7 @@ namespace GRINS
         species names in the input file. "Physics/Chemistry/species" is
         deprecated in favor of "Material/"+material+"/GasMixture/species" */
     static void parse_chemical_species( const GetPot& input,
+                                        const std::string& material,
                                         std::vector<std::string>& species_names );
 
     //! Helper function for parsing the chemical species and setting variable name
@@ -130,6 +131,7 @@ namespace GRINS
         "Physics/Chemistry/species" is deprecated in favor of
         "Material/"+material+"/GasMixture/species" */
     static void parse_species_varnames( const GetPot& input,
+                                        const std::string& material,
                                         std::vector<std::string>& species_names );
 
     static libMesh::Real parse_lewis_number( const GetPot& input,
