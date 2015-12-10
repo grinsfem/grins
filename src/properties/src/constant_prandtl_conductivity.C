@@ -62,20 +62,20 @@ namespace GRINS
   {
     // We can't have both the materials version and the old versions
     MaterialsParsing::duplicate_input_test(input,
-                                           "Materials/"+material+"/ThermalConductivity/Pr",
+                                           "Materials/"+material+"/PrandtlNumber/value",
                                            "Materials/Conductivity/Pr" );
 
     // If we have the "new" version, then parse it
-    if( input.have_variable("Materials/"+material+"/ThermalConductivity/Pr") )
+    if( input.have_variable("Materials/"+material+"/PrandtlNumber/value") )
       {
         this->set_parameter
-          (_Pr, input, "Materials/"+material+"/ThermalConductivity/Pr", _Pr);
+          (_Pr, input, "Materials/"+material+"/PrandtlNumber/value", _Pr);
       }
     // If instead we have the old version, use that.
     else if( input.have_variable("Materials/Conductivity/Pr") )
       {
         MaterialsParsing::dep_input_warning( "Materials/Conductivity/Pr",
-                                             "ThermalConductivity/Pr" );
+                                             "PrandtlNumber/value" );
 
         this->set_parameter
           (_Pr, input, "Materials/Conductivity/Pr", _Pr);

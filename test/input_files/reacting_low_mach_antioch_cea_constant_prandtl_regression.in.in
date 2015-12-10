@@ -15,8 +15,8 @@
 
    [../../Viscosity]
       value = '1.0e-5'
-   [../ThermalConductivity]
-      Pr = '0.7'
+   [../PrandtlNumber]
+      value = '0.7'
    [../ThermodynamicPressure]
       value = '10' #[Pa]
    [../LewisNumber]
