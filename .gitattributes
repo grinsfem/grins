@@ -1,0 +1,5 @@
+*.C linguist-language=C++
+*.h linguist-language=C++
+src/common/lcov/* linguist-vendored
+src/common/lic_utils/* linguist-vendored
+test/test_data/* linguist-vendored
