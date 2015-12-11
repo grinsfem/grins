@@ -27,7 +27,9 @@
 #include "grins/constant_conductivity.h"
 
 //GRINS
+#include "grins/common.h"
 #include "grins/grins_physics_names.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -39,6 +41,13 @@ namespace GRINS
     : ParameterUser("ConstantConductivity"),
       _k(0.0)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     if( !input.have_variable("Materials/Conductivity/k") )
       {
         libmesh_warning("No Materials/Conductivity/k specified!\n");
@@ -51,6 +60,32 @@ namespace GRINS
       this->set_parameter
         (_k, input, "Materials/Conductivity/k", _k);
     return;
+  }
+
+  ConstantConductivity::ConstantConductivity( const GetPot& input, const std::string& material )
+  : ParameterUser("ConstantConductivity"),
+    _k(0.0)
+  {
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/ThermalConductivity/value",
+                                           "Materials/Conductivity/k");
+
+    // If we have the "new" version, then parse it
+    if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") )
+      {
+        this->set_parameter
+          (_k, input, "Materials/"+material+"/ThermalConductivity/value", _k);
+      }
+    // If instead we have the old version, use that.
+    else if( input.have_variable("Materials/Conductivity/k") )
+      {
+        MaterialsParsing::dep_input_warning( "Materials/Conductivity/k",
+                                             "ThermalConductivity/value" );
+
+        this->set_parameter
+          (_k, input, "Materials/Conductivity/k", _k);
+      }
+
   }
 
   ConstantConductivity::~ConstantConductivity()

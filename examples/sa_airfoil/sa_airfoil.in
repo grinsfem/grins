@@ -1,3 +1,14 @@
+#Material Properties
+[Materials]
+   [./Gas]
+      [./Viscosity]
+         model = 'spalartallmaras' 
+         turb_visc_model = 'constant'
+         value = '0.000000167' # mu = 1/Re, really nu the kinematic viscosity
+      [../Density]
+         value = '1.0'
+[]
+
 # Mesh related options
 [Mesh]
    [./Read]
@@ -6,7 +17,7 @@
 
 [restart-options]
    # Use the coarser mesh to give us a good initial guess for the solution
-   restart_file = '/workspace/vikram/grins_libmesh_master_opt/examples/sa_airfoil/AoA_0/turbulent_airfoil_Re_6000000.xda'
+   restart_file = './turbulent_airfoil_Re_6000000.xda'
 
 []
 
@@ -38,14 +49,6 @@ output_adjoint = 'true'
 vis_output_file_prefix = 'turbulent_airfoil_Re_6000000_adjoint_sens'
 output_format = 'ExodusII xda'
 
-[Materials]
-
-[./Viscosity]
-
-mu = '0.000000167' # mu = 1/Re, really nu the kinematic viscosity
-
-[]
-
 # Options for print info to the screen
 [screen-options]
 print_equation_system_info = 'true'
@@ -67,13 +70,11 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMSta
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'Gas'
+
 FE_family = LAGRANGE
 V_order = FIRST
 P_order = FIRST
-
-viscosity_model = 'spalartallmaras'
-#viscosity_model = 'constant'
-rho = 1.0
 
 bc_ids = '0 2'
 bc_types = 'no_slip prescribed_vel'
@@ -85,9 +86,7 @@ bound_vel_2 = '1.0 0.0 0.0'
 #ic_variables = 'u'
 #ic_values = '0.0'
 
-pin_pressure = true
-pin_value = 1.0
-pin_location = '0.0 5.0'
+pin_pressure = 'false' 
 
 [../VariableNames]
 
@@ -98,6 +97,8 @@ turbulent_viscosity = 'nu'
 
 # Options for Spalart Allmaras physics
 [../SpalartAllmaras]
+
+material = 'Gas'
 
 TU_order = FIRST
 

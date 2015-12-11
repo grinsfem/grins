@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_chemistry.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+
 // Antioch
 #include "antioch/default_filename.h"
 
@@ -38,34 +41,24 @@
 
 namespace GRINS
 {
-  AntiochChemistry::AntiochChemistry( const GetPot& input )
+  AntiochChemistry::AntiochChemistry( const GetPot& input,
+                                      const std::string& material )
     : _antioch_gas(NULL)
   {
-    if( !input.have_variable("Physics/Chemistry/species") )
-      {
-        std::cerr << "Error: Must specify species list to use Antioch." << std::endl;
-        libmesh_error();
-      }
+    std::vector<std::string> species_list;
+    MaterialsParsing::parse_chemical_species(input,material,species_list);
 
-    unsigned int n_species = input.vector_variable_size("Physics/Chemistry/species");
-    std::vector<std::string> species_list(n_species);
+    bool verbose_antioch_read = input("Materials/"+material+"/GasMixture/Antioch/verbose_read",false);
 
-    for( unsigned int s = 0; s < n_species; s++ )
-      {
-        species_list[s] = input( "Physics/Chemistry/species", "DIE!", s );
-      }
-
-    bool verbose_antioch_read = input("Physics/Antioch/verbose_read",false);
-
-    std::string species_data_filename = input("Physics/Antioch/species_data", "default" );
+    std::string species_data_filename = input("Materials/"+material+"/GasMixture/Antioch/species_data", "default" );
     if( species_data_filename == std::string("default") )
       species_data_filename = Antioch::DefaultInstallFilename::chemical_mixture();
 
-    std::string vibration_data_filename = input("Physics/Antioch/vibration_data", "default" );
+    std::string vibration_data_filename = input("Materials/"+material+"/GasMixture/Antioch/vibration_data", "default" );
     if( vibration_data_filename == std::string("default") )
       vibration_data_filename = Antioch::DefaultInstallFilename::vibrational_data();
 
-    std::string electronic_data_filename = input("Physics/Antioch/electronic_data", "default" );
+    std::string electronic_data_filename = input("Materials/"+material+"/GasMixture/Antioch/electronic_data", "default" );
     if( electronic_data_filename == std::string("default") )
       electronic_data_filename = Antioch::DefaultInstallFilename::electronic_data();
 
@@ -75,15 +68,13 @@ namespace GRINS
                                                                      species_data_filename,
                                                                      vibration_data_filename,
                                                                      electronic_data_filename ) );
-
-    return;
   }
 
   AntiochChemistry::~AntiochChemistry()
   {
     return;
   }
-  
+
   std::string AntiochChemistry::species_name( unsigned int species_index ) const
   {
     libmesh_assert_less(species_index, _antioch_gas->n_species());

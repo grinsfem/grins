@@ -28,8 +28,10 @@
 
 // GRINS
 #include "grins_config.h"
+#include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/heat_transfer_macros.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -40,21 +42,19 @@
 namespace GRINS
 {
   template<class K>
-  HeatTransferBase<K>::HeatTransferBase( const std::string& physics_name, const GetPot& input )
+  HeatTransferBase<K>::HeatTransferBase( const std::string& physics_name,
+                                         const std::string& core_physics_name,
+                                         const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho(1.0),
-      _Cp(1.0),
-      _k(input)
+      _rho(0.0),
+      _Cp(0.0),
+      _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
-    this->set_parameter
-      (this->_rho, input,
-       "Physics/"+heat_transfer+"/rho", _rho);
+    MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 
-    this->set_parameter
-      (this->_Cp, input,
-       "Physics/"+heat_transfer+"/Cp", _Cp);
+    MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
 
     this->read_input_options(input);
 
@@ -116,7 +116,6 @@ namespace GRINS
     ParameterUser::register_parameter(param_name, param_pointer);
     _k.register_parameter(param_name, param_pointer);
   }
-
 
 } // namespace GRINS
 

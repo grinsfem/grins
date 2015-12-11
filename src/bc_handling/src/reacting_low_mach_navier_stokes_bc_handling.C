@@ -33,6 +33,8 @@
 #include "grins/constant_catalycity.h"
 #include "grins/arrhenius_catalycity.h"
 #include "grins/power_law_catalycity.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -47,18 +49,11 @@ namespace GRINS
                                                                                            const GetPot& input,
                                                                                            const Chemistry& chemistry )
     : LowMachNavierStokesBCHandling(physics_name,input),
-      _n_species( input.vector_variable_size("Physics/Chemistry/species") ),
-      _species_var_names(_n_species),
-      _species_vars(_n_species),
       _chemistry(chemistry)
   {
-
-    for( unsigned int s = 0; s < _n_species; s++ )
-      {
-	/*! \todo Make this prefix string an input option */
-	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", s ));
-	_species_var_names[s] =  var_name;
-      }
+    MaterialsParsing::parse_species_varnames(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes),_species_var_names);
+    _n_species = _species_var_names.size();
+    _species_vars.resize(_n_species);
 
     std::string id_str = "Physics/"+_physics_name+"/species_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/species_bc_types";

@@ -23,7 +23,7 @@
 #
 # The primary sections are:
 #    [Mesh] - all options related to the mesh used in the simulation
-
+#    [Materials] - all material property specifications
 
 # The block below is an example of using basic mesh generation
 # utilities in libMesh to construct a mesh. An example of reading
@@ -135,4 +135,194 @@
        # and z-components remain unchanged.
        function = '{x+x*(x-30)/30}{y*2}{z}'
 
+[]
+
+# The block below illustrates specifying properties for different
+# materials to be used by a Physics. Many different materials can be
+# specified within the [Materials] section. The name of the material
+# is arbitrary and is meant to be referenced by the "material" input
+# specifier within each Physics input section. Listed below are the various
+# material properties currently understood by various Physics within
+# GRINS. Note that if a material property is not used by a Physics,
+# it is not needed it will be an unused variable (causing an error at runtime).
+[Materials]
+
+  # Arbitrary material name. Here we describe input parameters related
+  # to the Cantera thermochemistry library. These are used for reacting
+  # flow Physics.
+  [./CanteraMaterial]
+     [./GasMixture]
+        # Notify that we're using Cantera
+        thermochemistry_library = 'cantera'
+
+        # Species in this gas mixture
+        species = 'N2 N C CN'
+
+        # Path to file containing kinetics data.
+        # For Cantera, this may also contain all other thermochemistry data.
+        kinetics_data = 'datafile.xml'
+
+        [./Cantera]
+           # Specify the mixture to be used. This is the "mixture"
+           # given in the kinetics_data file. The user must set this
+           # since the Cantera data file may contain more than one mixture.
+           gas_mixture = 'air4sp'
+
+   # Arbitrary material name. Here we describe input parameters related
+   # to the Antioch thermochemistry library. These are used for reacting
+   # flow Physics. Note that units here *must* be SI.
+   [../../../AntiochMaterial]
+      [./GasMixture]
+         # Notify that we're using Antioch
+         thermochemistry_library = 'antioch'
+
+         # Species in this gas mixture
+         species = 'N2 N C CN'
+
+         # Path to file containing kinetics data.
+         kinetics_data = 'datafile.xml'
+
+         # Antioch model specification
+         [./Antioch]
+
+           # The type of transport model. Currently accepted values
+           # are: constant, mixture_averaged
+           transport_model = 'constant'
+
+           # Model used for computing thermodynamic quantities.
+           # Currently accepted values are: cea, stat_mech
+           # Note: CEA data is internally used to the kinetics
+           #       calculation and this option will not effect that.
+           thermo_model = 'cea'
+
+           # Model used for computing viscosity.
+           # Currently accepted values are:
+           #   constant (only valid with transport_model = constant)
+           #   blottner (transport_model = mixture_averaged, requires blottner_data)
+           #   sutherland (transport_model = mixture_averaged, requires sutherland_data),
+           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
+           #                    thermal_conductivity_model and mass_diffusivity_model to  be kinetics_theory)
+           #
+           # For viscosity_model = 'constant', the viscosity value
+           # will be parsed from [Materials/material-name/Viscosity/value]
+           viscosity_model = 'constant'
+
+           # Model used for computing thermal conductivity.
+           # Currently accepted values are:
+           #   constant (only valid with transport_model = constant)
+           #   constant_prandtl
+           #   eucken (transport_model = mixture_averaged, requires thermo_model = stat_mech)
+           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
+           #                    viscosity_model and mass_diffusivity_model to be kinetics_theory)
+           #
+           # For thermal_conductivity_model = 'constant', the conductivity value
+           # will be parsed from [Materials/material-name/ThermalConductivity/value]
+           #
+           # For thermal_conductivity_model = 'constant_prandtl', the
+           # Prandtl number will be parsed from [Materials/material-name/PrandtlNumber/value]
+           thermal_conductivity_model = 'constant'
+
+           # Model used for computing mass diffusivity
+           # Currently accepted values are:
+           #   constant_lewis (transport_model = mixture_averaged, constant)
+           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
+           #                    viscosity_model and thermal_conductivity_model to be kinetics_theory)
+           #
+           # For  mass_diffusivity_model = 'constant_lewis', the lewis number
+           # will be parsed from [Materials/material-name/LewisNumber/value]
+           mass_diffusivity_model = 'constant_lewis'
+
+
+           # All of the following are datafiles used by Antioch. For
+           # values of 'default' (omission of these input options is
+           # equivalent to a value of 'default'), the default file installed with
+           # Antioch will be used. You may use your own datafile by
+           # setting the value to the fullpath of the datafile you
+           # wish to use.
+           species_data = 'default'
+           vibration_data = 'default'
+           electronic_data = 'default'
+           cea_data = 'default'
+           transport_data = 'default'
+           sutherland_data = 'default'
+           blottner_data = 'default'
+
+   [../../Viscosity]
+      value = '1.0e-5' # Units *must* be SI in this case.
+
+   [../ThermalConductivity]
+      value = '0.02' # Units *must* be SI in this case.
+
+   [../LewisNumber]
+      value = '1.4'
+
+   # Arbitrary Material name. We list all other possible material
+   # properties here. For these generic cases, i.e. non-reacting,
+   # there is no limitation on the units used. However, it is up to
+   # the user to be self-consistent.
+   [../../GenericMaterial]
+
+      [./ThermodynamicPressure]
+         value = '101325'
+
+      [../ReferenceTemperature]
+         value = '600'
+
+      [../GasConstant]
+         value = '287.0'
+
+      [../ThermalConductivity]
+         model = 'constant'
+         value = '.041801'
+
+      [../Viscosity]
+         # Accepted values: constant, spalartallmaras
+         #
+         # spalartallmaras only valid when used with SpalartAllmaras
+         # Physics. Also requires specification of turb_visc_model = 'constant'
+         model = 'constant'
+
+         value = '2.95456e-5'
+
+      [../SpecificHeat]
+         model = 'constant'
+         value = '1004.5'
+
+      [../Density]
+         value = '1.0'
+
+      [../MembraneThickness]
+         value = '0.05'
+
+      [../CrossSectionalArea]
+         value = '0.1'
+
+
+      [../StressStrainLaw]
+         # Here we can specify the stress-strain law for an elastic material.
+         #  Currently accepted values are:
+         #     incompressible_hyperelasticity
+         #     hookes_law
+         model = 'incompressible_hyperelasticity'
+
+         # If the stress-strain model is
+         # incompressible_hyperelasticity, then the strain_energy
+         # option controls what strain energy function is used.
+         # Currently accepted values are:
+         #   mooney_rivlin
+         strain_energy = 'mooney_rivlin'
+
+         # Parameters for the Mooney-Rivlin material
+         [./MooneyRivlin]
+            C1 = '24'
+            C2 = '3.0'
+
+         # Parameters for Hookes law. Used if
+         # [Materials/material-name/StressStrainLaw] is set to hookes_law
+         [../HookesLaw]
+            # Youngs modulus
+            E = '10000'
+
+            # Poisson's ratio
+            nu = '0.3'
 []

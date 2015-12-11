@@ -1,24 +1,33 @@
 # Options related to all Physics
+[Materials]
+  [./2SpeciesNGas]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
+        species   = 'N2 N'
+        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
+
+        [./Antioch]
+           transport_model = 'mixture_averaged'
+           thermo_model = 'stat_mech'
+           viscosity_model = 'blottner'
+           thermal_conductivity_model = 'eucken'
+           mass_diffusivity_model = 'constant_lewis'
+
+   [../../ThermodynamicPressure]
+      value = '10' #[Pa]
+   [../LewisNumber]
+      value = '1.4'
+[]
+
+# Options related to all Physics
 [Physics]
 
 enabled_physics = 'ReactingLowMachNavierStokes'
 
-[./Chemistry]
-
-species   = 'N2 N'
-chem_file = '@abs_top_builddir@/test/input_files/air_2sp.xml'
-
-[../Antioch]
-
-transport_model = 'mixture_averaged'
-viscosity_model = 'blottner'
-conductivity_model = 'eucken'
-diffusivity_model = 'constant_lewis'
-
-Le = '1.4'
-
 # Options for Incompressible Navier-Stokes physics
-[../ReactingLowMachNavierStokes]
+[./ReactingLowMachNavierStokes]
+
+material = '2SpeciesNGas'
 
 species_FE_family = 'LAGRANGE'
 V_FE_family       = 'LAGRANGE'
@@ -30,13 +39,8 @@ V_order       = 'SECOND'
 T_order       = 'SECOND'
 P_order       = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '10' #[Pa]
-
 # Gravity vector
 g = '0.0 0.0' #[m/s^2]
-
-thermochemistry_library = 'antioch'
 
 # Boundary ids:
 # j = bottom -> 0

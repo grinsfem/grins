@@ -60,6 +60,8 @@ namespace GRINS
 
   protected:
 
+    void parse_thermal_conductivity( const GetPot& input );
+
     //! Thermal conductivity
     libMesh::Real _k;
 

@@ -32,6 +32,7 @@
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"
 #include "grins/grins_enums.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -42,11 +43,13 @@ namespace GRINS
 {
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name, const GetPot& input)
+  LowMachNavierStokesBase<Mu,SH,TC>::LowMachNavierStokesBase(const std::string& physics_name,
+                                                             const std::string& core_physics_name,
+                                                             const GetPot& input)
     : Physics(physics_name, input),
-      _mu(input),
-      _cp(input),
-      _k(input)
+      _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
+      _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
+      _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
     this->read_input_options(input);
 
@@ -89,21 +92,26 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
     // Read thermodynamic state info
-    this->set_parameter
-      (_p0, input, "Physics/"+low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
-    this->set_parameter
-      (_T0, input, "Physics/"+low_mach_navier_stokes+"/T0", 0.0 ); /* Reference temperature */
-    this->set_parameter
-      (_R, input, "Physics/"+low_mach_navier_stokes+"/R", 0.0 ); /* gas constant */
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/p0",
+                                     "ThermodynamicPressure",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _p0 );
 
-    if( _R <= 0.0 )
-      {
-	std::cerr << "=========================================" << std::endl
-		  << " Error: Gas constant R must be positive. " << std::endl
-		  << " Detected value R = " << _R << std::endl
-		  << "=========================================" << std::endl;
-	libmesh_error();
-      }
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/T0",
+                                     "ReferenceTemperature",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _T0 );
+
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+low_mach_navier_stokes+"/R",
+                                     "GasConstant",
+                                     low_mach_navier_stokes,
+                                     (*this),
+                                     _R );
 
     _p0_over_R = _p0/_R;
 

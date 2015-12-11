@@ -31,6 +31,8 @@
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
 #include "grins/cached_values.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -48,7 +50,7 @@ int main(int argc, char* argv[])
 
   GetPot input( argv[1] );
 
-  GRINS::CanteraMixture mixture( input );
+  GRINS::CanteraMixture mixture( input, "TestMaterial" );
   GRINS::CanteraEvaluator gas(mixture);
 
   double T = 1500.0;

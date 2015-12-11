@@ -36,9 +36,18 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
-# [restart-options]
-# 
-# restart_file = 'stokes_tsection.xdr'
+[]
+
+# Materials
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0e-3'
+      [../Density]
+         value = '1.0'
+[]
+
 
 # Options related to all Physics
 [Physics]
@@ -47,6 +56,9 @@ enabled_physics = 'IncompressibleNavierStokes Stokes'
 
 # Options for Stokes physics
 [./Stokes]
+
+material = 'TestMaterial'
+
 enabled_subdomains = '2'
 
 FE_family = LAGRANGE
@@ -62,14 +74,14 @@ parabolic_profile_fix_7 = 'v'
 
 # Options for Navier Stokes physics
 [../IncompressibleNavierStokes]
+
+material = 'TestMaterial'
+
 enabled_subdomains = '1'
 
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = '1.0'
-mu = '1.0e-3'
 
 bc_ids = '1 2 3'
 bc_types = 'no_slip no_slip no_slip'

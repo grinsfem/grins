@@ -34,18 +34,23 @@ solver_quiet = 'true'
 echo_physics = 'true'
 echo_qoi = 'true' # which QoIs activated
 print_qoi = 'true' # print numerical values of QoIs
+[]
+
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0'
+    [../Density]
+      value = '1.0'
+[]
 
 # Options related to all Physics
 [Physics]
 
 enabled_physics = 'Stokes'
 
-# Hack for the way we are parsing properties right now
-[./IncompressibleNavierStokes]
-
-mu = '1.0'
-
-[../VariableNames]
+[./VariableNames]
 
 u_velocity = 'u'
 v_velocity = 'v'
@@ -55,7 +60,7 @@ pressure = 'p'
 # Options for Stokes physics
 [../Stokes]
 
-rho = '1.0'
+material = 'TestMaterial'
 
 FE_family = LAGRANGE
 V_order = SECOND

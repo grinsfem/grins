@@ -38,7 +38,7 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   LowMachNavierStokesStabilizationBase<Mu,SH,TC>::LowMachNavierStokesStabilizationBase( const std::string& physics_name, 
 											const GetPot& input )
-    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,input),
+    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,low_mach_navier_stokes,input),
       _stab_helper( physics_name+"StabHelper", input )
   {
     return;

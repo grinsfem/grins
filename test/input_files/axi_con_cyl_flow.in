@@ -40,6 +40,15 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0'
+      [../Density]
+         value = '1.0'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -50,12 +59,11 @@ is_axisymmetric = 'true'
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'TestMaterial'
+
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = 1.0
-mu = 1.0
 
 # Boundary ids:
 # j = bottom -> 0

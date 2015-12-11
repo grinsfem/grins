@@ -44,7 +44,7 @@ namespace GRINS
 
   template<class K>
   HeatTransfer<K>::HeatTransfer( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase<K>(physics_name, input),
+    : HeatTransferBase<K>(physics_name, heat_transfer, input),
     _k_index(0)
   {
     this->read_input_options(input);

@@ -22,10 +22,14 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "grins_config.h"
 
 // This class
-#include "grins_config.h"
 #include "grins/boussinesq_buoyancy_base.h"
+
+// GRINS
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -39,21 +43,25 @@ namespace GRINS
     : Physics(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _temp_vars(input,heat_transfer),
-      _rho_ref(1.0),
+      _rho(0.0),
       _T_ref(1.0),
       _beta_T(1.0)
   {
-    this->set_parameter
-      (_rho_ref, input,
-       "Physics/"+boussinesq_buoyancy+"/rho_ref", _rho_ref);
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                        "Density",
+                        _rho);
 
-    this->set_parameter
-      (_T_ref, input,
-       "Physics/"+boussinesq_buoyancy+"/T_ref", _T_ref);
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/T_ref",
+                        "ReferenceTemperature",
+                        _T_ref);
 
-    this->set_parameter
-      (_beta_T, input,
-       "Physics/"+boussinesq_buoyancy+"/beta_T", _beta_T);
+
+    this->read_property(input,
+                        "Physics/"+boussinesq_buoyancy+"/beta_T",
+                        "ThermalExpansionCoeff",
+                        _beta_T);
 
     unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
 
@@ -81,5 +89,77 @@ namespace GRINS
 
     return;
   }
+
+  void BoussinesqBuoyancyBase::read_property( const GetPot& input,
+                                              const std::string& old_option,
+                                              const std::string& property,
+                                              libMesh::Real& value )
+  {
+    std::string material = MaterialsParsing::material_name(input,boussinesq_buoyancy);
+
+    // Can't specify both material and rho_ref
+    MaterialsParsing::duplicate_input_test(input,
+                                           old_option,
+                                           "Materials/"+material+"/"+property+"/value" );
+
+    // Deprecated
+    if( input.have_variable(old_option) )
+      {
+        MaterialsParsing::dep_input_warning( old_option,property+"/value" );
+
+        this->set_parameter
+          (value, input,
+           old_option, 1.0 /*Old default*/);
+      }
+    // Preferred
+    else if( input.have_variable("Materials/"+material+"/"+property+"/value" ) )
+      {
+        this->set_parameter
+          (value, input,
+           "Materials/"+material+"/"+property+"/value", 0.0 /*default*/);
+      }
+    // If nothing was set, we default to 1.0. Deprecated, what was I thinking
+    else
+      {
+        this->no_input_warning( input,
+                                old_option,
+                                material,
+                                property );
+        this->set_parameter
+          (value, input, old_option, 1.0 /*default*/);
+      }
+
+    // Make sure density is positive
+    if( value <= 0.0 )
+      {
+        libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
+      }
+  }
+
+  void BoussinesqBuoyancyBase::no_input_warning( const GetPot& input,
+                                                 const std::string& old_option,
+                                                 const std::string& material,
+                                                 const std::string& property )
+  {
+    std::string warning;
+    if( !MaterialsParsing::have_material(input,boussinesq_buoyancy) )
+      {
+        warning = "WARNING: Neither "+old_option+"\n";
+        warning += "         nor a material_name was detected in input\n";
+        warning +  "         "+property+" is defaulting to 1.0. This behavior is DEPRECATED!\n";
+        warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+      }
+    else
+      {
+        warning = "WARNING: Neither "+old_option+"\n";
+        warning += "         nor Material/"+material+"/"+property+"/value\n";
+        warning +  "         "+property+" is defaulting to 1.0. This behavior is DEPRECATED!\n";
+        warning += "         Please update to use Material/MATERIAL_NAME/"+property+"/value\n";
+      }
+
+    grins_warning(warning);
+  }
+
+
 
 } // namespace GRINS

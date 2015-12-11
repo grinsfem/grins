@@ -40,8 +40,14 @@ namespace GRINS
   {
   public:
 
+    //! Constructor with specified material
+    /*! Will look in the input file for [Materials/material/SpecificHeat/value]
+        for the value of specific heat. */
+    ConstantSpecificHeat( const GetPot& input, const std::string& material );
+
+    //! Deprecated constructor
     ConstantSpecificHeat( const GetPot& input );
-    ~ConstantSpecificHeat();
+    virtual ~ConstantSpecificHeat();
 
     libMesh::Real operator()() const;
 

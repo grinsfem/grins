@@ -1,4 +1,18 @@
 
+# Material properties
+[Materials]
+   [./Cable]
+     [./CrossSectionalArea]
+       value = '0.5'
+     [../Density]
+       value = '1.0'
+     [../StressStrainLaw]
+       model = 'hookes_law'
+       [./HookesLaw]
+          E = '1.0e4'
+          nu = '0.45'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -7,12 +21,10 @@ enabled_physics = 'ElasticCable'
 # Options for Incompressible Navier-Stokes physics
 [./ElasticCable]
 
-A = '0.5'
+material = 'Cable'
 
 FE_family = 'LAGRANGE'
 order = 'FIRST'
-
-elasticity_model = 'HookesLaw'
 
 # Boundary ids:
 # j = left -> 0
@@ -21,11 +33,6 @@ bc_ids = '0 1'
 bc_types = 'pinned constant_displacement'
 
 displacement_1 = '0.1 0.0 0.0'
-
-[../HookesLaw]                                                                                                                                                                                                                               
-
-nu = '0.45'
-E = '1.0e4'
 
 []
 

@@ -40,6 +40,12 @@ namespace GRINS
   {
   public:
 
+    //! Constructor with specified material
+    /*! Will look in the input file for [Materials/material/ThermalConductivity/Pr]
+        for the value of viscosity. */
+    ConstantPrandtlConductivity( const GetPot& input, const std::string& material );
+
+    //! Deprecated constructor
     ConstantPrandtlConductivity( const GetPot& input );
     ~ConstantPrandtlConductivity();
 

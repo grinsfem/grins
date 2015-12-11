@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_mixture.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -40,23 +43,19 @@
 
 namespace GRINS
 {
-  AntiochMixture::AntiochMixture( const GetPot& input )
-    : AntiochChemistry(input),
+  AntiochMixture::AntiochMixture( const GetPot& input,
+                                  const std::string& material )
+    : AntiochChemistry(input,material),
       _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
       _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) )
   {
-    if( !input.have_variable("Physics/Chemistry/chem_file") )
-      {
-        std::cerr << "Error: Must specify XML chemistry file to use Antioch." << std::endl;
-        libmesh_error();
-      }
+    std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
 
-    std::string xml_filename = input( "Physics/Chemistry/chem_file", "DIE!");
     bool verbose_read = input("screen-options/verbose_kinetics_read", false );
-      
-    Antioch::read_reaction_set_data_xml<libMesh::Real>( xml_filename, verbose_read, *_reaction_set.get() );
 
-    std::string cea_data_filename = input( "Physics/Antioch/cea_data", "default" );
+    Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *_reaction_set.get() );
+
+    std::string cea_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/cea_data", "default" );
     if( cea_data_filename == std::string("default") )
       cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
@@ -77,12 +76,12 @@ namespace GRINS
     Antioch::StatMechThermodynamics<libMesh::Real> thermo( *(this->_antioch_gas.get()) );
 
     _h_stat_mech_ref_correction.resize(this->n_species());
-    
+
     for( unsigned int s = 0; s < this->n_species(); s++ )
       {
         _h_stat_mech_ref_correction[s] = -thermo.h_tot( s, 298.15 ) + thermo.e_0(s);
       }
-    
+
     return;
   }
 

@@ -38,11 +38,12 @@ solver_quiet = 'false'
 echo_physics = 'true'
 
 [Materials]
-
-[./Viscosity]
-
-mu = '1.0'
-
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0'
+    [../Density]
+      value = '1.0'
 []
 
 # Options related to all Physics
@@ -53,7 +54,7 @@ enabled_physics = 'Stokes'
 # Options for Stokes physics
 [./Stokes]
 
-rho = '1.0'
+material = 'TestMaterial'
 
 FE_family = LAGRANGE
 V_order = SECOND

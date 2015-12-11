@@ -46,6 +46,10 @@ namespace GRINS
   {
   public:
     IncompressiblePlaneStressHyperelasticity( const GetPot& input );
+
+    IncompressiblePlaneStressHyperelasticity( const GetPot& input,
+                                              const std::string& material );
+
     virtual ~IncompressiblePlaneStressHyperelasticity();
 
     // So we can make implementation private

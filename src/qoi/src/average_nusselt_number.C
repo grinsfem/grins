@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/multiphysics_sys.h"
 #include "grins/assembly_context.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -61,8 +62,7 @@ namespace GRINS
      const MultiphysicsSystem& system,
      unsigned int /*qoi_num*/ )
   {
-    this->set_parameter
-      ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+    this->parse_thermal_conductivity(input);
 
     this->set_parameter
       ( _scaling, input, "QoI/NusseltNumber/scaling", 1.0 );
@@ -199,6 +199,44 @@ namespace GRINS
       }
 
     return;
+  }
+
+  void AverageNusseltNumber::parse_thermal_conductivity( const GetPot& input )
+  {
+    std::string material = input("QoI/NusseltNumber/material", "NoMaterial!");
+
+    MaterialsParsing::duplicate_input_test(input,
+                                               "Materials/"+material+"/ThermalConductivity/value",
+                                               "QoI/NusseltNumber/thermal_conductivity");
+
+    // Parse the old version
+    if( input.have_variable("QoI/NusseltNumber/thermal_conductivity") )
+      {
+        MaterialsParsing::dep_input_warning( "QoI/NusseltNumber/thermal_conductivity",
+                                             "ThermalConductivity/value" );
+
+        this->set_parameter
+          ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );
+      }
+    // Parse new version
+    else if( input.have_variable("Materials/"+material+"/ThermalConductivity/value") )
+      {
+        // This is currently only valid for constant thermal conductivity models
+        if( input("Materials/"+material+"/ThermalConductivity/model", "DIE!")
+            != std::string("constant") )
+          {
+            libmesh_error_msg("ERROR: Only constant ThermalConductivity model supported in NusseltNumber!");
+          }
+
+        this->set_parameter
+          ( _k, input, "Materials/"+material+"/ThermalConductivity/value", -1.0 );
+      }
+    else
+      libmesh_error_msg("ERROR: Could not find valid thermal conducitivity value!");
+
+    // thermal conducivity should be positive
+    if( _k <= 0.0 )
+      libmesh_error_msg("ERROR: Detected non-positive thermal conductivity!");
   }
 
 } //namespace GRINS

@@ -81,6 +81,7 @@ libgrins_la_SOURCES += physics/src/boussinesq_buoyancy_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/boussinesq_buoyancy_spgsm_stab.C
 libgrins_la_SOURCES += physics/src/axisym_boussinesq_buoyancy.C
 libgrins_la_SOURCES += physics/src/physics_factory.C
+libgrins_la_SOURCES += physics/src/physics_factory_helper.C
 libgrins_la_SOURCES += physics/src/low_mach_navier_stokes_base.C
 libgrins_la_SOURCES += physics/src/low_mach_navier_stokes.C
 libgrins_la_SOURCES += physics/src/low_mach_navier_stokes_stab_base.C
@@ -164,6 +165,8 @@ libgrins_la_SOURCES += properties/src/hyperelasticity.C
 libgrins_la_SOURCES += properties/src/incompressible_plane_stress_hyperelasticity.C
 libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
+libgrins_la_SOURCES += properties/src/materials_parsing.C
+libgrins_la_SOURCES += properties/src/viscosity_base.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
@@ -296,6 +299,7 @@ include_HEADERS += physics/include/grins/boussinesq_buoyancy_adjoint_stab.h
 include_HEADERS += physics/include/grins/boussinesq_buoyancy_spgsm_stab.h
 include_HEADERS += physics/include/grins/axisym_boussinesq_buoyancy.h
 include_HEADERS += physics/include/grins/physics_factory.h
+include_HEADERS += physics/include/grins/physics_factory_helper.h
 include_HEADERS += physics/include/grins/grins_physics_names.h
 include_HEADERS += physics/include/grins/low_mach_navier_stokes_base.h
 include_HEADERS += physics/include/grins/low_mach_navier_stokes.h
@@ -386,6 +390,8 @@ include_HEADERS += properties/include/grins/hyperelasticity.h
 include_HEADERS += properties/include/grins/incompressible_plane_stress_hyperelasticity.h
 include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
 include_HEADERS += properties/include/grins/mooney_rivlin.h
+include_HEADERS += properties/include/grins/materials_parsing.h
+include_HEADERS += properties/include/grins/viscosity_base.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h

@@ -93,6 +93,7 @@ namespace GRINS
 
     StressStrainLaw _stress_strain_law;
 
+    //! Membrane thickness
     libMesh::Real _h0;
 
     bool _is_compressible;

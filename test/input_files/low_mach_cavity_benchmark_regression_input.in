@@ -1,3 +1,23 @@
+# Materials
+[Materials]
+  [./TestMaterial]
+    [./Viscosity]
+      model = 'constant'
+      value = '2.95456e-5' #[kg/m-s]
+    [../ThermalConductivity]
+      model = 'constant'
+      value = '.041801' #[W/m-K]
+    [../SpecificHeat]
+      model = 'constant'
+      value = '1004.5' #[J/kg-K]
+    [../ReferenceTemperature]
+      value = '600.0' #[K]
+    [../ThermodynamicPressure]
+      value = '101325.0' #[Pa]
+    [../GasConstant]
+      value = '287.0' #[J/kg-K]
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -5,6 +25,8 @@ enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
+
+material = 'TestMaterial'
 
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
@@ -14,24 +36,11 @@ V_order = 'FIRST'
 T_order = 'FIRST'
 P_order = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '101325' #[Pa]
-
-# Reference temperature
-T0 = '600' #[K]
-
-# Gas constant
-R = '287.0' #[J/kg-K]
-
 # Gravity vector
 g = '0.0 -9.81' #[m/s^2]
 
 # Ratio of wall temp differences
 epsilon = '0.6'
-
-conductivity_model = 'constant'
-viscosity_model = 'constant'
-specific_heat_model = 'constant'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -46,10 +55,10 @@ temp_bc_ids = '0 2 1 3'
 temp_bc_types = 'adiabatic adiabatic isothermal isothermal'
 
 # Cold wall at x = 1
-T_wall_1 = '${* ${T0} ${- 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
+T_wall_1 = '${* ${Materials/TestMaterial/ReferenceTemperature/value} ${- 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
 
 # Hot wall at x = 3
-T_wall_3 = '${* ${T0} ${+ 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
+T_wall_3 = '${* ${Materials/TestMaterial/ReferenceTemperature/value} ${+ 1.0 ${Physics/LowMachNavierStokes/epsilon} } }'
 
 enable_thermo_press_calc = 'true'
 
@@ -74,7 +83,7 @@ enabled_qois = 'average_nusselt_number'
 
 [./NusseltNumber]
 
-thermal_conductivity = '0.041801' #[W/m-K]
+material = 'TestMaterial'
 
 bc_ids = '3'
 
@@ -95,24 +104,6 @@ tau_factor = '0.05'
 #restart_file = 'cavity.xdr'
 
 []
-
-[Materials]
-
-[./Viscosity]
-
-mu = '2.95456e-5' #[kg/m-s]
-
-[../Conductivity]
-
-k = '.041801' #[W/m-K]
-
-[../SpecificHeat]
-
-cp = '1004.5' #[J/kg-K]
-
-[]
-
-
 
 # Mesh related options
 [Mesh]

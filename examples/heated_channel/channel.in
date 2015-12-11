@@ -1,3 +1,22 @@
+# Material properties
+[Materials]
+   [./Gas]
+      [./ThermodynamicPressure]
+         value = '100000'
+      [../ReferenceTemperature]
+         value = '300'
+      [../GasConstant]
+         value = '287.0'
+      [../ThermalConductivity]
+         model = 'constant'
+         value = '7.073943662' #[W/m-K] 
+      [../Viscosity]
+         model = 'constant'
+         value = '0.01178' #[kg/m-s] 
+      [../SpecificHeat]
+         model = 'constant'
+         value = '1004.5' #[J/kg-K] 
+[]
 
 # Options related to all Physics
 [Physics]
@@ -7,6 +26,8 @@ enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
 
+material = 'Gas'
+
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 T_FE_family = 'LAGRANGE'
@@ -15,21 +36,8 @@ V_order = 'FIRST'
 T_order = 'FIRST'
 P_order = 'FIRST'
 
-# Thermodynamic pressure
-p0 = '100000' #[Pa]
-
-# Reference temperature
-T0 = '300' #[K]
-
-# Gas constant
-R = '287.0' #[J/kg-K]
-
 # Gravity vector
 g = '0.0 -9.81' #[m/s^2]
-
-conductivity_model = 'constant'
-viscosity_model = 'constant'
-specific_heat_model = 'constant'
 
 # Boundary ids:
 # inflow (left)= 1
@@ -73,24 +81,6 @@ tau_factor = '0.005'
 
 
 []
-
-[Materials]
-
-[./Viscosity]
-
-mu = '0.01178' #[kg/m-s]
-
-[../Conductivity]
-
-k = '7.073943662' #[W/m-K]
-
-[../SpecificHeat]
-
-cp = '1004.5' #[J/kg-K]
-
-[]
-
-
 
 # Mesh related options
 [mesh-options]

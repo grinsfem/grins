@@ -25,6 +25,10 @@
 // This class
 #include "grins/mooney_rivlin.h"
 
+// GRINS
+#include "grins/common.h"
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -36,6 +40,13 @@ namespace GRINS
       _C1(-1),
       _C2(-1)
   {
+    // Warning about this constructor being deprecated
+    {
+      std::string warning = "WARNING: Use of this constructor is DEPRECATED.\n";
+      warning += "         Please update to use constructor with input material name.\n";
+      grins_warning(warning);
+    }
+
     //Force the user to specify C1 and C2
     if( !input.have_variable("Physics/MooneyRivlin/C1") ||
         !input.have_variable("Physics/MooneyRivlin/C2")    )
@@ -52,7 +63,49 @@ namespace GRINS
       (_C2, input, "Physics/MooneyRivlin/C2", _C2);
     return;
   }
-   
+
+  MooneyRivlin::MooneyRivlin( const GetPot& input, const std::string& material )
+    : HyperelasticStrainEnergy<MooneyRivlin>(),
+      ParameterUser("MooneyRivlin"),
+      _C1(-1),
+      _C2(-1)
+  {
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/MooneyRivlin/C1",
+                                           "Physics/MooneyRivlin/C1");
+    MaterialsParsing::duplicate_input_test(input,
+                                           "Materials/"+material+"/StressStrainLaw/MooneyRivlin/C2",
+                                           "Physics/MooneyRivlin/C2");
+
+    // Parse the new version
+    if( input.have_variable("Materials/"+material+"/StressStrainLaw/MooneyRivlin/C1")  &&
+        input.have_variable("Materials/"+material+"/StressStrainLaw/MooneyRivlin/C2") )
+      {
+        this->set_parameter
+          (_C1, input, "Materials/"+material+"/StressStrainLaw/MooneyRivlin/C1", _C1);
+        this->set_parameter
+          (_C2, input, "Materials/"+material+"/StressStrainLaw/MooneyRivlin/C2", _C2);
+      }
+    // Parse the old version
+    else if( input.have_variable("Physics/MooneyRivlin/C1") &&
+             input.have_variable("Physics/MooneyRivlin/C2") )
+      {
+        MaterialsParsing::dep_input_warning( "Physics/MooneyRivlin/C1",
+                                             "StressStrainLaw/MooneyRivlin/C1" );
+        MaterialsParsing::dep_input_warning( "Physics/MooneyRivlin/C2",
+                                             "StressStrainLaw/MooneyRivlin/C2" );
+
+        this->set_parameter
+          (_C1, input, "Physics/MooneyRivlin/C1", _C1);
+        this->set_parameter
+          (_C2, input, "Physics/MooneyRivlin/C2", _C2);
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Could not find consistent Mooney-Rivlin input!");
+      }
+  }
+
   MooneyRivlin::~MooneyRivlin()
   {
     return;

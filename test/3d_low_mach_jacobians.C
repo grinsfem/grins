@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
       const libMesh::System& system = es->get_system(system_name);
       
       libMesh::Parameters &params = es->parameters;
-      libMesh::Real T_init = libMesh_inputfile("Physics/LowMachNavierStokes/T0", 0.0);
-      libMesh::Real p0_init = libMesh_inputfile("Physics/LowMachNavierStokes/p0", 0.0);
+      libMesh::Real T_init = libMesh_inputfile("Materials/TestMaterial/ReferenceTemperature/value", 0.0);
+      libMesh::Real p0_init = libMesh_inputfile("Materials/TestMaterial/ThermodynamicPressure/value", 0.0);
 
       libMesh::Real& dummy_T  = params.set<libMesh::Real>("T_init");
       dummy_T = T_init;

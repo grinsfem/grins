@@ -39,6 +39,8 @@
 // GRINS
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_kinetics.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 int main(int argc, char* argv[])
 {
@@ -51,8 +53,8 @@ int main(int argc, char* argv[])
     }
 
   GetPot input( argv[1] );
-  
-  GRINS::AntiochMixture antioch_mixture(input);
+
+  GRINS::AntiochMixture antioch_mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
 
   GRINS::AntiochKinetics antioch_kinetics( antioch_mixture );
 

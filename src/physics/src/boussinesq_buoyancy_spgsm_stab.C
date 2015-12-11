@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -42,17 +43,11 @@ namespace GRINS
     : BoussinesqBuoyancyBase(physics_name,input),
       _flow_stab_helper(physics_name+"FlowStabHelper", input),
       _temp_stab_helper(physics_name+"TempStabHelper", input),
-      _rho(1.0),
-      _Cp(1.0),
+      _Cp(0.0),
       _k(1.0),
-      _mu(input)
+      _mu(input,MaterialsParsing::material_name(input,boussinesq_buoyancy))
   {
-    this->set_parameter
-      (_rho, input,
-       "Physics/"+incompressible_navier_stokes+"/rho", _rho);
-
-    this->set_parameter
-      (_Cp, input, "Physics/"+heat_transfer+"/Cp", _Cp);
+    MaterialsParsing::read_specific_heat( boussinesq_buoyancy, input, (*this), this->_Cp );
 
     this->set_parameter
       (_k, input, "Physics/"+heat_transfer+"/k", _k);
@@ -132,20 +127,20 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient residual = _rho_ref*_beta_T*(T-_T_ref)*_g;
+        libMesh::RealGradient residual = _rho*_beta_T*(T-_T_ref)*_g;
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
             Fu(i) += ( -tau_M*residual(0)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
-            // + _rho_ref*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp] )*JxW[qp];
+            // + _rho*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp] )*JxW[qp];
 
             Fv(i) += ( -tau_M*residual(1)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
-            // + _rho_ref*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp] )*JxW[qp];
+            // + _rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp] )*JxW[qp];
 
             if (_dim == 3)
               {
                 (*Fw)(i) += ( -tau_M*residual(2)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
-                // + _rho_ref*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp] )*JxW[qp];
+                // + _rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp] )*JxW[qp];
               }
 
             if (compute_jacobian)
@@ -215,7 +210,7 @@ namespace GRINS
         libMesh::Number T;
         T = context.interior_value(_temp_vars.T_var(), qp);
 
-        libMesh::RealGradient residual = _rho_ref*_beta_T*(T-_T_ref)*_g;
+        libMesh::RealGradient residual = _rho*_beta_T*(T-_T_ref)*_g;
 
         // First, an i-loop over the velocity degrees of freedom.
         // We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -298,13 +293,13 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += -_rho_ref*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp]*JxW[qp];
+            Fu(i) += -_rho*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp]*JxW[qp];
 
-            Fv(i) += -_rho_ref*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
+            Fv(i) += -_rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
 
             if (_dim == 3)
               {
-                (*Fw)(i) += -_rho_ref*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
+                (*Fw)(i) += -_rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
               }
 
             if (compute_jacobian)

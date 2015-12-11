@@ -1,0 +1,121 @@
+##### Mesh related options #####
+[Mesh]
+   [./Read]
+      filename = '@abs_top_srcdir@/test/input_files/mixed_dim_symmetric_square.exo'
+[]
+
+[Materials]
+   [./Membrane]
+      [./Density]
+        value = '1.0'
+      [../MembraneThickness]
+        value = '0.05'
+      [../StressStrainLaw]
+        model = 'incompressible_hyperelasticity'
+        strain_energy = 'mooney_rivlin'
+        [./MooneyRivlin]
+           C1 = '24'
+           C2 = '3.0'
+   [../../Cable]
+      [./Density]
+         value = '1.0'
+      [../CrossSectionalArea]
+         value = '0.1'
+      [../StressStrainLaw]
+         model = 'hookes_law'
+         [./HookesLaw]
+            E = '10000'
+            nu = '0.3'
+[]
+
+##### Options related to all Physics #####
+[Physics]
+enabled_physics = 'ElasticMembrane
+                   ElasticMembraneConstantPressure
+                   ElasticCable'
+
+##### Options for Elastic Membrane Physics #####
+[./ElasticMembrane]
+
+material = 'Membrane'
+
+enabled_subdomains = '1'
+
+FE_family = 'LAGRANGE'
+order = 'FIRST'
+
+bc_ids   = '1 2 3'
+bc_types = 'pinned yz_symmetry xz_symmetry'
+
+[../ElasticMembraneConstantPressure]
+
+enabled_subdomains = '1'
+
+pressure = '1.0'
+
+##### Options for Elastic Cable Physics #####
+[../ElasticCable]
+
+material = 'Cable'
+
+enabled_subdomains = '2'
+
+FE_family = 'LAGRANGE'
+order = 'FIRST'
+
+[]
+
+
+[SolverOptions]
+
+solver_type = 'libmesh_newmark'
+
+[]
+
+[unsteady-solver]
+
+   deltat = '0.05'
+   n_timesteps = '50'
+[]
+
+
+##### Linear and nonlinear solver options #####
+[linear-nonlinear-solver]
+relative_residual_tolerance = '1.0e-10'
+
+max_nonlinear_iterations =  '50' 
+max_linear_iterations = '2500'
+
+verify_analytic_jacobians = '1.0e-6'
+
+initial_linear_tolerance = '1.0e-10'
+
+use_numerical_jacobians_only = 'false'
+
+[]
+
+##### Visualization options ######
+[vis-options]
+output_vis = 'false'
+
+vis_output_file_prefix = 'sheet' 
+
+output_residual = 'false' 
+
+output_format = 'ExodusII xdr'
+
+##### Options for print info to the screen #####
+[screen-options]
+
+system_name = 'StretchedElasticSheet'
+
+print_equation_system_info = 'true'
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+print_element_jacobians = 'false'
+print_element_residuals = 'false'
+
+[]

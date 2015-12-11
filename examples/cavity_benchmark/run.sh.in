@@ -1,6 +1,7 @@
 #!/bin/sh
 
 GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
-GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
+DEFAULT_SOLVER_OPTIONS="-pc_type asm -pc_asm_overlap 8 -sub_pc_type ilu -sub_pc_factor_mat_ordering_type 1wd -sub_pc_factor_levels 10"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
 
 $GRINS_RUN @prefix@/examples/cavity_benchmark/cavity @prefix@/examples/cavity_benchmark/cavity.in $GRINS_SOLVER_OPTIONS

@@ -63,7 +63,7 @@ namespace GRINS
   {
   public:
 
-    CanteraMixture( const GetPot& input );
+    CanteraMixture( const GetPot& input, const std::string& material );
     ~CanteraMixture();
 
     Cantera::IdealGasMix& get_chemistry();
@@ -100,6 +100,8 @@ namespace GRINS
     libMesh::UniquePtr<Cantera::IdealGasMix> _cantera_gas;
 
     libMesh::UniquePtr<Cantera::Transport> _cantera_transport;
+
+    std::string parse_mixture( const GetPot& input, const std::string& material );
 
   private:
 

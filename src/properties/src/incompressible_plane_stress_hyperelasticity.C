@@ -41,6 +41,14 @@ namespace GRINS
   }
 
   template <typename StrainEnergy>
+  IncompressiblePlaneStressHyperelasticity<StrainEnergy>::IncompressiblePlaneStressHyperelasticity( const GetPot& input,
+                                                                                                    const std::string& material )
+    : _W(input,material)
+  {
+    return;
+  }
+
+  template <typename StrainEnergy>
   IncompressiblePlaneStressHyperelasticity<StrainEnergy>::~IncompressiblePlaneStressHyperelasticity()
   {
     return;

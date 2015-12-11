@@ -49,11 +49,23 @@ namespace GRINS
 
   protected:
 
+    //! Helper function for parsing/maintaing backward compatibility
+    void read_property( const GetPot& input,
+                        const std::string& old_option,
+                        const std::string& property,
+                        libMesh::Real& value );
+
+    //! Helper function for parsing/maintaing backward compatibility
+    void no_input_warning( const GetPot& input,
+                           const std::string& old_option,
+                           const std::string& material,
+                           const std::string& property );
+
     PrimitiveFlowFEVariables _flow_vars;
     PrimitiveTempFEVariables _temp_vars;
 
-    //! \f$ \rho_0 = \f$ reference density
-    libMesh::Number _rho_ref;
+    //! \f$ \rho = \f$ density
+    libMesh::Number _rho;
 
     //! \f$ T_0 = \f$ reference temperature 
     libMesh::Number _T_ref;

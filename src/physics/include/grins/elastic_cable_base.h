@@ -53,6 +53,12 @@ namespace GRINS
 
   protected:
 
+    //! Cross-sectional area of the cable
+    libMesh::Real _A;
+
+    //! Cable density
+    libMesh::Real  _rho;
+
     SolidMechanicsFEVariables _disp_vars;
 
     const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );

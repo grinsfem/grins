@@ -23,15 +23,20 @@ relative_step_tolerance = 1.0e-11
 verify_analytic_jacobians = 1.e-6
 
 [Materials]
+   [./TestMaterial]
+      [./Viscosity]
+          model = 'parsed'
+          value = '1.0'
 
-[./Viscosity]
-
-#mu = '2.95456e-5' #[kg/m-s]
-mu = '1.0'
-
-[../Conductivity]
-
-k = '1.0'
+      [../ThermalConductivity]
+          model = 'parsed'
+          value = '1.0'
+    [../Density]
+      value = '1.0'
+    [../SpecificHeat]
+      model = 'constant'
+      value = '1.0'
+[]
 
 # Visualization options
 [vis-options]
@@ -54,18 +59,10 @@ echo_physics = 'true'
 
 enabled_physics = 'Stokes HeatConduction'
 
-# This is a hack for the way we are currently parsing viscosity models
-[./IncompressibleNavierStokes]
-viscosity_model = 'parsed'
-
-# This is a hack for the way we are currently parsing conductivity models
-[../HeatTransfer]
-conductivity_model = 'parsed'
-
 # Options for Stokes physics
-[../Stokes]
+[./Stokes]
 
-rho = '1.0'
+material = 'TestMaterial'
 
 FE_family = LAGRANGE
 V_order = SECOND
@@ -88,8 +85,7 @@ pin_location = '2.5 0.5'
 
 [../HeatConduction]
 
-rho = 1.0
-Cp = 1.0
+material = 'TestMaterial'
 
 bc_ids = '3 0 2 1'
 

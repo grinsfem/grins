@@ -40,6 +40,8 @@ namespace GRINS
   public:
     MooneyRivlin( const GetPot& input );
 
+    MooneyRivlin( const GetPot& input, const std::string& material );
+
     virtual ~MooneyRivlin();
 
     // So we can make implementation private

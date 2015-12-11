@@ -36,6 +36,8 @@
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_evaluator.h"
 #include "grins/cached_values.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -262,7 +264,7 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture antioch_mixture(input);
+  GRINS::AntiochMixture antioch_mixture(input,"TestMaterial");
 
   int return_flag = 0;
 

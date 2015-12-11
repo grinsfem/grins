@@ -37,6 +37,25 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
+[Materials]
+   [./TestMaterial]
+      [./Viscosity]
+          model = 'constant'
+          value = '1.0'
+      [../ThermalConductivity]
+          model = 'constant'
+          value = '1.0'
+    [../Density]
+      value = '1.0'
+      [../SpecificHeat]
+         model = 'constant'
+         value = '1.0'
+      [../ReferenceTemperature]
+         value = '1.0'
+      [../ThermalExpansionCoeff]
+         value = '1.0'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -51,12 +70,11 @@ enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy Co
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
+material = 'TestMaterial'
+
 FE_family = LAGRANGE
 V_order = SECOND
 P_order = FIRST
-
-rho = 1.0
-mu = 1.0
 
 bc_ids = '2 3 1 0'
 bc_types = 'no_slip no_slip no_slip no_slip'
@@ -65,8 +83,7 @@ pin_pressure = 'true'
 
 [../HeatTransfer]
 
-rho = 1.0
-Cp = 1.0
+material = 'TestMaterial'
 
 bc_ids = '3 0 2 1'
 
@@ -77,9 +94,7 @@ T_wall_3 = 10
 
 [../BoussinesqBuoyancy]
 
-rho_ref = 1.0
-T_ref = 1.0
-beta_T = 1.0
+material = 'TestMaterial'
 
 g = '0 -9.8'
 
@@ -100,13 +115,5 @@ u_velocity = 'u'
 v_velocity = 'v'
 w_velocity = 'w'
 pressure = 'p'
-
-[]
-
-[Materials]
-
-[./Conductivity]
-
-k = 1.0
 
 []

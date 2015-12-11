@@ -27,31 +27,26 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// This class
 #include "grins/antioch_constant_transport_mixture.h"
+
+// GRINS
+#include "grins/materials_parsing.h"
 
 namespace GRINS
 {
   template<typename Thermo>
-  AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input )
-    : AntiochMixture(input),
-      _mu( input("Materials/Viscosity/mu", 0.0) ),
+  AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input,
+                                                                            const std::string& material )
+    : AntiochMixture(input,material),
+      _mu(NULL),
       _conductivity(NULL),
-      _diffusivity( new Antioch::ConstantLewisDiffusivity<libMesh::Real>( input("Physics/Antioch/Le", 0.0) ) )
+      _diffusivity(NULL)
   {
-    if( !input.have_variable("Materials/Viscosity/mu") )
-      {
-        std::cerr << "Error: Must specify viscosity value for constant viscosity model!" << std::endl;
-        libmesh_error();
-      }
-
-    if( !input.have_variable("Physics/Antioch/Le") )
-      {
-        std::cerr << "Error: Must provide Lewis number for constant_lewis diffusivity model."
-                  << std::endl;
-        libmesh_error();
-      }
-
-    this->build_conductivity(input);
+    libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
+    _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
+    _mu.reset( new ConstantViscosity(input,material) );
+    this->build_conductivity(input,material);
 
     return;
   }

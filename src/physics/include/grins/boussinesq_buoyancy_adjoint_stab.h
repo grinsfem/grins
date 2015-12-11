@@ -66,8 +66,6 @@ namespace GRINS
 
   protected:
 
-    libMesh::Number _rho;
-
     //! Viscosity object
     Viscosity _mu;
 

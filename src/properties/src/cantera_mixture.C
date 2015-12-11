@@ -30,17 +30,21 @@
 // This class
 #include "grins/cantera_mixture.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  CanteraMixture::CanteraMixture( const GetPot& input )
+  CanteraMixture::CanteraMixture( const GetPot& input, const std::string& material )
     : _cantera_gas(NULL),
       _cantera_transport(NULL)
   {
-    const std::string cantera_chem_file = input( "Physics/Chemistry/chem_file", "DIE!" );
-    const std::string mixture = input( "Physics/Chemistry/mixture", "DIE!" );
+    const std::string cantera_chem_file = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
+
+    std::string mixture = this->parse_mixture(input,material);
 
     try
       {
@@ -68,6 +72,29 @@ namespace GRINS
   CanteraMixture::~CanteraMixture()
   {
     return;
+  }
+
+  std::string CanteraMixture::parse_mixture( const GetPot& input, const std::string& material )
+  {
+    std::string mixture;
+
+    if( input.have_variable("Physics/Chemistry/mixture") )
+      {
+        MaterialsParsing::dep_input_warning("Physics/Chemistry/mixture",
+                                            "GasMixture/Cantera/gas_mixture" );
+
+        mixture = input( "Physics/Chemistry/mixture", "DIE!" );
+      }
+    else if( input.have_variable("Materials/"+material+"/GasMixture/Cantera/gas_mixture") )
+      {
+        mixture = input("Materials/"+material+"/GasMixture/Cantera/gas_mixture", "DIE!");
+      }
+    else
+      {
+        libmesh_error_msg("ERROR: Could not find valid input for Cantera gas_mixture!");
+      }
+
+    return mixture;
   }
 
   libMesh::Real CanteraMixture::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const

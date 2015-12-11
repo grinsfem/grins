@@ -27,9 +27,11 @@
 #include "grins/inc_navier_stokes_base.h"
 
 // GRINS
+#include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/grins_physics_names.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -45,12 +47,10 @@ namespace GRINS
                                                                      const GetPot& input )
     : Physics(my_physics_name, input),
       _flow_vars(input, core_physics_name),
-      _rho(1.0),
-      _mu(input)
+      _rho(0.0),
+      _mu(input,MaterialsParsing::material_name(input,core_physics_name))
   {
-    this->set_parameter
-      (this->_rho, input,
-       "Physics/"+core_physics_name+"/rho", this->_rho);
+    MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
   }
 
   template<class Mu>
@@ -124,7 +124,6 @@ namespace GRINS
     ParameterUser::register_parameter(param_name, param_pointer);
     _mu.register_parameter(param_name, param_pointer);
   }
-
 
 } // namespace GRINS
 

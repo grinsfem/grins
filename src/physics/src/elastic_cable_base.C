@@ -28,6 +28,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -38,9 +39,24 @@ namespace GRINS
   ElasticCableBase::ElasticCableBase( const PhysicsName& physics_name,
                                       const GetPot& input )
     : Physics(physics_name,input),
+      _A( 0.0 ),
+      _rho(0.0),
       _disp_vars(input,physics_name)
   {
-    return;
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+physics_name+"/A",
+                                     "CrossSectionalArea",
+                                     elastic_cable,
+                                     (*this),
+                                     _A );
+
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+physics_name+"/rho",
+                                     "Density",
+                                     elastic_cable,
+                                     (*this),
+                                     _rho );
+
   }
 
   ElasticCableBase::~ElasticCableBase()

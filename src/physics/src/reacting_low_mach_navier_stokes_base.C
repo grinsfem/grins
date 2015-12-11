@@ -34,6 +34,7 @@
 #include "grins/cantera_mixture.h"
 #include "grins/grins_enums.h"
 #include "grins/antioch_mixture.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -46,7 +47,7 @@ namespace GRINS
   ReactingLowMachNavierStokesBase<Mixture,Evaluator>::ReactingLowMachNavierStokesBase(const std::string& physics_name,
 									    const GetPot& input)
     : Physics(physics_name, input),
-      _gas_mixture(input),
+      _gas_mixture(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes)),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
       _fixed_rho_value(0.0)
   {
@@ -54,8 +55,12 @@ namespace GRINS
       (_fixed_rho_value, input,
        "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
 
+    // Parse species and setup variable names
+    MaterialsParsing::parse_species_varnames(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes),_species_var_names);
+    this->_n_species = _species_var_names.size();
+
     this->read_input_options(input);
-    
+
     return;
   }
 
@@ -86,26 +91,19 @@ namespace GRINS
 
     this->_T_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/T_order", "SECOND") );
 
-    // Read variable naming info
-    this->_n_species = input.vector_variable_size("Physics/Chemistry/species");
-
-    _species_var_names.reserve(this->_n_species);
-    for( unsigned int i = 0; i < this->_n_species; i++ )
-      {
-	/*! \todo Make this prefix string an input option */
-	std::string var_name = "w_"+std::string(input( "Physics/Chemistry/species", "DIE!", i ));
-	_species_var_names.push_back( var_name );
-      }
-
     this->_u_var_name = input("Physics/VariableNames/u_velocity", GRINS::u_var_name_default );
     this->_v_var_name = input("Physics/VariableNames/v_velocity", GRINS::v_var_name_default );
     this->_w_var_name = input("Physics/VariableNames/w_velocity", GRINS::w_var_name_default );
     this->_p_var_name = input("Physics/VariableNames/pressure", GRINS::p_var_name_default );
     this->_T_var_name = input("Physics/VariableNames/temperature", GRINS::T_var_name_default );
 
-    // Read thermodynamic state info
-    this->set_parameter
-      (_p0, input, "Physics/"+reacting_low_mach_navier_stokes+"/p0", 0.0 ); /* thermodynamic pressure */
+    // Read thermodynamic pressure info
+    MaterialsParsing::read_property( input,
+                                     "Physics/"+reacting_low_mach_navier_stokes+"/p0",
+                                     "ThermodynamicPressure",
+                                     reacting_low_mach_navier_stokes,
+                                     (*this),
+                                     _p0 );
 
     _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
@@ -119,10 +117,10 @@ namespace GRINS
 
     _g(0) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 1 );
-  
+
     if( g_dim == 3)
       _g(2) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 2 );
-  
+
     return;
   }
 
@@ -135,7 +133,7 @@ namespace GRINS
     _species_vars.reserve(this->_n_species);
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
-	_species_vars.push_back( system->add_variable( _species_var_names[i], 
+	_species_vars.push_back( system->add_variable( _species_var_names[i],
 						       this->_species_order, _species_FE_family) );
       }
 

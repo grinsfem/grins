@@ -73,7 +73,7 @@ namespace GRINS
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 
     this->set_parameter
-      (_rho_ref, input,
+      (_rho, input,
        "Physics/"+axisymmetric_boussinesq_buoyancy+"/rho_ref", 1.0);
 
     this->set_parameter
@@ -155,15 +155,15 @@ namespace GRINS
 	// for both at the same time.
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-	    Fr(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
-	    Fz(i) += -_rho_ref*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
+	    Fr(i) += -_rho*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
+	    Fz(i) += -_rho*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
 
 	    if (compute_jacobian && context.get_elem_solution_derivative())
 	      {
 		for (unsigned int j=0; j != n_T_dofs; j++)
 		  {
 		    const libMesh::Number val =
-                      -_rho_ref*_beta_T*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp]
+                      -_rho*_beta_T*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp]
                       * context.get_elem_solution_derivative();
 		    KrT(i,j) += val*_g(0);
 		    KzT(i,j) += val*_g(1);

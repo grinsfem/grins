@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
+#include "grins/physics_factory_helper.h"
 
 // libMesh
 #include "libmesh/parallel.h"
@@ -100,7 +101,10 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  std::string chem_lib = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/thermochemistry_library", "DIE!");
+  std::string chem_lib;
+  GRINS::PhysicsFactoryHelper::parse_thermochemistry_model( libMesh_inputfile,
+                                                            GRINS::reacting_low_mach_navier_stokes,
+                                                            chem_lib );
 
   if( chem_lib == std::string("cantera") )
     {
@@ -120,6 +124,7 @@ int main(int argc, char* argv[])
     }
   else
     {
+      std::cerr << "ERROR: Invalid thermochemistry library!" << std::endl;
       return_flag = 1;
     }
 

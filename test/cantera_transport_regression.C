@@ -31,6 +31,8 @@
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_transport.h"
 #include "grins/cached_values.h"
+#include "grins/materials_parsing.h"
+#include "grins/grins_physics_names.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -49,13 +51,13 @@ int main(int argc, char* argv[])
   GetPot input( argv[1] );
 
   std::vector<std::string> species(5);
-  species[0] = input( "Physics/Chemistry/species", "DIE!", 0 );
-  species[1] = input( "Physics/Chemistry/species", "DIE!", 1 );
-  species[2] = input( "Physics/Chemistry/species", "DIE!", 2 );
-  species[3] = input( "Physics/Chemistry/species", "DIE!", 3 );
-  species[4] = input( "Physics/Chemistry/species", "DIE!", 4 );
+  species[0] = input( "Materials/TestMaterial/GasMixture/species", "DIE!", 0 );
+  species[1] = input( "Materials/TestMaterial/GasMixture/species", "DIE!", 1 );
+  species[2] = input( "Materials/TestMaterial/GasMixture/species", "DIE!", 2 );
+  species[3] = input( "Materials/TestMaterial/GasMixture/species", "DIE!", 3 );
+  species[4] = input( "Materials/TestMaterial/GasMixture/species", "DIE!", 4 );
 
-  GRINS::CanteraMixture cantera_mixture(input);
+  GRINS::CanteraMixture cantera_mixture(input,"TestMaterial");
 
   GRINS::CanteraTransport cantera_trans(cantera_mixture);
 
