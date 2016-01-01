@@ -434,26 +434,26 @@ namespace GRINS
 
 	libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
 	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
-      
+
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) += (  tau_C*RC_t*u_gradphi[i][qp](0)
 			+ tau_M*RM_t(0)*rho*U*u_gradphi[i][qp]
-			+ mu*tau_M*RM_t(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
-					    + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1) 
-					    - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) ) 
+			+ mu*tau_M*RM_t(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1)
+					    + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1)
+					    - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) )
 			)*JxW[qp];
 
 	    Fv(i) += ( tau_C*RC_t*u_gradphi[i][qp](1)
 		       + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp]
-		       + mu*tau_M*RM_t(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
-					   + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1) 
-					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) ) 
+		       + mu*tau_M*RM_t(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1)
+					   + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1)
+					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) )
 		       )*JxW[qp];
 
 	    if( this->_dim == 3 )
 	      {
-		(*Fw)(i) -= mu*tau_M*RM_t(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2)
+		Fu(i) -= mu*tau_M*RM_t(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2)
 					   - 2.0/3.0*u_hessphi[i][qp](2,0))*JxW[qp];
 
 		Fv(i) -= mu*tau_M*RM_t(1)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](1,2)
