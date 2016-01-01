@@ -38,9 +38,7 @@ namespace GRINS
   LowMachNavierStokesBCHandling::LowMachNavierStokesBCHandling(const std::string& physics_name,
 							       const GetPot& input)
     : BCHandlingBase(physics_name),
-      _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
-      _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
-      _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
+      _flow_vars(input),
       _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
   {
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
@@ -113,6 +111,8 @@ namespace GRINS
 
   void LowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
+    _flow_vars.init(const_cast<libMesh::FEMSystem*>(&system));
+
     _T_var = system.variable_number( _T_var_name );
 
     return;
@@ -305,11 +305,11 @@ namespace GRINS
     int dim = system->get_mesh().mesh_dimension();
 
     VariableIndex T_var = system->variable_number( _T_var_name );
-    VariableIndex u_var = system->variable_number( _u_var_name );
-    VariableIndex v_var = system->variable_number( _v_var_name );
+    VariableIndex u_var = _flow_vars.u_var();
+    VariableIndex v_var = _flow_vars.v_var();
     VariableIndex w_var = -1;
     if( dim == 3 )
-      w_var = system->variable_number( _w_var_name );
+      w_var = _flow_vars.w_var();
 
     switch( bc_type )
       {
