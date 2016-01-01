@@ -29,6 +29,7 @@
 #include "grins/bc_handling_base.h"
 #include "grins/parabolic_profile.h"
 #include "grins/primitive_flow_variables.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -65,9 +66,7 @@ namespace GRINS
 
     PrimitiveFlowVariables _flow_vars;
 
-    std::string _T_var_name;
-
-    GRINS::VariableIndex _T_var;
+    PrimitiveTempVariables _temp_vars;
 
     // We need a second container to stash dirichlet values for the energy equation
     std::map< GRINS::BoundaryID, libMesh::Real > _T_values;

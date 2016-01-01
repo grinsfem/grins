@@ -39,7 +39,7 @@ namespace GRINS
 							       const GetPot& input)
     : BCHandlingBase(physics_name),
       _flow_vars(input),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
+      _temp_vars(input)
   {
     std::string id_str = "Physics/"+_physics_name+"/vel_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/vel_bc_types";
@@ -113,7 +113,7 @@ namespace GRINS
   {
     _flow_vars.init(const_cast<libMesh::FEMSystem*>(&system));
 
-    _T_var = system.variable_number( _T_var_name );
+    _temp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
 
     return;
   }
@@ -304,7 +304,7 @@ namespace GRINS
   {
     int dim = system->get_mesh().mesh_dimension();
 
-    VariableIndex T_var = system->variable_number( _T_var_name );
+    VariableIndex T_var = _temp_vars.T_var();
     VariableIndex u_var = _flow_vars.u_var();
     VariableIndex v_var = _flow_vars.v_var();
     VariableIndex w_var = -1;
