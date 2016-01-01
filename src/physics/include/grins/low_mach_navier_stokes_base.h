@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/grins_enums.h"
 #include "grins/primitive_flow_fe_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 //libMesh
 #include "libmesh/enum_order.h"
@@ -97,18 +98,13 @@ namespace GRINS
 
     PrimitiveFlowFEVariables _flow_vars;
 
+    PrimitiveTempFEVariables _temp_vars;
+
     //! Indices for each (owned) variable;
-    VariableIndex _T_var; /* Index for pressure field */
     VariableIndex _p0_var; /* Index for thermodynamic pressure */
 
     //! Names of each (owned) variable in the system
-    std::string _T_var_name, _p0_var_name;
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _T_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _T_order;
+    std::string _p0_var_name;
 
     //! Viscosity object
     Viscosity _mu;
@@ -135,7 +131,7 @@ namespace GRINS
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::T( const libMesh::Point& p, const AssemblyContext& c ) const
   {
-    return c.point_value(_T_var,p);
+    return c.point_value(_temp_vars.T_var(),p);
   }
 
   template<class V, class SH, class TC>

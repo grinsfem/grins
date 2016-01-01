@@ -61,7 +61,7 @@ namespace GRINS
 
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
-    context.get_element_fe(this->_T_var)->get_d2phi();
+    context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
 
     return;
   }
@@ -70,8 +70,8 @@ namespace GRINS
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( AssemblyContext& context,
 											       unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-    libMesh::RealGradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
+    libMesh::RealGradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
 
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u_var(), qp),
 			     context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
@@ -96,8 +96,8 @@ namespace GRINS
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( AssemblyContext& context,
 												  unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-    libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
+    libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
 
     libMesh::Real RC_t = -T_dot/T;
 
@@ -116,7 +116,7 @@ namespace GRINS
   libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( AssemblyContext& context,
 												     unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
 
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
 
@@ -161,7 +161,7 @@ namespace GRINS
 
     if( this->_mu.deriv(T) != 0.0 )
       {
-	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
+	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
 
 	libMesh::Gradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
 	libMesh::Gradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
@@ -205,7 +205,7 @@ namespace GRINS
   libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( AssemblyContext& context,
 													unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
 
     libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u_var(), qp), context.interior_value(this->_flow_vars.v_var(), qp) );
@@ -220,9 +220,9 @@ namespace GRINS
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( AssemblyContext& context,
 											   unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
-    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
-    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
+    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
+    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
 
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
     libMesh::Real rho_cp = rho*this->_cp(T);
@@ -245,10 +245,10 @@ namespace GRINS
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( AssemblyContext& context,
 											      unsigned int qp ) const
   {
-    libMesh::Real T = context.fixed_interior_value(this->_T_var, qp);
+    libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T_var(), qp);
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
     libMesh::Real rho_cp = rho*this->_cp(T);
-    libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
+    libMesh::Real T_dot = context.interior_value(this->_temp_vars.T_var(), qp);
 
     libMesh::Real RE_t = rho_cp*T_dot;
 
