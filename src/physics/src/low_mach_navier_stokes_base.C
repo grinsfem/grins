@@ -47,6 +47,7 @@ namespace GRINS
                                                              const std::string& core_physics_name,
                                                              const GetPot& input)
     : Physics(physics_name, input),
+      _flow_vars(input, core_physics_name),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
@@ -66,29 +67,13 @@ namespace GRINS
   void LowMachNavierStokesBase<Mu,SH,TC>::read_input_options( const GetPot& input )
   {
     // Read FE info
-    this->_V_FE_family =
-      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/V_FE_family", "LAGRANGE") );
-
-    this->_P_FE_family =
-      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/P_FE_family", "LAGRANGE") );
-
     this->_T_FE_family =
       libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") );
-
-    this->_V_order =
-      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/V_order", "SECOND") );
-
-    this->_P_order =
-      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/P_order", "FIRST") );
 
     this->_T_order =
       libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+low_mach_navier_stokes+"/T_order", "SECOND") );
 
     // Read variable naming info
-    this->_u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    this->_v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    this->_w_var_name = input("Physics/VariableNames/w_velocity", w_var_name_default );
-    this->_p_var_name = input("Physics/VariableNames/pressure", p_var_name_default );
     this->_T_var_name = input("Physics/VariableNames/temperature", T_var_name_default );
 
     // Read thermodynamic state info
@@ -140,15 +125,8 @@ namespace GRINS
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
 
-    _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
-    _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
+    this->_flow_vars.init(system);
 
-    if (_dim == 3)
-      _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
-    else
-      _w_var = _u_var;
-
-    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
     _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family);
 
     /* If we need to compute the thermodynamic pressure, we force this to be a first
@@ -164,14 +142,14 @@ namespace GRINS
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
-    system->time_evolving(_u_var);
-    system->time_evolving(_v_var);
+    system->time_evolving(_flow_vars.u_var());
+    system->time_evolving(_flow_vars.v_var());
 
     if (dim == 3)
-      system->time_evolving(_w_var);
+      system->time_evolving(_flow_vars.w_var());
 
     system->time_evolving(_T_var);
-    system->time_evolving(_p_var);
+    system->time_evolving(_flow_vars.p_var());
 
     if( _enable_thermo_press_calc )
       system->time_evolving(_p0_var);
@@ -185,18 +163,18 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_u_var)->get_JxW();
-    context.get_element_fe(_u_var)->get_phi();
-    context.get_element_fe(_u_var)->get_dphi();
-    context.get_element_fe(_u_var)->get_xyz();
+    context.get_element_fe(_flow_vars.u_var())->get_JxW();
+    context.get_element_fe(_flow_vars.u_var())->get_phi();
+    context.get_element_fe(_flow_vars.u_var())->get_dphi();
+    context.get_element_fe(_flow_vars.u_var())->get_xyz();
 
     context.get_element_fe(_T_var)->get_JxW();
     context.get_element_fe(_T_var)->get_phi();
     context.get_element_fe(_T_var)->get_dphi();
     context.get_element_fe(_T_var)->get_xyz();
 
-    context.get_element_fe(_p_var)->get_phi();
-    context.get_element_fe(_p_var)->get_xyz();
+    context.get_element_fe(_flow_vars.p_var())->get_phi();
+    context.get_element_fe(_flow_vars.p_var())->get_xyz();
 
     return;
   }
