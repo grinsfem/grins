@@ -136,6 +136,7 @@ libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
 libgrins_la_SOURCES += physics/src/source_term_base.C
 libgrins_la_SOURCES += physics/src/constant_source_term.C
 libgrins_la_SOURCES += physics/src/parsed_source_term.C
+libgrins_la_SOURCES += physics/src/thermo_pressure_variable.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -356,6 +357,7 @@ include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
 include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
+include_HEADERS += physics/include/grins/thermo_pressure_variable.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
