@@ -35,6 +35,7 @@
 #include "grins/primitive_flow_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
+#include "grins/species_mass_fracs_fe_variables.h"
 
 namespace GRINS
 {
@@ -85,26 +86,16 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    //! Number of species
-    unsigned int _n_species;
-
     PrimitiveFlowFEVariables _flow_vars;
 
     PrimitiveTempFEVariables _temp_vars;
 
     ThermoPressureFEVariable _p0_var;
 
-    //! Indices for each (owned) variable;
-    std::vector<VariableIndex> _species_vars; /* Indicies for species densities */
+    SpeciesMassFractionsFEVariables _species_vars;
 
-    //! Names of each (owned) variable in the system
-    std::vector<std::string> _species_var_names;
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _species_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _species_order;
+    //! Number of species
+    unsigned int _n_species;
 
     //! Gravity vector
     libMesh::Point _g; 
@@ -144,7 +135,7 @@ namespace GRINS
 
     for( unsigned int var = 0; var < this->_n_species; var++ )
       {
-        mass_fracs[var] = c.point_value(_species_vars[var],p);
+        mass_fracs[var] = c.point_value(_species_vars.species_var(var),p);
       }
 
     return;

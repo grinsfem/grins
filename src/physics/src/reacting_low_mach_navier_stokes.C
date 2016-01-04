@@ -195,7 +195,7 @@ namespace GRINS
         libmesh_not_implemented();
       }
     // Convenience
-    const VariableIndex s0_var = this->_species_vars[0];
+    const VariableIndex s0_var = this->_species_vars.species_var(0);
 
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
@@ -343,7 +343,7 @@ namespace GRINS
         for(unsigned int s=0; s < this->_n_species; s++ )
           {
             libMesh::DenseSubVector<libMesh::Number> &Fs =
-              context.get_elem_residual(this->_species_vars[s]); // R_{s}
+              context.get_elem_residual(this->_species_vars.species_var(s)); // R_{s}
 
             const libMesh::Real term1 = -rho*(U*grad_ws[s]) + omega_dot[s];
             const libMesh::Gradient term2 = -rho*D[s]*grad_ws[s];
@@ -517,8 +517,8 @@ namespace GRINS
 	  {
 	    /*! \todo Need to figure out something smarter for controling species
 	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars[s],qp), 0.0 );
-	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars[s],qp);
+	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species_var(s),qp), 0.0 );
+	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species_var(s),qp);
 	  }
 	
 	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
@@ -628,7 +628,7 @@ namespace GRINS
 	  {
 	    /*! \todo Need to figure out something smarter for controling species
 	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars[s],qp), 0.0 );
+	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars.species_var(s),qp), 0.0 );
 	  }
 	const libMesh::Real p0 = this->get_p0_steady_side(context, qp);
 

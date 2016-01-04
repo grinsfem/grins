@@ -51,16 +51,14 @@ namespace GRINS
       _flow_vars(input, reacting_low_mach_navier_stokes),
       _temp_vars(input, reacting_low_mach_navier_stokes),
       _p0_var(input, reacting_low_mach_navier_stokes),
+      _species_vars(input, reacting_low_mach_navier_stokes),
+      _n_species(_species_vars.n_species()),
       _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
       _fixed_rho_value(0.0)
   {
     this->set_parameter
       (_fixed_rho_value, input,
        "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
-
-    // Parse species and setup variable names
-    MaterialsParsing::parse_species_varnames(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes),_species_var_names);
-    this->_n_species = _species_var_names.size();
 
     this->read_input_options(input);
 
@@ -76,12 +74,6 @@ namespace GRINS
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::read_input_options( const GetPot& input )
   {
-    // Read FE family info
-    this->_species_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_FE_family", "LAGRANGE") );
-
-    // Read FE family info
-    this->_species_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+reacting_low_mach_navier_stokes+"/species_order", "SECOND") );
-
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
                                      "Physics/"+reacting_low_mach_navier_stokes+"/p0",
@@ -109,14 +101,8 @@ namespace GRINS
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
-    
-    _species_vars.reserve(this->_n_species);
-    for( unsigned int i = 0; i < this->_n_species; i++ )
-      {
-	_species_vars.push_back( system->add_variable( _species_var_names[i],
-						       this->_species_order, _species_FE_family) );
-      }
 
+    this->_species_vars.init(system);
     this->_flow_vars.init(system);
     this->_temp_vars.init(system);
 
@@ -135,7 +121,7 @@ namespace GRINS
 
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
-	system->time_evolving( _species_vars[i] );
+	system->time_evolving( _species_vars.species_var(i) );
       }
 
     system->time_evolving(_flow_vars.u_var());
@@ -159,10 +145,10 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_species_vars[0])->get_JxW();
-    context.get_element_fe(_species_vars[0])->get_phi();
-    context.get_element_fe(_species_vars[0])->get_dphi();
-    context.get_element_fe(_species_vars[0])->get_xyz();
+    context.get_element_fe(_species_vars.species_var(0))->get_JxW();
+    context.get_element_fe(_species_vars.species_var(0))->get_phi();
+    context.get_element_fe(_species_vars.species_var(0))->get_dphi();
+    context.get_element_fe(_species_vars.species_var(0))->get_xyz();
 
     context.get_element_fe(_flow_vars.u_var())->get_JxW();
     context.get_element_fe(_flow_vars.u_var())->get_phi();
