@@ -42,7 +42,9 @@ namespace GRINS
 
   AxisymmetricBoussinesqBuoyancy::AxisymmetricBoussinesqBuoyancy( const std::string& physics_name,
 								  const GetPot& input )
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _flow_vars(input, incompressible_navier_stokes),
+      _temp_vars(input, axisymmetric_heat_transfer)
   {
     this->read_input_options(input);
     return;
@@ -55,23 +57,6 @@ namespace GRINS
 
   void AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
   {
-    this->_T_FE_family =
-      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+axisymmetric_heat_transfer+"/FE_family", "LAGRANGE") );
-
-    this->_T_order =
-      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
-
-    this->_V_FE_family =
-      libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
-
-    this->_V_order =
-      libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
-
-    // Read variable naming info
-    this->_u_r_var_name = input("Physics/VariableNames/r_velocity", u_r_var_name_default );
-    this->_u_z_var_name = input("Physics/VariableNames/z_velocity", u_z_var_name_default );
-    this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     this->set_parameter
       (_rho, input,
        "Physics/"+axisymmetric_boussinesq_buoyancy+"/rho_ref", 1.0);
@@ -92,10 +77,8 @@ namespace GRINS
   {
     this->_dim = system->get_mesh().mesh_dimension();
 
-    _u_r_var = system->add_variable(_u_r_var_name, _V_order, _V_FE_family);
-    _u_z_var = system->add_variable(_u_z_var_name, _V_order, _V_FE_family);
-    _T_var   = system->add_variable(_T_var_name, _T_order, _T_FE_family);
-    return;
+    this->_temp_vars.init(system);
+    this->_flow_vars.init(system);
   }
 
   void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
@@ -107,32 +90,32 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(_u_r_var).size();
-    const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u_var()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T_var()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_u_r_var)->get_JxW();
+      context.get_element_fe(_flow_vars.u_var())->get_JxW();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& vel_phi =
-      context.get_element_fe(_u_r_var)->get_phi();
+      context.get_element_fe(_flow_vars.u_var())->get_phi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.get_element_fe(_T_var)->get_phi();
+      context.get_element_fe(_temp_vars.T_var())->get_phi();
 
     // Physical location of the quadrature points
     const std::vector<libMesh::Point>& u_qpoint =
-      context.get_element_fe(_u_r_var)->get_xyz();
+      context.get_element_fe(_flow_vars.u_var())->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &Fr = context.get_elem_residual(_u_r_var); // R_{r}
-    libMesh::DenseSubVector<libMesh::Number> &Fz = context.get_elem_residual(_u_z_var); // R_{z}
+    libMesh::DenseSubVector<libMesh::Number> &Fr = context.get_elem_residual(_flow_vars.u_var()); // R_{r}
+    libMesh::DenseSubVector<libMesh::Number> &Fz = context.get_elem_residual(_flow_vars.v_var()); // R_{z}
 
     // Get Jacobians
-    libMesh::DenseSubMatrix<libMesh::Number> &KrT = context.get_elem_jacobian(_u_r_var, _T_var); // R_{r},{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KzT = context.get_elem_jacobian(_u_z_var, _T_var); // R_{z},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KrT = context.get_elem_jacobian(_flow_vars.u_var(), _temp_vars.T_var()); // R_{r},{T}
+    libMesh::DenseSubMatrix<libMesh::Number> &KzT = context.get_elem_jacobian(_flow_vars.v_var(), _temp_vars.T_var()); // R_{z},{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -148,7 +131,7 @@ namespace GRINS
 
 	// Compute the solution & its gradient at the old Newton iterate.
 	libMesh::Number T;
-	T = context.interior_value(_T_var, qp);
+	T = context.interior_value(_temp_vars.T_var(), qp);
 
 	// First, an i-loop over the velocity degrees of freedom.
 	// We know that n_u_dofs == n_v_dofs so we can compute contributions
