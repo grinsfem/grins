@@ -32,6 +32,7 @@
 #include "grins/grins_enums.h"
 #include "grins/primitive_flow_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
+#include "grins/thermo_pressure_fe_variable.h"
 
 //libMesh
 #include "libmesh/enum_order.h"
@@ -100,11 +101,7 @@ namespace GRINS
 
     PrimitiveTempFEVariables _temp_vars;
 
-    //! Indices for each (owned) variable;
-    VariableIndex _p0_var; /* Index for thermodynamic pressure */
-
-    //! Names of each (owned) variable in the system
-    std::string _p0_var_name;
+    ThermoPressureFEVariable _p0_var;
 
     //! Viscosity object
     Viscosity _mu;
@@ -140,23 +137,23 @@ namespace GRINS
   {
     return p0/(this->_R*T);
   }
-  
+
   template<class V, class SH, class TC>
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::d_rho_dT( libMesh::Real T, libMesh::Real p0 ) const
   {
     return -p0/(this->_R*(T*T));
   }
-  
+
   template<class V, class SH, class TC>
-  inline 
+  inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c,
 								 unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.interior_value( _p0_var, qp );
+	p0 = c.interior_value( _p0_var.p0_var(), qp );
       }
     else
       {
@@ -166,14 +163,14 @@ namespace GRINS
   }
 
   template<class V, class SH, class TC>
-  inline 
+  inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady_side( const AssemblyContext& c,
 								      unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.side_value( _p0_var, qp );
+	p0 = c.side_value( _p0_var.p0_var(), qp );
       }
     else
       {
@@ -183,14 +180,14 @@ namespace GRINS
   }
 
   template<class V, class SH, class TC>
-  inline 
-  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c, 
+  inline
+  libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c,
 								 const libMesh::Point& p ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.point_value( _p0_var, p );
+	p0 = c.point_value( _p0_var.p0_var(), p );
       }
     else
       {
@@ -200,13 +197,13 @@ namespace GRINS
   }
 
   template<class V, class SH, class TC>
-  inline 
+  inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_transient( AssemblyContext& c, unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.fixed_interior_value( _p0_var, qp );
+	p0 = c.fixed_interior_value( _p0_var.p0_var(), qp );
       }
     else
       {

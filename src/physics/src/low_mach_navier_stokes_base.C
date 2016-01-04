@@ -49,6 +49,7 @@ namespace GRINS
     : Physics(physics_name, input),
       _flow_vars(input, core_physics_name),
       _temp_vars(input, core_physics_name),
+      _p0_var(input, core_physics_name),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
@@ -93,11 +94,6 @@ namespace GRINS
 
     _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
 
-    if( _enable_thermo_press_calc )
-      {
-	_p0_var_name = input("Physics/VariableNames/thermo_presure", "p0" );
-      }
-
     // Read gravity vector
     unsigned int g_dim = input.vector_variable_size("Physics/"+low_mach_navier_stokes+"/g");
 
@@ -122,7 +118,7 @@ namespace GRINS
     /* If we need to compute the thermodynamic pressure, we force this to be a first
        order scalar variable. */
     if( _enable_thermo_press_calc )
-      _p0_var = system->add_variable( _p0_var_name, libMesh::FIRST, libMesh::SCALAR);
+      _p0_var.init(system);
 
     return;
   }
@@ -142,7 +138,7 @@ namespace GRINS
     system->time_evolving(_flow_vars.p_var());
 
     if( _enable_thermo_press_calc )
-      system->time_evolving(_p0_var);
+      system->time_evolving(_p0_var.p0_var());
 
     return;
   }
