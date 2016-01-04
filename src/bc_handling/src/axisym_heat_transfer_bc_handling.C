@@ -38,10 +38,9 @@ namespace GRINS
 
   AxisymmetricHeatTransferBCHandling::AxisymmetricHeatTransferBCHandling( const std::string& physics_name,
                                                                           const GetPot& input)
-    : BCHandlingBase(physics_name)
+    : BCHandlingBase(physics_name),
+      _temp_vars(input)
   {
-    _T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
-
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
     std::string var_str = "Physics/"+_physics_name+"/bc_variables";
@@ -91,7 +90,7 @@ namespace GRINS
 
   void AxisymmetricHeatTransferBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _T_var = system.variable_number( _T_var_name );
+    _temp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
   }
 
   void AxisymmetricHeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 
@@ -169,19 +168,19 @@ namespace GRINS
       case(ADIABATIC_WALL):
         // Don't need to do anything: q = 0 in this case
         break;
-      
+
         // Prescribed constant heat flux
       case(PRESCRIBED_HEAT_FLUX):
         {
-          _bound_conds.apply_neumann_axisymmetric( context, _T_var, -1.0,
+          _bound_conds.apply_neumann_axisymmetric( context, _temp_vars.T_var(), -1.0,
                                                    this->get_neumann_bc_value(bc_id) );
         }
         break;
         // General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
         {
-          _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _T_var, -1.0, 
-                                                   this->get_neumann_bound_func( bc_id, _T_var ) );
+          _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _temp_vars.T_var(), -1.0,
+                                                   this->get_neumann_bound_func( bc_id, _temp_vars.T_var() ) );
         }
         break;
       default:
@@ -207,8 +206,8 @@ namespace GRINS
           dbc_ids.insert(bc_id);
         
           std::vector<VariableIndex> dbc_vars;
-          dbc_vars.push_back(_T_var);
-        
+          dbc_vars.push_back(_temp_vars.T_var());
+
           libMesh::ConstFunction<libMesh::Number> t_func(this->get_dirichlet_bc_value(bc_id));
         
           libMesh::DirichletBoundary t_dbc( dbc_ids, dbc_vars, &t_func );

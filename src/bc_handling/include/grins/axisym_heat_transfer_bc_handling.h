@@ -27,6 +27,7 @@
 
 //GRINS
 #include "bc_handling_base.h"
+#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
@@ -65,9 +66,7 @@ namespace GRINS
 
     AxisymmetricHeatTransferBCHandling();
 
-    std::string _T_var_name;
-
-    VariableIndex _T_var;
+    PrimitiveTempVariables _temp_vars;
 
     enum AHT_BC_TYPES{AXISYMMETRIC=0,
 		      ISOTHERMAL_WALL,
