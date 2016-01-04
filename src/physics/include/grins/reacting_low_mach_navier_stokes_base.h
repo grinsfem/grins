@@ -32,6 +32,8 @@
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
+#include "grins/primitive_flow_fe_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 namespace GRINS
 {
@@ -85,24 +87,23 @@ namespace GRINS
     //! Number of species
     unsigned int _n_species;
 
+    PrimitiveFlowFEVariables _flow_vars;
+
+    PrimitiveTempFEVariables _temp_vars;
+
     //! Indices for each (owned) variable;
     std::vector<VariableIndex> _species_vars; /* Indicies for species densities */
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
-    VariableIndex _p_var; /* Index for pressure field */
-    VariableIndex _T_var; /* Index for pressure field */
     VariableIndex _p0_var; /* Index for thermodynamic pressure */
 
     //! Names of each (owned) variable in the system
     std::vector<std::string> _species_var_names;
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name, _T_var_name, _p0_var_name;
+    std::string _p0_var_name;
 
     //! Element type, read from input
-    GRINSEnums::FEFamily _species_FE_family, _V_FE_family, _P_FE_family, _T_FE_family;
+    GRINSEnums::FEFamily _species_FE_family;
 
     //! Element orders, read from input
-    GRINSEnums::Order _species_order, _V_order, _P_order, _T_order;
+    GRINSEnums::Order _species_order;
 
     //! Gravity vector
     libMesh::Point _g; 
@@ -130,7 +131,7 @@ namespace GRINS
   inline
   libMesh::Real ReactingLowMachNavierStokesBase<Mixture,Evaluator>::T( const libMesh::Point& p,
                                                                        const AssemblyContext& c ) const
-  { return c.point_value(_T_var,p); }
+  { return c.point_value(_temp_vars.T_var(),p); }
 
   template<typename Mixture, typename Evaluator>
   inline
