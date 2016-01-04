@@ -34,6 +34,7 @@
 #include "grins/assembly_context.h"
 #include "grins/primitive_flow_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
+#include "grins/thermo_pressure_fe_variable.h"
 
 namespace GRINS
 {
@@ -91,13 +92,13 @@ namespace GRINS
 
     PrimitiveTempFEVariables _temp_vars;
 
+    ThermoPressureFEVariable _p0_var;
+
     //! Indices for each (owned) variable;
     std::vector<VariableIndex> _species_vars; /* Indicies for species densities */
-    VariableIndex _p0_var; /* Index for thermodynamic pressure */
 
     //! Names of each (owned) variable in the system
     std::vector<std::string> _species_var_names;
-    std::string _p0_var_name;
 
     //! Element type, read from input
     GRINSEnums::FEFamily _species_FE_family;
@@ -172,7 +173,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-        p0 = c.interior_value( _p0_var, qp );
+        p0 = c.interior_value( _p0_var.p0_var(), qp );
       }
     else
       {
@@ -189,7 +190,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-        p0 = c.side_value( _p0_var, qp );
+        p0 = c.side_value( _p0_var.p0_var(), qp );
       }
     else
       {
@@ -206,7 +207,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-        p0 = c.point_value( _p0_var, p );
+        p0 = c.point_value( _p0_var.p0_var(), p );
       }
     else
       {
@@ -223,7 +224,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-        p0 = c.fixed_interior_value( _p0_var, qp );
+        p0 = c.fixed_interior_value( _p0_var.p0_var(), qp );
       }
     else
       {
