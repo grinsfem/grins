@@ -49,12 +49,10 @@ namespace GRINS
                                                                                            const GetPot& input,
                                                                                            const Chemistry& chemistry )
     : LowMachNavierStokesBCHandling(physics_name,input),
+      _species_vars(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes)),
+      _n_species(_species_vars.n_species()),
       _chemistry(chemistry)
   {
-    MaterialsParsing::parse_species_varnames(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes),_species_var_names);
-    _n_species = _species_var_names.size();
-    _species_vars.resize(_n_species);
-
     std::string id_str = "Physics/"+_physics_name+"/species_bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/species_bc_types";
     std::string var_str = "Physics/"+_physics_name+"/species_bc_variables";
@@ -392,10 +390,7 @@ namespace GRINS
     // Call base class
     LowMachNavierStokesBCHandling::init_bc_data(system);
 
-    for( unsigned int s = 0; s < this->_n_species; s++ )
-      {
-	_species_vars[s] = system.variable_number( _species_var_names[s] );
-      }
+    _species_vars.init( const_cast<libMesh::FEMSystem*>(&system) );
 
     // See if we have a catalytic wall and initialize them if we do
     for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _neumann_bc_map.begin();
@@ -446,7 +441,7 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _n_species; s++ )
 	    {
-	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars[s]);
+	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars.species_var(s));
 
               libMesh::ConstFunction<libMesh::Number> species_func( this->get_species_bc_value(bc_id,s) );
 
@@ -521,21 +516,21 @@ namespace GRINS
       {
       case( GENERAL_SPECIES ):
 	{
-	  for( std::vector<VariableIndex>::const_iterator var = _species_vars.begin();
-	       var != _species_vars.end();
-	       ++var )
+	  for( unsigned int s = 0; s < this->_n_species; s++ )
 	    {
+              unsigned int var = _species_vars.species_var(s);
+
               if( this->is_axisymmetric() )
                 {
                   _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
-                                                                  request_jacobian, *var, -1.0, 
-                                                                  this->get_neumann_bound_func( bc_id, *var ) );
+                                                                  request_jacobian, var, -1.0,
+                                                                  this->get_neumann_bound_func( bc_id, var ) );
                 }
               else
                 {
                   _bound_conds.apply_neumann_normal( context, cache,
-                                                     request_jacobian, *var, 1.0, 
-                                                     this->get_neumann_bound_func( bc_id, *var ) );
+                                                     request_jacobian, var, 1.0,
+                                                     this->get_neumann_bound_func( bc_id, var ) );
                 }
 	    }
 	}
