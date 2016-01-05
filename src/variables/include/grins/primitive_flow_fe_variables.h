@@ -27,32 +27,25 @@
 #define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
 
 // GRINS
-#include "grins/grins_enums.h"
+#include "grins/fe_variables_base.h"
 #include "grins/primitive_flow_variables.h"
-
-// libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
 
-  class PrimitiveFlowFEVariables : public PrimitiveFlowVariables
+  class PrimitiveFlowFEVariables : public FEVariablesBase,
+                                   public PrimitiveFlowVariables
   {
   public:
 
     PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name );
-    ~PrimitiveFlowFEVariables();
+    ~PrimitiveFlowFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
   protected:
 
-    //! Element type, read from input
-    GRINSEnums::FEFamily _V_FE_family, _P_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _V_order, _P_order;
+    unsigned int _u_fe_idx, _p_fe_idx;
 
   private:
 
