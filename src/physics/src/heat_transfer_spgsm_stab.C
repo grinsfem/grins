@@ -58,18 +58,18 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T_var()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_temp_vars.T_var())->get_JxW();
+      context.get_element_fe(this->_temp_vars.T())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
+      context.get_element_fe(this->_temp_vars.T())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T_var()); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -78,11 +78,11 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
       
 	// Compute Conductivity at this qp
@@ -120,18 +120,18 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T_var()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_temp_vars.T_var())->get_JxW();
+      context.get_element_fe(this->_temp_vars.T())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
+      context.get_element_fe(this->_temp_vars.T())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T_var()); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_temp_vars.T());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -140,11 +140,11 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
 
 	// Compute Conductivity at this qp

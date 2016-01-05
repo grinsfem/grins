@@ -441,7 +441,7 @@ namespace GRINS
 
 	  for( unsigned int s = 0; s < _n_species; s++ )
 	    {
-	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars.species_var(s));
+	      std::vector<GRINS::VariableIndex> dbc_vars(1,_species_vars.species(s));
 
               libMesh::ConstFunction<libMesh::Number> species_func( this->get_species_bc_value(bc_id,s) );
 
@@ -518,7 +518,7 @@ namespace GRINS
 	{
 	  for( unsigned int s = 0; s < this->_n_species; s++ )
 	    {
-              unsigned int var = _species_vars.species_var(s);
+              unsigned int var = _species_vars.species(s);
 
               if( this->is_axisymmetric() )
                 {

@@ -48,10 +48,10 @@ namespace GRINS
 
     virtual void init( libMesh::FEMSystem* system );
 
-    VariableIndex u_var() const;
-    VariableIndex v_var() const;
-    VariableIndex w_var() const;
-    VariableIndex p_var() const;
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
+    VariableIndex p() const;
 
   protected:
 
@@ -64,25 +64,25 @@ namespace GRINS
   };
 
   inline
-  VariableIndex PrimitiveFlowVariables::u_var() const
+  VariableIndex PrimitiveFlowVariables::u() const
   {
     return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::v_var() const
+  VariableIndex PrimitiveFlowVariables::v() const
   {
     return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::w_var() const
+  VariableIndex PrimitiveFlowVariables::w() const
   {
     return this->_vars[_w_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::p_var() const
+  VariableIndex PrimitiveFlowVariables::p() const
   {
     return this->_vars[_p_idx];
   }

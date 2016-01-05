@@ -62,39 +62,39 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& p_gradphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+      context.get_element_fe(this->_flow_vars.u())->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
     libMesh::DenseSubMatrix<libMesh::Number> &Kup = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.p_var()); // J_{up}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.p()); // J_{up}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvp = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.p_var()); // J_{vp}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.p()); // J_{vp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // J_{vv}
 
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
@@ -106,43 +106,43 @@ namespace GRINS
 
     if(this->_dim == 3)
       {
-        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
         Kuw = &context.get_elem_jacobian
-          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
+          (this->_flow_vars.u(), this->_flow_vars.w()); // J_{uw}
         Kvw = &context.get_elem_jacobian
-          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
+          (this->_flow_vars.v(), this->_flow_vars.w()); // J_{vw}
         Kwp = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.p_var()); // J_{wp}
+          (this->_flow_vars.w(), this->_flow_vars.p()); // J_{wp}
         Kwu = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
+          (this->_flow_vars.w(), this->_flow_vars.u()); // J_{wu}
         Kwv = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
+          (this->_flow_vars.w(), this->_flow_vars.v()); // J_{wv}
         Kww = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
+          (this->_flow_vars.w(), this->_flow_vars.w()); // J_{ww}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
       
         /*
           libMesh::Gradient grad_u, grad_v, grad_w;
-          grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
-          grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
+          grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
+          grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
           if (_dim == 3)
-          grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
+          grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
         */
 
         libMesh::Real tau_M, tau_C;
@@ -392,57 +392,57 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_dphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_d2phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+      context.get_element_fe(this->_flow_vars.u())->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpp = 
-      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.p_var()); // J_{pp}
+      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.p()); // J_{pp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.u()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (this->_flow_vars.p_var(), this->_flow_vars.w_var()); // J_{pw}
+          (this->_flow_vars.p(), this->_flow_vars.w()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
 
         libMesh::Real tau_M;
@@ -555,40 +555,40 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealTensor> >& u_hessphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+      context.get_element_fe(this->_flow_vars.u())->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // J_{uu}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
-      context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // J_{uv}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // J_{vu}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
-      context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // J_{vv}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // J_{vv}
 
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kvw = NULL;
@@ -597,52 +597,52 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.u_var()); // J_{pu}
+      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.u()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(this->_flow_vars.p_var(), this->_flow_vars.v_var()); // J_{pv}
+      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
       {
-        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
         Kuw = &context.get_elem_jacobian
-          (this->_flow_vars.u_var(), this->_flow_vars.w_var()); // J_{uw}
+          (this->_flow_vars.u(), this->_flow_vars.w()); // J_{uw}
         Kvw = &context.get_elem_jacobian
-          (this->_flow_vars.v_var(), this->_flow_vars.w_var()); // J_{vw}
+          (this->_flow_vars.v(), this->_flow_vars.w()); // J_{vw}
         Kwu = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.u_var()); // J_{wu}
+          (this->_flow_vars.w(), this->_flow_vars.u()); // J_{wu}
         Kwv = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.v_var()); // J_{wv}
+          (this->_flow_vars.w(), this->_flow_vars.v()); // J_{wv}
         Kww = &context.get_elem_jacobian
-          (this->_flow_vars.w_var(), this->_flow_vars.w_var()); // J_{ww}
+          (this->_flow_vars.w(), this->_flow_vars.w()); // J_{ww}
 
         Kpw = &context.get_elem_jacobian
-          (this->_flow_vars.p_var(), this->_flow_vars.w_var()); // J_{pw}
+          (this->_flow_vars.p(), this->_flow_vars.w()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
 
         /*
           libMesh::Gradient grad_u, grad_v, grad_w;
-          grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
-          grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
+          grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
+          grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
           if (_dim == 3)
-          grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
+          grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
         */
 
         libMesh::Real tau_M;

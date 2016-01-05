@@ -84,7 +84,7 @@ namespace GRINS
     libMesh::Real mu_physical = this->_mu(context, qp);
 
     // The unscaled turbulent viscosity (the nu the SA physics solves for)
-    libMesh::Real nu = context.interior_value(this->_turbulence_vars.nu_var(),qp);
+    libMesh::Real nu = context.interior_value(this->_turbulence_vars.nu(),qp);
 
     // Assert that mu_value is greater than 0
     if(nu < 0.0)

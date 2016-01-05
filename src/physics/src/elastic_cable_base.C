@@ -76,9 +76,9 @@ namespace GRINS
   void ElasticCableBase::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u_var());
-    system->time_evolving(_disp_vars.v_var());
-    system->time_evolving(_disp_vars.w_var());
+    system->time_evolving(_disp_vars.u());
+    system->time_evolving(_disp_vars.v());
+    system->time_evolving(_disp_vars.w());
 
     return;
   }

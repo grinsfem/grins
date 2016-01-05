@@ -83,7 +83,7 @@ namespace GRINS
   void HeatTransferBase<K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
-    system->time_evolving(_temp_vars.T_var());
+    system->time_evolving(_temp_vars.T());
 
     return;
   }
@@ -94,15 +94,15 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_temp_vars.T_var())->get_JxW();
-    context.get_element_fe(_temp_vars.T_var())->get_phi();
-    context.get_element_fe(_temp_vars.T_var())->get_dphi();
-    context.get_element_fe(_temp_vars.T_var())->get_xyz();
+    context.get_element_fe(_temp_vars.T())->get_JxW();
+    context.get_element_fe(_temp_vars.T())->get_phi();
+    context.get_element_fe(_temp_vars.T())->get_dphi();
+    context.get_element_fe(_temp_vars.T())->get_xyz();
 
-    context.get_side_fe(_temp_vars.T_var())->get_JxW();
-    context.get_side_fe(_temp_vars.T_var())->get_phi();
-    context.get_side_fe(_temp_vars.T_var())->get_dphi();
-    context.get_side_fe(_temp_vars.T_var())->get_xyz();
+    context.get_side_fe(_temp_vars.T())->get_JxW();
+    context.get_side_fe(_temp_vars.T())->get_phi();
+    context.get_side_fe(_temp_vars.T())->get_dphi();
+    context.get_side_fe(_temp_vars.T())->get_xyz();
 
     return;
   }

@@ -57,8 +57,8 @@ namespace GRINS
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const
   {
     libMesh::Gradient grad_u, grad_v;
-    grad_u = context.interior_gradient(this->_flow_vars.u_var(), qp);
-    grad_v = context.interior_gradient(this->_flow_vars.v_var(), qp);
+    grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
+    grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
 
     libMesh::Real vorticity_value;
     vorticity_value = fabs(grad_v(0) - grad_u(1));
@@ -66,7 +66,7 @@ namespace GRINS
     if(this->_dim == 3)
       {
         libMesh::Gradient grad_w;
-        grad_w = context.interior_gradient(this->_flow_vars.w_var(), qp);
+        grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
 
         libMesh::Real vorticity_component_0 = grad_w(1) - grad_v(2);
         libMesh::Real vorticity_component_1 = grad_u(2) - grad_v(0);

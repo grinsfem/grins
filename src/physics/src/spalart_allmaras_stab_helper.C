@@ -79,21 +79,21 @@ namespace GRINS
   {
     // The flow velocity
     libMesh::Number u,v;
-    u = context.interior_value(this->_flow_vars.u_var(), qp);
-    v = context.interior_value(this->_flow_vars.v_var(), qp);
+    u = context.interior_value(this->_flow_vars.u(), qp);
+    v = context.interior_value(this->_flow_vars.v(), qp);
 
     libMesh::NumberVectorValue U(u,v);
     if ( context.get_system().get_mesh().mesh_dimension() == 3 )
-      U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+      U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
-    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u_var(), qp);
-    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v_var(), qp);
+    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
+    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
 
-    libMesh::Number nu_value = context.interior_value(this->_turbulence_vars.nu_var(), qp);
+    libMesh::Number nu_value = context.interior_value(this->_turbulence_vars.nu(), qp);
 
-    libMesh::RealGradient grad_nu = context.fixed_interior_gradient(this->_turbulence_vars.nu_var(), qp);
+    libMesh::RealGradient grad_nu = context.fixed_interior_gradient(this->_turbulence_vars.nu(), qp);
 
-    libMesh::RealTensor hess_nu = context.fixed_interior_hessian(this->_turbulence_vars.nu_var(), qp);
+    libMesh::RealTensor hess_nu = context.fixed_interior_hessian(this->_turbulence_vars.nu(), qp);
 
     // The convection term
     libMesh::Number rhoUdotGradnu = rho*(U*grad_nu);
@@ -141,7 +141,7 @@ namespace GRINS
 
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
-    libMesh::Number nu_dot = context.interior_value(this->_turbulence_vars.nu_var(), qp);
+    libMesh::Number nu_dot = context.interior_value(this->_turbulence_vars.nu(), qp);
 
     return rho*nu_dot;
   }

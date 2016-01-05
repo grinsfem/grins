@@ -66,7 +66,7 @@ namespace GRINS
   const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneBase::get_fe( const AssemblyContext& context )
   {
     // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u_var(),2);
+    return context.get_element_fe(_disp_vars.u(),2);
   }
 
 } // end namespace GRINS

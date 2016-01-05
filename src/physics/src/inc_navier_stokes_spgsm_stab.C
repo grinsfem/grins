@@ -61,32 +61,32 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
-    // Check number of dofs is same for _flow_vars.u_var(), v_var and w_var.
-    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v_var()).size());
+    // Check number of dofs is same for _flow_vars.u(), v_var and w_var.
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
     if (this->_dim == 3)
       {
-        libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w_var()).size());
+        libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
       }
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     if(this->_dim == 3)
       {
-        Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -95,11 +95,11 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
 	
 	// Compute the viscosity at this qp
@@ -150,19 +150,19 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -171,11 +171,11 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
       
-        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
           {
-            U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
 
 	// Compute the viscosity at this qp
@@ -214,29 +214,29 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{p}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     if(this->_dim == 3)
-      Fw = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+      Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -245,14 +245,14 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
 	// Compute the viscosity at this qp
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_dim == 3 )
           {
-            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
       
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );

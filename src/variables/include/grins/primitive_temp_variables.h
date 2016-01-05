@@ -46,7 +46,7 @@ namespace GRINS
 
     virtual void init( libMesh::FEMSystem* system );
 
-    VariableIndex T_var() const;
+    VariableIndex T() const;
 
   private:
 
@@ -55,7 +55,7 @@ namespace GRINS
   };
 
   inline
-  VariableIndex PrimitiveTempVariables::T_var() const
+  VariableIndex PrimitiveTempVariables::T() const
   {
     return _vars[0];
   }

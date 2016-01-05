@@ -65,15 +65,15 @@ namespace GRINS
                                                              AssemblyContext& context,
                                                              CachedValues& /*cache*/ )
   {
-    const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u()).size();
 
     const std::vector<libMesh::Real> &JxW = this->get_fe(context)->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi = this->get_fe(context)->get_phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u());
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v());
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 

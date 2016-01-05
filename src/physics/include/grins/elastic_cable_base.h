@@ -73,7 +73,7 @@ namespace GRINS
   const libMesh::FEGenericBase<libMesh::Real>* ElasticCableBase::get_fe( const AssemblyContext& context )
   {
     // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u_var(),1);
+    return context.get_element_fe(_disp_vars.u(),1);
   }
 }
 

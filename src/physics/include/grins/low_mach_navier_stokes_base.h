@@ -128,7 +128,7 @@ namespace GRINS
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::T( const libMesh::Point& p, const AssemblyContext& c ) const
   {
-    return c.point_value(_temp_vars.T_var(),p);
+    return c.point_value(_temp_vars.T(),p);
   }
 
   template<class V, class SH, class TC>
@@ -153,7 +153,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.interior_value( _p0_var.p0_var(), qp );
+	p0 = c.interior_value( _p0_var.p0(), qp );
       }
     else
       {
@@ -170,7 +170,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.side_value( _p0_var.p0_var(), qp );
+	p0 = c.side_value( _p0_var.p0(), qp );
       }
     else
       {
@@ -187,7 +187,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.point_value( _p0_var.p0_var(), p );
+	p0 = c.point_value( _p0_var.p0(), p );
       }
     else
       {
@@ -203,7 +203,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.fixed_interior_value( _p0_var.p0_var(), qp );
+	p0 = c.fixed_interior_value( _p0_var.p0(), qp );
       }
     else
       {

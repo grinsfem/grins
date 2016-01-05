@@ -71,21 +71,21 @@ namespace GRINS
 #endif
   
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T_var()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_temp_vars.T_var())->get_JxW();
+      context.get_element_fe(_temp_vars.T())->get_JxW();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.get_element_fe(_temp_vars.T_var())->get_phi();
+      context.get_element_fe(_temp_vars.T())->get_phi();
 
     // Locations of quadrature points
-    const std::vector<libMesh::Point>& x_qp = context.get_element_fe(_temp_vars.T_var())->get_xyz();
+    const std::vector<libMesh::Point>& x_qp = context.get_element_fe(_temp_vars.T())->get_xyz();
 
     // Get residuals
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_temp_vars.T_var()); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(_temp_vars.T()); // R_{T}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its

@@ -58,13 +58,13 @@ namespace GRINS
     bool have_v() const;
     bool have_w() const;
 
-    VariableIndex u_var() const;
-    VariableIndex v_var() const;
-    VariableIndex w_var() const;
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
 
-    const std::string& u_var_name() const;
-    const std::string& v_var_name() const;
-    const std::string& w_var_name() const;
+    const std::string& u_name() const;
+    const std::string& v_name() const;
+    const std::string& w_name() const;
 
   protected:
 
@@ -76,20 +76,20 @@ namespace GRINS
   };
 
   inline
-  VariableIndex DisplacementVariables::u_var() const
+  VariableIndex DisplacementVariables::u() const
   {
     return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex DisplacementVariables::v_var() const
+  VariableIndex DisplacementVariables::v() const
   {
     libmesh_assert(_have_v);
     return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex DisplacementVariables::w_var() const
+  VariableIndex DisplacementVariables::w() const
   {
     libmesh_assert(_have_w);
     return this->_vars[_w_idx];
@@ -108,19 +108,19 @@ namespace GRINS
   }
 
   inline
-  const std::string& DisplacementVariables::u_var_name() const
+  const std::string& DisplacementVariables::u_name() const
   {
     return this->_var_names[_u_idx];
   }
 
   inline
-  const std::string& DisplacementVariables::v_var_name() const
+  const std::string& DisplacementVariables::v_name() const
   {
     return this->_var_names[_v_idx];
   }
 
   inline
-  const std::string& DisplacementVariables::w_var_name() const
+  const std::string& DisplacementVariables::w_name() const
   {
     return this->_var_names[_w_idx];
   }

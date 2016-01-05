@@ -115,18 +115,18 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_turbulence_vars.nu_var())->get_JxW();
-    context.get_element_fe(_turbulence_vars.nu_var())->get_phi();
-    context.get_element_fe(_turbulence_vars.nu_var())->get_dphi();
-    context.get_element_fe(_turbulence_vars.nu_var())->get_xyz();
+    context.get_element_fe(_turbulence_vars.nu())->get_JxW();
+    context.get_element_fe(_turbulence_vars.nu())->get_phi();
+    context.get_element_fe(_turbulence_vars.nu())->get_dphi();
+    context.get_element_fe(_turbulence_vars.nu())->get_xyz();
 
-    context.get_element_fe(_turbulence_vars.nu_var())->get_phi();
-    context.get_element_fe(_turbulence_vars.nu_var())->get_xyz();
+    context.get_element_fe(_turbulence_vars.nu())->get_phi();
+    context.get_element_fe(_turbulence_vars.nu())->get_xyz();
 
-    context.get_side_fe(_turbulence_vars.nu_var())->get_JxW();
-    context.get_side_fe(_turbulence_vars.nu_var())->get_phi();
-    context.get_side_fe(_turbulence_vars.nu_var())->get_dphi();
-    context.get_side_fe(_turbulence_vars.nu_var())->get_xyz();
+    context.get_side_fe(_turbulence_vars.nu())->get_JxW();
+    context.get_side_fe(_turbulence_vars.nu())->get_phi();
+    context.get_side_fe(_turbulence_vars.nu())->get_dphi();
+    context.get_side_fe(_turbulence_vars.nu())->get_xyz();
 
     return;
   }
@@ -136,7 +136,7 @@ namespace GRINS
   {
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
-    system->time_evolving(this->_turbulence_vars.nu_var());
+    system->time_evolving(this->_turbulence_vars.nu());
 
     return;
   }
@@ -159,19 +159,19 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_JxW();
 
     // The viscosity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& nu_phi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_phi();
 
     // The viscosity shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_dphi();
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu()).size();
 
     // The subvectors and submatrices we need to fill:
     //
@@ -179,9 +179,9 @@ namespace GRINS
     // e.g., for \alpha = v and \beta = u we get: K{vu} = R_{v},{u}
     // Note that Kpu, Kpv, Kpw and Fp comes as constraint.
 
-    //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
+    //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu(), this->_turbulence_vars.nu()); // R_{nu},{nu}
 
-    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
+    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu()); // R_{nu}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -201,10 +201,10 @@ namespace GRINS
       {
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number nu;
-        nu = context.interior_value(this->_turbulence_vars.nu_var(), qp);
+        nu = context.interior_value(this->_turbulence_vars.nu(), qp);
 
         libMesh::Gradient grad_nu;
-        grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
+        grad_nu = context.interior_gradient(this->_turbulence_vars.nu(), qp);
 
         libMesh::Real jac = JxW[qp];
 
@@ -216,12 +216,12 @@ namespace GRINS
 
         // The flow velocity
         libMesh::Number u,v;
-        u = context.interior_value(this->_flow_vars.u_var(), qp);
-        v = context.interior_value(this->_flow_vars.v_var(), qp);
+        u = context.interior_value(this->_flow_vars.u(), qp);
+        v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
         if (this->_dim == 3)
-          U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+          U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         //The source term
         libMesh::Real S_tilde = this->_sa_params.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp, _infinite_distance);
@@ -307,19 +307,19 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_JxW();
 
     // The viscosity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& nu_phi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_phi();
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubVector<libMesh::Real> &F = context.get_elem_residual(this->_turbulence_vars.nu_var());
+    libMesh::DenseSubVector<libMesh::Real> &F = context.get_elem_residual(this->_turbulence_vars.nu());
 
-    //libMesh::DenseSubMatrix<libMesh::Real> &M = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var());
+    //libMesh::DenseSubMatrix<libMesh::Real> &M = context.get_elem_jacobian(this->_turbulence_vars.nu(), this->_turbulence_vars.nu());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -331,7 +331,7 @@ namespace GRINS
         // u_fixed will be given by the fixed_interior_value function
         // while u' will be given by the interior_rate function.
         libMesh::Real nu_dot;
-        context.interior_rate(this->_turbulence_vars.nu_var(), qp, nu_dot);
+        context.interior_rate(this->_turbulence_vars.nu(), qp, nu_dot);
 
         for (unsigned int i = 0; i != n_nu_dofs; ++i)
           {

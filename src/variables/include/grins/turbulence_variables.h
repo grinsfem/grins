@@ -46,7 +46,7 @@ namespace GRINS
 
     virtual void init( libMesh::FEMSystem* system );
 
-    VariableIndex nu_var() const;
+    VariableIndex nu() const;
 
   private:
 
@@ -55,7 +55,7 @@ namespace GRINS
   };
 
   inline
-  VariableIndex TurbulenceVariables::nu_var() const
+  VariableIndex TurbulenceVariables::nu() const
   {
     return _vars[0];
   }

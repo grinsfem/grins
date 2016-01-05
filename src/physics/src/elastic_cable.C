@@ -125,27 +125,27 @@ namespace GRINS
                                                                AssemblyContext& context,
                                                                CachedValues& /*cache*/ )
   {
-    const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u()).size();
 
     const std::vector<libMesh::Real> &JxW =
       this->get_fe(context)->get_JxW();
 
     // Residuals that we're populating
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u_var());
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v_var());
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w_var());
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_disp_vars.u());
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_disp_vars.v());
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(_disp_vars.w());
 
     //Grab the Jacobian matrix as submatrices
     //libMesh::DenseMatrix<libMesh::Number> &K = context.get_elem_jacobian();
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.u_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.v_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(_disp_vars.u_var(),_disp_vars.w_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.u_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.v_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(_disp_vars.v_var(),_disp_vars.w_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.u_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.v_var());
-    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(_disp_vars.w_var(),_disp_vars.w_var());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(_disp_vars.u(),_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(_disp_vars.u(),_disp_vars.v());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuw = context.get_elem_jacobian(_disp_vars.u(),_disp_vars.w());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(_disp_vars.v(),_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(_disp_vars.v(),_disp_vars.v());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvw = context.get_elem_jacobian(_disp_vars.v(),_disp_vars.w());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwu = context.get_elem_jacobian(_disp_vars.w(),_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kwv = context.get_elem_jacobian(_disp_vars.w(),_disp_vars.v());
+    libMesh::DenseSubMatrix<libMesh::Number> &Kww = context.get_elem_jacobian(_disp_vars.w(),_disp_vars.w());
 
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -153,9 +153,9 @@ namespace GRINS
     // All shape function gradients are w.r.t. master element coordinates
     const std::vector<std::vector<libMesh::Real> >& dphi_dxi = this->get_fe(context)->get_dphidxi();
 
-    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
-    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
-    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u() );
+    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v() );
+    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w() );
 
     // Need these to build up the covariant and contravariant metric tensors
     const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
@@ -314,11 +314,11 @@ namespace GRINS
 
     if( is_strain || is_stress || is_force )
       {
-        const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u_var()).size();
+        const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u()).size();
 
-        const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u_var() );
-        const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v_var() );
-        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w_var() );
+        const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( _disp_vars.u() );
+        const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( _disp_vars.v() );
+        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( _disp_vars.w() );
 
         // Build new FE for the current point. We need this to build tensors at point.
         libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( context.get_elem(), this->get_fe(context), point );

@@ -52,7 +52,7 @@ namespace GRINS
 
     unsigned int n_species() const;
 
-    VariableIndex species_var( unsigned int species ) const;
+    VariableIndex species( unsigned int species ) const;
 
   private:
 
@@ -69,7 +69,7 @@ namespace GRINS
   }
 
   inline
-  VariableIndex SpeciesMassFractionsVariables::species_var( unsigned int species ) const
+  VariableIndex SpeciesMassFractionsVariables::species( unsigned int species ) const
   {
     return _vars[species];
   }

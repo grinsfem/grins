@@ -47,7 +47,7 @@ namespace GRINS
 
     virtual void init( libMesh::FEMSystem* system );
 
-    VariableIndex p0_var() const;
+    VariableIndex p0() const;
 
   private:
 
@@ -56,7 +56,7 @@ namespace GRINS
   };
 
   inline
-  VariableIndex ThermoPressureVariable::p0_var() const
+  VariableIndex ThermoPressureVariable::p0() const
   {
     return _vars[0];
   }
