@@ -41,7 +41,7 @@ namespace GRINS
   public:
 
     SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name );
-    virtual ~SolidMechanicsFEVariables();
+    virtual ~SolidMechanicsFEVariables(){};
 
     //! Initialize System variables
     /*!

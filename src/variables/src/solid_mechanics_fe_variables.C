@@ -41,32 +41,23 @@ namespace GRINS
     :  SolidMechanicsVariables(input),
        _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ),
        _order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) )
-  {
-    return;
-  }
-
-  SolidMechanicsFEVariables::~SolidMechanicsFEVariables()
-  {
-    return;
-  }
+  {}
 
   void SolidMechanicsFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {
-    _u_var = system->add_variable( _u_var_name, this->_order, _FE_family);
+    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_order, _FE_family);
 
     if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
       {
         _have_v = true;
-        _v_var = system->add_variable( _v_var_name, this->_order, _FE_family);
+        _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_order, _FE_family);
       }
 
     if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
       {
         _have_w = true;
-        _w_var = system->add_variable( _w_var_name, this->_order, _FE_family);
+        _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_order, _FE_family);
       }
-
-    return;
   }
 
 } // end namespace GRINS

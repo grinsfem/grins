@@ -36,16 +36,16 @@ namespace libMesh
 #include "libmesh/libmesh_common.h"
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  class SolidMechanicsVariables
+  class SolidMechanicsVariables : public VariablesBase
   {
   public:
 
     SolidMechanicsVariables( const GetPot& input );
-    virtual ~SolidMechanicsVariables();
+    virtual ~SolidMechanicsVariables(){};
 
     //! Initialize System variables
     /*!
@@ -71,32 +71,28 @@ namespace GRINS
     bool _have_v;
     bool _have_w;
 
-    VariableIndex _u_var;
-    VariableIndex _v_var;
-    VariableIndex _w_var;
-
-    std::string _u_var_name, _v_var_name, _w_var_name;
+    unsigned int _u_idx, _v_idx, _w_idx;
 
   };
 
   inline
   VariableIndex SolidMechanicsVariables::u_var() const
   {
-    return _u_var;
+    return this->_vars[_u_idx];
   }
 
   inline
   VariableIndex SolidMechanicsVariables::v_var() const
   {
     libmesh_assert(_have_v);
-    return _v_var;
+    return this->_vars[_v_idx];
   }
 
   inline
   VariableIndex SolidMechanicsVariables::w_var() const
   {
     libmesh_assert(_have_w);
-    return _w_var;
+    return this->_vars[_w_idx];
   }
 
   inline
@@ -114,19 +110,19 @@ namespace GRINS
   inline
   const std::string& SolidMechanicsVariables::u_var_name() const
   {
-    return _u_var_name;
+    return this->_var_names[_u_idx];
   }
 
   inline
   const std::string& SolidMechanicsVariables::v_var_name() const
   {
-    return _v_var_name;
+    return this->_var_names[_v_idx];
   }
 
   inline
   const std::string& SolidMechanicsVariables::w_var_name() const
   {
-    return _w_var_name;
+    return this->_var_names[_w_idx];
   }
 
 } // end namespace GRINS

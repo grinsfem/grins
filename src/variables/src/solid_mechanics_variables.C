@@ -35,38 +35,36 @@
 namespace GRINS
 {
   SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
-    : _have_v(false),
+    : VariablesBase(),
+      _have_v(false),
       _have_w(false),
-      _u_var(invalid_var_index), // These are unsigned, so initialize to absurdly large value
-      _v_var(invalid_var_index),
-      _w_var(invalid_var_index),
-      _u_var_name( input("Physics/VariableNames/u_displacment", u_disp_name_default ) ),
-      _v_var_name( input("Physics/VariableNames/v_displacment", v_disp_name_default ) ),
-      _w_var_name( input("Physics/VariableNames/w_displacment", w_disp_name_default ) )
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-    return;
-  }
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
 
-  SolidMechanicsVariables::~SolidMechanicsVariables()
-  {
-    return;
+    _var_names[_u_idx] = input("Physics/VariableNames/u_displacment", u_disp_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_displacment", v_disp_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_displacment", w_disp_name_default );
   }
 
   void SolidMechanicsVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _u_var_name ) );
-    _u_var = system->variable_number( _u_var_name );
+    libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
+    _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );
 
-    if ( system->has_variable( _v_var_name ) )
+    if ( system->has_variable( _var_names[_v_idx] ) )
       {
         _have_v = true;
-        _v_var = system->variable_number( _v_var_name );
+        _vars[_v_idx] = system->variable_number( _var_names[_v_idx] );
       }
 
-    if ( system->has_variable( _w_var_name ) )
+    if ( system->has_variable( _var_names[_w_idx] ) )
       {
         _have_w = true;
-        _w_var = system->variable_number( _w_var_name );
+        _vars[_w_idx] = system->variable_number( _var_names[_w_idx] );
       }
 
     return;
