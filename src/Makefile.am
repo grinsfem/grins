@@ -434,6 +434,7 @@ include_HEADERS += variables/include/grins/thermo_pressure_fe_variable.h
 include_HEADERS += variables/include/grins/turbulence_variables.h
 include_HEADERS += variables/include/grins/turbulence_fe_variables.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
+include_HEADERS += variables/include/grins/variables_base.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
