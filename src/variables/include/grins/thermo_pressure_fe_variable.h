@@ -26,17 +26,14 @@
 #define GRINS_THERMO_PRESSURE_FE_VARIABLE_H
 
 // GRINS
-#include "grins/grins_enums.h"
+#include "grins/fe_variables_base.h"
 #include "grins/thermo_pressure_variable.h"
-
-// libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
 
-  class ThermoPressureFEVariable : public ThermoPressureVariable
+  class ThermoPressureFEVariable : public FEVariablesBase,
+                                   public ThermoPressureVariable
   {
   public:
 
@@ -44,14 +41,6 @@ namespace GRINS
     ~ThermoPressureFEVariable(){};
 
     virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _P_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _P_order;
 
   private:
 
