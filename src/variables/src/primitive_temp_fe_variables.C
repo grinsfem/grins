@@ -48,9 +48,7 @@ namespace GRINS
 
   void PrimitiveTempFEVariables::init( libMesh::FEMSystem* system )
   {
-    _T_var = system->add_variable( _T_var_name, this->_T_order, _T_FE_family );
-    
-    return;
+    _vars[0] = system->add_variable( _var_names[0], this->_T_order, _T_FE_family );
   }
 
 } // end namespace GRINS

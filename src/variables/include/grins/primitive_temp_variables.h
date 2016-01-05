@@ -33,28 +33,20 @@ namespace libMesh
 }
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  class PrimitiveTempVariables
+  class PrimitiveTempVariables : public VariablesBase
   {
   public:
 
     PrimitiveTempVariables( const GetPot& input );
-    ~PrimitiveTempVariables();
+    ~PrimitiveTempVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
     VariableIndex T_var() const;
-
-  protected:
-
-    //! Indices for each variable;
-    VariableIndex _T_var; /* Index for temperature field */
-
-    //! Names of each variable in the system
-    std::string _T_var_name;
 
   private:
 
@@ -65,7 +57,7 @@ namespace GRINS
   inline
   VariableIndex PrimitiveTempVariables::T_var() const
   {
-    return _T_var;
+    return _vars[0];
   }
 
 } // end namespace GRINS
