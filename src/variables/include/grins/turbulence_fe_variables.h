@@ -26,13 +26,8 @@
 #define GRINS_TURBULENCE_FE_VARIABLES_H
 
 // GRINS
-#include "grins/grins_enums.h"
+#include "grins/fe_variables_base.h"
 #include "grins/turbulence_variables.h"
-#include "grins/var_typedefs.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -43,7 +38,8 @@ namespace libMesh
 
 namespace GRINS
 {
-  class TurbulenceFEVariables : public TurbulenceVariables
+  class TurbulenceFEVariables : public FEVariablesBase,
+                                public TurbulenceVariables
   {
   public:
 
@@ -51,14 +47,6 @@ namespace GRINS
     ~TurbulenceFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _TU_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _TU_order;
 
   private:
 

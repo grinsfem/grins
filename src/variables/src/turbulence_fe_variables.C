@@ -25,10 +25,6 @@
 // This class
 #include "grins/turbulence_fe_variables.h"
 
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/variable_name_defaults.h"
-
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
@@ -37,14 +33,17 @@
 namespace GRINS
 {
   TurbulenceFEVariables::TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
-    :  TurbulenceVariables(input),
-       _TU_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-       _TU_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) )
-  {}
+    :  FEVariablesBase(),
+       TurbulenceVariables(input)
+  {
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) );
+
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) );
+  }
 
   void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
   {
-    _vars[0] = system->add_variable( _var_names[0], this->_TU_order, _TU_FE_family);
+    _vars[0] = system->add_variable( _var_names[0], _order[0], _family[0]);
   }
 
 } // end namespace GRINS
