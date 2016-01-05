@@ -48,7 +48,7 @@ namespace GRINS
   public:
 
     TurbulenceFEVariables( const GetPot& input, const std::string& physics_name );
-    ~TurbulenceFEVariables();
+    ~TurbulenceFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 

@@ -40,19 +40,11 @@ namespace GRINS
     :  TurbulenceVariables(input),
        _TU_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
        _TU_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) )
-  {
-    return;
-  }
-
-  TurbulenceFEVariables::~TurbulenceFEVariables()
-  {
-    return;
-  }
+  {}
 
   void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
   {
-    _nu_var = system->add_variable( _nu_var_name, this->_TU_order, _TU_FE_family);     
-    return;
+    _vars[0] = system->add_variable( _var_names[0], this->_TU_order, _TU_FE_family);
   }
 
 } // end namespace GRINS

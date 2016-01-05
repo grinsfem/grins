@@ -35,24 +35,18 @@
 namespace GRINS
 {
   TurbulenceVariables::TurbulenceVariables( const GetPot& input )
-    :  _nu_var(invalid_var_index),
-       _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
-  {
-    return;
-  }
+    :  VariablesBase()
 
-  TurbulenceVariables::~TurbulenceVariables()
   {
-    return;
+    _vars.resize(1,invalid_var_index);
+    _var_names.resize(1, input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) );
   }
 
   void TurbulenceVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _nu_var_name ) );
-    
-    _nu_var = system->variable_number( _nu_var_name );
-    
-    return;
+    libmesh_assert( system->has_variable( _var_names[0] ) );
+
+    _vars[0] = system->variable_number(  _var_names[0] );
   }
 
 } // end namespace GRINS

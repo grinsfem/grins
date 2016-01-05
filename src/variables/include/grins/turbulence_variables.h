@@ -33,28 +33,20 @@ namespace libMesh
 }
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  class TurbulenceVariables
+  class TurbulenceVariables : public VariablesBase
   {
   public:
 
     TurbulenceVariables( const GetPot& input );
-    ~TurbulenceVariables();
+    ~TurbulenceVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
     VariableIndex nu_var() const;
-
-  protected:
-
-    //! Indices for each variable;
-    VariableIndex _nu_var; /* Index for turbulence viscosity */
-
-    //! Names of each variable in the system
-    std::string _nu_var_name;
 
   private:
 
@@ -65,7 +57,7 @@ namespace GRINS
   inline
   VariableIndex TurbulenceVariables::nu_var() const
   {
-    return _nu_var;
+    return _vars[0];
   }
 
 } // end namespace GRINS
