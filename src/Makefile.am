@@ -103,12 +103,6 @@ libgrins_la_SOURCES += physics/src/averaged_turbine.C
 libgrins_la_SOURCES += physics/src/averaged_turbine_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/averaged_turbine_base.C
 libgrins_la_SOURCES += physics/src/scalar_ode.C
-libgrins_la_SOURCES += physics/src/primitive_flow_variables.C
-libgrins_la_SOURCES += physics/src/primitive_flow_fe_variables.C
-libgrins_la_SOURCES += physics/src/turbulence_variables.C
-libgrins_la_SOURCES += physics/src/turbulence_fe_variables.C
-libgrins_la_SOURCES += physics/src/primitive_temp_variables.C
-libgrins_la_SOURCES += physics/src/primitive_temp_fe_variables.C
 libgrins_la_SOURCES += physics/src/velocity_drag.C
 libgrins_la_SOURCES += physics/src/velocity_drag_adjoint_stab.C
 libgrins_la_SOURCES += physics/src/velocity_drag_base.C
@@ -124,8 +118,6 @@ libgrins_la_SOURCES += physics/src/spalart_allmaras_helper.C
 libgrins_la_SOURCES += physics/src/spalart_allmaras.C
 libgrins_la_SOURCES += physics/src/spalart_allmaras_stab_base.C
 libgrins_la_SOURCES += physics/src/spalart_allmaras_spgsm_stab.C
-libgrins_la_SOURCES += physics/src/solid_mechanics_variables.C
-libgrins_la_SOURCES += physics/src/solid_mechanics_fe_variables.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
 libgrins_la_SOURCES += physics/src/elastic_membrane.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_constant_pressure.C
@@ -136,10 +128,7 @@ libgrins_la_SOURCES += physics/src/nonlinear_elasticity_instantiate.C
 libgrins_la_SOURCES += physics/src/source_term_base.C
 libgrins_la_SOURCES += physics/src/constant_source_term.C
 libgrins_la_SOURCES += physics/src/parsed_source_term.C
-libgrins_la_SOURCES += physics/src/thermo_pressure_variable.C
-libgrins_la_SOURCES += physics/src/thermo_pressure_fe_variable.C
-libgrins_la_SOURCES += physics/src/species_mass_fracs_variables.C
-libgrins_la_SOURCES += physics/src/species_mass_fracs_fe_variables.C
+
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -196,6 +185,21 @@ libgrins_la_SOURCES += solver/src/parameter_manager.C
 libgrins_la_SOURCES += solver/src/parameter_user.C
 libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
+
+#src/variables
+libgrins_la_SOURCES += variables/src/primitive_flow_variables.C
+libgrins_la_SOURCES += variables/src/primitive_flow_fe_variables.C
+libgrins_la_SOURCES += variables/src/primitive_temp_variables.C
+libgrins_la_SOURCES += variables/src/primitive_temp_fe_variables.C
+libgrins_la_SOURCES += variables/src/solid_mechanics_variables.C
+libgrins_la_SOURCES += variables/src/solid_mechanics_fe_variables.C
+libgrins_la_SOURCES += variables/src/species_mass_fracs_variables.C
+libgrins_la_SOURCES += variables/src/species_mass_fracs_fe_variables.C
+libgrins_la_SOURCES += variables/src/thermo_pressure_variable.C
+libgrins_la_SOURCES += variables/src/thermo_pressure_fe_variable.C
+libgrins_la_SOURCES += variables/src/turbulence_variables.C
+libgrins_la_SOURCES += variables/src/turbulence_fe_variables.C
+
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -281,7 +285,6 @@ include_HEADERS += ic_handling/include/grins/generic_ic_handler.h
 include_HEADERS += physics/include/grins/multiphysics_sys.h
 include_HEADERS += physics/include/grins/assembly_context.h
 include_HEADERS += physics/include/grins/physics.h
-include_HEADERS += physics/include/grins/variable_name_defaults.h
 include_HEADERS += physics/include/grins/var_typedefs.h
 include_HEADERS += physics/include/grins/stokes.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_base.h
@@ -328,12 +331,6 @@ include_HEADERS += physics/include/grins/averaged_turbine.h
 include_HEADERS += physics/include/grins/averaged_turbine_adjoint_stab.h
 include_HEADERS += physics/include/grins/averaged_turbine_base.h
 include_HEADERS += physics/include/grins/scalar_ode.h
-include_HEADERS += physics/include/grins/primitive_flow_variables.h
-include_HEADERS += physics/include/grins/primitive_flow_fe_variables.h
-include_HEADERS += physics/include/grins/turbulence_variables.h
-include_HEADERS += physics/include/grins/turbulence_fe_variables.h
-include_HEADERS += physics/include/grins/primitive_temp_variables.h
-include_HEADERS += physics/include/grins/primitive_temp_fe_variables.h
 include_HEADERS += physics/include/grins/velocity_drag.h
 include_HEADERS += physics/include/grins/velocity_drag_adjoint_stab.h
 include_HEADERS += physics/include/grins/velocity_drag_base.h
@@ -349,8 +346,6 @@ include_HEADERS += physics/include/grins/spalart_allmaras_parameters.h
 include_HEADERS += physics/include/grins/spalart_allmaras_helper.h
 include_HEADERS += physics/include/grins/spalart_allmaras_stab_base.h
 include_HEADERS += physics/include/grins/spalart_allmaras_spgsm_stab.h
-include_HEADERS += physics/include/grins/solid_mechanics_variables.h
-include_HEADERS += physics/include/grins/solid_mechanics_fe_variables.h
 include_HEADERS += physics/include/grins/elastic_membrane_base.h
 include_HEADERS += physics/include/grins/elastic_membrane.h
 include_HEADERS += physics/include/grins/elastic_cable_base.h
@@ -360,10 +355,7 @@ include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
 include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
-include_HEADERS += physics/include/grins/thermo_pressure_variable.h
-include_HEADERS += physics/include/grins/thermo_pressure_fe_variable.h
-include_HEADERS += physics/include/grins/species_mass_fracs_variables.h
-include_HEADERS += physics/include/grins/species_mass_fracs_fe_variables.h
+
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
@@ -426,6 +418,21 @@ include_HEADERS += solver/include/grins/parameter_manager.h
 include_HEADERS += solver/include/grins/parameter_user.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/displacement_continuation_solver.h
+
+#src/variables headers
+include_HEADERS += variables/include/grins/primitive_flow_variables.h
+include_HEADERS += variables/include/grins/primitive_flow_fe_variables.h
+include_HEADERS += variables/include/grins/primitive_temp_variables.h
+include_HEADERS += variables/include/grins/primitive_temp_fe_variables.h
+include_HEADERS += variables/include/grins/solid_mechanics_variables.h
+include_HEADERS += variables/include/grins/solid_mechanics_fe_variables.h
+include_HEADERS += variables/include/grins/species_mass_fracs_variables.h
+include_HEADERS += variables/include/grins/species_mass_fracs_fe_variables.h
+include_HEADERS += variables/include/grins/thermo_pressure_variable.h
+include_HEADERS += variables/include/grins/thermo_pressure_fe_variable.h
+include_HEADERS += variables/include/grins/turbulence_variables.h
+include_HEADERS += variables/include/grins/turbulence_fe_variables.h
+include_HEADERS += variables/include/grins/variable_name_defaults.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
@@ -507,6 +514,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
 
 AM_CPPFLAGS += -I$(top_builddir)/src/utilities/include #For grins_version.h
