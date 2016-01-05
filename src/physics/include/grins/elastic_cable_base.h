@@ -59,7 +59,7 @@ namespace GRINS
     //! Cable density
     libMesh::Real  _rho;
 
-    SolidMechanicsFEVariables _disp_vars;
+    DisplacementFEVariables _disp_vars;
 
     const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 

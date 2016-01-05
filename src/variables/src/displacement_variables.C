@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
+  DisplacementVariables::DisplacementVariables( const GetPot& input )
     : VariablesBase(),
       _have_v(false),
       _have_w(false),
@@ -50,7 +50,7 @@ namespace GRINS
     _var_names[_w_idx] = input("Physics/VariableNames/w_displacment", w_disp_name_default );
   }
 
-  void SolidMechanicsVariables::init( libMesh::FEMSystem* system )
+  void DisplacementVariables::init( libMesh::FEMSystem* system )
   {
     libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
     _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );

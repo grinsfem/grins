@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLID_MECHANICS_VARIABLES_H
-#define GRINS_SOLID_MECHANICS_VARIABLES_H
+#ifndef GRINS_DISPLACEMENT_VARIABLES_H
+#define GRINS_DISPLACEMENT_VARIABLES_H
 
 // libMesh forward declarations
 class GetPot;
@@ -40,12 +40,12 @@ namespace libMesh
 
 namespace GRINS
 {
-  class SolidMechanicsVariables : public VariablesBase
+  class DisplacementVariables : public VariablesBase
   {
   public:
 
-    SolidMechanicsVariables( const GetPot& input );
-    virtual ~SolidMechanicsVariables(){};
+    DisplacementVariables( const GetPot& input );
+    virtual ~DisplacementVariables(){};
 
     //! Initialize System variables
     /*!
@@ -76,55 +76,55 @@ namespace GRINS
   };
 
   inline
-  VariableIndex SolidMechanicsVariables::u_var() const
+  VariableIndex DisplacementVariables::u_var() const
   {
     return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex SolidMechanicsVariables::v_var() const
+  VariableIndex DisplacementVariables::v_var() const
   {
     libmesh_assert(_have_v);
     return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex SolidMechanicsVariables::w_var() const
+  VariableIndex DisplacementVariables::w_var() const
   {
     libmesh_assert(_have_w);
     return this->_vars[_w_idx];
   }
 
   inline
-  bool SolidMechanicsVariables::have_v() const
+  bool DisplacementVariables::have_v() const
   {
     return _have_v;
   }
 
   inline
-  bool SolidMechanicsVariables::have_w() const
+  bool DisplacementVariables::have_w() const
   {
     return _have_w;
   }
 
   inline
-  const std::string& SolidMechanicsVariables::u_var_name() const
+  const std::string& DisplacementVariables::u_var_name() const
   {
     return this->_var_names[_u_idx];
   }
 
   inline
-  const std::string& SolidMechanicsVariables::v_var_name() const
+  const std::string& DisplacementVariables::v_var_name() const
   {
     return this->_var_names[_v_idx];
   }
 
   inline
-  const std::string& SolidMechanicsVariables::w_var_name() const
+  const std::string& DisplacementVariables::w_var_name() const
   {
     return this->_var_names[_w_idx];
   }
 
 } // end namespace GRINS
 
-#endif // GRINS_SOLID_MECHANICS_VARIABLES_H
+#endif // GRINS_DISPLACEMENT_VARIABLES_H

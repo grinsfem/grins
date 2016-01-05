@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SOLID_MECHANICS_FE_VARIABLES_H
-#define GRINS_SOLID_MECHANICS_FE_VARIABLES_H
+#ifndef GRINS_DISPLACEMENT_FE_VARIABLES_H
+#define GRINS_DISPLACEMENT_FE_VARIABLES_H
 
 // GRINS
 #include "grins/grins_enums.h"
@@ -36,12 +36,12 @@
 
 namespace GRINS
 {
-  class SolidMechanicsFEVariables : public SolidMechanicsVariables
+  class DisplacementFEVariables : public DisplacementVariables
   {
   public:
 
-    SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name );
-    virtual ~SolidMechanicsFEVariables(){};
+    DisplacementFEVariables( const GetPot& input, const std::string& physics_name );
+    virtual ~DisplacementFEVariables(){};
 
     //! Initialize System variables
     /*!
@@ -61,10 +61,10 @@ namespace GRINS
 
   private:
 
-    SolidMechanicsFEVariables();
+    DisplacementFEVariables();
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_SOLID_MECHANICS_FE_VARIABLES_H
+#endif // GRINS_DISPLACEMENT_FE_VARIABLES_H

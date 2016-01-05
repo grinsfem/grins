@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLID_MECHANICS_BC_HANDLING_H
-#define GRINS_SOLID_MECHANICS_BC_HANDLING_H
+#ifndef GRINS_DISPLACEMENT_BC_HANDLING_H
+#define GRINS_DISPLACEMENT_BC_HANDLING_H
 
 //GRINS
 #include "grins/bc_handling_base.h"
@@ -65,7 +65,7 @@ namespace GRINS
 
   protected:
 
-    SolidMechanicsVariables _disp_vars;
+    DisplacementVariables _disp_vars;
 
   private:
 
@@ -85,4 +85,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif // GRINS_SOLID_MECHANICS_BC_HANDLING_H
+#endif // GRINS_DISPLACEMENT_BC_HANDLING_H
