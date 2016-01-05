@@ -23,7 +23,6 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/grins_enums.h"
 #include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
@@ -34,21 +33,17 @@
 namespace GRINS
 {
   PrimitiveTempFEVariables::PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
-    : PrimitiveTempVariables(input),
-      _T_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-      _T_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) )
+    : FEVariablesBase(),
+      PrimitiveTempVariables(input)
   {
-    return;
-  }
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) );
 
-  PrimitiveTempFEVariables::~PrimitiveTempFEVariables()
-  {
-    return;
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) );
   }
 
   void PrimitiveTempFEVariables::init( libMesh::FEMSystem* system )
   {
-    _vars[0] = system->add_variable( _var_names[0], this->_T_order, _T_FE_family );
+    _vars[0] = system->add_variable( _var_names[0], _order[0], _family[0] );
   }
 
 } // end namespace GRINS
