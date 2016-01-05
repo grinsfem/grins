@@ -30,6 +30,8 @@
 #include "grins_config.h"
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
+#include "grins/primitive_flow_fe_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
 #include "libmesh/enum_order.h"
@@ -96,31 +98,9 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    // Indices for each variable;
-    //! Index for temperature field
-    VariableIndex _T_var;
+    PrimitiveFlowFEVariables _flow_vars;
 
-    //! Index for r-velocity field
-    VariableIndex _u_r_var;
-
-    //! Index for z-velocity field
-    VariableIndex _u_z_var; 
-
-    // Names of each variable in the system
-    //! Name for temperature variable
-    std::string _T_var_name;
-
-    //! Name of r-velocity
-    std::string _u_r_var_name;
-
-    //! Name of z-velocity
-    std::string _u_z_var_name;
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _T_FE_family, _V_FE_family;
-
-    //! Temperature element order, read from input
-    GRINSEnums::Order _T_order, _V_order;
+    PrimitiveTempFEVariables _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

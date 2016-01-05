@@ -103,9 +103,5 @@ g = '0 -9.8'
 Temperature = 'T'
 u_velocity = 'u'
 v_velocity = 'v'
-w_velocity = 'w'
 pressure = 'p'
-# Made these u and v as well to reuse test.
-r_velocity = 'u'
-z_velocity = 'v'
 []
