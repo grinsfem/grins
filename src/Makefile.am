@@ -421,6 +421,7 @@ include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/displacement_continuation_solver.h
 
 #src/variables headers
+include_HEADERS += variables/include/grins/fe_variables_base.h
 include_HEADERS += variables/include/grins/primitive_flow_variables.h
 include_HEADERS += variables/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += variables/include/grins/primitive_temp_variables.h
