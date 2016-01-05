@@ -26,7 +26,6 @@
 #include "grins/displacement_fe_variables.h"
 
 // GRINS
-#include "grins/grins_enums.h"
 #include "grins/variable_name_defaults.h"
 
 // libMesh
@@ -38,25 +37,27 @@ namespace GRINS
 {
 
   DisplacementFEVariables::DisplacementFEVariables( const GetPot& input, const std::string& physics_name )
-    :  DisplacementVariables(input),
-       _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ),
-       _order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) )
-  {}
+    :  FEVariablesBase(),
+       DisplacementVariables(input)
+  {
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) );
+  }
 
   void DisplacementFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {
-    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_order, _FE_family);
+    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_order[0], _family[0]);
 
     if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
       {
         _have_v = true;
-        _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_order, _FE_family);
+        _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_order[0], _family[0]);
       }
 
     if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
       {
         _have_w = true;
-        _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_order, _FE_family);
+        _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_order[0], _family[0]);
       }
   }
 

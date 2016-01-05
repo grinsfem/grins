@@ -27,16 +27,13 @@
 #define GRINS_DISPLACEMENT_FE_VARIABLES_H
 
 // GRINS
-#include "grins/grins_enums.h"
+#include "grins/fe_variables_base.h"
 #include "grins/displacement_variables.h"
-
-// libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
-  class DisplacementFEVariables : public DisplacementVariables
+  class DisplacementFEVariables : public FEVariablesBase,
+                                  public DisplacementVariables
   {
   public:
 
@@ -50,14 +47,6 @@ namespace GRINS
      * space or 2D shell manifolds in 3D (is_3D = true).
      */
     void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _order;
 
   private:
 
