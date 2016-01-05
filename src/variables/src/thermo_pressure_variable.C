@@ -32,15 +32,17 @@
 namespace GRINS
 {
   ThermoPressureVariable::ThermoPressureVariable( const GetPot& input )
-    : _p0_var(invalid_var_index),
-      _p0_var_name( input("Physics/VariableNames/thermo_presure", "p0" ) )
-  {}
+    : VariablesBase()
+  {
+    _vars.resize(1,invalid_var_index);
+    _var_names.resize(1, input("Physics/VariableNames/thermo_presure", "p0" ) );
+  }
 
   void ThermoPressureVariable::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _p0_var_name ) );
+    libmesh_assert( system->has_variable( _var_names[0] ) );
 
-    _p0_var = system->variable_number( _p0_var_name );
+    _vars[0] = system->variable_number( _var_names[0] );
   }
 
 } // end namespace GRINS

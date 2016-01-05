@@ -43,7 +43,7 @@ namespace GRINS
 
   void ThermoPressureFEVariable::init( libMesh::FEMSystem* system )
   {
-    _p0_var = system->add_variable( _p0_var_name, libMesh::FIRST, libMesh::SCALAR );
+    _vars[0] = system->add_variable( _var_names[0], libMesh::FIRST, libMesh::SCALAR );
   }
 
 } // end namespace GRINS

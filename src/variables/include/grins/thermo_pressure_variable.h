@@ -27,7 +27,7 @@
 #define GRINS_THERMO_PRESSURE_VARIABLE_H
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -38,7 +38,7 @@ namespace libMesh
 
 namespace GRINS
 {
-  class ThermoPressureVariable
+  class ThermoPressureVariable : public VariablesBase
   {
   public:
 
@@ -49,14 +49,6 @@ namespace GRINS
 
     VariableIndex p0_var() const;
 
-  protected:
-
-    //! Indices for each (owned) variable;
-    VariableIndex _p0_var;
-
-    //! Names of each (owned) variable in the system
-    std::string _p0_var_name;
-
   private:
 
     ThermoPressureVariable();
@@ -66,7 +58,7 @@ namespace GRINS
   inline
   VariableIndex ThermoPressureVariable::p0_var() const
   {
-    return _p0_var;
+    return _vars[0];
   }
 
 } // end namespace GRINS
