@@ -355,6 +355,7 @@ include_HEADERS += physics/include/grins/elastic_cable_constant_gravity.h
 include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
+include_HEADERS += physics/include/grins/antioch_instantiation_macro.h
 
 
 # src/properties headers
