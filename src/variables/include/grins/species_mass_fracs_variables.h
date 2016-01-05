@@ -30,7 +30,7 @@
 #include <vector>
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -41,7 +41,7 @@ namespace libMesh
 
 namespace GRINS
 {
-  class SpeciesMassFractionsVariables
+  class SpeciesMassFractionsVariables : public VariablesBase
   {
   public:
 
@@ -54,14 +54,6 @@ namespace GRINS
 
     VariableIndex species_var( unsigned int species ) const;
 
-  protected:
-
-    //! Indices for each (owned) variable;
-    std::vector<VariableIndex> _species_vars; /* Indicies for species densities */
-
-    //! Names of each (owned) variable in the system
-    std::vector<std::string> _species_var_names;
-
   private:
 
     SpeciesMassFractionsVariables();
@@ -71,15 +63,15 @@ namespace GRINS
   inline
   unsigned int SpeciesMassFractionsVariables::n_species() const
   {
-    // We *must* use the size of _species_var_names here since that gets populated
+    // We *must* use the size of _var_names here since that gets populated
     // at construction time.
-    return _species_var_names.size();
+    return _var_names.size();
   }
 
   inline
   VariableIndex SpeciesMassFractionsVariables::species_var( unsigned int species ) const
   {
-    return _species_vars[species];
+    return _vars[species];
   }
 
 } // end namespace GRINS

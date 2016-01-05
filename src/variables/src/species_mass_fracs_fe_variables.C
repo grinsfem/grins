@@ -49,12 +49,12 @@ namespace GRINS
 
   void SpeciesMassFractionsFEVariables::init( libMesh::FEMSystem* system )
   {
-    this->_species_vars.resize(this->n_species());
+    this->_vars.resize(this->n_species());
     for( unsigned int s = 0; s < this->n_species(); s++ )
       {
-	this->_species_vars[s] = system->add_variable( this->_species_var_names[s],
-                                                       this->_species_order,
-                                                       this->_species_FE_family);
+	this->_vars[s] = system->add_variable( this->_var_names[s],
+                                               this->_species_order,
+                                               this->_species_FE_family);
       }
   }
 

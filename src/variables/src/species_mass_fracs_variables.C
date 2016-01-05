@@ -37,8 +37,9 @@ namespace GRINS
 {
   SpeciesMassFractionsVariables::SpeciesMassFractionsVariables( const GetPot& input,
                                                                 const std::string& material_name )
+    : VariablesBase()
   {
-    MaterialsParsing::parse_species_varnames(input, material_name, _species_var_names);
+    MaterialsParsing::parse_species_varnames(input, material_name, _var_names);
   }
 
   void SpeciesMassFractionsVariables::init( libMesh::FEMSystem* system )
@@ -47,12 +48,12 @@ namespace GRINS
 
 #ifndef NDEBUG
     for( unsigned int s = 0; s < n_species; s++)
-      libmesh_assert( system->has_variable( _species_var_names[s] ) );
+      libmesh_assert( system->has_variable( _var_names[s] ) );
 #endif
 
-    _species_vars.resize(n_species);
+    _vars.resize(n_species);
     for( unsigned int s = 0; s < n_species; s++)
-      _species_vars[s] = system->variable_number( _species_var_names[s] );
+      _vars[s] = system->variable_number( _var_names[s] );
   }
 
 } // end namespace GRINS
