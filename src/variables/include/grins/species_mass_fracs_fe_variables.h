@@ -27,17 +27,14 @@
 #define GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
 
 // GRINS
-#include "grins/grins_enums.h"
+#include "grins/fe_variables_base.h"
 #include "grins/species_mass_fracs_variables.h"
-
-// libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
 
 namespace GRINS
 {
 
-  class SpeciesMassFractionsFEVariables : public SpeciesMassFractionsVariables
+  class SpeciesMassFractionsFEVariables : public FEVariablesBase,
+                                          public SpeciesMassFractionsVariables
   {
   public:
 
@@ -45,14 +42,6 @@ namespace GRINS
     ~SpeciesMassFractionsFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _species_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _species_order;
 
   private:
 

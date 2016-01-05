@@ -26,8 +26,6 @@
 #include "grins/species_mass_fracs_fe_variables.h"
 
 // GRINS
-#include "grins/grins_enums.h"
-#include "grins/variable_name_defaults.h"
 #include "grins/materials_parsing.h"
 
 // libMesh
@@ -39,12 +37,13 @@ namespace GRINS
 {
   SpeciesMassFractionsFEVariables::SpeciesMassFractionsFEVariables( const GetPot& input,
                                                                     const std::string& physics_name )
-    : SpeciesMassFractionsVariables( input, MaterialsParsing::material_name(input,physics_name) )
+    : FEVariablesBase(),
+      SpeciesMassFractionsVariables( input, MaterialsParsing::material_name(input,physics_name) )
   {
-    this->_species_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/species_FE_family", "LAGRANGE") );
+    this->_family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/species_FE_family", "LAGRANGE") ) );
 
     // Read FE family info
-    this->_species_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/species_order", "SECOND") );
+    this->_order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/species_order", "SECOND") ) );
   }
 
   void SpeciesMassFractionsFEVariables::init( libMesh::FEMSystem* system )
@@ -53,8 +52,8 @@ namespace GRINS
     for( unsigned int s = 0; s < this->n_species(); s++ )
       {
 	this->_vars[s] = system->add_variable( this->_var_names[s],
-                                               this->_species_order,
-                                               this->_species_FE_family);
+                                               this->_order[0],
+                                               this->_family[0]);
       }
   }
 
