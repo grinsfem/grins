@@ -28,7 +28,7 @@
 
 // GRINS
 #include "grins/grins_enums.h"
-#include "grins/solid_mechanics_variables.h"
+#include "grins/displacement_variables.h"
 
 // libMesh
 #include "libmesh/enum_order.h"

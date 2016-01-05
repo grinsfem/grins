@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/solid_mechanics_fe_variables.h"
+#include "grins/displacement_fe_variables.h"
 #include "grins/assembly_context.h"
 
 // libMesh

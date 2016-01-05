@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/solid_mechanics_variables.h"
+#include "grins/displacement_variables.h"
 
 namespace GRINS
 {

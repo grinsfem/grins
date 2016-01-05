@@ -23,41 +23,51 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/solid_mechanics_fe_variables.h"
-
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/variable_name_defaults.h"
+#include "grins/displacement_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
+
+// GRINS
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-
-  SolidMechanicsFEVariables::SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name )
-    :  SolidMechanicsVariables(input),
-       _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ),
-       _order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) )
-  {}
-
-  void SolidMechanicsFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
+  SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
+    : VariablesBase(),
+      _have_v(false),
+      _have_w(false),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_order, _FE_family);
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
 
-    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
+    _var_names[_u_idx] = input("Physics/VariableNames/u_displacment", u_disp_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_displacment", v_disp_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_displacment", w_disp_name_default );
+  }
+
+  void SolidMechanicsVariables::init( libMesh::FEMSystem* system )
+  {
+    libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
+    _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );
+
+    if ( system->has_variable( _var_names[_v_idx] ) )
       {
         _have_v = true;
-        _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_order, _FE_family);
+        _vars[_v_idx] = system->variable_number( _var_names[_v_idx] );
       }
 
-    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
+    if ( system->has_variable( _var_names[_w_idx] ) )
       {
         _have_w = true;
-        _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_order, _FE_family);
+        _vars[_w_idx] = system->variable_number( _var_names[_w_idx] );
       }
+
+    return;
   }
 
 } // end namespace GRINS
