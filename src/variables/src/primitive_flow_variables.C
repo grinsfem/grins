@@ -35,41 +35,37 @@
 namespace GRINS
 {
   PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
-    :  _u_var(invalid_var_index),
-       _v_var(invalid_var_index),
-       _w_var(invalid_var_index),
-       _p_var(invalid_var_index),
-       _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
-       _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
-       _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
-       _p_var_name( input("Physics/VariableNames/pressure",   p_var_name_default ) )
+    :  VariablesBase(),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2),
+       _p_idx(3)
   {
-    return;
-  }
+    _vars.resize(4,invalid_var_index);
+    _var_names.resize(4);
 
-  PrimitiveFlowVariables::~PrimitiveFlowVariables()
-  {
-    return;
+    _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+    _var_names[_p_idx] = input("Physics/VariableNames/pressure", p_var_name_default );
   }
 
   void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _u_var_name ) );
-    libmesh_assert( system->has_variable( _v_var_name ) );
-    libmesh_assert( system->has_variable( _p_var_name ) );
+    libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
+    libmesh_assert( system->has_variable( _var_names[_v_idx] ) );
+    libmesh_assert( system->has_variable( _var_names[_p_idx] ) );
 
-    _u_var = system->variable_number( _u_var_name );
-    _v_var = system->variable_number( _v_var_name );
+    _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );
+    _vars[_v_idx] = system->variable_number( _var_names[_v_idx] );
 
     if ( system->get_mesh().mesh_dimension() == 3)
       {
-        libmesh_assert( system->has_variable( _w_var_name ) );
-        _w_var = system->variable_number( _w_var_name );
+        libmesh_assert( system->has_variable( _var_names[_w_idx] ) );
+        _vars[_w_idx] = system->variable_number( _var_names[_w_idx] );
       }
 
-    _p_var = system->variable_number( _p_var_name );
-
-    return;
+    _vars[_p_idx] = system->variable_number( _var_names[_p_idx] );
   }
 
 } // end namespace GRINS

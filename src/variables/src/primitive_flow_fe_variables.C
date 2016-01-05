@@ -53,13 +53,13 @@ namespace GRINS
 
   void PrimitiveFlowFEVariables::init( libMesh::FEMSystem* system )
   {
-    _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
-    _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
+    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_V_order, _V_FE_family);
+    _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_V_order, _V_FE_family);
 
     if ( system->get_mesh().mesh_dimension() == 3)
-      _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
+      _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_V_order, _V_FE_family);
 
-    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
+    _vars[_p_idx] = system->add_variable( _var_names[_p_idx], this->_P_order, _P_FE_family);
 
     return;
   }
