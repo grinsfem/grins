@@ -276,7 +276,30 @@ namespace GRINS
        in the input file. If so, then tell the user what they were and error out. */
     std::vector<std::string> unused_vars = input.unidentified_variables();
 
+    bool unused_vars_detected = false;
+
+    // String we use to check if there is a variable in the Materials section
+    std::string mat_string = "Materials/";
+
+    // If we do have unused variables, make sure they are in the Materials
+    // section since we're allowing those to be present and not used.
     if( !unused_vars.empty() )
+      {
+        int n_total = unused_vars.size();
+
+        int n_mats = 0;
+
+        for( int v = 0; v < n_total; v++ )
+            if( (unused_vars[v]).find(mat_string) != std::string::npos )
+              n_mats += 1;
+
+        libmesh_assert_greater_equal( n_total, n_mats );
+
+        if( n_mats < n_total )
+          unused_vars_detected = true;
+      }
+
+    if( unused_vars_detected )
       {
         libMesh::err << "==========================================================" << std::endl;
         if( warning_only )
@@ -289,6 +312,10 @@ namespace GRINS
         for( std::vector<std::string>::const_iterator it = unused_vars.begin();
              it != unused_vars.end(); ++it )
           {
+            // Don't print out any unused Material variables, since we allow these
+            if( (*it).find(mat_string) != std::string::npos )
+              continue;
+
             libMesh::err << *it << std::endl;
           }
         libMesh::err << "==========================================================" << std::endl;
