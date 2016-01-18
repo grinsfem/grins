@@ -128,6 +128,8 @@ namespace GRINS
                                        ParameterUser& params,
                                        libMesh::Real& rho )
   {
+    bool have_material = MaterialsParsing::have_material(input,core_physics_name);
+
     std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
 
     // Error if both material/Density and rho are specified
@@ -137,8 +139,7 @@ namespace GRINS
 
     // It's deprecated to have nothing and default to 1.0
     if( !input.have_variable("Physics/"+core_physics_name+"/rho") &&
-        ( !input.have_variable("Physics/"+core_physics_name+"/material") ||
-          !input.have_variable("Materials/"+material+"/Density/value") ) )
+        !have_material )
       {
         // For some insane reason, we'd originally tied density specifically
         // to incompressible_navier_stokes, so we'll check for that first.
@@ -170,9 +171,8 @@ namespace GRINS
                "Physics/"+core_physics_name+"/rho", 1.0 /*default*/);
           }
       }
-
     // It's deprecated to use rho as the density input
-    if( input.have_variable("Physics/"+core_physics_name+"/rho") )
+    else if( input.have_variable("Physics/"+core_physics_name+"/rho") )
       {
         MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/rho",
                                              "Density/value" );
@@ -183,13 +183,18 @@ namespace GRINS
       }
 
     // This is the preferred version
-    if( input.have_variable("Physics/"+core_physics_name+"/material") &&
-        input.have_variable("Materials/"+material+"/Density/value") )
+    else if( have_material )
       {
+        if( !input.have_variable("Materials/"+material+"/Density/value") )
+          libmesh_error_msg("ERROR: Could not find Materials/"+material+"/Density/value in input!");
+
         params.set_parameter
           (rho, input,
            "Materials/"+material+"/Density/value", 0.0 /*default*/);
       }
+    // Wat?
+    else
+      libmesh_error();
 
     // Let's make sure we actually got a valid density value
     if( rho <= 0.0 )

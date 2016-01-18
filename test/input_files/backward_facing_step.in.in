@@ -7,6 +7,9 @@
          value = '1.0e-1'
       [../Density]
          value = '1.0'
+      # This is for testing "no-error-for-unused-Materials-variable"
+      [../ThermalConductivity]
+         value = '1.0'
 []
 
 # Options related to all Physics
