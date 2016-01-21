@@ -36,16 +36,6 @@
 
 namespace GRINS
 {
-  SolverFactory::SolverFactory()
-  {
-    return;
-  }
-
-  SolverFactory::~SolverFactory()
-  {
-    return;
-  }
-
   SharedPtr<Solver> SolverFactory::build(const GetPot& input)
   {
     bool mesh_adaptive = input("MeshAdaptivity/mesh_adaptive", false );

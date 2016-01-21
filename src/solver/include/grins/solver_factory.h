@@ -41,8 +41,8 @@ namespace GRINS
   {
   public:
 
-    SolverFactory();
-    virtual ~SolverFactory();
+    SolverFactory(){};
+    virtual ~SolverFactory(){};
 
     //! Builds GRINS::Solver object.
     /*! Users should override this method to construct 
