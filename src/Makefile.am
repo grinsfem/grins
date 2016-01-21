@@ -421,6 +421,7 @@ include_HEADERS += solver/include/grins/parameter_manager.h
 include_HEADERS += solver/include/grins/parameter_user.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/displacement_continuation_solver.h
+include_HEADERS += solver/include/grins/solver_names.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/fe_variables_base.h
