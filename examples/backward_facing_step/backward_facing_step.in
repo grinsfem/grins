@@ -31,12 +31,11 @@ P_order = 'FIRST'
 # 2 - no slip walls
 # 3 - outlet
 
-bc_ids = '1 2'
-bc_types = 'parabolic_profile no_slip'
+bc_ids = '1 1 2'
+bc_types = 'parsed_dirichlet constant_dirichlet no_slip'
 
-parabolic_profile_coeffs_1 = '0.0 0.0 -480.0 0.0 240.0 0.0'
-parabolic_profile_var_1 = 'u'
-parabolic_profile_fix_1 = 'v'
+bc_variables = 'u v'
+bc_values = '240.0*y*(1.0-2.0*y) 0.0'
 
 pin_pressure = 'false'
 
