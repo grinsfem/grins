@@ -25,6 +25,10 @@
 // This class
 #include "grins/time_stepping_parsing.h"
 
+// GRINS
+#include "grins/common.h"
+#include "grins/solver_parsing.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -32,7 +36,26 @@ namespace GRINS
 {
   unsigned int TimeSteppingParsing::parse_n_timesteps( const GetPot& input )
   {
-    return input("unsteady-solver/n_timesteps", 1 );
+    SolverParsing::dup_solver_option_check(input,
+                                           "unsteady-solver/n_timesteps",
+                                           "SolverOptions/TimeStepping/n_timesteps");
+
+    unsigned int n_timesteps = 0;
+
+    if( input.have_variable("unsteady-solver/n_timesteps") )
+      {
+        n_timesteps = input("unsteady-solver/n_timesteps",0);
+
+        std::string warning = "WARNING: unsteady-solver/n_timesteps is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/n_timesteps to specify # of timesteps.\n";
+        grins_warning(warning);
+      }
+    else if( input.have_variable("SolverOptions/TimeStepping/n_timesteps") )
+        n_timesteps = input("SolverOptions/TimeStepping/n_timesteps",0);
+    else
+      libmesh_error_msg("ERROR: Could not find valid entry for n_timesteps!");
+
+    return n_timesteps;
   }
 
   unsigned int TimeSteppingParsing::parse_backtrack_deltat( const GetPot& input )
