@@ -107,7 +107,22 @@ namespace GRINS
 
   double TimeSteppingParsing::parse_deltat( const GetPot& input )
   {
-    return input("unsteady-solver/deltat", 0.0 );
+    double delta_t = 0.0;
+
+    if( input.have_variable("unsteady-solver/deltat") )
+      {
+        delta_t = input("unsteady-solver/deltat",0.0);
+
+        std::string warning = "WARNING: unsteady-solver/deltat is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/delta_t to set delta_t.\n";
+        grins_warning(warning);
+      }
+    else if( input.have_variable("SolverOptions/TimeStepping/delta_t") )
+      delta_t = input("SolverOptions/TimeStepping/delta_t",0.0);
+    else
+      libmesh_error_msg("ERROR: Could not find valid entry for delta_t!");
+
+    return delta_t;
   }
 
 } // end namespace GRINS
