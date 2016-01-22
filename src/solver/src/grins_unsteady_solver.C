@@ -39,6 +39,7 @@
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/euler_solver.h"
+#include "libmesh/euler2_solver.h"
 #include "libmesh/twostep_time_solver.h"
 
 // C++
@@ -70,6 +71,12 @@ namespace GRINS
         time_solver = new libMesh::EulerSolver( *(system) );
 
         this->set_theta<libMesh::EulerSolver>(time_solver);
+      }
+    else if( _time_solver_name == SolverNames::libmesh_euler2_solver() )
+      {
+        time_solver = new libMesh::Euler2Solver( *(system) );
+
+        this->set_theta<libMesh::Euler2Solver>(time_solver);
       }
     else
       libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
