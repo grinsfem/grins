@@ -54,6 +54,8 @@ namespace GRINS
     static double parse_theta( const GetPot& input );
 
     static double parse_deltat( const GetPot& input );
+
+    static std::string parse_time_stepper_name( const GetPot& input );
   };
 
 } // end namespace GRINS

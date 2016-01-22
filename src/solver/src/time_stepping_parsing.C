@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/solver_names.h"
 #include "grins/solver_parsing.h"
 
 // libMesh
@@ -123,6 +124,27 @@ namespace GRINS
       libmesh_error_msg("ERROR: Could not find valid entry for delta_t!");
 
     return delta_t;
+  }
+
+  std::string TimeSteppingParsing::parse_time_stepper_name( const GetPot& input )
+  {
+    std::string default_stepper = SolverNames::libmesh_euler_solver();
+    std::string time_stepper = default_stepper;
+
+    // Before, we didn't actually set the solver name, we just set whether we
+    // were transient or not. So, if we see this option was set to true, then
+    // we were time stepping with the only option available then (EulerSolver)
+    if( input("unsteady-solver/transient", false) )
+      {
+        std::string warning = "WARNING: using unsteady-solver options is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/solver_type to set the time\n";
+        warning += "        stepping algorithm.\n";
+        grins_warning(warning);
+      }
+    else
+      time_stepper = input("SolverOptions/TimeStepping/solver_type", default_stepper);
+
+    return time_stepper;
   }
 
 } // end namespace GRINS
