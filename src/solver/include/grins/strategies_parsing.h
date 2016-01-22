@@ -41,6 +41,7 @@ namespace GRINS
 
     ~StrategiesParsing(){};
 
+    //! Checks input to see if mesh adaptivity options are present
     static bool is_mesh_adaptive( const GetPot& input );
   };
 
