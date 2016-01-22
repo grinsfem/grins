@@ -69,8 +69,7 @@ namespace GRINS
       {
         time_solver = new libMesh::EulerSolver( *(system) );
 
-        libMesh::EulerSolver* euler_solver = libMesh::libmesh_cast_ptr<libMesh::EulerSolver*>(time_solver);
-        euler_solver->theta = this->_theta;
+        this->set_theta<libMesh::EulerSolver>(time_solver);
       }
     else
       libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);

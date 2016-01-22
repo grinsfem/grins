@@ -31,6 +31,7 @@
 
 //libMesh
 #include "libmesh/system_norm.h"
+#include "libmesh/unsteady_solver.h"
 
 namespace GRINS
 {
@@ -47,6 +48,9 @@ namespace GRINS
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
+    template <typename T>
+    void set_theta( libMesh::UnsteadySolver* time_solver );
+
     std::string _time_solver_name;
 
     unsigned int _n_timesteps;
@@ -60,6 +64,14 @@ namespace GRINS
     double _max_growth;
     libMesh::SystemNorm _component_norm;
   };
+
+  template <typename T>
+  inline
+  void UnsteadySolver::set_theta( libMesh::UnsteadySolver* time_solver )
+  {
+    T* deriv_solver = libMesh::libmesh_cast_ptr<T*>(time_solver);
+    deriv_solver->theta = this->_theta;
+  }
 
 } // end namespace GRINS
 #endif // GRINS_UNSTEADY_SOLVER_H
