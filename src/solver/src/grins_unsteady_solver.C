@@ -32,6 +32,7 @@
 #include "grins/multiphysics_sys.h"
 #include "grins/time_stepping_parsing.h"
 #include "grins/strategies_parsing.h"
+#include "grins/solver_names.h"
 
 // libMesh
 #include "libmesh/dirichlet_boundaries.h"
@@ -62,11 +63,21 @@ namespace GRINS
 
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
-    libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
+    libMesh::UnsteadySolver* time_solver = NULL;
+
+    if( _time_solver_name == SolverNames::libmesh_euler_solver() )
+      {
+        time_solver = new libMesh::EulerSolver( *(system) );
+
+        libMesh::EulerSolver* euler_solver = libMesh::libmesh_cast_ptr<libMesh::EulerSolver*>(time_solver);
+        euler_solver->theta = this->_theta;
+      }
+    else
+      libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
 
     if (_target_tolerance)
       {
-        libMesh::TwostepTimeSolver *outer_solver = 
+        libMesh::TwostepTimeSolver *outer_solver =
           new libMesh::TwostepTimeSolver(*system);
 
         outer_solver->target_tolerance = _target_tolerance;
@@ -83,11 +94,7 @@ namespace GRINS
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
       }
 
-    // Set theta parameter for time-stepping scheme
-    time_solver->theta = this->_theta;
     time_solver->reduce_deltat_on_diffsolver_failure = this->_backtrack_deltat;
-
-    return;
   }
 
   void UnsteadySolver::solve( SolverContext& context )
