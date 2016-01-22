@@ -82,7 +82,27 @@ namespace GRINS
 
   double TimeSteppingParsing::parse_theta( const GetPot& input )
   {
-    return input("unsteady-solver/theta", 0.5 );
+    double theta = 0.0;
+
+    if( input.have_variable("unsteady-solver/theta") )
+      {
+        theta = input("unsteady-solver/theta",0.5);
+
+        std::string warning = "WARNING: unsteady-solver/theta is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/theta to set theta.\n";
+        grins_warning(warning);
+      }
+    else
+      theta = input("SolverOptions/TimeStepping/theta",0.5);
+
+    if( theta < 0.0 || theta > 1.0 )
+      {
+        std::stringstream ts;
+        ts << theta;
+        libmesh_error_msg("ERROR: theta must be between 0.0 and 1.0. Found: "+ts.str());
+      }
+
+    return theta;
   }
 
   double TimeSteppingParsing::parse_deltat( const GetPot& input )
