@@ -43,6 +43,9 @@ namespace GRINS
 
     static unsigned int parse_n_timesteps( const GetPot& input );
 
+    //! Parse option to retry failed time steps with smaller \f$ \Delta t \f$
+    /*! backtrack_deltat is the number of time the TimeSolver will try
+        to resolve the timestep with a smaller \f$ \Delta t \f$. Default is 0. */
     static unsigned int parse_backtrack_deltat( const GetPot& input );
 
     static double parse_theta( const GetPot& input );
