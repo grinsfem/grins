@@ -30,7 +30,10 @@
 
 // Forward declarations
 class GetPot;
-
+namespace libMesh
+{
+  class SystemNorm;
+}
 namespace GRINS
 {
   class StrategiesParsing
@@ -55,6 +58,9 @@ namespace GRINS
 
     //! Parses max growth parameter for adaptive time stepping
     static double parse_max_growth( const GetPot& input );
+
+    //! Parses the norm to use for each solution variable for adaptive time stepping
+    static void parse_component_norm( const GetPot& input, libMesh::SystemNorm& component_norm );
   };
 
 } // end namespace GRINS

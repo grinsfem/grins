@@ -57,19 +57,7 @@ namespace GRINS
       _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
       _max_growth( StrategiesParsing::parse_max_growth(input) )
   {
-    const unsigned int n_component_norm =
-      input.vector_variable_size("unsteady-solver/component_norm");
-    for (unsigned int i=0; i != n_component_norm; ++i)
-      {
-        const std::string current_norm = input("component_norm", std::string("L2"), i);
-        // TODO: replace this with string_to_enum with newer libMesh
-        if (current_norm == "GRINSEnums::L2")
-          _component_norm.set_type(i, libMesh::L2);
-        else if (current_norm == "GRINSEnums::H1")
-          _component_norm.set_type(i, libMesh::H1);
-        else
-          libmesh_not_implemented();
-      }
+    StrategiesParsing::parse_component_norm(input,_component_norm);
   }
 
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
