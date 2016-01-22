@@ -34,4 +34,20 @@ namespace GRINS
   {
     return input("MeshAdaptivity/mesh_adaptive", false );
   }
+
+  double StrategiesParsing::parse_target_tolerance( const GetPot& input )
+  {
+    return input("unsteady-solver/target_tolerance", 0.0 );
+  }
+
+  double StrategiesParsing::parse_upper_tolerance( const GetPot& input )
+  {
+    return input("unsteady-solver/upper_tolerance", 0.0 );
+  }
+
+  double StrategiesParsing::parse_max_growth( const GetPot& input )
+  {
+    return input("unsteady-solver/max_growth", 0.0 );
+  }
+
 } // end namespace GRINS

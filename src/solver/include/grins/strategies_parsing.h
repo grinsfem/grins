@@ -43,6 +43,18 @@ namespace GRINS
 
     //! Checks input to see if mesh adaptivity options are present
     static bool is_mesh_adaptive( const GetPot& input );
+
+    //! Parses target tolerance parameter for adaptive time stepping
+    /*! 0.0 means there is no adaptive time stepping enabled. To enable
+        adaptive time stepping with the libMesh::TwostepTimeSolver, this
+        parameter should be positive. */
+    static double parse_target_tolerance( const GetPot& input );
+
+    //! Parses upper tolerance parameter for adaptive time stepping
+    static double parse_upper_tolerance( const GetPot& input );
+
+    //! Parses max growth parameter for adaptive time stepping
+    static double parse_max_growth( const GetPot& input );
   };
 
 } // end namespace GRINS
