@@ -96,8 +96,8 @@ scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierSt
 []
 
 # Options for tiem solvers
-[unsteady-solver]
-transient = false 
+
+ 
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

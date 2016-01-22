@@ -11,8 +11,8 @@
 []
 
 # Options for tiem solvers
-[unsteady-solver]
-transient = false 
+
+ 
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

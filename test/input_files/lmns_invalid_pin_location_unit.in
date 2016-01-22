@@ -102,8 +102,8 @@ tau_factor = '0.05'
 
 
 # Options for tiem solvers
-[unsteady-solver]
-transient = 'false' 
+
+ 
 
 # Options for print info to the screen
 [screen-options]
