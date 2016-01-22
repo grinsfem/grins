@@ -48,10 +48,10 @@ namespace GRINS
 
   UnsteadySolver::UnsteadySolver( const GetPot& input )
     : Solver(input),
+      _time_solver_name(TimeSteppingParsing::parse_time_stepper_name(input)),
       _n_timesteps( TimeSteppingParsing::parse_n_timesteps(input) ),
       _backtrack_deltat( TimeSteppingParsing::parse_backtrack_deltat(input) ),
       _theta( TimeSteppingParsing::parse_theta(input) ),
-      /*! \todo Is this the best default for delta t?*/
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
       _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
       _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),

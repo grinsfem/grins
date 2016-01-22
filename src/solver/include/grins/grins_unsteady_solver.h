@@ -47,6 +47,8 @@ namespace GRINS
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
 
+    std::string _time_solver_name;
+
     unsigned int _n_timesteps;
     unsigned int _backtrack_deltat;
     double _theta;
