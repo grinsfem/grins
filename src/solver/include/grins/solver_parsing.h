@@ -44,6 +44,12 @@ namespace GRINS
     static std::string solver_type(const GetPot& input);
 
     static bool is_transient( const GetPot& input );
+
+  protected:
+
+    static void dup_solver_option_check( const GetPot& input,
+                                         const std::string& option1,
+                                         const std::string& option2 );
   };
 
 } // end namespace GRINS

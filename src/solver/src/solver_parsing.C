@@ -73,4 +73,15 @@ namespace GRINS
     return input("unsteady-solver/transient", false );
   }
 
+  void SolverParsing::dup_solver_option_check( const GetPot& input,
+                                               const std::string& option1,
+                                               const std::string& option2 )
+  {
+    // Can't specify both old and new version
+    if( input.have_variable(option1) && input.have_variable(option2) )
+      {
+        libmesh_error_msg("ERROR: Cannot specify both "+option1+" and "+option2);
+      }
+  }
+
 } // end namespace GRINS
