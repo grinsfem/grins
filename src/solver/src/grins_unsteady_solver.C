@@ -30,6 +30,7 @@
 #include "grins/grins_enums.h"
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
+#include "grins/time_stepping_parsing.h"
 
 // libMesh
 #include "libmesh/dirichlet_boundaries.h"
@@ -46,11 +47,11 @@ namespace GRINS
 
   UnsteadySolver::UnsteadySolver( const GetPot& input )
     : Solver(input),
-      _n_timesteps( input("unsteady-solver/n_timesteps", 1 ) ),
-      _backtrack_deltat( input("unsteady-solver/backtrack_deltat", 0 ) ),
-      _theta( input("unsteady-solver/theta", 0.5 ) ),
+      _n_timesteps( TimeSteppingParsing::parse_n_timesteps(input) ),
+      _backtrack_deltat( TimeSteppingParsing::parse_backtrack_deltat(input) ),
+      _theta( TimeSteppingParsing::parse_theta(input) ),
       /*! \todo Is this the best default for delta t?*/
-      _deltat( input("unsteady-solver/deltat", 0.0 ) ),
+      _deltat( TimeSteppingParsing::parse_deltat(input) ),
       _target_tolerance( input("unsteady-solver/target_tolerance", 0.0 ) ),
       _upper_tolerance( input("unsteady-solver/upper_tolerance", 0.0 ) ),
       _max_growth( input("unsteady-solver/max_growth", 0.0 ) )
@@ -68,8 +69,6 @@ namespace GRINS
         else
           libmesh_not_implemented();
       }
-
-
   }
 
   UnsteadySolver::~UnsteadySolver()
