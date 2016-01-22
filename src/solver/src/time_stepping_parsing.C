@@ -60,7 +60,24 @@ namespace GRINS
 
   unsigned int TimeSteppingParsing::parse_backtrack_deltat( const GetPot& input )
   {
-    return input("unsteady-solver/backtrack_deltat", 0 );
+    SolverParsing::dup_solver_option_check(input,
+                                           "unsteady-solver/backtrack_deltat",
+                                           "SolverOptions/TimeStepping/backtrack_deltat");
+
+    unsigned int backtrack_deltat = 0;
+
+    if( input.have_variable("unsteady-solver/backtrack_deltat") )
+      {
+        backtrack_deltat = input("unsteady-solver/backtrack_deltat",0);
+
+        std::string warning = "WARNING: unsteady-solver/backtrack_deltat is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/backtrack_deltat to set backtrack_deltat.\n";
+        grins_warning(warning);
+      }
+    else
+      backtrack_deltat = input("SolverOptions/TimeStepping/backtrack_deltat",0);
+
+    return backtrack_deltat;
   }
 
   double TimeSteppingParsing::parse_theta( const GetPot& input )
