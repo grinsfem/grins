@@ -27,6 +27,9 @@
 #include "grins/solver_parsing.h"
 #include "grins/strategies_parsing.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 
@@ -70,7 +73,29 @@ namespace GRINS
 
   bool SolverParsing::is_transient( const GetPot& input )
   {
-    return input("unsteady-solver/transient", false );
+    // Can't specify both old and new version
+    SolverParsing::dup_solver_option_check(input,
+                                           "unsteady-solver/transient",
+                                           "SolverOptions/TimeStepping/solver_type");
+
+    bool transient = false;
+
+    if( input.have_variable("unsteady-solver/transient") )
+      {
+        transient = input("unsteady-solver/transient",false);
+
+        std::string warning = "WARNING: unsteady-solver/transient is DEPRECATED!\n";
+        warning += "        Please use SolverOptions/TimeStepping/solver_type to specify time stepping solver.\n";
+        grins_warning(warning);
+      }
+
+    // In the new version, we set the solver type so we just need to
+    // check if the variable is present. Solver class will figure
+    // out the type.
+    if( input.have_variable("SolverOptions/TimeStepping/solver_type") )
+      transient = true;
+
+    return transient;
   }
 
   void SolverParsing::dup_solver_option_check( const GetPot& input,
