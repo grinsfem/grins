@@ -31,6 +31,7 @@
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/time_stepping_parsing.h"
+#include "grins/strategies_parsing.h"
 
 // libMesh
 #include "libmesh/dirichlet_boundaries.h"
@@ -52,9 +53,9 @@ namespace GRINS
       _theta( TimeSteppingParsing::parse_theta(input) ),
       /*! \todo Is this the best default for delta t?*/
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
-      _target_tolerance( input("unsteady-solver/target_tolerance", 0.0 ) ),
-      _upper_tolerance( input("unsteady-solver/upper_tolerance", 0.0 ) ),
-      _max_growth( input("unsteady-solver/max_growth", 0.0 ) )
+      _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
+      _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
+      _max_growth( StrategiesParsing::parse_max_growth(input) )
   {
     const unsigned int n_component_norm =
       input.vector_variable_size("unsteady-solver/component_norm");
