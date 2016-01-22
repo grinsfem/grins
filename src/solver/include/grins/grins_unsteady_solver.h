@@ -39,7 +39,7 @@ namespace GRINS
   public:
 
     UnsteadySolver( const GetPot& input );
-    virtual ~UnsteadySolver();
+    virtual ~UnsteadySolver(){};
 
     virtual void solve( SolverContext& context );
 

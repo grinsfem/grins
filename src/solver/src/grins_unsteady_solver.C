@@ -72,11 +72,6 @@ namespace GRINS
       }
   }
 
-  UnsteadySolver::~UnsteadySolver()
-  {
-    return;
-  }
-
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
     libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
