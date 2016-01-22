@@ -48,6 +48,9 @@ namespace GRINS
         to resolve the timestep with a smaller \f$ \Delta t \f$. Default is 0. */
     static unsigned int parse_backtrack_deltat( const GetPot& input );
 
+    //! Parse value of \f$ \theta \f$ for theta method time stepping.
+    /*! \f$ \theta \in [0,1] \f$ Option only used for theta method-based
+         time solvers. Defaults to 0.5. */
     static double parse_theta( const GetPot& input );
 
     static double parse_deltat( const GetPot& input );
