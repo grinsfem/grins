@@ -46,5 +46,10 @@ namespace GRINS
     static const std::string displacement_continuation()
     { return "displacement_continuation"; }
 
+    static const std::string libmesh_euler_solver()
+    { return "libmesh_euler_solver"; }
+
+    static const std::string libmesh_euler2_solver()
+    { return "libmesh_euler2_solver"; }
   };
 } // end namespace GRINS
