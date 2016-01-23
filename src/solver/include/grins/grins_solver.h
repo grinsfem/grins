@@ -87,6 +87,8 @@ namespace GRINS
 
     void print_scalar_vars( SolverContext& context );
 
+    void print_qoi( SolverContext& context, std::ostream& output );
+
   protected:
 
     // Linear/Nonlinear solver options

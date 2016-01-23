@@ -25,10 +25,12 @@
 // This class
 #include "grins/steady_mesh_adaptive_solver.h"
 
+// C++
+#include <iomanip>
+
 // GRINS
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
-#include "grins/composite_qoi.h"
 #include "grins/common.h"
 
 // libMesh
@@ -178,12 +180,7 @@ namespace GRINS
                 // It's helpful to print the qoi along the way, but only do it if the user
                 // asks for it
                 if( context.print_qoi )
-                  {
-                    context.system->assemble_qoi();
-                    const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
-                    my_qoi->output_qoi( std::cout );
-                    std::cout << std::endl;
-                  }
+                  this->print_qoi(context,std::cout);
               }
           }
 

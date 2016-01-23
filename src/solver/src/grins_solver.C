@@ -25,6 +25,7 @@
 
 // C++
 #include <iostream>
+#include <iomanip>
 
 // This class
 #include "grins/grins_solver.h"
@@ -32,6 +33,7 @@
 // GRINS
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -148,6 +150,15 @@ namespace GRINS
               context.system->current_solution(scalar_indices[i]);
           std::cout << '}' << std::endl;
         }
+  }
+
+  void Solver::print_qoi( SolverContext& context, std::ostream& output )
+  {
+    context.system->assemble_qoi();
+    const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
+
+    my_qoi->output_qoi( output );
+    output << std::endl;
   }
 
 } // namespace GRINS
