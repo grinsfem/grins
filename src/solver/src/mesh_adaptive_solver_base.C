@@ -37,8 +37,7 @@
 namespace GRINS
 {
   MeshAdaptiveSolverBase::MeshAdaptiveSolverBase( const GetPot& input )
-    : Solver( input ),
-      _max_refinement_steps( input("MeshAdaptivity/max_refinement_steps", 5) ),
+    : _max_refinement_steps( input("MeshAdaptivity/max_refinement_steps", 5) ),
       _coarsen_by_parents(true),
       _absolute_global_tolerance( input("MeshAdaptivity/absolute_global_tolerance", 0) ),
       _nelem_target( input("MeshAdaptivity/nelem_target", 0) ),

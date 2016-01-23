@@ -40,7 +40,8 @@ namespace GRINS
 {
 
   SteadyMeshAdaptiveSolver::SteadyMeshAdaptiveSolver( const GetPot& input )
-    : MeshAdaptiveSolverBase( input )
+    : Solver(input),
+      MeshAdaptiveSolverBase( input )
   {
     return;
   }

@@ -26,6 +26,7 @@
 #define GRINS_STEADY_MESH_ADAPTIVE_SOLVER_H
 
 // GRINS
+#include "grins/grins_solver.h"
 #include "grins/mesh_adaptive_solver_base.h"
 
 namespace GRINS
@@ -34,7 +35,8 @@ namespace GRINS
   class SolverContext;
   class MultiphysicsSystem;
 
-  class SteadyMeshAdaptiveSolver : public MeshAdaptiveSolverBase
+  class SteadyMeshAdaptiveSolver : public Solver,
+                                   public MeshAdaptiveSolverBase
   {
   public:
 
