@@ -38,6 +38,7 @@
 #include "libmesh/fem_system.h"
 #include "libmesh/diff_solver.h"
 #include "libmesh/newton_solver.h"
+#include "libmesh/dof_map.h"
 
 namespace GRINS
 {
@@ -125,6 +126,28 @@ namespace GRINS
 
     context.system->adjoint_solve();
     context.system->set_adjoint_already_solved(true);
+  }
+
+  void Solver::print_scalar_vars( SolverContext& context )
+  {
+    for (unsigned int v=0; v != context.system->n_vars(); ++v)
+      if (context.system->variable(v).type().family ==
+          libMesh::SCALAR)
+        {
+          std::cout << context.system->variable_name(v) <<
+            " = {";
+          std::vector<libMesh::dof_id_type> scalar_indices;
+          context.system->get_dof_map().SCALAR_dof_indices
+            (scalar_indices, v);
+          if (scalar_indices.size())
+            std::cout <<
+              context.system->current_solution(scalar_indices[0]);
+          for (unsigned int i=1; i < scalar_indices.size();
+               ++i)
+            std::cout << ", " <<
+              context.system->current_solution(scalar_indices[i]);
+          std::cout << '}' << std::endl;
+        }
   }
 
 } // namespace GRINS
