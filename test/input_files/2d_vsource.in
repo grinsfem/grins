@@ -68,11 +68,13 @@ pressure = 'p'
 []
 
 # Options for time solvers
-[unsteady-solver]
-transient = 'true' 
-theta = '1.0'
-n_timesteps = '10'
-deltat = '0.01'
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      theta = '1.0'
+      n_timesteps = '10'
+      delta_t = '0.01'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

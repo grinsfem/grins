@@ -117,11 +117,13 @@ tau_factor_T = '3.0'
 []
 
 # Options for tiem solvers
-[unsteady-solver]
-transient = 'true' 
-theta = 1.0
-n_timesteps = '10'
-deltat = '1.0'
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      theta = '1.0'
+      n_timesteps = '10'
+      delta_t = '1.0'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
