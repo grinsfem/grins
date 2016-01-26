@@ -46,15 +46,4 @@ namespace GRINS
     this->_order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/species_order", "SECOND") ) );
   }
 
-  void SpeciesMassFractionsFEVariables::init( libMesh::FEMSystem* system )
-  {
-    this->_vars.resize(this->n_species());
-    for( unsigned int s = 0; s < this->n_species(); s++ )
-      {
-	this->_vars[s] = system->add_variable( this->_var_names[s],
-                                               this->_order[0],
-                                               this->_family[0]);
-      }
-  }
-
 } // end namespace GRINS

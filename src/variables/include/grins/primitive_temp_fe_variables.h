@@ -46,7 +46,8 @@ namespace GRINS
     PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name );
     ~PrimitiveTempFEVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_fe_init(system, _var_names, _vars ); }
 
   private:
 

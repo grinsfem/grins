@@ -46,19 +46,20 @@ namespace GRINS
 
   void DisplacementFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {
-    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], this->_order[0], _family[0]);
+    unsigned int mesh_dim = system->get_mesh().mesh_dimension();
 
-    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
-      {
+    // The order matters here. We *must* do w first since we use pop_back().
+    if ( mesh_dim == 3 || is_3D )
+      _have_w = true;
+    else
+      _var_names.pop_back();
+
+    if ( mesh_dim >= 2 || is_2D || is_3D)
         _have_v = true;
-        _vars[_v_idx] = system->add_variable( _var_names[_v_idx], this->_order[0], _family[0]);
-      }
+    else
+        _var_names.pop_back();
 
-    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
-      {
-        _have_w = true;
-        _vars[_w_idx] = system->add_variable( _var_names[_w_idx], this->_order[0], _family[0]);
-      }
+    this->default_fe_init(system, _var_names, _vars );
   }
 
 } // end namespace GRINS

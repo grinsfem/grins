@@ -41,9 +41,4 @@ namespace GRINS
     _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) );
   }
 
-  void TurbulenceFEVariables::init( libMesh::FEMSystem* system )
-  {
-    _vars[0] = system->add_variable( _var_names[0], _order[0], _family[0]);
-  }
-
 } // end namespace GRINS
