@@ -91,6 +91,8 @@ namespace GRINS
 
     void flag_elements_for_refinement( const libMesh::ErrorVector& error );
 
+    void estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error );
+
   private:
 
     MeshAdaptiveSolverBase();

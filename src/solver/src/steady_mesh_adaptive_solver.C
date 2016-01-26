@@ -120,17 +120,7 @@ namespace GRINS
 
         // Now we construct the data structures for the mesh refinement process
         libMesh::ErrorVector error;
-
-        std::cout << "==========================================================" << std::endl
-                  << "Estimating error" << std::endl
-                  << "==========================================================" << std::endl;
-        context.error_estimator->estimate_error( *context.system, error );
-
-        // Plot error vector
-        if( this->_plot_cell_errors )
-          {
-            error.plot_error( this->_error_plot_prefix+".exo", mesh );
-          }
+        this->estimate_error_for_amr( context, error );
 
 	// Get the global error estimate if you can and are asked to
 	if( this->_compute_qoi_error_estimate )

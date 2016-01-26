@@ -226,4 +226,20 @@ namespace GRINS
     return;
   }
 
+  void MeshAdaptiveSolverBase::estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error )
+  {
+    std::cout << "==========================================================" << std::endl
+              << "Estimating error" << std::endl
+              << "==========================================================" << std::endl;
+    context.error_estimator->estimate_error( *context.system, error );
+
+    libMesh::MeshBase& mesh = context.equation_system->get_mesh();
+
+    // Plot error vector
+    if( this->_plot_cell_errors )
+      {
+        error.plot_error( this->_error_plot_prefix+".exo", mesh );
+      }
+  }
+
 } // end namespace GRINS
