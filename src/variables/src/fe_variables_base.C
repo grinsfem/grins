@@ -22,55 +22,24 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_FE_VARIABLES_BASE_H
-#define GRINS_FE_VARIABLES_BASE_H
-
-// C++
-#include <vector>
-#include <string>
-
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/var_typedefs.h"
+// This class
+#include "grins/fe_variables_base.h"
 
 // libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
-
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMSystem;
-}
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class FEVariablesBase
+  void FEVariablesBase::default_fe_init( libMesh::FEMSystem* system,
+                                         const std::vector<std::string>& var_names,
+                                         std::vector<VariableIndex>& vars ) const
   {
-  public:
+    const unsigned int n_vars = var_names.size();
+    vars.resize(n_vars);
 
-    FEVariablesBase(){};
-
-    ~FEVariablesBase(){};
-
-  protected:
-
-    //! Default method for init'ing variables
-    /*! This method will init all variables in the var_names
-        vector using the first _family and the first _order
-        finite elements and populate the vars vector with the
-        corresponding variable numbers. If the user has more than
-        one FE type, they should not use this method. */
-    void default_fe_init( libMesh::FEMSystem* system,
-                          const std::vector<std::string>& var_names,
-                          std::vector<VariableIndex>& vars ) const;
-
-    std::vector<GRINSEnums::FEFamily> _family;
-
-    std::vector<GRINSEnums::Order> _order;
-
-  };
+    for( unsigned int v = 0; v < n_vars; v++ )
+      {
+        vars[v] = system->add_variable( var_names[v], this->_order[0], _family[0]);
+      }
+  }
 } // end namespace GRINS
-
-#endif // GRINS_FE_VARIABLES_BASE_H
