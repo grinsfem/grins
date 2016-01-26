@@ -27,10 +27,6 @@
 
 // libMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
 
 // GRINS
 #include "grins/variables_base.h"
@@ -44,7 +40,8 @@ namespace GRINS
     TurbulenceVariables( const GetPot& input );
     ~TurbulenceVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
     VariableIndex nu() const;
 

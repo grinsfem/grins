@@ -31,10 +31,6 @@
 
 // libMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
 
 namespace GRINS
 {
@@ -45,7 +41,8 @@ namespace GRINS
     ThermoPressureVariable( const GetPot& input );
     ~ThermoPressureVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
     VariableIndex p0() const;
 

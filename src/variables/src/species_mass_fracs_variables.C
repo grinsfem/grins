@@ -27,7 +27,6 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
 
 // GRINS
 #include "grins/variable_name_defaults.h"
@@ -40,20 +39,6 @@ namespace GRINS
     : VariablesBase()
   {
     MaterialsParsing::parse_species_varnames(input, material_name, _var_names);
-  }
-
-  void SpeciesMassFractionsVariables::init( libMesh::FEMSystem* system )
-  {
-    unsigned int n_species = this->n_species();
-
-#ifndef NDEBUG
-    for( unsigned int s = 0; s < n_species; s++)
-      libmesh_assert( system->has_variable( _var_names[s] ) );
-#endif
-
-    _vars.resize(n_species);
-    for( unsigned int s = 0; s < n_species; s++)
-      _vars[s] = system->variable_number( _var_names[s] );
   }
 
 } // end namespace GRINS

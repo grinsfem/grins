@@ -34,10 +34,6 @@
 
 // libMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
 
 namespace GRINS
 {
@@ -48,7 +44,8 @@ namespace GRINS
     SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name );
     ~SpeciesMassFractionsVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
     unsigned int n_species() const;
 

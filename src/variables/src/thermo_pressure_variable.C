@@ -27,7 +27,6 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -36,13 +35,6 @@ namespace GRINS
   {
     _vars.resize(1,invalid_var_index);
     _var_names.resize(1, input("Physics/VariableNames/thermo_presure", "p0" ) );
-  }
-
-  void ThermoPressureVariable::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable( _var_names[0] ) );
-
-    _vars[0] = system->variable_number( _var_names[0] );
   }
 
 } // end namespace GRINS
