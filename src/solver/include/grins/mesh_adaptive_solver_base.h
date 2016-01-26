@@ -93,6 +93,8 @@ namespace GRINS
 
     void estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error );
 
+    void perform_amr( SolverContext& context, const libMesh::ErrorVector& error );
+
   private:
 
     MeshAdaptiveSolverBase();

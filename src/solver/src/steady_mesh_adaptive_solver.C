@@ -146,23 +146,7 @@ namespace GRINS
             // Only bother refining if we're on the last step.
             if( r_step < this->_max_refinement_steps -1 )
               {
-                std::cout << "==========================================================" << std::endl
-                          << "Performing Mesh Refinement" << std::endl
-                          << "==========================================================" << std::endl;
-
-                this->flag_elements_for_refinement( error );
-                _mesh_refinement->refine_and_coarsen_elements();
-
-                // Dont forget to reinit the system after each adaptive refinement!
-                context.equation_system->reinit();
-
-                // This output cannot be toggled in the input file.
-                std::cout << "==========================================================" << std::endl
-                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
-                          << " active elements" << std::endl
-                          << "            " << std::setw(16) << context.system->n_active_dofs()
-                          << " active dofs" << std::endl
-                          << "==========================================================" << std::endl;
+                this->perform_amr(context, error);
 
                 // It's helpful to print the qoi along the way, but only do it if the user
                 // asks for it

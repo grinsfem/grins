@@ -24,6 +24,7 @@
 
 // C++
 #include <numeric>
+#include <iomanip>
 
 // This class
 #include "grins/mesh_adaptive_solver_base.h"
@@ -244,6 +245,29 @@ namespace GRINS
       {
         error.plot_error( this->_error_plot_prefix+".exo", mesh );
       }
+  }
+
+  void MeshAdaptiveSolverBase::perform_amr( SolverContext& context, const libMesh::ErrorVector& error )
+  {
+    libMesh::MeshBase& mesh = context.equation_system->get_mesh();
+
+    std::cout << "==========================================================" << std::endl
+              << "Performing Mesh Refinement" << std::endl
+              << "==========================================================" << std::endl;
+
+    this->flag_elements_for_refinement( error );
+    _mesh_refinement->refine_and_coarsen_elements();
+
+    // Dont forget to reinit the system after each adaptive refinement!
+    context.equation_system->reinit();
+
+    // This output cannot be toggled in the input file.
+    std::cout << "==========================================================" << std::endl
+              << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
+              << " active elements" << std::endl
+              << "            " << std::setw(16) << context.system->n_active_dofs()
+              << " active dofs" << std::endl
+              << "==========================================================" << std::endl;
   }
 
 } // end namespace GRINS
