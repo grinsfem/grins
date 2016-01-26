@@ -148,6 +148,10 @@ namespace GRINS
   bool MeshAdaptiveSolverBase::check_for_convergence( SolverContext& context,
                                                       const libMesh::ErrorVector& error ) const
   {
+    std::cout << "==========================================================" << std::endl
+              << "Checking convergence" << std::endl
+              << "==========================================================" << std::endl;
+
     bool converged = false;
 
     libMesh::Real error_estimate = 0.0;

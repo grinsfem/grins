@@ -131,9 +131,6 @@ namespace GRINS
 	  }
 
         // Check for convergence of error
-        std::cout << "==========================================================" << std::endl
-                  << "Checking convergence" << std::endl
-                  << "==========================================================" << std::endl;
         bool converged = this->check_for_convergence( context, error );
 
         if( converged )
