@@ -52,22 +52,18 @@ namespace GRINS
 
   void DisplacementVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
-    _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );
+    // The order matters here. We *must* do w first since we use pop_back().
+    if ( system->has_variable( _var_names[_w_idx] ) )
+        _have_w = true;
+    else
+      _var_names.pop_back();
 
     if ( system->has_variable( _var_names[_v_idx] ) )
-      {
         _have_v = true;
-        _vars[_v_idx] = system->variable_number( _var_names[_v_idx] );
-      }
+    else
+      _var_names.pop_back();
 
-    if ( system->has_variable( _var_names[_w_idx] ) )
-      {
-        _have_w = true;
-        _vars[_w_idx] = system->variable_number( _var_names[_w_idx] );
-      }
-
-    return;
+    this->default_var_init(system);
   }
 
 } // end namespace GRINS
