@@ -22,48 +22,25 @@
 //
 //-----------------------------------------------------------------------el-
 
+// This class
+#include "grins/variables_base.h"
 
-#ifndef GRINS_VARIABLES_BASE_H
-#define GRINS_VARIABLES_BASE_H
-
-// C++
-#include <vector>
-#include <string>
-
-// GRINS
-#include "grins/var_typedefs.h"
-
-// libMesh forward declarations
-namespace libMesh
-{
-  class FEMSystem;
-}
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class VariablesBase
+  void VariablesBase::default_var_init( libMesh::FEMSystem* system )
   {
-  public:
+    unsigned int n_vars = _var_names.size();
 
-    VariablesBase(){};
+    _vars.resize(n_vars);
 
-    ~VariablesBase(){};
-
-  protected:
-
-    //! Default method for init'ing variables
-    /*! This method assumes that the variable has already been
-        added to the System elsewhere and we're just grabbing the
-        variable number from the system. We attempt to grab
-        a variable number for every entry in _var_names. */
-    void default_var_init( libMesh::FEMSystem* system );
-
-    std::vector<VariableIndex> _vars;
-
-    std::vector<std::string> _var_names;
-
-  };
+    for( unsigned int v = 0; v < n_vars; v++ )
+      {
+        libmesh_assert( system->has_variable(_var_names[v]) );
+        _vars[v] = system->variable_number(_var_names[v]);
+      }
+  }
 
 } // end namespace GRINS
-
-#endif // GRINS_VARIABLES_BASE_H
