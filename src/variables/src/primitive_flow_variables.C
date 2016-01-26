@@ -36,10 +36,10 @@ namespace GRINS
 {
   PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
     :  VariablesBase(),
-       _u_idx(0),
-       _v_idx(1),
-       _w_idx(2),
-       _p_idx(3)
+       _u_idx(1),
+       _v_idx(2),
+       _w_idx(3),
+       _p_idx(0)
   {
     _vars.resize(4,invalid_var_index);
     _var_names.resize(4);
@@ -52,20 +52,12 @@ namespace GRINS
 
   void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
   {
-    libmesh_assert( system->has_variable( _var_names[_u_idx] ) );
-    libmesh_assert( system->has_variable( _var_names[_v_idx] ) );
-    libmesh_assert( system->has_variable( _var_names[_p_idx] ) );
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 
-    _vars[_u_idx] = system->variable_number( _var_names[_u_idx] );
-    _vars[_v_idx] = system->variable_number( _var_names[_v_idx] );
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
 
-    if ( system->get_mesh().mesh_dimension() == 3)
-      {
-        libmesh_assert( system->has_variable( _var_names[_w_idx] ) );
-        _vars[_w_idx] = system->variable_number( _var_names[_w_idx] );
-      }
-
-    _vars[_p_idx] = system->variable_number( _var_names[_p_idx] );
+    this->default_var_init(system);
   }
 
 } // end namespace GRINS
