@@ -34,35 +34,28 @@ namespace libMesh
 }
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
 
-  class PrimitiveFlowVariables
+  class PrimitiveFlowVariables : public VariablesBase
   {
   public:
 
     PrimitiveFlowVariables( const GetPot& input );
-    ~PrimitiveFlowVariables();
+    ~PrimitiveFlowVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
-    VariableIndex u_var() const;
-    VariableIndex v_var() const;
-    VariableIndex w_var() const;
-    VariableIndex p_var() const;
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
+    VariableIndex p() const;
 
   protected:
 
-    //! Indices for each (owned) variable;
-    VariableIndex _u_var; /* Index for x-velocity field */
-    VariableIndex _v_var; /* Index for y-velocity field */
-    VariableIndex _w_var; /* Index for z-velocity field */
-    VariableIndex _p_var; /* Index for pressure field */
-
-    //! Names of each (owned) variable in the system
-    std::string _u_var_name, _v_var_name, _w_var_name, _p_var_name;
+    unsigned int _u_idx, _v_idx, _w_idx, _p_idx;
 
   private:
 
@@ -71,27 +64,27 @@ namespace GRINS
   };
 
   inline
-  VariableIndex PrimitiveFlowVariables::u_var() const
+  VariableIndex PrimitiveFlowVariables::u() const
   {
-    return _u_var;
+    return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::v_var() const
+  VariableIndex PrimitiveFlowVariables::v() const
   {
-    return _v_var;
+    return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::w_var() const
+  VariableIndex PrimitiveFlowVariables::w() const
   {
-    return _w_var;
+    return this->_vars[_w_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::p_var() const
+  VariableIndex PrimitiveFlowVariables::p() const
   {
-    return _p_var;
+    return this->_vars[_p_idx];
   }
 
 } // end namespace GRINS

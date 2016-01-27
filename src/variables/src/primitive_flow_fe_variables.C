@@ -26,7 +26,6 @@
 #include "grins/primitive_flow_fe_variables.h"
 
 // GRINS
-#include "grins/grins_enums.h"
 #include "grins/variable_name_defaults.h"
 
 // libMesh
@@ -37,31 +36,32 @@
 namespace GRINS
 {
   PrimitiveFlowFEVariables::PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name )
-    :  PrimitiveFlowVariables(input),
-       _V_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-       _P_FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/P_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) ),
-       _V_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") ) ),
-       _P_order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/P_order", "FIRST") ) )
+    :  FEVariablesBase(),
+       PrimitiveFlowVariables(input),
+       _u_fe_idx(0),
+       _p_fe_idx(1)
   {
-    return;
-  }
+    _family.resize(2,libMesh::INVALID_FE);
+    _order.resize(2,libMesh::INVALID_ORDER);
 
-  PrimitiveFlowFEVariables::~PrimitiveFlowFEVariables()
-  {
-    return;
+    _family[_u_fe_idx] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
+
+    _family[_p_fe_idx ] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/P_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
+
+    _order[_u_fe_idx ] = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") );
+
+    _order[_p_fe_idx] = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/P_order", "FIRST") );
   }
 
   void PrimitiveFlowFEVariables::init( libMesh::FEMSystem* system )
   {
-    _u_var = system->add_variable( _u_var_name, this->_V_order, _V_FE_family);
-    _v_var = system->add_variable( _v_var_name, this->_V_order, _V_FE_family);
+    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
+    _vars[_v_idx] = system->add_variable( _var_names[_v_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
 
     if ( system->get_mesh().mesh_dimension() == 3)
-      _w_var = system->add_variable( _w_var_name, this->_V_order, _V_FE_family);
+      _vars[_w_idx] = system->add_variable( _var_names[_w_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
 
-    _p_var = system->add_variable( _p_var_name, this->_P_order, _P_FE_family);
-
-    return;
+    _vars[_p_idx] = system->add_variable( _var_names[_p_idx], _order[_p_fe_idx], _family[_p_fe_idx]);
   }
 
 } // end namespace GRINS

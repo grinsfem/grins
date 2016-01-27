@@ -49,6 +49,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)

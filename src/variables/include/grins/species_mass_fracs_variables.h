@@ -22,50 +22,55 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
-#define GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
+
+#ifndef GRINS_SPECIES_MASS_FRACS_VARIABLES_H
+#define GRINS_SPECIES_MASS_FRACS_VARIABLES_H
+
+// C++
+#include <vector>
 
 // GRINS
-#include "grins/grins_enums.h"
-#include "grins/primitive_temp_variables.h"
-#include "grins/var_typedefs.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "grins/variables_base.h"
 
 // libMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
 
 namespace GRINS
 {
-  class PrimitiveTempFEVariables : public PrimitiveTempVariables
+  class SpeciesMassFractionsVariables : public VariablesBase
   {
   public:
 
-    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name );
-    ~PrimitiveTempFEVariables();
+    SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name );
+    ~SpeciesMassFractionsVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
-  protected:
+    unsigned int n_species() const;
 
-    //! Element type, read from input
-    GRINSEnums::FEFamily _T_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _T_order;
+    VariableIndex species( unsigned int species ) const;
 
   private:
 
-    PrimitiveTempFEVariables();
+    SpeciesMassFractionsVariables();
 
   };
 
+  inline
+  unsigned int SpeciesMassFractionsVariables::n_species() const
+  {
+    // We *must* use the size of _var_names here since that gets populated
+    // at construction time.
+    return _var_names.size();
+  }
+
+  inline
+  VariableIndex SpeciesMassFractionsVariables::species( unsigned int species ) const
+  {
+    return _vars[species];
+  }
+
 } // end namespace GRINS
 
-#endif // GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
+#endif // GRINS_SPECIES_MASS_FRACS_VARIABLES_H

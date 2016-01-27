@@ -22,37 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/turbulence_variables.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
+#ifndef GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
+#define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
 
 // GRINS
-#include "grins/variable_name_defaults.h"
+#include "grins/fe_variables_base.h"
+#include "grins/primitive_flow_variables.h"
 
 namespace GRINS
 {
-  TurbulenceVariables::TurbulenceVariables( const GetPot& input )
-    :  _nu_var(invalid_var_index),
-       _nu_var_name( input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) )
-  {
-    return;
-  }
 
-  TurbulenceVariables::~TurbulenceVariables()
+  class PrimitiveFlowFEVariables : public FEVariablesBase,
+                                   public PrimitiveFlowVariables
   {
-    return;
-  }
+  public:
 
-  void TurbulenceVariables::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable( _nu_var_name ) );
-    
-    _nu_var = system->variable_number( _nu_var_name );
-    
-    return;
-  }
+    PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name );
+    ~PrimitiveFlowFEVariables(){};
+
+    virtual void init( libMesh::FEMSystem* system );
+
+  protected:
+
+    unsigned int _u_fe_idx, _p_fe_idx;
+
+  private:
+
+    PrimitiveFlowFEVariables();
+
+  };
 
 } // end namespace GRINS
+
+#endif //GRINS_PRIMITIVE_FLOW_VARIABLES_H

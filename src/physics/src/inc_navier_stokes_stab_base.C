@@ -57,10 +57,10 @@ namespace GRINS
     IncompressibleNavierStokesBase<Mu>::init_context(context);
   
     // We need pressure derivatives
-    context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
+    context.get_element_fe(this->_flow_vars.p())->get_dphi();
 
     // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_flow_vars.u_var())->get_d2phi();
+    context.get_element_fe(this->_flow_vars.u())->get_d2phi();
 
     return;
   }

@@ -22,53 +22,28 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_THERMO_PRESSURE_VARIABLE_H
-#define GRINS_THERMO_PRESSURE_VARIABLE_H
+// This class
+#include "grins/species_mass_fracs_fe_variables.h"
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/materials_parsing.h"
 
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class ThermoPressureVariable
+  SpeciesMassFractionsFEVariables::SpeciesMassFractionsFEVariables( const GetPot& input,
+                                                                    const std::string& physics_name )
+    : FEVariablesBase(),
+      SpeciesMassFractionsVariables( input, MaterialsParsing::material_name(input,physics_name) )
   {
-  public:
+    this->_family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/species_FE_family", "LAGRANGE") ) );
 
-    ThermoPressureVariable( const GetPot& input );
-    ~ThermoPressureVariable(){};
-
-    virtual void init( libMesh::FEMSystem* system );
-
-    VariableIndex p0_var() const;
-
-  protected:
-
-    //! Indices for each (owned) variable;
-    VariableIndex _p0_var;
-
-    //! Names of each (owned) variable in the system
-    std::string _p0_var_name;
-
-  private:
-
-    ThermoPressureVariable();
-
-  };
-
-  inline
-  VariableIndex ThermoPressureVariable::p0_var() const
-  {
-    return _p0_var;
+    // Read FE family info
+    this->_order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/species_order", "SECOND") ) );
   }
 
 } // end namespace GRINS
-
-#endif // GRINS_THERMO_PRESSURE_VARIABLE_H

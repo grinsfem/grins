@@ -28,7 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "primitive_flow_fe_variables.h"
+#include "grins/primitive_flow_fe_variables.h"
 #include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
 #include "grins/spalart_allmaras_helper.h"

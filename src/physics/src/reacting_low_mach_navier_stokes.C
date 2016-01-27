@@ -172,15 +172,15 @@ namespace GRINS
     ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context(context);
 
     // We also need the side shape functions, etc.
-    context.get_side_fe(this->_flow_vars.u_var())->get_JxW();
-    context.get_side_fe(this->_flow_vars.u_var())->get_phi();
-    context.get_side_fe(this->_flow_vars.u_var())->get_dphi();
-    context.get_side_fe(this->_flow_vars.u_var())->get_xyz();
+    context.get_side_fe(this->_flow_vars.u())->get_JxW();
+    context.get_side_fe(this->_flow_vars.u())->get_phi();
+    context.get_side_fe(this->_flow_vars.u())->get_dphi();
+    context.get_side_fe(this->_flow_vars.u())->get_xyz();
 
-    context.get_side_fe(this->_temp_vars.T_var())->get_JxW();
-    context.get_side_fe(this->_temp_vars.T_var())->get_phi();
-    context.get_side_fe(this->_temp_vars.T_var())->get_dphi();
-    context.get_side_fe(this->_temp_vars.T_var())->get_xyz();
+    context.get_side_fe(this->_temp_vars.T())->get_JxW();
+    context.get_side_fe(this->_temp_vars.T())->get_phi();
+    context.get_side_fe(this->_temp_vars.T())->get_dphi();
+    context.get_side_fe(this->_temp_vars.T())->get_xyz();
 
     return;
   }
@@ -195,26 +195,26 @@ namespace GRINS
         libmesh_not_implemented();
       }
     // Convenience
-    const VariableIndex s0_var = this->_species_vars.species_var(0);
+    const VariableIndex s0_var = this->_species_vars.species(0);
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p_var()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
-    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
+    const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
-    // Check number of dofs is same for _flow_vars.u_var(), v_var and w_var.
-    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v_var()).size());
+    // Check number of dofs is same for _flow_vars.u(), v_var and w_var.
+    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
     if (this->_dim == 3)
-      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w_var()).size());
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real>& JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.get_element_fe(this->_flow_vars.p_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.p())->get_phi();
 
     // The species shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& s_phi = context.get_element_fe(s0_var)->get_phi();
@@ -224,35 +224,35 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     // The velocity shape function gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
 
     // The temperature shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& T_phi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_phi();
+      context.get_element_fe(this->_temp_vars.T())->get_phi();
 
     // The temperature shape functions gradients at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
-      context.get_element_fe(this->_temp_vars.T_var())->get_dphi();
+      context.get_element_fe(this->_temp_vars.T())->get_dphi();
 
     const std::vector<libMesh::Point>& u_qpoint =
-      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+      context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
-    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_flow_vars.p_var()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Real>* Fw = NULL;
 
     if( this->_dim == 3 )
       {
-        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
 
-    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T_var()); // R_{T}
+    libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
@@ -343,7 +343,7 @@ namespace GRINS
         for(unsigned int s=0; s < this->_n_species; s++ )
           {
             libMesh::DenseSubVector<libMesh::Number> &Fs =
-              context.get_elem_residual(this->_species_vars.species_var(s)); // R_{s}
+              context.get_elem_residual(this->_species_vars.species(s)); // R_{s}
 
             const libMesh::Real term1 = -rho*(U*grad_ws[s]) + omega_dot[s];
             const libMesh::Gradient term2 = -rho*D[s]*grad_ws[s];
@@ -436,7 +436,7 @@ namespace GRINS
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, this->_flow_vars.p_var() );
+	_p_pinning.pin_value( context, compute_jacobian, this->_flow_vars.p() );
       }
 
     return;
@@ -494,20 +494,20 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	u[qp] = context.interior_value(this->_flow_vars.u_var(), qp);
-	v[qp] = context.interior_value(this->_flow_vars.v_var(), qp);
+	u[qp] = context.interior_value(this->_flow_vars.u(), qp);
+	v[qp] = context.interior_value(this->_flow_vars.v(), qp);
 
-	grad_u[qp] = context.interior_gradient(this->_flow_vars.u_var(), qp);
-	grad_v[qp] = context.interior_gradient(this->_flow_vars.v_var(), qp);
+	grad_u[qp] = context.interior_gradient(this->_flow_vars.u(), qp);
+	grad_v[qp] = context.interior_gradient(this->_flow_vars.v(), qp);
 	if( this->_dim > 2 )
 	  {
-	    w[qp] = context.interior_value(this->_flow_vars.w_var(), qp);
-	    grad_w[qp] = context.interior_gradient(this->_flow_vars.w_var(), qp);
+	    w[qp] = context.interior_value(this->_flow_vars.w(), qp);
+	    grad_w[qp] = context.interior_gradient(this->_flow_vars.w(), qp);
 	  }
-	T[qp] = context.interior_value(this->_temp_vars.T_var(), qp);
-	grad_T[qp] = context.interior_gradient(this->_temp_vars.T_var(), qp);
+	T[qp] = context.interior_value(this->_temp_vars.T(), qp);
+	grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
 
-	p[qp] = context.interior_value(this->_flow_vars.p_var(), qp);
+	p[qp] = context.interior_value(this->_flow_vars.p(), qp);
 	p0[qp] = this->get_p0_steady(context, qp);
 
 	mass_fractions[qp].resize(this->_n_species);
@@ -517,8 +517,8 @@ namespace GRINS
 	  {
 	    /*! \todo Need to figure out something smarter for controling species
 	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species_var(s),qp), 0.0 );
-	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species_var(s),qp);
+	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species(s),qp), 0.0 );
+	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species(s),qp);
 	  }
 	
 	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
@@ -621,14 +621,14 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	T[qp] = context.side_value(this->_temp_vars.T_var(), qp);
+	T[qp] = context.side_value(this->_temp_vars.T(), qp);
 
 	mass_fractions[qp].resize(this->_n_species);
 	for( unsigned int s = 0; s < this->_n_species; s++ )
 	  {
 	    /*! \todo Need to figure out something smarter for controling species
 	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars.species_var(s),qp), 0.0 );
+	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars.species(s),qp), 0.0 );
 	  }
 	const libMesh::Real p0 = this->get_p0_steady_side(context, qp);
 

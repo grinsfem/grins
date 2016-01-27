@@ -84,11 +84,11 @@ namespace GRINS
 
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
-    system->time_evolving(_flow_vars.u_var());
-    system->time_evolving(_flow_vars.v_var());
+    system->time_evolving(_flow_vars.u());
+    system->time_evolving(_flow_vars.v());
 
     if (dim == 3)
-      system->time_evolving(_flow_vars.w_var());
+      system->time_evolving(_flow_vars.w());
 
     return;
   }
@@ -99,18 +99,18 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_flow_vars.u_var())->get_JxW();
-    context.get_element_fe(_flow_vars.u_var())->get_phi();
-    context.get_element_fe(_flow_vars.u_var())->get_dphi();
-    context.get_element_fe(_flow_vars.u_var())->get_xyz();
+    context.get_element_fe(_flow_vars.u())->get_JxW();
+    context.get_element_fe(_flow_vars.u())->get_phi();
+    context.get_element_fe(_flow_vars.u())->get_dphi();
+    context.get_element_fe(_flow_vars.u())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p_var())->get_phi();
-    context.get_element_fe(_flow_vars.p_var())->get_xyz();
+    context.get_element_fe(_flow_vars.p())->get_phi();
+    context.get_element_fe(_flow_vars.p())->get_xyz();
 
-    context.get_side_fe(_flow_vars.u_var())->get_JxW();
-    context.get_side_fe(_flow_vars.u_var())->get_phi();
-    context.get_side_fe(_flow_vars.u_var())->get_dphi();
-    context.get_side_fe(_flow_vars.u_var())->get_xyz();
+    context.get_side_fe(_flow_vars.u())->get_JxW();
+    context.get_side_fe(_flow_vars.u())->get_phi();
+    context.get_side_fe(_flow_vars.u())->get_dphi();
+    context.get_side_fe(_flow_vars.u())->get_xyz();
 
     return;
   }

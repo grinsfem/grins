@@ -77,13 +77,13 @@ namespace GRINS
                                                                             const libMesh::Real Cp,
                                                                             const libMesh::Real k ) const
   {
-    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
-    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
+    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
+    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T(), qp);
 
-    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
-                                  rho*Cp*context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
+    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
+                                  rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
     if(context.get_system().get_mesh().mesh_dimension() == 3)
-      rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w_var(), qp);
+      rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
   }
@@ -101,13 +101,13 @@ namespace GRINS
       libMesh::Gradient &d_res_dU
     ) const
   {
-    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T_var(), qp);
-    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T_var(), qp);
+    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
+    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T(), qp);
 
-    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u_var(), qp), 
-                                  rho*Cp*context.fixed_interior_value(this->_flow_vars.v_var(), qp) );
+    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
+                                  rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
     if(context.get_system().get_mesh().mesh_dimension() == 3)
-      rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w_var(), qp);
+      rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     res = rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
     d_res_dT = 0;
@@ -126,7 +126,7 @@ namespace GRINS
                                                                                const libMesh::Real Cp ) const
   {
     libMesh::Real T_dot;
-    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
+    context.interior_rate(this->_temp_vars.T(), qp, T_dot);
 
     return rho*Cp*T_dot;
   }
@@ -142,7 +142,7 @@ namespace GRINS
     ) const
   {
     libMesh::Real T_dot;
-    context.interior_rate(this->_temp_vars.T_var(), qp, T_dot);
+    context.interior_rate(this->_temp_vars.T(), qp, T_dot);
 
     res = rho*Cp*T_dot;
     d_res_dTdot = rho*Cp;

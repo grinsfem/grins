@@ -27,7 +27,6 @@
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
 
 // GRINS
 #include "grins/variable_name_defaults.h"
@@ -35,24 +34,10 @@
 namespace GRINS
 {
   PrimitiveTempVariables::PrimitiveTempVariables( const GetPot& input )
-    : _T_var(invalid_var_index),
-      _T_var_name( input("Physics/VariableNames/Temperature", T_var_name_default ) )
+    : VariablesBase()
   {
-    return;
-  }
-
-  PrimitiveTempVariables::~PrimitiveTempVariables()
-  {
-    return;
-  }
-
-  void PrimitiveTempVariables::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable(_T_var_name) );
-
-    _T_var = system->variable_number( _T_var_name );
-    
-    return;
+    _vars.resize(1,invalid_var_index);
+    _var_names.resize(1,input("Physics/VariableNames/Temperature", T_var_name_default ) );
   }
 
 } // end namespace GRINS

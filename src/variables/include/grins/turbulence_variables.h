@@ -22,49 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_TURBULENCE_VARIABLES_H
+#define GRINS_TURBULENCE_VARIABLES_H
 
-#ifndef GRINS_SOLID_MECHANICS_FE_VARIABLES_H
-#define GRINS_SOLID_MECHANICS_FE_VARIABLES_H
+// libMesh forward declarations
+class GetPot;
 
 // GRINS
-#include "grins/grins_enums.h"
-#include "grins/solid_mechanics_variables.h"
-
-// libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  class SolidMechanicsFEVariables : public SolidMechanicsVariables
+  class TurbulenceVariables : public VariablesBase
   {
   public:
 
-    SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name );
-    virtual ~SolidMechanicsFEVariables();
+    TurbulenceVariables( const GetPot& input );
+    ~TurbulenceVariables(){};
 
-    //! Initialize System variables
-    /*!
-     *  Additional arguments specify whether the spatial mesh is really 2D or 3D.
-     * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
-     * space or 2D shell manifolds in 3D (is_3D = true).
-     */
-    void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _order;
+    VariableIndex nu() const;
 
   private:
 
-    SolidMechanicsFEVariables();
+    TurbulenceVariables();
 
   };
 
+  inline
+  VariableIndex TurbulenceVariables::nu() const
+  {
+    return _vars[0];
+  }
+
 } // end namespace GRINS
 
-#endif // GRINS_SOLID_MECHANICS_FE_VARIABLES_H
+#endif // GRINS_TURBULENCE_VARIABLES_H

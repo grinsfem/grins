@@ -226,11 +226,11 @@ namespace GRINS
   {
     int dim = system->get_mesh().mesh_dimension();
 
-    VariableIndex u_var = _flow_vars.u_var();
-    VariableIndex v_var = _flow_vars.v_var();
+    VariableIndex u_var = _flow_vars.u();
+    VariableIndex v_var = _flow_vars.v();
     VariableIndex w_var = -1;
     if( dim == 3 )
-      w_var = _flow_vars.w_var();
+      w_var = _flow_vars.w();
 
     switch( bc_type )
       {

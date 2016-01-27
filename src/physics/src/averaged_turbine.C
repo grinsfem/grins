@@ -57,8 +57,8 @@ namespace GRINS
   template<class Mu>
   void AveragedTurbine<Mu>::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
-    context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+    context.get_element_fe(this->_flow_vars.u())->get_xyz();
+    context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     return;
   }
@@ -75,36 +75,36 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW = 
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi = 
-      context.get_element_fe(this->_flow_vars.u_var())->get_phi();
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     const std::vector<libMesh::Point>& u_qpoint = 
-      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+      context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The number of local degrees of freedom in each variable
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u_var()).size();
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // The subvectors and submatrices we need to fill:
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.u_var()); // R_{u},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.v_var()); // R_{u},{v}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.u_var()); // R_{v},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.v_var()); // R_{v},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // R_{u},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // R_{u},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // R_{v},{u}
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // R_{v},{v}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kus =
-            context.get_elem_jacobian(this->_flow_vars.u_var(),
+            context.get_elem_jacobian(this->_flow_vars.u(),
                                       this->fan_speed_var()); // R_{u},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksu =
             context.get_elem_jacobian(this->fan_speed_var(),
-                                      this->_flow_vars.u_var()); // R_{s},{u}
+                                      this->_flow_vars.u()); // R_{s},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvs =
-            context.get_elem_jacobian(this->_flow_vars.v_var(),
+            context.get_elem_jacobian(this->_flow_vars.v(),
                                       this->fan_speed_var()); // R_{v},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksv =
             context.get_elem_jacobian(this->fan_speed_var(),
-                                      this->_flow_vars.v_var()); // R_{s},{v}
+                                      this->_flow_vars.v()); // R_{s},{v}
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
             context.get_elem_jacobian(this->fan_speed_var(),
                                       this->fan_speed_var()); // R_{s},{s}
@@ -118,26 +118,26 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number>* Ksw = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kws = NULL;
 
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     libMesh::DenseSubVector<libMesh::Number> &Fs = context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
     if( this->_dim == 3 )
       {
-        Kuw = &context.get_elem_jacobian(this->_flow_vars.u_var(), this->_flow_vars.w_var()); // R_{u},{w}
-        Kvw = &context.get_elem_jacobian(this->_flow_vars.v_var(), this->_flow_vars.w_var()); // R_{v},{w}
+        Kuw = &context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.w()); // R_{u},{w}
+        Kvw = &context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.w()); // R_{v},{w}
 
-        Kwu = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.u_var()); // R_{w},{u}
-        Kwv = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.v_var()); // R_{w},{v}
-        Kww = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->_flow_vars.w_var()); // R_{w},{w}
-        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Kwu = &context.get_elem_jacobian(this->_flow_vars.w(), this->_flow_vars.u()); // R_{w},{u}
+        Kwv = &context.get_elem_jacobian(this->_flow_vars.w(), this->_flow_vars.v()); // R_{w},{v}
+        Kww = &context.get_elem_jacobian(this->_flow_vars.w(), this->_flow_vars.w()); // R_{w},{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
-        Ksw = &context.get_elem_jacobian(this->fan_speed_var(), this->_flow_vars.w_var()); // R_{s},{w}
-        Kws = &context.get_elem_jacobian(this->_flow_vars.w_var(), this->fan_speed_var()); // R_{w},{s}
+        Ksw = &context.get_elem_jacobian(this->fan_speed_var(), this->_flow_vars.w()); // R_{s},{w}
+        Kws = &context.get_elem_jacobian(this->_flow_vars.w(), this->fan_speed_var()); // R_{w},{s}
 
-        Fw  = &context.get_elem_residual(this->_flow_vars.w_var()); // R_{w}
+        Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -146,13 +146,13 @@ namespace GRINS
       {
         // Compute the solution at the old Newton iterate.
         libMesh::Number u, v, s;
-        u = context.interior_value(this->_flow_vars.u_var(), qp);
-        v = context.interior_value(this->_flow_vars.v_var(), qp);
+        u = context.interior_value(this->_flow_vars.u(), qp);
+        v = context.interior_value(this->_flow_vars.v(), qp);
         s = context.interior_value(this->fan_speed_var(), qp);
 
         libMesh::NumberVectorValue U(u,v);
         if (this->_dim == 3)
-          U(2) = context.interior_value(this->_flow_vars.w_var(), qp); // w
+          U(2) = context.interior_value(this->_flow_vars.w(), qp); // w
 
         libMesh::NumberVectorValue U_B_1;
         libMesh::NumberVectorValue F;

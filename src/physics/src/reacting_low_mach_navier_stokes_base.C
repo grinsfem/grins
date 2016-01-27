@@ -121,20 +121,20 @@ namespace GRINS
 
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
-	system->time_evolving( _species_vars.species_var(i) );
+	system->time_evolving( _species_vars.species(i) );
       }
 
-    system->time_evolving(_flow_vars.u_var());
-    system->time_evolving(_flow_vars.v_var());
+    system->time_evolving(_flow_vars.u());
+    system->time_evolving(_flow_vars.v());
 
     if (dim == 3)
-      system->time_evolving(_flow_vars.w_var());
+      system->time_evolving(_flow_vars.w());
 
-    system->time_evolving(_temp_vars.T_var());
-    system->time_evolving(_flow_vars.p_var());
+    system->time_evolving(_temp_vars.T());
+    system->time_evolving(_flow_vars.p());
 
     if( _enable_thermo_press_calc )
-      system->time_evolving(_p0_var.p0_var());
+      system->time_evolving(_p0_var.p0());
 
     return;
   }
@@ -145,23 +145,23 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_species_vars.species_var(0))->get_JxW();
-    context.get_element_fe(_species_vars.species_var(0))->get_phi();
-    context.get_element_fe(_species_vars.species_var(0))->get_dphi();
-    context.get_element_fe(_species_vars.species_var(0))->get_xyz();
+    context.get_element_fe(_species_vars.species(0))->get_JxW();
+    context.get_element_fe(_species_vars.species(0))->get_phi();
+    context.get_element_fe(_species_vars.species(0))->get_dphi();
+    context.get_element_fe(_species_vars.species(0))->get_xyz();
 
-    context.get_element_fe(_flow_vars.u_var())->get_JxW();
-    context.get_element_fe(_flow_vars.u_var())->get_phi();
-    context.get_element_fe(_flow_vars.u_var())->get_dphi();
-    context.get_element_fe(_flow_vars.u_var())->get_xyz();
+    context.get_element_fe(_flow_vars.u())->get_JxW();
+    context.get_element_fe(_flow_vars.u())->get_phi();
+    context.get_element_fe(_flow_vars.u())->get_dphi();
+    context.get_element_fe(_flow_vars.u())->get_xyz();
 
-    context.get_element_fe(_temp_vars.T_var())->get_JxW();
-    context.get_element_fe(_temp_vars.T_var())->get_phi();
-    context.get_element_fe(_temp_vars.T_var())->get_dphi();
-    context.get_element_fe(_temp_vars.T_var())->get_xyz();
+    context.get_element_fe(_temp_vars.T())->get_JxW();
+    context.get_element_fe(_temp_vars.T())->get_phi();
+    context.get_element_fe(_temp_vars.T())->get_dphi();
+    context.get_element_fe(_temp_vars.T())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p_var())->get_phi();
-    context.get_element_fe(_flow_vars.p_var())->get_xyz();
+    context.get_element_fe(_flow_vars.p())->get_phi();
+    context.get_element_fe(_flow_vars.p())->get_xyz();
 
     return;
   }

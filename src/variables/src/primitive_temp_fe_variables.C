@@ -23,36 +23,22 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/species_mass_fracs_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
-
-// GRINS
-#include "grins/variable_name_defaults.h"
-#include "grins/materials_parsing.h"
 
 namespace GRINS
 {
-  SpeciesMassFractionsVariables::SpeciesMassFractionsVariables( const GetPot& input,
-                                                                const std::string& material_name )
+  PrimitiveTempFEVariables::PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
+    : FEVariablesBase(),
+      PrimitiveTempVariables(input)
   {
-    MaterialsParsing::parse_species_varnames(input, material_name, _species_var_names);
-  }
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/T_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) );
 
-  void SpeciesMassFractionsVariables::init( libMesh::FEMSystem* system )
-  {
-    unsigned int n_species = this->n_species();
-
-#ifndef NDEBUG
-    for( unsigned int s = 0; s < n_species; s++)
-      libmesh_assert( system->has_variable( _species_var_names[s] ) );
-#endif
-
-    _species_vars.resize(n_species);
-    for( unsigned int s = 0; s < n_species; s++)
-      _species_vars[s] = system->variable_number( _species_var_names[s] );
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/T_order", "SECOND") ) );
   }
 
 } // end namespace GRINS

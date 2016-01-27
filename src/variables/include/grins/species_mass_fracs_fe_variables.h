@@ -22,52 +22,34 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_TURBULENCE_VARIABLES_H
-#define GRINS_TURBULENCE_VARIABLES_H
 
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
+#ifndef GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
+#define GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/fe_variables_base.h"
+#include "grins/species_mass_fracs_variables.h"
 
 namespace GRINS
 {
-  class TurbulenceVariables
+
+  class SpeciesMassFractionsFEVariables : public FEVariablesBase,
+                                          public SpeciesMassFractionsVariables
   {
   public:
 
-    TurbulenceVariables( const GetPot& input );
-    ~TurbulenceVariables();
+    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name );
+    ~SpeciesMassFractionsFEVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
-
-    VariableIndex nu_var() const;
-
-  protected:
-
-    //! Indices for each variable;
-    VariableIndex _nu_var; /* Index for turbulence viscosity */
-
-    //! Names of each variable in the system
-    std::string _nu_var_name;
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_fe_init(system, _var_names, _vars ); }
 
   private:
 
-    TurbulenceVariables();
+    SpeciesMassFractionsFEVariables();
 
   };
 
-  inline
-  VariableIndex TurbulenceVariables::nu_var() const
-  {
-    return _nu_var;
-  }
-
 } // end namespace GRINS
 
-#endif // GRINS_TURBULENCE_VARIABLES_H
+#endif //GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H

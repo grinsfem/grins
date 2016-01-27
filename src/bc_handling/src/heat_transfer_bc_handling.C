@@ -156,7 +156,7 @@ namespace GRINS
 	  dbc_ids.insert(bc_id);
 	
 	  std::vector<VariableIndex> dbc_vars;
-	  dbc_vars.push_back(_temp_vars.T_var());
+	  dbc_vars.push_back(_temp_vars.T());
 	
           libMesh::ConstFunction<libMesh::Number>
             t_func(this->get_dirichlet_bc_value(bc_id));
@@ -195,12 +195,12 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric( context, _temp_vars.T_var(), -1.0,
+              _bound_conds.apply_neumann_axisymmetric( context, _temp_vars.T(), -1.0,
                                                        this->get_neumann_bc_value(bc_id) );
             }
           else
             {
-              _bound_conds.apply_neumann( context, _temp_vars.T_var(), -1.0,
+              _bound_conds.apply_neumann( context, _temp_vars.T(), -1.0,
                                           this->get_neumann_bc_value(bc_id) );
             }
 	}
@@ -210,13 +210,13 @@ namespace GRINS
 	{
           if( this->is_axisymmetric() )
             {
-              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _temp_vars.T_var(), -1.0, 
-                                                       this->get_neumann_bound_func( bc_id, _temp_vars.T_var() ) );
+              _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _temp_vars.T(), -1.0, 
+                                                       this->get_neumann_bound_func( bc_id, _temp_vars.T() ) );
             }
           else
             {
-              _bound_conds.apply_neumann( context, cache, request_jacobian, _temp_vars.T_var(), -1.0, 
-                                          this->get_neumann_bound_func( bc_id, _temp_vars.T_var() ) );
+              _bound_conds.apply_neumann( context, cache, request_jacobian, _temp_vars.T(), -1.0, 
+                                          this->get_neumann_bound_func( bc_id, _temp_vars.T() ) );
             }
 	}
 	break;

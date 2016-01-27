@@ -22,53 +22,42 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_MEMBRANE_BASE_H
-#define GRINS_ELASTIC_MEMBRANE_BASE_H
 
-//GRINS
-#include "grins/physics.h"
-#include "grins/displacement_fe_variables.h"
-#include "grins/assembly_context.h"
+#ifndef GRINS_THERMO_PRESSURE_VARIABLE_H
+#define GRINS_THERMO_PRESSURE_VARIABLE_H
 
-// libMesh
-#include "libmesh/fe_base.h"
+// GRINS
+#include "grins/variables_base.h"
+
+// libMesh forward declarations
+class GetPot;
 
 namespace GRINS
 {
-  class ElasticMembraneBase : public Physics
+  class ThermoPressureVariable : public VariablesBase
   {
   public:
 
-    ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneBase();
+    ThermoPressureVariable( const GetPot& input );
+    ~ThermoPressureVariable(){};
 
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
-
-  protected:
-
-    DisplacementFEVariables _disp_vars;
-
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
+    VariableIndex p0() const;
 
   private:
 
-    ElasticMembraneBase();
+    ThermoPressureVariable();
 
   };
 
   inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneBase::get_fe( const AssemblyContext& context )
+  VariableIndex ThermoPressureVariable::p0() const
   {
-    // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u(),2);
+    return _vars[0];
   }
 
 } // end namespace GRINS
 
-#endif // GRINS_ELASTIC_MEMBRANE_BASE_H
+#endif // GRINS_THERMO_PRESSURE_VARIABLE_H

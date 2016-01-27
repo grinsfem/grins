@@ -23,24 +23,22 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/thermo_pressure_variable.h"
+#include "grins/species_mass_fracs_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
+
+// GRINS
+#include "grins/variable_name_defaults.h"
+#include "grins/materials_parsing.h"
 
 namespace GRINS
 {
-  ThermoPressureVariable::ThermoPressureVariable( const GetPot& input )
-    : _p0_var(invalid_var_index),
-      _p0_var_name( input("Physics/VariableNames/thermo_presure", "p0" ) )
-  {}
-
-  void ThermoPressureVariable::init( libMesh::FEMSystem* system )
+  SpeciesMassFractionsVariables::SpeciesMassFractionsVariables( const GetPot& input,
+                                                                const std::string& material_name )
+    : VariablesBase()
   {
-    libmesh_assert( system->has_variable( _p0_var_name ) );
-
-    _p0_var = system->variable_number( _p0_var_name );
+    MaterialsParsing::parse_species_varnames(input, material_name, _var_names);
   }
 
 } // end namespace GRINS

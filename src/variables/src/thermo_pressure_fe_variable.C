@@ -25,10 +25,6 @@
 // This class
 #include "grins/thermo_pressure_fe_variable.h"
 
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/variable_name_defaults.h"
-
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
@@ -36,14 +32,11 @@
 namespace GRINS
 {
   ThermoPressureFEVariable::ThermoPressureFEVariable( const GetPot& input, const std::string& /*physics_name*/ )
-    :  ThermoPressureVariable(input),
-       _P_FE_family( libMesh::SCALAR ),
-       _P_order( libMesh::FIRST )
-  {}
-
-  void ThermoPressureFEVariable::init( libMesh::FEMSystem* system )
+    :  FEVariablesBase(),
+       ThermoPressureVariable(input)
   {
-    _p0_var = system->add_variable( _p0_var_name, libMesh::FIRST, libMesh::SCALAR );
+    _family.resize(1, libMesh::SCALAR );
+    _order.resize(1, libMesh::FIRST );
   }
 
 } // end namespace GRINS

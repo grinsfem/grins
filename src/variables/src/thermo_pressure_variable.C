@@ -22,43 +22,19 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_THERMO_PRESSURE_FE_VARIABLE_H
-#define GRINS_THERMO_PRESSURE_FE_VARIABLE_H
-
-// GRINS
-#include "grins/grins_enums.h"
+// This class
 #include "grins/thermo_pressure_variable.h"
 
 // libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-
-  class ThermoPressureFEVariable : public ThermoPressureVariable
+  ThermoPressureVariable::ThermoPressureVariable( const GetPot& input )
+    : VariablesBase()
   {
-  public:
-
-    ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name );
-    ~ThermoPressureFEVariable(){};
-
-    virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _P_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _P_order;
-
-  private:
-
-    ThermoPressureFEVariable();
-
-  };
+    _vars.resize(1,invalid_var_index);
+    _var_names.resize(1, input("Physics/VariableNames/thermo_presure", "p0" ) );
+  }
 
 } // end namespace GRINS
-
-#endif // GRINS_THERMO_PRESSURE_FE_VARIABLE_H

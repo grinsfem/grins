@@ -22,50 +22,38 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_TURBULENCE_FE_VARIABLES_H
-#define GRINS_TURBULENCE_FE_VARIABLES_H
+
+#ifndef GRINS_DISPLACEMENT_FE_VARIABLES_H
+#define GRINS_DISPLACEMENT_FE_VARIABLES_H
 
 // GRINS
-#include "grins/grins_enums.h"
-#include "grins/turbulence_variables.h"
-#include "grins/var_typedefs.h"
-
-//libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
-
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
+#include "grins/fe_variables_base.h"
+#include "grins/displacement_variables.h"
 
 namespace GRINS
 {
-  class TurbulenceFEVariables : public TurbulenceVariables
+  class DisplacementFEVariables : public FEVariablesBase,
+                                  public DisplacementVariables
   {
   public:
 
-    TurbulenceFEVariables( const GetPot& input, const std::string& physics_name );
-    ~TurbulenceFEVariables();
+    DisplacementFEVariables( const GetPot& input, const std::string& physics_name );
+    virtual ~DisplacementFEVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    //! Element type, read from input
-    GRINSEnums::FEFamily _TU_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _TU_order;
+    //! Initialize System variables
+    /*!
+     *  Additional arguments specify whether the spatial mesh is really 2D or 3D.
+     * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
+     * space or 2D shell manifolds in 3D (is_3D = true).
+     */
+    void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
 
   private:
 
-    TurbulenceFEVariables();
+    DisplacementFEVariables();
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_TURBULENCE_FE_VARIABLES_H
+#endif // GRINS_DISPLACEMENT_FE_VARIABLES_H

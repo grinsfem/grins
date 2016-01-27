@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/primitive_flow_variables.h"
+#include "grins/displacement_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -34,42 +34,36 @@
 
 namespace GRINS
 {
-  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
-    :  _u_var(invalid_var_index),
-       _v_var(invalid_var_index),
-       _w_var(invalid_var_index),
-       _p_var(invalid_var_index),
-       _u_var_name( input("Physics/VariableNames/u_velocity", u_var_name_default ) ),
-       _v_var_name( input("Physics/VariableNames/v_velocity", v_var_name_default ) ),
-       _w_var_name( input("Physics/VariableNames/w_velocity", w_var_name_default ) ),
-       _p_var_name( input("Physics/VariableNames/pressure",   p_var_name_default ) )
+  DisplacementVariables::DisplacementVariables( const GetPot& input )
+    : VariablesBase(),
+      _have_v(false),
+      _have_w(false),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-    return;
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
+
+    _var_names[_u_idx] = input("Physics/VariableNames/u_displacment", u_disp_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_displacment", v_disp_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_displacment", w_disp_name_default );
   }
 
-  PrimitiveFlowVariables::~PrimitiveFlowVariables()
+  void DisplacementVariables::init( libMesh::FEMSystem* system )
   {
-    return;
-  }
+    // The order matters here. We *must* do w first since we use pop_back().
+    if ( system->has_variable( _var_names[_w_idx] ) )
+        _have_w = true;
+    else
+      _var_names.pop_back();
 
-  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable( _u_var_name ) );
-    libmesh_assert( system->has_variable( _v_var_name ) );
-    libmesh_assert( system->has_variable( _p_var_name ) );
+    if ( system->has_variable( _var_names[_v_idx] ) )
+        _have_v = true;
+    else
+      _var_names.pop_back();
 
-    _u_var = system->variable_number( _u_var_name );
-    _v_var = system->variable_number( _v_var_name );
-
-    if ( system->get_mesh().mesh_dimension() == 3)
-      {
-        libmesh_assert( system->has_variable( _w_var_name ) );
-        _w_var = system->variable_number( _w_var_name );
-      }
-
-    _p_var = system->variable_number( _p_var_name );
-
-    return;
+    this->default_var_init(system);
   }
 
 } // end namespace GRINS

@@ -23,17 +23,17 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPECIES_MASS_FRACS_VARIABLES_H
-#define GRINS_SPECIES_MASS_FRACS_VARIABLES_H
+#ifndef GRINS_VARIABLES_BASE_H
+#define GRINS_VARIABLES_BASE_H
 
 // C++
 #include <vector>
+#include <string>
 
 // GRINS
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
-class GetPot;
 namespace libMesh
 {
   class FEMSystem;
@@ -41,47 +41,29 @@ namespace libMesh
 
 namespace GRINS
 {
-  class SpeciesMassFractionsVariables
+  class VariablesBase
   {
   public:
 
-    SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name );
-    ~SpeciesMassFractionsVariables(){};
+    VariablesBase(){};
 
-    virtual void init( libMesh::FEMSystem* system );
-
-    unsigned int n_species() const;
-
-    VariableIndex species_var( unsigned int species ) const;
+    ~VariablesBase(){};
 
   protected:
 
-    //! Indices for each (owned) variable;
-    std::vector<VariableIndex> _species_vars; /* Indicies for species densities */
+    //! Default method for init'ing variables
+    /*! This method assumes that the variable has already been
+        added to the System elsewhere and we're just grabbing the
+        variable number from the system. We attempt to grab
+        a variable number for every entry in _var_names. */
+    void default_var_init( libMesh::FEMSystem* system );
 
-    //! Names of each (owned) variable in the system
-    std::vector<std::string> _species_var_names;
+    std::vector<VariableIndex> _vars;
 
-  private:
-
-    SpeciesMassFractionsVariables();
+    std::vector<std::string> _var_names;
 
   };
 
-  inline
-  unsigned int SpeciesMassFractionsVariables::n_species() const
-  {
-    // We *must* use the size of _species_var_names here since that gets populated
-    // at construction time.
-    return _species_var_names.size();
-  }
-
-  inline
-  VariableIndex SpeciesMassFractionsVariables::species_var( unsigned int species ) const
-  {
-    return _species_vars[species];
-  }
-
 } // end namespace GRINS
 
-#endif // GRINS_SPECIES_MASS_FRACS_VARIABLES_H
+#endif // GRINS_VARIABLES_BASE_H

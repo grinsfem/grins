@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLID_MECHANICS_VARIABLES_H
-#define GRINS_SOLID_MECHANICS_VARIABLES_H
+#ifndef GRINS_DISPLACEMENT_VARIABLES_H
+#define GRINS_DISPLACEMENT_VARIABLES_H
 
 // libMesh forward declarations
 class GetPot;
@@ -36,16 +36,16 @@ namespace libMesh
 #include "libmesh/libmesh_common.h"
 
 // GRINS
-#include "grins/var_typedefs.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  class SolidMechanicsVariables
+  class DisplacementVariables : public VariablesBase
   {
   public:
 
-    SolidMechanicsVariables( const GetPot& input );
-    virtual ~SolidMechanicsVariables();
+    DisplacementVariables( const GetPot& input );
+    virtual ~DisplacementVariables(){};
 
     //! Initialize System variables
     /*!
@@ -58,77 +58,73 @@ namespace GRINS
     bool have_v() const;
     bool have_w() const;
 
-    VariableIndex u_var() const;
-    VariableIndex v_var() const;
-    VariableIndex w_var() const;
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
 
-    const std::string& u_var_name() const;
-    const std::string& v_var_name() const;
-    const std::string& w_var_name() const;
+    const std::string& u_name() const;
+    const std::string& v_name() const;
+    const std::string& w_name() const;
 
   protected:
 
     bool _have_v;
     bool _have_w;
 
-    VariableIndex _u_var;
-    VariableIndex _v_var;
-    VariableIndex _w_var;
-
-    std::string _u_var_name, _v_var_name, _w_var_name;
+    unsigned int _u_idx, _v_idx, _w_idx;
 
   };
 
   inline
-  VariableIndex SolidMechanicsVariables::u_var() const
+  VariableIndex DisplacementVariables::u() const
   {
-    return _u_var;
+    return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex SolidMechanicsVariables::v_var() const
+  VariableIndex DisplacementVariables::v() const
   {
     libmesh_assert(_have_v);
-    return _v_var;
+    return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex SolidMechanicsVariables::w_var() const
+  VariableIndex DisplacementVariables::w() const
   {
     libmesh_assert(_have_w);
-    return _w_var;
+    return this->_vars[_w_idx];
   }
 
   inline
-  bool SolidMechanicsVariables::have_v() const
+  bool DisplacementVariables::have_v() const
   {
     return _have_v;
   }
 
   inline
-  bool SolidMechanicsVariables::have_w() const
+  bool DisplacementVariables::have_w() const
   {
     return _have_w;
   }
 
   inline
-  const std::string& SolidMechanicsVariables::u_var_name() const
+  const std::string& DisplacementVariables::u_name() const
   {
-    return _u_var_name;
+    return this->_var_names[_u_idx];
   }
 
   inline
-  const std::string& SolidMechanicsVariables::v_var_name() const
+  const std::string& DisplacementVariables::v_name() const
   {
-    return _v_var_name;
+    return this->_var_names[_v_idx];
   }
 
   inline
-  const std::string& SolidMechanicsVariables::w_var_name() const
+  const std::string& DisplacementVariables::w_name() const
   {
-    return _w_var_name;
+    return this->_var_names[_w_idx];
   }
 
 } // end namespace GRINS
 
-#endif // GRINS_SOLID_MECHANICS_VARIABLES_H
+#endif // GRINS_DISPLACEMENT_VARIABLES_H

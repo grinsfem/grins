@@ -23,53 +23,22 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/solid_mechanics_variables.h"
+#include "grins/turbulence_fe_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
-
-// GRINS
-#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-  SolidMechanicsVariables::SolidMechanicsVariables( const GetPot& input )
-    : _have_v(false),
-      _have_w(false),
-      _u_var(invalid_var_index), // These are unsigned, so initialize to absurdly large value
-      _v_var(invalid_var_index),
-      _w_var(invalid_var_index),
-      _u_var_name( input("Physics/VariableNames/u_displacment", u_disp_name_default ) ),
-      _v_var_name( input("Physics/VariableNames/v_displacment", v_disp_name_default ) ),
-      _w_var_name( input("Physics/VariableNames/w_displacment", w_disp_name_default ) )
+  TurbulenceFEVariables::TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
+    :  FEVariablesBase(),
+       TurbulenceVariables(input)
   {
-    return;
-  }
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) );
 
-  SolidMechanicsVariables::~SolidMechanicsVariables()
-  {
-    return;
-  }
-
-  void SolidMechanicsVariables::init( libMesh::FEMSystem* system )
-  {
-    libmesh_assert( system->has_variable( _u_var_name ) );
-    _u_var = system->variable_number( _u_var_name );
-
-    if ( system->has_variable( _v_var_name ) )
-      {
-        _have_v = true;
-        _v_var = system->variable_number( _v_var_name );
-      }
-
-    if ( system->has_variable( _w_var_name ) )
-      {
-        _have_w = true;
-        _w_var = system->variable_number( _w_var_name );
-      }
-
-    return;
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) );
   }
 
 } // end namespace GRINS

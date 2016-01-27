@@ -28,8 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "primitive_flow_fe_variables.h"
-#include "primitive_temp_fe_variables.h"
+#include "grins/primitive_flow_fe_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
 
 namespace GRINS
 {

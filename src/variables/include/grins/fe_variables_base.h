@@ -23,43 +23,54 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
-#define GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
+#ifndef GRINS_FE_VARIABLES_BASE_H
+#define GRINS_FE_VARIABLES_BASE_H
+
+// C++
+#include <vector>
+#include <string>
 
 // GRINS
 #include "grins/grins_enums.h"
-#include "grins/species_mass_fracs_variables.h"
+#include "grins/var_typedefs.h"
 
 // libMesh
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
 
+// libMesh forward declarations
+namespace libMesh
+{
+  class FEMSystem;
+}
+
 namespace GRINS
 {
-
-  class SpeciesMassFractionsFEVariables : public SpeciesMassFractionsVariables
+  class FEVariablesBase
   {
   public:
 
-    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name );
-    ~SpeciesMassFractionsFEVariables(){};
+    FEVariablesBase(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    ~FEVariablesBase(){};
 
   protected:
 
-    //! Element type, read from input
-    GRINSEnums::FEFamily _species_FE_family;
+    //! Default method for init'ing variables
+    /*! This method will init all variables in the var_names
+        vector using the first _family and the first _order
+        finite elements and populate the vars vector with the
+        corresponding variable numbers. If the user has more than
+        one FE type, they should not use this method. */
+    void default_fe_init( libMesh::FEMSystem* system,
+                          const std::vector<std::string>& var_names,
+                          std::vector<VariableIndex>& vars ) const;
 
-    //! Element orders, read from input
-    GRINSEnums::Order _species_order;
+    std::vector<GRINSEnums::FEFamily> _family;
 
-  private:
-
-    SpeciesMassFractionsFEVariables();
+    std::vector<GRINSEnums::Order> _order;
 
   };
-
 } // end namespace GRINS
 
-#endif //GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
+#endif // GRINS_FE_VARIABLES_BASE_H

@@ -58,7 +58,7 @@ namespace GRINS
     SpalartAllmaras<Mu>::init_context(context);
       
     // We also need second derivatives, so initialize those.
-    context.get_element_fe(this->_turbulence_vars.nu_var())->get_d2phi();
+    context.get_element_fe(this->_turbulence_vars.nu())->get_d2phi();
 
     return;
   }

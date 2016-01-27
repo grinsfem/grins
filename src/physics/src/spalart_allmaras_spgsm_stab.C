@@ -86,26 +86,26 @@ namespace GRINS
     libMesh::Elem &elem_pointer = context.get_elem();
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_JxW();
 
     // The viscosity shape function gradients (in global coords.)
     // at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_dphi();
 
     // Quadrature point locations
     //const std::vector<libMesh::Point>& nu_qpoint =
-    //context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
+    //context.get_element_fe(this->_turbulence_vars.nu())->get_xyz();
 
-    //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
+    //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu(), this->_turbulence_vars.nu()); // R_{nu},{nu}
 
-    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
+    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu()); // R_{nu}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -118,7 +118,7 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         libMesh::Gradient grad_nu;
-        grad_nu = context.interior_gradient(this->_turbulence_vars.nu_var(), qp);
+        grad_nu = context.interior_gradient(this->_turbulence_vars.nu(), qp);
 
         libMesh::Real jac = JxW[qp];
 
@@ -131,12 +131,12 @@ namespace GRINS
 
         // The flow velocity
         libMesh::Number u,v;
-        u = context.interior_value(this->_flow_vars.u_var(), qp);
-        v = context.interior_value(this->_flow_vars.v_var(), qp);
+        u = context.interior_value(this->_flow_vars.u(), qp);
+        v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
         if (this->_dim == 3)
-          U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+          U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         // Stabilization terms
 
@@ -180,19 +180,19 @@ namespace GRINS
     libMesh::Elem &elem_pointer = context.get_elem();
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
+    const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_JxW();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
-      context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
+      context.get_element_fe(this->_turbulence_vars.nu())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu_var()); // R_{nu}
+    libMesh::DenseSubVector<libMesh::Number> &Fnu = context.get_elem_residual(this->_turbulence_vars.nu()); // R_{nu}
 
-    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu_var());
+    libMesh::FEBase* fe = context.get_element_fe(this->_turbulence_vars.nu());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -207,14 +207,14 @@ namespace GRINS
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u_var(), qp ),
-                                 context.fixed_interior_value( this->_flow_vars.v_var(), qp ) );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
         // Compute the viscosity at this qp
         libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_dim == 3 )
           {
-            U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
+            U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
 
         libMesh::Real tau_spalart = this->_stab_helper.compute_tau_spalart( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );

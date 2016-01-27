@@ -23,50 +23,41 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/solid_mechanics_fe_variables.h"
-
-// GRINS
-#include "grins/grins_enums.h"
-#include "grins/variable_name_defaults.h"
+#include "grins/primitive_flow_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
+
+// GRINS
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-
-  SolidMechanicsFEVariables::SolidMechanicsFEVariables( const GetPot& input, const std::string& physics_name )
-    :  SolidMechanicsVariables(input),
-       _FE_family( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ),
-       _order( libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) )
+  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
+    :  VariablesBase(),
+       _u_idx(1),
+       _v_idx(2),
+       _w_idx(3),
+       _p_idx(0)
   {
-    return;
+    _vars.resize(4,invalid_var_index);
+    _var_names.resize(4);
+
+    _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+    _var_names[_p_idx] = input("Physics/VariableNames/pressure", p_var_name_default );
   }
 
-  SolidMechanicsFEVariables::~SolidMechanicsFEVariables()
+  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
   {
-    return;
-  }
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 
-  void SolidMechanicsFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
-  {
-    _u_var = system->add_variable( _u_var_name, this->_order, _FE_family);
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
 
-    if ( system->get_mesh().mesh_dimension() >= 2 || is_2D || is_3D)
-      {
-        _have_v = true;
-        _v_var = system->add_variable( _v_var_name, this->_order, _FE_family);
-      }
-
-    if ( system->get_mesh().mesh_dimension() == 3 || is_3D )
-      {
-        _have_w = true;
-        _w_var = system->add_variable( _w_var_name, this->_order, _FE_family);
-      }
-
-    return;
+    this->default_var_init(system);
   }
 
 } // end namespace GRINS

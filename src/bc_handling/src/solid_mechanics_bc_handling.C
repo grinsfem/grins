@@ -201,21 +201,21 @@ namespace GRINS
                                                           BoundaryID bc_id,
                                                           BCType bc_type ) const
   {
-    VariableIndex u_var = _disp_vars.u_var();
-    libmesh_assert(system->has_variable(_disp_vars.u_var_name()));
+    VariableIndex u_var = _disp_vars.u();
+    libmesh_assert(system->has_variable(_disp_vars.u_name()));
 
     VariableIndex v_var;
     if( _disp_vars.have_v() )
       {
-        v_var = _disp_vars.v_var();
-        libmesh_assert(system->has_variable(_disp_vars.v_var_name()));
+        v_var = _disp_vars.v();
+        libmesh_assert(system->has_variable(_disp_vars.v_name()));
       }
 
     VariableIndex w_var;
     if( _disp_vars.have_w() )
       {
-        w_var = _disp_vars.w_var();
-        libmesh_assert(system->has_variable(_disp_vars.w_var_name()));
+        w_var = _disp_vars.w();
+        libmesh_assert(system->has_variable(_disp_vars.w_name()));
       }
 
     switch( bc_type )
@@ -442,13 +442,13 @@ namespace GRINS
         {
           const libMesh::Point& traction = this->get_neumann_bc_value(bc_id);
 
-          _bound_conds.apply_neumann_normal( context, _disp_vars.u_var(), 1.0, traction(0) );
+          _bound_conds.apply_neumann_normal( context, _disp_vars.u(), 1.0, traction(0) );
 
           if( _disp_vars.have_v() )
-            _bound_conds.apply_neumann_normal( context, _disp_vars.v_var(), 1.0, traction(1) );
+            _bound_conds.apply_neumann_normal( context, _disp_vars.v(), 1.0, traction(1) );
 
           if( _disp_vars.have_w() )
-            _bound_conds.apply_neumann_normal( context, _disp_vars.w_var(), 1.0, traction(2) );
+            _bound_conds.apply_neumann_normal( context, _disp_vars.w(), 1.0, traction(2) );
         }
         break;
 

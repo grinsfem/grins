@@ -22,44 +22,44 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
-#define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
+// This class
+#include "grins/displacement_fe_variables.h"
 
 // GRINS
-#include "grins/grins_enums.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/variable_name_defaults.h"
 
 // libMesh
-#include "libmesh/enum_order.h"
-#include "libmesh/enum_fe_family.h"
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
 
-  class PrimitiveFlowFEVariables : public PrimitiveFlowVariables
+  DisplacementFEVariables::DisplacementFEVariables( const GetPot& input, const std::string& physics_name )
+    :  FEVariablesBase(),
+       DisplacementVariables(input)
   {
-  public:
+    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
+    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) );
+  }
 
-    PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name );
-    ~PrimitiveFlowFEVariables();
+  void DisplacementFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
+  {
+    unsigned int mesh_dim = system->get_mesh().mesh_dimension();
 
-    virtual void init( libMesh::FEMSystem* system );
+    // The order matters here. We *must* do w first since we use pop_back().
+    if ( mesh_dim == 3 || is_3D )
+      _have_w = true;
+    else
+      _var_names.pop_back();
 
-  protected:
+    if ( mesh_dim >= 2 || is_2D || is_3D)
+        _have_v = true;
+    else
+        _var_names.pop_back();
 
-    //! Element type, read from input
-    GRINSEnums::FEFamily _V_FE_family, _P_FE_family;
-
-    //! Element orders, read from input
-    GRINSEnums::Order _V_order, _P_order;
-
-  private:
-
-    PrimitiveFlowFEVariables();
-
-  };
+    this->default_fe_init(system, _var_names, _vars );
+  }
 
 } // end namespace GRINS
-
-#endif //GRINS_PRIMITIVE_FLOW_VARIABLES_H
