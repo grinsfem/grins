@@ -42,6 +42,23 @@ namespace GRINS
     static void clear_suffix()
     { _suffix.clear(); }
 
+    //! Extract the physics name and the suffix from the full_name
+    /*! Note returned suffix includes the delimiter */
+    static void extract_physics_and_suffix( const std::string& full_name,
+                                            std::string& physics_name,
+                                            std::string& suffix );
+
+    //! Extract the physics name from the full_name.
+    /*! If the delimiter is not present in the full_name, then
+        the physics_name is the full_name. */
+    static std::string extract_physics( const std::string& full_name );
+
+    //! Extract the suffix from the full_name.
+    /*! Note returned suffix includes the delimiter. If there is
+        no delimiter present, then the returned suffix is an empty
+        string. */
+    static std::string extract_suffix( const std::string& full_name );
+
     static PhysicsName stokes()
     { return "Stokes"+_suffix; }
 
