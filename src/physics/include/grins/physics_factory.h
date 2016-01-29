@@ -78,6 +78,18 @@ namespace GRINS
     virtual void check_physics_consistency( const GRINS::PhysicsList& physics_list );
 
     //! Utility function
+    /*! The elements in the physics_list may have suffixes attached while
+        the required_physics is assumed not to when this function is called.
+        So, this helper method will do the check by stripping the suffixes
+        from the physics_list element during the search and check if the required
+        physics is present.
+
+        \todo This is a linear search, but it really shouldn't matter unless the
+              physics_list gets big. */
+    bool find_physics( const std::string& required_physics,
+                       const GRINS::PhysicsList& physics_list ) const;
+
+    //! Utility function
     void physics_consistency_error( const std::string physics_checked,
 				    const std::string physics_required ) const;
 

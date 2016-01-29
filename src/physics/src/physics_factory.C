@@ -928,6 +928,25 @@ namespace GRINS
     return;
   }
 
+  bool PhysicsFactory::find_physics( const std::string& required_physics,
+                                     const GRINS::PhysicsList& physics_list ) const
+  {
+    bool found_physics = false;
+
+    for( PhysicsListIter physics = physics_list.begin();
+	 physics != physics_list.end();
+	 physics++ )
+      {
+        if( required_physics == PhysicsNaming::extract_physics(physics->first) )
+          {
+            found_physics = true;
+            break;
+          }
+      }
+
+    return found_physics;
+  }
+
   void PhysicsFactory::physics_consistency_error( const std::string physics_checked,
 						  const std::string physics_required ) const
   {
