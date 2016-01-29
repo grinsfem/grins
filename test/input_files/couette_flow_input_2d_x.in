@@ -43,10 +43,10 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes'
+enabled_physics = 'IncompressibleNavierStokes:TestDelimiter'
 
 # Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+[./IncompressibleNavierStokes:TestDelimiter]
 
 material = 'TestMaterial'
 
