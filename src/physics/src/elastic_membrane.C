@@ -60,6 +60,11 @@ namespace GRINS
                                      (*this),
                                      _h0 );
 
+    MaterialsParsing::read_density( physics_name,
+                                    input,
+                                    (*this),
+                                    _rho );
+
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
 
     this->_ic_handler = new GenericICHandler(physics_name, input);
