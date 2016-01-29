@@ -810,34 +810,36 @@ namespace GRINS
 	 physics != physics_list.end();
 	 physics++ )
       {
+        PhysicsName current_physics = PhysicsNaming::extract_physics(physics->first);
+
 	// For IncompressibleNavierStokes*Stabilization, we'd better have IncompressibleNavierStokes
-        if( (physics->first == PhysicsNaming::incompressible_navier_stokes_adjoint_stab()) ||
-            (physics->first == PhysicsNaming::incompressible_navier_stokes_spgsm_stab()) )
+        if( (current_physics == PhysicsNaming::incompressible_navier_stokes_adjoint_stab()) ||
+            (current_physics == PhysicsNaming::incompressible_navier_stokes_spgsm_stab()) )
           {
-            if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
+            if( !this->find_physics(PhysicsNaming::incompressible_navier_stokes(), physics_list) )
               {
-                this->physics_consistency_error( physics->first, PhysicsNaming::incompressible_navier_stokes()  );
+                this->physics_consistency_error( current_physics, PhysicsNaming::incompressible_navier_stokes()  );
               }
           }
 
 	// For HeatTransfer, we need IncompressibleNavierStokes
-	if( physics->first == PhysicsNaming::heat_transfer() )
+	if( current_physics == PhysicsNaming::heat_transfer() )
 	  {
-	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::incompressible_navier_stokes(), physics_list) )
 	      {
 		this->physics_consistency_error( PhysicsNaming::heat_transfer(), PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 	  }
 
 	// For BoussinesqBuoyancy, we need both HeatTransfer and IncompressibleNavierStokes
-	if( physics->first == PhysicsNaming::boussinesq_buoyancy() )
+	if( current_physics == PhysicsNaming::boussinesq_buoyancy() )
 	  {
-	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::incompressible_navier_stokes(), physics_list) )
 	      {
 		this->physics_consistency_error( PhysicsNaming::boussinesq_buoyancy(), PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 
-	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::heat_transfer(), physics_list) )
 	      {
 		this->physics_consistency_error( PhysicsNaming::boussinesq_buoyancy(), PhysicsNaming::heat_transfer()  );
 	      }
@@ -845,10 +847,10 @@ namespace GRINS
 
 	/* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer
 	   and AxisymmetricIncompNavierStokes */
-	if( physics->first == PhysicsNaming::axisymmetric_boussinesq_buoyancy() )
+	if( current_physics == PhysicsNaming::axisymmetric_boussinesq_buoyancy() )
 	  {
 
-	    if( physics_list.find(PhysicsNaming::axisymmetric_heat_transfer()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::axisymmetric_heat_transfer(), physics_list) )
 	      {
 		this->physics_consistency_error( PhysicsNaming::axisymmetric_boussinesq_buoyancy(),
 						 PhysicsNaming::axisymmetric_heat_transfer()  );
@@ -857,7 +859,7 @@ namespace GRINS
 
 	/* For LowMachNavierStokes, there should be nothing else loaded, except
 	   for stabilization. */
-	if( physics->first == PhysicsNaming::low_mach_navier_stokes() )
+	if( current_physics == PhysicsNaming::low_mach_navier_stokes() )
 	  {
 	    if( physics_list.size() > 2 )
 	      {
@@ -869,7 +871,7 @@ namespace GRINS
 		     iter != physics_list.end();
 		     iter++ )
 		  {
-		    std::cerr << physics->first << std::endl;
+		    std::cerr << current_physics << std::endl;
 		  }
 		std::cerr << "=======================================================" << std::endl;
 		libmesh_error();
@@ -877,35 +879,35 @@ namespace GRINS
 	  }
 
 	/* For HeatTransferSource, we'd better have HeatTransfer */
-	if( physics->first == PhysicsNaming::heat_transfer_source() )
+	if( current_physics == PhysicsNaming::heat_transfer_source() )
 	  {
-	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::heat_transfer(), physics_list) )
 	      {
-		this->physics_consistency_error( physics->first, PhysicsNaming::heat_transfer()  );
+		this->physics_consistency_error( current_physics, PhysicsNaming::heat_transfer()  );
 	      }
 	  }
 
 	/* For HeatTransferAdjointStabilization, we'd better have HeatTransfer */
-	if( physics->first == PhysicsNaming::heat_transfer_adjoint_stab() )
+	if( current_physics == PhysicsNaming::heat_transfer_adjoint_stab() )
 	  {
-	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::heat_transfer(), physics_list) )
 	      {
-		this->physics_consistency_error( physics->first, PhysicsNaming::heat_transfer()  );
+		this->physics_consistency_error( current_physics, PhysicsNaming::heat_transfer()  );
 	      }
 	  }
 
         /* For BoussinesqBuoyancyAdjointStabilization, we'd better have IncompressibleNavierStokes */
-	if( physics->first == PhysicsNaming::boussinesq_buoyancy_adjoint_stab() )
+	if( current_physics == PhysicsNaming::boussinesq_buoyancy_adjoint_stab() )
 	  {
-	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
+	    if( !this->find_physics(PhysicsNaming::incompressible_navier_stokes(), physics_list) )
 	      {
-		this->physics_consistency_error( physics->first, PhysicsNaming::incompressible_navier_stokes()  );
+		this->physics_consistency_error( current_physics, PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 	  }
 
 	/* For ReactingLowMachNavierStokes, there should be nothing else loaded, except
 	   for stabilization. */
-	if( physics->first == PhysicsNaming::reacting_low_mach_navier_stokes() )
+	if( current_physics == PhysicsNaming::reacting_low_mach_navier_stokes() )
 	  {
 	    if( physics_list.size() > 2 )
 	      {
@@ -917,7 +919,7 @@ namespace GRINS
 		     iter != physics_list.end();
 		     iter++ )
 		  {
-		    std::cerr << physics->first << std::endl;
+		    std::cerr << current_physics << std::endl;
 		  }
 		std::cerr << "=======================================================" << std::endl;
 		libmesh_error();
