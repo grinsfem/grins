@@ -167,6 +167,9 @@ namespace GRINS
 
   private:
 
+    static std::string physics_name_delimiter()
+    { return ":"; }
+
     static std::string _suffix;
 
   };
