@@ -104,7 +104,7 @@ namespace GRINS
                                                        libMesh::Real pressure )
   {
     // Get Physics class and cast
-    GRINS::SharedPtr<GRINS::Physics> raw_physics = system.get_physics(elastic_membrane_constant_pressure);
+    GRINS::SharedPtr<GRINS::Physics> raw_physics = system.get_physics(GRINS::PhysicsNaming::elastic_membrane_constant_pressure());
     ElasticMembraneConstantPressure& physics = libMesh::cast_ref<ElasticMembraneConstantPressure&>( *(raw_physics.get()) );
 
     physics.reset_pressure(pressure);

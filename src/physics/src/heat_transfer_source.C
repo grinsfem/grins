@@ -42,7 +42,7 @@ namespace GRINS
   HeatTransferSource<SourceFunction>::HeatTransferSource( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _source(input),
-      _temp_vars(input,heat_transfer)
+      _temp_vars(input,PhysicsNaming::heat_transfer())
   {
     return;
   }

@@ -32,7 +32,7 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 #include "grins/heat_transfer_macros.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
 
 // libMesh
@@ -45,14 +45,14 @@ namespace GRINS
   template<class K>
   HeatConduction<K>::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _temp_vars(input,heat_conduction),
+      _temp_vars(input,PhysicsNaming::heat_conduction()),
       _rho(0.0),
       _Cp(0.0),
-      _k(input,MaterialsParsing::material_name(input,heat_conduction))
+      _k(input,MaterialsParsing::material_name(input,PhysicsNaming::heat_conduction()))
   {
-    MaterialsParsing::read_density( heat_conduction, input, (*this), this->_rho );
+    MaterialsParsing::read_density( PhysicsNaming::heat_conduction(), input, (*this), this->_rho );
 
-    MaterialsParsing::read_specific_heat( heat_conduction, input, (*this), this->_Cp );
+    MaterialsParsing::read_specific_heat( PhysicsNaming::heat_conduction(), input, (*this), this->_Cp );
 
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );

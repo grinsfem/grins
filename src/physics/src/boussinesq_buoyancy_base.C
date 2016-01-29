@@ -41,35 +41,35 @@ namespace GRINS
 
   BoussinesqBuoyancyBase::BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _flow_vars(input,incompressible_navier_stokes),
-      _temp_vars(input,heat_transfer),
+      _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
+      _temp_vars(input,PhysicsNaming::heat_transfer()),
       _rho(0.0),
       _T_ref(1.0),
       _beta_T(1.0)
   {
     this->read_property(input,
-                        "Physics/"+boussinesq_buoyancy+"/rho_ref",
+                        "Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/rho_ref",
                         "Density",
                         _rho);
 
     this->read_property(input,
-                        "Physics/"+boussinesq_buoyancy+"/T_ref",
+                        "Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/T_ref",
                         "ReferenceTemperature",
                         _T_ref);
 
 
     this->read_property(input,
-                        "Physics/"+boussinesq_buoyancy+"/beta_T",
+                        "Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/beta_T",
                         "ThermalExpansionCoeff",
                         _beta_T);
 
-    unsigned int g_dim = input.vector_variable_size("Physics/"+boussinesq_buoyancy+"/g");
+    unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g");
 
-    _g(0) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 1 );
+    _g(0) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 1 );
   
     if( g_dim == 3)
-      _g(2) = input("Physics/"+boussinesq_buoyancy+"/g", 0.0, 2 );
+      _g(2) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 2 );
 
     return;
   }
@@ -95,7 +95,7 @@ namespace GRINS
                                               const std::string& property,
                                               libMesh::Real& value )
   {
-    std::string material = MaterialsParsing::material_name(input,boussinesq_buoyancy);
+    std::string material = MaterialsParsing::material_name(input,PhysicsNaming::boussinesq_buoyancy());
 
     // Can't specify both material and rho_ref
     MaterialsParsing::duplicate_input_test(input,
@@ -142,7 +142,7 @@ namespace GRINS
                                                  const std::string& property )
   {
     std::string warning;
-    if( !MaterialsParsing::have_material(input,boussinesq_buoyancy) )
+    if( !MaterialsParsing::have_material(input,PhysicsNaming::boussinesq_buoyancy()) )
       {
         warning = "WARNING: Neither "+old_option+"\n";
         warning += "         nor a material_name was detected in input\n";

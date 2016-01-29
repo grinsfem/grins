@@ -45,12 +45,12 @@ namespace GRINS
       _temp_stab_helper(physics_name+"TempStabHelper", input),
       _Cp(0.0),
       _k(1.0),
-      _mu(input,MaterialsParsing::material_name(input,boussinesq_buoyancy))
+      _mu(input,MaterialsParsing::material_name(input,PhysicsNaming::boussinesq_buoyancy()))
   {
-    MaterialsParsing::read_specific_heat( boussinesq_buoyancy, input, (*this), this->_Cp );
+    MaterialsParsing::read_specific_heat( PhysicsNaming::boussinesq_buoyancy(), input, (*this), this->_Cp );
 
     this->set_parameter
-      (_k, input, "Physics/"+heat_transfer+"/k", _k);
+      (_k, input, "Physics/"+PhysicsNaming::heat_transfer()+"/k", _k);
   }
 
   template<class Mu>

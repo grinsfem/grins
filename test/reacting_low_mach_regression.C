@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 
   std::string chem_lib;
   GRINS::PhysicsFactoryHelper::parse_thermochemistry_model( libMesh_inputfile,
-                                                            GRINS::reacting_low_mach_navier_stokes,
+                                                            GRINS::PhysicsNaming::reacting_low_mach_navier_stokes(),
                                                             chem_lib );
 
   if( chem_lib == std::string("cantera") )

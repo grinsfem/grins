@@ -190,9 +190,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ChannelBCFactory::build
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
   
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::low_mach_navier_stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::low_mach_navier_stokes(),  cont) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::low_mach_navier_stokes,  cont2) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::low_mach_navier_stokes(),  cont2) );
 
   return mymap;
 }

@@ -33,7 +33,7 @@
 #include "grins/cantera_mixture.h"
 #include "grins/antioch_chemistry.h"
 #include "grins/materials_parsing.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 
 // libMesh
 #include "libmesh/getpot.h"

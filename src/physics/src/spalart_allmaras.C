@@ -46,17 +46,17 @@ namespace GRINS
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
-    _flow_vars(input,incompressible_navier_stokes),
-    _turbulence_vars(input, spalart_allmaras),
+    _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
+    _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
     _spalart_allmaras_helper(input),
     _sa_params(input),
-    _no_of_walls(input("Physics/"+spalart_allmaras+"/no_of_walls", 0)),
-    _infinite_distance(input("Physics/"+spalart_allmaras+"/infinite_distance", false))
+    _no_of_walls(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/no_of_walls", 0)),
+    _infinite_distance(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/infinite_distance", false))
   {
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
       {
-        _wall_ids.insert(input("Physics/"+spalart_allmaras+"/wall_ids", 0, i ));
+        _wall_ids.insert(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/wall_ids", 0, i ));
       }
 
     std::cout<<"No of walls: "<<_no_of_walls<<std::endl;

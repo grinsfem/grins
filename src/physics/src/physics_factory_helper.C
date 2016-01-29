@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
 
 // libMesh
@@ -43,7 +43,7 @@ namespace GRINS
     bool have_material = MaterialsParsing::have_material(input,physics);
 
     // Old deprecated version
-    bool have_viscosity_model = input.have_variable("Physics/"+incompressible_navier_stokes+"/viscosity_model");
+    bool have_viscosity_model = input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model");
 
     PhysicsFactoryHelper::deprecated_visc_model_parsing(  have_viscosity_model,
                                                           have_material,
@@ -66,7 +66,7 @@ namespace GRINS
     bool have_material = MaterialsParsing::have_material(input,physics);
 
     // Old deprecated versions
-    bool have_ht_conductivity_model = input.have_variable("Physics/"+heat_transfer+"/conductivity_model");
+    bool have_ht_conductivity_model = input.have_variable("Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model");
 
     bool have_conductivity_model = input.have_variable("Physics/"+physics+"/conductivity_model");
 
@@ -93,11 +93,11 @@ namespace GRINS
     // Deprecated
     if( have_ht_conductivity_model )
       {
-        std::string warning = "Warning: Option Physics/"+heat_transfer+"/conductivity_model is DEPRECATED.\n";
+        std::string warning = "Warning: Option Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model is DEPRECATED.\n";
         warning += "         Please update to use Physics/"+physics+"/material.\n";
         grins_warning(warning);
 
-        model = input( "Physics/"+heat_transfer+"/conductivity_model", "constant" );
+        model = input( "Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model", "constant" );
       }
 
     // Deprecated
@@ -127,21 +127,21 @@ namespace GRINS
     // Newer, preferred version
     bool have_material = MaterialsParsing::have_material(input,physics);
 
-    bool have_lmns_specific_heat_model = input.have_variable("Physics/"+low_mach_navier_stokes+"/specific_heat_model");
+    bool have_lmns_specific_heat_model = input.have_variable("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model");
 
     if( have_material && have_lmns_specific_heat_model )
       {
-        libmesh_error_msg("ERROR: Cannot specify both a material and Physics/"+low_mach_navier_stokes+"/specific_heat_model!");
+        libmesh_error_msg("ERROR: Cannot specify both a material and Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model!");
       }
 
     // Deprecated
     if( have_lmns_specific_heat_model )
       {
-        std::string warning = "Warning: Option Physics/"+low_mach_navier_stokes+"/specific_heat_model is DEPRECATED.\n";
+        std::string warning = "Warning: Option Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model is DEPRECATED.\n";
         warning += "         Please update to use Physics/"+physics+"/material.\n";
         grins_warning(warning);
 
-        model = input( "Physics/"+low_mach_navier_stokes+"/specific_heat_model", "constant" );
+        model = input( "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model", "constant" );
       }
 
     // Preferred
@@ -160,7 +160,7 @@ namespace GRINS
     bool have_material = MaterialsParsing::have_material(input,physics);
 
     // Old deprecated version
-    bool have_viscosity_model = input.have_variable("Physics/"+incompressible_navier_stokes+"/viscosity_model");
+    bool have_viscosity_model = input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model");
 
     PhysicsFactoryHelper::deprecated_visc_model_parsing(  have_viscosity_model,
                                                           have_material,
@@ -173,11 +173,11 @@ namespace GRINS
     // is set to spallartallmaras. In that case, the physical viscosity
     // model is 'constant'.
     if( !have_material &&
-        input.have_variable( "Physics/"+incompressible_navier_stokes+"/viscosity_model") )
+        input.have_variable( "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model") )
       {
         // If we got here, have_viscosity_model is true and might
         // be set to spallartallmaras
-        if( input("Physics/"+incompressible_navier_stokes+"/viscosity_model", "DIE!") == std::string("spalartallmaras") )
+        if( input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model", "DIE!") == std::string("spalartallmaras") )
           {
             model = "constant";
           }
@@ -256,19 +256,19 @@ namespace GRINS
     // Newer, preferred version
     std::string material = MaterialsParsing::material_name( input, physics );
 
-    bool have_thermochem_lib = input.have_variable( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library" );
+    bool have_thermochem_lib = input.have_variable( "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/thermochemistry_library" );
 
     // It's an error to specify both the old and the new version
     if( have_thermochem_lib &&
         input.have_variable("Materials/"+material+"/GasMixture/thermochemistry_library") )
       {
-        libmesh_error_msg("ERROR: Cannot specify both Materials/"+material+"/GasMixture/thermochemistry_library and Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library!");
+        libmesh_error_msg("ERROR: Cannot specify both Materials/"+material+"/GasMixture/thermochemistry_library and Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/thermochemistry_library!");
       }
 
     //Deprecated
     if( have_thermochem_lib )
       {
-        model = input( "Physics/"+reacting_low_mach_navier_stokes+"/thermochemistry_library", "DIE!" );
+        model = input( "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/thermochemistry_library", "DIE!" );
       }
     // Preferred
     else if( input.have_variable("Materials/"+material+"/GasMixture/thermochemistry_library") )
@@ -433,11 +433,11 @@ namespace GRINS
 
     if( have_ins_viscosity_model )
       {
-        std::string warning = "Warning: Option Physics/"+incompressible_navier_stokes+"/viscosity_model is DEPRECATED.\n";
+        std::string warning = "Warning: Option Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model is DEPRECATED.\n";
         warning += "         Please update to use Physics/"+physics+"/material.\n";
         grins_warning(warning);
 
-        model = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+        model = input( "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model", "constant" );
       }
 
     if( have_viscosity_model )

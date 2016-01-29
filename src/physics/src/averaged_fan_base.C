@@ -37,7 +37,7 @@ namespace GRINS
   template<class Mu>
   AveragedFanBase<Mu>::AveragedFanBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
-                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
       base_velocity_function(""),
       local_vertical_function(""),
@@ -62,7 +62,7 @@ namespace GRINS
   void AveragedFanBase<Mu>::read_input_options( const GetPot& input )
   {
     this->set_parameter(base_velocity_function, input,
-                        "Physics/"+averaged_fan+"/base_velocity",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/base_velocity",
                         this->zero_vector_function);
 
     if (base_velocity_function.expression() == this->zero_vector_function)
@@ -70,7 +70,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(local_vertical_function, input,
-                        "Physics/"+averaged_fan+"/local_vertical",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/local_vertical",
                         this->zero_vector_function);
 
     if (local_vertical_function.expression() == this->zero_vector_function)
@@ -78,21 +78,21 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(lift_function, input,
-                        "Physics/"+averaged_fan+"/lift",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/lift",
                         "0");
 
     if (lift_function.expression() == "0")
       std::cout << "Warning! Zero lift function specified!" << std::endl;
 
     this->set_parameter(drag_function, input,
-                        "Physics/"+averaged_fan+"/drag",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/drag",
                         "0");
 
     if (drag_function.expression() == "0")
       std::cout << "Warning! Zero drag function specified!" << std::endl;
 
     this->set_parameter(chord_function, input,
-                        "Physics/"+averaged_fan+"/chord_length",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/chord_length",
                         "0");
 
     if (chord_function.expression() == "0")
@@ -100,7 +100,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(area_swept_function, input,
-                        "Physics/"+averaged_fan+"/area_swept",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/area_swept",
                         "0");
 
     if (area_swept_function.expression() == "0")
@@ -108,7 +108,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(aoa_function, input,
-                        "Physics/"+averaged_fan+"/angle_of_attack",
+                        "Physics/"+PhysicsNaming::averaged_fan()+"/angle_of_attack",
                         "00000");
 
     if (aoa_function.expression() == "00000")

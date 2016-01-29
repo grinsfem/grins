@@ -27,7 +27,7 @@
 #include "grins/constant_viscosity.h"
 
 //GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/common.h"
 
 // libMesh
@@ -53,7 +53,7 @@ namespace GRINS
         libmesh_warning("No Materials/Viscosity/mu specified!\n");
         // Try and get the viscosity from other specifications
         this->set_parameter
-          (_mu, input, "Physics/"+incompressible_navier_stokes+"/mu", _mu);
+          (_mu, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/mu", _mu);
       }
     else
       {
@@ -70,9 +70,9 @@ namespace GRINS
     this->check_input_consistency(input,material);
 
     if( input.have_variable("Materials/"+material+"/Viscosity/value") &&
-        input.have_variable("Physics/"+incompressible_navier_stokes+"/mu") )
+        input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/mu") )
       {
-        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/Viscosity/value and Physics/"+incompressible_navier_stokes+"/mu");
+        libmesh_error_msg("Error: Cannot specify both Materials/"+material+"/Viscosity/value and Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/mu");
       }
 
     // If we have the "new" version, then parse it
@@ -98,13 +98,13 @@ namespace GRINS
         std::string warning = "WARNING: No Materials/Viscosity/mu or\n";
         warning += "       Materials/"+material+"/Viscosity/value specified!\n";
         warning += "       We are assuming then that you want to specify through\n";
-        warning += "       Physics/"+incompressible_navier_stokes+"/mu.\n";
+        warning += "       Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/mu.\n";
         warning += "       This is DEPRECATED. Please updated to use Materials/"+material+"/Viscosity/value.\n";
         grins_warning(warning);
 
         // Try and get the viscosity from other specifications
         this->set_parameter
-          (_mu, input, "Physics/"+incompressible_navier_stokes+"/mu", _mu);
+          (_mu, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/mu", _mu);
       }
     else
       {

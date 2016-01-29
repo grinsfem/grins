@@ -76,7 +76,7 @@ namespace GRINS
     // Other quantities read in base class
 
     // Read pressure pinning information
-    this->_pin_pressure = input("Physics/"+reacting_low_mach_navier_stokes+"/pin_pressure", false );
+    this->_pin_pressure = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/pin_pressure", false );
 
     return;
   }
@@ -92,7 +92,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
                                                                                      PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+reacting_low_mach_navier_stokes+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -149,7 +149,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalue output_vars value for "+reacting_low_mach_navier_stokes << std::endl
+                std::cerr << "Error: Invalue output_vars value for "+PhysicsNaming::reacting_low_mach_navier_stokes() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: rho" << std::endl
                           << "                              mu" << std::endl

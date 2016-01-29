@@ -48,9 +48,9 @@ namespace GRINS
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 								    const GetPot& input)
     : Physics(physics_name, input),
-      _flow_vars(input, incompressible_navier_stokes),
-      _temp_vars(input, axisymmetric_heat_transfer),
-      _k(input,MaterialsParsing::material_name(input,axisymmetric_heat_transfer))
+      _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
+      _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer()),
+      _k(input,MaterialsParsing::material_name(input,PhysicsNaming::axisymmetric_heat_transfer()))
   {
     this->read_input_options(input);
   
@@ -70,9 +70,9 @@ namespace GRINS
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::read_input_options( const GetPot& input )
   {
-    MaterialsParsing::read_density( axisymmetric_heat_transfer, input, (*this), this->_rho );
+    MaterialsParsing::read_density( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_rho );
 
-    MaterialsParsing::read_specific_heat( axisymmetric_heat_transfer, input, (*this), this->_Cp );
+    MaterialsParsing::read_specific_heat( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_Cp );
   }
 
   template< class Conductivity>

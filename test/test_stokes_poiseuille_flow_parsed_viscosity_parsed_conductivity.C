@@ -174,7 +174,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::bui
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::stokes(),  cont) );
 
   return mymap;
 }

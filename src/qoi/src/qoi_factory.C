@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"
@@ -142,8 +142,8 @@ namespace GRINS
        HeatTransfer implicitly requires fluids, so no need to check for those. `*/
     if( qoi_name == avg_nusselt )
       {
-	required_physics.insert(heat_transfer);
-	required_physics.insert(low_mach_navier_stokes);
+	required_physics.insert(PhysicsNaming::heat_transfer());
+	required_physics.insert(PhysicsNaming::low_mach_navier_stokes());
 	this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
       

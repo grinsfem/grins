@@ -28,7 +28,7 @@
 
 //GRINS
 #include "grins/common.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
 
 // libMesh
@@ -54,7 +54,7 @@ namespace GRINS
 
 	// Try and get the conductivity from other specifications
         this->set_parameter
-	  (_k, input, "Physics/"+incompressible_navier_stokes+"/k", _k);
+	  (_k, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/k", _k);
       }
     else
       this->set_parameter

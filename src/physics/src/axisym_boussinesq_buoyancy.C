@@ -43,8 +43,8 @@ namespace GRINS
   AxisymmetricBoussinesqBuoyancy::AxisymmetricBoussinesqBuoyancy( const std::string& physics_name,
 								  const GetPot& input )
     : Physics(physics_name, input),
-      _flow_vars(input, incompressible_navier_stokes),
-      _temp_vars(input, axisymmetric_heat_transfer)
+      _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
+      _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer())
   {
     this->read_input_options(input);
     return;
@@ -59,16 +59,16 @@ namespace GRINS
   {
     this->set_parameter
       (_rho, input,
-       "Physics/"+axisymmetric_boussinesq_buoyancy+"/rho_ref", 1.0);
+       "Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/rho_ref", 1.0);
 
     this->set_parameter
-      (_T_ref, input, "Physics/"+axisymmetric_boussinesq_buoyancy+"/T_ref", 1.0);
+      (_T_ref, input, "Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/T_ref", 1.0);
 
     this->set_parameter
-      (_beta_T, input, "Physics/"+axisymmetric_boussinesq_buoyancy+"/beta_T", 1.0);
+      (_beta_T, input, "Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/beta_T", 1.0);
 
-    _g(0) = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+axisymmetric_boussinesq_buoyancy+"/g", 0.0, 1 );
+    _g(0) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 1 );
 
     return;
   }

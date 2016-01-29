@@ -58,9 +58,9 @@ namespace Bunsen
 
   void BunsenSource::read_input_options( const GetPot& input )
   {
-    this->_T_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+GRINS::reacting_low_mach_navier_stokes+"/T_FE_family", "LAGRANGE") ); 
+    this->_T_FE_family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()+"/T_FE_family", "LAGRANGE") ); 
 
-    this->_T_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+GRINS::reacting_low_mach_navier_stokes+"/T_order", "SECOND") );
+    this->_T_order = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()+"/T_order", "SECOND") );
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", GRINS::T_var_name_default );
 
