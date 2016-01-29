@@ -563,6 +563,10 @@ namespace GRINS
 				    const std::string& physics_to_add,
 				    PhysicsList& physics_list )
   {
+    std::string physics_suffix =  PhysicsNaming::extract_suffix( physics_to_add );
+
+    PhysicsNaming::set_suffix(physics_suffix);
+
     if( physics_to_add == PhysicsNaming::incompressible_navier_stokes() )
       {
 	physics_list[physics_to_add] =
@@ -799,7 +803,7 @@ namespace GRINS
         libmesh_error();
       }
 
-    return;
+    PhysicsNaming::clear_suffix();
   }
 
   void PhysicsFactory::check_physics_consistency( const PhysicsList& physics_list )
