@@ -29,7 +29,7 @@
 // GRINS
 #include "grins/common.h"
 #include "grins/assembly_context.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/inc_nav_stokes_macro.h"
 #include "grins/materials_parsing.h"
 

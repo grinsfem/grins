@@ -65,7 +65,7 @@
 #include "grins/elastic_cable.h"
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/elastic_cable_constant_gravity.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/constant_source_term.h"
 #include "grins/parsed_source_term.h"
 

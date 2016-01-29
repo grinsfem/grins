@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_PHYSICS_NAMES_H
-#define GRINS_PHYSICS_NAMES_H
+#ifndef GRINS_PHYSICS_NAMING_H
+#define GRINS_PHYSICS_NAMING_H
 
 #include <string>
 
@@ -34,9 +34,9 @@ namespace GRINS
 
   const PhysicsName stokes = "Stokes";
   const PhysicsName incompressible_navier_stokes = "IncompressibleNavierStokes";
-  const PhysicsName incompressible_navier_stokes_adjoint_stab = 
+  const PhysicsName incompressible_navier_stokes_adjoint_stab =
     "IncompressibleNavierStokesAdjointStabilization";
-  const PhysicsName incompressible_navier_stokes_spgsm_stab = 
+  const PhysicsName incompressible_navier_stokes_spgsm_stab =
     "IncompressibleNavierStokesSPGSMStabilization";
   const PhysicsName velocity_drag = "VelocityDrag";
   const PhysicsName velocity_drag_adjoint_stab = "VelocityDragAdjointStabilization";
@@ -77,4 +77,4 @@ namespace GRINS
   const PhysicsName parsed_source_term = "ParsedSourceTerm";
 }
 
-#endif //GRINS_PHYSICS_NAMES_H
+#endif //GRINS_PHYSICS_NAMING_H

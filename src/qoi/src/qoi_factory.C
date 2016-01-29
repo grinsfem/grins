@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"

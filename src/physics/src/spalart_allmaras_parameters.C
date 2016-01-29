@@ -27,7 +27,7 @@
 #include "grins/spalart_allmaras_parameters.h"
 
 // GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 
 // libMesh
 #include "libmesh/getpot.h"

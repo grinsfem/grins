@@ -31,7 +31,7 @@
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/turbulence_models_macro.h"
 #include "grins/materials_parsing.h"
 

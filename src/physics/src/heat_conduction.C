@@ -32,7 +32,7 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/heat_transfer_bc_handling.h"
 #include "grins/heat_transfer_macros.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
 
 // libMesh

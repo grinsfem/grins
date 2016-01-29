@@ -20,7 +20,7 @@
 
 //GRINS
 #include "grins/common.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/turbulent_viscosity_macro.h"
 
 // libMesh

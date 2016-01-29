@@ -27,7 +27,7 @@
 #include "grins/parsed_viscosity.h"
 
 //GRINS
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/common.h"
 
 // libMesh

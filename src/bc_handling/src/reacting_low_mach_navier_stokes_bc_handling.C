@@ -34,7 +34,7 @@
 #include "grins/arrhenius_catalycity.h"
 #include "grins/power_law_catalycity.h"
 #include "grins/materials_parsing.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 
 // libMesh
 #include "libmesh/fem_system.h"

@@ -40,7 +40,7 @@
 #include "grins/antioch_mixture.h"
 #include "grins/antioch_kinetics.h"
 #include "grins/materials_parsing.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 
 int main(int argc, char* argv[])
 {

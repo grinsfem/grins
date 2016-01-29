@@ -31,7 +31,7 @@
 
 // GRINS
 #include "grins/var_typedefs.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/dbc_container.h"
 #include "grins/nbc_container.h"
 

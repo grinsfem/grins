@@ -33,7 +33,7 @@
 #include "grins_config.h"
 #include "grins/variable_name_defaults.h"
 #include "grins/var_typedefs.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/cached_values.h"
 #include "grins/parameter_user.h"
 

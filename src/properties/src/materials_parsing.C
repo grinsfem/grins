@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
-#include "grins/grins_physics_names.h"
+#include "grins/physics_naming.h"
 #include "grins/parameter_user.h"
 
 namespace GRINS
