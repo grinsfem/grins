@@ -44,7 +44,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   LowMachNavierStokes<Mu,SH,TC>::LowMachNavierStokes(const std::string& physics_name, const GetPot& input)
-    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,low_mach_navier_stokes,input),
+    : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,PhysicsNaming::low_mach_navier_stokes(),input),
       _p_pinning(input,physics_name),
       _rho_index(0) // Initialize to zero
   {
@@ -69,7 +69,7 @@ namespace GRINS
     // Other quantities read in base class
 
     // Read pressure pinning information
-    this->_pin_pressure = input("Physics/"+low_mach_navier_stokes+"/pin_pressure", false );
+    this->_pin_pressure = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/pin_pressure", false );
 
     return;
   }
@@ -85,7 +85,7 @@ namespace GRINS
   void LowMachNavierStokes<Mu,SH,TC>::register_postprocessing_vars( const GetPot& input,
                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+low_mach_navier_stokes+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -101,7 +101,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalue output_vars value for "+low_mach_navier_stokes << std::endl
+                std::cerr << "Error: Invalue output_vars value for "+PhysicsNaming::low_mach_navier_stokes() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: rho" << std::endl;
                 libmesh_error();

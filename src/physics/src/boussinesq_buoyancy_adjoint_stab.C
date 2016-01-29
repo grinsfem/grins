@@ -43,7 +43,7 @@ namespace GRINS
   template<class Mu>
   BoussinesqBuoyancyAdjointStabilization<Mu>::BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : BoussinesqBuoyancyBase(physics_name,input),
-      _mu(input,MaterialsParsing::material_name(input,boussinesq_buoyancy)),
+      _mu(input,MaterialsParsing::material_name(input,PhysicsNaming::boussinesq_buoyancy())),
       _stab_helper( physics_name+"StabHelper", input )
   {}
 

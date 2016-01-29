@@ -44,7 +44,7 @@ namespace GRINS
 
   template<class K>
   HeatTransfer<K>::HeatTransfer( const std::string& physics_name, const GetPot& input )
-    : HeatTransferBase<K>(physics_name, heat_transfer, input),
+    : HeatTransferBase<K>(physics_name, PhysicsNaming::heat_transfer(), input),
     _k_index(0)
   {
     this->read_input_options(input);
@@ -78,7 +78,7 @@ namespace GRINS
   void HeatTransfer<K>::register_postprocessing_vars( const GetPot& input,
                                                       PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+heat_transfer+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::heat_transfer()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -94,7 +94,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalid output_vars value for "+heat_transfer << std::endl
+                std::cerr << "Error: Invalid output_vars value for "+PhysicsNaming::heat_transfer() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: k" << std::endl;
                 libmesh_error();

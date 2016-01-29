@@ -563,124 +563,124 @@ namespace GRINS
 				    const std::string& physics_to_add,
 				    PhysicsList& physics_list )
   {
-    if( physics_to_add == incompressible_navier_stokes )
+    if( physics_to_add == PhysicsNaming::incompressible_navier_stokes() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokes>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == stokes )
+    else if( physics_to_add == PhysicsNaming::stokes() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<Stokes>
-          (physics_to_add, stokes, input);
+          (physics_to_add, PhysicsNaming::stokes(), input);
       }
-    else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::incompressible_navier_stokes_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokesAdjointStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
+    else if( physics_to_add == PhysicsNaming::incompressible_navier_stokes_spgsm_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<IncompressibleNavierStokesSPGSMStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == velocity_drag )
+    else if( physics_to_add == PhysicsNaming::velocity_drag() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityDrag>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == velocity_drag_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::velocity_drag_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityDragAdjointStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == velocity_penalty  ||
-             physics_to_add == velocity_penalty2 ||
-             physics_to_add == velocity_penalty3)
+    else if( physics_to_add == PhysicsNaming::velocity_penalty()  ||
+             physics_to_add == PhysicsNaming::velocity_penalty2() ||
+             physics_to_add == PhysicsNaming::velocity_penalty3())
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenalty>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == velocity_penalty_adjoint_stab  ||
-             physics_to_add == velocity_penalty2_adjoint_stab ||
-             physics_to_add == velocity_penalty3_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::velocity_penalty_adjoint_stab()  ||
+             physics_to_add == PhysicsNaming::velocity_penalty2_adjoint_stab() ||
+             physics_to_add == PhysicsNaming::velocity_penalty3_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<VelocityPenaltyAdjointStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == parsed_velocity_source )
+    else if( physics_to_add == PhysicsNaming::parsed_velocity_source() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<ParsedVelocitySource>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == parsed_velocity_source_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::parsed_velocity_source_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<ParsedVelocitySourceAdjointStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == averaged_fan )
+    else if( physics_to_add == PhysicsNaming::averaged_fan() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedFan>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == averaged_fan_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::averaged_fan_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedFanAdjointStabilization>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == averaged_turbine )
+    else if( physics_to_add == PhysicsNaming::averaged_turbine() )
       {
 	physics_list[physics_to_add] =
           new_mu_class<AveragedTurbine>
-          (physics_to_add, incompressible_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::incompressible_navier_stokes(), input);
       }
-    else if( physics_to_add == spalart_allmaras )
+    else if( physics_to_add == PhysicsNaming::spalart_allmaras() )
       {
         physics_list[physics_to_add] =
           new_turb_mu_class<SpalartAllmaras>
-          (physics_to_add, spalart_allmaras, input);
+          (physics_to_add, PhysicsNaming::spalart_allmaras(), input);
       }
-    else if( physics_to_add == spalart_allmaras_spgsm_stab )
+    else if( physics_to_add == PhysicsNaming::spalart_allmaras_spgsm_stab() )
       {
         physics_list[physics_to_add] =
           new_turb_mu_class<SpalartAllmarasSPGSMStabilization>
-          (physics_to_add, spalart_allmaras, input);
+          (physics_to_add, PhysicsNaming::spalart_allmaras(), input);
       }
-    else if( physics_to_add == scalar_ode )
+    else if( physics_to_add == PhysicsNaming::scalar_ode() )
       {
 	physics_list[physics_to_add] =
 	  PhysicsPtr(new ScalarODE(physics_to_add,input));
       }
-    else if( physics_to_add == heat_transfer )
+    else if( physics_to_add == PhysicsNaming::heat_transfer() )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransfer>
-          (physics_to_add, heat_transfer, input);
+          (physics_to_add, PhysicsNaming::heat_transfer(), input);
       }
-    else if( physics_to_add == heat_transfer_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::heat_transfer_adjoint_stab() )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransferAdjointStabilization>
-          (physics_to_add, heat_transfer, input);
+          (physics_to_add, PhysicsNaming::heat_transfer(), input);
       }
-    else if( physics_to_add == heat_transfer_spgsm_stab )
+    else if( physics_to_add == PhysicsNaming::heat_transfer_spgsm_stab() )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatTransferSPGSMStabilization>
-          (physics_to_add, heat_transfer, input);
+          (physics_to_add, PhysicsNaming::heat_transfer(), input);
       }
-    else if( physics_to_add == heat_transfer_source )
+    else if( physics_to_add == PhysicsNaming::heat_transfer_source() )
       {
 	std::string source_function = input( "Physics/"+physics_to_add+"/source_function", "constant" );
 	if( source_function == "constant")
@@ -697,98 +697,98 @@ namespace GRINS
 	    libmesh_error();
 	  }
       }
-    else if( physics_to_add == axisymmetric_heat_transfer )
+    else if( physics_to_add == PhysicsNaming::axisymmetric_heat_transfer() )
       {
 	physics_list[physics_to_add] =
           new_k_class<AxisymmetricHeatTransfer>
-          (physics_to_add, axisymmetric_heat_transfer, input);
+          (physics_to_add, PhysicsNaming::axisymmetric_heat_transfer(), input);
       }
-    else if( physics_to_add == boussinesq_buoyancy )
+    else if( physics_to_add == PhysicsNaming::boussinesq_buoyancy() )
       {
 	physics_list[physics_to_add] =
 	  PhysicsPtr(new BoussinesqBuoyancy(physics_to_add,input));
       }
-    else if( physics_to_add == boussinesq_buoyancy_adjoint_stab )
+    else if( physics_to_add == PhysicsNaming::boussinesq_buoyancy_adjoint_stab() )
       {
         physics_list[physics_to_add] =
           new_mu_class<BoussinesqBuoyancyAdjointStabilization>
-          (physics_to_add, boussinesq_buoyancy, input);
+          (physics_to_add, PhysicsNaming::boussinesq_buoyancy(), input);
       }
-    else if( physics_to_add == boussinesq_buoyancy_spgsm_stab )
+    else if( physics_to_add == PhysicsNaming::boussinesq_buoyancy_spgsm_stab() )
       {
         physics_list[physics_to_add] =
           new_mu_class<BoussinesqBuoyancySPGSMStabilization>
-          (physics_to_add, boussinesq_buoyancy, input);
+          (physics_to_add, PhysicsNaming::boussinesq_buoyancy(), input);
       }
-    else if( physics_to_add == axisymmetric_boussinesq_buoyancy)
+    else if( physics_to_add == PhysicsNaming::axisymmetric_boussinesq_buoyancy())
       {
 	physics_list[physics_to_add] =
 	  PhysicsPtr(new AxisymmetricBoussinesqBuoyancy(physics_to_add,input));
       }
-    else if( physics_to_add == heat_conduction )
+    else if( physics_to_add == PhysicsNaming::heat_conduction() )
       {
 	physics_list[physics_to_add] =
           new_k_class<HeatConduction>
-          (physics_to_add, heat_conduction, input);
+          (physics_to_add, PhysicsNaming::heat_conduction(), input);
       }
-    else if(  physics_to_add == low_mach_navier_stokes )
+    else if(  physics_to_add == PhysicsNaming::low_mach_navier_stokes() )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokes>
-          (physics_to_add, low_mach_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::low_mach_navier_stokes(), input);
       }
-    else if(  physics_to_add == low_mach_navier_stokes_spgsm_stab )
+    else if(  physics_to_add == PhysicsNaming::low_mach_navier_stokes_spgsm_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesSPGSMStabilization>
-          (physics_to_add, low_mach_navier_stokes, input);
+          (physics_to_add, PhysicsNaming::low_mach_navier_stokes(), input);
       }
-    else if(  physics_to_add == low_mach_navier_stokes_vms_stab )
+    else if(  physics_to_add == PhysicsNaming::low_mach_navier_stokes_vms_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesVMSStabilization>
-            (physics_to_add, low_mach_navier_stokes, input);
+            (physics_to_add, PhysicsNaming::low_mach_navier_stokes(), input);
       }
-    else if(  physics_to_add == low_mach_navier_stokes_braack_stab )
+    else if(  physics_to_add == PhysicsNaming::low_mach_navier_stokes_braack_stab() )
       {
 	physics_list[physics_to_add] =
           new_mu_cp_k_class<LowMachNavierStokesBraackStabilization>
-            (physics_to_add, low_mach_navier_stokes, input);
+            (physics_to_add, PhysicsNaming::low_mach_navier_stokes(), input);
       }
-    else if( physics_to_add == reacting_low_mach_navier_stokes )
+    else if( physics_to_add == PhysicsNaming::reacting_low_mach_navier_stokes() )
       {
         physics_list[physics_to_add] =
           new_reacting_low_mach_class<ReactingLowMachNavierStokes>
              (physics_to_add, input);
       }
-    else if( physics_to_add == elastic_membrane )
+    else if( physics_to_add == PhysicsNaming::elastic_membrane() )
       {
         physics_list[physics_to_add] =
           new_plane_stress_class<ElasticMembrane>
-          (physics_to_add, elastic_membrane, input);
+          (physics_to_add, PhysicsNaming::elastic_membrane(), input);
       }
-    else if( physics_to_add == elastic_membrane_constant_pressure )
+    else if( physics_to_add == PhysicsNaming::elastic_membrane_constant_pressure() )
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ElasticMembraneConstantPressure(physics_to_add,input));
       }
-    else if( physics_to_add == elastic_cable )
+    else if( physics_to_add == PhysicsNaming::elastic_cable() )
       {
         physics_list[physics_to_add] =
           new_one_d_stress_class<ElasticCable>
-          (physics_to_add, elastic_cable, input);
+          (physics_to_add, PhysicsNaming::elastic_cable(), input);
       }
-    else if( physics_to_add == elastic_cable_constant_gravity )
+    else if( physics_to_add == PhysicsNaming::elastic_cable_constant_gravity() )
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ElasticCableConstantGravity(physics_to_add,input));
       }
-    else if( physics_to_add == constant_source_term )
+    else if( physics_to_add == PhysicsNaming::constant_source_term() )
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ConstantSourceTerm(physics_to_add,input));
       }
-    else if( physics_to_add == parsed_source_term )
+    else if( physics_to_add == PhysicsNaming::parsed_source_term() )
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ParsedSourceTerm(physics_to_add,input));
@@ -811,58 +811,58 @@ namespace GRINS
 	 physics++ )
       {
 	// For IncompressibleNavierStokes*Stabilization, we'd better have IncompressibleNavierStokes
-        if( (physics->first == incompressible_navier_stokes_adjoint_stab) ||
-            (physics->first == incompressible_navier_stokes_spgsm_stab) )
+        if( (physics->first == PhysicsNaming::incompressible_navier_stokes_adjoint_stab()) ||
+            (physics->first == PhysicsNaming::incompressible_navier_stokes_spgsm_stab()) )
           {
-            if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+            if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
               {
-                this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
+                this->physics_consistency_error( physics->first, PhysicsNaming::incompressible_navier_stokes()  );
               }
           }
 
 	// For HeatTransfer, we need IncompressibleNavierStokes
-	if( physics->first == heat_transfer )
+	if( physics->first == PhysicsNaming::heat_transfer() )
 	  {
-	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( heat_transfer, incompressible_navier_stokes  );
+		this->physics_consistency_error( PhysicsNaming::heat_transfer(), PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 	  }
 
 	// For BoussinesqBuoyancy, we need both HeatTransfer and IncompressibleNavierStokes
-	if( physics->first == boussinesq_buoyancy )
+	if( physics->first == PhysicsNaming::boussinesq_buoyancy() )
 	  {
-	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( boussinesq_buoyancy, incompressible_navier_stokes  );
+		this->physics_consistency_error( PhysicsNaming::boussinesq_buoyancy(), PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 
-	    if( physics_list.find(heat_transfer) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( boussinesq_buoyancy, heat_transfer  );
+		this->physics_consistency_error( PhysicsNaming::boussinesq_buoyancy(), PhysicsNaming::heat_transfer()  );
 	      }
 	  }
 
 	/* For AxisymmetricBoussinesqBuoyancy, we need both AxisymmetricHeatTransfer
 	   and AxisymmetricIncompNavierStokes */
-	if( physics->first == axisymmetric_boussinesq_buoyancy )
+	if( physics->first == PhysicsNaming::axisymmetric_boussinesq_buoyancy() )
 	  {
 
-	    if( physics_list.find(axisymmetric_heat_transfer) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::axisymmetric_heat_transfer()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( axisymmetric_boussinesq_buoyancy,
-						 axisymmetric_heat_transfer  );
+		this->physics_consistency_error( PhysicsNaming::axisymmetric_boussinesq_buoyancy(),
+						 PhysicsNaming::axisymmetric_heat_transfer()  );
 	      }
 	  }
 
 	/* For LowMachNavierStokes, there should be nothing else loaded, except
 	   for stabilization. */
-	if( physics->first == low_mach_navier_stokes )
+	if( physics->first == PhysicsNaming::low_mach_navier_stokes() )
 	  {
 	    if( physics_list.size() > 2 )
 	      {
 		std::cerr << "=======================================================" << std::endl
-			  << "Error: For physics " << low_mach_navier_stokes << std::endl
+			  << "Error: For physics " << PhysicsNaming::low_mach_navier_stokes() << std::endl
 			  << "only one stabilization physics is allowed. Detected the" << std::endl
 			  << "following:" << std::endl;
 		for( GRINS::PhysicsListIter iter = physics_list.begin();
@@ -877,40 +877,40 @@ namespace GRINS
 	  }
 
 	/* For HeatTransferSource, we'd better have HeatTransfer */
-	if( physics->first == heat_transfer_source )
+	if( physics->first == PhysicsNaming::heat_transfer_source() )
 	  {
-	    if( physics_list.find(heat_transfer) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( physics->first, heat_transfer  );
+		this->physics_consistency_error( physics->first, PhysicsNaming::heat_transfer()  );
 	      }
 	  }
 
 	/* For HeatTransferAdjointStabilization, we'd better have HeatTransfer */
-	if( physics->first == heat_transfer_adjoint_stab )
+	if( physics->first == PhysicsNaming::heat_transfer_adjoint_stab() )
 	  {
-	    if( physics_list.find(heat_transfer) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::heat_transfer()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( physics->first, heat_transfer  );
+		this->physics_consistency_error( physics->first, PhysicsNaming::heat_transfer()  );
 	      }
 	  }
 
         /* For BoussinesqBuoyancyAdjointStabilization, we'd better have IncompressibleNavierStokes */
-	if( physics->first == boussinesq_buoyancy_adjoint_stab )
+	if( physics->first == PhysicsNaming::boussinesq_buoyancy_adjoint_stab() )
 	  {
-	    if( physics_list.find(incompressible_navier_stokes) == physics_list.end() )
+	    if( physics_list.find(PhysicsNaming::incompressible_navier_stokes()) == physics_list.end() )
 	      {
-		this->physics_consistency_error( physics->first, incompressible_navier_stokes  );
+		this->physics_consistency_error( physics->first, PhysicsNaming::incompressible_navier_stokes()  );
 	      }
 	  }
 
 	/* For ReactingLowMachNavierStokes, there should be nothing else loaded, except
 	   for stabilization. */
-	if( physics->first == reacting_low_mach_navier_stokes )
+	if( physics->first == PhysicsNaming::reacting_low_mach_navier_stokes() )
 	  {
 	    if( physics_list.size() > 2 )
 	      {
 		std::cerr << "=======================================================" << std::endl
-			  << "Error: For physics " << reacting_low_mach_navier_stokes << std::endl
+			  << "Error: For physics " << PhysicsNaming::reacting_low_mach_navier_stokes() << std::endl
 			  << "only one stabilization physics is allowed. Detected the" << std::endl
 			  << "following:" << std::endl;
 		for( GRINS::PhysicsListIter iter = physics_list.begin();

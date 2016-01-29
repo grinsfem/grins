@@ -46,8 +46,8 @@ namespace GRINS
                                          const std::string& core_physics_name,
                                          const GetPot& input )
     : Physics(physics_name, input),
-      _flow_vars(input,incompressible_navier_stokes),
-      _temp_vars(input,heat_transfer),
+      _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
+      _temp_vars(input,PhysicsNaming::heat_transfer()),
       _rho(0.0),
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))

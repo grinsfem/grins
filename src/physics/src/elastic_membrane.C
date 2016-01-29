@@ -49,14 +49,14 @@ namespace GRINS
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
                                                      bool is_compressible )
     : ElasticMembraneBase(physics_name,input),
-      _stress_strain_law(input,MaterialsParsing::material_name(input,elastic_membrane)),
+      _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_membrane())),
       _h0(0.0),
       _is_compressible(is_compressible)
   {
     MaterialsParsing::read_property( input,
                                      "Physics/"+physics_name+"/h0",
                                      "MembraneThickness",
-                                     elastic_membrane,
+                                     PhysicsNaming::elastic_membrane(),
                                      (*this),
                                      _h0 );
 
@@ -93,7 +93,7 @@ namespace GRINS
   void ElasticMembrane<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                        PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+elastic_membrane+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::elastic_membrane()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -141,7 +141,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalue output_vars value for "+elastic_membrane << std::endl
+                std::cerr << "Error: Invalue output_vars value for "+PhysicsNaming::elastic_membrane() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: stress" << std::endl
                           << "                              strain" << std::endl;

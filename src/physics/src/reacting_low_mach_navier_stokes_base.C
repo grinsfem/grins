@@ -47,18 +47,18 @@ namespace GRINS
   ReactingLowMachNavierStokesBase<Mixture,Evaluator>::ReactingLowMachNavierStokesBase(const std::string& physics_name,
 									    const GetPot& input)
     : Physics(physics_name, input),
-      _gas_mixture(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes)),
-      _flow_vars(input, reacting_low_mach_navier_stokes),
-      _temp_vars(input, reacting_low_mach_navier_stokes),
-      _p0_var(input, reacting_low_mach_navier_stokes),
-      _species_vars(input, reacting_low_mach_navier_stokes),
+      _gas_mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
+      _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _p0_var(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _species_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _n_species(_species_vars.n_species()),
-      _fixed_density( input("Physics/"+reacting_low_mach_navier_stokes+"/fixed_density", false ) ),
+      _fixed_density( input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_density", false ) ),
       _fixed_rho_value(0.0)
   {
     this->set_parameter
       (_fixed_rho_value, input,
-       "Physics/"+reacting_low_mach_navier_stokes+"/fixed_rho_value", 0.0 );
+       "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_rho_value", 0.0 );
 
     this->read_input_options(input);
 
@@ -76,22 +76,22 @@ namespace GRINS
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
-                                     "Physics/"+reacting_low_mach_navier_stokes+"/p0",
+                                     "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/p0",
                                      "ThermodynamicPressure",
-                                     reacting_low_mach_navier_stokes,
+                                     PhysicsNaming::reacting_low_mach_navier_stokes(),
                                      (*this),
                                      _p0 );
 
-    _enable_thermo_press_calc = input("Physics/"+reacting_low_mach_navier_stokes+"/enable_thermo_press_calc", false );
+    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
 
     // Read gravity vector
-    unsigned int g_dim = input.vector_variable_size("Physics/"+reacting_low_mach_navier_stokes+"/g");
+    unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g");
 
-    _g(0) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 1 );
+    _g(0) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 1 );
 
     if( g_dim == 3)
-      _g(2) = input("Physics/"+reacting_low_mach_navier_stokes+"/g", 0.0, 2 );
+      _g(2) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 2 );
 
     return;
   }

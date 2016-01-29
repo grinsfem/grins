@@ -70,38 +70,38 @@ namespace GRINS
   {
     // Read thermodynamic state info
     MaterialsParsing::read_property( input,
-                                     "Physics/"+low_mach_navier_stokes+"/p0",
+                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/p0",
                                      "ThermodynamicPressure",
-                                     low_mach_navier_stokes,
+                                     PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),
                                      _p0 );
 
     MaterialsParsing::read_property( input,
-                                     "Physics/"+low_mach_navier_stokes+"/T0",
+                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/T0",
                                      "ReferenceTemperature",
-                                     low_mach_navier_stokes,
+                                     PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),
                                      _T0 );
 
     MaterialsParsing::read_property( input,
-                                     "Physics/"+low_mach_navier_stokes+"/R",
+                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/R",
                                      "GasConstant",
-                                     low_mach_navier_stokes,
+                                     PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),
                                      _R );
 
     _p0_over_R = _p0/_R;
 
-    _enable_thermo_press_calc = input("Physics/"+low_mach_navier_stokes+"/enable_thermo_press_calc", false );
+    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
 
     // Read gravity vector
-    unsigned int g_dim = input.vector_variable_size("Physics/"+low_mach_navier_stokes+"/g");
+    unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g");
 
-    _g(0) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 1 );
+    _g(0) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 0 );
+    _g(1) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 1 );
   
     if( g_dim == 3)
-      _g(2) = input("Physics/"+low_mach_navier_stokes+"/g", 0.0, 2 );
+      _g(2) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 2 );
   
     return;
   }

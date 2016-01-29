@@ -142,26 +142,26 @@ namespace GRINS
         !have_material )
       {
         // For some insane reason, we'd originally tied density specifically
-        // to incompressible_navier_stokes, so we'll check for that first.
-        if( input.have_variable("Physics/"+incompressible_navier_stokes+"/rho") )
+        // to PhysicsNaming::incompressible_navier_stokes(), so we'll check for that first.
+        if( input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho") )
           {
             std::string warning = "WARNING: neither Physics/"+core_physics_name+"/rho nor\n";
             warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
-            warning += "         But we found Physics/"+incompressible_navier_stokes+"/rho so we using that.\n";
+            warning += "         But we found Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho so we using that.\n";
             warning += "        This behavior is DEPRECATED.\n";
             warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
             grins_warning(warning);
 
             params.set_parameter
               (rho, input,
-               "Physics/"+incompressible_navier_stokes+"/rho", 1.0 /*default*/);
+               "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho", 1.0 /*default*/);
           }
         // Otherwise, the insanity continued and we defaulted to 1.0
         else
           {
             std::string warning = "WARNING: neither Physics/"+core_physics_name+"/rho nor\n";
             warning += "         Physics/"+core_physics_name+"/material  nor\n";
-            warning += "         Physics/"+incompressible_navier_stokes+"/rho options were detected.\n";
+            warning += "         Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho options were detected.\n";
             warning += "         We are assuming a density value of 1.0. This is DEPRECATED.\n";
             warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
             grins_warning(warning);
@@ -221,26 +221,26 @@ namespace GRINS
           !input.have_variable("Materials/"+material+"/SpecificHeat/value") ) )
       {
         // For some insane reason, we'd originally tied Cp specifically
-        // to heat_transfer, so we'll check for that first.
-        if( input.have_variable("Physics/"+heat_transfer+"/Cp") )
+        // to PhysicsNaming::heat_transfer(), so we'll check for that first.
+        if( input.have_variable("Physics/"+PhysicsNaming::heat_transfer()+"/Cp") )
           {
             std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
             warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
-            warning += "         But we found Physics/"+heat_transfer+"/Cp so we using that.\n";
+            warning += "         But we found Physics/"+PhysicsNaming::heat_transfer()+"/Cp so we using that.\n";
             warning += "        This behavior is DEPRECATED.\n";
             warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
             grins_warning(warning);
 
             params.set_parameter
               (cp, input,
-               "Physics/"+heat_transfer+"/Cp", 1.0 /*default*/);
+               "Physics/"+PhysicsNaming::heat_transfer()+"/Cp", 1.0 /*default*/);
           }
         // Otherwise, the insanity continued and we defaulted to 1.0
         else
           {
             std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
             warning += "         Physics/"+core_physics_name+"/material  nor\n";
-            warning += "         Physics/"+heat_transfer+"/Cp options were detected.\n";
+            warning += "         Physics/"+PhysicsNaming::heat_transfer()+"/Cp options were detected.\n";
             warning += "         We are assuming a specific heat value of 1.0. This is DEPRECATED.\n";
             warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
             grins_warning(warning);

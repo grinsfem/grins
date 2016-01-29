@@ -38,7 +38,7 @@ namespace GRINS
   template<class Mu>
   VelocityDragBase<Mu>::VelocityDragBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
-                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
       _coefficient("")
   {
@@ -57,10 +57,10 @@ namespace GRINS
   void VelocityDragBase<Mu>::read_input_options( const GetPot& input )
   {
     this->set_parameter
-      (_exponent, input, "Physics/"+velocity_drag+"/exponent", 2);
+      (_exponent, input, "Physics/"+PhysicsNaming::velocity_drag()+"/exponent", 2);
 
     this->set_parameter(_coefficient, input,
-                        "Physics/"+velocity_drag+"/coefficient",
+                        "Physics/"+PhysicsNaming::velocity_drag()+"/coefficient",
                         "0");
 
     if (_coefficient.expression() == "0")

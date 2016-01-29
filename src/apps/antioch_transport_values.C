@@ -44,7 +44,7 @@
 template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )
 {
-  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::reacting_low_mach_navier_stokes));
+  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
 
   GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 

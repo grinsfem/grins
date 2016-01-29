@@ -48,7 +48,7 @@ namespace GRINS
   ElasticCable<StressStrainLaw>::ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                                                bool is_compressible )
     : ElasticCableBase(physics_name,input),
-      _stress_strain_law(input,MaterialsParsing::material_name(input,elastic_cable)),
+      _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_cable())),
       _is_compressible(is_compressible)
   {
     this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
@@ -69,7 +69,7 @@ namespace GRINS
   void ElasticCable<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+elastic_cable+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::elastic_cable()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -108,7 +108,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalue output_vars value for "+elastic_cable << std::endl
+                std::cerr << "Error: Invalue output_vars value for "+PhysicsNaming::elastic_cable() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: stress" << std::endl
                           << "                              strain" << std::endl

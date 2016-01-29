@@ -38,7 +38,7 @@ namespace GRINS
   template<class Mu>
   ParsedVelocitySourceBase<Mu>::ParsedVelocitySourceBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
-                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
       _input(input)
   {

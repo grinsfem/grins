@@ -42,7 +42,7 @@ namespace GRINS
   template<class Mu>
   IncompressibleNavierStokes<Mu>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
-                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
     _p_pinning(input,physics_name),
     _mu_index(0)
@@ -81,7 +81,7 @@ namespace GRINS
     // Other quantities read in base class
 
     // Read pressure pinning information
-    this->_pin_pressure = input("Physics/"+incompressible_navier_stokes+"/pin_pressure", false );
+    this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );
 
     return;
   }
@@ -90,7 +90,7 @@ namespace GRINS
   void IncompressibleNavierStokes<Mu>::register_postprocessing_vars( const GetPot& input,
                                                                                      PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "Physics/"+incompressible_navier_stokes+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/output_vars";
 
     if( input.have_variable(section) )
       {
@@ -106,7 +106,7 @@ namespace GRINS
               }
             else
               {
-                std::cerr << "Error: Invalid output_vars value for "+incompressible_navier_stokes << std::endl
+                std::cerr << "Error: Invalid output_vars value for "+PhysicsNaming::incompressible_navier_stokes() << std::endl
                           << "       Found " << name << std::endl
                           << "       Acceptable values are: mu" << std::endl;
                 libmesh_error();

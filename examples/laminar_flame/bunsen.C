@@ -371,11 +371,11 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > BunsenBCFactory::build_
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
   
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::reacting_low_mach_navier_stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::reacting_low_mach_navier_stokes(),  cont) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::reacting_low_mach_navier_stokes,  cont2) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::reacting_low_mach_navier_stokes(),  cont2) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::reacting_low_mach_navier_stokes,  cont3) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::reacting_low_mach_navier_stokes(),  cont3) );
 
   return mymap;
 }
@@ -405,9 +405,9 @@ void BunsenPhysicsFactory::check_physics_consistency( const GRINS::PhysicsList& 
     {
       if( physics->first == "BunsenSource" )
 	{
-	  if( physics_list.find(GRINS::reacting_low_mach_navier_stokes) == physics_list.end() )
+	  if( physics_list.find(GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()) == physics_list.end() )
 	    {
-	      this->physics_consistency_error( physics->first, GRINS::reacting_low_mach_navier_stokes  );
+	      this->physics_consistency_error( physics->first, GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()  );
 	    }
 	}
     }

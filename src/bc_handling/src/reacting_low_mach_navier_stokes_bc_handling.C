@@ -49,7 +49,7 @@ namespace GRINS
                                                                                            const GetPot& input,
                                                                                            const Chemistry& chemistry )
     : LowMachNavierStokesBCHandling(physics_name,input),
-      _species_vars(input,MaterialsParsing::material_name(input,reacting_low_mach_navier_stokes)),
+      _species_vars(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
       _n_species(_species_vars.n_species()),
       _chemistry(chemistry)
   {

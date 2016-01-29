@@ -46,10 +46,10 @@ namespace GRINS
   template<class Mu>
   TurbulenceModelsBase<Mu>::TurbulenceModelsBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
-      _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
-      _mu(input,MaterialsParsing::material_name(input,incompressible_navier_stokes))
+      _rho(input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho", 1.0)),
+      _mu(input,MaterialsParsing::material_name(input,PhysicsNaming::incompressible_navier_stokes()))
   {
-    this->set_parameter(this->_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", this->_rho);
+    this->set_parameter(this->_rho, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho", this->_rho);
   }
 
   template<class Mu>

@@ -35,7 +35,7 @@ namespace GRINS
   template<class Mu>
   AveragedTurbineBase<Mu>::AveragedTurbineBase( const std::string& physics_name, const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
-                                         incompressible_navier_stokes, /* "core" Physics name */
+                                         PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
       base_velocity_function(""),
       local_vertical_function(""),
@@ -80,7 +80,7 @@ namespace GRINS
   void AveragedTurbineBase<Mu>::read_input_options( const GetPot& input )
   {
     this->set_parameter(base_velocity_function, input,
-                        "Physics/"+averaged_turbine+"/base_velocity",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/base_velocity",
                         this->zero_vector_function);
 
     if (base_velocity_function.expression() == this->zero_vector_function)
@@ -88,7 +88,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(local_vertical_function, input,
-                        "Physics/"+averaged_turbine+"/local_vertical",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/local_vertical",
                         this->zero_vector_function);
 
     if (local_vertical_function.expression() == this->zero_vector_function)
@@ -96,21 +96,21 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(lift_function, input,
-                        "Physics/"+averaged_turbine+"/lift",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/lift",
                         "0");
 
     if (lift_function.expression() == "0")
       std::cout << "Warning! Zero lift function specified!" << std::endl;
 
     this->set_parameter(drag_function, input,
-                        "Physics/"+averaged_turbine+"/drag",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/drag",
                         "0");
 
     if (drag_function.expression() == "0")
       std::cout << "Warning! Zero drag function specified!" << std::endl;
 
     this->set_parameter(chord_function, input,
-                        "Physics/"+averaged_turbine+"/chord_length",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/chord_length",
                         "0");
 
     if (chord_function.expression() == "0")
@@ -118,7 +118,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(area_swept_function, input,
-                        "Physics/"+averaged_turbine+"/area_swept",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/area_swept",
                         "0");
 
     if (area_swept_function.expression() == "0")
@@ -126,7 +126,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(aoa_function, input,
-                        "Physics/"+averaged_turbine+"/angle_of_attack",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/angle_of_attack",
                         "00000");
 
     if (aoa_function.expression() == "00000")
@@ -134,7 +134,7 @@ namespace GRINS
                         std::endl);
 
     this->set_parameter(torque_function, input,
-                        "Physics/"+averaged_turbine+"/torque",
+                        "Physics/"+PhysicsNaming::averaged_turbine()+"/torque",
                         "0");
 
     if (torque_function.expression() == "0")
@@ -142,7 +142,7 @@ namespace GRINS
 
     this->set_parameter
       (this->moment_of_inertia, input,
-       "Physics/"+averaged_turbine+"/moment_of_inertia",
+       "Physics/"+PhysicsNaming::averaged_turbine()+"/moment_of_inertia",
        libMesh::Number(0));
 
     if (!moment_of_inertia)
@@ -152,7 +152,7 @@ namespace GRINS
 
     this->set_parameter
       (this->initial_speed, input,
-       "Physics/"+averaged_turbine+"/initial_speed",
+       "Physics/"+PhysicsNaming::averaged_turbine()+"/initial_speed",
        libMesh::Number(0));
 
     this->_fan_speed_var_name = input("Physics/VariableNames/fan_speed",

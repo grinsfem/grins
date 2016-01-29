@@ -191,9 +191,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > AxiConCylBCFactory::bui
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
   
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont2) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont2) );
 
   return mymap;
 }

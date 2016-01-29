@@ -405,9 +405,9 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont_u) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont_u) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::spalart_allmaras(),  cont_nu) );
 
   return mymap;
 }
