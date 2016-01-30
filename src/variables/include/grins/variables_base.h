@@ -70,6 +70,13 @@ namespace GRINS
                                  std::vector<std::string>& var_names,
                                  const std::vector<std::string>& default_names );
 
+    //! Check for old name style and new name style. If both present, error.
+    /*! Old name style: [Physics/VariableNames]
+        New name style: [Variables/<variable type>]
+        Here, we just check for the presence of the sections [Physics/VariableNames]
+        and [Variables]. */
+    void duplicate_name_section_check( const GetPot& input ) const;
+
     std::vector<VariableIndex> _vars;
 
     std::vector<std::string> _var_names;

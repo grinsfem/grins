@@ -57,4 +57,11 @@ namespace GRINS
       var_names[n] = input("Variables/"+subsection+"/names", default_names[n], n);
   }
 
+  void VariablesBase::duplicate_name_section_check( const GetPot& input ) const
+  {
+    if( input.have_section("Physics/VariableNames") &&
+        input.have_section("Variables") )
+      libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and Variables in input!");
+  }
+
 } // end namespace GRINS
