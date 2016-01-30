@@ -27,6 +27,7 @@
 
 // libMesh
 #include "libmesh/fem_system.h"
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
@@ -41,6 +42,19 @@ namespace GRINS
         libmesh_assert( system->has_variable(_var_names[v]) );
         _vars[v] = system->variable_number(_var_names[v]);
       }
+  }
+
+  void VariablesBase::parse_names_from_input( const GetPot& input,
+                                              const std::string& subsection,
+                                              std::vector<std::string>& var_names,
+                                              const std::vector<std::string>& default_names )
+  {
+    libmesh_assert_equal_to( var_names.size(), default_names.size() );
+
+    unsigned int n_names = default_names.size();
+
+    for( unsigned int n = 0; n < n_names; n++ )
+      var_names[n] = input("Variables/"+subsection+"/names", default_names[n], n);
   }
 
 } // end namespace GRINS

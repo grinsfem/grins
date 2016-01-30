@@ -34,6 +34,7 @@
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
+class GetPot;
 namespace libMesh
 {
   class FEMSystem;
@@ -57,6 +58,17 @@ namespace GRINS
         variable number from the system. We attempt to grab
         a variable number for every entry in _var_names. */
     void default_var_init( libMesh::FEMSystem* system );
+
+    //! Method to parse variable names from input
+    /*! Names parsed from: [Variables/<subsection>/names] and then
+        populated into the supplied var_names vector. It is assumed
+        that var_names has been properly sized, that default_names
+        and var_names have the same size, and that default_names has
+        been populated with unique strings. */
+    void parse_names_from_input( const GetPot& input,
+                                 const std::string& subsection,
+                                 std::vector<std::string>& var_names,
+                                 const std::vector<std::string>& default_names );
 
     std::vector<VariableIndex> _vars;
 
