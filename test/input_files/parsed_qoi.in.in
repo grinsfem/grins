@@ -10,8 +10,8 @@
 []
 
 # Options for time solvers
-[unsteady-solver]
-transient = false
+
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

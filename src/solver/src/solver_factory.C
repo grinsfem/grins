@@ -26,6 +26,8 @@
 #include "grins/solver_factory.h"
 
 // GRINS
+#include "grins/solver_names.h"
+#include "grins/solver_parsing.h"
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
 #include "grins/steady_mesh_adaptive_solver.h"
@@ -36,49 +38,35 @@
 
 namespace GRINS
 {
-  SolverFactory::SolverFactory()
-  {
-    return;
-  }
-
-  SolverFactory::~SolverFactory()
-  {
-    return;
-  }
-
   SharedPtr<Solver> SolverFactory::build(const GetPot& input)
   {
-    bool mesh_adaptive = input("MeshAdaptivity/mesh_adaptive", false );
-
-    bool transient = input("unsteady-solver/transient", false );
+    std::string solver_type = SolverParsing::solver_type(input);
 
     SharedPtr<Solver> solver;  // Effectively NULL
 
-    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
-
-    if( solver_type == std::string("displacement_continuation") )
+    if( solver_type == SolverNames::displacement_continuation() )
       {
         solver.reset( new DisplacementContinuationSolver(input) );
       }
-    else if(transient && !mesh_adaptive)
+    else if(solver_type == SolverNames::unsteady_solver() )
       {
         solver.reset( new UnsteadySolver(input) );
       }
-    else if( !transient && !mesh_adaptive )
+    else if( solver_type == SolverNames::steady_solver() )
       {
         solver.reset( new SteadySolver(input) );
       }
-    else if( !transient && mesh_adaptive )
+    else if( solver_type == SolverNames::steady_mesh_adaptive_solver() )
       {
         solver.reset( new SteadyMeshAdaptiveSolver(input) );
       }
-    else if( transient && mesh_adaptive )
+    else if( solver_type == SolverNames::unsteady_mesh_adaptive_solver() )
       {
         libmesh_not_implemented();
       }
     else
       {
-        std::cerr << "Invalid solver options!" << std::endl;
+        libmesh_error_msg("Invalid solver_type: "+solver_type);
       }
 
     return solver;

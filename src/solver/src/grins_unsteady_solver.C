@@ -30,12 +30,16 @@
 #include "grins/grins_enums.h"
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
+#include "grins/time_stepping_parsing.h"
+#include "grins/strategies_parsing.h"
+#include "grins/solver_names.h"
 
 // libMesh
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/euler_solver.h"
+#include "libmesh/euler2_solver.h"
 #include "libmesh/twostep_time_solver.h"
 
 // C++
@@ -46,44 +50,40 @@ namespace GRINS
 
   UnsteadySolver::UnsteadySolver( const GetPot& input )
     : Solver(input),
-      _n_timesteps( input("unsteady-solver/n_timesteps", 1 ) ),
-      _backtrack_deltat( input("unsteady-solver/backtrack_deltat", 0 ) ),
-      _theta( input("unsteady-solver/theta", 0.5 ) ),
-      /*! \todo Is this the best default for delta t?*/
-      _deltat( input("unsteady-solver/deltat", 0.0 ) ),
-      _target_tolerance( input("unsteady-solver/target_tolerance", 0.0 ) ),
-      _upper_tolerance( input("unsteady-solver/upper_tolerance", 0.0 ) ),
-      _max_growth( input("unsteady-solver/max_growth", 0.0 ) )
+      _time_solver_name(TimeSteppingParsing::parse_time_stepper_name(input)),
+      _n_timesteps( TimeSteppingParsing::parse_n_timesteps(input) ),
+      _backtrack_deltat( TimeSteppingParsing::parse_backtrack_deltat(input) ),
+      _theta( TimeSteppingParsing::parse_theta(input) ),
+      _deltat( TimeSteppingParsing::parse_deltat(input) ),
+      _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
+      _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
+      _max_growth( StrategiesParsing::parse_max_growth(input) )
   {
-    const unsigned int n_component_norm =
-      input.vector_variable_size("unsteady-solver/component_norm");
-    for (unsigned int i=0; i != n_component_norm; ++i)
-      {
-        const std::string current_norm = input("component_norm", std::string("L2"), i);
-        // TODO: replace this with string_to_enum with newer libMesh
-        if (current_norm == "GRINSEnums::L2")
-          _component_norm.set_type(i, libMesh::L2);
-        else if (current_norm == "GRINSEnums::H1")
-          _component_norm.set_type(i, libMesh::H1);
-        else
-          libmesh_not_implemented();
-      }
-
-
-  }
-
-  UnsteadySolver::~UnsteadySolver()
-  {
-    return;
+    StrategiesParsing::parse_component_norm(input,_component_norm);
   }
 
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
-    libMesh::EulerSolver* time_solver = new libMesh::EulerSolver( *(system) );
+    libMesh::UnsteadySolver* time_solver = NULL;
+
+    if( _time_solver_name == SolverNames::libmesh_euler_solver() )
+      {
+        time_solver = new libMesh::EulerSolver( *(system) );
+
+        this->set_theta<libMesh::EulerSolver>(time_solver);
+      }
+    else if( _time_solver_name == SolverNames::libmesh_euler2_solver() )
+      {
+        time_solver = new libMesh::Euler2Solver( *(system) );
+
+        this->set_theta<libMesh::Euler2Solver>(time_solver);
+      }
+    else
+      libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
 
     if (_target_tolerance)
       {
-        libMesh::TwostepTimeSolver *outer_solver = 
+        libMesh::TwostepTimeSolver *outer_solver =
           new libMesh::TwostepTimeSolver(*system);
 
         outer_solver->target_tolerance = _target_tolerance;
@@ -100,11 +100,7 @@ namespace GRINS
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
       }
 
-    // Set theta parameter for time-stepping scheme
-    time_solver->theta = this->_theta;
     time_solver->reduce_deltat_on_diffsolver_failure = this->_backtrack_deltat;
-
-    return;
   }
 
   void UnsteadySolver::solve( SolverContext& context )

@@ -22,56 +22,34 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SOLVER_PARSING_H
+#define GRINS_SOLVER_PARSING_H
 
-#ifndef GRINS_UNSTEADY_SOLVER_H
-#define GRINS_UNSTEADY_SOLVER_H
+// C++
+#include <string>
 
-//GRINS
-#include "grins/grins_solver.h"
-
-//libMesh
-#include "libmesh/system_norm.h"
-#include "libmesh/unsteady_solver.h"
+// Forward declarations
+class GetPot;
 
 namespace GRINS
 {
-  class UnsteadySolver : public Solver
+  class SolverParsing
   {
   public:
 
-    UnsteadySolver( const GetPot& input );
-    virtual ~UnsteadySolver(){};
+    SolverParsing(){};
 
-    virtual void solve( SolverContext& context );
+    ~SolverParsing(){};
 
-  protected:
+    static std::string solver_type(const GetPot& input);
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    static bool is_transient( const GetPot& input );
 
-    template <typename T>
-    void set_theta( libMesh::UnsteadySolver* time_solver );
-
-    std::string _time_solver_name;
-
-    unsigned int _n_timesteps;
-    unsigned int _backtrack_deltat;
-    double _theta;
-    double _deltat;
-
-    // Options for adaptive time solvers
-    double _target_tolerance;
-    double _upper_tolerance;
-    double _max_growth;
-    libMesh::SystemNorm _component_norm;
+    static void dup_solver_option_check( const GetPot& input,
+                                         const std::string& option1,
+                                         const std::string& option2 );
   };
 
-  template <typename T>
-  inline
-  void UnsteadySolver::set_theta( libMesh::UnsteadySolver* time_solver )
-  {
-    T* deriv_solver = libMesh::libmesh_cast_ptr<T*>(time_solver);
-    deriv_solver->theta = this->_theta;
-  }
-
 } // end namespace GRINS
-#endif // GRINS_UNSTEADY_SOLVER_H
+
+#endif // GRINS_SOLVER_PARSING_H

@@ -75,8 +75,8 @@ weights = 'y*(1-y)' # This 'fixes' the spill
 []
 
 # Options for tiem solvers
-[unsteady-solver]
-   transient = 'false'
+
+   
 []
 
 #Linear and nonlinear solver options

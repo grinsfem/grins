@@ -22,56 +22,42 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_TIME_STEPPING_PARSING_H
+#define GRINS_TIME_STEPPING_PARSING_H
 
-#ifndef GRINS_UNSTEADY_SOLVER_H
-#define GRINS_UNSTEADY_SOLVER_H
+// C++
+#include <string>
 
-//GRINS
-#include "grins/grins_solver.h"
-
-//libMesh
-#include "libmesh/system_norm.h"
-#include "libmesh/unsteady_solver.h"
+// Forward declarations
+class GetPot;
 
 namespace GRINS
 {
-  class UnsteadySolver : public Solver
+  class TimeSteppingParsing
   {
   public:
 
-    UnsteadySolver( const GetPot& input );
-    virtual ~UnsteadySolver(){};
+    TimeSteppingParsing(){};
 
-    virtual void solve( SolverContext& context );
+    ~TimeSteppingParsing(){};
 
-  protected:
+    static unsigned int parse_n_timesteps( const GetPot& input );
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    //! Parse option to retry failed time steps with smaller \f$ \Delta t \f$
+    /*! backtrack_deltat is the number of time the TimeSolver will try
+        to resolve the timestep with a smaller \f$ \Delta t \f$. Default is 0. */
+    static unsigned int parse_backtrack_deltat( const GetPot& input );
 
-    template <typename T>
-    void set_theta( libMesh::UnsteadySolver* time_solver );
+    //! Parse value of \f$ \theta \f$ for theta method time stepping.
+    /*! \f$ \theta \in [0,1] \f$ Option only used for theta method-based
+         time solvers. Defaults to 0.5. */
+    static double parse_theta( const GetPot& input );
 
-    std::string _time_solver_name;
+    static double parse_deltat( const GetPot& input );
 
-    unsigned int _n_timesteps;
-    unsigned int _backtrack_deltat;
-    double _theta;
-    double _deltat;
-
-    // Options for adaptive time solvers
-    double _target_tolerance;
-    double _upper_tolerance;
-    double _max_growth;
-    libMesh::SystemNorm _component_norm;
+    static std::string parse_time_stepper_name( const GetPot& input );
   };
 
-  template <typename T>
-  inline
-  void UnsteadySolver::set_theta( libMesh::UnsteadySolver* time_solver )
-  {
-    T* deriv_solver = libMesh::libmesh_cast_ptr<T*>(time_solver);
-    deriv_solver->theta = this->_theta;
-  }
-
 } // end namespace GRINS
-#endif // GRINS_UNSTEADY_SOLVER_H
+
+#endif // GRINS_TIME_STEPPING_PARSING_H

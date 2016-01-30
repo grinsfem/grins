@@ -22,56 +22,34 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_UNSTEADY_SOLVER_H
-#define GRINS_UNSTEADY_SOLVER_H
-
-//GRINS
-#include "grins/grins_solver.h"
-
-//libMesh
-#include "libmesh/system_norm.h"
-#include "libmesh/unsteady_solver.h"
+// C++
+#include <string>
 
 namespace GRINS
 {
-  class UnsteadySolver : public Solver
+  class SolverNames
   {
   public:
 
-    UnsteadySolver( const GetPot& input );
-    virtual ~UnsteadySolver(){};
+    static const std::string steady_solver()
+    { return "grins_steady_solver"; }
 
-    virtual void solve( SolverContext& context );
+    static const std::string unsteady_solver()
+    { return "grins_unsteady_solver"; }
 
-  protected:
+    static const std::string steady_mesh_adaptive_solver()
+    { return "grins_steady_mesh_adaptive_solver"; }
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    static const std::string unsteady_mesh_adaptive_solver()
+    { return "grins_unsteady_mesh_adaptive_solver"; }
 
-    template <typename T>
-    void set_theta( libMesh::UnsteadySolver* time_solver );
+    static const std::string displacement_continuation()
+    { return "displacement_continuation"; }
 
-    std::string _time_solver_name;
+    static const std::string libmesh_euler_solver()
+    { return "libmesh_euler_solver"; }
 
-    unsigned int _n_timesteps;
-    unsigned int _backtrack_deltat;
-    double _theta;
-    double _deltat;
-
-    // Options for adaptive time solvers
-    double _target_tolerance;
-    double _upper_tolerance;
-    double _max_growth;
-    libMesh::SystemNorm _component_norm;
+    static const std::string libmesh_euler2_solver()
+    { return "libmesh_euler2_solver"; }
   };
-
-  template <typename T>
-  inline
-  void UnsteadySolver::set_theta( libMesh::UnsteadySolver* time_solver )
-  {
-    T* deriv_solver = libMesh::libmesh_cast_ptr<T*>(time_solver);
-    deriv_solver->theta = this->_theta;
-  }
-
 } // end namespace GRINS
-#endif // GRINS_UNSTEADY_SOLVER_H

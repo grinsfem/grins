@@ -9,11 +9,14 @@
 []
 
 # Options for tiem solvers
-[unsteady-solver]
-transient = true
-theta = 0.5
-n_timesteps = 100
-deltat = 0.1
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      theta = '0.5'
+      n_timesteps = '100'
+      delta_t = '0.1'
+[]
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
