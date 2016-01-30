@@ -25,6 +25,9 @@
 // This class
 #include "grins/variables_base.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/fem_system.h"
 #include "libmesh/getpot.h"
@@ -62,6 +65,25 @@ namespace GRINS
     if( input.have_section("Physics/VariableNames") &&
         input.have_section("Variables") )
       libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and Variables in input!");
+  }
+
+  bool VariablesBase::check_dep_name_input( const GetPot& input,
+                                            const std::string& new_subsection ) const
+  {
+    this->duplicate_name_section_check(input);
+
+    bool is_old_input_style = false;
+
+    if( input.have_section("Physics/VariableNames") )
+      {
+        is_old_input_style = true;
+
+        std::string warning = "WARNING: Specifying variable names with Physics/VariableNames is DEPRECATED!\n";
+        warning += "         Please update to use Variables/"+new_subsection+"/names.\n";
+        grins_warning(warning);
+      }
+
+    return is_old_input_style;
   }
 
 } // end namespace GRINS

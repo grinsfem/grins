@@ -77,10 +77,20 @@ namespace GRINS
         and [Variables]. */
     void duplicate_name_section_check( const GetPot& input ) const;
 
+    //! Check for deprecated variable name input style
+    /*! If found, this returns true and emits a deprecated warning.
+        Otherwise, this returns false.
+        The string argument is supplied by each variable
+        class for the warning message. E.g. if the variable class
+        is going to look in "Displacement", i.e.
+        [Variables/Displacement/names], then "Displacement" should be
+        passed. */
+    bool check_dep_name_input( const GetPot& input,
+                               const std::string& new_subsection ) const;
+
     std::vector<VariableIndex> _vars;
 
     std::vector<std::string> _var_names;
-
   };
 
 } // end namespace GRINS
