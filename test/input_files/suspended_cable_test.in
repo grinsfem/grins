@@ -47,6 +47,11 @@ gravity ='0 0 -32.2'
 
 []
 
+[Variables]
+   [./Displacement]
+      names = 'u v w'
+[]
+
 # Mesh related options
 [Mesh]
    [./Generation]
