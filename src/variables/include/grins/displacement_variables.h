@@ -25,13 +25,6 @@
 #ifndef GRINS_DISPLACEMENT_VARIABLES_H
 #define GRINS_DISPLACEMENT_VARIABLES_H
 
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 
