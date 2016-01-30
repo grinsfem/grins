@@ -50,16 +50,14 @@ namespace GRINS
     default_names[_v_idx] = "v";
     default_names[_w_idx] = "w";
 
-    std::string subsection = "Displacement";
-
-    if( this->check_dep_name_input(input,subsection) )
+    if( this->check_dep_name_input(input,this->subsection()) )
       {
         _var_names[_u_idx] = input("Physics/VariableNames/u_displacment", default_names[_u_idx] );
         _var_names[_v_idx] = input("Physics/VariableNames/v_displacment", default_names[_v_idx] );
         _var_names[_w_idx] = input("Physics/VariableNames/w_displacment", default_names[_w_idx] );
       }
     else
-      this->parse_names_from_input(input,subsection,_var_names,default_names);
+      this->parse_names_from_input(input,this->subsection(),_var_names,default_names);
   }
 
   void DisplacementVariables::init( libMesh::FEMSystem* system )
