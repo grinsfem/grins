@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/variables_parsing.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -57,18 +58,19 @@ namespace GRINS
     unsigned int n_names = default_names.size();
 
     for( unsigned int n = 0; n < n_names; n++ )
-      var_names[n] = input("Variables/"+subsection+"/names", default_names[n], n);
+      var_names[n] = input(VariablesParsing::varnames_input_name(subsection), default_names[n], n);
   }
 
   void VariablesBase::duplicate_name_section_check( const GetPot& input ) const
   {
     if( input.have_section("Physics/VariableNames") &&
-        input.have_section("Variables") )
-      libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and Variables in input!");
+        input.have_section(VariablesParsing::variables_section()) )
+      libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and "
+                        +VariablesParsing::variables_section()+" in input!");
   }
 
   bool VariablesBase::check_dep_name_input( const GetPot& input,
-                                            const std::string& new_subsection ) const
+                                            const std::string& subsection ) const
   {
     this->duplicate_name_section_check(input);
 
@@ -79,7 +81,7 @@ namespace GRINS
         is_old_input_style = true;
 
         std::string warning = "WARNING: Specifying variable names with Physics/VariableNames is DEPRECATED!\n";
-        warning += "         Please update to use Variables/"+new_subsection+"/names.\n";
+        warning += "         Please update to use ["+VariablesParsing::varnames_input_name(subsection)+"].\n";
         grins_warning(warning);
       }
 

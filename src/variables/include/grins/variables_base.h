@@ -50,6 +50,8 @@ namespace GRINS
 
     ~VariablesBase(){};
 
+
+
   protected:
 
     //! Default method for init'ing variables
