@@ -27,24 +27,35 @@
 #define GRINS_THERMO_PRESSURE_VARIABLE_H
 
 // GRINS
-#include "grins/variables_base.h"
-
-// libMesh forward declarations
-class GetPot;
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-  class ThermoPressureVariable : public VariablesBase
+  class ThermoPressureVariable : public SingleVariable
   {
   public:
 
-    ThermoPressureVariable( const GetPot& input );
+    ThermoPressureVariable( const GetPot& input )
+      : SingleVariable(input,
+                       this->old_var_name(),
+                       this->subsection(),
+                       this->default_name())
+    {}
+
     ~ThermoPressureVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
-
     VariableIndex p0() const;
+
+  private:
+
+    std::string old_var_name() const
+    { return "thermo_presure"; }
+
+    std::string subsection() const
+    { return "ThermoPressure"; }
+
+    std::string default_name() const
+    { return "p0"; }
 
   private:
 
