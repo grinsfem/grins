@@ -29,23 +29,35 @@
 class GetPot;
 
 // GRINS
-#include "grins/variables_base.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-  class TurbulenceVariables : public VariablesBase
+  class TurbulenceVariables : public SingleVariable
   {
   public:
 
-    TurbulenceVariables( const GetPot& input );
-    ~TurbulenceVariables(){};
+    TurbulenceVariables( const GetPot& input )
+      : SingleVariable(input,
+                       this->old_var_name(),
+                       this->subsection(),
+                       this->default_name())
+    {}
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
+    ~TurbulenceVariables(){};
 
     VariableIndex nu() const;
 
   private:
+
+    std::string old_var_name() const
+    { return "turbulent_viscosity"; }
+
+    std::string subsection() const
+    { return "TurbulentViscosity"; }
+
+    std::string default_name() const
+    { return "nu"; }
 
     TurbulenceVariables();
 
