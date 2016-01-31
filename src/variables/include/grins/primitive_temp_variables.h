@@ -29,23 +29,35 @@
 class GetPot;
 
 // GRINS
-#include "grins/variables_base.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-  class PrimitiveTempVariables : public VariablesBase
+  class PrimitiveTempVariables : public SingleVariable
   {
   public:
 
-    PrimitiveTempVariables( const GetPot& input );
-    ~PrimitiveTempVariables(){};
+    PrimitiveTempVariables( const GetPot& input )
+      : SingleVariable(input,
+                       this->old_var_name(),
+                       this->subsection(),
+                       this->default_name())
+    {}
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
+    ~PrimitiveTempVariables(){};
 
     VariableIndex T() const;
 
   private:
+
+    std::string old_var_name() const
+    { return "Temperature"; }
+
+    std::string subsection() const
+    { return "Temperature"; }
+
+    std::string default_name() const
+    { return "T"; }
 
     PrimitiveTempVariables();
 

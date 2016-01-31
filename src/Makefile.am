@@ -196,7 +196,6 @@ libgrins_la_SOURCES += variables/src/single_variable.C
 libgrins_la_SOURCES += variables/src/fe_variables_base.C
 libgrins_la_SOURCES += variables/src/primitive_flow_variables.C
 libgrins_la_SOURCES += variables/src/primitive_flow_fe_variables.C
-libgrins_la_SOURCES += variables/src/primitive_temp_variables.C
 libgrins_la_SOURCES += variables/src/primitive_temp_fe_variables.C
 libgrins_la_SOURCES += variables/src/displacement_variables.C
 libgrins_la_SOURCES += variables/src/displacement_fe_variables.C
