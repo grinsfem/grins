@@ -194,6 +194,7 @@ libgrins_la_SOURCES += solver/src/time_stepping_parsing.C
 libgrins_la_SOURCES += variables/src/variables_base.C
 libgrins_la_SOURCES += variables/src/single_variable.C
 libgrins_la_SOURCES += variables/src/fe_variables_base.C
+libgrins_la_SOURCES += variables/src/single_fe_type_variable.C
 libgrins_la_SOURCES += variables/src/primitive_flow_variables.C
 libgrins_la_SOURCES += variables/src/primitive_flow_fe_variables.C
 libgrins_la_SOURCES += variables/src/primitive_temp_fe_variables.C
@@ -432,6 +433,7 @@ include_HEADERS += solver/include/grins/time_stepping_parsing.h
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h
 include_HEADERS += variables/include/grins/fe_variables_base.h
+include_HEADERS += variables/include/grins/single_fe_type_variable.h
 include_HEADERS += variables/include/grins/primitive_flow_variables.h
 include_HEADERS += variables/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += variables/include/grins/primitive_temp_variables.h
