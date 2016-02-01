@@ -57,7 +57,7 @@ namespace GRINS
     LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);
 
     // We need pressure derivatives
-    context.get_element_fe(this->_flow_vars.p())->get_dphi();
+    context.get_element_fe(this->_press_var.p())->get_dphi();
 
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_flow_vars.u())->get_d2phi();
@@ -125,7 +125,7 @@ namespace GRINS
     if(this->_dim == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p(), qp);
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
 
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
     libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);

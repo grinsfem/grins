@@ -87,6 +87,7 @@ namespace GRINS
 
     _temp_vars.init(system);
     _flow_vars.init(system);
+    this->_press_var.init(system);
 
     return;
   }

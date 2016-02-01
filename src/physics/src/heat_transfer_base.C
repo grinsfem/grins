@@ -75,6 +75,7 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     _flow_vars.init(system);
+    this->_press_var.init(system);
     _temp_vars.init(system);
 
     return;

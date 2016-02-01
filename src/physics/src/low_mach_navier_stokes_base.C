@@ -114,6 +114,7 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
     this->_temp_vars.init(system);
 
     /* If we need to compute the thermodynamic pressure, we force this to be a first
@@ -136,7 +137,7 @@ namespace GRINS
       system->time_evolving(_flow_vars.w());
 
     system->time_evolving(_temp_vars.T());
-    system->time_evolving(_flow_vars.p());
+    system->time_evolving(_press_var.p());
 
     if( _enable_thermo_press_calc )
       system->time_evolving(_p0_var.p0());
@@ -160,8 +161,8 @@ namespace GRINS
     context.get_element_fe(_temp_vars.T())->get_dphi();
     context.get_element_fe(_temp_vars.T())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p())->get_phi();
-    context.get_element_fe(_flow_vars.p())->get_xyz();
+    context.get_element_fe(_press_var.p())->get_phi();
+    context.get_element_fe(_press_var.p())->get_xyz();
 
     return;
   }

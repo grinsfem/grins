@@ -95,7 +95,7 @@ namespace GRINS
 											 AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
@@ -103,9 +103,9 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -319,7 +319,7 @@ namespace GRINS
 											    AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
@@ -327,9 +327,9 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 

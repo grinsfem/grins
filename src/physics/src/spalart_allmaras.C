@@ -89,6 +89,7 @@ namespace GRINS
 
     this->_turbulence_vars.init(system);
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
 
     // Init the variables belonging to SA helper
     _spalart_allmaras_helper.init_variables(system);

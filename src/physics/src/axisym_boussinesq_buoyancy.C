@@ -80,6 +80,7 @@ namespace GRINS
 
     this->_temp_vars.init(system);
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
   }
 
   void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,

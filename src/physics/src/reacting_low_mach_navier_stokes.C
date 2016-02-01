@@ -198,7 +198,7 @@ namespace GRINS
     const VariableIndex s0_var = this->_species_vars.species(0);
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -214,7 +214,7 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.get_element_fe(this->_flow_vars.p())->get_phi();
+      context.get_element_fe(this->_press_var.p())->get_phi();
 
     // The species shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& s_phi = context.get_element_fe(s0_var)->get_phi();
@@ -241,7 +241,7 @@ namespace GRINS
     const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
-    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
@@ -436,7 +436,7 @@ namespace GRINS
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, this->_flow_vars.p() );
+	_p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
       }
 
     return;
@@ -507,7 +507,7 @@ namespace GRINS
 	T[qp] = context.interior_value(this->_temp_vars.T(), qp);
 	grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
 
-	p[qp] = context.interior_value(this->_flow_vars.p(), qp);
+	p[qp] = context.interior_value(this->_press_var.p(), qp);
 	p0[qp] = this->get_p0_steady(context, qp);
 
 	mass_fractions[qp].resize(this->_n_species);

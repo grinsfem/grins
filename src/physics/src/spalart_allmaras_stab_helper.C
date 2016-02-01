@@ -65,6 +65,8 @@ namespace GRINS
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
     this->_flow_vars.init(&system);
+    this->_press_var.init(&system);
+
     this->_turbulence_vars.init(&system);
 
     // Init the variables belonging to SA helper

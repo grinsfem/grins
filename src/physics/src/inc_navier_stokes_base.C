@@ -66,6 +66,7 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
 
     this->_mu.init(system);
 
@@ -105,8 +106,8 @@ namespace GRINS
     context.get_element_fe(_flow_vars.u())->get_dphi();
     context.get_element_fe(_flow_vars.u())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p())->get_phi();
-    context.get_element_fe(_flow_vars.p())->get_xyz();
+    context.get_element_fe(_press_var.p())->get_phi();
+    context.get_element_fe(_press_var.p())->get_xyz();
 
     context.get_side_fe(_flow_vars.u())->get_JxW();
     context.get_side_fe(_flow_vars.u())->get_phi();

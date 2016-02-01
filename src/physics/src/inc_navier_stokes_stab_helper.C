@@ -68,7 +68,8 @@ namespace GRINS
   void IncompressibleNavierStokesStabilizationHelper::init( libMesh::FEMSystem& system )
   {
     _flow_vars.init(&system);
-    
+    _press_var.init(&system);
+
     return;
   }
 
@@ -187,7 +188,7 @@ namespace GRINS
     if(context.get_system().get_mesh().mesh_dimension() == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p(), qp);
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
 
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
     libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
@@ -231,7 +232,7 @@ namespace GRINS
     if(context.get_system().get_mesh().mesh_dimension() == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
-    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_flow_vars.p(), qp);
+    libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
 
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
     libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
