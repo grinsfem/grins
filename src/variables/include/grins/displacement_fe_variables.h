@@ -27,12 +27,12 @@
 #define GRINS_DISPLACEMENT_FE_VARIABLES_H
 
 // GRINS
-#include "grins/fe_variables_base.h"
+#include "grins/single_fe_type_variable.h"
 #include "grins/displacement_variables.h"
 
 namespace GRINS
 {
-  class DisplacementFEVariables : public FEVariablesBase,
+  class DisplacementFEVariables : public SingleFETypeVariable,
                                   public DisplacementVariables
   {
   public:
