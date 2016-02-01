@@ -42,6 +42,47 @@ namespace GRINS
                           const std::string& default_order );
 
     ~SingleFETypeVariable(){};
+
+  protected:
+
+    //! Helper function to parse FEFamily and Order.
+    /*! Mainly to encapsulate warning/using old style and new style.
+        Note that default_family and default_order are *only* for the
+        old style. In the new style, the user *must* specify the FEFamily
+        and order in the input file. This function assumes that family and order
+        have been properly sized. Currently assumes only a single
+        family and order. */
+    void parse_family_and_order( const GetPot& input,
+                                 const std::string& physics_name,
+                                 const std::string& old_var_suffix,
+                                 const std::string& subsection,
+                                 std::vector<GRINSEnums::FEFamily>& family,
+                                 std::vector<GRINSEnums::Order>& order,
+                                 const std::string& default_family,
+                                 const std::string& default_order );
+
+    //! Check (and error if true) for old and new style FEFamily/Order input
+    /*! Actually, for the new style, we just check for the presence
+        of a [Variables] section in order to be conservative. */
+    void dup_family_order_check( const GetPot& input,
+                                 const std::string& physics_name,
+                                 const std::string& old_var_suffix) const;
+
+    //! Check for *no* presence of FEFamily/Order input
+    bool have_family_or_order( const GetPot& input,
+                               const std::string& physics_name,
+                               const std::string& old_var_suffix,
+                               const std::string& subsection ) const;
+
+    void parse_old_style_with_warning( const GetPot& input,
+                                       const std::string& physics_name,
+                                       const std::string& old_var_suffix,
+                                       const std::string& default_family,
+                                       const std::string& default_order,
+                                       const std::string& subsection,
+                                       std::string& parsed_family,
+                                       std::string& parsed_order );
+
   };
 
 } // end namespace GRINS
