@@ -429,6 +429,7 @@ include_HEADERS += variables/include/grins/single_variable.h
 include_HEADERS += variables/include/grins/fe_variables_base.h
 include_HEADERS += variables/include/grins/single_fe_type_variable.h
 include_HEADERS += variables/include/grins/pressure_variable.h
+include_HEADERS += variables/include/grins/pressure_fe_variable.h
 include_HEADERS += variables/include/grins/primitive_flow_variables.h
 include_HEADERS += variables/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += variables/include/grins/primitive_temp_variables.h
