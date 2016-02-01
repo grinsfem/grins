@@ -36,26 +36,18 @@
 namespace GRINS
 {
   PrimitiveFlowFEVariables::PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name )
-    :  FEVariablesBase(),
-       PrimitiveFlowVariables(input),
-       _u_fe_idx(0)
-  {
-    _family.resize(1,libMesh::INVALID_FE);
-    _order.resize(1,libMesh::INVALID_ORDER);
-
-    _family[_u_fe_idx] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/V_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
-
-    _order[_u_fe_idx ] = libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/V_order", "SECOND") );
-
-  }
+    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND"),
+       PrimitiveFlowVariables(input)
+  {}
 
   void PrimitiveFlowFEVariables::init( libMesh::FEMSystem* system )
   {
-    _vars[_u_idx] = system->add_variable( _var_names[_u_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
-    _vars[_v_idx] = system->add_variable( _var_names[_v_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 
-    if ( system->get_mesh().mesh_dimension() == 3)
-      _vars[_w_idx] = system->add_variable( _var_names[_w_idx], _order[_u_fe_idx], _family[_u_fe_idx]);
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
+
+    this->default_fe_init(system, _var_names, _vars );
   }
 
 } // end namespace GRINS

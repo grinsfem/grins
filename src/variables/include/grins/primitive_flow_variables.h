@@ -54,6 +54,9 @@ namespace GRINS
 
   protected:
 
+    std::string subsection() const
+    { return "Velocity"; }
+
     unsigned int _u_idx, _v_idx, _w_idx;
 
   private:

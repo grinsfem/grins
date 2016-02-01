@@ -27,13 +27,13 @@
 #define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
 
 // GRINS
-#include "grins/fe_variables_base.h"
+#include "grins/single_fe_type_variable.h"
 #include "grins/primitive_flow_variables.h"
 
 namespace GRINS
 {
 
-  class PrimitiveFlowFEVariables : public FEVariablesBase,
+  class PrimitiveFlowFEVariables : public SingleFETypeVariable,
                                    public PrimitiveFlowVariables
   {
   public:
@@ -42,10 +42,6 @@ namespace GRINS
     ~PrimitiveFlowFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
-
-  protected:
-
-    unsigned int _u_fe_idx;
 
   private:
 
