@@ -46,7 +46,7 @@ namespace GRINS
 
     VariableIndex p0() const;
 
-  private:
+  protected:
 
     std::string old_var_name() const
     { return "thermo_presure"; }
