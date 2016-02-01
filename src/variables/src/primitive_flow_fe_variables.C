@@ -35,12 +35,12 @@
 
 namespace GRINS
 {
-  PrimitiveFlowFEVariables::PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name )
+  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name )
     :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND"),
-       PrimitiveFlowVariables(input)
+       VelocityVariables(input)
   {}
 
-  void PrimitiveFlowFEVariables::init( libMesh::FEMSystem* system )
+  void VelocityFEVariables::init( libMesh::FEMSystem* system )
   {
     libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 

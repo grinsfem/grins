@@ -82,7 +82,7 @@ namespace GRINS
     /*! \todo Do we really need to cache this? */
     unsigned int _dim;
 
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */

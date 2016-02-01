@@ -33,19 +33,19 @@
 namespace GRINS
 {
 
-  class PrimitiveFlowFEVariables : public SingleFETypeVariable,
-                                   public PrimitiveFlowVariables
+  class VelocityFEVariables : public SingleFETypeVariable,
+                                   public VelocityVariables
   {
   public:
 
-    PrimitiveFlowFEVariables( const GetPot& input, const std::string& physics_name );
-    ~PrimitiveFlowFEVariables(){};
+    VelocityFEVariables( const GetPot& input, const std::string& physics_name );
+    ~VelocityFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
   private:
 
-    PrimitiveFlowFEVariables();
+    VelocityFEVariables();
 
   };
 

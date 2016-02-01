@@ -62,7 +62,7 @@ namespace GRINS
                            const std::string& material,
                            const std::string& property );
 
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 

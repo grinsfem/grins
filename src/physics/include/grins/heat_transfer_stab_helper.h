@@ -107,7 +107,7 @@ namespace GRINS
 
     PrimitiveTempVariables _temp_vars;
 
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
     PressureVariable _press_var;
 
   }; // class HeatTransferStabilizationHelper

@@ -39,12 +39,12 @@ namespace libMesh
 namespace GRINS
 {
 
-  class PrimitiveFlowVariables : public VariablesBase
+  class VelocityVariables : public VariablesBase
   {
   public:
 
-    PrimitiveFlowVariables( const GetPot& input );
-    ~PrimitiveFlowVariables(){};
+    VelocityVariables( const GetPot& input );
+    ~VelocityVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );
 
@@ -61,24 +61,24 @@ namespace GRINS
 
   private:
 
-    PrimitiveFlowVariables();
+    VelocityVariables();
 
   };
 
   inline
-  VariableIndex PrimitiveFlowVariables::u() const
+  VariableIndex VelocityVariables::u() const
   {
     return this->_vars[_u_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::v() const
+  VariableIndex VelocityVariables::v() const
   {
     return this->_vars[_v_idx];
   }
 
   inline
-  VariableIndex PrimitiveFlowVariables::w() const
+  VariableIndex VelocityVariables::w() const
   {
     return this->_vars[_w_idx];
   }

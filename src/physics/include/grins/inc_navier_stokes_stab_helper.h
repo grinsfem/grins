@@ -172,7 +172,7 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
     PressureVariable _press_var;
 
   }; // class IncompressibleNavierStokesStabilizationHelper

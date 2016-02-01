@@ -95,7 +95,7 @@ namespace GRINS
   protected:
 
     // The flow variables
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     // These are defined for each physics
     TurbulenceFEVariables _turbulence_vars;

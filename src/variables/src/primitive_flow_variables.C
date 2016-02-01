@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
+  VelocityVariables::VelocityVariables( const GetPot& input )
     :  VariablesBase(),
        _u_idx(0),
        _v_idx(1),
@@ -48,7 +48,7 @@ namespace GRINS
     _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
   }
 
-  void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
+  void VelocityVariables::init( libMesh::FEMSystem* system )
   {
     libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 

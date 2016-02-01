@@ -75,7 +75,7 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 

@@ -64,7 +64,7 @@ namespace GRINS
 
   protected:
 
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
 
     PrimitiveTempVariables _temp_vars;
 

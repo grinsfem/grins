@@ -98,7 +98,7 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 

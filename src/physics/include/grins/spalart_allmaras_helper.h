@@ -55,7 +55,7 @@ namespace GRINS
     unsigned int _dim;
 
     // The flow variables
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
     PressureVariable _press_var;
 
   private:
