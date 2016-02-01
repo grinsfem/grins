@@ -29,6 +29,7 @@
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
 #include "grins/primitive_flow_variables.h"
+#include "grins/pressure_variable.h"
 #include "grins/turbulence_variables.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"
@@ -141,6 +142,7 @@ namespace GRINS
     libMesh::Real _C, _tau_factor;
 
     PrimitiveFlowVariables _flow_vars;
+    PressureVariable _press_var;
 
     TurbulenceVariables _turbulence_vars;
 

@@ -42,7 +42,8 @@ namespace GRINS
 {
 
   SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& input )
-    : _flow_vars(input)
+    : _flow_vars(input),
+      _press_var(input)
   {}
 
   void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )

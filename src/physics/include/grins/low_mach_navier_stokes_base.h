@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/grins_enums.h"
 #include "grins/primitive_flow_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
 
@@ -98,7 +99,7 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-
+    PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 
     ThermoPressureFEVariable _p0_var;

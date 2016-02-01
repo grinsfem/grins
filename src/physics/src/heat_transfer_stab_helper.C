@@ -41,7 +41,8 @@ namespace GRINS
       _C(1),
       _tau_factor(0.5),
       _temp_vars(input),
-      _flow_vars(input)
+      _flow_vars(input),
+      _press_var(input)
   {
     if (input.have_variable("Stabilization/tau_constant_T"))
       this->set_parameter

@@ -29,6 +29,7 @@
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
 #include "grins/primitive_flow_variables.h"
+#include "grins/pressure_variable.h"
 
 // libMesh foward declarations
 class GetPot;
@@ -172,6 +173,7 @@ namespace GRINS
     libMesh::Real _C, _tau_factor;
 
     PrimitiveFlowVariables _flow_vars;
+    PressureVariable _press_var;
 
   }; // class IncompressibleNavierStokesStabilizationHelper
 

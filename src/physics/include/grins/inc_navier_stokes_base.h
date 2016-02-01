@@ -29,6 +29,7 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/primitive_flow_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 
 namespace GRINS
 {
@@ -82,7 +83,7 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-
+    PressureFEVariable _press_var;
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;

@@ -47,6 +47,7 @@ namespace GRINS
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
     _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
+    _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
     _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
     _spalart_allmaras_helper(input),
     _sa_params(input),

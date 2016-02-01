@@ -31,6 +31,7 @@
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
 #include "grins/primitive_flow_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
@@ -82,7 +83,7 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-
+    PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 
     //! \f$ \rho = \f$ density

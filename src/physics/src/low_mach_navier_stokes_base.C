@@ -48,6 +48,7 @@ namespace GRINS
                                                              const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, core_physics_name),
+      _press_var(input,core_physics_name),
       _temp_vars(input, core_physics_name),
       _p0_var(input, core_physics_name),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),

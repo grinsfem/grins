@@ -30,6 +30,7 @@
 #include "grins/assembly_context.h"
 #include "grins/primitive_temp_variables.h"
 #include "grins/primitive_flow_variables.h"
+#include "grins/pressure_variable.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -107,6 +108,7 @@ namespace GRINS
     PrimitiveTempVariables _temp_vars;
 
     PrimitiveFlowVariables _flow_vars;
+    PressureVariable _press_var;
 
   }; // class HeatTransferStabilizationHelper
 

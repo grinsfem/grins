@@ -49,6 +49,7 @@ namespace GRINS
     : Physics(physics_name, input),
       _gas_mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
       _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes()),
       _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _p0_var(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _species_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
