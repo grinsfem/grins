@@ -26,7 +26,7 @@
 #define GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
 
 // GRINS
-#include "grins/fe_variables_base.h"
+#include "grins/single_fe_type_variable.h"
 #include "grins/primitive_temp_variables.h"
 
 // libMesh forward declarations
@@ -38,12 +38,16 @@ namespace libMesh
 
 namespace GRINS
 {
-  class PrimitiveTempFEVariables : public FEVariablesBase,
+  class PrimitiveTempFEVariables : public SingleFETypeVariable,
                                    public PrimitiveTempVariables
   {
   public:
 
-    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name );
+    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
+      :  SingleFETypeVariable(input,physics_name,"T_",this->subsection(),"LAGRANGE","SECOND"),
+         PrimitiveTempVariables(input)
+    {}
+
     ~PrimitiveTempFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system )
