@@ -48,7 +48,7 @@ namespace GRINS
 
     VariableIndex nu() const;
 
-  private:
+  protected:
 
     std::string old_var_name() const
     { return "turbulent_viscosity"; }

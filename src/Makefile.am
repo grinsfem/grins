@@ -201,7 +201,6 @@ libgrins_la_SOURCES += variables/src/displacement_variables.C
 libgrins_la_SOURCES += variables/src/displacement_fe_variables.C
 libgrins_la_SOURCES += variables/src/species_mass_fracs_variables.C
 libgrins_la_SOURCES += variables/src/species_mass_fracs_fe_variables.C
-libgrins_la_SOURCES += variables/src/turbulence_fe_variables.C
 
 
 # src/utilities files
