@@ -51,11 +51,10 @@ namespace GRINS
     VariableIndex u() const;
     VariableIndex v() const;
     VariableIndex w() const;
-    VariableIndex p() const;
 
   protected:
 
-    unsigned int _u_idx, _v_idx, _w_idx, _p_idx;
+    unsigned int _u_idx, _v_idx, _w_idx;
 
   private:
 
@@ -79,12 +78,6 @@ namespace GRINS
   VariableIndex PrimitiveFlowVariables::w() const
   {
     return this->_vars[_w_idx];
-  }
-
-  inline
-  VariableIndex PrimitiveFlowVariables::p() const
-  {
-    return this->_vars[_p_idx];
   }
 
 } // end namespace GRINS

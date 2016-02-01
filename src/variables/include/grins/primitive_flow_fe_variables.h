@@ -45,7 +45,7 @@ namespace GRINS
 
   protected:
 
-    unsigned int _u_fe_idx, _p_fe_idx;
+    unsigned int _u_fe_idx;
 
   private:
 

@@ -36,18 +36,16 @@ namespace GRINS
 {
   PrimitiveFlowVariables::PrimitiveFlowVariables( const GetPot& input )
     :  VariablesBase(),
-       _u_idx(1),
-       _v_idx(2),
-       _w_idx(3),
-       _p_idx(0)
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-    _vars.resize(4,invalid_var_index);
-    _var_names.resize(4);
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
 
     _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
     _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
     _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
-    _var_names[_p_idx] = input("Physics/VariableNames/pressure", p_var_name_default );
   }
 
   void PrimitiveFlowVariables::init( libMesh::FEMSystem* system )
