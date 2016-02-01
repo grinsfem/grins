@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
 
 namespace GRINS
 {

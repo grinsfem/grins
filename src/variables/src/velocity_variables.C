@@ -22,33 +22,40 @@
 //
 //-----------------------------------------------------------------------el-
 
+// This class
+#include "grins/velocity_variables.h"
 
-#ifndef GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
-#define GRINS_PRIMITIVE_FLOW_FE_VARIABLES_H
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-
-  class VelocityFEVariables : public SingleFETypeVariable,
-                                   public VelocityVariables
+  VelocityVariables::VelocityVariables( const GetPot& input )
+    :  VariablesBase(),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-  public:
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
 
-    VelocityFEVariables( const GetPot& input, const std::string& physics_name );
-    ~VelocityFEVariables(){};
+    _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
+    _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
+    _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+  }
 
-    virtual void init( libMesh::FEMSystem* system );
+  void VelocityVariables::init( libMesh::FEMSystem* system )
+  {
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 
-  private:
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
 
-    VelocityFEVariables();
-
-  };
+    this->default_var_init(system);
+  }
 
 } // end namespace GRINS
-
-#endif //GRINS_PRIMITIVE_FLOW_VARIABLES_H

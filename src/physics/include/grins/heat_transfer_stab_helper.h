@@ -29,7 +29,7 @@
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
 #include "grins/primitive_temp_variables.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
 #include "grins/pressure_variable.h"
 
 // libMesh forward declarations

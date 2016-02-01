@@ -28,7 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
 #include "grins/pressure_variable.h"
 
 //Utils

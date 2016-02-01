@@ -28,7 +28,7 @@
 //GRINS
 #include "grins/bc_handling_base.h"
 #include "grins/parabolic_profile.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
 #include "grins/primitive_temp_variables.h"
 
 namespace GRINS

@@ -22,32 +22,67 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/primitive_flow_fe_variables.h"
+
+#ifndef GRINS_VELOCITY_VARIABLES_H
+#define GRINS_VELOCITY_VARIABLES_H
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 // GRINS
-#include "grins/variable_name_defaults.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name )
-    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND"),
-       VelocityVariables(input)
-  {}
 
-  void VelocityFEVariables::init( libMesh::FEMSystem* system )
+  class VelocityVariables : public VariablesBase
   {
-    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
+  public:
 
-    if ( system->get_mesh().mesh_dimension() < 3)
-      _var_names.pop_back();
+    VelocityVariables( const GetPot& input );
+    ~VelocityVariables(){};
 
-    this->default_fe_init(system, _var_names, _vars );
+    virtual void init( libMesh::FEMSystem* system );
+
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
+
+  protected:
+
+    std::string subsection() const
+    { return "Velocity"; }
+
+    unsigned int _u_idx, _v_idx, _w_idx;
+
+  private:
+
+    VelocityVariables();
+
+  };
+
+  inline
+  VariableIndex VelocityVariables::u() const
+  {
+    return this->_vars[_u_idx];
+  }
+
+  inline
+  VariableIndex VelocityVariables::v() const
+  {
+    return this->_vars[_v_idx];
+  }
+
+  inline
+  VariableIndex VelocityVariables::w() const
+  {
+    return this->_vars[_w_idx];
   }
 
 } // end namespace GRINS
+
+#endif //GRINS_VELOCITY_VARIABLES_H
