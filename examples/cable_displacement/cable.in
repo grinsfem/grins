@@ -23,9 +23,6 @@ enabled_physics = 'ElasticCable'
 
 material = 'Cable'
 
-FE_family = 'LAGRANGE'
-order = 'FIRST'
-
 # Boundary ids:
 # j = left -> 0
 # j = right-> 1
@@ -34,6 +31,13 @@ bc_types = 'pinned constant_displacement'
 
 displacement_1 = '0.1 0.0 0.0'
 
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'u v w'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
 [SolverOptions]
@@ -60,7 +64,7 @@ n_increments = '50'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  '50' 
+max_nonlinear_iterations =  '50'
 max_linear_iterations = '2500'
 
 verify_analytic_jacobians = '0.0'
@@ -73,9 +77,9 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = 'cable' 
+vis_output_file_prefix = 'cable'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 

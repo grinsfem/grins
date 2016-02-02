@@ -16,7 +16,7 @@
       [../ReferenceTemperature]
          value = '300.0'
       [../ThermalExpansionCoeff]
-         value = '0.003333333333' 
+         value = '0.003333333333'
 []
 
 # Options related to all Physics
@@ -28,12 +28,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 [./IncompressibleNavierStokes]
 
 material = 'Gas'
-
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-
-V_order = 'FIRST'
-P_order = 'FIRST'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -56,9 +50,6 @@ ic_values = '(abs(x)<=2)*0.001'
 [../HeatTransfer]
 
 material = 'Gas'
-
-T_FE_family = 'LAGRANGE'
-T_order = 'FIRST'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -84,6 +75,23 @@ material = 'Gas'
 
 # Gravity vector
 g = '0.0 -9.81' #[m/s^2]
+
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
 
 [Stabilization]
 
@@ -119,7 +127,7 @@ tau_factor_T = '3.0'
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = 'true' 
+transient = 'true'
 theta = 1.0
 n_timesteps = '250'
 deltat = '0.25'
@@ -141,9 +149,9 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = true
 
-vis_output_file_prefix = 'convection_cell' 
+vis_output_file_prefix = 'convection_cell'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII'
 

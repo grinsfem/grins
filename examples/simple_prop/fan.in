@@ -18,12 +18,6 @@ enabled_physics = 'IncompressibleNavierStokes AveragedTurbine'
 
 material = 'Fluid'
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-
-V_order = 'SECOND'
-P_order = 'FIRST'
-
 # Boundary ids:
 # imin,imax = 4, 2
 # jmin,jmax = 1, 3
@@ -56,6 +50,19 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -75,14 +82,14 @@ angle_of_attack = '{pi/4}'
 
 # Options for time solvers
 [unsteady-solver]
-transient = 'true' 
+transient = 'true'
 theta = '1.0'
 n_timesteps = '200'
 deltat = '0.01'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = '7' 
+max_nonlinear_iterations = '7'
 max_linear_iterations = '500'
 
 relative_residual_tolerance = '1.0e-6'
@@ -98,7 +105,7 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = 'output/fan' 
+vis_output_file_prefix = 'output/fan'
 
 output_residual = 'false'
 
