@@ -103,8 +103,8 @@ namespace GRINS
 
     if( this->_enable_thermo_press_calc )
       {
-	libMesh::Real p0 = context.fixed_interior_value(this->_p0_var.p0(), qp);
-	libMesh::Real p0_dot = context.interior_value(this->_p0_var.p0(), qp);
+	libMesh::Real p0 = context.fixed_interior_value(this->_p0_var->p0(), qp);
+	libMesh::Real p0_dot = context.interior_value(this->_p0_var->p0(), qp);
 
 	RC_t += p0_dot/p0;
       }
@@ -254,7 +254,7 @@ namespace GRINS
 
     if( this->_enable_thermo_press_calc )
       {
-	RE_t -= context.interior_value(this->_p0_var.p0(), qp);
+	RE_t -= context.interior_value(this->_p0_var->p0(), qp);
       }
   
     return RE_t;

@@ -46,7 +46,7 @@ namespace GRINS
       libmesh_assert_equal_to( _order[0], libMesh::FIRST );
     }
 
-    ~ThermoPressureFEVariable(){};
+    virtual ~ThermoPressureFEVariable(){};
 
     virtual void init( libMesh::FEMSystem* system )
     { this->default_fe_init(system, _var_names, _vars ); }
