@@ -25,6 +25,7 @@ libgrins_la_SOURCES =
 
 # src/bc_handling files
 libgrins_la_SOURCES += bc_handling/src/bc_handling_base.C
+libgrins_la_SOURCES += bc_handling/src/generic_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/heat_transfer_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/axisym_heat_transfer_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/inc_navier_stokes_bc_handling.C
@@ -248,6 +249,7 @@ include_HEADERS =
 # src/bc_handling headers
 include_HEADERS += bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
 include_HEADERS += bc_handling/include/grins/bc_handling_base.h
+include_HEADERS += bc_handling/include/grins/generic_bc_handling.h
 include_HEADERS += bc_handling/include/grins/heat_transfer_bc_handling.h
 include_HEADERS += bc_handling/include/grins/inc_navier_stokes_bc_handling.h
 include_HEADERS += bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
