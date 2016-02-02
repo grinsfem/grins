@@ -43,9 +43,19 @@ namespace GRINS
     _vars.resize(3,invalid_var_index);
     _var_names.resize(3);
 
-    _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
-    _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
-    _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+    std::vector<std::string> default_names(3);
+    default_names[_u_idx] = "u";
+    default_names[_v_idx] = "v";
+    default_names[_w_idx] = "w";
+
+    if( this->check_dep_name_input(input,this->subsection()) )
+      {
+        _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
+        _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
+        _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+      }
+    else
+      this->parse_names_from_input(input,this->subsection(),_var_names,default_names);
   }
 
   void VelocityVariables::init( libMesh::FEMSystem* system )
