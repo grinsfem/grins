@@ -24,10 +24,10 @@
 
 enabled_physics = 'IncompressibleNavierStokes:TestDelimiter
                    IncompressibleNavierStokesAdjointStabilization:TestDelimiter
-                   HeatTransfer:TestDelimiter
-                   HeatTransferAdjointStabilization:TestDelimiter
-                   BoussinesqBuoyancy:TestDelimiter
-                   BoussinesqBuoyancyAdjointStabilization:TestDelimiter'
+                   HeatTransfer:MySuffix
+                   HeatTransferAdjointStabilization:MySuffix
+                   BoussinesqBuoyancy:YourSuffix
+                   BoussinesqBuoyancyAdjointStabilization:YourSuffix'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes:TestDelimiter]
@@ -52,7 +52,7 @@ ic_types = 'parsed'
 ic_variables = 'v'
 ic_values = '(abs(x)<=2)*0.001'
 
-[../HeatTransfer:TestDelimiter]
+[../HeatTransfer:MySuffix]
 
 material = 'TestMaterial'
 
@@ -74,7 +74,7 @@ ic_types = 'constant'
 ic_variables = 'T'
 ic_values = '300.0'
 
-[../BoussinesqBuoyancy:TestDelimiter]
+[../BoussinesqBuoyancy:YourSuffix]
 
 material = 'TestMaterial'
 
