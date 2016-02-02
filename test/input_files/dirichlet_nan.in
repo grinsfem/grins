@@ -11,11 +11,11 @@
 
 # Options for tiem solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 1.0e-6
@@ -75,10 +75,6 @@ enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy He
 
 material = 'TestMaterial'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 bc_ids = '2 3 1 0'
 bc_types = 'no_slip no_slip no_slip no_slip'
 
@@ -111,12 +107,19 @@ g = '0 -9.8'
 
 value = '0.0'
 
-[../VariableNames]
+[]
 
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
 []

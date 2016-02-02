@@ -37,6 +37,13 @@
 
 []
 
+[Variables]
+   [./Displacement]
+      names = 'u v w'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
 ##### Options related to all Physics #####
 [Physics]
 enabled_physics = 'ElasticMembrane
@@ -49,9 +56,6 @@ enabled_physics = 'ElasticMembrane
 material = 'Membrane'
 
 enabled_subdomains = '1'
-
-FE_family = 'LAGRANGE'
-order = 'FIRST'
 
 bc_ids   = '1 2 3'
 bc_types = 'pinned yz_symmetry xz_symmetry'
@@ -69,16 +73,13 @@ material = 'Cable'
 
 enabled_subdomains = '2'
 
-FE_family = 'LAGRANGE'
-order = 'FIRST'
-
 []
 
 ##### Linear and nonlinear solver options #####
 [linear-nonlinear-solver]
 relative_residual_tolerance = '1.0e-10'
 
-max_nonlinear_iterations =  '50' 
+max_nonlinear_iterations =  '50'
 max_linear_iterations = '2500'
 
 verify_analytic_jacobians = '0.0'
@@ -93,9 +94,9 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'sheet' 
+vis_output_file_prefix = 'sheet'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 

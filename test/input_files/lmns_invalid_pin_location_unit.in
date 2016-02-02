@@ -27,14 +27,6 @@ enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-T_FE_family = 'LAGRANGE'
-
-V_order = 'FIRST'
-T_order = 'FIRST'
-P_order = 'FIRST'
-
 # Gravity vector
 g = '0.0 -9.81' #[m/s^2]
 
@@ -71,16 +63,22 @@ pin_pressure = 'true'
 pin_location = '0.0 -0.01'
 pin_value = '0.0'
 
-[../VariableNames]
-
-Temperature = 'T'
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
 []
 
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
 
 [Stabilization]
 
@@ -103,7 +101,7 @@ tau_factor = '0.05'
 
 # Options for tiem solvers
 
- 
+
 
 # Options for print info to the screen
 [screen-options]

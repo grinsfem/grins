@@ -34,12 +34,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 
 material = 'TestMaterial'
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-
-V_order = 'FIRST'
-P_order = 'FIRST'
-
 # Boundary ids:
 # j = bottom -> 0
 # j = top    -> 2
@@ -61,9 +55,6 @@ ic_values = '(abs(x)<=2)*0.001'
 [../HeatTransfer]
 
 material = 'TestMaterial'
-
-T_FE_family = 'LAGRANGE'
-T_order = 'FIRST'
 
 # Boundary ids:
 # j = bottom -> 0
@@ -98,16 +89,22 @@ tau_factor_vel = '1.0'
 tau_constant_T = '1.0'
 tau_factor_T = '3.0'
 
-
 []
 
-[restart-options]
-
-#restart_file = 'convection_cell.xdr'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family ='LAGRANGE'
+      order = 'FIRST'
 []
-
-
 
 # Mesh related options
 [Mesh]
@@ -145,11 +142,11 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis = 'false' 
+output_vis = 'false'
 
-vis_output_file_prefix = 'convection_cell' 
+vis_output_file_prefix = 'convection_cell'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII'
 

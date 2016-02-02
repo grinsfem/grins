@@ -19,9 +19,6 @@
    [./HeatConduction]
       material = 'TestMaterial'
 
-      T_FE_family = 'LAGRANGE'
-      T_order = 'FIRST'
-
       bc_ids = '0 1 2 3'
       bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
       bc_variables = 'T T T T'
@@ -42,6 +39,13 @@
          FE_orders = 'FIRST'
 []
 
+[Variables]
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
 [QoI]
 enabled_qois = 'weighted_flux'
 
@@ -49,7 +53,7 @@ enabled_qois = 'weighted_flux'
 variables = 'T'
 bc_ids = '3'        # Note that this spills over to 0+2 in the corners!
 weights = 'y*(1-y)' # This 'fixes' the spill
-# Analytic value == '2/15*(a-1+exp(-a))' 
+# Analytic value == '2/15*(a-1+exp(-a))'
 
 # Or, with u = sin(pi*x) * sin(pi*y)
 # du/dx = pi * cos(pi*x) * sin(pi*y)
@@ -76,7 +80,7 @@ weights = 'y*(1-y)' # This 'fixes' the spill
 
 # Options for tiem solvers
 
-   
+
 []
 
 #Linear and nonlinear solver options

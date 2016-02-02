@@ -22,13 +22,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 
 material = 'TestMaterial'
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-
-V_order = 'SECOND'
-P_order = 'FIRST'
-
-
 # Boundary ids:
 # 1 - Inlet
 # 2 - no slip walls
@@ -43,12 +36,17 @@ parabolic_profile_fix_1 = 'v'
 
 pin_pressure = 'false'
 
-[../VariableNames]
+[]
 
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
 [Stabilization]
@@ -58,27 +56,15 @@ tau_factor = '0.05'
 
 []
 
-[restart-options]
-
-#restart_file = 'restart.xdr'
-
-[]
-
-
-
 # Mesh related options
 [Mesh]
    [./Read]
       filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
 []
 
-# Options for tiem solvers
-
- 
-
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  25 
+max_nonlinear_iterations =  25
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -91,9 +77,9 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'step' 
+vis_output_file_prefix = 'step'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 
