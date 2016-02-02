@@ -135,32 +135,7 @@ namespace GRINS
 
         // If we have any solution-dependent Dirichlet boundaries, we
         // need to update them with the current solution.
-        //
-        // FIXME: This needs to be much more efficient and intuitive.
-        bool have_nonlinear_dirichlet_bc = false;
-        {
-        const libMesh::DirichletBoundaries &db =
-          *context.system->get_dof_map().get_dirichlet_boundaries();
-        for (libMesh::DirichletBoundaries::const_iterator
-               it = db.begin(); it != db.end(); ++it)
-          {
-            const libMesh::DirichletBoundary* bdy = *it;
-            if (bdy->f_fem.get())
-              {
-                have_nonlinear_dirichlet_bc = true;
-                break;
-              }
-          }
-        }
-
-        // Nonlinear Dirichlet constraints change as the solution does
-        if (have_nonlinear_dirichlet_bc)
-          {
-            context.system->reinit_constraints();
-            context.system->get_dof_map().enforce_constraints_exactly(*context.system);
-            context.system->get_dof_map().enforce_constraints_exactly(*context.system,
-                                                                      dynamic_cast<libMesh::UnsteadySolver*>(context.system->time_solver.get())->old_local_nonlinear_solution.get());
-          }
+        this->update_dirichlet_bcs(context);
 
 	// GRVY timers contained in here (if enabled)
 	context.system->solve();
@@ -182,24 +157,7 @@ namespace GRINS
           libMesh::perflog.print_log();
 
         if ( context.print_scalars )
-          for (unsigned int v=0; v != context.system->n_vars(); ++v)
-            if (context.system->variable(v).type().family ==
-                libMesh::SCALAR)
-              {
-                std::cout << context.system->variable_name(v) <<
-                             " = {";
-                std::vector<libMesh::dof_id_type> scalar_indices;
-                context.system->get_dof_map().SCALAR_dof_indices
-                  (scalar_indices, v);
-                if (scalar_indices.size())
-                  std::cout <<
-                    context.system->current_solution(scalar_indices[0]);
-                for (unsigned int i=1; i < scalar_indices.size();
-                     ++i)
-                  std::cout << ", " <<
-                    context.system->current_solution(scalar_indices[i]);
-                std::cout << '}' << std::endl;
-              }
+          this->print_scalar_vars(context);
 
 	// Advance to the next timestep
 	context.system->time_solver->advance_timestep();
@@ -216,4 +174,34 @@ namespace GRINS
     return;
   }
 
+  void UnsteadySolver::update_dirichlet_bcs( SolverContext& context )
+  {
+    // FIXME: This needs to be much more efficient and intuitive.
+    // FIXME: This is only checking for nonlinear bc! This is not checking for time-dependence!
+    bool have_nonlinear_dirichlet_bc = false;
+    {
+      const libMesh::DirichletBoundaries &db =
+        *context.system->get_dof_map().get_dirichlet_boundaries();
+      for (libMesh::DirichletBoundaries::const_iterator
+             it = db.begin(); it != db.end(); ++it)
+        {
+          const libMesh::DirichletBoundary* bdy = *it;
+          if (bdy->f_fem.get())
+            {
+              have_nonlinear_dirichlet_bc = true;
+              break;
+            }
+        }
+    }
+
+    // Nonlinear Dirichlet constraints change as the solution does
+    // FIXME: We should be updating with time-dependent BCs as well!
+    if (have_nonlinear_dirichlet_bc)
+      {
+        context.system->reinit_constraints();
+        context.system->get_dof_map().enforce_constraints_exactly(*context.system);
+        context.system->get_dof_map().enforce_constraints_exactly(*context.system,
+                                                                  dynamic_cast<libMesh::UnsteadySolver*>(context.system->time_solver.get())->old_local_nonlinear_solution.get());
+      }
+  }
 } // namespace GRINS

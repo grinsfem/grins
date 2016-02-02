@@ -25,10 +25,12 @@
 // This class
 #include "grins/steady_mesh_adaptive_solver.h"
 
+// C++
+#include <iomanip>
+
 // GRINS
 #include "grins/solver_context.h"
 #include "grins/multiphysics_sys.h"
-#include "grins/composite_qoi.h"
 #include "grins/common.h"
 
 // libMesh
@@ -40,7 +42,8 @@ namespace GRINS
 {
 
   SteadyMeshAdaptiveSolver::SteadyMeshAdaptiveSolver( const GetPot& input )
-    : MeshAdaptiveSolverBase( input )
+    : Solver(input),
+      MeshAdaptiveSolverBase( input )
   {
     return;
   }
@@ -117,17 +120,7 @@ namespace GRINS
 
         // Now we construct the data structures for the mesh refinement process
         libMesh::ErrorVector error;
-
-        std::cout << "==========================================================" << std::endl
-                  << "Estimating error" << std::endl
-                  << "==========================================================" << std::endl;
-        context.error_estimator->estimate_error( *context.system, error );
-
-        // Plot error vector
-        if( this->_plot_cell_errors )
-          {
-            error.plot_error( this->_error_plot_prefix+".exo", mesh );
-          }
+        this->estimate_error_for_amr( context, error );
 
 	// Get the global error estimate if you can and are asked to
 	if( this->_compute_qoi_error_estimate )
@@ -138,9 +131,6 @@ namespace GRINS
 	  }
 
         // Check for convergence of error
-        std::cout << "==========================================================" << std::endl
-                  << "Checking convergence" << std::endl
-                  << "==========================================================" << std::endl;
         bool converged = this->check_for_convergence( context, error );
 
         if( converged )
@@ -156,33 +146,12 @@ namespace GRINS
             // Only bother refining if we're on the last step.
             if( r_step < this->_max_refinement_steps -1 )
               {
-                std::cout << "==========================================================" << std::endl
-                          << "Performing Mesh Refinement" << std::endl
-                          << "==========================================================" << std::endl;
-
-                this->flag_elements_for_refinement( error );
-                _mesh_refinement->refine_and_coarsen_elements();
-
-                // Dont forget to reinit the system after each adaptive refinement!
-                context.equation_system->reinit();
-
-                // This output cannot be toggled in the input file.
-                std::cout << "==========================================================" << std::endl
-                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
-                          << " active elements" << std::endl
-                          << "            " << std::setw(16) << context.system->n_active_dofs()
-                          << " active dofs" << std::endl
-                          << "==========================================================" << std::endl;
+                this->perform_amr(context, error);
 
                 // It's helpful to print the qoi along the way, but only do it if the user
                 // asks for it
                 if( context.print_qoi )
-                  {
-                    context.system->assemble_qoi();
-                    const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
-                    my_qoi->output_qoi( std::cout );
-                    std::cout << std::endl;
-                  }
+                  this->print_qoi(context,std::cout);
               }
           }
 

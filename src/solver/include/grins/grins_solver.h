@@ -85,6 +85,10 @@ namespace GRINS
         in multiple different steady solves. */
     void steady_adjoint_solve( SolverContext& context );
 
+    void print_scalar_vars( SolverContext& context );
+
+    void print_qoi( SolverContext& context, std::ostream& output );
+
   protected:
 
     // Linear/Nonlinear solver options

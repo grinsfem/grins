@@ -25,6 +25,7 @@
 
 // C++
 #include <iostream>
+#include <iomanip>
 
 // This class
 #include "grins/grins_solver.h"
@@ -32,12 +33,14 @@
 // GRINS
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/diff_solver.h"
 #include "libmesh/newton_solver.h"
+#include "libmesh/dof_map.h"
 
 namespace GRINS
 {
@@ -125,6 +128,37 @@ namespace GRINS
 
     context.system->adjoint_solve();
     context.system->set_adjoint_already_solved(true);
+  }
+
+  void Solver::print_scalar_vars( SolverContext& context )
+  {
+    for (unsigned int v=0; v != context.system->n_vars(); ++v)
+      if (context.system->variable(v).type().family ==
+          libMesh::SCALAR)
+        {
+          std::cout << context.system->variable_name(v) <<
+            " = {";
+          std::vector<libMesh::dof_id_type> scalar_indices;
+          context.system->get_dof_map().SCALAR_dof_indices
+            (scalar_indices, v);
+          if (scalar_indices.size())
+            std::cout <<
+              context.system->current_solution(scalar_indices[0]);
+          for (unsigned int i=1; i < scalar_indices.size();
+               ++i)
+            std::cout << ", " <<
+              context.system->current_solution(scalar_indices[i]);
+          std::cout << '}' << std::endl;
+        }
+  }
+
+  void Solver::print_qoi( SolverContext& context, std::ostream& output )
+  {
+    context.system->assemble_qoi();
+    const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(context.system->get_qoi());
+
+    my_qoi->output_qoi( output );
+    output << std::endl;
   }
 
 } // namespace GRINS

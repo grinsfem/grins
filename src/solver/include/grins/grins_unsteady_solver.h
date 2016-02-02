@@ -51,6 +51,12 @@ namespace GRINS
     template <typename T>
     void set_theta( libMesh::UnsteadySolver* time_solver );
 
+    //! Updates Dirichlet boundary conditions
+    /*! If the Dirichlet boundary condition is nonlinear, we need
+        to update the constraints with the new solution.
+        \todo We're not updating time-dependent BCs right now! */
+    void update_dirichlet_bcs( SolverContext& context );
+
     std::string _time_solver_name;
 
     unsigned int _n_timesteps;

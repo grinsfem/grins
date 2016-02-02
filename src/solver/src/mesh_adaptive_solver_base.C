@@ -24,6 +24,7 @@
 
 // C++
 #include <numeric>
+#include <iomanip>
 
 // This class
 #include "grins/mesh_adaptive_solver_base.h"
@@ -37,8 +38,7 @@
 namespace GRINS
 {
   MeshAdaptiveSolverBase::MeshAdaptiveSolverBase( const GetPot& input )
-    : Solver( input ),
-      _max_refinement_steps( input("MeshAdaptivity/max_refinement_steps", 5) ),
+    : _max_refinement_steps( input("MeshAdaptivity/max_refinement_steps", 5) ),
       _coarsen_by_parents(true),
       _absolute_global_tolerance( input("MeshAdaptivity/absolute_global_tolerance", 0) ),
       _nelem_target( input("MeshAdaptivity/nelem_target", 0) ),
@@ -149,6 +149,10 @@ namespace GRINS
   bool MeshAdaptiveSolverBase::check_for_convergence( SolverContext& context,
                                                       const libMesh::ErrorVector& error ) const
   {
+    std::cout << "==========================================================" << std::endl
+              << "Checking convergence" << std::endl
+              << "==========================================================" << std::endl;
+
     bool converged = false;
 
     libMesh::Real error_estimate = 0.0;
@@ -225,6 +229,45 @@ namespace GRINS
       } // switch(_refinement_type)
 
     return;
+  }
+
+  void MeshAdaptiveSolverBase::estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error )
+  {
+    std::cout << "==========================================================" << std::endl
+              << "Estimating error" << std::endl
+              << "==========================================================" << std::endl;
+    context.error_estimator->estimate_error( *context.system, error );
+
+    libMesh::MeshBase& mesh = context.equation_system->get_mesh();
+
+    // Plot error vector
+    if( this->_plot_cell_errors )
+      {
+        error.plot_error( this->_error_plot_prefix+".exo", mesh );
+      }
+  }
+
+  void MeshAdaptiveSolverBase::perform_amr( SolverContext& context, const libMesh::ErrorVector& error )
+  {
+    libMesh::MeshBase& mesh = context.equation_system->get_mesh();
+
+    std::cout << "==========================================================" << std::endl
+              << "Performing Mesh Refinement" << std::endl
+              << "==========================================================" << std::endl;
+
+    this->flag_elements_for_refinement( error );
+    _mesh_refinement->refine_and_coarsen_elements();
+
+    // Dont forget to reinit the system after each adaptive refinement!
+    context.equation_system->reinit();
+
+    // This output cannot be toggled in the input file.
+    std::cout << "==========================================================" << std::endl
+              << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
+              << " active elements" << std::endl
+              << "            " << std::setw(16) << context.system->n_active_dofs()
+              << " active dofs" << std::endl
+              << "==========================================================" << std::endl;
   }
 
 } // end namespace GRINS

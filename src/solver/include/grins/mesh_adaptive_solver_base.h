@@ -28,9 +28,6 @@
 // C++
 #include <string>
 
-// GRINS
-#include "grins/grins_solver.h"
-
 //libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/mesh_refinement.h"
@@ -45,7 +42,9 @@ namespace libMesh
 
 namespace GRINS
 {
-  class MeshAdaptiveSolverBase : public Solver
+  class SolverContext;
+
+  class MeshAdaptiveSolverBase
   {
   public:
 
@@ -91,6 +90,10 @@ namespace GRINS
                                 const libMesh::ErrorVector& error ) const;
 
     void flag_elements_for_refinement( const libMesh::ErrorVector& error );
+
+    void estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error );
+
+    void perform_amr( SolverContext& context, const libMesh::ErrorVector& error );
 
   private:
 
