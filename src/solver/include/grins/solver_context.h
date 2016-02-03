@@ -73,6 +73,8 @@ namespace GRINS
 
     SharedPtr<libMesh::ErrorEstimator> error_estimator;
 
+    bool have_restart;
+
   };
 
 } // end namespace GRINS
