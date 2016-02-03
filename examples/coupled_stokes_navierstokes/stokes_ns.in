@@ -5,7 +5,7 @@
         value = '1.0'
      [../Viscosity]
         model = 'constant'
-        value = '1.0e-3' 
+        value = '1.0e-3'
 []
 
 # Mesh related options
@@ -19,11 +19,11 @@
 
 # Options for time solvers
 [unsteady-solver]
-transient = false 
+transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = '1.0e-12'
@@ -32,13 +32,13 @@ verify_analytic_jacobians = '1.e-6'
 
 # Visualization options
 [vis-options]
-output_vis = 'true' 
+output_vis = 'true'
 vis_output_file_prefix = 'stokes_ns'
 output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
 solver_verbose = 'true'
@@ -58,10 +58,6 @@ material = 'Gas'
 
 enabled_subdomains = '2'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 bc_ids = '7 7 4 6 8'
 bc_types = 'parsed_dirichlet constant_dirichlet no_slip no_slip no_slip'
 
@@ -74,17 +70,18 @@ bc_values = '4.0*y*(1.0-y) 0.0'
 material = 'Gas'
 enabled_subdomains = '1'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 bc_ids = '1 2 3'
 bc_types = 'no_slip no_slip no_slip'
 
-[../VariableNames]
+[]
 
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

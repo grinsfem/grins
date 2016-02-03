@@ -22,22 +22,67 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/primitive_temp_variables.h"
 
-// libMesh
-#include "libmesh/getpot.h"
+#ifndef GRINS_VELOCITY_VARIABLES_H
+#define GRINS_VELOCITY_VARIABLES_H
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 // GRINS
-#include "grins/variable_name_defaults.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  PrimitiveTempVariables::PrimitiveTempVariables( const GetPot& input )
-    : VariablesBase()
+
+  class VelocityVariables : public VariablesBase
   {
-    _vars.resize(1,invalid_var_index);
-    _var_names.resize(1,input("Physics/VariableNames/Temperature", T_var_name_default ) );
+  public:
+
+    VelocityVariables( const GetPot& input );
+    ~VelocityVariables(){};
+
+    virtual void init( libMesh::FEMSystem* system );
+
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
+
+  protected:
+
+    std::string subsection() const
+    { return "Velocity"; }
+
+    unsigned int _u_idx, _v_idx, _w_idx;
+
+  private:
+
+    VelocityVariables();
+
+  };
+
+  inline
+  VariableIndex VelocityVariables::u() const
+  {
+    return this->_vars[_u_idx];
+  }
+
+  inline
+  VariableIndex VelocityVariables::v() const
+  {
+    return this->_vars[_v_idx];
+  }
+
+  inline
+  VariableIndex VelocityVariables::w() const
+  {
+    return this->_vars[_w_idx];
   }
 
 } // end namespace GRINS
+
+#endif //GRINS_VELOCITY_VARIABLES_H

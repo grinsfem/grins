@@ -26,23 +26,19 @@
 #include "grins/displacement_fe_variables.h"
 
 // GRINS
-#include "grins/variable_name_defaults.h"
+#include "grins/common.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
 #include "libmesh/fem_system.h"
 
 namespace GRINS
 {
 
   DisplacementFEVariables::DisplacementFEVariables( const GetPot& input, const std::string& physics_name )
-    :  FEVariablesBase(),
+    :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"LAGRANGE","FIRST"),
        DisplacementVariables(input)
-  {
-    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) );
-    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/order", "FIRST") ) );
-  }
+  {}
 
   void DisplacementFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
   {

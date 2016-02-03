@@ -26,6 +26,7 @@
 #include "grins/fe_variables_base.h"
 
 // libMesh
+#include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 
 namespace GRINS
@@ -42,4 +43,5 @@ namespace GRINS
         vars[v] = system->add_variable( var_names[v], this->_order[0], _family[0]);
       }
   }
+
 } // end namespace GRINS

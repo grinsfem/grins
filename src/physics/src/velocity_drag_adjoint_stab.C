@@ -52,7 +52,7 @@ namespace GRINS
   template<class Mu>
   void VelocityDragAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(this->_flow_vars.p())->get_dphi();
+    context.get_element_fe(this->_press_var.p())->get_dphi();
 
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
@@ -243,7 +243,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -257,20 +257,20 @@ namespace GRINS
       context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.u()); // J_{pu}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.v()); // J_{pv}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
  
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (this->_flow_vars.p(), this->_flow_vars.w()); // J_{pw}
+          (this->_press_var.p(), this->_flow_vars.w()); // J_{pw}
       }
 
     // Now we will build the element Jacobian and residual.

@@ -49,8 +49,9 @@ namespace GRINS
     : Physics(physics_name, input),
       _gas_mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
       _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes()),
       _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
-      _p0_var(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _p0_var(NULL),
       _species_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _n_species(_species_vars.n_species()),
       _fixed_density( input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_density", false ) ),
@@ -60,9 +61,11 @@ namespace GRINS
       (_fixed_rho_value, input,
        "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_rho_value", 0.0 );
 
-    this->read_input_options(input);
+    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
+    if( _enable_thermo_press_calc )
+      _p0_var.reset( new ThermoPressureFEVariable(input, PhysicsNaming::reacting_low_mach_navier_stokes()) );
 
-    return;
+    this->read_input_options(input);
   }
 
   template<typename Mixture, typename Evaluator>
@@ -81,8 +84,6 @@ namespace GRINS
                                      PhysicsNaming::reacting_low_mach_navier_stokes(),
                                      (*this),
                                      _p0 );
-
-    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
 
     // Read gravity vector
     unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g");
@@ -104,12 +105,13 @@ namespace GRINS
 
     this->_species_vars.init(system);
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
     this->_temp_vars.init(system);
 
     /* If we need to compute the thermodynamic pressure, we force this to be a first
        order scalar variable. */
     if( _enable_thermo_press_calc )
-      _p0_var.init(system);
+      _p0_var->init(system);
 
     return;
   }
@@ -131,10 +133,10 @@ namespace GRINS
       system->time_evolving(_flow_vars.w());
 
     system->time_evolving(_temp_vars.T());
-    system->time_evolving(_flow_vars.p());
+    system->time_evolving(_press_var.p());
 
     if( _enable_thermo_press_calc )
-      system->time_evolving(_p0_var.p0());
+      system->time_evolving(_p0_var->p0());
 
     return;
   }
@@ -160,8 +162,8 @@ namespace GRINS
     context.get_element_fe(_temp_vars.T())->get_dphi();
     context.get_element_fe(_temp_vars.T())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p())->get_phi();
-    context.get_element_fe(_flow_vars.p())->get_xyz();
+    context.get_element_fe(_press_var.p())->get_phi();
+    context.get_element_fe(_press_var.p())->get_xyz();
 
     return;
   }

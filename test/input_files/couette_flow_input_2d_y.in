@@ -12,11 +12,11 @@
 
 # Options for tiem solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
@@ -25,11 +25,11 @@ verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
-vis_output_file_prefix = couette 
+vis_output_file_prefix = couette
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
 solver_verbose = 'true'
@@ -58,25 +58,25 @@ enabled_physics = 'IncompressibleNavierStokes'
 
 material = 'TestMaterial'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 bc_ids = '1 3'
 bc_types = 'prescribed_vel no_slip'
 
 bound_vel_1 = '0.0 10.0 0.0'
 
 # We don't pin the pressure in this
-# case because we don't specify 
+# case because we don't specify
 # Dirichlet BC's everywhere.
 pin_pressure = false
 
-[../VariableNames]
+[]
 
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

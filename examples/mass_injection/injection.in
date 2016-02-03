@@ -7,14 +7,6 @@ enabled_physics = 'LowMachNavierStokes LowMachNavierStokesSPGSMStabilization'
 # Options for Incompressible Navier-Stokes physics
 [./LowMachNavierStokes]
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-T_FE_family = 'LAGRANGE'
-
-V_order = 'FIRST'
-T_order = 'FIRST'
-P_order = 'FIRST'
-
 # Thermodynamic pressure
 p0 = '100000' #[Pa]
 
@@ -56,19 +48,21 @@ tau_factor = '0.005'
 
 []
 
-[restart-options]
-
-#restart_file = 'cavity.xdr'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
-[BoundaryConditions]
-
-[./Injection]
-
-
-
-[]
 
 [Materials]
 
@@ -94,19 +88,19 @@ mesh_option = 'read_mesh_from_file'
 mesh_filename = 'injection_grid.e'
 element_type = QUAD9
 
-uniformly_refine =  0 
+uniformly_refine =  0
 
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = true 
+transient = true
 theta = 1.0
 n_timesteps = 1
 deltat = 0.0001
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  2 
+max_nonlinear_iterations =  2
 max_linear_iterations = 250
 
 verify_analytic_jacobians = 0.0
@@ -121,7 +115,7 @@ require_residual_reduction = 'true'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = 'injection' 
+vis_output_file_prefix = 'injection'
 
 output_residual = 'false'
 

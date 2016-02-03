@@ -18,9 +18,6 @@
 
    [./HeatConduction]
 
-      T_FE_family = 'LAGRANGE'
-      T_order = 'FIRST'
-
       bc_ids = '0'
       bc_types = 'constant_dirichlet'
       bc_variables = 'T'
@@ -38,6 +35,13 @@
          FE_orders = 'FIRST'
 []
 
+[Variables]
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -53,7 +57,7 @@
 
 # Options for tiem solvers
 
-   
+
 []
 
 #Linear and nonlinear solver options

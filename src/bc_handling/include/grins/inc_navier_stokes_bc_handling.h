@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
 
 namespace GRINS
 {
@@ -59,7 +59,7 @@ namespace GRINS
     
   protected:
 
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
 
   private:
 

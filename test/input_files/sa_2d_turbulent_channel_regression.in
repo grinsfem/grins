@@ -65,10 +65,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMSta
 
 material = 'TestMaterial'
 
-FE_family = LAGRANGE
-V_order = FIRST
-P_order = FIRST
-
 bc_ids = '3 2 0'
 bc_types = 'general_velocity no_slip no_slip '
 
@@ -79,19 +75,10 @@ ic_values = '4*y*(1.0-y)'
 
 pin_pressure = 'false'
 
-[../VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-pressure = 'p'
-turbulent_viscosity = 'nu'
-
 # Options for Spalart Allmaras physics
 [../SpalartAllmaras]
 
 material = 'TestMaterial'
-
-TU_order = FIRST
 
 bc_ids = '0 2 3'
 bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
@@ -107,4 +94,19 @@ ic_types = 'parsed'
 ic_variables = 'nu'
 ic_values = '0.1*y*(1.0-y)'
 
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../TurbulentViscosity]
+      names = 'nu'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

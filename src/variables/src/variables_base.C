@@ -25,8 +25,13 @@
 // This class
 #include "grins/variables_base.h"
 
+// GRINS
+#include "grins/common.h"
+#include "grins/variables_parsing.h"
+
 // libMesh
 #include "libmesh/fem_system.h"
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
@@ -41,6 +46,46 @@ namespace GRINS
         libmesh_assert( system->has_variable(_var_names[v]) );
         _vars[v] = system->variable_number(_var_names[v]);
       }
+  }
+
+  void VariablesBase::parse_names_from_input( const GetPot& input,
+                                              const std::string& subsection,
+                                              std::vector<std::string>& var_names,
+                                              const std::vector<std::string>& default_names )
+  {
+    libmesh_assert_equal_to( var_names.size(), default_names.size() );
+
+    unsigned int n_names = default_names.size();
+
+    for( unsigned int n = 0; n < n_names; n++ )
+      var_names[n] = input(VariablesParsing::varnames_input_name(subsection), default_names[n], n);
+  }
+
+  void VariablesBase::duplicate_name_section_check( const GetPot& input ) const
+  {
+    if( input.have_section("Physics/VariableNames") &&
+        input.have_section(VariablesParsing::variables_section()) )
+      libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and "
+                        +VariablesParsing::variables_section()+" in input!");
+  }
+
+  bool VariablesBase::check_dep_name_input( const GetPot& input,
+                                            const std::string& subsection ) const
+  {
+    this->duplicate_name_section_check(input);
+
+    bool is_old_input_style = false;
+
+    if( input.have_section("Physics/VariableNames") )
+      {
+        is_old_input_style = true;
+
+        std::string warning = "WARNING: Specifying variable names with Physics/VariableNames is DEPRECATED!\n";
+        warning += "         Please update to use ["+VariablesParsing::varnames_input_name(subsection)+"].\n";
+        grins_warning(warning);
+      }
+
+    return is_old_input_style;
   }
 
 } // end namespace GRINS

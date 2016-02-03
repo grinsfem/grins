@@ -34,6 +34,7 @@
 #include "grins/var_typedefs.h"
 
 // libMesh forward declarations
+class GetPot;
 namespace libMesh
 {
   class FEMSystem;
@@ -49,6 +50,8 @@ namespace GRINS
 
     ~VariablesBase(){};
 
+
+
   protected:
 
     //! Default method for init'ing variables
@@ -58,10 +61,38 @@ namespace GRINS
         a variable number for every entry in _var_names. */
     void default_var_init( libMesh::FEMSystem* system );
 
+    //! Method to parse variable names from input
+    /*! Names parsed from: [Variables/<subsection>/names] and then
+        populated into the supplied var_names vector. It is assumed
+        that var_names has been properly sized, that default_names
+        and var_names have the same size, and that default_names has
+        been populated with unique strings. */
+    void parse_names_from_input( const GetPot& input,
+                                 const std::string& subsection,
+                                 std::vector<std::string>& var_names,
+                                 const std::vector<std::string>& default_names );
+
+    //! Check for old name style and new name style. If both present, error.
+    /*! Old name style: [Physics/VariableNames]
+        New name style: [Variables/<variable type>]
+        Here, we just check for the presence of the sections [Physics/VariableNames]
+        and [Variables]. */
+    void duplicate_name_section_check( const GetPot& input ) const;
+
+    //! Check for deprecated variable name input style
+    /*! If found, this returns true and emits a deprecated warning.
+        Otherwise, this returns false.
+        The string argument is supplied by each variable
+        class for the warning message. E.g. if the variable class
+        is going to look in "Displacement", i.e.
+        [Variables/Displacement/names], then "Displacement" should be
+        passed. */
+    bool check_dep_name_input( const GetPot& input,
+                               const std::string& new_subsection ) const;
+
     std::vector<VariableIndex> _vars;
 
     std::vector<std::string> _var_names;
-
   };
 
 } // end namespace GRINS

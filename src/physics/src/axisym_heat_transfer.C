@@ -49,6 +49,7 @@ namespace GRINS
 								    const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
       _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer()),
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::axisymmetric_heat_transfer()))
   {
@@ -83,6 +84,7 @@ namespace GRINS
 
     this->_temp_vars.init(system);
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
   }
 
   template< class Conductivity>

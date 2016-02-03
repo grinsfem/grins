@@ -31,6 +31,7 @@
 
 // GRINS
 #include "grins/variables_base.h"
+#include "grins/materials_parsing.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -41,7 +42,13 @@ namespace GRINS
   {
   public:
 
-    SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name );
+    SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name )
+      : VariablesBase()
+    {
+      std::string prefix = input("Variables/"+this->subsection()+"/names", "w_" );
+      MaterialsParsing::parse_species_varnames(input, material_name, prefix, _var_names);
+    }
+
     ~SpeciesMassFractionsVariables(){};
 
     virtual void init( libMesh::FEMSystem* system )
@@ -50,6 +57,11 @@ namespace GRINS
     unsigned int n_species() const;
 
     VariableIndex species( unsigned int species ) const;
+
+  protected:
+
+    std::string subsection() const
+    { return "SpeciesMassFractions"; }
 
   private:
 

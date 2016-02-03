@@ -47,6 +47,7 @@ namespace GRINS
                                          const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
       _temp_vars(input,PhysicsNaming::heat_transfer()),
       _rho(0.0),
       _Cp(0.0),
@@ -74,6 +75,7 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     _flow_vars.init(system);
+    this->_press_var.init(system);
     _temp_vars.init(system);
 
     return;

@@ -17,13 +17,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 
 material = 'Fluid'
 
-V_FE_family = 'LAGRANGE'
-P_FE_family = 'LAGRANGE'
-
-V_order = 'FIRST'
-P_order = 'FIRST'
-
-
 # Boundary ids:
 # j = bottom -> 0
 # j = top    -> 2
@@ -39,6 +32,17 @@ pin_pressure = true
 pin_location = '0.0 0.00'
 pin_value = '0.0'
 
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
 [Stabilization]
@@ -72,14 +76,14 @@ tau_factor = '1.0'
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = 'true' 
+transient = 'true'
 theta = '1.0'
 n_timesteps = '25'
 deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  100 
+max_nonlinear_iterations =  100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -92,9 +96,9 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = true
 
-vis_output_file_prefix = 'lid_driven_cavity' 
+vis_output_file_prefix = 'lid_driven_cavity'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII'
 

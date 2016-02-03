@@ -9,10 +9,6 @@
       x_max = '2.0'
 []
 
-# Options for tiem solvers
-
- 
-
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 10 
@@ -61,10 +57,6 @@ is_axisymmetric = 'true'
 
 material = 'TestMaterial'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 # Boundary ids:
 # j = bottom -> 0
 # j = top    -> 2
@@ -76,14 +68,19 @@ bc_types = 'no_slip prescribed_vel general_velocity general_velocity'
 
 bound_vel_3 = '0.0 2.0 0.0'
 
-pin_pressure = true 
+pin_pressure = true
 pin_value = 100.0
 pin_location = '1.5 0.5'
 
-[../VariableNames]
+[]
 
-u_velocity = 'r_vel'
-v_velocity = 'z_vel'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'r_vel z_vel'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

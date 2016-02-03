@@ -12,11 +12,11 @@
 
 # Options for tiem solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
@@ -36,15 +36,15 @@ numerical_jacobian_h = 1.e-10
 # Visualization options
 [vis-options]
 output_vis = true
-vis_output_file_prefix = penalty_poiseuille 
+vis_output_file_prefix = penalty_poiseuille
 output_format = 'ExodusII xdr'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
-solver_verbose = 'true' 
+solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
@@ -66,11 +66,7 @@ enabled_physics = 'IncompressibleNavierStokes VelocityPenalty'
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
-material = 'TestMaterial' 
-
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
+material = 'TestMaterial'
 
 bc_ids = '1 3 2 0'
 bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
@@ -89,11 +85,15 @@ penalty_function = '{(abs(y-.5)>.25)*1e6}{0}{0}'
 #penalty_function = '{(abs(y-.5)>.25)*1e8}{0}{0}'
 #quadratic_scaling = true
 
-[../VariableNames]
+[]
 
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

@@ -26,19 +26,27 @@
 #define GRINS_THERMO_PRESSURE_FE_VARIABLE_H
 
 // GRINS
-#include "grins/fe_variables_base.h"
+#include "grins/single_fe_type_variable.h"
 #include "grins/thermo_pressure_variable.h"
 
 namespace GRINS
 {
 
-  class ThermoPressureFEVariable : public FEVariablesBase,
+  class ThermoPressureFEVariable : public SingleFETypeVariable,
                                    public ThermoPressureVariable
   {
   public:
 
-    ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name );
-    ~ThermoPressureFEVariable(){};
+    ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name )
+      :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"SCALAR","FIRST"),
+         ThermoPressureVariable(input)
+    {
+      // Currently only support SCALAR and FIRST
+      libmesh_assert_equal_to( _family[0], libMesh::SCALAR );
+      libmesh_assert_equal_to( _order[0], libMesh::FIRST );
+    }
+
+    virtual ~ThermoPressureFEVariable(){};
 
     virtual void init( libMesh::FEMSystem* system )
     { this->default_fe_init(system, _var_names, _vars ); }

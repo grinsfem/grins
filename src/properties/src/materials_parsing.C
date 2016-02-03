@@ -363,6 +363,7 @@ namespace GRINS
 
   void MaterialsParsing::parse_species_varnames( const GetPot& input,
                                                  const std::string& material,
+                                                 const std::string& prefix,
                                                  std::vector<std::string>& species_varnames )
   {
     std::vector<std::string> species_names;
@@ -372,7 +373,7 @@ namespace GRINS
 
     for( unsigned int i = 0; i < n_species; i++ )
       {
-        std::string var_name = "w_"+species_names[i];
+        std::string var_name = prefix+species_names[i];
         species_varnames.push_back(var_name);
       }
   }

@@ -27,18 +27,22 @@
 #define GRINS_SPECIES_MASS_FRACS_FE_VARIABLES_H
 
 // GRINS
-#include "grins/fe_variables_base.h"
+#include "grins/single_fe_type_variable.h"
 #include "grins/species_mass_fracs_variables.h"
 
 namespace GRINS
 {
 
-  class SpeciesMassFractionsFEVariables : public FEVariablesBase,
+  class SpeciesMassFractionsFEVariables : public SingleFETypeVariable,
                                           public SpeciesMassFractionsVariables
   {
   public:
 
-    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name );
+    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name )
+      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),"LAGRANGE","SECOND"),
+         SpeciesMassFractionsVariables(input, MaterialsParsing::material_name(input,physics_name) )
+    {}
+
     ~SpeciesMassFractionsFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system )

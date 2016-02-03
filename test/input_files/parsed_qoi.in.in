@@ -55,21 +55,10 @@ print_qoi = 'true' # print numerical values of QoIs
 
 enabled_physics = 'Stokes'
 
-[./VariableNames]
-
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
 # Options for Stokes physics
-[../Stokes]
+[./Stokes]
 
 material = 'TestMaterial'
-
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
 
 bc_ids = '1 3 2 0'
 bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
@@ -80,6 +69,17 @@ pin_pressure = true
 pin_value = 100.0
 pin_location = '2.5 0' # Must be on boundary!
 
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
 # Options for adaptivity

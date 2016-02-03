@@ -168,16 +168,16 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(_press_var.p()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(_flow_vars.u())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its

@@ -23,20 +23,49 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/thermo_pressure_fe_variable.h"
+#include "grins/velocity_variables.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 
+// GRINS
+#include "grins/variable_name_defaults.h"
+
 namespace GRINS
 {
-  ThermoPressureFEVariable::ThermoPressureFEVariable( const GetPot& input, const std::string& /*physics_name*/ )
-    :  FEVariablesBase(),
-       ThermoPressureVariable(input)
+  VelocityVariables::VelocityVariables( const GetPot& input )
+    :  VariablesBase(),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {
-    _family.resize(1, libMesh::SCALAR );
-    _order.resize(1, libMesh::FIRST );
+    _vars.resize(3,invalid_var_index);
+    _var_names.resize(3);
+
+    std::vector<std::string> default_names(3);
+    default_names[_u_idx] = "u";
+    default_names[_v_idx] = "v";
+    default_names[_w_idx] = "w";
+
+    if( this->check_dep_name_input(input,this->subsection()) )
+      {
+        _var_names[_u_idx] = input("Physics/VariableNames/u_velocity", u_var_name_default );
+        _var_names[_v_idx] = input("Physics/VariableNames/v_velocity", v_var_name_default );
+        _var_names[_w_idx] = input("Physics/VariableNames/w_velocity", w_var_name_default );
+      }
+    else
+      this->parse_names_from_input(input,this->subsection(),_var_names,default_names);
+  }
+
+  void VelocityVariables::init( libMesh::FEMSystem* system )
+  {
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
+
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
+
+    this->default_var_init(system);
   }
 
 } // end namespace GRINS

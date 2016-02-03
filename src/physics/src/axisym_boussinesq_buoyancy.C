@@ -44,6 +44,7 @@ namespace GRINS
 								  const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
       _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer())
   {
     this->read_input_options(input);
@@ -79,6 +80,7 @@ namespace GRINS
 
     this->_temp_vars.init(system);
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
   }
 
   void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,

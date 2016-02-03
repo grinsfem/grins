@@ -25,13 +25,6 @@
 #ifndef GRINS_DISPLACEMENT_VARIABLES_H
 #define GRINS_DISPLACEMENT_VARIABLES_H
 
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 
@@ -67,6 +60,9 @@ namespace GRINS
     const std::string& w_name() const;
 
   protected:
+
+    std::string subsection() const
+    { return "Displacement"; }
 
     bool _have_v;
     bool _have_w;

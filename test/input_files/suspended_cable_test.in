@@ -25,9 +25,6 @@ enabled_physics = 'ElasticCable
 
 material = 'TestMaterial'
 
-FE_family = 'LAGRANGE'
-order = 'FIRST'
-
 # Boundary ids:
 # j = left -> 0
 # j = right-> 1
@@ -45,6 +42,13 @@ traction_1 = '5.7735 0.0 0.0'
 
 gravity ='0 0 -32.2'
 
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'u v w'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []
 
 # Mesh related options

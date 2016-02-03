@@ -22,23 +22,33 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/turbulence_variables.h"
 
-// libMesh
-#include "libmesh/getpot.h"
+#ifndef GRINS_VELOCITY_FE_VARIABLES_H
+#define GRINS_VELOCITY_FE_VARIABLES_H
 
 // GRINS
-#include "grins/variable_name_defaults.h"
+#include "grins/single_fe_type_variable.h"
+#include "grins/velocity_variables.h"
 
 namespace GRINS
 {
-  TurbulenceVariables::TurbulenceVariables( const GetPot& input )
-    :  VariablesBase()
 
+  class VelocityFEVariables : public SingleFETypeVariable,
+                                   public VelocityVariables
   {
-    _vars.resize(1,invalid_var_index);
-    _var_names.resize(1, input("Physics/VariableNames/turbulent_viscosity", nu_var_name_default ) );
-  }
+  public:
+
+    VelocityFEVariables( const GetPot& input, const std::string& physics_name );
+    ~VelocityFEVariables(){};
+
+    virtual void init( libMesh::FEMSystem* system );
+
+  private:
+
+    VelocityFEVariables();
+
+  };
 
 } // end namespace GRINS
+
+#endif //GRINS_VELOCITY_FE_VARIABLES_H

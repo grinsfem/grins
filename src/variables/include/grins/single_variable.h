@@ -22,28 +22,34 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/species_mass_fracs_fe_variables.h"
+#ifndef GRINS_SINGLE_VARIABLE_H
+#define GRINS_SINGLE_VARIABLE_H
 
 // GRINS
-#include "grins/materials_parsing.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
+#include "grins/variables_base.h"
 
 namespace GRINS
 {
-  SpeciesMassFractionsFEVariables::SpeciesMassFractionsFEVariables( const GetPot& input,
-                                                                    const std::string& physics_name )
-    : FEVariablesBase(),
-      SpeciesMassFractionsVariables( input, MaterialsParsing::material_name(input,physics_name) )
+  class SingleVariable : public VariablesBase
   {
-    this->_family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/species_FE_family", "LAGRANGE") ) );
+  public:
 
-    // Read FE family info
-    this->_order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/species_order", "SECOND") ) );
-  }
+    SingleVariable( const GetPot& input,
+                    const std::string& old_var_name,
+                    const std::string& subsection,
+                    const std::string& default_name );
+
+    ~SingleVariable(){};
+
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
+
+  private:
+
+    SingleVariable();
+
+  };
 
 } // end namespace GRINS
+
+#endif // GRINS_SINGLE_VARIABLE_H

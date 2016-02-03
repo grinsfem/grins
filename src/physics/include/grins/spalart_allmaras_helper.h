@@ -28,7 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_variables.h"
+#include "grins/velocity_variables.h"
+#include "grins/pressure_variable.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -54,7 +55,8 @@ namespace GRINS
     unsigned int _dim;
 
     // The flow variables
-    PrimitiveFlowVariables _flow_vars;
+    VelocityVariables _flow_vars;
+    PressureVariable _press_var;
 
   private:
 

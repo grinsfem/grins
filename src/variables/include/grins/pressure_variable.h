@@ -22,71 +22,53 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_PRIMITIVE_FLOW_VARIABLES_H
-#define GRINS_PRIMITIVE_FLOW_VARIABLES_H
+#ifndef GRINS_PRESSURE_VARIABLE_H
+#define GRINS_PRESSURE_VARIABLE_H
 
 // libMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
 
 // GRINS
-#include "grins/variables_base.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-
-  class PrimitiveFlowVariables : public VariablesBase
+  class PressureVariable : public SingleVariable
   {
   public:
 
-    PrimitiveFlowVariables( const GetPot& input );
-    ~PrimitiveFlowVariables(){};
+    PressureVariable( const GetPot& input )
+      : SingleVariable(input,
+                       this->old_var_name(),
+                       this->subsection(),
+                       this->default_name())
+    {}
 
-    virtual void init( libMesh::FEMSystem* system );
+    ~PressureVariable(){};
 
-    VariableIndex u() const;
-    VariableIndex v() const;
-    VariableIndex w() const;
     VariableIndex p() const;
 
   protected:
 
-    unsigned int _u_idx, _v_idx, _w_idx, _p_idx;
+    std::string old_var_name() const
+    { return "pressure"; }
 
-  private:
+    std::string subsection() const
+    { return "Pressure"; }
 
-    PrimitiveFlowVariables();
+    std::string default_name() const
+    { return "p"; }
+
+    PressureVariable();
 
   };
 
   inline
-  VariableIndex PrimitiveFlowVariables::u() const
+  VariableIndex PressureVariable::p() const
   {
-    return this->_vars[_u_idx];
-  }
-
-  inline
-  VariableIndex PrimitiveFlowVariables::v() const
-  {
-    return this->_vars[_v_idx];
-  }
-
-  inline
-  VariableIndex PrimitiveFlowVariables::w() const
-  {
-    return this->_vars[_w_idx];
-  }
-
-  inline
-  VariableIndex PrimitiveFlowVariables::p() const
-  {
-    return this->_vars[_p_idx];
+    return _vars[0];
   }
 
 } // end namespace GRINS
 
-#endif //GRINS_PRIMITIVE_FLOW_VARIABLES_H
+#endif // GRINS_PRESSURE_VARIABLE_H

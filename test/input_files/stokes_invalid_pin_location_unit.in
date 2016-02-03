@@ -10,14 +10,14 @@
 
 # Options for tiem solvers
 
- 
+
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
-solver_verbose = 'true' 
+solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
@@ -41,10 +41,6 @@ enabled_physics = 'Stokes'
 
 material = 'TestMaterial'
 
-FE_family = LAGRANGE
-V_order = SECOND
-P_order = FIRST
-
 bc_ids = '1 3 2 0'
 bc_types = 'parabolic_profile parabolic_profile no_slip no_slip'
 
@@ -61,11 +57,15 @@ pin_value = '100.0'
 # Purposefully outside the mesh for this test
 pin_location = '-2.5 0.5'
 
-[../VariableNames]
+[]
 
-u_velocity = 'u'
-v_velocity = 'v'
-w_velocity = 'w'
-pressure = 'p'
-
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
 []

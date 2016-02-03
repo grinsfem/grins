@@ -40,6 +40,7 @@ namespace GRINS
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1.0 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(input),
+      _press_var(input),
       _turbulence_vars(input),
       _spalart_allmaras_helper(input),
       _sa_params(input)
@@ -64,6 +65,8 @@ namespace GRINS
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
     this->_flow_vars.init(&system);
+    this->_press_var.init(&system);
+
     this->_turbulence_vars.init(&system);
 
     // Init the variables belonging to SA helper

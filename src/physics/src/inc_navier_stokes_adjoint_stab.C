@@ -62,7 +62,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -70,7 +70,7 @@ namespace GRINS
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> >& p_gradphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
@@ -84,13 +84,13 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
     libMesh::DenseSubMatrix<libMesh::Number> &Kup = 
-      context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.p()); // J_{up}
+      context.get_elem_jacobian(this->_flow_vars.u(), this->_press_var.p()); // J_{up}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvp = 
-      context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.p()); // J_{vp}
+      context.get_elem_jacobian(this->_flow_vars.v(), this->_press_var.p()); // J_{vp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
@@ -112,7 +112,7 @@ namespace GRINS
         Kvw = &context.get_elem_jacobian
           (this->_flow_vars.v(), this->_flow_vars.w()); // J_{vw}
         Kwp = &context.get_elem_jacobian
-          (this->_flow_vars.w(), this->_flow_vars.p()); // J_{wp}
+          (this->_flow_vars.w(), this->_press_var.p()); // J_{wp}
         Kwu = &context.get_elem_jacobian
           (this->_flow_vars.w(), this->_flow_vars.u()); // J_{wu}
         Kwv = &context.get_elem_jacobian
@@ -392,7 +392,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -401,7 +401,7 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
     // The velocity shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& u_phi =
@@ -413,20 +413,20 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealTensor> >& u_d2phi =
       context.get_element_fe(this->_flow_vars.u())->get_d2phi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpp = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.p()); // J_{pp}
+      context.get_elem_jacobian(this->_press_var.p(), this->_press_var.p()); // J_{pp}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.u()); // J_{pu}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.v()); // J_{pv}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
       {
         Kpw = &context.get_elem_jacobian
-          (this->_flow_vars.p(), this->_flow_vars.w()); // J_{pw}
+          (this->_press_var.p(), this->_flow_vars.w()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -555,7 +555,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -564,7 +564,7 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
@@ -579,7 +579,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
@@ -597,9 +597,9 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.u()); // J_{pu}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
     libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
-      context.get_elem_jacobian(this->_flow_vars.p(), this->_flow_vars.v()); // J_{pv}
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
     if(this->_dim == 3)
@@ -618,7 +618,7 @@ namespace GRINS
           (this->_flow_vars.w(), this->_flow_vars.w()); // J_{ww}
 
         Kpw = &context.get_elem_jacobian
-          (this->_flow_vars.p(), this->_flow_vars.w()); // J_{pw}
+          (this->_press_var.p(), this->_flow_vars.w()); // J_{pw}
       }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();

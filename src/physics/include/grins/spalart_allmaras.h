@@ -28,7 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/turbulence_fe_variables.h"
 #include "grins/turbulence_models_base.h"
 #include "grins/spalart_allmaras_helper.h"
@@ -94,8 +95,8 @@ namespace GRINS
   protected:
 
     // The flow variables
-    PrimitiveFlowFEVariables _flow_vars;
-
+    VelocityFEVariables _flow_vars;
+    PressureFEVariable _press_var;
     // These are defined for each physics
     TurbulenceFEVariables _turbulence_vars;
 

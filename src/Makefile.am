@@ -192,20 +192,13 @@ libgrins_la_SOURCES += solver/src/time_stepping_parsing.C
 
 #src/variables
 libgrins_la_SOURCES += variables/src/variables_base.C
+libgrins_la_SOURCES += variables/src/single_variable.C
 libgrins_la_SOURCES += variables/src/fe_variables_base.C
-libgrins_la_SOURCES += variables/src/primitive_flow_variables.C
-libgrins_la_SOURCES += variables/src/primitive_flow_fe_variables.C
-libgrins_la_SOURCES += variables/src/primitive_temp_variables.C
-libgrins_la_SOURCES += variables/src/primitive_temp_fe_variables.C
+libgrins_la_SOURCES += variables/src/single_fe_type_variable.C
+libgrins_la_SOURCES += variables/src/velocity_variables.C
+libgrins_la_SOURCES += variables/src/velocity_fe_variables.C
 libgrins_la_SOURCES += variables/src/displacement_variables.C
 libgrins_la_SOURCES += variables/src/displacement_fe_variables.C
-libgrins_la_SOURCES += variables/src/species_mass_fracs_variables.C
-libgrins_la_SOURCES += variables/src/species_mass_fracs_fe_variables.C
-libgrins_la_SOURCES += variables/src/thermo_pressure_variable.C
-libgrins_la_SOURCES += variables/src/thermo_pressure_fe_variable.C
-libgrins_la_SOURCES += variables/src/turbulence_variables.C
-libgrins_la_SOURCES += variables/src/turbulence_fe_variables.C
-
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -432,9 +425,13 @@ include_HEADERS += solver/include/grins/strategies_parsing.h
 include_HEADERS += solver/include/grins/time_stepping_parsing.h
 
 #src/variables headers
+include_HEADERS += variables/include/grins/single_variable.h
 include_HEADERS += variables/include/grins/fe_variables_base.h
-include_HEADERS += variables/include/grins/primitive_flow_variables.h
-include_HEADERS += variables/include/grins/primitive_flow_fe_variables.h
+include_HEADERS += variables/include/grins/single_fe_type_variable.h
+include_HEADERS += variables/include/grins/pressure_variable.h
+include_HEADERS += variables/include/grins/pressure_fe_variable.h
+include_HEADERS += variables/include/grins/velocity_variables.h
+include_HEADERS += variables/include/grins/velocity_fe_variables.h
 include_HEADERS += variables/include/grins/primitive_temp_variables.h
 include_HEADERS += variables/include/grins/primitive_temp_fe_variables.h
 include_HEADERS += variables/include/grins/displacement_variables.h
@@ -447,6 +444,7 @@ include_HEADERS += variables/include/grins/turbulence_variables.h
 include_HEADERS += variables/include/grins/turbulence_fe_variables.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
 include_HEADERS += variables/include/grins/variables_base.h
+include_HEADERS += variables/include/grins/variables_parsing.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h

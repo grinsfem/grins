@@ -23,22 +23,31 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/species_mass_fracs_variables.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "grins/velocity_fe_variables.h"
 
 // GRINS
 #include "grins/variable_name_defaults.h"
-#include "grins/materials_parsing.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  SpeciesMassFractionsVariables::SpeciesMassFractionsVariables( const GetPot& input,
-                                                                const std::string& material_name )
-    : VariablesBase()
+  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name )
+    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND"),
+       VelocityVariables(input)
+  {}
+
+  void VelocityFEVariables::init( libMesh::FEMSystem* system )
   {
-    MaterialsParsing::parse_species_varnames(input, material_name, _var_names);
+    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
+
+    if ( system->get_mesh().mesh_dimension() < 3)
+      _var_names.pop_back();
+
+    this->default_fe_init(system, _var_names, _vars );
   }
 
 } // end namespace GRINS

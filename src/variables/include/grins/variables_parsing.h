@@ -22,23 +22,35 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/turbulence_fe_variables.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
+#ifndef GRINS_VARIABLES_PARSING_H
+#define GRINS_VARIABLES_PARSING_H
 
 namespace GRINS
 {
-  TurbulenceFEVariables::TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
-    :  FEVariablesBase(),
-       TurbulenceVariables(input)
+  class VariablesParsing
   {
-    _family.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>( input("Physics/"+physics_name+"/TU_FE_family", input("Physics/"+physics_name+"/FE_family", "LAGRANGE") ) ) );
+  public:
 
-    _order.resize(1, libMesh::Utility::string_to_enum<GRINSEnums::Order>( input("Physics/"+physics_name+"/TU_order", "FIRST") ) );
-  }
+    //! Helper function to encapsualte the overall [Variables] section name.
+    static std::string variables_section()
+    { return "Variables"; }
+
+    //! Helper function to encapsulate the names variable in the input file
+    /*! This is the full variable name to be passed to GetPot to read in
+        user-supplied names for variables. */
+    static std::string varnames_input_name( const std::string& subsection )
+    { return VariablesParsing::variables_section()+"/"+subsection+"/names"; }
+
+    //! Helper function to encaplusate fe_family input variable
+    static std::string fe_family_input_name( const std::string& subsection )
+    { return VariablesParsing::variables_section()+"/"+subsection+"/fe_family"; }
+
+    //! Helper function to encaplusate order input variable
+    static std::string order_input_name( const std::string& subsection )
+    { return VariablesParsing::variables_section()+"/"+subsection+"/order"; }
+
+  };
 
 } // end namespace GRINS
+
+#endif // GRINS_VARIABLES_PARSING_H

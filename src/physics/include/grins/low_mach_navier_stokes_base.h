@@ -30,7 +30,8 @@
 #include "grins/physics.h"
 #include "grins/assembly_context.h"
 #include "grins/grins_enums.h"
-#include "grins/primitive_flow_fe_variables.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
 
@@ -97,11 +98,11 @@ namespace GRINS
     //! Physical dimension of problem
     unsigned int _dim;
 
-    PrimitiveFlowFEVariables _flow_vars;
-
+    VelocityFEVariables _flow_vars;
+    PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 
-    ThermoPressureFEVariable _p0_var;
+    libMesh::UniquePtr<ThermoPressureFEVariable> _p0_var;
 
     //! Viscosity object
     Viscosity _mu;
@@ -153,7 +154,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.interior_value( _p0_var.p0(), qp );
+	p0 = c.interior_value( _p0_var->p0(), qp );
       }
     else
       {
@@ -170,7 +171,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.side_value( _p0_var.p0(), qp );
+	p0 = c.side_value( _p0_var->p0(), qp );
       }
     else
       {
@@ -187,7 +188,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.point_value( _p0_var.p0(), p );
+	p0 = c.point_value( _p0_var->p0(), p );
       }
     else
       {
@@ -203,7 +204,7 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.fixed_interior_value( _p0_var.p0(), qp );
+	p0 = c.fixed_interior_value( _p0_var->p0(), qp );
       }
     else
       {

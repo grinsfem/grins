@@ -132,6 +132,7 @@ namespace GRINS
         "Material/"+material+"/GasMixture/species" */
     static void parse_species_varnames( const GetPot& input,
                                         const std::string& material,
+                                        const std::string& prefix,
                                         std::vector<std::string>& species_names );
 
     static libMesh::Real parse_lewis_number( const GetPot& input,

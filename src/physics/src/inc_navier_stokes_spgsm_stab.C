@@ -150,7 +150,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
@@ -158,9 +158,9 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -214,7 +214,7 @@ namespace GRINS
 #endif
 
     // The number of local degrees of freedom in each variable.
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_flow_vars.p()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -223,7 +223,7 @@ namespace GRINS
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::RealGradient> >& p_dphi =
-      context.get_element_fe(this->_flow_vars.p())->get_dphi();
+      context.get_element_fe(this->_press_var.p())->get_dphi();
 
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_flow_vars.u())->get_dphi();
@@ -234,7 +234,7 @@ namespace GRINS
     if(this->_dim == 3)
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_flow_vars.p()); // R_{p}
+    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 

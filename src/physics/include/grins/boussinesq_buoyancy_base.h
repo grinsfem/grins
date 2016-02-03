@@ -28,7 +28,8 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/primitive_flow_fe_variables.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/primitive_temp_fe_variables.h"
 
 // libMesh
@@ -61,7 +62,8 @@ namespace GRINS
                            const std::string& material,
                            const std::string& property );
 
-    PrimitiveFlowFEVariables _flow_vars;
+    VelocityFEVariables _flow_vars;
+    PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;
 
     //! \f$ \rho = \f$ density

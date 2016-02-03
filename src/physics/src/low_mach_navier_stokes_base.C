@@ -48,12 +48,17 @@ namespace GRINS
                                                              const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, core_physics_name),
+      _press_var(input,core_physics_name),
       _temp_vars(input, core_physics_name),
-      _p0_var(input, core_physics_name),
+      _p0_var(NULL),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
+    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
+    if( _enable_thermo_press_calc )
+      _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name) );
+
     this->read_input_options(input);
 
     return;
@@ -92,8 +97,6 @@ namespace GRINS
 
     _p0_over_R = _p0/_R;
 
-    _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
-
     // Read gravity vector
     unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g");
 
@@ -113,12 +116,13 @@ namespace GRINS
     this->_dim = system->get_mesh().mesh_dimension();
 
     this->_flow_vars.init(system);
+    this->_press_var.init(system);
     this->_temp_vars.init(system);
 
     /* If we need to compute the thermodynamic pressure, we force this to be a first
        order scalar variable. */
     if( _enable_thermo_press_calc )
-      _p0_var.init(system);
+      _p0_var->init(system);
 
     return;
   }
@@ -135,10 +139,10 @@ namespace GRINS
       system->time_evolving(_flow_vars.w());
 
     system->time_evolving(_temp_vars.T());
-    system->time_evolving(_flow_vars.p());
+    system->time_evolving(_press_var.p());
 
     if( _enable_thermo_press_calc )
-      system->time_evolving(_p0_var.p0());
+      system->time_evolving(_p0_var->p0());
 
     return;
   }
@@ -159,8 +163,8 @@ namespace GRINS
     context.get_element_fe(_temp_vars.T())->get_dphi();
     context.get_element_fe(_temp_vars.T())->get_xyz();
 
-    context.get_element_fe(_flow_vars.p())->get_phi();
-    context.get_element_fe(_flow_vars.p())->get_xyz();
+    context.get_element_fe(_press_var.p())->get_phi();
+    context.get_element_fe(_press_var.p())->get_xyz();
 
     return;
   }

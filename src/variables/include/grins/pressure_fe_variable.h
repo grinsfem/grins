@@ -22,19 +22,43 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/thermo_pressure_variable.h"
+#ifndef GRINS_PRESSURE_FE_VARIABLE_H
+#define GRINS_PRESSURE_FE_VARIABLE_H
 
-// libMesh
-#include "libmesh/getpot.h"
+// GRINS
+#include "grins/single_fe_type_variable.h"
+#include "grins/pressure_variable.h"
+
+// libMesh forward declarations
+class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 namespace GRINS
 {
-  ThermoPressureVariable::ThermoPressureVariable( const GetPot& input )
-    : VariablesBase()
+  class PressureFEVariable : public SingleFETypeVariable,
+                             public PressureVariable
   {
-    _vars.resize(1,invalid_var_index);
-    _var_names.resize(1, input("Physics/VariableNames/thermo_presure", "p0" ) );
-  }
+  public:
+
+    PressureFEVariable( const GetPot& input, const std::string& physics_name )
+      :  SingleFETypeVariable(input,physics_name,"P_",this->subsection(),"LAGRANGE","FIRST"),
+         PressureVariable(input)
+    {}
+
+    ~PressureFEVariable(){};
+
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_fe_init(system, _var_names, _vars ); }
+
+  private:
+
+    PressureFEVariable();
+
+  };
 
 } // end namespace GRINS
+
+#endif // GRINS_PRESSURE_FE_VARIABLE_H

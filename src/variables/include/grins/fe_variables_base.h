@@ -39,6 +39,7 @@
 #include "libmesh/enum_fe_family.h"
 
 // libMesh forward declarations
+class GetPot;
 namespace libMesh
 {
   class FEMSystem;
