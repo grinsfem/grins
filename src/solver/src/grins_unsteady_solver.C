@@ -57,7 +57,8 @@ namespace GRINS
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
       _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
       _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
-      _max_growth( StrategiesParsing::parse_max_growth(input) )
+      _max_growth( StrategiesParsing::parse_max_growth(input) ),
+      _is_second_order_in_time(false)
   {
     StrategiesParsing::parse_component_norm(input,_component_norm);
   }

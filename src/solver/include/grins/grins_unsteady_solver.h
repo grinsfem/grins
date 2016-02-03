@@ -69,6 +69,11 @@ namespace GRINS
     double _upper_tolerance;
     double _max_growth;
     libMesh::SystemNorm _component_norm;
+
+    //! Track whether is this a second order (in time) solver or not
+    /*! If it is, we need to potentially initialize the acceleration */
+    bool _is_second_order_in_time;
+
   };
 
   template <typename T>
