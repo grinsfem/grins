@@ -188,26 +188,36 @@ namespace GRINS
   void UnsteadySolver::update_dirichlet_bcs( SolverContext& context )
   {
     // FIXME: This needs to be much more efficient and intuitive.
-    // FIXME: This is only checking for nonlinear bc! This is not checking for time-dependence!
     bool have_nonlinear_dirichlet_bc = false;
+    bool have_time_dependence = false;
     {
       const libMesh::DirichletBoundaries &db =
         *context.system->get_dof_map().get_dirichlet_boundaries();
+
       for (libMesh::DirichletBoundaries::const_iterator
              it = db.begin(); it != db.end(); ++it)
         {
           const libMesh::DirichletBoundary* bdy = *it;
+
+          // If we have a FEMFunctionBase, we assume nonlinearity
           if (bdy->f_fem.get())
-            {
               have_nonlinear_dirichlet_bc = true;
-              break;
-            }
-        }
+
+          // Check for time-dependence of FunctionBase
+          if( bdy->f.get() )
+              if( bdy->f->is_time_dependent() )
+                  have_time_dependence = true;
+
+          if( have_nonlinear_dirichlet_bc || have_time_dependence )
+            break;
+
+        } // End loop over DirichletBoundaries
     }
 
+
     // Nonlinear Dirichlet constraints change as the solution does
-    // FIXME: We should be updating with time-dependent BCs as well!
-    if (have_nonlinear_dirichlet_bc)
+    // and time-dependent constraints have to be updated
+    if (have_nonlinear_dirichlet_bc || have_time_dependence )
       {
         context.system->reinit_constraints();
         context.system->get_dof_map().enforce_constraints_exactly(*context.system);
