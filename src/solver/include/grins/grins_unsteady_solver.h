@@ -52,9 +52,8 @@ namespace GRINS
     void set_theta( libMesh::UnsteadySolver* time_solver );
 
     //! Updates Dirichlet boundary conditions
-    /*! If the Dirichlet boundary condition is nonlinear, we need
-        to update the constraints with the new solution.
-        \todo We're not updating time-dependent BCs right now! */
+    /*! If the Dirichlet boundary condition is nonlinear or time-dependent,
+        we need to update the constraints with the new solution. */
     void update_dirichlet_bcs( SolverContext& context );
 
     void init_second_order_in_time_solvers( SolverContext& context );
