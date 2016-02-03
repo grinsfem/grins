@@ -31,6 +31,7 @@
 #include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
+#include "grins/simulation_parsing.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -79,14 +80,11 @@ namespace GRINS
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
-    if( input.have_variable("restart-options/restart_file") )
-      {
+    if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
-      }
 
     this->check_for_unused_vars(input, false /*warning only*/);
 
-    return;
   }
 
   Simulation::Simulation( const GetPot& input,
@@ -126,15 +124,12 @@ namespace GRINS
     // Must be called after setting QoI on the MultiphysicsSystem
     _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
-    if( input.have_variable("restart-options/restart_file") )
-      {
+    if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
-      }
 
     bool warning_only = command_line.search("--warn-only-unused-var");
     this->check_for_unused_vars(input, warning_only );
 
-    return;
   }
 
   Simulation::~Simulation()
@@ -459,7 +454,7 @@ namespace GRINS
 
   void Simulation::read_restart( const GetPot& input )
   {
-    const std::string restart_file = input( "restart-options/restart_file", "none" );
+    const std::string restart_file = SimulationParsing::restart_file(input);
 
     // Most of this was pulled from FIN-S
     if (restart_file != "none")
