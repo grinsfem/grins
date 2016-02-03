@@ -80,6 +80,11 @@ namespace GRINS
 
         this->set_theta<libMesh::Euler2Solver>(time_solver);
       }
+    else if( _time_solver_name == SolverNames::libmesh_newmark_solver() )
+      {
+        time_solver = new libMesh::NewmarkSolver( *(system) );
+        _is_second_order_in_time = true;
+      }
     else
       libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
 
