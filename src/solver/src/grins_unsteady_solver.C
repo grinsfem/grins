@@ -119,6 +119,10 @@ namespace GRINS
 	context.vis->output( context.equation_system );
       }
 
+    // We may need to initialize acceleration for second order solvers
+    if( _is_second_order_in_time )
+      this->init_second_order_in_time_solvers(context);
+
     std::time_t first_wall_time = std::time(NULL);
     
     // Now we begin the timestep loop to compute the time-accurate
