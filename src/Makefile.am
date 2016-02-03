@@ -423,6 +423,7 @@ include_HEADERS += solver/include/grins/solver_parsing.h
 include_HEADERS += solver/include/grins/solver_names.h
 include_HEADERS += solver/include/grins/strategies_parsing.h
 include_HEADERS += solver/include/grins/time_stepping_parsing.h
+include_HEADERS += solver/include/grins/simulation_parsing.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h
