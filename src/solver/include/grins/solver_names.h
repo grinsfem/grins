@@ -51,5 +51,9 @@ namespace GRINS
 
     static const std::string libmesh_euler2_solver()
     { return "libmesh_euler2_solver"; }
+
+    static const std::string libmesh_newmark_solver()
+    { return "libmesh_newmark"; }
+
   };
 } // end namespace GRINS
