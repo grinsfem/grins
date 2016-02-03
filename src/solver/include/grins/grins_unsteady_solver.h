@@ -57,6 +57,8 @@ namespace GRINS
         \todo We're not updating time-dependent BCs right now! */
     void update_dirichlet_bcs( SolverContext& context );
 
+    void init_second_order_in_time_solvers( SolverContext& context );
+
     std::string _time_solver_name;
 
     unsigned int _n_timesteps;

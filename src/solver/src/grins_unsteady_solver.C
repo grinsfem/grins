@@ -41,6 +41,7 @@
 #include "libmesh/euler_solver.h"
 #include "libmesh/euler2_solver.h"
 #include "libmesh/twostep_time_solver.h"
+#include "libmesh/newmark_solver.h"
 
 // C++
 #include <ctime>
@@ -205,4 +206,27 @@ namespace GRINS
                                                                   dynamic_cast<libMesh::UnsteadySolver*>(context.system->time_solver.get())->old_local_nonlinear_solution.get());
       }
   }
+
+  void UnsteadySolver::init_second_order_in_time_solvers( SolverContext& context )
+  {
+    // Right now, only Newmark is available so we cast directly to that
+    libMesh::TimeSolver& base_time_solver = context.system->get_time_solver();
+
+    libMesh::NewmarkSolver& time_solver = libMesh::libmesh_cast_ref<libMesh::NewmarkSolver&>(base_time_solver);
+
+    // If there's a restart, the acceleration should already be there
+    if( context.have_restart )
+      time_solver.set_initial_accel_avail(true);
+
+    // Otherwise, we need to compute it
+    else
+      {
+        libMesh::out << "==========================================================" << std::endl
+                     << "            Computing Initital Acceleration" << std::endl
+                     << "==========================================================" << std::endl;
+
+        time_solver.compute_initial_accel();
+      }
+  }
+
 } // namespace GRINS
