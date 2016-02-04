@@ -442,13 +442,13 @@ namespace GRINS
         {
           const libMesh::Point& traction = this->get_neumann_bc_value(bc_id);
 
-          _bound_conds.apply_neumann_normal( context, _disp_vars.u(), 1.0, traction(0) );
+          _bound_conds.apply_neumann_normal( context, _disp_vars.u(), -1.0, traction(0) );
 
           if( _disp_vars.have_v() )
-            _bound_conds.apply_neumann_normal( context, _disp_vars.v(), 1.0, traction(1) );
+            _bound_conds.apply_neumann_normal( context, _disp_vars.v(), -1.0, traction(1) );
 
           if( _disp_vars.have_w() )
-            _bound_conds.apply_neumann_normal( context, _disp_vars.w(), 1.0, traction(2) );
+            _bound_conds.apply_neumann_normal( context, _disp_vars.w(), -1.0, traction(2) );
         }
         break;
 

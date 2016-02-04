@@ -9,7 +9,10 @@
       [./MooneyRivlin]
          C1 = '24'
          C2 = '3.0'
-  [../../../Cable]
+    [../../Density]
+       value = '1.0'
+
+  [../../Cable]
     [./Density]
       value = '1.0'
     [../CrossSectionalArea]

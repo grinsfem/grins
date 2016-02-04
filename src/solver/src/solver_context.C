@@ -45,9 +45,8 @@ namespace GRINS
       print_perflog( false ),
       print_scalars( false ),
       do_adjoint_solve(false),
-      postprocessing( SharedPtr<PostProcessedQuantities<libMesh::Real> >() )
-  {
-    return;
-  }
+      postprocessing( SharedPtr<PostProcessedQuantities<libMesh::Real> >() ),
+      have_restart(false)
+  {}
 
 }

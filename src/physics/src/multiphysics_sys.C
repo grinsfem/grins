@@ -368,6 +368,16 @@ namespace GRINS
        &GRINS::Physics::compute_nonlocal_constraint_cache);
   }
 
+  bool MultiphysicsSystem::damping_residual( bool request_jacobian,
+                                             libMesh::DiffContext& context )
+  {
+    return this->_general_residual
+      (request_jacobian,
+       context,
+       &GRINS::Physics::damping_residual,
+       &GRINS::Physics::compute_damping_residual_cache);
+  }
+
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
 					  libMesh::DiffContext& context )
   {

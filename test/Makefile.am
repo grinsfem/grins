@@ -223,6 +223,7 @@ TESTS += suspended_cable_test.sh
 TESTS += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
+TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
@@ -287,7 +288,6 @@ shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_const
 shellfiles_src += 3d_low_mach_jacobians_xy.sh
 shellfiles_src += 3d_low_mach_jacobians_xz.sh
 shellfiles_src += 3d_low_mach_jacobians_yz.sh
-shellfiles_src += suspended_cable_test.sh
 shellfiles_src += warn_only_ufo_unit.sh
 shellfiles_src += error_ufo_unit.sh
 shellfiles_src += laplace_parsed_source_regression.sh
@@ -295,6 +295,12 @@ shellfiles_src += poisson_weighted_flux_regression.sh
 shellfiles_src += viscosity_options_conflict_unit_1.sh
 shellfiles_src += viscosity_options_conflict_unit_2.sh
 shellfiles_src += viscosity_options_conflict_unit_3.sh
+
+shellfiles_src += suspended_cable_test.sh
+shellfiles_src += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
+shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
+shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
+shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids

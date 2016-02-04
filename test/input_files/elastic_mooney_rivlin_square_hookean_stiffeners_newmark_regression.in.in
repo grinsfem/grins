@@ -16,7 +16,7 @@
         [./MooneyRivlin]
            C1 = '24'
            C2 = '3.0'
-   [../../Cable]
+   [../../../Cable]
       [./Density]
          value = '1.0'
       [../CrossSectionalArea]
@@ -28,34 +28,28 @@
             nu = '0.3'
 []
 
-##### Options related to all Physics #####
 [Physics]
-enabled_physics = 'ElasticMembrane
-                   ElasticMembraneConstantPressure
-                   ElasticCable'
+   enabled_physics = 'ElasticMembrane
+                      ElasticMembraneConstantPressure
+                      ElasticCable'
 
-##### Options for Elastic Membrane Physics #####
-[./ElasticMembrane]
+   [./ElasticMembrane]
 
-material = 'Membrane'
+      material = 'Membrane'
+      enabled_subdomains = '1'
 
-enabled_subdomains = '1'
+      bc_ids   = '1 2 3'
+      bc_types = 'pinned yz_symmetry xz_symmetry'
 
-bc_ids   = '1 2 3'
-bc_types = 'pinned yz_symmetry xz_symmetry'
+   [../ElasticMembraneConstantPressure]
 
-[../ElasticMembraneConstantPressure]
+      enabled_subdomains = '1'
+      pressure = '1.0'
 
-enabled_subdomains = '1'
+   [../ElasticCable]
 
-pressure = '1.0'
-
-##### Options for Elastic Cable Physics #####
-[../ElasticCable]
-
-material = 'Cable'
-
-enabled_subdomains = '2'
+      material = 'Cable'
+      enabled_subdomains = '2'
 
 []
 
@@ -67,19 +61,12 @@ enabled_subdomains = '2'
 []
 
 [SolverOptions]
-
-solver_type = 'libmesh_newmark'
-
+   [./TimeStepping]
+      solver_type = 'libmesh_newmark'
+      delta_t = '0.025'
+      n_timesteps = '10'
 []
 
-[unsteady-solver]
-
-   deltat = '0.05'
-   n_timesteps = '50'
-[]
-
-
-##### Linear and nonlinear solver options #####
 [linear-nonlinear-solver]
 relative_residual_tolerance = '1.0e-10'
 

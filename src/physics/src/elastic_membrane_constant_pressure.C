@@ -134,11 +134,11 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
-            Fu(i) += traction(0)*u_phi[i][qp]*jac;
+            Fu(i) -= traction(0)*u_phi[i][qp]*jac;
 
-            Fv(i) += traction(1)*u_phi[i][qp]*jac;
+            Fv(i) -= traction(1)*u_phi[i][qp]*jac;
 
-            Fw(i) += traction(2)*u_phi[i][qp]*jac;
+            Fw(i) -= traction(2)*u_phi[i][qp]*jac;
 
             if( compute_jacobian )
               {
@@ -155,14 +155,14 @@ namespace GRINS
                     const libMesh::Real dt2_du = _pressure/sqrt_a*(u_gradphi(0)*A_2(1) - A_1(1)*u_gradphi(1));
                     const libMesh::Real dt2_dv = _pressure/sqrt_a*(A_1(0)*u_gradphi(1) - u_gradphi(0)*A_2(0));
 
-                    Kuv(i,j) += dt0_dv*u_phi[i][qp]*jac;
-                    Kuw(i,j) += dt0_dw*u_phi[i][qp]*jac;
+                    Kuv(i,j) -= dt0_dv*u_phi[i][qp]*jac;
+                    Kuw(i,j) -= dt0_dw*u_phi[i][qp]*jac;
 
-                    Kvu(i,j) += dt1_du*u_phi[i][qp]*jac;
-                    Kvw(i,j) += dt1_dw*u_phi[i][qp]*jac;
+                    Kvu(i,j) -= dt1_du*u_phi[i][qp]*jac;
+                    Kvw(i,j) -= dt1_dw*u_phi[i][qp]*jac;
 
-                    Kwu(i,j) += dt2_du*u_phi[i][qp]*jac;
-                    Kwv(i,j) += dt2_dv*u_phi[i][qp]*jac;
+                    Kwu(i,j) -= dt2_du*u_phi[i][qp]*jac;
+                    Kwv(i,j) -= dt2_dv*u_phi[i][qp]*jac;
                   }
               }
           }

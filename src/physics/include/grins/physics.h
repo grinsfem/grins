@@ -187,6 +187,11 @@ namespace GRINS
                                       AssemblyContext& context,
                                       CachedValues& cache );
 
+    //! Damping matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
+    virtual void damping_residual( bool compute_jacobian,
+                                   AssemblyContext& context,
+                                   CachedValues& cache );
+
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
@@ -223,6 +228,9 @@ namespace GRINS
 
     virtual void compute_nonlocal_constraint_cache( const AssemblyContext& context,
                                                     CachedValues& cache );
+
+    virtual void compute_damping_residual_cache( const AssemblyContext& context,
+                                                 CachedValues& cache );
 
     virtual void compute_mass_residual_cache( const AssemblyContext& context,
                                               CachedValues& cache );

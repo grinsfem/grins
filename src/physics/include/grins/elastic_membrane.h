@@ -96,6 +96,9 @@ namespace GRINS
     //! Membrane thickness
     libMesh::Real _h0;
 
+    //! Membrane density
+    libMesh::Real _rho;
+
     bool _is_compressible;
 
     //! Variable index for lambda_sq variable

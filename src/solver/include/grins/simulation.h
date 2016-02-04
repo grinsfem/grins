@@ -170,6 +170,8 @@ namespace GRINS
     // Cache whether or not we do an adjoint solve
     bool _do_adjoint_solve;
 
+    bool _have_restart;
+
   private:
 
     Simulation();

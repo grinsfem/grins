@@ -484,6 +484,9 @@ AC_CONFIG_FILES(test/stokes_invalid_pin_location_unit.sh, [chmod +x test/stokes_
 AC_CONFIG_FILES(test/ins_invalid_pin_location_unit.sh, [chmod +x test/ins_invalid_pin_location_unit.sh])
 AC_CONFIG_FILES(test/lmns_invalid_pin_location_unit.sh, [chmod +x test/lmns_invalid_pin_location_unit.sh])
 
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in, [chmod +x test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in])
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------

@@ -41,6 +41,7 @@
 #include "libmesh/euler_solver.h"
 #include "libmesh/euler2_solver.h"
 #include "libmesh/twostep_time_solver.h"
+#include "libmesh/newmark_solver.h"
 
 // C++
 #include <ctime>
@@ -57,7 +58,8 @@ namespace GRINS
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
       _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
       _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
-      _max_growth( StrategiesParsing::parse_max_growth(input) )
+      _max_growth( StrategiesParsing::parse_max_growth(input) ),
+      _is_second_order_in_time(false)
   {
     StrategiesParsing::parse_component_norm(input,_component_norm);
   }
@@ -77,6 +79,11 @@ namespace GRINS
         time_solver = new libMesh::Euler2Solver( *(system) );
 
         this->set_theta<libMesh::Euler2Solver>(time_solver);
+      }
+    else if( _time_solver_name == SolverNames::libmesh_newmark_solver() )
+      {
+        time_solver = new libMesh::NewmarkSolver( *(system) );
+        _is_second_order_in_time = true;
       }
     else
       libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
@@ -116,6 +123,10 @@ namespace GRINS
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
+
+    // We may need to initialize acceleration for second order solvers
+    if( _is_second_order_in_time )
+      this->init_second_order_in_time_solvers(context);
 
     std::time_t first_wall_time = std::time(NULL);
     
@@ -204,4 +215,27 @@ namespace GRINS
                                                                   dynamic_cast<libMesh::UnsteadySolver*>(context.system->time_solver.get())->old_local_nonlinear_solution.get());
       }
   }
+
+  void UnsteadySolver::init_second_order_in_time_solvers( SolverContext& context )
+  {
+    // Right now, only Newmark is available so we cast directly to that
+    libMesh::TimeSolver& base_time_solver = context.system->get_time_solver();
+
+    libMesh::NewmarkSolver& time_solver = libMesh::libmesh_cast_ref<libMesh::NewmarkSolver&>(base_time_solver);
+
+    // If there's a restart, the acceleration should already be there
+    if( context.have_restart )
+      time_solver.set_initial_accel_avail(true);
+
+    // Otherwise, we need to compute it
+    else
+      {
+        libMesh::out << "==========================================================" << std::endl
+                     << "            Computing Initital Acceleration" << std::endl
+                     << "==========================================================" << std::endl;
+
+        time_solver.compute_initial_accel();
+      }
+  }
+
 } // namespace GRINS

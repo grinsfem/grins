@@ -148,6 +148,10 @@ namespace GRINS
     virtual bool nonlocal_constraint( bool request_jacobian,
 				      libMesh::DiffContext& context );
 
+    //! Contributions to \f$C(u)\dot{u}\f$
+    virtual bool damping_residual( bool request_jacobian,
+                                   libMesh::DiffContext& context );
+
     //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
 				libMesh::DiffContext& context );

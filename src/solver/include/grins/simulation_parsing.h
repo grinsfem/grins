@@ -22,38 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SIMULATION_PARSING_H
+#define GRINS_SIMULATION_PARSING_H
+
 // C++
 #include <string>
 
+// libMesh
+#include "libmesh/getpot.h"
+
 namespace GRINS
 {
-  class SolverNames
+  class SimulationParsing
   {
   public:
 
-    static const std::string steady_solver()
-    { return "grins_steady_solver"; }
+    SimulationParsing(){};
 
-    static const std::string unsteady_solver()
-    { return "grins_unsteady_solver"; }
+    ~SimulationParsing(){};
 
-    static const std::string steady_mesh_adaptive_solver()
-    { return "grins_steady_mesh_adaptive_solver"; }
+    static bool have_restart( const GetPot& input )
+    { return input.have_variable( SimulationParsing::restart_input_option() ); }
 
-    static const std::string unsteady_mesh_adaptive_solver()
-    { return "grins_unsteady_mesh_adaptive_solver"; }
+    static std::string restart_file( const GetPot& input )
+    { return input( SimulationParsing::restart_input_option(), "none" ); }
 
-    static const std::string displacement_continuation()
-    { return "displacement_continuation"; }
+  private:
 
-    static const std::string libmesh_euler_solver()
-    { return "libmesh_euler_solver"; }
-
-    static const std::string libmesh_euler2_solver()
-    { return "libmesh_euler2_solver"; }
-
-    static const std::string libmesh_newmark_solver()
-    { return "libmesh_newmark"; }
-
+    static std::string restart_input_option()
+    { return "restart-options/restart_file"; }
   };
+
 } // end namespace GRINS
+
+#endif // GRINS_SIMULATION_PARSING_H

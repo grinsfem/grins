@@ -57,6 +57,8 @@ namespace GRINS
         \todo We're not updating time-dependent BCs right now! */
     void update_dirichlet_bcs( SolverContext& context );
 
+    void init_second_order_in_time_solvers( SolverContext& context );
+
     std::string _time_solver_name;
 
     unsigned int _n_timesteps;
@@ -69,6 +71,11 @@ namespace GRINS
     double _upper_tolerance;
     double _max_growth;
     libMesh::SystemNorm _component_norm;
+
+    //! Track whether is this a second order (in time) solver or not
+    /*! If it is, we need to potentially initialize the acceleration */
+    bool _is_second_order_in_time;
+
   };
 
   template <typename T>

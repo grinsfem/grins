@@ -10,6 +10,8 @@
         [./MooneyRivlin]
            C1 = '24'
            C2 = '1.5'
+     [../../Density]
+        value = '1.0'
 []
 
 # Options related to all Physics
