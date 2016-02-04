@@ -29,12 +29,12 @@
 
 ##### Options related to all Physics #####
 [Physics]
-enabled_physics = 'ElasticMembrane
-                   ElasticMembraneConstantPressure
-                   ElasticCable'
+enabled_physics = 'ElasticMembrane:Membrane1
+                   ElasticMembraneConstantPressure:AllMembranes
+                   ElasticCable:Cables'
 
 ##### Options for Elastic Membrane Physics #####
-[./ElasticMembrane]
+[./ElasticMembrane:Membrane1]
 
 material = 'Membrane'
 
@@ -48,14 +48,14 @@ ic_types     = 'parsed'
 ic_variables = 'w'
 ic_values    = '-0.5*cos(pi/2*sqrt(x^2+y^2))'
 
-[../ElasticMembraneConstantPressure]
+[../ElasticMembraneConstantPressure:AllMembranes]
 
 enabled_subdomains = '1'
 
 pressure = '1.0'
 
 ##### Options for Elastic Cable Physics #####
-[../ElasticCable]
+[../ElasticCable:Cables]
 
 material = 'Cable'
 
