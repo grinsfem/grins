@@ -32,6 +32,7 @@
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
 #include "grins/simulation_parsing.h"
+#include "grins/strategies_parsing.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -172,7 +173,8 @@ namespace GRINS
     // This *must* be done after equation_system->init in order to get variable indices
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
-    return;
+    // Set any extra quadrature order the user requested. By default, is 0.
+    _multiphysics_system->extra_quadrature_order = StrategiesParsing::extra_quadrature_order(input);
   }
 
   void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )

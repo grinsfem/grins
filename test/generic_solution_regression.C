@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
     }
 
   // Now grab any "gold" QoI values
-  unsigned int n_qoi_vals = command_line.vector_variable_size("qoi_values");
+  unsigned int n_qoi_vals = command_line.vector_variable_size("qois");
   for( unsigned int n = 0; n < n_qoi_vals; n++ )
     {
 
@@ -177,15 +177,17 @@ int main(int argc, char* argv[])
       double error = computed_qoi - gold_qoi;
 
       if (std::abs(error) > tol)
-        std::cerr << "Tolerance exceeded for generic regression test!" << std::endl
-                  << "tolerance     = " << tol << std::endl
-                  << "error         = " << error << std::endl
-                  << "qoi index     = " << n << std::endl;
+        {
+          std::cerr << "Tolerance exceeded for generic regression test!" << std::endl
+                    << "tolerance     = " << tol << std::endl
+                    << "error         = " << error << std::endl
+                    << "qoi index     = " << n << std::endl;
+          return_flag = 1;
+        }
       else
         std::cout << "PASSED!" << std::endl
                   << "==========================================================" << std::endl;
 
-      return_flag = 1;
     }
 
 
