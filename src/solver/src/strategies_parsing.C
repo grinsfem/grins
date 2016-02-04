@@ -67,4 +67,15 @@ namespace GRINS
           libmesh_not_implemented();
       }
   }
+
+  int StrategiesParsing::extra_quadrature_order( const GetPot& input )
+  {
+    int extra_order = input("Strategies/Assembly/extra_quadrature_order", 0);
+
+    if( extra_order < 0 )
+      libmesh_error_msg("ERROR: extra_quadrature_order must be non-negative!");
+
+    return extra_order;
+  }
+
 } // end namespace GRINS
