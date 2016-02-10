@@ -358,7 +358,6 @@ include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
 include_HEADERS += physics/include/grins/antioch_instantiation_macro.h
 
-
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
 include_HEADERS += properties/include/grins/parsed_property_base.h
