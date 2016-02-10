@@ -73,9 +73,11 @@ namespace GRINS
     // Thermo
     libMesh::Real cp( const CachedValues& cache, unsigned int qp );
 
+    libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
     libMesh::Real cv( const CachedValues& cache, unsigned int qp );
 
+    libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
     libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
 
@@ -213,17 +215,33 @@ namespace GRINS
   }
 
   inline
+  libMesh::Real CanteraEvaluator::cp( const libMesh::Real& T,
+                                      const libMesh::Real P,
+                                      const std::vector<libMesh::Real>& Y )
+  {
+    return _thermo.cp(T,P,Y);
+  }
+
+  inline
   libMesh::Real CanteraEvaluator::cv( const CachedValues& cache, unsigned int qp )
   {
     return _thermo.cv(cache,qp);
   }
-  
+
+  inline
+  libMesh::Real CanteraEvaluator::cv( const libMesh::Real& T,
+                                      const libMesh::Real P,
+                                      const std::vector<libMesh::Real>& Y )
+  {
+    return _thermo.cv(T,P,Y);
+  }
+
   inline
   libMesh::Real CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, unsigned int species)
   {
     return _thermo.h(cache,qp,species);
   }
-  
+
   inline
   void CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h)
   {
