@@ -32,15 +32,13 @@
 namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
-  class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase<Mixture,Evaluator>
+  class ReactingLowMachNavierStokes : public ReactingLowMachNavierStokesBase<Mixture>
   {
   public:
 
     ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input);
-    ~ReactingLowMachNavierStokes();
-    
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+
+    virtual ~ReactingLowMachNavierStokes(){};
 
     virtual void auxiliary_init( MultiphysicsSystem& system );
 

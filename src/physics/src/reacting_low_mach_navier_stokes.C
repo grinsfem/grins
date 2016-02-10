@@ -41,15 +41,13 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase<Mixture,Evaluator>(physics_name,input),
+    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
     _p_pinning(input,physics_name),
     _rho_index(0),
     _mu_index(0),
     _k_index(0),
     _cp_index(0)
   {
-    this->read_input_options(input);
-
     // This is deleted in the base class
     this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<typename Mixture::ChemistryParent>( physics_name, input,
                                                                                                       this->_gas_mixture.chemistry() );
@@ -59,26 +57,9 @@ namespace GRINS
         this->_is_axisymmetric = true;
       }
 
-    this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokes<Mixture,Evaluator>::~ReactingLowMachNavierStokes()
-  {
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::read_input_options( const GetPot& input )
-  {
-    // Other quantities read in base class
-
-    // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/pin_pressure", false );
 
-    return;
+    this->_ic_handler = new GenericICHandler( physics_name, input );
   }
 
   template<typename Mixture, typename Evaluator>
@@ -169,7 +150,7 @@ namespace GRINS
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::init_context( AssemblyContext& context )
   {
     // First call base class
-    ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context(context);
+    ReactingLowMachNavierStokesAbstract::init_context(context);
 
     // We also need the side shape functions, etc.
     context.get_side_fe(this->_flow_vars.u())->get_JxW();
@@ -181,8 +162,6 @@ namespace GRINS
     context.get_side_fe(this->_temp_vars.T())->get_phi();
     context.get_side_fe(this->_temp_vars.T())->get_dphi();
     context.get_side_fe(this->_temp_vars.T())->get_xyz();
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>

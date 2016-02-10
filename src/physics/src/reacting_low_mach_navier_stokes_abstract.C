@@ -26,7 +26,7 @@
 #include "grins_config.h"
 
 // This class
-#include "grins/reacting_low_mach_navier_stokes_base.h"
+#include "grins/reacting_low_mach_navier_stokes_abstract.h"
 
 // GRINS
 #include "grins/assembly_context.h"
@@ -43,11 +43,10 @@
 
 namespace GRINS
 {
-  template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokesBase<Mixture,Evaluator>::ReactingLowMachNavierStokesBase(const std::string& physics_name,
-									    const GetPot& input)
+
+  ReactingLowMachNavierStokesAbstract::ReactingLowMachNavierStokesAbstract(const std::string& physics_name,
+                                                                           const GetPot& input)
     : Physics(physics_name, input),
-      _gas_mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
       _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes()),
       _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
@@ -68,14 +67,7 @@ namespace GRINS
     this->read_input_options(input);
   }
 
-  template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokesBase<Mixture,Evaluator>::~ReactingLowMachNavierStokesBase()
-  {
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::read_input_options( const GetPot& input )
+  void ReactingLowMachNavierStokesAbstract::read_input_options( const GetPot& input )
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
@@ -94,11 +86,9 @@ namespace GRINS
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 2 );
 
-    return;
   }
 
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_variables( libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokesAbstract::init_variables( libMesh::FEMSystem* system )
   {
     // Get libMesh to assign an index for each variable
     this->_dim = system->get_mesh().mesh_dimension();
@@ -112,12 +102,9 @@ namespace GRINS
        order scalar variable. */
     if( _enable_thermo_press_calc )
       _p0_var->init(system);
-
-    return;
   }
 
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  void ReactingLowMachNavierStokesAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -137,12 +124,9 @@ namespace GRINS
 
     if( _enable_thermo_press_calc )
       system->time_evolving(_p0_var->p0());
-
-    return;
   }
 
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesBase<Mixture,Evaluator>::init_context( AssemblyContext& context )
+  void ReactingLowMachNavierStokesAbstract::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -164,8 +148,6 @@ namespace GRINS
 
     context.get_element_fe(_press_var.p())->get_phi();
     context.get_element_fe(_press_var.p())->get_xyz();
-
-    return;
   }
 
 } // end namespace GRINS
