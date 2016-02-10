@@ -69,6 +69,7 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
+    libmesh_error();
     //_wilke_evaluator->mu_and_k( T, Y, mu, k );
     return;
   }
@@ -86,6 +87,7 @@ namespace GRINS
                                                                        const libMesh::Real P,
                                                                        const std::vector<libMesh::Real>& Y )
   {
+    libmesh_error();
     return 0.0;//_wilke_evaluator->k( T, Y );
   }
 
