@@ -330,17 +330,12 @@ namespace GRINS
   inline
   void CanteraEvaluator::mu_and_k_and_D( const libMesh::Real T,
                                          const libMesh::Real rho,
-                                         const libMesh::Real /*cp*/,
+                                         const libMesh::Real cp,
                                          const std::vector<libMesh::Real>& Y,
                                          libMesh::Real& mu, libMesh::Real& k,
                                          std::vector<libMesh::Real>& D )
   {
-    /*! \todo We're assuming an ideal gas here. Fix this when the API becomes stable, i.e
-              when we only need to pass a GRINS::AssemblyContext. */
-    libMesh::Real R_mix = this->R_mix(Y);
-    libMesh::Real P = rho*R_mix*T;
-
-    _transport.mu_and_k_and_D( T, P, Y, mu, k, D );
+    _transport.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
   }
 
   inline

@@ -59,6 +59,8 @@ int main(int argc, char* argv[])
 
   std::vector<double> Y(5,0.2);
 
+  double rho = P/T/gas.R_mix(Y);
+
   GRINS::CachedValues cache;
 
   cache.add_quantity(GRINS::Cache::TEMPERATURE);
@@ -80,12 +82,10 @@ int main(int argc, char* argv[])
   const double cv = gas.cv( cache, 0 );
   const double cp = gas.cp( cache, 0 );
 
-  const double mu = gas.mu( cache, 0 );
-  const double k = gas.k( cache, 0 );
-  
+  double mu, k;
   std::vector<libMesh::Real> D(5,0.0);
 
-  gas.D( cache, 0, D );
+  gas.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
 
   std::vector<double> h(5,0.0);
   gas.h_s( cache, 0, h );

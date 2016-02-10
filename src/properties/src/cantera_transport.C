@@ -165,7 +165,8 @@ namespace GRINS
   }
 
   void CanteraTransport::mu_and_k_and_D( const libMesh::Real T,
-                                         const libMesh::Real P,
+                                         const libMesh::Real rho,
+                                         const libMesh::Real /*cp*/,
                                          const std::vector<libMesh::Real>& Y,
                                          libMesh::Real& mu, libMesh::Real& k,
                                          std::vector<libMesh::Real>& D )
@@ -176,7 +177,7 @@ namespace GRINS
 	Not sure if we will get thread lock here or not. */
       try
 	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
+	  _cantera_gas.setState_TRY(T, rho, &Y[0]);
 
           mu =  _cantera_transport.viscosity();
           k =  _cantera_transport.thermalConductivity();
