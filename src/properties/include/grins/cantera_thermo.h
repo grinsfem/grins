@@ -50,7 +50,7 @@ namespace GRINS
   // GRINS forward declarations
   class CanteraMixture;
   class CachedValues;
-  
+
   //! Wrapper class for evaluating thermo properties using Cantera
   /*!
     This class is expected to be constructed *after* threads have been forked and will only
@@ -67,7 +67,11 @@ namespace GRINS
 
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 
+    libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y ) const;
+
     libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
+
+    libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y ) const;
 
     libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species) const;
 

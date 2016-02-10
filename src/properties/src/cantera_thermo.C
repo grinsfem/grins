@@ -50,7 +50,14 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-    
+
+    return this->cp(T,P,Y);
+  }
+
+  libMesh::Real CanteraThermodynamics::cp( const libMesh::Real& T,
+                                           const libMesh::Real P,
+                                           const std::vector<libMesh::Real>& Y ) const
+  {
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real cp = 0.0;
@@ -82,7 +89,14 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-    
+
+    return this->cv(T,P,Y);
+  }
+
+  libMesh::Real CanteraThermodynamics::cv( const libMesh::Real& T,
+                                           const libMesh::Real P,
+                                           const std::vector<libMesh::Real>& Y ) const
+  {
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real cv = 0.0;
