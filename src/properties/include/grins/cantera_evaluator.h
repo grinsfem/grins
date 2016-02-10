@@ -100,12 +100,6 @@ namespace GRINS
     void mu_and_k( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y,
                    libMesh::Real& mu, libMesh::Real& k );
 
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D );
-
-    void D( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y,
-	    std::vector<libMesh::Real>& D );
-
     void mu_and_k_and_D( const libMesh::Real T,
                          const libMesh::Real rho,
                          const libMesh::Real cp,
@@ -309,22 +303,6 @@ namespace GRINS
   {
     mu = _transport.mu(T,P,Y);
     k = _transport.k(T,P,Y);
-  }
-
-  inline
-  void CanteraEvaluator::D( const CachedValues& cache, unsigned int qp,
-                            std::vector<libMesh::Real>& D )
-  {
-    _transport.D(cache,qp,D);
-  }
-
-  inline
-  void CanteraEvaluator::D( const libMesh::Real& T,
-                            const libMesh::Real P,
-                            const std::vector<libMesh::Real>& Y,
-                            std::vector<libMesh::Real>& D )
-  {
-    _transport.D(T,P,Y,D);
   }
 
   inline

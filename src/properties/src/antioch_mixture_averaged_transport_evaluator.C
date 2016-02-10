@@ -92,20 +92,6 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename Diff>
-  void AntiochMixtureAveragedTransportEvaluator<Th,V,C,Diff>::D( const libMesh::Real T,
-                                                                 const libMesh::Real rho,
-                                                                 const libMesh::Real cp,
-                                                                 const std::vector<libMesh::Real>& Y,
-                                                                 std::vector<libMesh::Real>& D )
-  {
-    libMesh::Real dummy = 0.0;
-    typename Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType
-      diff_type = Antioch::MixtureAveragedTransportEvaluator<Diff,V,C,libMesh::Real>::DiffusivityType::MASS_FLUX_MASS_FRACTION;
-
-    _wilke_evaluator->mu_and_k_and_D( T, rho, cp, Y, dummy, dummy, D, diff_type);
-  }
-
-  template<typename Th, typename V, typename C, typename Diff>
   void AntiochMixtureAveragedTransportEvaluator<Th,V,C,Diff>::mu_and_k_and_D( const libMesh::Real T,
                                                                               const libMesh::Real rho,
                                                                               const libMesh::Real cp,

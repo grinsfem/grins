@@ -76,12 +76,6 @@ namespace GRINS
 
     libMesh::Real k( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
-    void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D );
-
-    void D( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y,
-	    std::vector<libMesh::Real>& D );
-
     void mu_and_k_and_D( const libMesh::Real T,
                          const libMesh::Real rho,
                          const libMesh::Real cp,
