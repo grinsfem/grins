@@ -109,7 +109,8 @@ namespace GRINS
   libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::k( const libMesh::Real T,
                                                                            const std::vector<libMesh::Real>& Y )
   {
-    const libMesh::Real cp = this->cp( T, Y );
+    // Second T is dummy
+    const libMesh::Real cp = this->cp( T, T, Y );
 
     return _conductivity( _mu, cp );
   }

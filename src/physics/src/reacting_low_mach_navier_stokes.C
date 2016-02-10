@@ -659,8 +659,9 @@ namespace GRINS
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.cp( T, Y );
+        value = gas_evaluator.cp( T, p0, Y );
       }
     // Now check for species dependent stuff
     else
