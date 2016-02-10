@@ -48,7 +48,8 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
-    return this->mu( T, Y );
+    // Second T is dummy
+    return this->mu( T, T, Y );
   }
 
   template<typename Th, typename V, typename C, typename D>
@@ -57,7 +58,8 @@ namespace GRINS
     const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
-    return this->k( T, Y );
+    // Second T is dummy
+    return this->k( T, T, Y );
   }
 
   template<typename Th, typename V, typename C, typename D>
@@ -73,6 +75,7 @@ namespace GRINS
 
   template<typename Th, typename V, typename C, typename D>
   libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
+                                                                        const libMesh::Real /*P*/,
                                                                         const std::vector<libMesh::Real>& Y )
   {
     return _wilke_evaluator->mu( T, Y );
@@ -80,6 +83,7 @@ namespace GRINS
 
   template<typename Th, typename V, typename C, typename D>
   libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
+                                                                       const libMesh::Real P,
                                                                        const std::vector<libMesh::Real>& Y )
   {
     return 0.0;//_wilke_evaluator->k( T, Y );

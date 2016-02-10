@@ -67,9 +67,11 @@ namespace GRINS
                    libMesh::Real& mu, libMesh::Real& k );
 
     libMesh::Real mu( const libMesh::Real T,
+                      const libMesh::Real P,
                       const std::vector<libMesh::Real>& Y );
 
     libMesh::Real k( const libMesh::Real T,
+                     const libMesh::Real P,
                      const std::vector<libMesh::Real>& Y );
 
     void D( const libMesh::Real T,

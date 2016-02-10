@@ -100,6 +100,7 @@ namespace GRINS
 
   template<typename Thermo, typename Conductivity>
   libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu( const libMesh::Real /*T*/,
+                                                                            const libMesh::Real /*P*/,
                                                                             const std::vector<libMesh::Real>& /*Y*/ )
   {
     return _mu;
@@ -107,6 +108,7 @@ namespace GRINS
   
   template<typename Thermo, typename Conductivity>
   libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::k( const libMesh::Real T,
+                                                                           const libMesh::Real /*P*/,
                                                                            const std::vector<libMesh::Real>& Y )
   {
     // Second T is dummy

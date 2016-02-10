@@ -643,16 +643,18 @@ namespace GRINS
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.mu( T, Y );
+        value = gas_evaluator.mu( T, p0, Y );
       }
     else if( quantity_index == this->_k_index )
       {
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.k( T, Y );
+        value = gas_evaluator.k( T, p0, Y );
       }
     else if( quantity_index == this->_cp_index )
       {
