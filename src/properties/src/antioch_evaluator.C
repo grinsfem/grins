@@ -57,8 +57,6 @@ namespace GRINS
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
     this->omega_dot( T, rho, Y, omega_dot );
-
-    return;
   }
 
   template<typename Thermo>
@@ -69,19 +67,6 @@ namespace GRINS
     this->check_and_reset_temp_cache(T);
 
     _kinetics->omega_dot( *(_temp_cache.get()), rho, mass_fractions, omega_dot );
-
-    return;
-  }
-
-  template<typename Thermo>
-  void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
-  {
-    if( _temp_cache->T != T )
-      {
-        _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
-      }
-
-    return;
   }
 
   template<>

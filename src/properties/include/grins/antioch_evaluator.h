@@ -204,6 +204,14 @@ namespace GRINS
     return _chem.species_name(species_index);
   }
 
+  template<typename Thermo>
+  inline
+  void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
+  {
+    if( _temp_cache->T != T )
+      _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
+  }
+
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
