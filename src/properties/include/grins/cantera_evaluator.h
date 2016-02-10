@@ -71,26 +71,28 @@ namespace GRINS
     std::string species_name( unsigned int species_index ) const;
 
     // Thermo
-    libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real cp( const CachedValues& cache, unsigned int qp );
 
-    libMesh::Real cv( const CachedValues& cache, unsigned int qp ) const;
 
-    libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species) const;
+    libMesh::Real cv( const CachedValues& cache, unsigned int qp );
 
-    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const;
+
+    libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
+
+    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h);
 
     libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
 
     // Transport
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp );
 
-    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp );
 
     void mu_and_k( const CachedValues& cache, unsigned int qp,
                    libMesh::Real& mu, libMesh::Real& k );
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D ) const;
+	    std::vector<libMesh::Real>& D );
 
     void mu_and_k_and_D( const libMesh::Real T,
                          const libMesh::Real rho,
@@ -101,7 +103,7 @@ namespace GRINS
 
     // Kinetics
     void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<libMesh::Real>& omega_dot ) const;
+		    std::vector<libMesh::Real>& omega_dot );
 
     void omega_dot( const libMesh::Real& T, libMesh::Real rho,
                     const std::vector<libMesh::Real> mass_fractions,
@@ -205,25 +207,25 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real CanteraEvaluator::cp( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraEvaluator::cp( const CachedValues& cache, unsigned int qp )
   {
     return _thermo.cp(cache,qp);
   }
 
   inline
-  libMesh::Real CanteraEvaluator::cv( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraEvaluator::cv( const CachedValues& cache, unsigned int qp )
   {
     return _thermo.cv(cache,qp);
   }
   
   inline
-  libMesh::Real CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, unsigned int species) const
+  libMesh::Real CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, unsigned int species)
   {
     return _thermo.h(cache,qp,species);
   }
   
   inline
-  void CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h) const
+  void CanteraEvaluator::h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h)
   {
     _thermo.h(cache,qp,h);
     return;
@@ -236,13 +238,13 @@ namespace GRINS
   }
 
   inline
-  libMesh::Real CanteraEvaluator::mu( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraEvaluator::mu( const CachedValues& cache, unsigned int qp )
   {
     return _transport.mu(cache,qp);
   }
 
   inline
-  libMesh::Real CanteraEvaluator::k( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraEvaluator::k( const CachedValues& cache, unsigned int qp )
   {
     return _transport.k(cache,qp);
   }
@@ -257,7 +259,7 @@ namespace GRINS
 
   inline
   void CanteraEvaluator::D( const CachedValues& cache, unsigned int qp,
-                            std::vector<libMesh::Real>& D ) const
+                            std::vector<libMesh::Real>& D )
   {
     return _transport.D(cache,qp,D);
   }
@@ -280,7 +282,7 @@ namespace GRINS
 
   inline
   void CanteraEvaluator::omega_dot( const CachedValues& cache, unsigned int qp,
-                                    std::vector<libMesh::Real>& omega_dot ) const
+                                    std::vector<libMesh::Real>& omega_dot )
   {
     return _kinetics.omega_dot(cache,qp,omega_dot);
   }

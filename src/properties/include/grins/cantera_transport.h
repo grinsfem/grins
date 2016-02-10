@@ -63,17 +63,17 @@ namespace GRINS
   class CanteraTransport
   {
   public:
-    
+
     CanteraTransport( CanteraMixture& mixture );
 
     ~CanteraTransport(){};
 
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real mu( const CachedValues& cache, unsigned int qp );
 
-    libMesh::Real k( const CachedValues& cache, unsigned int qp ) const;
+    libMesh::Real k( const CachedValues& cache, unsigned int qp );
 
     void D( const CachedValues& cache, unsigned int qp,
-	    std::vector<libMesh::Real>& D ) const;
+	    std::vector<libMesh::Real>& D );
 
     void mu_and_k_and_D( const libMesh::Real T,
                          const libMesh::Real P,
