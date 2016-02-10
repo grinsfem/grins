@@ -56,7 +56,7 @@ namespace GRINS
   public:
 
     CanteraKinetics( CanteraMixture& mixture );
-    ~CanteraKinetics();
+    ~CanteraKinetics(){};
 
     void omega_dot( const CachedValues& cache, unsigned int qp,
 		    std::vector<libMesh::Real>& omega_dot ) const;

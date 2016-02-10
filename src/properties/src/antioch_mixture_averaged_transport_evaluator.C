@@ -40,15 +40,7 @@ namespace GRINS
     : AntiochEvaluator<Thermo>( mixture ),
     _wilke_evaluator( new Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real>( mixture.wilke_mixture(), mixture.diffusivity(), mixture.viscosity(), mixture.conductivity() ) ),
     _diffusivity( mixture.diffusivity() )
-  {
-    return;
-  }
-
-  template<typename T, typename V, typename C, typename D>
-  AntiochMixtureAveragedTransportEvaluator<T,V,C,D>::~AntiochMixtureAveragedTransportEvaluator()
-  {
-    return;
-  }
+  {}
 
   template<typename Th, typename V, typename C, typename D>
   libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const CachedValues& cache, unsigned int qp )

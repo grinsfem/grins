@@ -63,7 +63,7 @@ namespace GRINS
 
     AntiochMixture( const GetPot& input, const std::string& material );
 
-    virtual ~AntiochMixture();
+    virtual ~AntiochMixture(){};
 
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 
@@ -105,7 +105,7 @@ namespace GRINS
   {
     return _h_stat_mech_ref_correction[species];
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH

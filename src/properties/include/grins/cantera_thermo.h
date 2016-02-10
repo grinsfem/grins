@@ -63,7 +63,7 @@ namespace GRINS
   public:
 
     CanteraThermodynamics( CanteraMixture& mixture );
-    ~CanteraThermodynamics();
+    ~CanteraThermodynamics(){};
 
     libMesh::Real cp( const CachedValues& cache, unsigned int qp ) const;
 

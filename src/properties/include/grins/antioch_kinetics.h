@@ -59,7 +59,8 @@ namespace GRINS
   public:
 
     AntiochKinetics( const AntiochMixture& mixture );
-    ~AntiochKinetics();
+
+    ~AntiochKinetics(){};
 
     void omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                     const libMesh::Real rho,

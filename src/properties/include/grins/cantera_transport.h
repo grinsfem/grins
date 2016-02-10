@@ -65,7 +65,8 @@ namespace GRINS
   public:
     
     CanteraTransport( CanteraMixture& mixture );
-    ~CanteraTransport();
+
+    ~CanteraTransport(){};
 
     libMesh::Real mu( const CachedValues& cache, unsigned int qp ) const;
 

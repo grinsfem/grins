@@ -47,15 +47,7 @@ namespace GRINS
 
   CanteraKinetics::CanteraKinetics( CanteraMixture& mixture )
     :  _cantera_gas( mixture.get_chemistry() )
-  {
-    return;
-  }
-
-  CanteraKinetics::~CanteraKinetics()
-  {
-    return;
-  }
-
+  {}
   void CanteraKinetics::omega_dot( const CachedValues& cache,
 				   unsigned int qp,
 				   std::vector<libMesh::Real>& omega_dot ) const

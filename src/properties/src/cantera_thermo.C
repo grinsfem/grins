@@ -43,14 +43,7 @@ namespace GRINS
   CanteraThermodynamics::CanteraThermodynamics( CanteraMixture& mixture )
     : _cantera_mixture(mixture),
       _cantera_gas(mixture.get_chemistry())
-  {
-    return;
-  }
-
-  CanteraThermodynamics::~CanteraThermodynamics()
-  {
-    return;
-  }
+  {}
 
   libMesh::Real CanteraThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
   {

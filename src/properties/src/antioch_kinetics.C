@@ -43,14 +43,7 @@ namespace GRINS
     : _antioch_mixture( mixture ),
       _antioch_kinetics( mixture.reaction_set(), 0 ),
       _antioch_cea_thermo( mixture.cea_mixture() )
-  {
-    return;
-  }
-
-  AntiochKinetics::~AntiochKinetics()
-  {
-    return;
-  }
+  {}
 
   void AntiochKinetics::omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                                    const libMesh::Real rho,
@@ -73,10 +66,8 @@ namespace GRINS
                                             molar_densities,
                                             h_RT_minus_s_R,
                                             omega_dot );
-
-    return;
   }
-  
+
 }// end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH

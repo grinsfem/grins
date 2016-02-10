@@ -47,15 +47,7 @@ namespace GRINS
       _temp_cache( new Antioch::TempCache<libMesh::Real>(1.0) )
   {
     this->build_thermo( mixture );
-    return;
   }
-
-  template<typename Thermo>
-  AntiochEvaluator<Thermo>::~AntiochEvaluator()
-  {
-    return;
-  }
-
   template<typename Thermo>
   void AntiochEvaluator<Thermo>::omega_dot( const CachedValues& cache, unsigned int qp,
                                             std::vector<libMesh::Real>& omega_dot )

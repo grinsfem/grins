@@ -58,7 +58,7 @@ namespace GRINS
 
     AntiochEvaluator( const AntiochMixture& mixture );
 
-    virtual ~AntiochEvaluator();
+    virtual ~AntiochEvaluator(){};
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;

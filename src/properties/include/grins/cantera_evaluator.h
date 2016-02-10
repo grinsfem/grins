@@ -50,7 +50,7 @@ namespace GRINS
   public:
 
     CanteraEvaluator( CanteraMixture& mixture );
-    ~CanteraEvaluator();
+    ~CanteraEvaluator(){};
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;

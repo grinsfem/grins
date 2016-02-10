@@ -45,11 +45,6 @@ namespace GRINS
     return;
   }
 
-  CanteraEvaluator::~CanteraEvaluator()
-  {
-    return;
-  }
-
 } // end namespace GRINS
 
 #endif //GRINS_HAVE_CANTERA

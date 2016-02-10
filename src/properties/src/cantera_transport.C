@@ -49,14 +49,7 @@ namespace GRINS
   CanteraTransport::CanteraTransport( CanteraMixture& mixture )
     : _cantera_gas( mixture.get_chemistry() ),
       _cantera_transport( mixture.get_transport() )
-  {
-    return;
-  }
-
-  CanteraTransport::~CanteraTransport()
-  {
-    return;
-  }
+  {}
 
   libMesh::Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
   {
