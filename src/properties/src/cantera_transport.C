@@ -57,6 +57,13 @@ namespace GRINS
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
+    return this->mu(T,P,Y);
+  }
+
+  libMesh::Real CanteraTransport::mu( const libMesh::Real& T,
+                                      const libMesh::Real P,
+                                      const std::vector<libMesh::Real>& Y )
+  {
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real mu = 0.0;
@@ -88,6 +95,13 @@ namespace GRINS
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
+    return this->k(T,P,Y);
+  }
+
+  libMesh::Real CanteraTransport::k( const libMesh::Real& T,
+                                     const libMesh::Real P,
+                                     const std::vector<libMesh::Real>& Y )
+  {
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real k = 0.0;
@@ -120,6 +134,14 @@ namespace GRINS
     const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
     const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
 
+    this->D(T,P,Y,D);
+  }
+
+  void CanteraTransport::D( const libMesh::Real& T,
+                            const libMesh::Real P,
+                            const std::vector<libMesh::Real>& Y,
+                            std::vector<libMesh::Real>& D )
+  {
     libmesh_assert_equal_to( Y.size(), D.size() );
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
@@ -140,8 +162,6 @@ namespace GRINS
 	}
 
     }
-
-    return;
   }
 
   void CanteraTransport::mu_and_k_and_D( const libMesh::Real T,
