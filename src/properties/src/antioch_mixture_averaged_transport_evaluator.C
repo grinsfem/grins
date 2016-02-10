@@ -43,38 +43,6 @@ namespace GRINS
   {}
 
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const CachedValues& cache, unsigned int qp )
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    // Second T is dummy
-    return this->mu( T, T, Y );
-  }
-
-  template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const CachedValues& cache, unsigned int qp )
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    // Second T is dummy
-    return this->k( T, T, Y );
-  }
-
-  template<typename Th, typename V, typename C, typename D>
-  void AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu_and_k( const CachedValues& cache, unsigned int qp,
-                                                                     libMesh::Real& mu, libMesh::Real& k )
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    libmesh_error();
-    //_wilke_evaluator->mu_and_k( T, Y, mu, k );
-    return;
-  }
-
-  template<typename Th, typename V, typename C, typename D>
   libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::mu( const libMesh::Real T,
                                                                         const libMesh::Real /*P*/,
                                                                         const std::vector<libMesh::Real>& Y )

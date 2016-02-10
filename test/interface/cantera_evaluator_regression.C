@@ -61,26 +61,12 @@ int main(int argc, char* argv[])
 
   double rho = P/T/gas.R_mix(Y);
 
-  GRINS::CachedValues cache;
-
-  cache.add_quantity(GRINS::Cache::TEMPERATURE);
-  cache.add_quantity(GRINS::Cache::THERMO_PRESSURE);
-  cache.add_quantity(GRINS::Cache::MASS_FRACTIONS);
-
-  std::vector<double> Tqp(1,T);
-  std::vector<double> Pqp(1,P);
-  std::vector<std::vector<double> > Yqp(1,Y);
-
-  cache.set_values(GRINS::Cache::TEMPERATURE, Tqp);
-  cache.set_values(GRINS::Cache::THERMO_PRESSURE, Pqp);
-  cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
-
   std::vector<double> omega_dot(5,0.0);
 
-  gas.omega_dot( cache, 0, omega_dot );
+  gas.omega_dot( T, rho, Y, omega_dot );
 
-  const double cv = gas.cv( cache, 0 );
-  const double cp = gas.cp( cache, 0 );
+  const double cv = gas.cv( T, P, Y );
+  const double cp = gas.cp( T, P, Y );
 
   double mu, k;
   std::vector<libMesh::Real> D(5,0.0);
@@ -88,7 +74,8 @@ int main(int argc, char* argv[])
   gas.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
 
   std::vector<double> h(5,0.0);
-  gas.h_s( cache, 0, h );
+  for( unsigned int s = 0; s < 5; s++ )
+    h[s] = gas.h_s( T, s );
 
   int return_flag = 0;
   

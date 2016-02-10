@@ -62,6 +62,11 @@ namespace GRINS
 
     ~AntiochKinetics(){};
 
+    void omega_dot( const libMesh::Real& T,
+                    const libMesh::Real rho,
+                    const std::vector<libMesh::Real>& mass_fractions,
+                    std::vector<libMesh::Real>& omega_dot );
+
     void omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                     const libMesh::Real rho,
                     const std::vector<libMesh::Real>& mass_fractions,

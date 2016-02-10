@@ -45,6 +45,15 @@ namespace GRINS
       _antioch_cea_thermo( mixture.cea_mixture() )
   {}
 
+  void AntiochKinetics::omega_dot( const libMesh::Real& T,
+                                   const libMesh::Real rho,
+                                   const std::vector<libMesh::Real>& mass_fractions,
+                                   std::vector<libMesh::Real>& omega_dot )
+  {
+    Antioch::TempCache<libMesh::Real> temp_cache(T);
+    this->omega_dot(temp_cache,rho,mass_fractions,omega_dot);
+  }
+
   void AntiochKinetics::omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
                                    const libMesh::Real rho,
                                    const std::vector<libMesh::Real>& mass_fractions,

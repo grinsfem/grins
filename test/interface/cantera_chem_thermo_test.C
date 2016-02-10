@@ -71,30 +71,18 @@ int main(int argc, char* argv[])
 
   std::vector<double> Y(5,0.2);
 
-  GRINS::CachedValues cache;
-
-  cache.add_quantity(GRINS::Cache::TEMPERATURE);
-  cache.add_quantity(GRINS::Cache::THERMO_PRESSURE);
-  cache.add_quantity(GRINS::Cache::MASS_FRACTIONS);
-
-  std::vector<double> Tqp(1,T);
-  std::vector<double> Pqp(1,P);
-  std::vector<std::vector<double> > Yqp(1,Y);
-
-  cache.set_values(GRINS::Cache::TEMPERATURE, Tqp);
-  cache.set_values(GRINS::Cache::THERMO_PRESSURE, Pqp);
-  cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
+  double rho = P/T/cantera_mixture.R_mix(Y);
 
   std::vector<double> omega_dot(5,0.0);
-  
-  cantera_kinetics.omega_dot(cache,0,omega_dot);
-  
-  const double cv = cantera_thermo.cv( cache, 0 );
-  const double cp = cantera_thermo.cp( cache, 0 );
+
+  cantera_kinetics.omega_dot(T, rho, Y, omega_dot);
+
+  const double cv = cantera_thermo.cv( T, P, Y );
+  const double cp = cantera_thermo.cp( T, P, Y );
 
   std::vector<double> h(5,0.0);
-
-  cantera_thermo.h(cache,0,h);
+  for( unsigned int s = 0; s < 5; s++ )
+    h[s] = cantera_thermo.h( T, s );
 
   cantera.setState_TPY(T,P,&Y[0]);
   const double e = cantera.intEnergy_mass();

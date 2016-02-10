@@ -52,36 +52,6 @@ namespace GRINS
   }
 
   template<typename Thermo, typename Conductivity>
-  libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu( const CachedValues& /*cache*/,
-                                                                            unsigned int /*qp*/ )
-  {
-    return this->_mu;
-  }
-
-  template<typename Thermo, typename Conductivity>
-  libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::k( const CachedValues& cache,
-                                                                           unsigned int qp )
-  {
-    libMesh::Real cp = this->cp( cache, qp );
-
-    return _conductivity( _mu, cp );
-  }
-
-  template<typename Thermo, typename Conductivity>
-  void AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu_and_k( const CachedValues& cache,
-                                                                         unsigned int qp,
-                                                                         libMesh::Real& mu,
-                                                                         libMesh::Real& k ) 
-  {
-    mu = _mu;
-
-    libMesh::Real cp = this->cp( cache, qp );
-
-    k = _conductivity( _mu, cp );
-    return;
-  }
-
-  template<typename Thermo, typename Conductivity>
   libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu( const libMesh::Real /*T*/,
                                                                             const libMesh::Real /*P*/,
                                                                             const std::vector<libMesh::Real>& /*Y*/ )

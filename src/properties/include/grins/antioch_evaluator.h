@@ -79,24 +79,13 @@ namespace GRINS
     std::string species_name( unsigned int species_index ) const;
 
     // Thermo
-    libMesh::Real cp( const CachedValues& cache, unsigned int qp );
-
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
-    libMesh::Real cv( const CachedValues& cache, unsigned int qp );
-
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-
-    libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
-
-    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
 
     libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
 
     // Kinetics
-    void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<libMesh::Real>& omega_dot );
-
     void omega_dot( const libMesh::Real& T, libMesh::Real rho,
                     const std::vector<libMesh::Real> mass_fractions,
                     std::vector<libMesh::Real>& omega_dot );
@@ -211,28 +200,6 @@ namespace GRINS
   {
     if( _temp_cache->T != T )
       _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
-  }
-
-  template<typename Thermo>
-  inline
-  libMesh::Real AntiochEvaluator<Thermo>::cp( const CachedValues& cache,unsigned int qp )
-  {
-    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    // Second T is dummy
-    return this->cp( T, T, Y );
-  }
-
-  template<typename Thermo>
-  inline
-  libMesh::Real AntiochEvaluator<Thermo>::cv( const CachedValues& cache,unsigned int qp )
-  {
-    const libMesh::Real& T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    // Second T is dummy
-    return this->cv( T, T, Y );
   }
 
 } // end namespace GRINS

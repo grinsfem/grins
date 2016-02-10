@@ -65,17 +65,9 @@ namespace GRINS
     CanteraThermodynamics( CanteraMixture& mixture );
     ~CanteraThermodynamics(){};
 
-    libMesh::Real cp( const CachedValues& cache, unsigned int qp );
-
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
-    libMesh::Real cv( const CachedValues& cache, unsigned int qp );
-
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-
-    libMesh::Real h(const CachedValues& cache, unsigned int qp, unsigned int species);
-
-    void h(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h);
 
     libMesh::Real h( const libMesh::Real& T, unsigned int species );
 

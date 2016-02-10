@@ -68,11 +68,7 @@ namespace GRINS
 
     ~CanteraTransport(){};
 
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp );
-
     libMesh::Real mu( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-
-    libMesh::Real k( const CachedValues& cache, unsigned int qp );
 
     libMesh::Real k( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 

@@ -51,15 +51,6 @@ namespace GRINS
       _cantera_transport( mixture.get_transport() )
   {}
 
-  libMesh::Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp )
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    return this->mu(T,P,Y);
-  }
-
   libMesh::Real CanteraTransport::mu( const libMesh::Real& T,
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )
@@ -87,15 +78,6 @@ namespace GRINS
     }
 
     return mu;
-  }
-
-  libMesh::Real CanteraTransport::k( const CachedValues& cache, unsigned int qp )
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    return this->k(T,P,Y);
   }
 
   libMesh::Real CanteraTransport::k( const libMesh::Real& T,
