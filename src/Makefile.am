@@ -371,6 +371,7 @@ include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_abstrac
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_stab_base.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_stab_helper.h
+include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_spgsm_stab.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_macro.h
 include_HEADERS += physics/include/grins/heat_conduction.h
