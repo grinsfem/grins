@@ -214,7 +214,7 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
-    libMesh::DenseSubVector<libMesh::Real>* Fw = NULL;
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     if( this->mesh_dim(context) == 3 )
       Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
@@ -424,7 +424,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Real> &F_v = context.get_elem_residual(this->_flow_vars.v());
     libMesh::DenseSubVector<libMesh::Real>* F_w = NULL;
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       F_w  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
     libMesh::DenseSubVector<libMesh::Real> &F_T = context.get_elem_residual(this->_temp_vars.T());
@@ -440,7 +440,7 @@ namespace GRINS
         context.interior_rate(this->_flow_vars.u(), qp, u_dot);
         context.interior_rate(this->_flow_vars.v(), qp, v_dot);
 
-        if( this->_dim == 3 )
+        if( this->mesh_dim(context) == 3 )
           context.interior_rate(this->_flow_vars.w(), qp, w_dot);
 
         libMesh::Real T_dot;
@@ -497,7 +497,7 @@ namespace GRINS
             F_u(i) -= rho*u_dot*u_phi[i][qp]*jac;
             F_v(i) -= rho*v_dot*u_phi[i][qp]*jac;
 
-            if( this->_dim == 3 )
+            if( this->mesh_dim(context) == 3 )
               (*F_w)(i) -= rho*w_dot*u_phi[i][qp]*jac;
           }
 
