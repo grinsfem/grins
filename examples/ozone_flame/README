@@ -1,0 +1,7 @@
+This example first runs 500 time steps starting from initial conditions.
+To get close enough to steady state for a steady solve requires many time
+steps, including making later time steps larger once the kinetics settles
+down and the transport dominates. Included in the example is a restart_steady.in
+and restart.xdr file which is a transient solution close to steady state.
+So, you can change the input file in run.sh to be restart_steady.in to
+do the steady-state solve.

@@ -1,0 +1,14 @@
+#===========================================================================                                                                                                                                                               
+# LEGEND
+#===========================================================================
+#
+#    Species    -- Species name
+#    Mol. Wt.   -- Molecular weight (kg/kmol)
+#    Hform      -- Formation enthalpy (J/kg @ 0K)
+#    cfs        -- Nominal T-R Degrees of freedom (cv = cfs*k*T)
+#    zns        -- Charge number
+#
+#    Spec.     Mol. Wt.     Hform (0K),  cfs,   zns
+O       16.00000          1.5420000000e7        1.5      0
+O2      32.00000          0.000000000000        2.5      0
+O3      48.00000          2.9729160000e7        3.0      0
