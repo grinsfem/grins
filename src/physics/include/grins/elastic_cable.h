@@ -29,9 +29,6 @@
 //GRINS
 #include "grins/elastic_cable_base.h"
 
-//LIBMESH
-#include "libmesh/fe_base.h"
-
 namespace GRINS
 {
   template<typename StressStrainLaw>
@@ -70,11 +67,6 @@ namespace GRINS
   private:
 
     ElasticCable();
-
-    // This is straight up copied from libMesh. Should make this a friend or public.
-    libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
-                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                           const libMesh::Point p );
 
     void compute_metric_tensors( unsigned int qp,
                                  const libMesh::FEBase& elem,

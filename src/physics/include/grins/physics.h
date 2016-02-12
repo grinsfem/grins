@@ -40,6 +40,7 @@
 //libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/point.h"
+#include "libmesh/fe_base.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -252,7 +253,12 @@ namespace GRINS
 #endif
 
   protected:
-    
+
+    /*! \todo This is straight up copied from libMesh. Need to make this available from libMesh. */
+    libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
+                                                                             const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                             const libMesh::Point p );
+
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects
       in GRINS namespace */

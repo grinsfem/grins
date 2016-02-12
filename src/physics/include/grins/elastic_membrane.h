@@ -27,7 +27,6 @@
 
 //GRINS
 #include "grins/elastic_membrane_base.h"
-#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
@@ -69,11 +68,6 @@ namespace GRINS
   private:
 
     ElasticMembrane();
-
-    /*! \todo This is straight up copied from libMesh. Should make this a friend or public. */
-    libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
-                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                           const libMesh::Point p );
 
     void compute_metric_tensors( unsigned int qp,
                                  const libMesh::FEBase& elem,
