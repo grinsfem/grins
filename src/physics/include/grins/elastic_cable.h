@@ -27,12 +27,12 @@
 
 
 //GRINS
-#include "grins/elastic_cable_base.h"
+#include "grins/elastic_cable_abstract.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCable : public ElasticCableBase
+  class ElasticCable : public ElasticCableAbstract
   {
   public:
 

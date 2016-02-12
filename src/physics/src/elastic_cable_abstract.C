@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_cable_base.h"
+#include "grins/elastic_cable_abstract.h"
 
 // GRINS
 #include "grins_config.h"
@@ -36,7 +36,7 @@
 
 namespace GRINS
 {
-  ElasticCableBase::ElasticCableBase( const PhysicsName& physics_name,
+  ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
                                       const GetPot& input )
     : Physics(physics_name,input),
       _A( 0.0 ),
@@ -59,26 +59,22 @@ namespace GRINS
 
   }
 
-  void ElasticCableBase::init_variables( libMesh::FEMSystem* system )
+  void ElasticCableAbstract::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true
     _disp_vars.init(system,false,true);
-
-    return;
   }
 
 
-  void ElasticCableBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  void ElasticCableAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u());
     system->time_evolving(_disp_vars.v());
     system->time_evolving(_disp_vars.w());
-
-    return;
   }
 
-  void ElasticCableBase::init_context( AssemblyContext& context )
+  void ElasticCableAbstract::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
@@ -89,8 +85,6 @@ namespace GRINS
     this->get_fe(context)->get_dxidx();
     this->get_fe(context)->get_dxidy();
     this->get_fe(context)->get_dxidz();
-
-    return;
   }
 
 } // end namespace GRINS

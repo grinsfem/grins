@@ -46,7 +46,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   ElasticCable<StressStrainLaw>::ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                                                bool is_compressible )
-    : ElasticCableBase(physics_name,input),
+    : ElasticCableAbstract(physics_name,input),
       _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_cable())),
       _is_compressible(is_compressible)
   {

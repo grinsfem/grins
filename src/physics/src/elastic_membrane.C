@@ -47,7 +47,7 @@ namespace GRINS
   template<typename StressStrainLaw>
   ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
                                                      bool is_compressible )
-    : ElasticMembraneBase(physics_name,input),
+    : ElasticMembraneAbstract(physics_name,input),
       _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_membrane())),
       _h0(0.0),
       _is_compressible(is_compressible)
@@ -75,7 +75,7 @@ namespace GRINS
   void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    ElasticMembraneBase::init_variables(system);
+    ElasticMembraneAbstract::init_variables(system);
 
     // Now build lambda_sq variable if we need it
     if(_is_compressible)

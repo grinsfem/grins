@@ -38,7 +38,7 @@
 namespace GRINS
 {
   ElasticCableConstantGravity::ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : ElasticCableBase(physics_name,input)
+    : ElasticCableAbstract(physics_name,input)
   {
     int num_gravity =  input.vector_variable_size("Physics/"+physics_name+"/gravity");
     if (num_gravity != 3)

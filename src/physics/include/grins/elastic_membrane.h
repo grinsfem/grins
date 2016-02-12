@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_MEMBRANE_H
 
 //GRINS
-#include "grins/elastic_membrane_base.h"
+#include "grins/elastic_membrane_abstract.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticMembrane : public ElasticMembraneBase
+  class ElasticMembrane : public ElasticMembraneAbstract
   {
   public:
 

@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_membrane_base.h"
+#include "grins/elastic_membrane_abstract.h"
 
 // GRINS
 #include "grins_config.h"
@@ -35,32 +35,26 @@
 
 namespace GRINS
 {
-  ElasticMembraneBase::ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _disp_vars(input,physics_name)
-  {
-    return;
-  }
+  {}
 
-  void ElasticMembraneBase::init_variables( libMesh::FEMSystem* system )
+  void ElasticMembraneAbstract::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true
     _disp_vars.init(system,false,true);
-
-    return;
   }
 
-  void ElasticMembraneBase::set_time_evolving_vars( libMesh::FEMSystem* system )
+  void ElasticMembraneAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u());
     system->time_evolving(_disp_vars.v());
     system->time_evolving(_disp_vars.w());
-
-    return;
   }
 
-  void ElasticMembraneBase::init_context( AssemblyContext& context )
+  void ElasticMembraneAbstract::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
@@ -76,8 +70,6 @@ namespace GRINS
     this->get_fe(context)->get_detadx();
     this->get_fe(context)->get_detady();
     this->get_fe(context)->get_detadz();
-
-    return;
   }
 
 } // end namespace GRINS

@@ -38,7 +38,7 @@
 namespace GRINS
 {
   ElasticMembraneConstantPressure::ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : ElasticMembraneBase(physics_name,input),
+    : ElasticMembraneAbstract(physics_name,input),
       _pressure(0.0)
   {
     if( !input.have_variable("Physics/"+physics_name+"/pressure") )

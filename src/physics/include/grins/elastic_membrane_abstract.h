@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_BASE_H
-#define GRINS_ELASTIC_CABLE_BASE_H
+#ifndef GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
+#define GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
 
 //GRINS
 #include "grins/physics.h"
@@ -35,13 +35,13 @@
 
 namespace GRINS
 {
-  class ElasticCableBase : public Physics
+  class ElasticMembraneAbstract : public Physics
   {
   public:
 
-    ElasticCableBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticCableBase(){};
+    virtual ~ElasticMembraneAbstract(){};
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system );
@@ -53,28 +53,23 @@ namespace GRINS
 
   protected:
 
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
-
-    //! Cable density
-    libMesh::Real  _rho;
-
     DisplacementFEVariables _disp_vars;
 
     const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 
   private:
 
-    ElasticCableBase();
+    ElasticMembraneAbstract();
 
   };
 
   inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableBase::get_fe( const AssemblyContext& context )
+  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneAbstract::get_fe( const AssemblyContext& context )
   {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
+    // For this Physics, we need to make sure that we grab only the 2D elements
+    return context.get_element_fe(_disp_vars.u(),2);
   }
-}
 
-#endif // GRINS_ELASTIC_CABLE_BASE_H
+} // end namespace GRINS
+
+#endif // GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
