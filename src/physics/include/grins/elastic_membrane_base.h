@@ -40,7 +40,8 @@ namespace GRINS
   public:
 
     ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneBase();
+
+    virtual ~ElasticMembraneBase(){};
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system );

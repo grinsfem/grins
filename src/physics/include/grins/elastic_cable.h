@@ -42,7 +42,7 @@ namespace GRINS
     ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                   bool lambda_sq_var );
 
-    virtual ~ElasticCable();
+    virtual ~ElasticCable(){};
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -54,8 +54,8 @@ namespace GRINS
                                           CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache );
+				       AssemblyContext& context,
+				       CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,

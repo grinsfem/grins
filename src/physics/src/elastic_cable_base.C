@@ -59,11 +59,6 @@ namespace GRINS
 
   }
 
-  ElasticCableBase::~ElasticCableBase()
-  {
-    return;
-  }
-
   void ElasticCableBase::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true

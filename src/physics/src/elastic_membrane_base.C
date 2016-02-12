@@ -42,11 +42,6 @@ namespace GRINS
     return;
   }
 
-  ElasticMembraneBase::~ElasticMembraneBase()
-  {
-    return;
-  }
-
   void ElasticMembraneBase::init_variables( libMesh::FEMSystem* system )
   {
     // is_2D = false, is_3D = true

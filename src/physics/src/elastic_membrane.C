@@ -73,12 +73,6 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::~ElasticMembrane()
-  {
-    return;
-  }
-
-  template<typename StressStrainLaw>
   void ElasticMembrane<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
@@ -398,26 +392,6 @@ namespace GRINS
               }
           }
       } // is_compressible
-
-    return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::side_time_derivative( bool /*compute_jacobian*/,
-                                                               AssemblyContext& /*context*/,
-                                                               CachedValues& /*cache*/ )
-  {
-    /*
-      std::vector<BoundaryID> ids = context.side_boundary_ids();
-
-      for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-      it != ids.end(); it++ )
-      {
-      libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
-
-      _bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
-      }
-    */
 
     return;
   }

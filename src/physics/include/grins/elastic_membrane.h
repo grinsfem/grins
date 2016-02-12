@@ -39,7 +39,7 @@ namespace GRINS
     ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
                      bool is_compressible );
 
-    virtual ~ElasticMembrane();
+    virtual ~ElasticMembrane(){};
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -51,10 +51,6 @@ namespace GRINS
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context,
                                           CachedValues& cache );
-
-    virtual void side_time_derivative( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,

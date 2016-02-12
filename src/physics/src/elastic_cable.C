@@ -59,13 +59,6 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  ElasticCable<StressStrainLaw>::~ElasticCable()
-  {
-    return;
-  }
-
-
-  template<typename StressStrainLaw>
   void ElasticCable<StressStrainLaw>::register_postprocessing_vars( const GetPot& input,
                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
@@ -274,15 +267,14 @@ namespace GRINS
     std::vector<BoundaryID> ids = context.side_boundary_ids();
 
     for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-         it != ids.end(); it++ )
+	 it != ids.end(); it++ )
       {
-        libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
+	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
 
-        _bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
+	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
       }
-
-    return;
   }
+
 
   template<typename StressStrainLaw>
   void ElasticCable<StressStrainLaw>::mass_residual( bool compute_jacobian,

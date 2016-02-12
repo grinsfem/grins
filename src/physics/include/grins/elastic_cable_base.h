@@ -41,7 +41,7 @@ namespace GRINS
 
     ElasticCableBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticCableBase();
+    virtual ~ElasticCableBase(){};
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system );
