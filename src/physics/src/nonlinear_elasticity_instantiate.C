@@ -23,6 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 #include "elastic_membrane.C"
+#include "elastic_cable_base.C"
 #include "elastic_cable.C"
 
 #include "grins/hookes_law.h"
@@ -33,4 +34,5 @@
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
 template class GRINS::ElasticMembrane<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
 
+template class GRINS::ElasticCableBase<GRINS::HookesLaw1D>;
 template class GRINS::ElasticCable<GRINS::HookesLaw1D>;
