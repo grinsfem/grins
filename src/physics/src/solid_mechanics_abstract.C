@@ -22,51 +22,36 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_ABSTRACT_H
-#define GRINS_ELASTIC_CABLE_ABSTRACT_H
-
-//GRINS
+// This class
 #include "grins/solid_mechanics_abstract.h"
-#include "grins/assembly_context.h"
+
+// GRINS
+#include "grins/materials_parsing.h"
 
 // libMesh
-#include "libmesh/fe_base.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class ElasticCableAbstract : public SolidMechanicsAbstract
+  SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName& physics_name,
+                                                 const GetPot& input )
+    : Physics(physics_name,input),
+      _disp_vars(input,physics_name)
+  {}
+
+  void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )
   {
-  public:
-
-    ElasticCableAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
-
-    virtual ~ElasticCableAbstract(){};
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
-
-  protected:
-
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
-
-    //! Cable density
-    libMesh::Real  _rho;
-
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
-
-  private:
-
-    ElasticCableAbstract();
-
-  };
-
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
+    // is_2D = false, is_3D = true
+    _disp_vars.init(system,false,true);
   }
-}
 
-#endif // GRINS_ELASTIC_CABLE_ABSTRACT_H
+  void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    // Tell the system to march temperature forward in time
+    system->time_evolving(_disp_vars.u());
+    system->time_evolving(_disp_vars.v());
+    system->time_evolving(_disp_vars.w());
+  }
+
+} // end namespace GRINS

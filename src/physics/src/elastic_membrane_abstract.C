@@ -36,23 +36,8 @@
 namespace GRINS
 {
   ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : Physics(physics_name,input),
-      _disp_vars(input,physics_name)
+    : SolidMechanicsAbstract(physics_name,input)
   {}
-
-  void ElasticMembraneAbstract::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
-  }
-
-  void ElasticMembraneAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u());
-    system->time_evolving(_disp_vars.v());
-    system->time_evolving(_disp_vars.w());
-  }
 
   void ElasticMembraneAbstract::init_context( AssemblyContext& context )
   {

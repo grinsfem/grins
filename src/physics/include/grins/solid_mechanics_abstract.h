@@ -22,51 +22,48 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_ABSTRACT_H
-#define GRINS_ELASTIC_CABLE_ABSTRACT_H
+#ifndef GRINS_SOLID_MECHANICS_ABSTRACT_H
+#define GRINS_SOLID_MECHANICS_ABSTRACT_H
 
 //GRINS
-#include "grins/solid_mechanics_abstract.h"
-#include "grins/assembly_context.h"
+#include "grins/physics.h"
+#include "grins/displacement_fe_variables.h"
 
 // libMesh
-#include "libmesh/fe_base.h"
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
-  class ElasticCableAbstract : public SolidMechanicsAbstract
+  class SolidMechanicsAbstract : public Physics
   {
   public:
 
-    ElasticCableAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    SolidMechanicsAbstract( const GRINS::PhysicsName& physics_name,
+                            const GetPot& input );
 
-    virtual ~ElasticCableAbstract(){};
+    virtual ~SolidMechanicsAbstract(){};
 
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    //! Initialize variables for this physics.
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
   protected:
 
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
+    DisplacementFEVariables _disp_vars;
 
-    //! Cable density
-    libMesh::Real  _rho;
+    typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
 
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
+    typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
+
+    typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
 
   private:
 
-    ElasticCableAbstract();
+    SolidMechanicsAbstract();
 
   };
 
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
-  }
-}
+} // end namespace GRINS
 
-#endif // GRINS_ELASTIC_CABLE_ABSTRACT_H
+#endif // GRINS_SOLID_MECHANICS_ABSTRACT_H

@@ -43,10 +43,6 @@ namespace GRINS
 
   protected:
 
-    typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
-    typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
-    typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
-
     //! Implementation of element_time_derivative.
     /*! The lambda argument is needed to support Rayleigh Damping. */
     void element_time_derivative_impl( bool compute_jacobian,

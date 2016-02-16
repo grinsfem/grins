@@ -37,11 +37,10 @@
 namespace GRINS
 {
   ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
-                                      const GetPot& input )
-    : Physics(physics_name,input),
+                                              const GetPot& input )
+    : SolidMechanicsAbstract(physics_name,input),
       _A( 0.0 ),
-      _rho(0.0),
-      _disp_vars(input,physics_name)
+      _rho(0.0)
   {
     MaterialsParsing::read_property( input,
                                      "Physics/"+physics_name+"/A",
@@ -57,21 +56,6 @@ namespace GRINS
                                      (*this),
                                      _rho );
 
-  }
-
-  void ElasticCableAbstract::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
-  }
-
-
-  void ElasticCableAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u());
-    system->time_evolving(_disp_vars.v());
-    system->time_evolving(_disp_vars.w());
   }
 
   void ElasticCableAbstract::init_context( AssemblyContext& context )

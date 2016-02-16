@@ -26,8 +26,7 @@
 #define GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
 
 //GRINS
-#include "grins/physics.h"
-#include "grins/displacement_fe_variables.h"
+#include "grins/solid_mechanics_abstract.h"
 #include "grins/assembly_context.h"
 
 // libMesh
@@ -35,7 +34,7 @@
 
 namespace GRINS
 {
-  class ElasticMembraneAbstract : public Physics
+  class ElasticMembraneAbstract : public SolidMechanicsAbstract
   {
   public:
 
@@ -43,17 +42,10 @@ namespace GRINS
 
     virtual ~ElasticMembraneAbstract(){};
 
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
   protected:
-
-    DisplacementFEVariables _disp_vars;
 
     const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 
