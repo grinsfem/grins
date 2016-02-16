@@ -33,8 +33,11 @@ namespace GRINS
   class ElasticMembraneConstantPressure : public ElasticMembraneAbstract
   {
   public:
-    ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneConstantPressure();
+
+    ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name,
+                                     const GetPot& input );
+
+    virtual ~ElasticMembraneConstantPressure(){};
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,

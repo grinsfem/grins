@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_MEMBRANE_H
 
 //GRINS
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/elastic_membrane_base.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticMembrane : public ElasticMembraneAbstract
+  class ElasticMembrane : public ElasticMembraneBase<StressStrainLaw>
   {
   public:
 
@@ -40,8 +40,6 @@ namespace GRINS
 
     virtual ~ElasticMembrane(){};
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Register postprocessing variables for ElasticMembrane
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
@@ -49,7 +47,11 @@ namespace GRINS
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context,
-                                          CachedValues& cache );
+                                          CachedValues& /*cache*/ )
+    { this->element_time_derivative_impl(compute_jacobian,
+                                         context,
+                                         &libMesh::DiffContext::get_elem_solution,
+                                         &libMesh::DiffContext::get_elem_solution_derivative); }
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
@@ -57,7 +59,11 @@ namespace GRINS
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
-                                CachedValues& cache );
+                                CachedValues& /*cache*/ )
+    { this->mass_residual_impl(compute_jacobian,
+                               context,
+                               &libMesh::FEMContext::interior_accel,
+                               &libMesh::DiffContext::get_elem_solution_accel_derivative); }
 
     //! Compute the registered postprocessed quantities
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
@@ -68,31 +74,6 @@ namespace GRINS
   private:
 
     ElasticMembrane();
-
-    void compute_metric_tensors( unsigned int qp,
-                                 const libMesh::FEBase& elem,
-                                 const AssemblyContext& context,
-                                 const libMesh::Gradient& grad_u,
-                                 const libMesh::Gradient& grad_v,
-                                 const libMesh::Gradient& grad_w,
-                                 libMesh::TensorValue<libMesh::Real>& a_cov,
-                                 libMesh::TensorValue<libMesh::Real>& a_contra,
-                                 libMesh::TensorValue<libMesh::Real>& A_cov,
-                                 libMesh::TensorValue<libMesh::Real>& A_contra,
-                                 libMesh::Real& lambda_sq);
-
-    StressStrainLaw _stress_strain_law;
-
-    //! Membrane thickness
-    libMesh::Real _h0;
-
-    //! Membrane density
-    libMesh::Real _rho;
-
-    bool _is_compressible;
-
-    //! Variable index for lambda_sq variable
-    VariableIndex _lambda_sq_var;
 
     //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

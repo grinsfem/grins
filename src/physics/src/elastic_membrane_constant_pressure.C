@@ -52,11 +52,6 @@ namespace GRINS
       (_pressure, input, "Physics/"+physics_name+"/pressure", _pressure );
   }
 
-  ElasticMembraneConstantPressure::~ElasticMembraneConstantPressure()
-  {
-    return;
-  }
-
   void ElasticMembraneConstantPressure::element_time_derivative( bool compute_jacobian,
                                                                  AssemblyContext& context,
                                                                  CachedValues& /*cache*/ )
