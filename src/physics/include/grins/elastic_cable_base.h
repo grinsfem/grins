@@ -45,6 +45,7 @@ namespace GRINS
 
     typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
     typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
+    typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
 
     //! Implementation of element_time_derivative.
     /*! The lambda argument is needed to support Rayleigh Damping. */
@@ -58,7 +59,7 @@ namespace GRINS
     /*! The mu argument is needed to support Rayleigh Damping. */
     void mass_residual_impl( bool compute_jacobian,
                              AssemblyContext& context,
-                             VarFuncType get_solution,
+                             InteriorFuncType interior_solution,
                              VarDerivType get_solution_deriv,
                              libMesh::Real mu = 1.0 );
 

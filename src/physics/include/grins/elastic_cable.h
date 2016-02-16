@@ -60,7 +60,11 @@ namespace GRINS
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
-                                CachedValues& cache );
+                                CachedValues& /*cache*/ )
+    { this->mass_residual_impl(compute_jacobian,
+                               context,
+                               &libMesh::FEMContext::interior_accel,
+                               &libMesh::DiffContext::get_elem_solution_accel_derivative); }
 
     //! Compute the registered postprocessed quantities
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,

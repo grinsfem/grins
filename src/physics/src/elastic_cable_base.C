@@ -193,6 +193,64 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
+  void ElasticCableBase<StressStrainLaw>::mass_residual_impl( bool compute_jacobian,
+                                                              AssemblyContext& context,
+                                                              InteriorFuncType interior_solution,
+                                                              VarDerivType get_solution_deriv,
+                                                              libMesh::Real mu )
+  {
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
+
+    const std::vector<libMesh::Real> &JxW =
+      this->get_fe(context)->get_JxW();
+
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      this->get_fe(context)->get_phi();
+
+    // Residuals that we're populating
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_disp_vars.u());
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_disp_vars.v());
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_disp_vars.w());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.v());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+        libMesh::Real jac = JxW[qp];
+
+        libMesh::Real u_ddot, v_ddot, w_ddot;
+        (context.*interior_solution)( this->_disp_vars.u(), qp, u_ddot );
+        (context.*interior_solution)( this->_disp_vars.v(), qp, v_ddot );
+        (context.*interior_solution)( this->_disp_vars.w(), qp, w_ddot );
+
+        for (unsigned int i=0; i != n_u_dofs; i++)
+	  {
+            libMesh::Real value = this->_rho*this->_A*u_phi[i][qp]*jac*mu;
+            Fu(i) += value*u_ddot;
+            Fv(i) += value*v_ddot;
+            Fw(i) += value*w_ddot;
+
+            if( compute_jacobian )
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    libMesh::Real jac_term = mu*this->_rho*this->_A*u_phi[i][qp]*u_phi[j][qp]*jac;
+                    jac_term *= (context.*get_solution_deriv)();
+
+                    Kuu(i,j) += jac_term;
+                    Kvv(i,j) += jac_term;
+                    Kww(i,j) += jac_term;
+                  }
+              }
+          }
+      }
+  }
+
+  template<typename StressStrainLaw>
   void ElasticCableBase<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
                                                                   const libMesh::FEBase& elem,
                                                                   const AssemblyContext& /*context*/,
