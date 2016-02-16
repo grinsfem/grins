@@ -22,6 +22,7 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "elastic_membrane_base.C"
 #include "elastic_membrane.C"
 #include "elastic_cable_base.C"
 #include "elastic_cable.C"
@@ -31,6 +32,8 @@
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
 #include "grins/mooney_rivlin.h"
 
+template class GRINS::ElasticMembraneBase<GRINS::HookesLaw>;
+template class GRINS::ElasticMembraneBase<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
 template class GRINS::ElasticMembrane<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
 
