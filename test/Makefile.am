@@ -224,6 +224,7 @@ TESTS += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
+TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh
 
 TESTS += extra_quadrature_order_laplace_arefee_amr_regression.sh
 
@@ -303,6 +304,7 @@ shellfiles_src += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
 shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
 shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
 shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
+shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh
 
 shellfiles_src += extra_quadrature_order_laplace_arefee_amr_regression.sh
 

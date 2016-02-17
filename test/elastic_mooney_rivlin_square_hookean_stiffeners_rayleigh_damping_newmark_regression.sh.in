@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PROG="../test/generic_solution_regression"
+
+INPUT="@top_builddir@/test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.in"
+DATA="@top_srcdir@/test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.xdr"
+
+PETSC_OPTIONS="-ksp_type cg -pc_type bjacobi -sub_pc_type icc"
+
+${LIBMESH_RUN:-} $PROG $PETSC_OPTIONS input=$INPUT soln-data=$DATA vars='u v w' norms='L2 H1' tol='1.0e-10'
