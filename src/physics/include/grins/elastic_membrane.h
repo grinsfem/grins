@@ -47,11 +47,7 @@ namespace GRINS
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context,
-                                          CachedValues& /*cache*/ )
-    { this->element_time_derivative_impl(compute_jacobian,
-                                         context,
-                                         &libMesh::DiffContext::get_elem_solution,
-                                         &libMesh::DiffContext::get_elem_solution_derivative); }
+                                          CachedValues& /*cache*/ );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,

@@ -45,14 +45,6 @@ namespace GRINS
 
   protected:
 
-    //! Implementation of element_time_derivative.
-    /*! The lambda argument is needed to support Rayleigh Damping. */
-    void element_time_derivative_impl( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       VarFuncType get_solution,
-                                       VarDerivType get_solution_deriv,
-                                       libMesh::Real lambda_factor = 1.0 );
-
     //! Implementation of mass_residual.
     /*! The mu argument is needed to support Rayleigh Damping. */
     void mass_residual_impl( bool compute_jacobian,
