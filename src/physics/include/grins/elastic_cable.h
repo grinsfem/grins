@@ -37,7 +37,7 @@ namespace GRINS
   public:
 
     ElasticCable( const PhysicsName& physics_name, const GetPot& input,
-                  bool lambda_sq_var );
+                  bool is_compressible );
 
     virtual ~ElasticCable(){};
 
