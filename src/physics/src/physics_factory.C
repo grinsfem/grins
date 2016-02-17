@@ -62,7 +62,9 @@
 #include "grins/parsed_velocity_source.h"
 #include "grins/parsed_velocity_source_adjoint_stab.h"
 #include "grins/elastic_membrane.h"
+#include "grins/elastic_membrane_rayleigh_damping.h"
 #include "grins/elastic_cable.h"
+#include "grins/elastic_cable_rayleigh_damping.h"
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/elastic_cable_constant_gravity.h"
 #include "grins/physics_naming.h"
@@ -771,6 +773,12 @@ namespace GRINS
           new_plane_stress_class<ElasticMembrane>
           (physics_to_add, PhysicsNaming::elastic_membrane(), input);
       }
+    else if( physics_to_add == PhysicsNaming::elastic_membrane_rayleigh_damping() )
+      {
+        physics_list[physics_to_add] =
+          new_plane_stress_class<ElasticMembraneRayleighDamping>
+          (physics_to_add, PhysicsNaming::elastic_membrane_rayleigh_damping(), input);
+      }
     else if( physics_to_add == PhysicsNaming::elastic_membrane_constant_pressure() )
       {
         physics_list[physics_to_add] =
@@ -781,6 +789,12 @@ namespace GRINS
         physics_list[physics_to_add] =
           new_one_d_stress_class<ElasticCable>
           (physics_to_add, PhysicsNaming::elastic_cable(), input);
+      }
+    else if( physics_to_add == PhysicsNaming::elastic_cable_rayleigh_damping() )
+      {
+        physics_list[physics_to_add] =
+          new_one_d_stress_class<ElasticCableRayleighDamping>
+          (physics_to_add, PhysicsNaming::elastic_cable_rayleigh_damping(), input);
       }
     else if( physics_to_add == PhysicsNaming::elastic_cable_constant_gravity() )
       {
