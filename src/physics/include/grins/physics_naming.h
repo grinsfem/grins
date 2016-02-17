@@ -170,6 +170,12 @@ namespace GRINS
     static PhysicsName elastic_cable()
     { return "ElasticCable"+_suffix; }
 
+    static PhysicsName elastic_cable_rayleigh_damping()
+    { return "ElasticCableRayleighDamping"+_suffix; }
+
+    static PhysicsName elastic_membrane_rayleigh_damping()
+    { return "ElasticMembraneRayleighDamping"+_suffix; }
+
     static PhysicsName elastic_membrane_constant_pressure()
     { return "ElasticMembraneConstantPressure"+_suffix; }
 
