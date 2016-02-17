@@ -26,6 +26,8 @@
 #include "elastic_membrane.C"
 #include "elastic_cable_base.C"
 #include "elastic_cable.C"
+#include "elastic_cable_rayleigh_damping.C"
+#include "elastic_membrane_rayleigh_damping.C"
 
 #include "grins/hookes_law.h"
 #include "grins/hookes_law_1d.h"
@@ -36,6 +38,9 @@ template class GRINS::ElasticMembraneBase<GRINS::HookesLaw>;
 template class GRINS::ElasticMembraneBase<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
 template class GRINS::ElasticMembrane<GRINS::HookesLaw>;
 template class GRINS::ElasticMembrane<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
+template class GRINS::ElasticMembraneRayleighDamping<GRINS::HookesLaw>;
+template class GRINS::ElasticMembraneRayleighDamping<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
 
 template class GRINS::ElasticCableBase<GRINS::HookesLaw1D>;
 template class GRINS::ElasticCable<GRINS::HookesLaw1D>;
+template class GRINS::ElasticCableRayleighDamping<GRINS::HookesLaw1D>;
