@@ -1,4 +1,10 @@
 
+AM_TESTS_ENVIRONMENT  = GRINS_TEST_DIR=$(top_builddir)/test; export GRINS_TEST_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_BUILDSRC_DIR=$(top_builddir)/src; export GRINS_BUILDSRC_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; export GRINS_TEST_INPUT_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
+
 check_PROGRAMS =
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
