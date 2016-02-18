@@ -48,7 +48,7 @@ namespace GRINS
       _ic_handler(new ICHandlingBase(physics_name)),
       _is_axisymmetric(false)
   {
-    this->read_input_options(input);
+    this->parse_enabled_subdomains(input,physics_name);
 
     if( input( "Physics/is_axisymmetric", false ) )
       {
@@ -68,17 +68,16 @@ namespace GRINS
     return;
   }
 
-  void Physics::read_input_options( const GetPot& input )
+  void Physics::parse_enabled_subdomains( const GetPot& input,
+                                          const std::string& physics_name )
   {
-    int num_ids = input.vector_variable_size( "Physics/"+this->_physics_name+"/enabled_subdomains" );
+    int num_ids = input.vector_variable_size( "Physics/"+physics_name+"/enabled_subdomains" );
 
     for( int i = 0; i < num_ids; i++ )
       {
-	libMesh::subdomain_id_type dumvar = input( "Physics/"+this->_physics_name+"/enabled_subdomains", -1, i );
+	libMesh::subdomain_id_type dumvar = input( "Physics/"+physics_name+"/enabled_subdomains", -1, i );
 	_enabled_subdomains.insert( dumvar );
       }
-
-    return;
   }
 
   bool Physics::enabled_on_elem( const libMesh::Elem* elem )

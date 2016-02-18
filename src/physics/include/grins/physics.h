@@ -113,7 +113,7 @@ namespace GRINS
     virtual ~Physics();
 
     //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( const GetPot& input );
+    virtual void read_input_options( const GetPot& input ){};
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;
@@ -258,6 +258,9 @@ namespace GRINS
     libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
                                                                              const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                              const libMesh::Point p );
+
+    void parse_enabled_subdomains( const GetPot& input,
+                                   const std::string& physics_name );
 
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects
