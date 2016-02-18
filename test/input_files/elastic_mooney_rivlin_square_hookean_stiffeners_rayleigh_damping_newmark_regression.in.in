@@ -51,7 +51,6 @@
    [../ElasticMembraneRayleighDamping]
      
       enabled_subdomains = '1'
-      material = 'Membrane' 
       lambda_factor = '0.1'
       mu_factor = '0.1'
 
@@ -62,7 +61,6 @@
 
    [../ElasticCableRayleighDamping]
 
-      material = 'Cable'
       enabled_subdomains = '2'
       lambda_factor = '0.1'
       mu_factor = '0.1'
