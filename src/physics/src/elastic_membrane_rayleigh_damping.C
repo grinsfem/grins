@@ -62,10 +62,18 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembraneRayleighDamping<StressStrainLaw>::element_time_derivative( bool compute_jacobian,
-                                                                                 AssemblyContext& context,
-                                                                                 CachedValues& /*cache*/ )
+  void ElasticMembraneRayleighDamping<StressStrainLaw>::damping_residual( bool compute_jacobian,
+                                                                          AssemblyContext& context,
+                                                                          CachedValues& /*cache*/ )
   {
+    // First do the mass part
+    this->mass_residual_impl(compute_jacobian,
+                               context,
+                               &libMesh::FEMContext::interior_rate,
+                               &libMesh::DiffContext::get_elem_solution_rate_derivative,
+                               _mu_factor);
+
+    // Now do the stiffness part
     const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
 
     const std::vector<libMesh::Real> &JxW =

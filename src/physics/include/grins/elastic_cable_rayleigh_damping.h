@@ -41,18 +41,9 @@ namespace GRINS
     virtual ~ElasticCableRayleighDamping(){};
 
     //! Time dependent part(s) of physics for element interiors
-    virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& /*cache*/ );
-
-    virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& /*cache*/ )
-    { this->mass_residual_impl(compute_jacobian,
-                               context,
-                               &libMesh::FEMContext::interior_rate,
-                               &libMesh::DiffContext::get_elem_solution_rate_derivative,
-                               _mu_factor); }
+    virtual void damping_residual( bool compute_jacobian,
+                                   AssemblyContext& context,
+                                   CachedValues& /*cache*/ );
 
   protected:
 
