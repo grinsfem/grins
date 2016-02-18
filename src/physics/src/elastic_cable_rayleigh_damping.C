@@ -201,31 +201,38 @@ namespace GRINS
                     const libMesh::Real y_term = C1*gamma_v;
                     const libMesh::Real z_term = C1*gamma_w;
 
-                    Kuu(i,j) += x_term*u_gradphi_J(0)*(gamma_u*context.get_elem_solution_rate_derivative() + dgradu_dt(0)*context.get_elem_solution_derivative());
+                    const libMesh::Real ddtterm_du = u_gradphi_J(0)*(gamma_u*context.get_elem_solution_rate_derivative()
+                                                                     + dgradu_dt(0)*context.get_elem_solution_derivative());
 
-                    Kuv(i,j) += x_term*u_gradphi_J(0)*(gamma_v*context.get_elem_solution_rate_derivative() + dgradv_dt(0)*context.get_elem_solution_derivative());
+                    const libMesh::Real ddtterm_dv = u_gradphi_J(0)*(gamma_v*context.get_elem_solution_rate_derivative()
+                                                                     + dgradv_dt(0)*context.get_elem_solution_derivative());
 
-                    Kuw(i,j) += x_term*u_gradphi_J(0)*(gamma_w*context.get_elem_solution_rate_derivative() + dgradw_dt(0)*context.get_elem_solution_derivative());
+                    const libMesh::Real ddtterm_dw = u_gradphi_J(0)*(gamma_w*context.get_elem_solution_rate_derivative()
+                                                                     + dgradw_dt(0)*context.get_elem_solution_derivative());
 
-                    Kvu(i,j) += y_term*u_gradphi_J(0)*(gamma_u*context.get_elem_solution_rate_derivative() + dgradu_dt(0)*context.get_elem_solution_derivative());
+                    Kuu(i,j) += x_term*ddtterm_du;
+                    Kuv(i,j) += x_term*ddtterm_dv;
+                    Kuw(i,j) += x_term*ddtterm_dw;
 
-                    Kvv(i,j) += y_term*u_gradphi_J(0)*(gamma_v*context.get_elem_solution_rate_derivative() + dgradv_dt(0)*context.get_elem_solution_derivative());
+                    Kvu(i,j) += y_term*ddtterm_du;
+                    Kvv(i,j) += y_term*ddtterm_dv;
+                    Kvw(i,j) += y_term*ddtterm_dw;
 
-                    Kvw(i,j) += y_term*u_gradphi_J(0)*(gamma_w*context.get_elem_solution_rate_derivative() + dgradw_dt(0)*context.get_elem_solution_derivative());
-
-                    Kwu(i,j) += z_term*u_gradphi_J(0)*(gamma_u*context.get_elem_solution_rate_derivative() + dgradu_dt(0)*context.get_elem_solution_derivative());
-
-                    Kwv(i,j) += z_term*u_gradphi_J(0)*(gamma_v*context.get_elem_solution_rate_derivative() + dgradv_dt(0)*context.get_elem_solution_derivative());
-
-                    Kww(i,j) += z_term*u_gradphi_J(0)*(gamma_w*context.get_elem_solution_rate_derivative() + dgradw_dt(0)*context.get_elem_solution_derivative());
+                    Kwu(i,j) += z_term*ddtterm_du;
+                    Kwv(i,j) += z_term*ddtterm_dv;
+                    Kww(i,j) += z_term*ddtterm_dw;
 
                     const libMesh::Real dt_term = dgradu_dt(0)*gamma_u + dgradv_dt(0)*gamma_v + dgradw_dt(0)*gamma_w;
 
-                    Kuu(i,j) += C1*dt_term*u_gradphi_J(0)*context.get_elem_solution_derivative();
+                    // Here, we're missing derivatives of C(0,0,0,0) w.r.t. strain
+                    // Nonzero for hyperelasticity models
+                    const libMesh::Real dxterm_du = C1*u_gradphi_J(0)*context.get_elem_solution_derivative();
+                    const libMesh::Real dyterm_dv = dxterm_du;
+                    const libMesh::Real dzterm_dw = dxterm_du;
 
-                    Kvv(i,j) += C1*dt_term*u_gradphi_J(0)*context.get_elem_solution_derivative();
-
-                    Kww(i,j) += C1*dt_term*u_gradphi_J(0)*context.get_elem_solution_derivative();
+                    Kuu(i,j) += dxterm_du*dt_term;
+                    Kvv(i,j) += dyterm_dv*dt_term;
+                    Kww(i,j) += dzterm_dw*dt_term;
 
                   } // end j-loop
               } // end i-loop

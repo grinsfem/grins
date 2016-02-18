@@ -215,15 +215,13 @@ namespace GRINS
                             libMesh::Real v_diagterm = dgradv_dt(beta)*u_gradphi_i(alpha) + dgradv_dt(alpha)*u_gradphi_i(beta);
                             libMesh::Real w_diagterm = dgradw_dt(beta)*u_gradphi_i(alpha) + dgradw_dt(alpha)*u_gradphi_i(beta);
 
-                            {
-                              const libMesh::Real factor = common_factor*tau(alpha,beta);
+                            const libMesh::Real factor = common_factor*tau(alpha,beta);
 
-                              const libMesh::Real ddiagterm = u_gradphi_j(beta)*u_gradphi_i(alpha) + u_gradphi_j(alpha)*u_gradphi_i(beta);
+                            const libMesh::Real ddiagterm = u_gradphi_j(beta)*u_gradphi_i(alpha) + u_gradphi_j(alpha)*u_gradphi_i(beta);
 
-                              Kuu(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
-                              Kvv(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
-                              Kww(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
-                            }
+                            Kuu(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
+                            Kvv(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
+                            Kww(i,j) += factor*ddiagterm*context.get_elem_solution_rate_derivative();
 
                             for( unsigned int lambda = 0; lambda < dim; lambda++ )
                               {
@@ -276,6 +274,8 @@ namespace GRINS
 
                                     const libMesh::Real gamma_sum = gamma_u + gamma_v + gamma_w;
 
+                                    // Here, we're missing derivatives of C(alpha,beta,lambda,mu) w.r.t. strain
+                                    // Nonzero for hyperelasticity models
                                     const libMesh::Real dxterm_du = C1*(  u_gradphi_j(beta)*u_gradphi_i(alpha)
                                                                         + u_gradphi_j(alpha)*u_gradphi_i(beta) )*context.get_elem_solution_derivative();
 
