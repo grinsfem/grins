@@ -50,7 +50,6 @@
 
    [../ElasticMembraneRayleighDamping]
      
-      enabled_subdomains = '1'
       lambda_factor = '0.1'
       mu_factor = '0.1'
 
@@ -61,7 +60,6 @@
 
    [../ElasticCableRayleighDamping]
 
-      enabled_subdomains = '2'
       lambda_factor = '0.1'
       mu_factor = '0.1'
 []

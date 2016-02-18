@@ -48,6 +48,17 @@ namespace GRINS
 
     if( !input.have_variable("Physics/"+PhysicsNaming::elastic_cable_rayleigh_damping()+"/mu_factor") )
       libmesh_error_msg("ERROR: Couldn't find Physics/"+PhysicsNaming::elastic_cable_rayleigh_damping()+"/mu_factor in input!");
+
+
+    // If the user specified enabled subdomains in this Physics section,
+    // that's an error; we're slave to ElasticCable.
+    if( input.have_variable("Physics/"+PhysicsNaming::elastic_cable_rayleigh_damping()+"/enabled_subdomains" ) )
+      libmesh_error_msg("ERROR: Cannot specify subdomains for "
+                        +PhysicsNaming::elastic_cable_rayleigh_damping()
+                        +"! Must specify subdomains through "
+                        +PhysicsNaming::elastic_cable()+".");
+
+    this->parse_enabled_subdomains(input,PhysicsNaming::elastic_cable());
   }
 
   template<typename StressStrainLaw>
