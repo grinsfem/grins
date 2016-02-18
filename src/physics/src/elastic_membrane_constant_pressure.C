@@ -50,6 +50,16 @@ namespace GRINS
 
     this->set_parameter
       (_pressure, input, "Physics/"+physics_name+"/pressure", _pressure );
+
+    // If the user specified enabled subdomains in this Physics section,
+    // that's an error; we're slave to ElasticMembrane.
+    if( input.have_variable("Physics/"+PhysicsNaming::elastic_membrane_constant_pressure()+"/enabled_subdomains" ) )
+      libmesh_error_msg("ERROR: Cannot specify subdomains for "
+                        +PhysicsNaming::elastic_membrane_constant_pressure()
+                        +"! Must specify subdomains through "
+                        +PhysicsNaming::elastic_membrane()+".");
+
+    this->parse_enabled_subdomains(input,PhysicsNaming::elastic_membrane());
   }
 
   void ElasticMembraneConstantPressure::element_time_derivative( bool compute_jacobian,

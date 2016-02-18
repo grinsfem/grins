@@ -65,8 +65,6 @@ bc_types = 'pinned yz_symmetry xz_symmetry'
 
 [../ElasticMembraneConstantPressure]
 
-enabled_subdomains = '1'
-
 pressure = '1.0'
 
 ##### Options for Elastic Cable Physics #####

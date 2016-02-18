@@ -45,7 +45,6 @@
 
    [../ElasticMembraneConstantPressure]
 
-      enabled_subdomains = '1'
       pressure = '1.0'
 
    [../ElasticMembraneRayleighDamping]
