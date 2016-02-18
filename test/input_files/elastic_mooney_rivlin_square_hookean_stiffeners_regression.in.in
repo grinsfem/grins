@@ -28,7 +28,7 @@
 ##### Mesh related options #####
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/input_files/mixed_dim_symmetric_square.exo'
+      filename = '@abs_top_srcdir@/test/grids/mixed_dim_symmetric_square.exo'
 []
 
 [Variables]
