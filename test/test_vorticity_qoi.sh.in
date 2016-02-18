@@ -1,8 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/vorticity_qoi"
-
-INPUT="@top_builddir@/test/input_files/vorticity_qoi.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT
-

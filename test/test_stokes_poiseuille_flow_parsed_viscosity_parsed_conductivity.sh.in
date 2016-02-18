@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity"
-
-INPUT="@top_srcdir@/test/input_files/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_input.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT 

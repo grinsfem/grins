@@ -1,8 +1,0 @@
-#!/bin/sh
-
-PROG="@top_builddir@/test/3d_low_mach_jacobians_xz"
-
-INPUT="@top_srcdir@/test/input_files/3d_low_mach_jacobians_xz.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT
-

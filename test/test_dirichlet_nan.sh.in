@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_thermally_driven_flow"
-
-INPUT="@top_srcdir@/test/input_files/dirichlet_nan.in @top_srcdir@/test/test_data/dirichlet_nan.xdr"
-
-PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_factor_levels 4"
-
-${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS

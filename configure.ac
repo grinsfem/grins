@@ -363,135 +363,52 @@ AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
 dnl-----------------------------------------------
-AC_CONFIG_FILES(test/test_axi_ns_poiseuille_flow.sh,	                  [chmod +x test/test_axi_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_x.sh,                        [chmod +x test/test_ns_couette_flow_2d_x.sh])
-AC_CONFIG_FILES(test/test_ns_couette_flow_2d_y.sh,                        [chmod +x test/test_ns_couette_flow_2d_y.sh])
-AC_CONFIG_FILES(test/test_ns_poiseuille_flow.sh,                          [chmod +x test/test_ns_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow.sh,                      [chmod +x test/test_stokes_poiseuille_flow.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity.sh,     [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity.sh])
-AC_CONFIG_FILES(test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh, [chmod +x test/test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh])
-AC_CONFIG_FILES(test/sa_2d_turbulent_channel_regression.sh,               [chmod +x test/sa_2d_turbulent_channel_regression.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_2d_flow.sh,                    [chmod +x test/test_thermally_driven_2d_flow.sh])
-AC_CONFIG_FILES(test/test_thermally_driven_3d_flow.sh,                    [chmod +x test/test_thermally_driven_3d_flow.sh])
-AC_CONFIG_FILES(test/convection_cell_regression.sh,                       [chmod +x test/convection_cell_regression.sh])
-AC_CONFIG_FILES(test/convection_cell_parsed_regression.sh,                [chmod +x test/convection_cell_parsed_regression.sh])
-AC_CONFIG_FILES(test/test_2d_pseudofan.sh,                                [chmod +x test/test_2d_pseudofan.sh])
-AC_CONFIG_FILES(test/test_2d_pseudoprop.sh,                               [chmod +x test/test_2d_pseudoprop.sh])
-AC_CONFIG_FILES(test/test_2d_fantrick.sh,                                 [chmod +x test/test_2d_fantrick.sh])
-AC_CONFIG_FILES(test/test_2d_proptrick.sh,                                [chmod +x test/test_2d_proptrick.sh])
-AC_CONFIG_FILES(test/test_2d_vsource.sh,                                  [chmod +x test/test_2d_vsource.sh])
-AC_CONFIG_FILES(test/test_dirichlet_fem.sh,                               [chmod +x test/test_dirichlet_fem.sh])
-AC_CONFIG_FILES(test/test_dirichlet_nan.sh,                               [chmod +x test/test_dirichlet_nan.sh])
-AC_CONFIG_FILES(test/test_simple_ode.sh,                                  [chmod +x test/test_simple_ode.sh])
-AC_CONFIG_FILES(test/test_axi_thermally_driven_flow.sh,                   [chmod +x test/test_axi_thermally_driven_flow.sh])
-AC_CONFIG_FILES(test/test_axi_ns_con_cyl_flow.sh,                         [chmod +x test/test_axi_ns_con_cyl_flow.sh])
-AC_CONFIG_FILES(test/test_parsed_qoi.sh,                                  [chmod +x test/test_parsed_qoi.sh])
-AC_CONFIG_FILES(test/test_vorticity_qoi.sh,                               [chmod +x test/test_vorticity_qoi.sh])
-AC_CONFIG_FILES(test/input_files/parsed_qoi.in)
-AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
-AC_CONFIG_FILES(test/low_mach_cavity_benchmark_regression.sh,             [chmod +x test/low_mach_cavity_benchmark_regression.sh])
 AC_CONFIG_FILES(test/backward_facing_step_regression.sh,                  [chmod +x test/backward_facing_step_regression.sh])
 AC_CONFIG_FILES(test/locally_refine_regression.sh,                        [chmod +x test/locally_refine_regression.sh])
-AC_CONFIG_FILES(test/penalty_poiseuille.sh,                               [chmod +x test/penalty_poiseuille.sh])
-AC_CONFIG_FILES(test/penalty_poiseuille_stab.sh,                          [chmod +x test/penalty_poiseuille_stab.sh])
 AC_CONFIG_FILES(test/redistribute_regression.sh,                          [chmod +x test/redistribute_regression.sh])
+AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                                [chmod +x test/coupled_stokes_ns.sh])
+AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_inflating_sheet_regression.sh, [chmod +x test/elastic_mooney_rivlin_inflating_sheet_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh])
+AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh])
+AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in, [chmod +x test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in])
+AC_CONFIG_FILES(test/sa_2d_turbulent_channel_regression.sh, [chmod +x test/sa_2d_turbulent_channel_regression.sh])
+
+AC_CONFIG_FILES(test/input_files/parsed_qoi.in)
+AC_CONFIG_FILES(test/input_files/vorticity_qoi.in)
 AC_CONFIG_FILES(test/input_files/backward_facing_step.in)
 AC_CONFIG_FILES(test/input_files/locally_refine.in)
 AC_CONFIG_FILES(test/input_files/redistribute.in)
-AC_CONFIG_FILES(test/coupled_stokes_ns.sh,                                [chmod +x test/coupled_stokes_ns.sh])
 AC_CONFIG_FILES(test/input_files/coupled_stokes_ns.in)
-AC_CONFIG_FILES(test/cantera_chem_thermo_test.sh,	                  [chmod +x test/cantera_chem_thermo_test.sh])
 AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
-AC_CONFIG_FILES(test/reacting_low_mach_cantera_regression.sh,             [chmod +x test/reacting_low_mach_cantera_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
 AC_CONFIG_FILES(test/input_files/air_2sp.xml)
 AC_CONFIG_FILES(test/input_files/air_4sp.xml)
-AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
-AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod +x test/cantera_transport_regression.sh])
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
-AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
-AC_CONFIG_FILES(test/gas_recombination_catalytic_wall_unit_cantera.sh,    [chmod +x test/gas_recombination_catalytic_wall_unit_cantera.sh])
-AC_CONFIG_FILES(test/gas_recombination_catalytic_wall_unit_antioch.sh,    [chmod +x test/gas_recombination_catalytic_wall_unit_antioch.sh])
-AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_cantera.sh,            [chmod +x test/gas_solid_catalytic_wall_unit_cantera.sh])
-AC_CONFIG_FILES(test/gas_solid_catalytic_wall_unit_antioch.sh,            [chmod +x test/gas_solid_catalytic_wall_unit_antioch.sh])
-AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
-AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
-AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
-AC_CONFIG_FILES(test/antioch_mixture_averaged_transport_evaluator_regression.sh,               [chmod +x test/antioch_mixture_averaged_transport_evaluator_regression.sh])
 AC_CONFIG_FILES(test/input_files/antioch.in)
 AC_CONFIG_FILES(test/input_files/gas_surface.in)
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_sheet_regression.sh,           [chmod +x test/elastic_mooney_rivlin_sheet_regression.sh])
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_inflating_sheet_regression.sh, [chmod +x test/elastic_mooney_rivlin_inflating_sheet_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_inflating_sheet_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_constant_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_prandtl_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
-AC_CONFIG_FILES(test/suspended_cable_test.sh,                    [chmod +x test/suspended_cable_test.sh])
-
-AC_CONFIG_FILES(test/3d_low_mach_jacobians_xy.sh,                            [chmod +x test/3d_low_mach_jacobians_xy.sh])
-AC_CONFIG_FILES(test/3d_low_mach_jacobians_xz.sh,                            [chmod +x test/3d_low_mach_jacobians_xz.sh])
-AC_CONFIG_FILES(test/3d_low_mach_jacobians_yz.sh,                            [chmod +x test/3d_low_mach_jacobians_yz.sh])
-
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.in)
-
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_regression.in)
-
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.in)
-
-AC_CONFIG_FILES(test/warn_only_ufo_unit.sh, [chmod +x test/warn_only_ufo_unit.sh])
-AC_CONFIG_FILES(test/error_ufo_unit.sh, [chmod +x test/error_ufo_unit.sh])
-
-AC_CONFIG_FILES(test/laplace_parsed_source_regression.sh, [chmod +x test/laplace_parsed_source_regression.sh])
-AC_CONFIG_FILES(test/viscosity_options_conflict_unit_1.sh, [chmod +x test/viscosity_options_conflict_unit_1.sh])
-AC_CONFIG_FILES(test/viscosity_options_conflict_unit_2.sh, [chmod +x test/viscosity_options_conflict_unit_2.sh])
-AC_CONFIG_FILES(test/viscosity_options_conflict_unit_3.sh, [chmod +x test/viscosity_options_conflict_unit_3.sh])
-
-AC_CONFIG_FILES(test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh, [chmod +x test/axisym_reacting_low_mach_antioch_cea_constant_regression.sh])
 AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)
-AC_CONFIG_FILES(test/poisson_weighted_flux_regression.sh, [chmod +x test/poisson_weighted_flux_regression.sh])
-
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_kinetics_theory_regression.sh, [chmod +x test/reacting_low_mach_antioch_kinetics_theory_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in)
-
-AC_CONFIG_FILES(test/stokes_invalid_pin_location_unit.sh, [chmod +x test/stokes_invalid_pin_location_unit.sh])
-AC_CONFIG_FILES(test/ins_invalid_pin_location_unit.sh, [chmod +x test/ins_invalid_pin_location_unit.sh])
-AC_CONFIG_FILES(test/lmns_invalid_pin_location_unit.sh, [chmod +x test/lmns_invalid_pin_location_unit.sh])
-
-AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh, [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh])
-AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in, [chmod +x test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.in])
 
 AC_CONFIG_FILES(test/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh,
                 [chmod +x test/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh])
 AC_CONFIG_FILES(test/input_files/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.in)
-
-AC_CONFIG_FILES(test/extra_quadrature_order_laplace_arefee_amr_regression.sh, [chmod +x test/extra_quadrature_order_laplace_arefee_amr_regression.sh])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
@@ -521,8 +438,12 @@ AC_CONFIG_FILES(src/utilities/include/grins/grins_version.h)
 dnl-----------------------------------------------
 dnl Generate Makefiles
 dnl-----------------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
-		 doxygen/grins.dox examples/Makefile])
+AC_CONFIG_FILES([Makefile
+                 src/Makefile
+                 test/Makefile
+                 doxygen/Makefile
+                 doxygen/grins.dox
+                 examples/Makefile])
 
 
 dnl-----------------------------------------------
