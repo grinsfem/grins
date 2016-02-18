@@ -64,7 +64,7 @@ namespace GRINS
     MultiphysicsSystem (through libMesh::FEMSystem) solves the following equation:
 
     \f$M(u)\dot{u} = F(u)\f$
-    
+
     M = mass matrix
     u = solution vector
     F = time derivative
@@ -72,14 +72,14 @@ namespace GRINS
     Note that for the nonlinear system that is solved for implicit
     time stepping is:
 
-    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$ 
+    \f$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0\f$
 
     *_time_derivative correspond to calculating terms for \f$F(u)\f$
     *_mass_residual correspond to calculating terms for \f$M(u)\dot{u}\f$
    */
   //TODO: is it F(u) or F(u_{\theta})?
   class MultiphysicsSystem : public libMesh::FEMSystem
-  {    
+  {
   public:
 
     //! Constructor. Will be called by libMesh only.
@@ -88,8 +88,8 @@ namespace GRINS
 			const unsigned int number );
 
     //! Destructor. Clean up all physics allocations.
-    ~MultiphysicsSystem();
-    
+    ~MultiphysicsSystem(){};
+
     //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );
 
@@ -130,11 +130,11 @@ namespace GRINS
     //! Boundary contributions to \f$F(u)\f$ which have time varying components.
     virtual bool side_time_derivative( bool request_jacobian,
 				       libMesh::DiffContext& context );
-    
+
     //! Contributions to \f$F(u)\f$ on SCALAR variables which have time varying components.
     virtual bool nonlocal_time_derivative( bool request_jacobian,
 				           libMesh::DiffContext& context );
-    
+
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool element_constraint( bool request_jacobian,
@@ -143,7 +143,7 @@ namespace GRINS
     //! Boundary contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool side_constraint( bool request_jacobian,
 				  libMesh::DiffContext& context );
-    
+
     //! Contributions to \f$F(u)\f$ on SCALAR variables which do not have time varying components.
     virtual bool nonlocal_constraint( bool request_jacobian,
 				      libMesh::DiffContext& context );
@@ -175,7 +175,7 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-#endif    
+#endif
 
   private:
 
@@ -192,7 +192,7 @@ namespace GRINS
 
     // A list of values for per-variable numerical jacobian deltas
     std::vector<libMesh::Real> _numerical_jacobian_h_values;
-    
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif

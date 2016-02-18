@@ -43,10 +43,7 @@ namespace GRINS
 
     HeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    ~HeatTransfer();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~HeatTransfer(){};
 
     //! Register postprocessing variables for HeatTransfer
     virtual void register_postprocessing_vars( const GetPot& input,

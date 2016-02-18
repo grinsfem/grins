@@ -48,17 +48,14 @@ namespace GRINS
 
     VelocityDragBase( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityDragBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~VelocityDragBase(){};
 
     bool compute_force ( const libMesh::Point& point,
                          const libMesh::Real time,
                          const libMesh::NumberVectorValue& U,
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL);
- 
+
   protected:
 
     libMesh::Real _exponent;
@@ -67,6 +64,9 @@ namespace GRINS
   private:
 
     VelocityDragBase();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
   };
 
 } // end namespace block

@@ -112,9 +112,6 @@ namespace GRINS
     Physics( const GRINS::PhysicsName& physics_name, const GetPot& input );
     virtual ~Physics();
 
-    //! Read options from GetPot input file. By default, nothing is read.
-    virtual void read_input_options( const GetPot& input ){};
-
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system ) = 0;
 
@@ -244,9 +241,9 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
-    BCHandlingBase* get_bc_handler(); 
+    BCHandlingBase* get_bc_handler();
 
-    ICHandlingBase* get_ic_handler(); 
+    ICHandlingBase* get_ic_handler();
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -276,7 +273,7 @@ namespace GRINS
 
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;
-    
+
     //! Caches whether or not the solver that's being used is steady or not.
     /*! This is need, for example, in flow stabilization as the tau terms change
       depending on whether the solver is steady or unsteady. */

@@ -39,17 +39,7 @@ namespace GRINS
                                                                 const GetPot& input )
     : HeatTransferBase<K>(physics_name,PhysicsNaming::heat_transfer(),input),
       _stab_helper(physics_name+"StabHelper", input)
-  {
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class K>
-  HeatTransferStabilizationBase<K>::~HeatTransferStabilizationBase()
-  {
-    return;
-  }
+  {}
 
   template<class K>
   void HeatTransferStabilizationBase<K>::init_variables( libMesh::FEMSystem* system )

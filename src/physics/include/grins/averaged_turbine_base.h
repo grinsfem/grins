@@ -48,7 +48,7 @@ namespace GRINS
 
     AveragedTurbineBase( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbineBase();
+    ~AveragedTurbineBase(){};
 
     //! Initialization of variables
     /*!
@@ -60,9 +60,6 @@ namespace GRINS
     //! Sets turbine_speed and velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     bool compute_force ( const libMesh::Point& point,
                          const libMesh::Real time,
                          const libMesh::NumberVectorValue& U,
@@ -71,7 +68,7 @@ namespace GRINS
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL,
                          libMesh::NumberVectorValue *dFds = NULL);
- 
+
     VariableIndex fan_speed_var() const { return _fan_speed_var; }
 
   protected:
@@ -140,6 +137,9 @@ namespace GRINS
     std::string _fan_speed_var_name;
 
   private:
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
     AveragedTurbineBase();
   };

@@ -48,17 +48,14 @@ namespace GRINS
 
     AveragedFanBase( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFanBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~AveragedFanBase(){};
 
     bool compute_force ( const libMesh::Point& point,
                          const libMesh::Real time,
                          const libMesh::NumberVectorValue& U,
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL);
- 
+
   protected:
 
     // Velocity of the moving fan blades as a function of x,y,z
@@ -93,6 +90,9 @@ namespace GRINS
     libMesh::ParsedFunction<libMesh::Number> aoa_function;
 
   private:
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
     AveragedFanBase();
   };

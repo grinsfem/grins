@@ -43,14 +43,6 @@ namespace GRINS
       _coefficient("")
   {
     this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  VelocityDragBase<Mu>::~VelocityDragBase()
-  {
-    return;
   }
 
   template<class Mu>

@@ -54,10 +54,7 @@ namespace GRINS
 
     LowMachNavierStokesBase(const PhysicsName& physics_name, const std::string& core_physics_name, const GetPot& input);
 
-    ~LowMachNavierStokesBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~LowMachNavierStokesBase(){};
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -70,7 +67,7 @@ namespace GRINS
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0 ) const;
-    
+
     libMesh::Real d_rho_dT( libMesh::Real T, libMesh::Real p0 ) const;
 
     libMesh::Real get_p0_steady( const AssemblyContext& c, unsigned int qp ) const;
@@ -114,7 +111,7 @@ namespace GRINS
     ThermalConductivity _k;
 
     //! Gravity vector
-    libMesh::Point _g; 
+    libMesh::Point _g;
 
     //! Flag to enable thermodynamic pressure calculation
     bool _enable_thermo_press_calc;
@@ -122,6 +119,9 @@ namespace GRINS
   private:
 
     LowMachNavierStokesBase();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
   };
 

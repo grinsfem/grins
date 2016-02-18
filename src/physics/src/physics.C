@@ -54,8 +54,6 @@ namespace GRINS
       {
         _is_axisymmetric = true;
       }
-
-    return;
   }
 
   Physics::~Physics()
@@ -64,8 +62,6 @@ namespace GRINS
     if( _bc_handler ) delete _bc_handler;
 
     if( _ic_handler ) delete _ic_handler;
-
-    return;
   }
 
   void Physics::parse_enabled_subdomains( const GetPot& input,
@@ -84,9 +80,9 @@ namespace GRINS
   {
     // Check if enabled_subdomains flag has been set and if we're
     // looking at a real element (rather than a nonlocal evaluation)
-    if( !elem || _enabled_subdomains.empty() ) 
+    if( !elem || _enabled_subdomains.empty() )
       return true;
-  
+
     // Check if current physics is enabled on elem
     if( _enabled_subdomains.find( elem->subdomain_id() ) == _enabled_subdomains.end() )
       return false;
@@ -152,7 +148,7 @@ namespace GRINS
     _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
     return;
   }
-  
+
   void Physics::init_context( AssemblyContext& /*context*/ )
   {
     return;
@@ -251,7 +247,7 @@ namespace GRINS
 				 CachedValues& /*cache*/ )
   {
     return;
-  }   
+  }
 
   void Physics::nonlocal_constraint( bool /*compute_jacobian*/,
 				     AssemblyContext& /*context*/,

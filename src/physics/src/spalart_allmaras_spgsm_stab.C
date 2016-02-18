@@ -42,17 +42,7 @@ namespace GRINS
   SpalartAllmarasSPGSMStabilization<Mu>::SpalartAllmarasSPGSMStabilization( const std::string& physics_name,
                                                                             const GetPot& input )
     : SpalartAllmarasStabilizationBase<Mu>(physics_name,input)
-  {
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  SpalartAllmarasSPGSMStabilization<Mu>::~SpalartAllmarasSPGSMStabilization()
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::init_variables( libMesh::FEMSystem* system )

@@ -40,7 +40,7 @@
 
 namespace GRINS
 {
-  
+
   //! Physics class for Axisymmetric Heat Transfer
   /*
     This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
@@ -52,10 +52,7 @@ namespace GRINS
 
     AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    ~AxisymmetricHeatTransfer();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~AxisymmetricHeatTransfer(){};
 
     //! Initialization  AxisymmetricHeatTransfer variables
     /*!
@@ -113,7 +110,11 @@ namespace GRINS
     Conductivity _k;
 
   private:
+
     AxisymmetricHeatTransfer();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
   };
 

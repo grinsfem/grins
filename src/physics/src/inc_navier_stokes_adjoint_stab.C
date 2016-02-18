@@ -37,20 +37,10 @@ namespace GRINS
 {
 
   template<class Mu>
-  IncompressibleNavierStokesAdjointStabilization<Mu>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
+  IncompressibleNavierStokesAdjointStabilization<Mu>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name,
                                                                                                   const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
-  {
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  IncompressibleNavierStokesAdjointStabilization<Mu>::~IncompressibleNavierStokesAdjointStabilization()
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   void IncompressibleNavierStokesAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
@@ -83,17 +73,17 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kup = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kup =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_press_var.p()); // J_{up}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvp = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvp =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_press_var.p()); // J_{vp}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // J_{vv}
 
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
@@ -136,7 +126,7 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
-      
+
         /*
           libMesh::Gradient grad_u, grad_v, grad_w;
           grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
@@ -183,7 +173,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] +
               _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 
@@ -415,11 +405,11 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpp = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpp =
       context.get_elem_jacobian(this->_press_var.p(), this->_press_var.p()); // J_{pp}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpu =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpv =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
@@ -450,9 +440,9 @@ namespace GRINS
         libMesh::Gradient d_tau_M_dU;
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
         libMesh::Tensor d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
-	
+
 	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);	
+	libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if (compute_jacobian)
           {
@@ -483,7 +473,7 @@ namespace GRINS
                   context.get_fixed_solution_derivative();
 
                 const libMesh::TypeVector<libMesh::Number>
-                  p_dphiiT_d_RM_s_dgradp = 
+                  p_dphiiT_d_RM_s_dgradp =
                   d_RM_s_dgradp.transpose() * p_dphi[i][qp];
 
                 for (unsigned int j=0; j != n_p_dofs; j++)
@@ -581,13 +571,13 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // J_{vv}
 
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
@@ -596,9 +586,9 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kwv = NULL;
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpu =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpv =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
@@ -708,7 +698,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] +
               _mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             libMesh::Gradient d_test_func_dU = this->_rho*u_gradphi[i][qp];
 

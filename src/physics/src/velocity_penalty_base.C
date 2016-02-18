@@ -56,12 +56,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  VelocityPenaltyBase<Mu>::~VelocityPenaltyBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
   {
     _quadratic_scaling =

@@ -36,21 +36,11 @@ namespace GRINS
 {
 
   template<class Mu>
-  IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name, 
+  IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name,
                                                                                               const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
-  {
-    this->read_input_options(input);
+  {}
 
-    return;
-  }
-
-  template<class Mu>
-  IncompressibleNavierStokesSPGSMStabilization<Mu>::~IncompressibleNavierStokesSPGSMStabilization()
-  {
-    return;
-  }
-  
   template<class Mu>
   void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                               AssemblyContext& context,
@@ -101,10 +91,10 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
-	
+
 	// Compute the viscosity at this qp
 	libMesh::Real _mu_qp = this->_mu(context, qp);
-	
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
@@ -170,7 +160,7 @@ namespace GRINS
       {
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
-      
+
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
         if( this->_dim == 3 )
@@ -254,7 +244,7 @@ namespace GRINS
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
-      
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
 
         libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );

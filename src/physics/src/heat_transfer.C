@@ -47,8 +47,6 @@ namespace GRINS
     : HeatTransferBase<K>(physics_name, PhysicsNaming::heat_transfer(), input),
     _k_index(0)
   {
-    this->read_input_options(input);
-
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
 
@@ -58,20 +56,6 @@ namespace GRINS
       }
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
-  }
-
-  template<class K>
-  HeatTransfer<K>::~HeatTransfer()
-  {
-    return;
-  }
-
-  template<class K>
-  void HeatTransfer<K>::read_input_options( const GetPot& /*input*/ )
-  {
-    return;
   }
 
   template<class K>
@@ -140,7 +124,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& T_gradphi =
       context.get_element_fe(this->_temp_vars.T())->get_dphi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     libMesh::DenseSubMatrix<libMesh::Number> &KTT = context.get_elem_jacobian(this->_temp_vars.T(), this->_temp_vars.T()); // R_{T},{T}
@@ -269,14 +253,14 @@ namespace GRINS
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_temp_vars.T())->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& phi = 
+    const std::vector<std::vector<libMesh::Real> >& phi =
       context.get_element_fe(this->_temp_vars.T())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The number of local degrees of freedom in each variable
@@ -320,9 +304,9 @@ namespace GRINS
                     M(i,j) -= this->_rho*this->_Cp*phi[j][qp]*phi[i][qp]*jac * context.get_elem_solution_rate_derivative();
                   }
               }// End of check on Jacobian
-          
+
 	  } // End of element dof loop
-      
+
       } // End of the quadrature point loop
 
 #ifdef GRINS_USE_GRVY_TIMERS
