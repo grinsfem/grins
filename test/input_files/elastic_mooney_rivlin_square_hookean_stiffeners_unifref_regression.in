@@ -10,8 +10,8 @@
       [./MooneyRivlin]
          C1 = '24'
          C2 = '3.0'
-     [../../Density]
-        value = '1.0'
+    [../../Density]
+       value = '1.0'
 
   [../../Cable]
     [./Density]
@@ -28,7 +28,16 @@
 ##### Mesh related options #####
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/grids/mixed_dim_symmetric_square.exo'
+      filename = './grids/mixed_dim_symmetric_square.exo'
+
+   [../Refinement]
+      uniformly_refine = '1'
+[]
+
+[restart-options]
+   # Use the coarser mesh to give us a good initial guess for the solution
+   restart_file = './test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr'
+
 []
 
 [Variables]
@@ -53,11 +62,6 @@ enabled_subdomains = '1'
 
 bc_ids   = '1 2 3'
 bc_types = 'pinned yz_symmetry xz_symmetry'
-
-ic_ids       = '1'
-ic_types     = 'parsed'
-ic_variables = 'w'
-ic_values    = '0.1*(x+0.5)*x*(x-1.5)*(y+0.5)*(y-1.5)'
 
 [../ElasticMembraneConstantPressure]
 

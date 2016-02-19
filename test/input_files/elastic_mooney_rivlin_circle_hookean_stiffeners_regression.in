@@ -27,7 +27,7 @@
 ##### Mesh related options #####
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/grids/mixed_dim_circle.exo'
+      filename = './grids/mixed_dim_circle.exo'
 []
 
 ##### Options related to all Physics #####

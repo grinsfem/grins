@@ -1,4 +1,14 @@
 
+# Materials
+[Materials]
+  [./TestMaterial]
+    [./Viscosity]
+      model = 'constant'
+      value = '1.0e-1'
+    [../Density]
+      value = '1.0'
+[]
+
 # Options related to all Physics
 [Physics]
 
@@ -17,27 +27,11 @@ material = 'TestMaterial'
 bc_ids = '1 2'
 bc_types = 'parabolic_profile no_slip'
 
-parabolic_profile_coeffs_1 = '0.0 0.0 -480.0 0.0 240.0 0.0'
+parabolic_profile_coeffs_1 = '0.0 0.0 -40.0 0.0 40.0 0.0'
 parabolic_profile_var_1 = 'u'
 parabolic_profile_fix_1 = 'v'
 
 pin_pressure = 'false'
-
-[]
-
-[Materials]
-  [./TestMaterial]
-    [./Viscosity]
-      model = 'constant'
-      value = '1.0e-1'
-    [../Density]
-         value = '1.0'
-[]
-
-[Stabilization]
-
-tau_constant = '10'
-tau_factor = '0.05'
 
 []
 
@@ -52,19 +46,29 @@ tau_factor = '0.05'
       order = 'FIRST'
 []
 
+[Stabilization]
+
+tau_constant = '10'
+tau_factor = '0.05'
+
+[]
+
 # Mesh related options
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
+      filename = './grids/backward_facing_step.e'
 
    [../Refinement]
       locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
+
+   [../Redistribution]
+      function = '{x+x*(x-30)/30}{y*2}{z}'
 []
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations =  25
-max_linear_iterations = 2500
+max_linear_iterations = 5000
 
 verify_analytic_jacobians = 0.0
 
@@ -77,7 +81,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'refined_step'
+vis_output_file_prefix = 'redistributed_step'
 
 output_residual = 'false'
 

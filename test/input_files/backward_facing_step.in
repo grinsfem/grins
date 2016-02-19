@@ -1,12 +1,15 @@
 
-# Materials
+# Material options
 [Materials]
-  [./TestMaterial]
-    [./Viscosity]
-      model = 'constant'
-      value = '1.0e-1'
-    [../Density]
-      value = '1.0'
+   [./TestMaterial]
+      [./Viscosity]
+         model = 'constant'
+         value = '1.0e-1'
+      [../Density]
+         value = '1.0'
+      # This is for testing "no-error-for-unused-Materials-variable"
+      [../ThermalConductivity]
+         value = '1.0'
 []
 
 # Options related to all Physics
@@ -27,7 +30,7 @@ material = 'TestMaterial'
 bc_ids = '1 2'
 bc_types = 'parabolic_profile no_slip'
 
-parabolic_profile_coeffs_1 = '0.0 0.0 -40.0 0.0 40.0 0.0'
+parabolic_profile_coeffs_1 = '0.0 0.0 -480.0 0.0 240.0 0.0'
 parabolic_profile_var_1 = 'u'
 parabolic_profile_fix_1 = 'v'
 
@@ -56,32 +59,25 @@ tau_factor = '0.05'
 # Mesh related options
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/grids/backward_facing_step.e'
-
-   [../Refinement]
-      locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
-
-   [../Redistribution]
-      function = '{x+x*(x-30)/30}{y*2}{z}'
+      filename = './grids/backward_facing_step.e'
 []
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations =  25
-max_linear_iterations = 5000
+max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
-relative_step_tolerance = 1.0e-10
+relative_step_tolerance = 1.0e-11
 
-use_numerical_jacobians_only = 'true'
+use_numerical_jacobians_only = 'false'
 
 # Visualization options
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'redistributed_step'
+vis_output_file_prefix = 'step'
 
 output_residual = 'false'
 

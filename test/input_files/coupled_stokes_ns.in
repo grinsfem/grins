@@ -1,7 +1,7 @@
 # Mesh related options
 [Mesh]
    [./Read]
-      filename = '@abs_top_srcdir@/test/grids/coupled_stokes_ns.e'
+      filename = './grids/coupled_stokes_ns.e'
 []
 
 #Linear and nonlinear solver options

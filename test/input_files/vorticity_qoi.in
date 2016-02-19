@@ -1,7 +1,7 @@
 # Mesh related options
 [Mesh]
     [./Read]
-       filename = '@abs_top_srcdir@/test/grids/poiseuille_verification.e'
+       filename = './grids/poiseuille_verification.e'
 []
 
 # Options for time solvers
