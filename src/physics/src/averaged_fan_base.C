@@ -48,14 +48,6 @@ namespace GRINS
       aoa_function("")
   {
     this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  AveragedFanBase<Mu>::~AveragedFanBase()
-  {
-    return;
   }
 
   template<class Mu>
@@ -203,14 +195,14 @@ namespace GRINS
     const libMesh::Number lift = C_lift * LDfactor;
     const libMesh::Number drag = C_drag * LDfactor;
 
-    // Force 
+    // Force
     F = lift * N_lift + drag * N_drag;
 
     if (dFdU)
       {
         // FIXME: Jacobians here are very inexact!
         // Dropping all AoA dependence on U terms!
-        const libMesh::NumberVectorValue LDderivfactor = 
+        const libMesh::NumberVectorValue LDderivfactor =
           (N_lift*C_lift+N_drag*C_drag) *
           this->_rho * chord / area;
 

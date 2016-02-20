@@ -61,8 +61,6 @@ ic_values    = '0.1*(x+0.5)*x*(x-1.5)*(y+0.5)*(y-1.5)'
 
 [../ElasticMembraneConstantPressure]
 
-enabled_subdomains = '1'
-
 pressure = '1.0'
 
 ##### Options for Elastic Cable Physics #####

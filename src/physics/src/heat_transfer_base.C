@@ -56,16 +56,6 @@ namespace GRINS
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 
     MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
-
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class K>
-  HeatTransferBase<K>::~HeatTransferBase()
-  {
-    return;
   }
 
   template<class K>

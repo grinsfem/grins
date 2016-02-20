@@ -47,12 +47,9 @@ namespace GRINS
 
     IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input);
 
-    ~IncompressibleNavierStokes();
+    ~IncompressibleNavierStokes(){};
 
     virtual void auxiliary_init( MultiphysicsSystem& system );
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
 
     //! Register postprocessing variables for IncompressibleNavierStokes
     virtual void register_postprocessing_vars( const GetPot& input,

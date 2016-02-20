@@ -22,53 +22,36 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_VELOCITY_DRAG_BASE_H
-#define GRINS_VELOCITY_DRAG_BASE_H
+// This class
+#include "grins/solid_mechanics_abstract.h"
 
 // GRINS
-#include "grins_config.h"
-#include "grins/inc_navier_stokes_base.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/tensor_value.h"
-
-// C++
-#include <string>
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
+  SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName& physics_name,
+                                                 const GetPot& input )
+    : Physics(physics_name,input),
+      _disp_vars(input,physics_name)
+  {}
 
-  template<class Viscosity>
-  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
+  void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )
   {
-  public:
+    // is_2D = false, is_3D = true
+    _disp_vars.init(system,false,true);
+  }
 
-    VelocityDragBase( const std::string& physics_name, const GetPot& input );
+  void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
+  {
+    // Tell the system to march temperature forward in time
+    system->time_evolving(_disp_vars.u());
+    system->time_evolving(_disp_vars.v());
+    system->time_evolving(_disp_vars.w());
+  }
 
-    ~VelocityDragBase(){};
-
-    bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
-                         const libMesh::NumberVectorValue& U,
-                         libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
-
-  protected:
-
-    libMesh::Real _exponent;
-    libMesh::ParsedFunction<libMesh::Number> _coefficient;
-
-  private:
-
-    VelocityDragBase();
-
-    //! Read options from GetPot input file.
-    void read_input_options( const GetPot& input );
-  };
-
-} // end namespace block
-
-#endif // GRINS_VELOCITY_DRAG_BASE_H
+} // end namespace GRINS

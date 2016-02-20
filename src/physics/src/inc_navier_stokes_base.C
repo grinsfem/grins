@@ -55,12 +55,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  IncompressibleNavierStokesBase<Mu>::~IncompressibleNavierStokesBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();

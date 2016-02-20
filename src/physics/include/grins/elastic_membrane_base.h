@@ -26,35 +26,57 @@
 #define GRINS_ELASTIC_MEMBRANE_BASE_H
 
 //GRINS
-#include "grins/physics.h"
-#include "grins/displacement_fe_variables.h"
-#include "grins/assembly_context.h"
-
-// libMesh
-#include "libmesh/fe_base.h"
+#include "grins/elastic_membrane_abstract.h"
 
 namespace GRINS
 {
-  class ElasticMembraneBase : public Physics
+  template<typename StressStrainLaw>
+  class ElasticMembraneBase : public ElasticMembraneAbstract
   {
   public:
 
-    ElasticMembraneBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneBase();
+    ElasticMembraneBase( const GRINS::PhysicsName& physics_name,
+                      const GetPot& input,
+                      bool is_compressible);
 
-    //! Initialize variables for this physics.
+    virtual ~ElasticMembraneBase(){};
+
     virtual void init_variables( libMesh::FEMSystem* system );
-
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
 
   protected:
 
-    DisplacementFEVariables _disp_vars;
+    //! Implementation of mass_residual.
+    /*! The mu argument is needed to support Rayleigh Damping. */
+    void mass_residual_impl( bool compute_jacobian,
+                             AssemblyContext& context,
+                             InteriorFuncType interior_solution,
+                             VarDerivType get_solution_deriv,
+                             libMesh::Real mu = 1.0 );
 
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
+    void compute_metric_tensors( unsigned int qp,
+                                 const libMesh::FEBase& elem,
+                                 const AssemblyContext& context,
+                                 const libMesh::Gradient& grad_u,
+                                 const libMesh::Gradient& grad_v,
+                                 const libMesh::Gradient& grad_w,
+                                 libMesh::TensorValue<libMesh::Real>& a_cov,
+                                 libMesh::TensorValue<libMesh::Real>& a_contra,
+                                 libMesh::TensorValue<libMesh::Real>& A_cov,
+                                 libMesh::TensorValue<libMesh::Real>& A_contra,
+                                 libMesh::Real& lambda_sq);
+
+    StressStrainLaw _stress_strain_law;
+
+    bool _is_compressible;
+
+    //! Membrane thickness
+    libMesh::Real _h0;
+
+    //! Membrane density
+    libMesh::Real _rho;
+
+    //! Variable index for lambda_sq variable
+    VariableIndex _lambda_sq_var;
 
   private:
 
@@ -62,13 +84,6 @@ namespace GRINS
 
   };
 
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneBase::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u(),2);
-  }
-
-} // end namespace GRINS
+}
 
 #endif // GRINS_ELASTIC_MEMBRANE_BASE_H

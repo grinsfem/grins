@@ -22,53 +22,46 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
+#define GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
 
-#ifndef GRINS_VELOCITY_DRAG_BASE_H
-#define GRINS_VELOCITY_DRAG_BASE_H
-
-// GRINS
-#include "grins_config.h"
-#include "grins/inc_navier_stokes_base.h"
+//GRINS
+#include "grins/solid_mechanics_abstract.h"
+#include "grins/assembly_context.h"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/tensor_value.h"
-
-// C++
-#include <string>
+#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
-
-  template<class Viscosity>
-  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
+  class ElasticMembraneAbstract : public SolidMechanicsAbstract
   {
   public:
 
-    VelocityDragBase( const std::string& physics_name, const GetPot& input );
+    ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    ~VelocityDragBase(){};
+    virtual ~ElasticMembraneAbstract(){};
 
-    bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
-                         const libMesh::NumberVectorValue& U,
-                         libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext& context );
 
   protected:
 
-    libMesh::Real _exponent;
-    libMesh::ParsedFunction<libMesh::Number> _coefficient;
+    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 
   private:
 
-    VelocityDragBase();
+    ElasticMembraneAbstract();
 
-    //! Read options from GetPot input file.
-    void read_input_options( const GetPot& input );
   };
 
-} // end namespace block
+  inline
+  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneAbstract::get_fe( const AssemblyContext& context )
+  {
+    // For this Physics, we need to make sure that we grab only the 2D elements
+    return context.get_element_fe(_disp_vars.u(),2);
+  }
 
-#endif // GRINS_VELOCITY_DRAG_BASE_H
+} // end namespace GRINS
+
+#endif // GRINS_ELASTIC_MEMBRANE_ABSTRACT_H

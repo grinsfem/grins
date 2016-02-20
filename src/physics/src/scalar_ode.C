@@ -46,13 +46,6 @@ namespace GRINS
     this->read_input_options(input);
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
-  }
-
-  ScalarODE::~ScalarODE()
-  {
-    return;
   }
 
   void ScalarODE::init_variables( libMesh::FEMSystem* system )
@@ -155,7 +148,7 @@ namespace GRINS
         time_deriv_jacobian -=
           (*time_deriv_function)(context, libMesh::Point(0),
                                  context.get_time());
-           
+
         Us(0) = s;
         time_deriv_jacobian /= (2*this->_epsilon);
 
@@ -201,7 +194,7 @@ namespace GRINS
         mass_residual_jacobian -=
           (*mass_residual_function)(context, libMesh::Point(0),
                                     context.get_time());
-           
+
         Us(0) = s;
         mass_residual_jacobian /= (2*this->_epsilon);
 
@@ -247,7 +240,7 @@ namespace GRINS
         constraint_jacobian -=
           (*constraint_function)(context, libMesh::Point(0),
                                  context.get_time());
-           
+
         Us(0) = s;
         constraint_jacobian /= (2*this->_epsilon);
 

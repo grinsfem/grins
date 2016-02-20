@@ -48,9 +48,6 @@ namespace GRINS
 
     virtual ~ReactingLowMachNavierStokesAbstract(){};
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
@@ -107,6 +104,9 @@ namespace GRINS
   private:
 
     ReactingLowMachNavierStokesAbstract();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
   }; // class ReactingLowMachNavierStokesAbstract
 

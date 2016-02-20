@@ -47,8 +47,6 @@ namespace GRINS
     _p_pinning(input,physics_name),
     _mu_index(0)
   {
-    this->read_input_options(input);
-
     // This is deleted in the base class
     this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
 
@@ -59,13 +57,7 @@ namespace GRINS
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
-    return;
-  }
-
-  template<class Mu>
-  IncompressibleNavierStokes<Mu>::~IncompressibleNavierStokes()
-  {
-    return;
+    this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );
   }
 
   template<class Mu>
@@ -73,17 +65,6 @@ namespace GRINS
   {
     if( _pin_pressure )
       _p_pinning.check_pin_location(system.get_mesh());
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::read_input_options( const GetPot& input )
-  {
-    // Other quantities read in base class
-
-    // Read pressure pinning information
-    this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );
-
-    return;
   }
 
   template<class Mu>
@@ -155,7 +136,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.get_element_fe(this->_press_var.p())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The subvectors and submatrices we need to fill:
@@ -286,7 +267,7 @@ namespace GRINS
                        -this->_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
                        -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-                    
+
                     if( this->_is_axisymmetric )
                       {
                         Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac * context.get_elem_solution_derivative();
@@ -340,7 +321,7 @@ namespace GRINS
 
                   } // end of the inner dof (j) loop
 
-                
+
 
               } // end - if (compute_jacobian)
 
@@ -388,9 +369,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.get_element_fe(this->_press_var.p())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
-    
+
     // The subvectors and submatrices we need to fill:
     //
     // Kpu, Kpv, Kpw, Fp
@@ -472,7 +453,7 @@ namespace GRINS
 
     return;
   }
-  
+
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::mass_residual( bool compute_jacobian,
                                                   AssemblyContext& context,
@@ -480,15 +461,15 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The shape functions at interior quadrature points.
     // We assume the same for each flow variable
-    const std::vector<std::vector<libMesh::Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The number of local degrees of freedom in each variable
@@ -518,13 +499,13 @@ namespace GRINS
         // for us so we need to supply M(u_fixed)*u' for the residual.
         // u_fixed will be given by the fixed_interior_value function
         // while u' will be given by the interior_rate function.
-        libMesh::Real u_dot, v_dot, w_dot = 0.0; 
+        libMesh::Real u_dot, v_dot, w_dot = 0.0;
         context.interior_rate(this->_flow_vars.u(), qp, u_dot);
         context.interior_rate(this->_flow_vars.v(), qp, v_dot);
 
         if(this->_dim == 3 )
           context.interior_rate(this->_flow_vars.w(), qp, w_dot);
-      
+
         const libMesh::Number r = u_qpoint[qp](0);
 
         libMesh::Real jac = JxW[qp];
@@ -541,7 +522,7 @@ namespace GRINS
 
             if( this->_dim == 3 )
               (*F_w)(i) -= this->_rho*w_dot*u_phi[i][qp]*jac;
-          
+
             if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)

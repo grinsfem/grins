@@ -53,7 +53,7 @@ namespace GRINS
 
     ScalarODE( const std::string& physics_name, const GetPot& input );
 
-    ~ScalarODE();
+    ~ScalarODE(){};
 
     //! Initialization of variables
     /*!
@@ -64,12 +64,9 @@ namespace GRINS
     //! Sets scalar variable(s) to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
-
     //! Prepare the context for evaluations
     virtual void init_context( AssemblyContext& context );
-    
+
     // residual and jacobian calculations
 
     // User-specified ODE(s)
@@ -112,6 +109,9 @@ namespace GRINS
     const GetPot & _input;
 
     ScalarODE();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
   };
 
 } // end namespace block

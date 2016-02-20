@@ -48,30 +48,11 @@ namespace GRINS
       _p_pinning(input,physics_name),
       _rho_index(0) // Initialize to zero
   {
-    this->read_input_options(input);
-
     // This is deleted in the base class
     this->_bc_handler = new LowMachNavierStokesBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  LowMachNavierStokes<Mu,SH,TC>::~LowMachNavierStokes()
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::read_input_options( const GetPot& input )
-  {
-    // Other quantities read in base class
-
-    // Read pressure pinning information
     this->_pin_pressure = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/pin_pressure", false );
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -209,7 +190,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian,
 								AssemblyContext& context,
 								CachedValues& cache )
   {
@@ -302,39 +283,39 @@ namespace GRINS
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
 	    Fp(i) += (-U*grad_T/T + divU)*p_phi[i][qp]*JxW[qp];
-	    
-	    
-	    if (compute_jacobian) 
+
+
+	    if (compute_jacobian)
 	    	{
-	        
+
 	    		for (unsigned int j=0; j!=n_u_dofs; j++)
 	    			{
-		    			KPu(i,j) += JxW[qp]*( 
+		    			KPu(i,j) += JxW[qp]*(
 		    						+u_gradphi[j][qp](0)*p_phi[i][qp]
 		    						-u_phi[j][qp]*p_phi[i][qp]*grad_T(0)/T
 		    						);
-		    						
-		    			KPv(i,j) += JxW[qp]*( 
+
+		    			KPv(i,j) += JxW[qp]*(
 		    						+u_gradphi[j][qp](1)*p_phi[i][qp]
 		    						-u_phi[j][qp]*p_phi[i][qp]*grad_T(1)/T
-		    						);	    			
-		    			
+		    						);
+
 		    			if (this->_dim == 3)
 		    				{
-							(*KPw)(i,j) += JxW[qp]*( 
+							(*KPw)(i,j) += JxW[qp]*(
 										+u_gradphi[j][qp](2)*p_phi[i][qp]
 										-u_phi[j][qp]*p_phi[i][qp]*grad_T(2)/T
 										);
-		    				}	
+		    				}
 
 	    			}
-	    		
-	    		for (unsigned int j=0; j!=n_t_dofs; j++) 
+
+	    		for (unsigned int j=0; j!=n_t_dofs; j++)
 	    			{
 		    			KPT(i,j) += JxW[qp]*(
 		    					-T_gradphi[j][qp]*U*p_phi[i][qp]/T
 		    					+U*p_phi[i][qp]*grad_T*T_phi[j][qp])/(T*T);
-	    			} 		 			
+	    			}
 	    } // end if compute_jacobian
 	  } // end p_dofs loop
       } // end qp loop
@@ -343,7 +324,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian,
 								    AssemblyContext& context,
 								    CachedValues& cache )
   {
@@ -400,7 +381,7 @@ namespace GRINS
 	if (this->_dim == 3)
 	  grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
 
-	libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) ); 
+	libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) );
 	libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
 	libMesh::NumberVectorValue grad_wT;
 	if( this->_dim == 3 )
@@ -462,7 +443,7 @@ namespace GRINS
 		       - this->_mu(T)*(u_gradphi[i][qp]*grad_u + u_gradphi[i][qp]*grad_uT
 				       - 2.0/3.0*divU*u_gradphi[i][qp](0) )    // diffusion term
 		       + rho*this->_g(0)*u_phi[i][qp]                 // hydrostatic term
-		       )*JxW[qp]; 
+		       )*JxW[qp];
 
 	    Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]                 // convection term
 		       + p*u_gradphi[i][qp](1)                           // pressure term
@@ -485,13 +466,13 @@ namespace GRINS
               libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
               for (unsigned int j=0; j != n_u_dofs; j++)
-	      		{				  
+	      		{
 				  //precompute repeated terms
 				  libMesh::Number r0 = rho*U*u_phi[i][qp]*u_gradphi[j][qp];
 				  libMesh::Number r1 = u_gradphi[i][qp]*u_gradphi[j][qp];
-				  libMesh::Number r2 = rho*u_phi[i][qp]*u_phi[j][qp];				  
-				  
-				  
+				  libMesh::Number r2 = rho*u_phi[i][qp]*u_phi[j][qp];
+
+
 				  Kuu(i,j) += JxW[qp]*(
 				  				-r0
 				  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
@@ -514,23 +495,23 @@ namespace GRINS
 				  					+ u_gradphi[i][qp](1)*u_gradphi[j][qp](1) // transpose
 				  					- 2.0/3.0*u_gradphi[i][qp](1)*u_gradphi[j][qp](1)
 				  								));
-				  								
+
 				  Kuv(i,j) += JxW[qp]*(
 				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
 				  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
 				  				-r2*grad_u(1)
 				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(1));
 				  						);
-				  				
+
 				  Kvu(i,j) += JxW[qp]*(
 				  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](0)
 				  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](1)
 				  				-r2*grad_v(0)
 				  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(0));
 				  						);
-				  				
-				  
-					  								
+
+
+
 				  if (this->_dim == 3)
 				  	{
 				  		(*Kuw)(i,j) += JxW[qp]*(
@@ -539,28 +520,28 @@ namespace GRINS
 						  				-r2*grad_u(2)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_u(2)
 						  					);
-				  				
+
 				  		(*Kvw)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
 						  				-this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
 						  				-r2*grad_v(2)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_v(2)
 						  						);
-				  				
+
 				  		(*Kwu)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](0)
 						  				-this->_mu(T)*u_gradphi[i][qp](0)*u_gradphi[j][qp](2)
 						  				-r2*grad_w(0)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(0)
 						  						);
-				  				
+
 				  		(*Kwv)(i,j) += JxW[qp]*(
 						  				+2.0/3.0*this->_mu(T)*u_gradphi[i][qp](2)*u_gradphi[j][qp](1)
 						  				-this->_mu(T)*u_gradphi[i][qp](1)*u_gradphi[j][qp](2)
 						  				-r2*grad_w(1)
 						  				//-rho*u_phi[i][qp]*u_phi[j][qp]*grad_w(1)
 						  						);
-				  										
+
 					 	(*Kww)(i,j) += JxW[qp]*(
 					 					-r0
 						  				//-rho*U*u_gradphi[j][qp]*u_phi[i][qp]
@@ -572,16 +553,16 @@ namespace GRINS
 						  					+ u_gradphi[i][qp](2)*u_gradphi[j][qp](2) // transpose
 						  					- 2.0/3.0*u_gradphi[i][qp](2)*u_gradphi[j][qp](2)
 				  								));
-				  												  						
+
 					} // end if _dim==3
 	      		} // end of the inner dof (j) loop
 
 				for (unsigned int j=0; j!=n_T_dofs; j++)
 					{
-						
+
 						//precompute repeated term
 						libMesh:: Number r3 = d_rho*u_phi[i][qp]*T_phi[j][qp];
-						
+
 						// Analytical Jacobains
 					 	KuT(i,j) += JxW[qp]*(
 					 		-r3*U*grad_u
@@ -592,7 +573,7 @@ namespace GRINS
 				  			+r3*this->_g(0)
 				  			//+d_rho*T_phi[j][qp]*this->_g(0)*u_phi[i][qp]
 				  							);
-				  				
+
 				 		 KvT(i,j) += JxW[qp]*(
 				 		 	-r3*U*grad_v
 				  			//-d_rho*T_phi[j][qp]*U*grad_v*u_phi[i][qp]
@@ -602,7 +583,7 @@ namespace GRINS
 				  			+r3*this->_g(1)
 				  			//+d_rho*T_phi[j][qp]*this->_g(1)*u_phi[i][qp]
 				  							);
-				  							
+
 				  		if (this->_dim == 3)
 				  			{
 				  				(*KwT)(i,j) += JxW[qp]*(
@@ -613,9 +594,9 @@ namespace GRINS
 							  			+2.0/3.0*d_mu*T_phi[j][qp]*divU*u_gradphi[i][qp](2)
 		  								+r3*this->_g(2)
 							  			//+d_rho*T_phi[j][qp]*this->_g(2)*u_phi[i][qp]
-				  							);	      			
-				  			
-				  			} // end if _dim==3	      				 
+				  							);
+
+				  			} // end if _dim==3
 					} // end T_dofs loop
 
               	// Matrix contributions for the up, vp and wp couplings
@@ -699,34 +680,34 @@ namespace GRINS
 		  {
 			FT(i) += ( -rho*cp*U*grad_T*T_phi[i][qp] // convection term
 				   - k*grad_T*T_gradphi[i][qp]            // diffusion term
-				   )*JxW[qp]; 
-				   
-				   
-			 if(compute_jacobian) 
+				   )*JxW[qp];
+
+
+			 if(compute_jacobian)
 			 	{
 				 	for (unsigned int j=0; j!=n_u_dofs; j++)
 				 		{
 					 		//pre-compute repeated term
 					 		libMesh::Number r0 = rho*cp*T_phi[i][qp]*u_phi[j][qp];
-					 		
+
 					 		KTu(i,j) += JxW[qp]*
 			 						-r0*grad_T(0);
-			 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp]; 	
+			 						//-rho*cp*u_phi[j][qp]*grad_T(0)*T_phi[i][qp];
 
 					 		KTv(i,j) += JxW[qp]*
 			 						-r0*grad_T(1);
 			 						//-rho*cp*u_phi[j][qp]*grad_T(1)*T_phi[i][qp];
-			 				
+
 					 		if (this->_dim == 3)
 					 			{
 					 				(*KTw)(i,j) += JxW[qp]*
 			 								-r0*grad_T(2);
-			 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp]; 
-					 			}		 	
-				 	
+			 								//-rho*cp*u_phi[j][qp]*grad_T(2)*T_phi[i][qp];
+					 			}
+
 				 		} // end u_dofs loop (j)
-				 	
-				 	
+
+
 				 	for (unsigned int j=0; j!=n_T_dofs; j++)
 				 	    {
 					 	    KTT(i,j) += JxW[qp]* (
@@ -736,10 +717,10 @@ namespace GRINS
 							 				 )
 							 			-cp*U*grad_T*T_phi[i][qp]*d_rho*T_phi[j][qp]
 							 			-k*T_gradphi[i][qp]*T_gradphi[j][qp]
-							 			-grad_T*T_gradphi[i][qp]*dk_dT*T_phi[j][qp]	 	
+							 			-grad_T*T_gradphi[i][qp]*dk_dT*T_phi[j][qp]
 					 						    );
 				 	    } // end T_dofs loop (j)
-			 
+
 			 	} // end if compute_jacobian
 		  } // end outer T_dofs loop (i)
       } //end qp loop
@@ -790,7 +771,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/, 
+  void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/,
 								       AssemblyContext& context )
   {
     // Element Jacobian * quadrature weights for interior integration
@@ -833,7 +814,7 @@ namespace GRINS
 	libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
 
 	libMesh::Number rho = this->rho(T, this->get_p0_transient(context, qp));
-      
+
 	for (unsigned int i = 0; i != n_u_dofs; ++i)
 	  {
 	    F_u(i) -= rho*u_dot*u_phi[i][qp]*JxW[qp];
@@ -850,15 +831,15 @@ namespace GRINS
 	      // Assuming rho is constant w.r.t. u, v, w
 	      // and T (if Boussinesq added).
 	      libMesh::Real value = JxW[qp]*_rho*u_phi[i][qp]*u_phi[j][qp];
-		  
+
 	      M_uu(i,j) += value;
 	      M_vv(i,j) += value;
-		  
+
 	      if( _dim == 3)
 	      {
 	      M_ww(i,j) += value;
 	      }
-		  
+
 	      } // End DoF loop j
 	      } // End Jacobian check
 	    */
@@ -904,7 +885,7 @@ namespace GRINS
 	libMesh::Real cp = this->_cp(T);
 
 	libMesh::Number rho = this->rho(T, this->get_p0_transient(context, qp));
-      
+
 	for (unsigned int i = 0; i != n_T_dofs; ++i)
 	  {
 	    F_T(i) -= rho*cp*T_dot*T_phi[i][qp]*JxW[qp];
@@ -1009,7 +990,7 @@ namespace GRINS
 	    //F_p0(i) += (k*grad_T*normals[qp] - p0*gamma_ratio*U*normals[qp]  )*JxW_side[qp];
 	  }
       }
-  
+
     return;
   }
 
@@ -1076,7 +1057,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( const AssemblyContext& context, 
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( const AssemblyContext& context,
 									     CachedValues& cache )
   {
     const unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -1086,7 +1067,7 @@ namespace GRINS
     v.resize(n_qpoints);
     if( this->_dim > 2 )
       w.resize(n_qpoints);
-    
+
     T.resize(n_qpoints);
     p.resize(n_qpoints);
     p0.resize(n_qpoints);
@@ -1096,7 +1077,7 @@ namespace GRINS
     grad_v.resize(n_qpoints);
     if( this->_dim > 2 )
       grad_w.resize(n_qpoints);
-    
+
     grad_T.resize(n_qpoints);
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
@@ -1117,13 +1098,13 @@ namespace GRINS
 	p[qp] = context.interior_value(this->_press_var.p(), qp);
 	p0[qp] = this->get_p0_steady(context, qp);
       }
-    
+
     cache.set_values(Cache::X_VELOCITY, u);
     cache.set_values(Cache::Y_VELOCITY, v);
-    
+
     cache.set_gradient_values(Cache::X_VELOCITY_GRAD, grad_u);
     cache.set_gradient_values(Cache::Y_VELOCITY_GRAD, grad_v);
-    
+
     if(this->_dim > 2)
       {
 	cache.set_values(Cache::Z_VELOCITY, w);

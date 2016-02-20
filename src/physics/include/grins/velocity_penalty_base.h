@@ -48,10 +48,7 @@ namespace GRINS
 
     VelocityPenaltyBase( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityPenaltyBase();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~VelocityPenaltyBase(){};
 
     // Hack to read ParsedFEMFunction options after System init
     void set_time_evolving_vars (libMesh::FEMSystem* system);
@@ -61,7 +58,7 @@ namespace GRINS
                          const libMesh::NumberVectorValue& U,
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL);
-   
+
   protected:
 
     std::string base_physics_name;
@@ -79,6 +76,9 @@ namespace GRINS
     const GetPot & _input;
 
     VelocityPenaltyBase();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
   };
 
 } // end namespace block

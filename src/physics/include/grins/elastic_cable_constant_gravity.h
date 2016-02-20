@@ -26,11 +26,11 @@
 #define GRINS_ELASTIC_CABLE_CONSTANT_GRAVITY_H
 
 //GRINS
-#include "grins/elastic_cable_base.h"
+#include "grins/elastic_cable_abstract.h"
 
 namespace GRINS
 {
-  class ElasticCableConstantGravity : public ElasticCableBase
+  class ElasticCableConstantGravity : public ElasticCableAbstract
   {
   public:
 	  ElasticCableConstantGravity( const GRINS::PhysicsName& physics_name, const GetPot& input );

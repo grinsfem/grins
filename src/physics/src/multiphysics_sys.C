@@ -42,19 +42,11 @@ namespace GRINS
 					  const unsigned int number )
     : FEMSystem(es, name, number),
       _use_numerical_jacobians_only(false)
-  {
-    return;
-  }
-
-  MultiphysicsSystem::~MultiphysicsSystem()
-  {
-    return;
-  }
+  {}
 
   void MultiphysicsSystem::attach_physics_list( PhysicsList physics_list )
   {
     _physics_list = physics_list;
-    return;
   }
 
   void MultiphysicsSystem::read_input_options( const GetPot& input )
@@ -270,7 +262,7 @@ namespace GRINS
                                               CacheFuncType cachefunc)
   {
     AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
-  
+
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 

@@ -48,12 +48,6 @@ namespace GRINS
       _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer())
   {
     this->read_input_options(input);
-    return;
-  }
-
-  AxisymmetricBoussinesqBuoyancy::~AxisymmetricBoussinesqBuoyancy()
-  {
-    return;
   }
 
   void AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )

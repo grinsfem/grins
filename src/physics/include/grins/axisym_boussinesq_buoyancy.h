@@ -40,7 +40,7 @@
 #include "libmesh/point.h"
 
 namespace GRINS
-{  
+{
   //! Adds Axisymmetric Boussinesq bouyancy source term
   /*!
     This class implements the Axisymmetric Boussinesq approximation for thermal buoyancy.
@@ -58,13 +58,10 @@ namespace GRINS
   class AxisymmetricBoussinesqBuoyancy : public Physics
   {
   public:
-    
+
     AxisymmetricBoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
-    ~AxisymmetricBoussinesqBuoyancy();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~AxisymmetricBoussinesqBuoyancy(){};
 
     //! Initialization of AxisymmetricBoussinesqBuoyancy variables
     virtual void init_variables( libMesh::FEMSystem* system );
@@ -89,7 +86,7 @@ namespace GRINS
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
 
-    //! \f$ T_0 = \f$ reference temperature 
+    //! \f$ T_0 = \f$ reference temperature
     libMesh::Number _T_ref;
 
     //! \f$ \beta_T = \f$ coefficient of thermal expansion
@@ -100,7 +97,11 @@ namespace GRINS
     libMesh::Point _g;
 
   private:
+
     AxisymmetricBoussinesqBuoyancy();
+
+    //! Read options from GetPot input file.
+    void read_input_options( const GetPot& input );
 
   }; // class AxisymmetricBoussinesqBuoyancy
 

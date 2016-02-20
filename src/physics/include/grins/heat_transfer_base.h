@@ -48,7 +48,7 @@ namespace GRINS
                       const std::string& core_physics_name,
                       const GetPot& input );
 
-    ~HeatTransferBase();
+    ~HeatTransferBase(){};
 
     //! Initialization Heat Transfer variables
     /*!

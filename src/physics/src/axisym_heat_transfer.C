@@ -54,18 +54,10 @@ namespace GRINS
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::axisymmetric_heat_transfer()))
   {
     this->read_input_options(input);
-  
+
     // This is deleted in the base class
     this->_bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
-  }
-
-  template< class Conductivity>
-  AxisymmetricHeatTransfer<Conductivity>::~AxisymmetricHeatTransfer( )
-  {
-    return;
   }
 
   template< class Conductivity>
@@ -330,9 +322,9 @@ namespace GRINS
                     M(i,j) -= JxW[qp] * context.get_elem_solution_rate_derivative() *r*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
-          
+
 	  } // End of element dof loop
-      
+
       } // End of the quadrature point loop
 
 #ifdef GRINS_USE_GRVY_TIMERS

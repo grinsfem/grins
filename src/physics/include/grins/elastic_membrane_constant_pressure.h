@@ -26,15 +26,18 @@
 #define GRINS_ELASTIC_MEMBRANE_CONSTANT_PRESSURE_H
 
 //GRINS
-#include "grins/elastic_membrane_base.h"
+#include "grins/elastic_membrane_abstract.h"
 
 namespace GRINS
 {
-  class ElasticMembraneConstantPressure : public ElasticMembraneBase
+  class ElasticMembraneConstantPressure : public ElasticMembraneAbstract
   {
   public:
-    ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    virtual ~ElasticMembraneConstantPressure();
+
+    ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name,
+                                     const GetPot& input );
+
+    virtual ~ElasticMembraneConstantPressure(){};
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
@@ -46,7 +49,7 @@ namespace GRINS
   private:
 
     ElasticMembraneConstantPressure();
-    
+
     libMesh::Real _pressure;
   };
 

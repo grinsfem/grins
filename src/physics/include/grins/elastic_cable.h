@@ -29,20 +29,17 @@
 //GRINS
 #include "grins/elastic_cable_base.h"
 
-//LIBMESH
-#include "libmesh/fe_base.h"
-
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCable : public ElasticCableBase
+  class ElasticCable : public ElasticCableBase<StressStrainLaw>
   {
   public:
 
     ElasticCable( const PhysicsName& physics_name, const GetPot& input,
-                  bool lambda_sq_var );
+                  bool is_compressible );
 
-    virtual ~ElasticCable();
+    virtual ~ElasticCable(){};
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -54,12 +51,16 @@ namespace GRINS
                                           CachedValues& cache );
 
     virtual void side_time_derivative( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache );
+				       AssemblyContext& context,
+				       CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
-                                CachedValues& cache );
+                                CachedValues& /*cache*/ )
+    { this->mass_residual_impl(compute_jacobian,
+                               context,
+                               &libMesh::FEMContext::interior_accel,
+                               &libMesh::DiffContext::get_elem_solution_accel_derivative); }
 
     //! Compute the registered postprocessed quantities
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
@@ -70,27 +71,6 @@ namespace GRINS
   private:
 
     ElasticCable();
-
-    // This is straight up copied from libMesh. Should make this a friend or public.
-    libMesh::AutoPtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
-                                                                           const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                           const libMesh::Point p );
-
-    void compute_metric_tensors( unsigned int qp,
-                                 const libMesh::FEBase& elem,
-                                 const AssemblyContext& context,
-                                 const libMesh::Gradient& grad_u,
-                                 const libMesh::Gradient& grad_v,
-                                 const libMesh::Gradient& grad_w,
-                                 libMesh::TensorValue<libMesh::Real>& a_cov,
-                                 libMesh::TensorValue<libMesh::Real>& a_contra,
-                                 libMesh::TensorValue<libMesh::Real>& A_cov,
-                                 libMesh::TensorValue<libMesh::Real>& A_contra,
-                                 libMesh::Real& lambda_sq);
-
-    StressStrainLaw _stress_strain_law;
-
-    bool _is_compressible;
 
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

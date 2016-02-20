@@ -60,14 +60,6 @@ namespace GRINS
       _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name) );
 
     this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  LowMachNavierStokesBase<Mu,SH,TC>::~LowMachNavierStokesBase()
-  {
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -102,11 +94,9 @@ namespace GRINS
 
     _g(0) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 1 );
-  
+
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 2 );
-  
-    return;
   }
 
   template<class Mu, class SH, class TC>

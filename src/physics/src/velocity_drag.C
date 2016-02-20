@@ -40,18 +40,7 @@ namespace GRINS
   template<class Mu>
   VelocityDrag<Mu>::VelocityDrag( const std::string& physics_name, const GetPot& input )
     : VelocityDragBase<Mu>(physics_name, input)
-  {
-    this->read_input_options(input);
-
-    return;
-  }
-
-  template<class Mu>
-  VelocityDrag<Mu>::~VelocityDrag()
-  {
-    return;
-  }
-
+  {}
 
   template<class Mu>
   void VelocityDrag<Mu>::init_context( AssemblyContext& context )
@@ -73,14 +62,14 @@ namespace GRINS
 #endif
 
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The number of local degrees of freedom in each variable

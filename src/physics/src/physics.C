@@ -33,6 +33,7 @@
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/elem.h"
+#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -47,14 +48,12 @@ namespace GRINS
       _ic_handler(new ICHandlingBase(physics_name)),
       _is_axisymmetric(false)
   {
-    this->read_input_options(input);
+    this->parse_enabled_subdomains(input,physics_name);
 
     if( input( "Physics/is_axisymmetric", false ) )
       {
         _is_axisymmetric = true;
       }
-
-    return;
   }
 
   Physics::~Physics()
@@ -63,30 +62,27 @@ namespace GRINS
     if( _bc_handler ) delete _bc_handler;
 
     if( _ic_handler ) delete _ic_handler;
-
-    return;
   }
 
-  void Physics::read_input_options( const GetPot& input )
+  void Physics::parse_enabled_subdomains( const GetPot& input,
+                                          const std::string& physics_name )
   {
-    int num_ids = input.vector_variable_size( "Physics/"+this->_physics_name+"/enabled_subdomains" );
+    int num_ids = input.vector_variable_size( "Physics/"+physics_name+"/enabled_subdomains" );
 
     for( int i = 0; i < num_ids; i++ )
       {
-	libMesh::subdomain_id_type dumvar = input( "Physics/"+this->_physics_name+"/enabled_subdomains", -1, i );
+	libMesh::subdomain_id_type dumvar = input( "Physics/"+physics_name+"/enabled_subdomains", -1, i );
 	_enabled_subdomains.insert( dumvar );
       }
-
-    return;
   }
 
   bool Physics::enabled_on_elem( const libMesh::Elem* elem )
   {
     // Check if enabled_subdomains flag has been set and if we're
     // looking at a real element (rather than a nonlocal evaluation)
-    if( !elem || _enabled_subdomains.empty() ) 
+    if( !elem || _enabled_subdomains.empty() )
       return true;
-  
+
     // Check if current physics is enabled on elem
     if( _enabled_subdomains.find( elem->subdomain_id() ) == _enabled_subdomains.end() )
       return false;
@@ -152,7 +148,7 @@ namespace GRINS
     _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
     return;
   }
-  
+
   void Physics::init_context( AssemblyContext& /*context*/ )
   {
     return;
@@ -251,7 +247,7 @@ namespace GRINS
 				 CachedValues& /*cache*/ )
   {
     return;
-  }   
+  }
 
   void Physics::nonlocal_constraint( bool /*compute_jacobian*/,
 				     AssemblyContext& /*context*/,
@@ -287,6 +283,37 @@ namespace GRINS
                                                 libMesh::Real& /*value*/ )
   {
     return;
+  }
+
+  libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem& elem,
+                                                                                    const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                                    const libMesh::Point p )
+  {
+    using namespace libMesh;
+    FEType fe_type = fe->get_fe_type();
+
+    // If we don't have an Elem to evaluate on, then the only functions
+    // we can sensibly evaluate are the scalar dofs which are the same
+    // everywhere.
+    libmesh_assert(&elem || fe_type.family == SCALAR);
+
+    unsigned int elem_dim = &elem ? elem.dim() : 0;
+
+    AutoPtr<FEGenericBase<libMesh::Real> >
+      fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
+
+    // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h
+    // Build a vector of point co-ordinates to send to reinit
+    Point master_point = &elem ?
+      FEInterface::inverse_map(elem_dim, fe_type, &elem, p) :
+      Point(0);
+
+    std::vector<Point> coor(1, master_point);
+
+    // Reinitialize the element and compute the shape function values at coor
+    fe_new->reinit (&elem, &coor);
+
+    return fe_new;
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

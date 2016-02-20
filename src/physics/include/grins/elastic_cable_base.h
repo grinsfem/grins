@@ -26,42 +26,54 @@
 #define GRINS_ELASTIC_CABLE_BASE_H
 
 //GRINS
-#include "grins/physics.h"
-#include "grins/displacement_fe_variables.h"
-#include "grins/assembly_context.h"
-
-// libMesh
-#include "libmesh/fe_base.h"
+#include "grins/elastic_cable_abstract.h"
 
 namespace GRINS
 {
-  class ElasticCableBase : public Physics
+  template<typename StressStrainLaw>
+  class ElasticCableBase : public ElasticCableAbstract
   {
   public:
 
-    ElasticCableBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ElasticCableBase( const GRINS::PhysicsName& physics_name,
+                      const GetPot& input,
+                      bool is_compressible);
 
-    virtual ~ElasticCableBase();
-
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual ~ElasticCableBase(){};
 
   protected:
 
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
+    //! Implementation of element_time_derivative.
+    /*! The lambda argument is needed to support Rayleigh Damping. */
+    void element_time_derivative_impl( bool compute_jacobian,
+                                       AssemblyContext& context,
+                                       VarFuncType get_solution,
+                                       VarDerivType get_solution_deriv,
+                                       libMesh::Real lambda = 1.0 );
 
-    //! Cable density
-    libMesh::Real  _rho;
+    //! Implementation of mass_residual.
+    /*! The mu argument is needed to support Rayleigh Damping. */
+    void mass_residual_impl( bool compute_jacobian,
+                             AssemblyContext& context,
+                             InteriorFuncType interior_solution,
+                             VarDerivType get_solution_deriv,
+                             libMesh::Real mu = 1.0 );
 
-    DisplacementFEVariables _disp_vars;
+    void compute_metric_tensors( unsigned int qp,
+                                 const libMesh::FEBase& elem,
+                                 const AssemblyContext& context,
+                                 const libMesh::Gradient& grad_u,
+                                 const libMesh::Gradient& grad_v,
+                                 const libMesh::Gradient& grad_w,
+                                 libMesh::TensorValue<libMesh::Real>& a_cov,
+                                 libMesh::TensorValue<libMesh::Real>& a_contra,
+                                 libMesh::TensorValue<libMesh::Real>& A_cov,
+                                 libMesh::TensorValue<libMesh::Real>& A_contra,
+                                 libMesh::Real& lambda_sq);
 
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
+    StressStrainLaw _stress_strain_law;
+
+    bool _is_compressible;
 
   private:
 
@@ -69,12 +81,6 @@ namespace GRINS
 
   };
 
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableBase::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
-  }
 }
 
 #endif // GRINS_ELASTIC_CABLE_BASE_H

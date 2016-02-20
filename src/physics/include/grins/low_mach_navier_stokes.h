@@ -44,10 +44,7 @@ namespace GRINS
 
     LowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input);
 
-    ~LowMachNavierStokes();
-
-    //! Read options from GetPot input file.
-    virtual void read_input_options( const GetPot& input );
+    ~LowMachNavierStokes(){};
 
     virtual void auxiliary_init( MultiphysicsSystem& system );
 
@@ -88,46 +85,46 @@ namespace GRINS
 
     //! Enable pressure pinning
     bool _pin_pressure;
-    
+
     PressurePinning _p_pinning;
 
     //! Cache index for density post-processing
     unsigned int _rho_index;
 
     //! Helper function
-    void assemble_mass_time_deriv( bool compute_jacobian, 
+    void assemble_mass_time_deriv( bool compute_jacobian,
 				   AssemblyContext& context,
 				   CachedValues& cache );
 
     //! Helper function
-    void assemble_momentum_time_deriv( bool compute_jacobian, 
+    void assemble_momentum_time_deriv( bool compute_jacobian,
 				       AssemblyContext& context,
 				       CachedValues& cache );
 
     //! Helper function
-    void assemble_energy_time_deriv( bool compute_jacobian, 
+    void assemble_energy_time_deriv( bool compute_jacobian,
 				     AssemblyContext& context,
 				     CachedValues& cache );
 
     //! Helper function
-    void assemble_continuity_mass_residual( bool compute_jacobian, 
+    void assemble_continuity_mass_residual( bool compute_jacobian,
 					    AssemblyContext& c );
 
     //! Helper function
-    void assemble_momentum_mass_residual( bool compute_jacobian, 
+    void assemble_momentum_mass_residual( bool compute_jacobian,
 					  AssemblyContext& c );
 
     //! Helper function
-    void assemble_energy_mass_residual( bool compute_jacobian, 
+    void assemble_energy_mass_residual( bool compute_jacobian,
 					AssemblyContext& c );
 
-    void assemble_thermo_press_elem_time_deriv( bool compute_jacobian, 
+    void assemble_thermo_press_elem_time_deriv( bool compute_jacobian,
 						AssemblyContext& c );
 
-    void assemble_thermo_press_side_time_deriv( bool compute_jacobian, 
+    void assemble_thermo_press_side_time_deriv( bool compute_jacobian,
 						AssemblyContext& c );
 
-    void assemble_thermo_press_mass_residual( bool compute_jacobian, 
+    void assemble_thermo_press_mass_residual( bool compute_jacobian,
 					      AssemblyContext& c );
 
   private:

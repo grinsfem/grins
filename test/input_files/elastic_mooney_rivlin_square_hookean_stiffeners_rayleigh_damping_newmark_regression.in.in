@@ -31,7 +31,9 @@
 [Physics]
    enabled_physics = 'ElasticMembrane
                       ElasticMembraneConstantPressure
-                      ElasticCable'
+                      ElasticCable
+                      ElasticMembraneRayleighDamping
+                      ElasticCableRayleighDamping'
 
    [./ElasticMembrane]
 
@@ -45,11 +47,20 @@
 
       pressure = '1.0'
 
+   [../ElasticMembraneRayleighDamping]
+     
+      lambda_factor = '0.1'
+      mu_factor = '0.1'
+
    [../ElasticCable]
 
       material = 'Cable'
       enabled_subdomains = '2'
 
+   [../ElasticCableRayleighDamping]
+
+      lambda_factor = '0.1'
+      mu_factor = '0.1'
 []
 
 [Variables]
@@ -72,7 +83,7 @@ relative_residual_tolerance = '1.0e-10'
 max_nonlinear_iterations =  '50'
 max_linear_iterations = '2500'
 
-verify_analytic_jacobians = '1.0e-6'
+verify_analytic_jacobians = '0.0e-6'
 
 initial_linear_tolerance = '1.0e-10'
 

@@ -26,76 +26,143 @@
 #include "grins/elastic_cable_base.h"
 
 // GRINS
-#include "grins_config.h"
-#include "grins/assembly_context.h"
 #include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {
-  ElasticCableBase::ElasticCableBase( const PhysicsName& physics_name,
-                                      const GetPot& input )
-    : Physics(physics_name,input),
-      _A( 0.0 ),
-      _rho(0.0),
-      _disp_vars(input,physics_name)
+  template<typename StressStrainLaw>
+  ElasticCableBase<StressStrainLaw>::ElasticCableBase( const PhysicsName& physics_name,
+                                                       const GetPot& input,
+                                                       bool is_compressible)
+    : ElasticCableAbstract(physics_name,input),
+      _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_cable())),
+      _is_compressible(is_compressible)
+  {}
+
+  template<typename StressStrainLaw>
+  void ElasticCableBase<StressStrainLaw>::mass_residual_impl( bool compute_jacobian,
+                                                              AssemblyContext& context,
+                                                              InteriorFuncType interior_solution,
+                                                              VarDerivType get_solution_deriv,
+                                                              libMesh::Real mu )
   {
-    MaterialsParsing::read_property( input,
-                                     "Physics/"+physics_name+"/A",
-                                     "CrossSectionalArea",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _A );
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
 
-    MaterialsParsing::read_property( input,
-                                     "Physics/"+physics_name+"/rho",
-                                     "Density",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _rho );
+    const std::vector<libMesh::Real> &JxW =
+      this->get_fe(context)->get_JxW();
 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      this->get_fe(context)->get_phi();
+
+    // Residuals that we're populating
+    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_disp_vars.u());
+    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_disp_vars.v());
+    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_disp_vars.w());
+
+    libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.v());
+    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+        libMesh::Real jac = JxW[qp];
+
+        libMesh::Real u_ddot, v_ddot, w_ddot;
+        (context.*interior_solution)( this->_disp_vars.u(), qp, u_ddot );
+        (context.*interior_solution)( this->_disp_vars.v(), qp, v_ddot );
+        (context.*interior_solution)( this->_disp_vars.w(), qp, w_ddot );
+
+        for (unsigned int i=0; i != n_u_dofs; i++)
+	  {
+            libMesh::Real value = this->_rho*this->_A*u_phi[i][qp]*jac*mu;
+            Fu(i) += value*u_ddot;
+            Fv(i) += value*v_ddot;
+            Fw(i) += value*w_ddot;
+
+            if( compute_jacobian )
+              {
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    libMesh::Real jac_term = mu*this->_rho*this->_A*u_phi[i][qp]*u_phi[j][qp]*jac;
+                    jac_term *= (context.*get_solution_deriv)();
+
+                    Kuu(i,j) += jac_term;
+                    Kvv(i,j) += jac_term;
+                    Kww(i,j) += jac_term;
+                  }
+              }
+          }
+      }
   }
 
-  ElasticCableBase::~ElasticCableBase()
+  template<typename StressStrainLaw>
+  void ElasticCableBase<StressStrainLaw>::compute_metric_tensors( unsigned int qp,
+                                                                  const libMesh::FEBase& elem,
+                                                                  const AssemblyContext& /*context*/,
+                                                                  const libMesh::Gradient& grad_u,
+                                                                  const libMesh::Gradient& grad_v,
+                                                                  const libMesh::Gradient& grad_w,
+                                                                  libMesh::TensorValue<libMesh::Real>& a_cov,
+                                                                  libMesh::TensorValue<libMesh::Real>& a_contra,
+                                                                  libMesh::TensorValue<libMesh::Real>& A_cov,
+                                                                  libMesh::TensorValue<libMesh::Real>& A_contra,
+                                                                  libMesh::Real& lambda_sq )
   {
-    return;
-  }
+    const std::vector<libMesh::RealGradient>& dxdxi  = elem.get_dxyzdxi();
 
-  void ElasticCableBase::init_variables( libMesh::FEMSystem* system )
-  {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
+    const std::vector<libMesh::Real>& dxidx  = elem.get_dxidx();
+    const std::vector<libMesh::Real>& dxidy  = elem.get_dxidy();
+    const std::vector<libMesh::Real>& dxidz  = elem.get_dxidz();
 
-    return;
-  }
+    libMesh::RealGradient dxi( dxidx[qp], dxidy[qp], dxidz[qp] );
 
+    libMesh::RealGradient dudxi( grad_u(0), grad_v(0), grad_w(0) );
 
-  void ElasticCableBase::set_time_evolving_vars( libMesh::FEMSystem* system )
-  {
-    // Tell the system to march temperature forward in time
-    system->time_evolving(_disp_vars.u());
-    system->time_evolving(_disp_vars.v());
-    system->time_evolving(_disp_vars.w());
+    // Covariant metric tensor of reference configuration
+    a_cov.zero();
+    a_cov(0,0) = dxdxi[qp]*dxdxi[qp];
+    a_cov(1,1)    = 1.0;
+    a_cov(2,2)    = 1.0;
 
-    return;
-  }
+    // Covariant metric tensor of current configuration
+    A_cov.zero();
+    A_cov(0,0) = (dxdxi[qp] + dudxi)*(dxdxi[qp] + dudxi);
 
-  void ElasticCableBase::init_context( AssemblyContext& context )
-  {
-    this->get_fe(context)->get_JxW();
-    this->get_fe(context)->get_phi();
-    this->get_fe(context)->get_dphidxi();
+    // Contravariant metric tensor of reference configuration
+    a_contra.zero();
+    a_contra(0,0) = 1/a_cov(0,0);
+    a_contra(1,1) = 1.0;
+    a_contra(2,2) = 1.0;
 
-    // Need for constructing metric tensors
-    this->get_fe(context)->get_dxyzdxi();
-    this->get_fe(context)->get_dxidx();
-    this->get_fe(context)->get_dxidy();
-    this->get_fe(context)->get_dxidz();
+    // Contravariant metric tensor in current configuration is A_cov^{-1}
+    A_contra.zero();
+    A_contra(0,0) =  1/A_cov(0,0);
 
-    return;
+    // If the material is compressible, then lambda_sq is an independent variable
+    if( _is_compressible )
+      {
+        libmesh_not_implemented();
+        //lambda_sq = context.interior_value(this->_lambda_sq_var, qp);
+      }
+    else
+      {
+        // If the material is incompressible, lambda^2 is known
+        lambda_sq = a_cov(0,0)/A_cov(0,0);//det_a/det_A;
+      }
+
+    //Update the covariant and contravariant tensors of current configuration
+    A_cov(1,1)    = lambda_sq;
+    A_cov(2,2)    = lambda_sq;
+    A_contra(1,1) = 1.0/lambda_sq;
+    A_contra(2,2) = 1.0/lambda_sq;
   }
 
 } // end namespace GRINS

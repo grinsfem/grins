@@ -22,53 +22,48 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SOLID_MECHANICS_ABSTRACT_H
+#define GRINS_SOLID_MECHANICS_ABSTRACT_H
 
-#ifndef GRINS_VELOCITY_DRAG_BASE_H
-#define GRINS_VELOCITY_DRAG_BASE_H
-
-// GRINS
-#include "grins_config.h"
-#include "grins/inc_navier_stokes_base.h"
+//GRINS
+#include "grins/physics.h"
+#include "grins/displacement_fe_variables.h"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/tensor_value.h"
-
-// C++
-#include <string>
+#include "libmesh/fem_context.h"
 
 namespace GRINS
 {
-
-  template<class Viscosity>
-  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
+  class SolidMechanicsAbstract : public Physics
   {
   public:
 
-    VelocityDragBase( const std::string& physics_name, const GetPot& input );
+    SolidMechanicsAbstract( const GRINS::PhysicsName& physics_name,
+                            const GetPot& input );
 
-    ~VelocityDragBase(){};
+    virtual ~SolidMechanicsAbstract(){};
 
-    bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
-                         const libMesh::NumberVectorValue& U,
-                         libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
+    //! Initialize variables for this physics.
+    virtual void init_variables( libMesh::FEMSystem* system );
+
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
   protected:
 
-    libMesh::Real _exponent;
-    libMesh::ParsedFunction<libMesh::Number> _coefficient;
+    DisplacementFEVariables _disp_vars;
+
+    typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
+
+    typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
+
+    typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
 
   private:
 
-    VelocityDragBase();
+    SolidMechanicsAbstract();
 
-    //! Read options from GetPot input file.
-    void read_input_options( const GetPot& input );
   };
 
-} // end namespace block
+} // end namespace GRINS
 
-#endif // GRINS_VELOCITY_DRAG_BASE_H
+#endif // GRINS_SOLID_MECHANICS_ABSTRACT_H

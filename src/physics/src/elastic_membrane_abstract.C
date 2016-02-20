@@ -22,53 +22,39 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_VELOCITY_DRAG_BASE_H
-#define GRINS_VELOCITY_DRAG_BASE_H
+// This class
+#include "grins/elastic_membrane_abstract.h"
 
 // GRINS
 #include "grins_config.h"
-#include "grins/inc_navier_stokes_base.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/tensor_value.h"
-
-// C++
-#include <string>
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
+  ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
+    : SolidMechanicsAbstract(physics_name,input)
+  {}
 
-  template<class Viscosity>
-  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
+  void ElasticMembraneAbstract::init_context( AssemblyContext& context )
   {
-  public:
+    this->get_fe(context)->get_JxW();
+    this->get_fe(context)->get_phi();
+    this->get_fe(context)->get_dphidxi();
+    this->get_fe(context)->get_dphideta();
 
-    VelocityDragBase( const std::string& physics_name, const GetPot& input );
+    // Need for constructing metric tensors
+    this->get_fe(context)->get_dxyzdxi();
+    this->get_fe(context)->get_dxyzdeta();
+    this->get_fe(context)->get_dxidx();
+    this->get_fe(context)->get_dxidy();
+    this->get_fe(context)->get_dxidz();
+    this->get_fe(context)->get_detadx();
+    this->get_fe(context)->get_detady();
+    this->get_fe(context)->get_detadz();
+  }
 
-    ~VelocityDragBase(){};
-
-    bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
-                         const libMesh::NumberVectorValue& U,
-                         libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
-
-  protected:
-
-    libMesh::Real _exponent;
-    libMesh::ParsedFunction<libMesh::Number> _coefficient;
-
-  private:
-
-    VelocityDragBase();
-
-    //! Read options from GetPot input file.
-    void read_input_options( const GetPot& input );
-  };
-
-} // end namespace block
-
-#endif // GRINS_VELOCITY_DRAG_BASE_H
+} // end namespace GRINS

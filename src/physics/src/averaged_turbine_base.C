@@ -47,17 +47,9 @@ namespace GRINS
       aoa_function("")
   {
     this->read_input_options(input);
-
-    return;
   }
 
   template<class Mu>
-  AveragedTurbineBase<Mu>::~AveragedTurbineBase()
-  {
-    return;
-  }
-
-  template<class Mu> 
   void AveragedTurbineBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
     this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
@@ -67,7 +59,7 @@ namespace GRINS
     IncompressibleNavierStokesBase<Mu>::init_variables(system);
   }
 
-  template<class Mu> 
+  template<class Mu>
   void AveragedTurbineBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     system->time_evolving(this->fan_speed_var());
@@ -250,12 +242,12 @@ namespace GRINS
     const libMesh::Number lift = C_lift * LDfactor;
     const libMesh::Number drag = C_drag * LDfactor;
 
-    // Force 
+    // Force
     F = lift * N_lift + drag * N_drag;
 
     if (dFdU)
       {
-        const libMesh::NumberVectorValue LDderivfactor = 
+        const libMesh::NumberVectorValue LDderivfactor =
           (N_lift*C_lift+N_drag*C_drag) *
           this->_rho * chord / area;
 

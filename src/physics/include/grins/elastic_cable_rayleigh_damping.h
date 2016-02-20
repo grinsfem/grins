@@ -22,53 +22,40 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_ELASTIC_CABLE_RAYLEIGH_DAMPING_H
+#define GRINS_ELASTIC_CABLE_RAYLEIGH_DAMPING_H
 
-#ifndef GRINS_VELOCITY_DRAG_BASE_H
-#define GRINS_VELOCITY_DRAG_BASE_H
-
-// GRINS
-#include "grins_config.h"
-#include "grins/inc_navier_stokes_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/parsed_function.h"
-#include "libmesh/tensor_value.h"
-
-// C++
-#include <string>
+#include "grins/elastic_cable_base.h"
 
 namespace GRINS
 {
-
-  template<class Viscosity>
-  class VelocityDragBase : public IncompressibleNavierStokesBase<Viscosity>
+  template<typename StressStrainLaw>
+  class ElasticCableRayleighDamping : public ElasticCableBase<StressStrainLaw>
   {
   public:
 
-    VelocityDragBase( const std::string& physics_name, const GetPot& input );
+    ElasticCableRayleighDamping( const PhysicsName& physics_name,
+                                 const GetPot& input,
+                                 bool is_compressible );
 
-    ~VelocityDragBase(){};
+    virtual ~ElasticCableRayleighDamping(){};
 
-    bool compute_force ( const libMesh::Point& point,
-                         const libMesh::Real time,
-                         const libMesh::NumberVectorValue& U,
-                         libMesh::NumberVectorValue& F,
-                         libMesh::NumberTensorValue *dFdU = NULL);
+    //! Time dependent part(s) of physics for element interiors
+    virtual void damping_residual( bool compute_jacobian,
+                                   AssemblyContext& context,
+                                   CachedValues& /*cache*/ );
 
   protected:
 
-    libMesh::Real _exponent;
-    libMesh::ParsedFunction<libMesh::Number> _coefficient;
+    libMesh::Real _lambda_factor;
+    libMesh::Real _mu_factor;
 
   private:
 
-    VelocityDragBase();
+    ElasticCableRayleighDamping();
 
-    //! Read options from GetPot input file.
-    void read_input_options( const GetPot& input );
   };
 
-} // end namespace block
+} // end namespace GRINS
 
-#endif // GRINS_VELOCITY_DRAG_BASE_H
+#endif // GRINS_ELASTIC_CABLE_RAYLEIGH_DAMPING_H
