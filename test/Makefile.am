@@ -6,6 +6,18 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 
 check_PROGRAMS =
+
+# Unit Tests
+check_PROGRAMS += antioch_mixture_unit
+check_PROGRAMS += arrhenius_catalycity_unit
+check_PROGRAMS += cantera_mixture_unit
+check_PROGRAMS += composite_function_unit
+check_PROGRAMS += constant_catalycity_unit
+check_PROGRAMS += gas_recombination_catalytic_wall_unit
+check_PROGRAMS += gas_solid_catalytic_wall_unit
+check_PROGRAMS += power_law_catalycity_unit
+check_PROGRAMS += split_string_unit
+
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
 check_PROGRAMS += test_stokes_poiseuille_flow
@@ -20,21 +32,13 @@ check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += cantera_mixture_unit
 check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_transport_regression
 check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += antioch_mixture_unit
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_evaluator_regression
 check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
-check_PROGRAMS += composite_function_unit
-check_PROGRAMS += gas_recombination_catalytic_wall_unit
-check_PROGRAMS += gas_solid_catalytic_wall_unit
-check_PROGRAMS += constant_catalycity_unit
-check_PROGRAMS += arrhenius_catalycity_unit
-check_PROGRAMS += power_law_catalycity_unit
 check_PROGRAMS += elastic_sheet_regression
 check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
@@ -43,7 +47,7 @@ check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
-check_PROGRAMS += split_string_unit
+
 
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -91,7 +95,18 @@ if MASA_ENABLED
   LIBS += $(MASA_LIBS)
 endif
 
-# Sources for these tests
+# Sources for unit tests
+antioch_mixture_unit_SOURCES = unit/antioch_mixture_unit.C
+arrhenius_catalycity_unit_SOURCES = unit/arrhenius_catalycity_unit.C
+cantera_mixture_unit_SOURCES = unit/cantera_mixture_unit.C
+composite_function_unit_SOURCES = unit/composite_function_unit.C
+constant_catalycity_unit_SOURCES = unit/constant_catalycity_unit.C
+gas_recombination_catalytic_wall_unit_SOURCES = unit/gas_recombination_catalytic_wall_unit.C
+gas_solid_catalytic_wall_unit_SOURCES = unit/gas_solid_catalytic_wall_unit.C
+power_law_catalycity_unit_SOURCES = unit/power_law_catalycity_unit.C
+split_string_unit_SOURCES = unit/split_string_unit.C
+
+# Sources for other tests
 test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
 test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
 test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
@@ -106,21 +121,13 @@ gaussian_profiles_SOURCES = gaussian_profiles.C
 vorticity_qoi_SOURCES = test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = grins_flow_regression.C
-cantera_mixture_unit_SOURCES = cantera_mixture_unit.C
 cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
 cantera_transport_regression_SOURCES = cantera_transport_regression.C
 cantera_evaluator_regression_SOURCES = cantera_evaluator_regression.C
 reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
-antioch_mixture_unit_SOURCES = antioch_mixture_unit.C
 antioch_kinetics_regression_SOURCES = antioch_kinetics_regression.C
 antioch_evaluator_regression_SOURCES = antioch_evaluator_regression.C
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = antioch_mixture_averaged_transport_evaluator_regression.C
-composite_function_unit_SOURCES = composite_function_unit.C
-gas_recombination_catalytic_wall_unit_SOURCES = gas_recombination_catalytic_wall_unit.C
-gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
-constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
-arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
-power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
 elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_xy_SOURCES = 3d_low_mach_jacobians.C
 3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
@@ -129,32 +136,40 @@ suspended_cable_regression_SOURCES = suspended_cable_regression.C
 ufo_unit_SOURCES = ufo_unit.C
 generic_solution_regression_SOURCES = generic_solution_regression.C
 axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
-split_string_unit_SOURCES = split_string_unit.C
+
 
 #Define tests to actually be run
 TESTS =
 XFAIL_TESTS =
 
+# Unit TESTS
+# The .sh are in the unit directory but the programs
+# get put directly in the test directory, not test/unit
+# so they don't get a unit/ prefix
+TESTS += unit/antioch_mixture_unit.sh
+TESTS += arrhenius_catalycity_unit
+TESTS += unit/cantera_mixture_unit.sh
+TESTS += composite_function_unit
+TESTS += constant_catalycity_unit
+TESTS += unit/gas_recombination_catalytic_wall_unit_antioch.sh
+TESTS += unit/gas_recombination_catalytic_wall_unit_cantera.sh
+TESTS += unit/gas_solid_catalytic_wall_unit_antioch.sh
+TESTS += unit/gas_solid_catalytic_wall_unit_cantera.sh
+TESTS += power_law_catalycity_unit
+TESTS += split_string_unit
+
+
+# Other TESTS
 TESTS += gaussian_profiles
-TESTS += cantera_mixture_unit.sh
 TESTS += cantera_chem_thermo_test.sh
 TESTS += cantera_transport_regression.sh
 TESTS += cantera_evaluator_regression.sh
-TESTS += antioch_mixture_unit.sh
 TESTS += antioch_kinetics_regression.sh
 TESTS += antioch_evaluator_regression.sh
 TESTS += antioch_mixture_averaged_transport_evaluator_regression.sh
-TESTS += gas_recombination_catalytic_wall_unit_antioch.sh
-TESTS += gas_recombination_catalytic_wall_unit_cantera.sh
-TESTS += gas_solid_catalytic_wall_unit_antioch.sh
-TESTS += gas_solid_catalytic_wall_unit_cantera.sh
-TESTS += constant_catalycity_unit
-TESTS += arrhenius_catalycity_unit
-TESTS += power_law_catalycity_unit
 TESTS += warn_only_ufo_unit.sh
 TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
-TESTS += split_string_unit
 
 TESTS += stokes_invalid_pin_location_unit.sh
 TESTS += ins_invalid_pin_location_unit.sh
@@ -218,8 +233,6 @@ TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_cata
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
 TESTS += reacting_low_mach_antioch_kinetics_theory_regression.sh
-
-TESTS += composite_function_unit
 TESTS += 3d_low_mach_jacobians_xy.sh
 TESTS += 3d_low_mach_jacobians_xz.sh
 TESTS += 3d_low_mach_jacobians_yz.sh
@@ -231,8 +244,8 @@ TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
 TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh
-
 TESTS += extra_quadrature_order_laplace_arefee_amr_regression.sh
+
 
 CLEANFILES  = penalty_poiseuille.exo
 CLEANFILES += penalty_poiseuille.xdr
