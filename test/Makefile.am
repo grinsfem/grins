@@ -18,6 +18,14 @@ check_PROGRAMS += gas_solid_catalytic_wall
 check_PROGRAMS += power_law_catalycity
 check_PROGRAMS += split_string
 
+# Interface Tests
+check_PROGRAMS += antioch_evaluator_regression
+check_PROGRAMS += antioch_kinetics_regression
+check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
+check_PROGRAMS += cantera_chem_thermo_test
+check_PROGRAMS += cantera_evaluator_regression
+check_PROGRAMS += cantera_transport_regression
+
 # Other Tests
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
@@ -33,13 +41,7 @@ check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += cantera_chem_thermo_test
-check_PROGRAMS += cantera_transport_regression
-check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += antioch_kinetics_regression
-check_PROGRAMS += antioch_evaluator_regression
-check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
 check_PROGRAMS += elastic_sheet_regression
 check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
@@ -107,6 +109,15 @@ gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 split_string_SOURCES = unit/split_string.C
 
+# Interface tests
+antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
+antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
+antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
+cantera_chem_thermo_test_SOURCES = interface/cantera_chem_thermo_test.C
+cantera_evaluator_regression_SOURCES = interface/cantera_evaluator_regression.C
+cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
+
+
 # Other tests
 test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
 test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
@@ -122,13 +133,7 @@ gaussian_profiles_SOURCES = gaussian_profiles.C
 vorticity_qoi_SOURCES = test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = grins_flow_regression.C
-cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
-cantera_transport_regression_SOURCES = cantera_transport_regression.C
-cantera_evaluator_regression_SOURCES = cantera_evaluator_regression.C
 reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
-antioch_kinetics_regression_SOURCES = antioch_kinetics_regression.C
-antioch_evaluator_regression_SOURCES = antioch_evaluator_regression.C
-antioch_mixture_averaged_transport_evaluator_regression_SOURCES = antioch_mixture_averaged_transport_evaluator_regression.C
 elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_xy_SOURCES = 3d_low_mach_jacobians.C
 3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
@@ -159,14 +164,16 @@ TESTS += unit/gas_solid_catalytic_wall_cantera.sh
 TESTS += power_law_catalycity
 TESTS += split_string
 
+# Interface TESTS
+TESTS += interface/antioch_evaluator_regression.sh
+TESTS += interface/antioch_kinetics_regression.sh
+TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
+TESTS += interface/cantera_chem_thermo_test.sh
+TESTS += interface/cantera_evaluator_regression.sh
+TESTS += interface/cantera_transport_regression.sh
+
 # Other TESTS
 TESTS += gaussian_profiles
-TESTS += cantera_chem_thermo_test.sh
-TESTS += cantera_transport_regression.sh
-TESTS += cantera_evaluator_regression.sh
-TESTS += antioch_kinetics_regression.sh
-TESTS += antioch_evaluator_regression.sh
-TESTS += antioch_mixture_averaged_transport_evaluator_regression.sh
 TESTS += warn_only_ufo_unit.sh
 TESTS += error_ufo_unit.sh
 XFAIL_TESTS += error_ufo_unit.sh
