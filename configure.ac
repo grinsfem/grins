@@ -363,27 +363,7 @@ AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 dnl-----------------------------------------------
 dnl Generate files for unit and regression testing
 dnl-----------------------------------------------
-AC_CONFIG_FILES(test/cantera_mixture_unit.sh,                             [chmod +x test/cantera_mixture_unit.sh])
 AC_CONFIG_FILES(test/sa_2d_turbulent_channel_regression.sh, [chmod +x test/sa_2d_turbulent_channel_regression.sh])
-
-AC_CONFIG_FILES(test/input_files/cantera_chem_thermo.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_cantera_regression.in)
-AC_CONFIG_FILES(test/input_files/air_2sp.xml)
-AC_CONFIG_FILES(test/input_files/air_4sp.xml)
-AC_CONFIG_FILES(test/input_files/cantera_transport.in)
-AC_CONFIG_FILES(test/input_files/antioch.in)
-AC_CONFIG_FILES(test/input_files/gas_surface.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_prandtl_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.in)
-AC_CONFIG_FILES(test/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in)
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_kinetics_theory_regression.in)
 
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read grids without having to require
@@ -397,6 +377,15 @@ AC_CONFIG_LINKS([test/grids/mixed_dim_symmetric_square.exo:test/grids/mixed_dim_
 AC_CONFIG_LINKS([test/grids/poiseuille_verification.e:test/grids/poiseuille_verification.e])
 
 AC_CONFIG_LINKS([test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr:test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr])
+
+dnl------------------------------------------------------------------------------
+dnl Generate symlinks to allow tests to read these files from the test input file
+dnl------------------------------------------------------------------------------
+AC_CONFIG_LINKS([test/input_files/air_2sp.xml:test/input_files/air_2sp.xml])
+AC_CONFIG_LINKS([test/input_files/air_4sp.xml:test/input_files/air_4sp.xml])
+AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test.xml])
+AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
+AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples

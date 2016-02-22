@@ -4,17 +4,19 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species   = 'N2 N'
-        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
+        kinetics_data = './input_files/air_2sp.xml'
 
         [./Antioch]
            transport_model = 'mixture_averaged'
            thermo_model = 'stat_mech'
-           viscosity_model = 'kinetics_theory'
-           thermal_conductivity_model = 'kinetics_theory'
-           mass_diffusivity_model = 'kinetics_theory'
+           viscosity_model = 'blottner'
+           thermal_conductivity_model = 'eucken'
+           mass_diffusivity_model = 'constant_lewis'
 
    [../../ThermodynamicPressure]
       value = '10' #[Pa]
+   [../LewisNumber]
+      value = '1.4'
 []
 
 # Options related to all Physics
@@ -53,9 +55,17 @@ T_wall_0 = '300'
 T_wall_2 = '300'
 T_wall_3 = '300'
 
-species_bc_ids = '3'
-species_bc_types = 'prescribed_species'
+species_bc_ids = '3 2'
+species_bc_types = 'prescribed_species gas_recombination_catalytic_wall'
+
 bound_species_3 = '0.6 0.4'
+
+wall_catalytic_reactions_2 = 'N->N2'
+
+gamma_N_2_type = 'arrhenius'
+
+gamma0_N_2 = '0.001'
+Ta_N_2 = '300'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'

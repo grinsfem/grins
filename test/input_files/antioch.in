@@ -5,7 +5,7 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species = 'N2 O2 NO N O'
-        kinetics_data = '@abs_top_srcdir@/test/input_files/air.xml'
+        kinetics_data = './input_files/air.xml'
 
       [../LewisNumber]
         value = '1.4'

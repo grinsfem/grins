@@ -4,19 +4,19 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species   = 'N2 N'
-        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
+        kinetics_data = './input_files/air_2sp.xml'
 
         [./Antioch]
            transport_model = 'constant'
            thermo_model = 'stat_mech'
            viscosity_model = 'constant'
-           thermal_conductivity_model = 'constant'
+           thermal_conductivity_model = 'constant_prandtl'
            mass_diffusivity_model = 'constant_lewis'
 
    [../../Viscosity]
       value = '1.0e-5'
-   [../ThermalConductivity]
-      value = '0.02'
+   [../PrandtlNumber]
+      value = '0.7'
    [../ThermodynamicPressure]
       value = '10' #[Pa]
    [../LewisNumber]
@@ -121,7 +121,7 @@ verify_analytic_jacobians = 0.0
 
 initial_linear_tolerance = 1.0e-10
 
-relative_step_tolerance = 1.0e-11
+relative_step_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
 

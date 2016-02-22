@@ -4,26 +4,20 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species   = 'N2 N'
-        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
+        kinetics_data = './input_files/air_2sp.xml'
 
         [./Antioch]
-           transport_model = 'constant'
-           thermo_model = 'cea'
-           viscosity_model = 'constant'
-           thermal_conductivity_model = 'constant_prandtl'
-           mass_diffusivity_model = 'constant_lewis'
+           transport_model = 'mixture_averaged'
+           thermo_model = 'stat_mech'
+           viscosity_model = 'kinetics_theory'
+           thermal_conductivity_model = 'kinetics_theory'
+           mass_diffusivity_model = 'kinetics_theory'
 
-   [../../Viscosity]
-      value = '1.0e-5'
-   [../PrandtlNumber]
-      value = '0.7'
-   [../ThermodynamicPressure]
+   [../../ThermodynamicPressure]
       value = '10' #[Pa]
-   [../LewisNumber]
-      value = '1.4'
 []
 
-
+# Options related to all Physics
 [Physics]
 
 enabled_physics = 'ReactingLowMachNavierStokes'
@@ -91,6 +85,10 @@ pin_pressure = 'false'
 
 []
 
+[restart-options]
+
+#restart_file = 'cavity.xdr'
+
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -119,7 +117,6 @@ initial_linear_tolerance = 1.0e-10
 relative_step_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
-[]
 
 # Visualization options
 [vis-options]
@@ -132,8 +129,6 @@ output_residual = 'false'
 output_format = 'ExodusII xdr'
 
 #output_vars = 'rho_mix mole_fractions'
-
-[]
 
 # Options for print info to the screen
 [screen-options]

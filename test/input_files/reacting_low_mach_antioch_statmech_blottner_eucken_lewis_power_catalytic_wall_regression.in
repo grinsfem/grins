@@ -4,7 +4,7 @@
      [./GasMixture]
         thermochemistry_library = 'antioch'
         species   = 'N2 N'
-        kinetics_data = '@abs_top_builddir@/test/input_files/air_2sp.xml'
+        kinetics_data = './input_files/air_2sp.xml'
 
         [./Antioch]
            transport_model = 'mixture_averaged'
@@ -62,8 +62,10 @@ bound_species_3 = '0.6 0.4'
 
 wall_catalytic_reactions_2 = 'N->N2'
 
-gamma_N_2_type = 'constant'
-gamma_N_2 = '0.001'
+gamma_N_2_type = 'power'
+gamma0_N_2 = '0.001'
+Tref_N_2 = '300'
+alpha_N_2 = '1.8'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
@@ -131,11 +133,11 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'nitridation'
+vis_output_file_prefix = 'nitridation' 
 
 output_residual = 'false'
 
-output_format = 'ExodusII'
+output_format = 'ExodusII xdr'
 
 #output_vars = 'rho_mix mole_fractions'
 

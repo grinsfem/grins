@@ -4,7 +4,7 @@
      [./GasMixture]
         thermochemistry_library = 'cantera'
         species = 'N2 O2 NO N  O'
-        kinetics_data = '@abs_top_srcdir@/test/input_files/air_5sp_test.xml'
+        kinetics_data = './input_files/air_5sp_test.xml'
 
         [./Cantera]
            gas_mixture = 'air5sp'

@@ -11,7 +11,7 @@
 
   <!-- phase air4sp     -->
   <phase dim="3" id="air4sp">
-    <elementArray datasrc="@abs_top_srcdir@/test/input_files/elements.xml">N C</elementArray>
+    <elementArray datasrc="./input_files/elements.xml">N C</elementArray>
     <speciesArray datasrc="#FINS_r13324">N2 N C CN</speciesArray>
     <reactionArray datasrc="#park_jaffe_partridge_JTHT_2001">
       <skip species="undeclared"/>

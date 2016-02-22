@@ -4,7 +4,7 @@
      [./GasMixture]
         thermochemistry_library = 'cantera'
         species = 'N2 N C CN'
-        kinetics_data = '@abs_top_builddir@/test/input_files/air_4sp.xml'
+        kinetics_data = './input_files/air_4sp.xml'
 
         [./Cantera]
            gas_mixture = 'air4sp'
@@ -13,7 +13,7 @@
       [./GasMixture]
          thermochemistry_library = 'antioch'
          species = 'N2 N C CN'
-         kinetics_data = '@abs_top_builddir@/test/input_files/air_4sp.xml'
+         kinetics_data = './input_files/air_4sp.xml'
 
        [../LewisNumber]
          value = '1.4'

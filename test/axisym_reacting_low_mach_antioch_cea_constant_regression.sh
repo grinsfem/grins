@@ -2,7 +2,7 @@
 
 PROG="${GRINS_TEST_DIR}/axisym_reacting_low_mach_regression"
 
-INPUT="${GRINS_TEST_DIR}/input_files/axisym_reacting_low_mach_antioch_cea_constant_regression.in"
+INPUT="${GRINS_TEST_INPUT_DIR}/axisym_reacting_low_mach_antioch_cea_constant_regression.in"
 DATA="${GRINS_TEST_DATA_DIR}/axisym_reacting_low_mach_antioch_cea_constant_regression.xdr"
 
 # This problem does *not* like much additive Schwarz overlap...
