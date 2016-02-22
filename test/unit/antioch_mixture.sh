@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="${GRINS_TEST_DIR}/antioch_mixture_unit"
+PROG="${GRINS_TEST_DIR}/antioch_mixture"
 
 INPUT="${GRINS_TEST_INPUT_DIR}/antioch.in"
 

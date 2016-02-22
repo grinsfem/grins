@@ -8,16 +8,17 @@ AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DI
 check_PROGRAMS =
 
 # Unit Tests
-check_PROGRAMS += antioch_mixture_unit
-check_PROGRAMS += arrhenius_catalycity_unit
-check_PROGRAMS += cantera_mixture_unit
-check_PROGRAMS += composite_function_unit
-check_PROGRAMS += constant_catalycity_unit
-check_PROGRAMS += gas_recombination_catalytic_wall_unit
-check_PROGRAMS += gas_solid_catalytic_wall_unit
-check_PROGRAMS += power_law_catalycity_unit
-check_PROGRAMS += split_string_unit
+check_PROGRAMS += antioch_mixture
+check_PROGRAMS += arrhenius_catalycity
+check_PROGRAMS += cantera_mixture
+check_PROGRAMS += composite_function
+check_PROGRAMS += constant_catalycity
+check_PROGRAMS += gas_recombination_catalytic_wall
+check_PROGRAMS += gas_solid_catalytic_wall
+check_PROGRAMS += power_law_catalycity
+check_PROGRAMS += split_string
 
+# Other Tests
 check_PROGRAMS += test_ns_couette_flow_2d_x
 check_PROGRAMS += test_ns_couette_flow_2d_y
 check_PROGRAMS += test_stokes_poiseuille_flow
@@ -95,18 +96,18 @@ if MASA_ENABLED
   LIBS += $(MASA_LIBS)
 endif
 
-# Sources for unit tests
-antioch_mixture_unit_SOURCES = unit/antioch_mixture_unit.C
-arrhenius_catalycity_unit_SOURCES = unit/arrhenius_catalycity_unit.C
-cantera_mixture_unit_SOURCES = unit/cantera_mixture_unit.C
-composite_function_unit_SOURCES = unit/composite_function_unit.C
-constant_catalycity_unit_SOURCES = unit/constant_catalycity_unit.C
-gas_recombination_catalytic_wall_unit_SOURCES = unit/gas_recombination_catalytic_wall_unit.C
-gas_solid_catalytic_wall_unit_SOURCES = unit/gas_solid_catalytic_wall_unit.C
-power_law_catalycity_unit_SOURCES = unit/power_law_catalycity_unit.C
-split_string_unit_SOURCES = unit/split_string_unit.C
+# Unit tests
+antioch_mixture_SOURCES = unit/antioch_mixture.C
+arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
+cantera_mixture_SOURCES = unit/cantera_mixture.C
+composite_function_SOURCES = unit/composite_function.C
+constant_catalycity_SOURCES = unit/constant_catalycity.C
+gas_recombination_catalytic_wall_SOURCES = unit/gas_recombination_catalytic_wall.C
+gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
+power_law_catalycity_SOURCES = unit/power_law_catalycity.C
+split_string_SOURCES = unit/split_string.C
 
-# Sources for other tests
+# Other tests
 test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
 test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
 test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
@@ -139,25 +140,24 @@ axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regressio
 
 
 #Define tests to actually be run
+# The .sh are in the <subdir> directory but the programs
+# get built directly in the test directory, not test/<subdir>
+# so they don't get a <subdir>/ prefix
 TESTS =
 XFAIL_TESTS =
 
 # Unit TESTS
-# The .sh are in the unit directory but the programs
-# get put directly in the test directory, not test/unit
-# so they don't get a unit/ prefix
-TESTS += unit/antioch_mixture_unit.sh
-TESTS += arrhenius_catalycity_unit
-TESTS += unit/cantera_mixture_unit.sh
-TESTS += composite_function_unit
-TESTS += constant_catalycity_unit
-TESTS += unit/gas_recombination_catalytic_wall_unit_antioch.sh
-TESTS += unit/gas_recombination_catalytic_wall_unit_cantera.sh
-TESTS += unit/gas_solid_catalytic_wall_unit_antioch.sh
-TESTS += unit/gas_solid_catalytic_wall_unit_cantera.sh
-TESTS += power_law_catalycity_unit
-TESTS += split_string_unit
-
+TESTS += unit/antioch_mixture.sh
+TESTS += arrhenius_catalycity
+TESTS += unit/cantera_mixture.sh
+TESTS += composite_function
+TESTS += constant_catalycity
+TESTS += unit/gas_recombination_catalytic_wall_antioch.sh
+TESTS += unit/gas_recombination_catalytic_wall_cantera.sh
+TESTS += unit/gas_solid_catalytic_wall_antioch.sh
+TESTS += unit/gas_solid_catalytic_wall_cantera.sh
+TESTS += power_law_catalycity
+TESTS += split_string
 
 # Other TESTS
 TESTS += gaussian_profiles
