@@ -360,11 +360,6 @@ DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
 
 AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 
-dnl-----------------------------------------------
-dnl Generate files for unit and regression testing
-dnl-----------------------------------------------
-AC_CONFIG_FILES(test/sa_2d_turbulent_channel_regression.sh, [chmod +x test/sa_2d_turbulent_channel_regression.sh])
-
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read grids without having to require
 dnl AC_CONFIG_FILES to generate the input files
@@ -376,6 +371,10 @@ AC_CONFIG_LINKS([test/grids/mixed_dim_circle.exo:test/grids/mixed_dim_circle.exo
 AC_CONFIG_LINKS([test/grids/mixed_dim_symmetric_square.exo:test/grids/mixed_dim_symmetric_square.exo])
 AC_CONFIG_LINKS([test/grids/poiseuille_verification.e:test/grids/poiseuille_verification.e])
 
+dnl-------------------------------------------------------------------------
+dnl Generate symlinks to allow tests to read restarts without having to
+dnl require AC_CONFIG_FILES to generate the .sh files
+dnl-------------------------------------------------------------------------
 AC_CONFIG_LINKS([test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr:test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr])
 
 dnl------------------------------------------------------------------------------
