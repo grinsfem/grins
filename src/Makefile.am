@@ -329,6 +329,7 @@ include_HEADERS += physics/include/grins/low_mach_navier_stokes_stab_helper.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_abstract.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes.h
+include_HEADERS += physics/include/grins/reacting_low_mach_navier_stokes_macro.h
 include_HEADERS += physics/include/grins/heat_conduction.h
 include_HEADERS += physics/include/grins/averaged_fan.h
 include_HEADERS += physics/include/grins/averaged_fan_adjoint_stab.h
