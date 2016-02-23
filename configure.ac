@@ -362,7 +362,8 @@ AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read grids without having to require
-dnl AC_CONFIG_FILES to generate the input files
+dnl AC_CONFIG_FILES to generate the input files.
+dnl NOTE: AC_CONFIG_LINKS will generate the rules for `make dist`
 dnl-------------------------------------------------------------------------
 AC_CONFIG_LINKS([test/grids/backward_facing_step.e:test/grids/backward_facing_step.e])
 AC_CONFIG_LINKS([test/grids/circular_sheet.e:test/grids/circular_sheet.e])
@@ -374,11 +375,13 @@ AC_CONFIG_LINKS([test/grids/poiseuille_verification.e:test/grids/poiseuille_veri
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read restarts without having to
 dnl require AC_CONFIG_FILES to generate the .sh files
+dnl NOTE: AC_CONFIG_LINKS will generate the rules for `make dist`
 dnl-------------------------------------------------------------------------
 AC_CONFIG_LINKS([test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr:test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr])
 
 dnl------------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read these files from the test input file
+dnl NOTE: AC_CONFIG_LINKS will generate the rules for `make dist`
 dnl------------------------------------------------------------------------------
 AC_CONFIG_LINKS([test/input_files/air_2sp.xml:test/input_files/air_2sp.xml])
 AC_CONFIG_LINKS([test/input_files/air_4sp.xml:test/input_files/air_4sp.xml])
@@ -449,6 +452,20 @@ AC_SUBST(GRINS_STAMPED_FILES)
 #     in EXTRA_DIST. `make dist` always checks './'.
 GRINS_TEST_SH_FILES=$(find $TOP_SRC_DIR/test -name "*.sh" | tr "\n" " ")
 AC_SUBST(GRINS_TEST_SH_FILES)
+
+# PB: Since the .xml input files are put into `make dist` by AC_CONFIG_LINKS,
+#     we need to do the others separately because if add the directory as a whole
+#     to EXTRA_DIST in a Makefile.am, somehow the AC_CONFIG_LINKS parts don't
+#     end up in the dist tarball...
+GRINS_TEST_INPUT_FILES=$(find $TOP_SRC_DIR/test/input_files -name "*.in" | tr "\n" " ")
+AC_SUBST(GRINS_TEST_INPUT_FILES)
+
+# PB: Since there are some .xdr files put into `make dist` by AC_CONFIG_LINKS,
+#     we need to do the others separately because if add the directory as a whole
+#     to EXTRA_DIST in a Makefile.am, somehow the AC_CONFIG_LINKS parts don't
+#     end up in the dist tarball...
+GRINS_TEST_DATA_FILES=$(find $TOP_SRC_DIR/test/test_data -name "*.xdr" -or -name "*.xda" | grep -v "elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr" | tr "\n" " ")
+AC_SUBST(GRINS_TEST_DATA_FILES)
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()

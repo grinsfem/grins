@@ -271,8 +271,6 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
-# Want these put with the distro so we can run make check
-EXTRA_DIST = $(shellfiles_src) input_files test_data grids
 CLEANFILES =
 
 if CODE_COVERAGE_ENABLED
