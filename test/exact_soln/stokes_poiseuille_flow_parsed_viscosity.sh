@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="${GRINS_TEST_DIR}/test_stokes_poiseuille_flow_parsed_viscosity"
+PROG="${GRINS_TEST_DIR}/stokes_poiseuille_flow_parsed_viscosity"
 
 INPUT="${GRINS_TEST_INPUT_DIR}/stokes_poiseuille_flow_parsed_viscosity_input.in"
 

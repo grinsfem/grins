@@ -26,19 +26,21 @@ check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += cantera_transport_regression
 
+# Exact solution tests
+check_PROGRAMS += axi_ns_con_cyl_flow
+check_PROGRAMS += axi_ns_poiseuille_flow
+check_PROGRAMS += ns_couette_flow_2d_x
+check_PROGRAMS += ns_couette_flow_2d_y
+check_PROGRAMS += ns_poiseuille_flow
+check_PROGRAMS += stokes_poiseuille_flow
+check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity
+check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
+check_PROGRAMS += vorticity_qoi
+
 # Other Tests
-check_PROGRAMS += test_ns_couette_flow_2d_x
-check_PROGRAMS += test_ns_couette_flow_2d_y
-check_PROGRAMS += test_stokes_poiseuille_flow
-check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity
-check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
-check_PROGRAMS += test_ns_poiseuille_flow
-check_PROGRAMS += test_axi_ns_poiseuille_flow
-check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += test_turbulent_channel
 check_PROGRAMS += gaussian_profiles
-check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
 check_PROGRAMS += reacting_low_mach_regression
@@ -118,19 +120,22 @@ cantera_evaluator_regression_SOURCES = interface/cantera_evaluator_regression.C
 cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 
+# Exact solution tests
+axi_ns_con_cyl_flow_SOURCES = exact_soln/axi_ns_con_cyl_flow.C
+axi_ns_poiseuille_flow_SOURCES = exact_soln/axi_ns_poiseuille_flow.C
+ns_couette_flow_2d_x_SOURCES = exact_soln/ns_couette_flow_2d_x.C
+ns_couette_flow_2d_y_SOURCES = exact_soln/ns_couette_flow_2d_y.C
+ns_poiseuille_flow_SOURCES = exact_soln/ns_poiseuille_flow.C
+stokes_poiseuille_flow_SOURCES = exact_soln/stokes_poiseuille_flow.C
+stokes_poiseuille_flow_parsed_viscosity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity.C
+stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
+vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
+
+
 # Other tests
-test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
-test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
-test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
-test_stokes_poiseuille_flow_parsed_viscosity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity.C
-test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
-test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
-test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
-test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 test_turbulent_channel_SOURCES = test_turbulent_channel.C
 gaussian_profiles_SOURCES = gaussian_profiles.C
-vorticity_qoi_SOURCES = test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = grins_flow_regression.C
 reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
@@ -172,6 +177,20 @@ TESTS += interface/cantera_chem_thermo_test.sh
 TESTS += interface/cantera_evaluator_regression.sh
 TESTS += interface/cantera_transport_regression.sh
 
+
+# Exact solution TESTS
+TESTS += exact_soln/axi_ns_con_cyl_flow.sh
+TESTS += exact_soln/axi_ns_poiseuille_flow.sh
+TESTS += exact_soln/laplace_parsed_source.sh
+TESTS += exact_soln/ns_couette_flow_2d_x.sh
+TESTS += exact_soln/ns_couette_flow_2d_y.sh
+TESTS += exact_soln/ns_poiseuille_flow.sh
+TESTS += exact_soln/stokes_poiseuille_flow.sh
+TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity.sh
+TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
+TESTS += exact_soln/vorticity_qoi.sh
+
+
 # Other TESTS
 TESTS += gaussian_profiles
 TESTS += warn_only_ufo_unit.sh
@@ -185,7 +204,7 @@ XFAIL_TESTS += stokes_invalid_pin_location_unit.sh
 XFAIL_TESTS += ins_invalid_pin_location_unit.sh
 XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
 
-TESTS += laplace_parsed_source_regression.sh
+
 TESTS += poisson_weighted_flux_regression.sh
 TESTS += viscosity_options_conflict_unit_1.sh
 TESTS += viscosity_options_conflict_unit_2.sh
@@ -194,14 +213,6 @@ XFAIL_TESTS += viscosity_options_conflict_unit_1.sh
 XFAIL_TESTS += viscosity_options_conflict_unit_2.sh
 XFAIL_TESTS += viscosity_options_conflict_unit_3.sh
 
-TESTS += test_ns_couette_flow_2d_x.sh
-TESTS += test_ns_couette_flow_2d_y.sh
-TESTS += test_stokes_poiseuille_flow.sh
-TESTS += test_stokes_poiseuille_flow_parsed_viscosity.sh
-TESTS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
-TESTS += test_ns_poiseuille_flow.sh
-TESTS += test_axi_ns_poiseuille_flow.sh
-TESTS += test_axi_ns_con_cyl_flow.sh
 TESTS += sa_2d_turbulent_channel_regression.sh
 TESTS += test_thermally_driven_2d_flow.sh
 TESTS += test_axi_thermally_driven_flow.sh
@@ -217,7 +228,6 @@ TESTS += test_dirichlet_fem.sh
 TESTS += test_dirichlet_nan.sh
 TESTS += test_simple_ode.sh
 TESTS += test_parsed_qoi.sh
-TESTS += test_vorticity_qoi.sh
 TESTS += low_mach_cavity_benchmark_regression.sh
 TESTS += backward_facing_step_regression.sh
 TESTS += locally_refine_regression.sh

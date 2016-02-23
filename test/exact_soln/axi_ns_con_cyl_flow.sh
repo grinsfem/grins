@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="${GRINS_TEST_DIR}/test_axi_ns_con_cyl_flow"
+PROG="${GRINS_TEST_DIR}/axi_ns_con_cyl_flow"
 
 INPUT="${GRINS_TEST_INPUT_DIR}/axi_con_cyl_flow.in"
 
