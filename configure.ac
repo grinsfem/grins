@@ -436,13 +436,19 @@ dnl-----------------------------------------------
 #     to using $(shell) calls in the Makefile.am which 1. requires
 #     GNU Make and 2. Causes automake to issue a warning
 _AC_SRCDIRS(.)
-TOP_SEARCH_DIR=$ac_abs_top_srcdir
+ABS_TOP_SRC_DIR=$ac_abs_top_srcdir
+TOP_SRC_DIR=$ac_srcdir
 
 # We have to do this by subdirectory because otherwise distcheck
 # breaks as we start picking up files in the directories
 # that it uses.
-GRINS_STAMPED_FILES=$(find $TOP_SEARCH_DIR/{src,examples,test} -name "*.h" -or -name "*.C" | tr "\n" " ")
+GRINS_STAMPED_FILES=$(find $ABS_TOP_SRC_DIR/{src,examples,test} -name "*.h" -or -name "*.C" | tr "\n" " ")
 AC_SUBST(GRINS_STAMPED_FILES)
+
+# PB: This *must not* be an absolute path since we'll use this variable
+#     in EXTRA_DIST. `make dist` always checks './'.
+GRINS_TEST_SH_FILES=$(find $TOP_SRC_DIR/test -name "*.sh" | tr "\n" " ")
+AC_SUBST(GRINS_TEST_SH_FILES)
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()
