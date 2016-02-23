@@ -264,12 +264,6 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
-
-CLEANFILES  = penalty_poiseuille.exo
-CLEANFILES += penalty_poiseuille.xdr
-CLEANFILES += penalty_poiseuille_stab.exo
-CLEANFILES += penalty_poiseuille_stab.xdr
-
 shellfiles_src =
 shellfiles_src += ns_couette_flow_2d_x.sh
 shellfiles_src += ns_couette_flow_2d_y.sh
@@ -347,13 +341,14 @@ shellfiles_src += extra_quadrature_order_laplace_arefee_amr.sh
 
 # Want these put with the distro so we can run make check
 EXTRA_DIST = $(shellfiles_src) input_files test_data grids
+CLEANFILES =
 
 if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
 # If we have tests fail, libmesh_error() may leave output
-CLEANFILES += traceout*.txt temp_print_trace.* *.exo *.xdr
+CLEANFILES += traceout*.txt temp_print_trace.*
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

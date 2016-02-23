@@ -24,8 +24,8 @@ verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
-output_vis = true
-output_solution_sensitivities = true
+output_vis = 'false'
+output_solution_sensitivities = 'false'
 vis_output_file_prefix = 'parsed_qoi_vis'
 output_format = 'ExodusII'
 
