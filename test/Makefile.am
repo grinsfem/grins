@@ -5,6 +5,54 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; exp
 AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 
+AM_CPPFLAGS =
+AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
+
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
+AM_CPPFLAGS += $(GRVY_CFLAGS)
+
+LIBS =
+LIBS += $(LIBGRINS_LIBS)
+
+AM_LDFLAGS =
+
+#----------------
+# Cantera support
+#----------------
+if CANTERA_ENABLED
+   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
+   AM_LDFLAGS += $(CANTERA_LDFLAGS)
+   LIBS += $(CANTERA_LIBS)
+endif
+
+#----------------
+# Antioch support
+#----------------
+if ANTIOCH_ENABLED
+   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
+endif
+
+#--------------
+# MASA support
+#--------------
+if MASA_ENABLED
+  AM_CPPFLAGS += $(MASA_CXXFLAGS)
+  LIBS += $(MASA_LIBS)
+endif
+
+# These are programs that need to be built in order to run
+# the various tests. They will be built with `make check`
 check_PROGRAMS =
 
 # Unit Tests
@@ -53,53 +101,9 @@ check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
 
 
-AM_CPPFLAGS =
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
 
-AM_CPPFLAGS += $(BOOST_CPPFLAGS)
-AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
-AM_CPPFLAGS += $(GRVY_CFLAGS)
 
-LIBS =
-LIBS += $(LIBGRINS_LIBS)
-
-AM_LDFLAGS =
-
-#----------------
-# Cantera support
-#----------------
-if CANTERA_ENABLED
-   AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
-   AM_LDFLAGS += $(CANTERA_LDFLAGS)
-   LIBS += $(CANTERA_LIBS)
-endif
-
-#----------------
-# Antioch support
-#----------------
-if ANTIOCH_ENABLED
-   AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-endif
-
-#--------------
-# MASA support
-#--------------
-if MASA_ENABLED
-  AM_CPPFLAGS += $(MASA_CXXFLAGS)
-  LIBS += $(MASA_LIBS)
-endif
-
-# Unit tests
+# Unit test source files
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -110,7 +114,7 @@ gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 split_string_SOURCES = unit/split_string.C
 
-# Interface tests
+# Interface test source files
 antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
 antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
@@ -119,7 +123,7 @@ cantera_evaluator_regression_SOURCES = interface/cantera_evaluator_regression.C
 cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 
-# Exact solution tests
+# Exact solution test source files
 axi_ns_con_cyl_flow_SOURCES = exact_soln/axi_ns_con_cyl_flow.C
 axi_ns_poiseuille_flow_SOURCES = exact_soln/axi_ns_poiseuille_flow.C
 ns_couette_flow_2d_x_SOURCES = exact_soln/ns_couette_flow_2d_x.C
@@ -131,7 +135,7 @@ stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = exact_soln
 vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 
-# Regression tests
+# Regression test source files
 test_thermally_driven_flow_SOURCES = regression/test_thermally_driven_flow.C
 test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
 gaussian_profiles_SOURCES = regression/gaussian_profiles.C
@@ -152,6 +156,8 @@ axisym_reacting_low_mach_regression_SOURCES = regression/axisym_reacting_low_mac
 # get built directly in the test directory, not test/<subdir>
 # so they don't get a <subdir>/ prefix
 TESTS =
+
+# These are tests that are *expected* to fail
 XFAIL_TESTS =
 
 # Unit TESTS
@@ -187,6 +193,7 @@ TESTS += exact_soln/stokes_poiseuille_flow.sh
 TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity.sh
 TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
 TESTS += exact_soln/vorticity_qoi.sh
+
 
 # Error/xfail TESTS
 TESTS += error_xfail/error_ufo.sh
