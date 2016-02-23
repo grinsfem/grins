@@ -11,7 +11,7 @@ SUBDIRS          = src test doxygen examples
 
 EXTRA_DIST       = README.md CHANGES LICENSE COPYING contrib
 
-AM_DISTCHECK_CONFIGURE_FLAGS = --with-libmesh=$(LIBMESH_PREFIX) --with-boost=$(BOOST_ROOT)
+AM_DISTCHECK_CONFIGURE_FLAGS = --with-libmesh=$(LIBMESH_PREFIX) --with-boost=$(BOOST_ROOT) METHOD=$(LIBMESH_METHOD)
 
 aclocaldir = $(prefix)/share/aclocal
 aclocal_DATA = $(top_srcdir)/share/aclocal/*
