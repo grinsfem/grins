@@ -49,7 +49,6 @@ check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
-check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
 
@@ -144,7 +143,6 @@ elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
 3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = suspended_cable_regression.C
-ufo_unit_SOURCES = ufo_unit.C
 generic_solution_regression_SOURCES = generic_solution_regression.C
 axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
 
