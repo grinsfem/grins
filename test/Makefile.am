@@ -190,29 +190,32 @@ TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity.sh
 TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
 TESTS += exact_soln/vorticity_qoi.sh
 
+# Error/xfail TESTS
+TESTS += error_xfail/error_ufo.sh
+XFAIL_TESTS += error_xfail/error_ufo.sh
+
+TESTS += error_xfail/stokes_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/stokes_invalid_pin_location.sh
+
+TESTS += error_xfail/ins_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/ins_invalid_pin_location.sh
+
+TESTS += error_xfail/lmns_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/lmns_invalid_pin_location.sh
+
+TESTS += error_xfail/viscosity_options_conflict_1.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_1.sh
+
+TESTS += error_xfail/viscosity_options_conflict_2.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_2.sh
+
+TESTS += error_xfail/viscosity_options_conflict_3.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_3.sh
 
 # Other TESTS
 TESTS += gaussian_profiles
 TESTS += warn_only_ufo_unit.sh
-TESTS += error_ufo_unit.sh
-XFAIL_TESTS += error_ufo_unit.sh
-
-TESTS += stokes_invalid_pin_location_unit.sh
-TESTS += ins_invalid_pin_location_unit.sh
-TESTS += lmns_invalid_pin_location_unit.sh
-XFAIL_TESTS += stokes_invalid_pin_location_unit.sh
-XFAIL_TESTS += ins_invalid_pin_location_unit.sh
-XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
-
-
 TESTS += poisson_weighted_flux_regression.sh
-TESTS += viscosity_options_conflict_unit_1.sh
-TESTS += viscosity_options_conflict_unit_2.sh
-TESTS += viscosity_options_conflict_unit_3.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_1.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_2.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_3.sh
-
 TESTS += sa_2d_turbulent_channel_regression.sh
 TESTS += test_thermally_driven_2d_flow.sh
 TESTS += test_axi_thermally_driven_flow.sh
