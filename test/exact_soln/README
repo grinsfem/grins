@@ -1,0 +1,13 @@
+When setting up the exact_soln tests to use the generic_exact_solution_testing_app,
+there are a couple of important points to implement.
+
+1. We are assuming that the primary libMesh::System name is "GRINS-TEST", so
+   be sure to set the system_name variable to 'GRINS-TEST' in the test input file.
+
+2. These tests are meant to operate by running the grins app directly, which will write
+   out a restart file. Then, the genenric test app will run and load the restart file
+   to compare against the exact solution (supplied on the command line). To maintain
+   the integrity of the parallel builds, each restart file *must* be named uniquely.
+   Thus, the rule here is to name the restart file the same as the test, e.g.
+   if the test was named navier_stokes_2d.sh, then the restart should be named
+   navier_stokes_2d.xdr.
