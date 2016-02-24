@@ -241,6 +241,16 @@ mixeddiminflatingsheet_SCRIPTS = $(top_builddir)/examples/mixed_dim_inflating_sh
 EXTRA_DIST += $(mixeddiminflatingsheet_DATA)
 
 
+#=======================================================================
+# Transient AMR Example
+#=======================================================================
+transientamrdir = $(prefix)/examples/transient_amr
+transientamr_DATA  = $(top_srcdir)/examples/transient_amr/convection_diffusion_unsteady_2d_amr.in
+transientamr_DATA += $(top_srcdir)/examples/transient_amr/mixed_quad_tri_square_mesh.xda
+transientamr_SCRIPTS = $(top_builddir)/examples/transient_amr/run.sh
+
+EXTRA_DIST += $(transientamr_DATA)
+
 
 MAINTAINERCLEANFILES = Makefile.in
 
