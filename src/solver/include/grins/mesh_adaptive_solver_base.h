@@ -77,6 +77,8 @@ namespace GRINS
     unsigned int _face_level_mismatch_limit;
     bool _enforce_mismatch_limit_prior_to_refinement;
 
+    unsigned int _max_h_level;
+
     RefinementFlaggingType _refinement_type;
 
     libMesh::UniquePtr<libMesh::MeshRefinement> _mesh_refinement;
