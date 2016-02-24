@@ -75,6 +75,7 @@ check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += cantera_transport_regression
 
 # Exact solution tests
+check_PROGRAMS += generic_exact_solution_testing_app
 check_PROGRAMS += axi_ns_con_cyl_flow
 check_PROGRAMS += axi_ns_poiseuille_flow
 check_PROGRAMS += ns_couette_flow_2d_x
@@ -124,6 +125,7 @@ cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 
 # Exact solution test source files
+generic_exact_solution_testing_app_SOURCES = exact_soln/generic_exact_solution_testing_app.C
 axi_ns_con_cyl_flow_SOURCES = exact_soln/axi_ns_con_cyl_flow.C
 axi_ns_poiseuille_flow_SOURCES = exact_soln/axi_ns_poiseuille_flow.C
 ns_couette_flow_2d_x_SOURCES = exact_soln/ns_couette_flow_2d_x.C
