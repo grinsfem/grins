@@ -10,27 +10,29 @@
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10
-max_linear_iterations = 2500
-
-initial_linear_tolerance = 1.0e-12
-
-verify_analytic_jacobians = 1.e-6
+   max_nonlinear_iterations = 10
+   max_linear_iterations = 2500
+   minimum_linear_tolerance = 1.0e-12
+   verify_analytic_jacobians = 1.e-6
+[]
 
 # Visualization options
 [vis-options]
-output_vis = false
-vis_output_file_prefix = couette_poiseuille
+   output_vis = 'true'
+   vis_output_file_prefix = 'ns_poiseuille_flow'
+   output_format = 'xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-echo_physics = 'true'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   echo_physics = 'true'
+   system_name = 'GRINS-TEST'
+[]
 
 [Materials]
   [./TestMaterial]
@@ -41,24 +43,22 @@ echo_physics = 'true'
       value = '1.0'
 []
 
-
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes'
+   enabled_physics = 'IncompressibleNavierStokes'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-bc_ids = '1 3 2 0'
-bc_types = 'general_velocity general_velocity no_slip no_slip'
+      bc_ids = '1 3 1 3 2 0'
+      bc_types = 'parsed_dirichlet parsed_dirichlet parsed_dirichlet parsed_dirichlet no_slip no_slip'
+      bc_variables  = 'u u v v na na'
+      bc_values = '4*y*(1-y) 4*y*(1-y) 0.0 0.0 na na'
 
-pin_pressure = 'true'
-pin_value = '120.0'
-pin_location = '0.0 0.0'
-
+      pin_pressure = 'true'
+      pin_value = '120.0'
+      pin_location = '0.0 0.0'
 []
 
 [Variables]
