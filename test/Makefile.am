@@ -171,6 +171,7 @@ TESTS += interface/cantera_transport_regression.sh
 # Exact solution TESTS
 TESTS += exact_soln/axi_ns_con_cyl_flow.sh
 TESTS += exact_soln/axi_ns_poiseuille_flow.sh
+TESTS += exact_soln/convection_diffusion_steady_1d.sh
 TESTS += exact_soln/laplace_parsed_source.sh
 TESTS += exact_soln/ns_couette_flow_2d_x.sh
 TESTS += exact_soln/ns_couette_flow_2d_y.sh
