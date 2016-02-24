@@ -8,34 +8,28 @@
       x_max = '5.0'
 []
 
-# Options for tiem solvers
-
-
-
-#Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10
-max_linear_iterations = 2500
+   max_nonlinear_iterations = 10
+   max_linear_iterations = 2500
+   minimum_linear_tolerance = 1.0e-12
+   verify_analytic_jacobians = 1.e-6
+[]
 
-initial_linear_tolerance = 1.0e-12
-
-verify_analytic_jacobians = 1.e-6
-
-# Visualization options
 [vis-options]
-output_vis = 'false'
-vis_output_file_prefix = couette_poiseuille
-output_format = 'ExodusII xdr'
+   output_vis = 'true'
+   vis_output_file_prefix = 'stokes_poiseuille_flow'
+   output_format = 'xdr'
+[]
 
-# Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-echo_physics = 'true'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   echo_physics = 'true'
+   system_name = 'GRINS-TEST'
+[]
 
 [Materials]
    [./TestMaterial]
@@ -46,30 +40,22 @@ echo_physics = 'true'
       value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'Stokes'
+   enabled_physics = 'Stokes'
 
-# Options for Stokes physics
-[./Stokes]
+   [./Stokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-bc_ids = '1 3 2 0'
-bc_types = 'parabolic_profile parabolic_profile no_slip no_slip'
+      bc_ids = '1 3 1 3 2 0'
+      bc_types = 'parsed_dirichlet parsed_dirichlet parsed_dirichlet parsed_dirichlet no_slip no_slip'
+      bc_variables = 'u u v v na na'
+      bc_values = '{4*y*(1-y)} {4*y*(1-y)} 0.0 0.0 na na'
 
-parabolic_profile_coeffs_1 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_coeffs_3 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_var_1 = 'u'
-parabolic_profile_var_3 = 'u'
-parabolic_profile_fix_1 = 'v'
-parabolic_profile_fix_3 = 'v'
-
-pin_pressure = true
-pin_value = 100.0
-pin_location = '2.5 0.5'
-
+      pin_pressure = true
+      pin_value = 100.0
+      pin_location = '2.5 0.5'
 []
 
 [Variables]

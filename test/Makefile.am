@@ -76,7 +76,6 @@ check_PROGRAMS += cantera_transport_regression
 
 # Exact solution tests
 check_PROGRAMS += generic_exact_solution_testing_app
-check_PROGRAMS += stokes_poiseuille_flow
 check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity
 check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
 check_PROGRAMS += vorticity_qoi
@@ -121,7 +120,6 @@ cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 # Exact solution test source files
 generic_exact_solution_testing_app_SOURCES = exact_soln/generic_exact_solution_testing_app.C
-stokes_poiseuille_flow_SOURCES = exact_soln/stokes_poiseuille_flow.C
 stokes_poiseuille_flow_parsed_viscosity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity.C
 stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
 vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
