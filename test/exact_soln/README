@@ -11,3 +11,10 @@ there are a couple of important points to implement.
    Thus, the rule here is to name the restart file the same as the test, e.g.
    if the test was named navier_stokes_2d.sh, then the restart should be named
    navier_stokes_2d.xdr.
+
+3. If you're exact solution is a time-dependent one, you must evaluate it at the time
+   the restart is written. You can do this in the parsed function, e.g.:
+   
+   'tf:=1.0;x+y+z+tf'
+
+   This function will be parsed as x+y+z+1
