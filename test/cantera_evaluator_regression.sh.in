@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/cantera_evaluator_regression"
-
-INPUT="@top_builddir@/test/input_files/cantera_transport.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT

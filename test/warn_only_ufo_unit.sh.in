@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/ufo_unit"
-
-INPUT="@top_srcdir@/test/input_files/ufo_unit.in"
-
-GRINS_OPTIONS="--warn-only-unused-var"
-
-${LIBMESH_RUN:-} $PROG $INPUT $GRINS_OPTIONS

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_ns_couette_flow_2d_x"
-
-INPUT="@top_srcdir@/test/input_files/couette_flow_input_2d_x.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT

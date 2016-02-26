@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_axi_ns_poiseuille_flow"
-
-INPUT="@top_srcdir@/test/input_files/axi_poiseuille_flow_input.in"
-
-PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
-
-${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 

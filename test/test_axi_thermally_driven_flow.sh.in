@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_thermally_driven_flow"
-
-INPUT="@top_srcdir@/test/input_files/axi_thermally_driven_flow.in @top_srcdir@/test/test_data/axi_thermally_driven.xdr"
-
-${LIBMESH_RUN:-} $PROG $INPUT

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/test_ns_poiseuille_flow"
-
-INPUT="@top_srcdir@/test/input_files/poiseuille_flow_input.in"
-
-${LIBMESH_RUN:-} $PROG $INPUT 

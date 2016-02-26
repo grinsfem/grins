@@ -41,10 +41,10 @@
 []
 
 [vis-options]
-   output_vis = 'true'
+   output_vis = 'false'
    vis_output_file_prefix = 'poisson_stiff_forcing'
    output_format = 'ExodusII xda'
-   output_adjoint = 'true'
+   output_adjoint = 'false'
 []
 
 [Materials]

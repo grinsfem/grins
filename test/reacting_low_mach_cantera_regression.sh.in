@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/reacting_low_mach_regression"
-
-INPUT="@top_builddir@/test/input_files/reacting_low_mach_cantera_regression.in @top_srcdir@/test/test_data/reacting_low_mach_cantera_regression.xdr"
-
-PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
-
-${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 

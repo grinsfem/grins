@@ -35,7 +35,7 @@ numerical_jacobian_h = 1.e-10
 
 # Visualization options
 [vis-options]
-output_vis = true
+output_vis = false
 vis_output_file_prefix = penalty_poiseuille
 output_format = 'ExodusII xdr'
 

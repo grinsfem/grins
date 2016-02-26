@@ -1,43 +1,9 @@
 
-check_PROGRAMS =
-check_PROGRAMS += test_ns_couette_flow_2d_x
-check_PROGRAMS += test_ns_couette_flow_2d_y
-check_PROGRAMS += test_stokes_poiseuille_flow
-check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity
-check_PROGRAMS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
-check_PROGRAMS += test_ns_poiseuille_flow
-check_PROGRAMS += test_axi_ns_poiseuille_flow
-check_PROGRAMS += test_axi_ns_con_cyl_flow
-check_PROGRAMS += test_thermally_driven_flow
-check_PROGRAMS += test_turbulent_channel
-check_PROGRAMS += gaussian_profiles
-check_PROGRAMS += vorticity_qoi
-check_PROGRAMS += low_mach_cavity_benchmark_regression
-check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += cantera_mixture_unit
-check_PROGRAMS += cantera_chem_thermo_test
-check_PROGRAMS += cantera_transport_regression
-check_PROGRAMS += cantera_evaluator_regression
-check_PROGRAMS += reacting_low_mach_regression
-check_PROGRAMS += antioch_mixture_unit
-check_PROGRAMS += antioch_kinetics_regression
-check_PROGRAMS += antioch_evaluator_regression
-check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
-check_PROGRAMS += composite_function_unit
-check_PROGRAMS += gas_recombination_catalytic_wall_unit
-check_PROGRAMS += gas_solid_catalytic_wall_unit
-check_PROGRAMS += constant_catalycity_unit
-check_PROGRAMS += arrhenius_catalycity_unit
-check_PROGRAMS += power_law_catalycity_unit
-check_PROGRAMS += elastic_sheet_regression
-check_PROGRAMS += 3d_low_mach_jacobians_xy
-check_PROGRAMS += 3d_low_mach_jacobians_xz
-check_PROGRAMS += 3d_low_mach_jacobians_yz
-check_PROGRAMS += suspended_cable_regression
-check_PROGRAMS += ufo_unit
-check_PROGRAMS += generic_solution_regression
-check_PROGRAMS += axisym_reacting_low_mach_regression
-check_PROGRAMS += split_string_unit
+AM_TESTS_ENVIRONMENT  = GRINS_TEST_DIR=$(top_builddir)/test; export GRINS_TEST_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_BUILDSRC_DIR=$(top_builddir)/src; export GRINS_BUILDSRC_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; export GRINS_TEST_INPUT_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
@@ -85,238 +51,234 @@ if MASA_ENABLED
   LIBS += $(MASA_LIBS)
 endif
 
-# Sources for these tests
-test_ns_couette_flow_2d_x_SOURCES = test_ns_couette_flow_2d_x.C
-test_ns_couette_flow_2d_y_SOURCES = test_ns_couette_flow_2d_y.C
-test_stokes_poiseuille_flow_SOURCES = test_stokes_poiseuille_flow.C
-test_stokes_poiseuille_flow_parsed_viscosity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity.C
-test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
-test_ns_poiseuille_flow_SOURCES = test_ns_poiseuille_flow.C
-test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
-test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
-test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
-test_turbulent_channel_SOURCES = test_turbulent_channel.C
-gaussian_profiles_SOURCES = gaussian_profiles.C
-vorticity_qoi_SOURCES = test_vorticity_qoi.C
-low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C
-grins_flow_regression_SOURCES = grins_flow_regression.C
-cantera_mixture_unit_SOURCES = cantera_mixture_unit.C
-cantera_chem_thermo_test_SOURCES = cantera_chem_thermo_test.C
-cantera_transport_regression_SOURCES = cantera_transport_regression.C
-cantera_evaluator_regression_SOURCES = cantera_evaluator_regression.C
-reacting_low_mach_regression_SOURCES = reacting_low_mach_regression.C
-antioch_mixture_unit_SOURCES = antioch_mixture_unit.C
-antioch_kinetics_regression_SOURCES = antioch_kinetics_regression.C
-antioch_evaluator_regression_SOURCES = antioch_evaluator_regression.C
-antioch_mixture_averaged_transport_evaluator_regression_SOURCES = antioch_mixture_averaged_transport_evaluator_regression.C
-composite_function_unit_SOURCES = composite_function_unit.C
-gas_recombination_catalytic_wall_unit_SOURCES = gas_recombination_catalytic_wall_unit.C
-gas_solid_catalytic_wall_unit_SOURCES = gas_solid_catalytic_wall_unit.C
-constant_catalycity_unit_SOURCES = constant_catalycity_unit.C
-arrhenius_catalycity_unit_SOURCES = arrhenius_catalycity_unit.C
-power_law_catalycity_unit_SOURCES = power_law_catalycity_unit.C
-elastic_sheet_regression_SOURCES = elastic_sheet_regression.C
-3d_low_mach_jacobians_xy_SOURCES = 3d_low_mach_jacobians.C
-3d_low_mach_jacobians_xz_SOURCES = 3d_low_mach_jacobians.C
-3d_low_mach_jacobians_yz_SOURCES = 3d_low_mach_jacobians.C
-suspended_cable_regression_SOURCES = suspended_cable_regression.C
-ufo_unit_SOURCES = ufo_unit.C
-generic_solution_regression_SOURCES = generic_solution_regression.C
-axisym_reacting_low_mach_regression_SOURCES = axisym_reacting_low_mach_regression.C
-split_string_unit_SOURCES = split_string_unit.C
+# These are programs that need to be built in order to run
+# the various tests. They will be built with `make check`
+check_PROGRAMS =
+
+# Unit Tests
+check_PROGRAMS += antioch_mixture
+check_PROGRAMS += arrhenius_catalycity
+check_PROGRAMS += cantera_mixture
+check_PROGRAMS += composite_function
+check_PROGRAMS += constant_catalycity
+check_PROGRAMS += gas_recombination_catalytic_wall
+check_PROGRAMS += gas_solid_catalytic_wall
+check_PROGRAMS += power_law_catalycity
+check_PROGRAMS += split_string
+
+# Interface Tests
+check_PROGRAMS += antioch_evaluator_regression
+check_PROGRAMS += antioch_kinetics_regression
+check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
+check_PROGRAMS += cantera_chem_thermo_test
+check_PROGRAMS += cantera_evaluator_regression
+check_PROGRAMS += cantera_transport_regression
+
+# Exact solution tests
+check_PROGRAMS += axi_ns_con_cyl_flow
+check_PROGRAMS += axi_ns_poiseuille_flow
+check_PROGRAMS += ns_couette_flow_2d_x
+check_PROGRAMS += ns_couette_flow_2d_y
+check_PROGRAMS += ns_poiseuille_flow
+check_PROGRAMS += stokes_poiseuille_flow
+check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity
+check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
+check_PROGRAMS += vorticity_qoi
+
+# Regression Tests
+check_PROGRAMS += test_thermally_driven_flow
+check_PROGRAMS += test_turbulent_channel
+check_PROGRAMS += gaussian_profiles
+check_PROGRAMS += low_mach_cavity_benchmark_regression
+check_PROGRAMS += grins_flow_regression
+check_PROGRAMS += reacting_low_mach_regression
+check_PROGRAMS += elastic_sheet_regression
+check_PROGRAMS += 3d_low_mach_jacobians_xy
+check_PROGRAMS += 3d_low_mach_jacobians_xz
+check_PROGRAMS += 3d_low_mach_jacobians_yz
+check_PROGRAMS += suspended_cable_regression
+check_PROGRAMS += generic_solution_regression
+check_PROGRAMS += axisym_reacting_low_mach_regression
+
+
+
+
+# Unit test source files
+antioch_mixture_SOURCES = unit/antioch_mixture.C
+arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
+cantera_mixture_SOURCES = unit/cantera_mixture.C
+composite_function_SOURCES = unit/composite_function.C
+constant_catalycity_SOURCES = unit/constant_catalycity.C
+gas_recombination_catalytic_wall_SOURCES = unit/gas_recombination_catalytic_wall.C
+gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
+power_law_catalycity_SOURCES = unit/power_law_catalycity.C
+split_string_SOURCES = unit/split_string.C
+
+# Interface test source files
+antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
+antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
+antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
+cantera_chem_thermo_test_SOURCES = interface/cantera_chem_thermo_test.C
+cantera_evaluator_regression_SOURCES = interface/cantera_evaluator_regression.C
+cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
+
+
+# Exact solution test source files
+axi_ns_con_cyl_flow_SOURCES = exact_soln/axi_ns_con_cyl_flow.C
+axi_ns_poiseuille_flow_SOURCES = exact_soln/axi_ns_poiseuille_flow.C
+ns_couette_flow_2d_x_SOURCES = exact_soln/ns_couette_flow_2d_x.C
+ns_couette_flow_2d_y_SOURCES = exact_soln/ns_couette_flow_2d_y.C
+ns_poiseuille_flow_SOURCES = exact_soln/ns_poiseuille_flow.C
+stokes_poiseuille_flow_SOURCES = exact_soln/stokes_poiseuille_flow.C
+stokes_poiseuille_flow_parsed_viscosity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity.C
+stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
+vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
+
+
+# Regression test source files
+test_thermally_driven_flow_SOURCES = regression/test_thermally_driven_flow.C
+test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
+gaussian_profiles_SOURCES = regression/gaussian_profiles.C
+low_mach_cavity_benchmark_regression_SOURCES = regression/low_mach_cavity_benchmark_regression.C
+grins_flow_regression_SOURCES = regression/grins_flow_regression.C
+reacting_low_mach_regression_SOURCES = regression/reacting_low_mach_regression.C
+elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
+3d_low_mach_jacobians_xy_SOURCES = regression/3d_low_mach_jacobians.C
+3d_low_mach_jacobians_xz_SOURCES = regression/3d_low_mach_jacobians.C
+3d_low_mach_jacobians_yz_SOURCES = regression/3d_low_mach_jacobians.C
+suspended_cable_regression_SOURCES = regression/suspended_cable_regression.C
+generic_solution_regression_SOURCES = regression/generic_solution_regression.C
+axisym_reacting_low_mach_regression_SOURCES = regression/axisym_reacting_low_mach_regression.C
+
 
 #Define tests to actually be run
+# The .sh are in the <subdir> directory but the programs
+# get built directly in the test directory, not test/<subdir>
+# so they don't get a <subdir>/ prefix
 TESTS =
+
+# These are tests that are *expected* to fail
 XFAIL_TESTS =
 
+# Unit TESTS
+TESTS += unit/antioch_mixture.sh
+TESTS += arrhenius_catalycity
+TESTS += unit/cantera_mixture.sh
+TESTS += composite_function
+TESTS += constant_catalycity
+TESTS += unit/gas_recombination_catalytic_wall_antioch.sh
+TESTS += unit/gas_recombination_catalytic_wall_cantera.sh
+TESTS += unit/gas_solid_catalytic_wall_antioch.sh
+TESTS += unit/gas_solid_catalytic_wall_cantera.sh
+TESTS += power_law_catalycity
+TESTS += split_string
+
+# Interface TESTS
+TESTS += interface/antioch_evaluator_regression.sh
+TESTS += interface/antioch_kinetics_regression.sh
+TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
+TESTS += interface/cantera_chem_thermo_test.sh
+TESTS += interface/cantera_evaluator_regression.sh
+TESTS += interface/cantera_transport_regression.sh
+
+
+# Exact solution TESTS
+TESTS += exact_soln/axi_ns_con_cyl_flow.sh
+TESTS += exact_soln/axi_ns_poiseuille_flow.sh
+TESTS += exact_soln/laplace_parsed_source.sh
+TESTS += exact_soln/ns_couette_flow_2d_x.sh
+TESTS += exact_soln/ns_couette_flow_2d_y.sh
+TESTS += exact_soln/ns_poiseuille_flow.sh
+TESTS += exact_soln/stokes_poiseuille_flow.sh
+TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity.sh
+TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
+TESTS += exact_soln/vorticity_qoi.sh
+
+
+# Error/xfail TESTS
+TESTS += error_xfail/error_ufo.sh
+XFAIL_TESTS += error_xfail/error_ufo.sh
+
+TESTS += error_xfail/stokes_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/stokes_invalid_pin_location.sh
+
+TESTS += error_xfail/ins_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/ins_invalid_pin_location.sh
+
+TESTS += error_xfail/lmns_invalid_pin_location.sh
+XFAIL_TESTS += error_xfail/lmns_invalid_pin_location.sh
+
+TESTS += error_xfail/viscosity_options_conflict_1.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_1.sh
+
+TESTS += error_xfail/viscosity_options_conflict_2.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_2.sh
+
+TESTS += error_xfail/viscosity_options_conflict_3.sh
+XFAIL_TESTS += error_xfail/viscosity_options_conflict_3.sh
+
+# Regression TESTS
 TESTS += gaussian_profiles
-TESTS += cantera_mixture_unit.sh
-TESTS += cantera_chem_thermo_test.sh
-TESTS += cantera_transport_regression.sh
-TESTS += cantera_evaluator_regression.sh
-TESTS += antioch_mixture_unit.sh
-TESTS += antioch_kinetics_regression.sh
-TESTS += antioch_evaluator_regression.sh
-TESTS += antioch_mixture_averaged_transport_evaluator_regression.sh
-TESTS += gas_recombination_catalytic_wall_unit_antioch.sh
-TESTS += gas_recombination_catalytic_wall_unit_cantera.sh
-TESTS += gas_solid_catalytic_wall_unit_antioch.sh
-TESTS += gas_solid_catalytic_wall_unit_cantera.sh
-TESTS += constant_catalycity_unit
-TESTS += arrhenius_catalycity_unit
-TESTS += power_law_catalycity_unit
-TESTS += warn_only_ufo_unit.sh
-TESTS += error_ufo_unit.sh
-XFAIL_TESTS += error_ufo_unit.sh
-TESTS += split_string_unit
+TESTS += regression/warn_only_ufo.sh
+TESTS += regression/poisson_weighted_flux.sh
+TESTS += regression/sa_2d_turbulent_channel.sh
+TESTS += regression/thermally_driven_2d_flow.sh
+TESTS += regression/axi_thermally_driven_flow.sh
+TESTS += regression/thermally_driven_3d_flow.sh
+TESTS += regression/convection_cell.sh
+TESTS += regression/convection_cell_parsed.sh
+TESTS += regression/2d_pseudofan.sh
+TESTS += regression/2d_pseudoprop.sh
+TESTS += regression/2d_fantrick.sh
+TESTS += regression/2d_proptrick.sh
+TESTS += regression/2d_vsource.sh
+TESTS += regression/dirichlet_fem.sh
+TESTS += regression/dirichlet_nan.sh
+TESTS += regression/simple_ode.sh
+TESTS += regression/parsed_qoi.sh
+TESTS += regression/low_mach_cavity_benchmark.sh
+TESTS += regression/backward_facing_step.sh
+TESTS += regression/locally_refine.sh
+TESTS += regression/penalty_poiseuille.sh
+TESTS += regression/penalty_poiseuille_stab.sh
+TESTS += regression/redistribute.sh
+TESTS += regression/coupled_stokes_ns.sh
 
-TESTS += stokes_invalid_pin_location_unit.sh
-TESTS += ins_invalid_pin_location_unit.sh
-TESTS += lmns_invalid_pin_location_unit.sh
-XFAIL_TESTS += stokes_invalid_pin_location_unit.sh
-XFAIL_TESTS += ins_invalid_pin_location_unit.sh
-XFAIL_TESTS += lmns_invalid_pin_location_unit.sh
+TESTS += regression/reacting_low_mach_cantera.sh
+XFAIL_TESTS += regression/reacting_low_mach_cantera.sh
 
-TESTS += laplace_parsed_source_regression.sh
-TESTS += poisson_weighted_flux_regression.sh
-TESTS += viscosity_options_conflict_unit_1.sh
-TESTS += viscosity_options_conflict_unit_2.sh
-TESTS += viscosity_options_conflict_unit_3.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_1.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_2.sh
-XFAIL_TESTS += viscosity_options_conflict_unit_3.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_constant.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_constant_prandtl.sh
+TESTS += regression/reacting_low_mach_antioch_cea_constant.sh
+TESTS += regression/axisym_reacting_low_mach_antioch_cea_constant.sh
+TESTS += regression/reacting_low_mach_antioch_cea_constant_prandtl.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall.sh
+TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall.sh
+TESTS += regression/reacting_low_mach_antioch_kinetics_theory.sh
+TESTS += regression/3d_low_mach_jacobians_xy.sh
+TESTS += regression/3d_low_mach_jacobians_xz.sh
+TESTS += regression/3d_low_mach_jacobians_yz.sh
+TESTS += regression/elastic_mooney_rivlin_sheet.sh
+TESTS += regression/elastic_mooney_rivlin_inflating_sheet.sh
+TESTS += regression/suspended_cable_test.sh
+TESTS += regression/elastic_mooney_rivlin_circle_hookean_stiffeners.sh
+TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners.sh
+TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_unifref.sh
+TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
+TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
+TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
-TESTS += test_ns_couette_flow_2d_x.sh
-TESTS += test_ns_couette_flow_2d_y.sh
-TESTS += test_stokes_poiseuille_flow.sh
-TESTS += test_stokes_poiseuille_flow_parsed_viscosity.sh
-TESTS += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
-TESTS += test_ns_poiseuille_flow.sh
-TESTS += test_axi_ns_poiseuille_flow.sh
-TESTS += test_axi_ns_con_cyl_flow.sh
-TESTS += sa_2d_turbulent_channel_regression.sh
-TESTS += test_thermally_driven_2d_flow.sh
-TESTS += test_axi_thermally_driven_flow.sh
-TESTS += test_thermally_driven_3d_flow.sh
-TESTS += convection_cell_regression.sh
-TESTS += convection_cell_parsed_regression.sh
-TESTS += test_2d_pseudofan.sh
-TESTS += test_2d_pseudoprop.sh
-TESTS += test_2d_fantrick.sh
-TESTS += test_2d_proptrick.sh
-TESTS += test_2d_vsource.sh
-TESTS += test_dirichlet_fem.sh
-TESTS += test_dirichlet_nan.sh
-TESTS += test_simple_ode.sh
-TESTS += test_parsed_qoi.sh
-TESTS += test_vorticity_qoi.sh
-TESTS += low_mach_cavity_benchmark_regression.sh
-TESTS += backward_facing_step_regression.sh
-TESTS += locally_refine_regression.sh
-TESTS += penalty_poiseuille.sh
-TESTS += penalty_poiseuille_stab.sh
-TESTS += redistribute_regression.sh
-TESTS += coupled_stokes_ns.sh
-
-TESTS += reacting_low_mach_cantera_regression.sh
-XFAIL_TESTS += reacting_low_mach_cantera_regression.sh
-
-TESTS += reacting_low_mach_antioch_statmech_constant_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
-TESTS += reacting_low_mach_antioch_cea_constant_regression.sh
-TESTS += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
-TESTS += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
-TESTS += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
-TESTS += reacting_low_mach_antioch_kinetics_theory_regression.sh
-
-TESTS += composite_function_unit
-TESTS += 3d_low_mach_jacobians_xy.sh
-TESTS += 3d_low_mach_jacobians_xz.sh
-TESTS += 3d_low_mach_jacobians_yz.sh
-TESTS += elastic_mooney_rivlin_sheet_regression.sh
-TESTS += elastic_mooney_rivlin_inflating_sheet_regression.sh
-TESTS += suspended_cable_test.sh
-TESTS += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
-TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
-TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
-TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
-TESTS += elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh
-
-TESTS += extra_quadrature_order_laplace_arefee_amr_regression.sh
-
-CLEANFILES  = penalty_poiseuille.exo
-CLEANFILES += penalty_poiseuille.xdr
-CLEANFILES += penalty_poiseuille_stab.exo
-CLEANFILES += penalty_poiseuille_stab.xdr
-
-shellfiles_src =
-shellfiles_src += test_ns_couette_flow_2d_x.sh
-shellfiles_src += test_ns_couette_flow_2d_y.sh
-shellfiles_src += test_stokes_poiseuille_flow.sh
-shellfiles_src += test_stokes_poiseuille_flow_parsed_viscosity.sh
-shellfiles_src += test_stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
-shellfiles_src += test_ns_poiseuille_flow.sh
-shellfiles_src += test_axi_ns_poiseuille_flow.sh
-shellfiles_src += test_axi_ns_con_cyl_flow.sh
-shellfiles_src += sa_2d_turbulent_channel_regression.sh
-shellfiles_src += test_thermally_driven_2d_flow.sh
-shellfiles_src += test_axi_thermally_driven_flow.sh
-shellfiles_src += test_thermally_driven_3d_flow.sh
-shellfiles_src += convection_cell_regression.sh
-shellfiles_src += convection_cell_parsed_regression.sh
-shellfiles_src += test_2d_pseudofan.sh
-shellfiles_src += test_2d_pseudoprop.sh
-shellfiles_src += test_2d_fantrick.sh
-shellfiles_src += test_2d_proptrick.sh
-shellfiles_src += test_2d_vsource.sh
-shellfiles_src += test_dirichlet_fem.sh
-shellfiles_src += test_dirichlet_nan.sh
-shellfiles_src += test_simple_ode.sh
-shellfiles_src += test_parsed_qoi.sh
-shellfiles_src += test_vorticity_qoi.sh
-shellfiles_src += low_mach_cavity_benchmark_regression.sh
-shellfiles_src += backward_facing_step_regression.sh
-shellfiles_src += locally_refine_regression.sh
-shellfiles_src += penalty_poiseuille.sh
-shellfiles_src += penalty_poiseuille_stab.sh
-shellfiles_src += redistribute_regression.sh
-shellfiles_src += coupled_stokes_ns.sh
-shellfiles_src += reacting_low_mach_cantera_regression.sh
-shellfiles_src += cantera_mixture_unit.sh
-shellfiles_src += cantera_chem_thermo_test.sh
-shellfiles_src += cantera_transport_regression.sh
-shellfiles_src += cantera_evaluator_regression.sh
-shellfiles_src += antioch_mixture_unit.sh
-shellfiles_src += antioch_kinetics_regression.sh
-shellfiles_src += antioch_evaluator_regression.sh
-shellfiles_src += antioch_mixture_averaged_transport_evaluator_regression.sh
-shellfiles_src += gas_recombination_catalytic_wall_unit_antioch.sh
-shellfiles_src += gas_recombination_catalytic_wall_unit_cantera.sh
-shellfiles_src += gas_solid_catalytic_wall_unit_antioch.sh
-shellfiles_src += gas_solid_catalytic_wall_unit_cantera.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_constant_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_constant_prandtl_regression.sh
-shellfiles_src += reacting_low_mach_antioch_cea_constant_regression.sh
-shellfiles_src += axisym_reacting_low_mach_antioch_cea_constant_regression.sh
-shellfiles_src += reacting_low_mach_antioch_cea_constant_prandtl_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh
-shellfiles_src += reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall_regression.sh
-shellfiles_src += 3d_low_mach_jacobians_xy.sh
-shellfiles_src += 3d_low_mach_jacobians_xz.sh
-shellfiles_src += 3d_low_mach_jacobians_yz.sh
-shellfiles_src += warn_only_ufo_unit.sh
-shellfiles_src += error_ufo_unit.sh
-shellfiles_src += laplace_parsed_source_regression.sh
-shellfiles_src += poisson_weighted_flux_regression.sh
-shellfiles_src += viscosity_options_conflict_unit_1.sh
-shellfiles_src += viscosity_options_conflict_unit_2.sh
-shellfiles_src += viscosity_options_conflict_unit_3.sh
-
-shellfiles_src += suspended_cable_test.sh
-shellfiles_src += elastic_mooney_rivlin_circle_hookean_stiffeners_regression.sh
-shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_regression.sh
-shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_unifref_regression.sh
-shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_newmark_regression.sh
-shellfiles_src += elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark_regression.sh
-
-shellfiles_src += extra_quadrature_order_laplace_arefee_amr_regression.sh
-
-# Want these put with the distro so we can run make check
-EXTRA_DIST = $(shellfiles_src) input_files test_data grids
+CLEANFILES =
 
 if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
 # If we have tests fail, libmesh_error() may leave output
-CLEANFILES += traceout*.txt temp_print_trace.* *.exo *.xdr
+CLEANFILES += traceout*.txt temp_print_trace.*
 
 # Required for AX_AM_MACROS
 ###@INC_AMINCLUDE@

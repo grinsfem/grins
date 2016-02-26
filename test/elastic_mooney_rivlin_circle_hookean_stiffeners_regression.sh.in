@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROG="@top_builddir@/test/elastic_sheet_regression"
-
-INPUT="@top_builddir@/test/input_files/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.in @top_srcdir@/test/test_data/elastic_mooney_rivlin_circle_hookean_stiffeners_regression.xdr"
-
-PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
-
-${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 
