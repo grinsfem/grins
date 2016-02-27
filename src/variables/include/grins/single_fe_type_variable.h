@@ -80,8 +80,8 @@ namespace GRINS
                                        const std::string& default_family,
                                        const std::string& default_order,
                                        const std::string& subsection,
-                                       std::string& parsed_family,
-                                       std::string& parsed_order );
+                                       GRINSEnums::FEFamily& family,
+                                       GRINSEnums::Order& order );
 
     void parse_new_style( const GetPot& input,
                           const std::string& subsection,

@@ -97,23 +97,15 @@ namespace GRINS
         if( input.have_variable("Physics/"+physics_name+"/"+old_var_suffix+"FE_family") ||
             input.have_variable("Physics/"+physics_name+"/"+old_var_suffix+"order"))
           {
-            std::string family_in, order_in;
-            this->parse_old_style_with_warning(input,physics_name,old_var_suffix,default_family,default_order,
-                                               subsection,family_in,order_in);
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+            this->parse_old_style_with_warning(input,physics_name,"",default_family,default_order,
+                                               subsection,family[0],order[0]);
           }
         // Some of the old style didn't have the "prefix"
         else if( input.have_variable("Physics/"+physics_name+"/FE_family") ||
                  input.have_variable("Physics/"+physics_name+"/order"))
           {
-            std::string family_in, order_in;
             this->parse_old_style_with_warning(input,physics_name,"",default_family,default_order,
-                                               subsection,family_in,order_in);
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+                                               subsection,family[0],order[0]);
           }
         // We must be using the new style
         else
@@ -140,16 +132,19 @@ namespace GRINS
                                                            const std::string& default_family,
                                                            const std::string& default_order,
                                                            const std::string& subsection,
-                                                           std::string& parsed_family,
-                                                           std::string& parsed_order )
+                                                           GRINSEnums::FEFamily& family,
+                                                           GRINSEnums::Order& order )
   {
     std::string warning = "WARNING: Specifying Physics/"+physics_name+"/"+old_var_suffix+"FE_family and\n";
     warning += "         Physics/"+physics_name+"/"+old_var_suffix+"order is DEPRECATED! Please update and use\n";
     warning += "         [Variables/"+subsection+"/fe_family] and [Variables/"+subsection+"/order].\n";
     grins_warning(warning);
 
-    parsed_family = input("Physics/"+physics_name+"/"+old_var_suffix+"FE_family", default_family);
-    parsed_order = input("Physics/"+physics_name+"/"+old_var_suffix+"order", default_order);
+    std::string family_in = input("Variables/"+subsection+"/fe_family", default_family );
+    std::string order_in = input("Variables/"+subsection+"/order", default_order );
+
+    family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
+    order = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
   }
 
   void SingleFETypeVariable::dup_family_order_check( const GetPot& input,
