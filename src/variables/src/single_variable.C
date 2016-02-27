@@ -46,4 +46,16 @@ namespace GRINS
       this->parse_names_from_input(input,subsection,_var_names,default_names);
   }
 
+  SingleVariable::SingleVariable( const GetPot& input,
+                                  const std::string& subsection,
+                                  const std::string& default_name )
+  {
+    _vars.resize(1,invalid_var_index);
+    _var_names.resize(1);
+
+    std::vector<std::string> default_names(1,default_name);
+
+    this->parse_names_from_input(input,subsection,_var_names,default_names);
+  }
+
 } // end namespace GRINS

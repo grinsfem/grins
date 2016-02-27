@@ -39,6 +39,12 @@ namespace GRINS
                     const std::string& subsection,
                     const std::string& default_name );
 
+    //! Primary constructor
+    /*! Will parse from input section [Variables/<subsection>]. */
+    SingleVariable( const GetPot& input,
+                    const std::string& subsection,
+                    const std::string& default_name );
+
     ~SingleVariable(){};
 
     virtual void init( libMesh::FEMSystem* system )
