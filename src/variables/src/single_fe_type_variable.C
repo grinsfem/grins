@@ -110,18 +110,7 @@ namespace GRINS
         // We must be using the new style
         else
           {
-            // Both options must've been specified
-            if( !input.have_variable("Variables/"+subsection+"/fe_family") )
-              libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/fe_family in input!");
-
-            if( !input.have_variable("Variables/"+subsection+"/order") )
-              libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/order in input!");
-
-            std::string family_in = input("Variables/"+subsection+"/fe_family", "DIE!");
-            std::string order_in = input("Variables/"+subsection+"/order", "DIE!");
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+            this->parse_new_style(input,subsection,family[0],order[0]);
           }
       }
   }
