@@ -18,70 +18,62 @@
       n_elems_y = '5'
 []
 
-# Options for tiem solvers
-
- 
-
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
-max_linear_iterations = 2500
-
-initial_linear_tolerance = 1.0e-12
-
-relative_residual_tolerance = '1.0e-14'
-relative_step_tolerance = '1.0e-14'
-
-absolute_residual_tolerance = '1.0e-10'
-
-verify_analytic_jacobians = '1.e-6'
+   max_nonlinear_iterations = 10 
+   max_linear_iterations = 2500
+   minimum_linear_tolerance = 1.0e-12
+   relative_residual_tolerance = '1.0e-14'
+   relative_step_tolerance = '1.0e-14'
+   absolute_residual_tolerance = '1.0e-10'
+   verify_analytic_jacobians = '1.e-6'
+[]
 
 # Visualization options
 [vis-options]
-output_vis = 'false' 
-vis_output_file_prefix = 'axi_poiseuille' 
+   output_vis = 'true' 
+   vis_output_file_prefix = 'axi_ns_poiseuille_flow' 
+   output_format = 'xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-echo_physics = 'true'
-
-print_dof_constraints = false
-print_residual = false
+   print_equation_system_info = 'true' 
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   echo_physics = 'true'
+   system_name = 'GRINS-TEST'
+[]
 
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes'
+   enabled_physics = 'IncompressibleNavierStokes'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
-
-bc_ids = '1 3 0 2 '
-bc_types = 'no_slip axisymmetric general_velocity general_velocity'
-
-pin_pressure = 'true'
-pin_value = 100.0
-pin_location = '0.0 0.0'
-
+      # Boundary ids:
+      # j = bottom -> 0
+      # j = top    -> 2
+      # i = bottom -> 3
+      # i = top    -> 1
+      bc_ids = '1 3 0 2 0 2'
+      bc_types = 'no_slip axisymmetric parsed_dirichlet parsed_dirichlet parsed_dirichlet parsed_dirichlet'
+      bc_variables = 'na na u_r u_r u_z u_z'
+      bc_values = 'na na {0.0} {0.0} {100/4*(1-x*x)} {100/4*(1-x^2)}'
+ 
+      pin_pressure = 'true'
+      pin_value = '100.0'
+      pin_location = '0.0 0.0'
 []
 
 [Variables]
    [./Velocity]
-      names = 'r_vel z_vel'
+      names = 'u_r u_z'
       fe_family = 'LAGRANGE'
       order = 'SECOND'
    [../Pressure]

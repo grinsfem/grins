@@ -75,14 +75,7 @@ check_PROGRAMS += cantera_evaluator_regression
 check_PROGRAMS += cantera_transport_regression
 
 # Exact solution tests
-check_PROGRAMS += axi_ns_con_cyl_flow
-check_PROGRAMS += axi_ns_poiseuille_flow
-check_PROGRAMS += ns_couette_flow_2d_x
-check_PROGRAMS += ns_couette_flow_2d_y
-check_PROGRAMS += ns_poiseuille_flow
-check_PROGRAMS += stokes_poiseuille_flow
-check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity
-check_PROGRAMS += stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity
+check_PROGRAMS += generic_exact_solution_testing_app
 check_PROGRAMS += vorticity_qoi
 
 # Regression Tests
@@ -124,14 +117,7 @@ cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 
 # Exact solution test source files
-axi_ns_con_cyl_flow_SOURCES = exact_soln/axi_ns_con_cyl_flow.C
-axi_ns_poiseuille_flow_SOURCES = exact_soln/axi_ns_poiseuille_flow.C
-ns_couette_flow_2d_x_SOURCES = exact_soln/ns_couette_flow_2d_x.C
-ns_couette_flow_2d_y_SOURCES = exact_soln/ns_couette_flow_2d_y.C
-ns_poiseuille_flow_SOURCES = exact_soln/ns_poiseuille_flow.C
-stokes_poiseuille_flow_SOURCES = exact_soln/stokes_poiseuille_flow.C
-stokes_poiseuille_flow_parsed_viscosity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity.C
-stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_SOURCES = exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.C
+generic_exact_solution_testing_app_SOURCES = exact_soln/generic_exact_solution_testing_app.C
 vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 
@@ -185,6 +171,8 @@ TESTS += interface/cantera_transport_regression.sh
 # Exact solution TESTS
 TESTS += exact_soln/axi_ns_con_cyl_flow.sh
 TESTS += exact_soln/axi_ns_poiseuille_flow.sh
+TESTS += exact_soln/convection_diffusion_steady_1d.sh
+TESTS += exact_soln/convection_diffusion_unsteady_2d.sh
 TESTS += exact_soln/laplace_parsed_source.sh
 TESTS += exact_soln/ns_couette_flow_2d_x.sh
 TESTS += exact_soln/ns_couette_flow_2d_y.sh
