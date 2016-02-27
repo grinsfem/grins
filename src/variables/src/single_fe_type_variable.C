@@ -59,6 +59,19 @@ namespace GRINS
     libmesh_assert_not_equal_to( _order[0], libMesh::INVALID_ORDER);
   }
 
+  SingleFETypeVariable::SingleFETypeVariable( const GetPot& input,
+                                              const std::string& subsection )
+    :  FEVariablesBase()
+  {
+     _family.resize(1,libMesh::INVALID_FE);
+     _order.resize(1,libMesh::INVALID_ORDER);
+
+     this->parse_new_style(input, subsection, _family[0], _order[0]);
+
+     libmesh_assert_not_equal_to( _family[0], libMesh::INVALID_FE);
+     libmesh_assert_not_equal_to( _order[0], libMesh::INVALID_ORDER);
+  }
+
   void SingleFETypeVariable::parse_family_and_order( const GetPot& input,
                                                      const std::string& physics_name,
                                                      const std::string& old_var_suffix,

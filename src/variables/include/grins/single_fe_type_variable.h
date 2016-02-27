@@ -41,6 +41,11 @@ namespace GRINS
                           const std::string& default_family,
                           const std::string& default_order );
 
+    //! Primary constructor
+    /*! Will parse from input section [Variables/<subsection>]. */
+    SingleFETypeVariable( const GetPot& input,
+                          const std::string& subsection );
+
     ~SingleFETypeVariable(){};
 
   protected:
