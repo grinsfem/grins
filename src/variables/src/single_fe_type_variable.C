@@ -166,6 +166,25 @@ namespace GRINS
       libmesh_error_msg("ERROR: Cannot have a [Variables] section and deprecated FE_family/order input style!");
   }
 
+  void SingleFETypeVariable::parse_new_style( const GetPot& input,
+                                              const std::string& subsection,
+                                              GRINSEnums::FEFamily& family,
+                                              GRINSEnums::Order& order )
+  {
+    // Both options must've been specified
+    if( !input.have_variable("Variables/"+subsection+"/fe_family") )
+      libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/fe_family in input!");
+
+    if( !input.have_variable("Variables/"+subsection+"/order") )
+      libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/order in input!");
+
+    std::string family_in = input("Variables/"+subsection+"/fe_family", "DIE!");
+    std::string order_in = input("Variables/"+subsection+"/order", "DIE!");
+
+    family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
+    order = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+  }
+
   bool SingleFETypeVariable::have_family_or_order( const GetPot& input,
                                                    const std::string& physics_name,
                                                    const std::string& old_var_suffix,

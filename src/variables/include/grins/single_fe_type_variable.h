@@ -83,6 +83,10 @@ namespace GRINS
                                        std::string& parsed_family,
                                        std::string& parsed_order );
 
+    void parse_new_style( const GetPot& input,
+                          const std::string& subsection,
+                          GRINSEnums::FEFamily& family,
+                          GRINSEnums::Order& order );
   };
 
 } // end namespace GRINS
