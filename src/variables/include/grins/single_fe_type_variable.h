@@ -30,10 +30,18 @@
 
 namespace GRINS
 {
+  //! Class to encapsulate a single FEVariable
+  /*! For variables with multiple components associated with it,
+      e.g. Velocity, a separate subclass of FEVariableBase should be
+      used. */
   class SingleFETypeVariable : public FEVariablesBase
   {
   public:
 
+    //! Deprecated, old style constructor
+    /*! This constructor is used for when there is possibly old deprecated
+        styles of input for which we do additional checks/warnings. Otherwise,
+        you should use the new constructor. */
     SingleFETypeVariable( const GetPot& input,
                           const std::string& physics_name,
                           const std::string& old_var_suffix,

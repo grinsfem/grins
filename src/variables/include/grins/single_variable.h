@@ -30,10 +30,18 @@
 
 namespace GRINS
 {
+  //! Class to encapsulate a single Variable
+  /*! For variables with multiple components associated with it,
+      e.g. Velocity, a separate subclass of VariableBase should be
+      used. */
   class SingleVariable : public VariablesBase
   {
   public:
 
+    //! Deprecated, old style constructor
+    /*! This constructor is used for when there is possibly old deprecated
+        styles of input for which we do additional checks/warnings. Otherwise,
+        you should use the new constructor. */
     SingleVariable( const GetPot& input,
                     const std::string& old_var_name,
                     const std::string& subsection,
