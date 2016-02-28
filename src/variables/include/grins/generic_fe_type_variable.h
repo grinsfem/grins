@@ -22,48 +22,44 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SINGLE_VARIABLE_H
-#define GRINS_SINGLE_VARIABLE_H
+#ifndef GRINS_GENERIC_FE_TYPE_VARIABLE_H
+#define GRINS_GENERIC_FE_TYPE_VARIABLE_H
+
+// libMesh forward declarations
+class GetPot;
 
 // GRINS
-#include "grins/variables_base.h"
+#include "grins/single_fe_type_variable.h"
+#include "grins/generic_variable.h"
 
 namespace GRINS
 {
-  //! Class to encapsulate a single Variable
-  /*! For variables with multiple components associated with it,
-      e.g. Velocity, a separate subclass of VariableBase should be
-      used. */
-  class SingleVariable : public VariablesBase
+  //! Generic FE variable for generic physics
+  /*! The variable inputs, e.g. fe_family, will be tied to the input physics_name.
+      Thus, the input specification will be [Variables/<physics_name>/fe_family],
+      etc.*/
+  class GenericFETypeVariable : public SingleFETypeVariable,
+                                public GenericVariable
   {
   public:
 
-    //! Deprecated, old style constructor
-    /*! This constructor is used for when there is possibly old deprecated
-        styles of input for which we do additional checks/warnings. Otherwise,
-        you should use the new constructor. */
-    SingleVariable( const GetPot& input,
-                    const std::string& old_var_name,
-                    const std::string& subsection,
-                    const std::string& default_name );
+    GenericFETypeVariable( const GetPot& input,
+                           const std::string& physics_name )
+      : SingleFETypeVariable(input,physics_name),
+        GenericVariable(input,physics_name)
+    {}
 
-    //! Primary constructor
-    /*! Will parse from input section [Variables/<subsection>]. */
-    SingleVariable( const GetPot& input,
-                    const std::string& subsection,
-                    const std::string& default_name );
-
-    ~SingleVariable(){};
+    ~GenericFETypeVariable(){};
 
     virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
+    { this->default_fe_init(system, _var_names, _vars ); }
 
-  private:
+  protected:
 
-    SingleVariable();
+    GenericFETypeVariable();
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_SINGLE_VARIABLE_H
+#endif // GRINS_GENERIC_FE_TYPE_VARIABLE_H

@@ -22,40 +22,51 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/single_variable.h"
+#ifndef GRINS_GENERIC_VARIABLE_H
+#define GRINS_GENERIC_VARIABLE_H
 
-// libMesh
-#include "libmesh/getpot.h"
+// libMesh forward declarations
+class GetPot;
+
+// GRINS
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-  SingleVariable::SingleVariable( const GetPot& input,
-                                  const std::string& old_var_name,
-                                  const std::string& subsection,
-                                  const std::string& default_name )
+  //! Generic variable for generic physics
+  /*! The variable inputs, e.g. name, will be tied to the input physics_name.
+      Thus, the input specification will be [Variables/<physics_name>/name],
+      etc.*/
+  class GenericVariable : public SingleVariable
   {
-    _vars.resize(1,invalid_var_index);
-    _var_names.resize(1);
+  public:
 
-    std::vector<std::string> default_names(1,default_name);
+    GenericVariable( const GetPot& input,
+                     const std::string& physics_name )
+      : SingleVariable(input,
+                       physics_name,
+                       this->default_name())
+    {}
 
-    if( this->check_dep_name_input(input,subsection) )
-      _var_names[0] = input("Physics/VariableNames/"+old_var_name, default_names[0] );
-    else
-      this->parse_names_from_input(input,subsection,_var_names,default_names);
-  }
+    ~GenericVariable(){};
 
-  SingleVariable::SingleVariable( const GetPot& input,
-                                  const std::string& subsection,
-                                  const std::string& default_name )
+    VariableIndex var() const;
+
+  protected:
+
+    std::string default_name() const
+    { return "u"; }
+
+    GenericVariable();
+
+  };
+
+  inline
+  VariableIndex GenericVariable::var() const
   {
-    _vars.resize(1,invalid_var_index);
-    _var_names.resize(1);
-
-    std::vector<std::string> default_names(1,default_name);
-
-    this->parse_names_from_input(input,subsection,_var_names,default_names);
+    return _vars[0];
   }
 
 } // end namespace GRINS
+
+#endif // GRINS_GENERIC_VARIABLE_H

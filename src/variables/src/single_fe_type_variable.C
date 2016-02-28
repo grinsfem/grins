@@ -59,6 +59,19 @@ namespace GRINS
     libmesh_assert_not_equal_to( _order[0], libMesh::INVALID_ORDER);
   }
 
+  SingleFETypeVariable::SingleFETypeVariable( const GetPot& input,
+                                              const std::string& subsection )
+    :  FEVariablesBase()
+  {
+     _family.resize(1,libMesh::INVALID_FE);
+     _order.resize(1,libMesh::INVALID_ORDER);
+
+     this->parse_new_style(input, subsection, _family[0], _order[0]);
+
+     libmesh_assert_not_equal_to( _family[0], libMesh::INVALID_FE);
+     libmesh_assert_not_equal_to( _order[0], libMesh::INVALID_ORDER);
+  }
+
   void SingleFETypeVariable::parse_family_and_order( const GetPot& input,
                                                      const std::string& physics_name,
                                                      const std::string& old_var_suffix,
@@ -97,39 +110,20 @@ namespace GRINS
         if( input.have_variable("Physics/"+physics_name+"/"+old_var_suffix+"FE_family") ||
             input.have_variable("Physics/"+physics_name+"/"+old_var_suffix+"order"))
           {
-            std::string family_in, order_in;
-            this->parse_old_style_with_warning(input,physics_name,old_var_suffix,default_family,default_order,
-                                               subsection,family_in,order_in);
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+            this->parse_old_style_with_warning(input,physics_name,"",default_family,default_order,
+                                               subsection,family[0],order[0]);
           }
         // Some of the old style didn't have the "prefix"
         else if( input.have_variable("Physics/"+physics_name+"/FE_family") ||
                  input.have_variable("Physics/"+physics_name+"/order"))
           {
-            std::string family_in, order_in;
             this->parse_old_style_with_warning(input,physics_name,"",default_family,default_order,
-                                               subsection,family_in,order_in);
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+                                               subsection,family[0],order[0]);
           }
         // We must be using the new style
         else
           {
-            // Both options must've been specified
-            if( !input.have_variable("Variables/"+subsection+"/fe_family") )
-              libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/fe_family in input!");
-
-            if( !input.have_variable("Variables/"+subsection+"/order") )
-              libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/order in input!");
-
-            std::string family_in = input("Variables/"+subsection+"/fe_family", "DIE!");
-            std::string order_in = input("Variables/"+subsection+"/order", "DIE!");
-
-            family[0] = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
-            order[0] = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
+            this->parse_new_style(input,subsection,family[0],order[0]);
           }
       }
   }
@@ -140,16 +134,19 @@ namespace GRINS
                                                            const std::string& default_family,
                                                            const std::string& default_order,
                                                            const std::string& subsection,
-                                                           std::string& parsed_family,
-                                                           std::string& parsed_order )
+                                                           GRINSEnums::FEFamily& family,
+                                                           GRINSEnums::Order& order )
   {
     std::string warning = "WARNING: Specifying Physics/"+physics_name+"/"+old_var_suffix+"FE_family and\n";
     warning += "         Physics/"+physics_name+"/"+old_var_suffix+"order is DEPRECATED! Please update and use\n";
     warning += "         [Variables/"+subsection+"/fe_family] and [Variables/"+subsection+"/order].\n";
     grins_warning(warning);
 
-    parsed_family = input("Physics/"+physics_name+"/"+old_var_suffix+"FE_family", default_family);
-    parsed_order = input("Physics/"+physics_name+"/"+old_var_suffix+"order", default_order);
+    std::string family_in = input("Variables/"+subsection+"/fe_family", default_family );
+    std::string order_in = input("Variables/"+subsection+"/order", default_order );
+
+    family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
+    order = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
   }
 
   void SingleFETypeVariable::dup_family_order_check( const GetPot& input,
@@ -164,6 +161,25 @@ namespace GRINS
           input.have_variable("Physics/"+physics_name+"/"+old_var_suffix+"order")) &&
         input.have_section("Variables") )
       libmesh_error_msg("ERROR: Cannot have a [Variables] section and deprecated FE_family/order input style!");
+  }
+
+  void SingleFETypeVariable::parse_new_style( const GetPot& input,
+                                              const std::string& subsection,
+                                              GRINSEnums::FEFamily& family,
+                                              GRINSEnums::Order& order )
+  {
+    // Both options must've been specified
+    if( !input.have_variable("Variables/"+subsection+"/fe_family") )
+      libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/fe_family in input!");
+
+    if( !input.have_variable("Variables/"+subsection+"/order") )
+      libmesh_error_msg("ERROR: Could not find Variables/"+subsection+"/order in input!");
+
+    std::string family_in = input("Variables/"+subsection+"/fe_family", "DIE!");
+    std::string order_in = input("Variables/"+subsection+"/order", "DIE!");
+
+    family = libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(family_in);
+    order = libMesh::Utility::string_to_enum<GRINSEnums::Order>(order_in);
   }
 
   bool SingleFETypeVariable::have_family_or_order( const GetPot& input,

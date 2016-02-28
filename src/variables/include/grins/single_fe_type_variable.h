@@ -30,16 +30,29 @@
 
 namespace GRINS
 {
+  //! Class to encapsulate a single FEVariable
+  /*! For variables with multiple components associated with it,
+      e.g. Velocity, a separate subclass of FEVariableBase should be
+      used. */
   class SingleFETypeVariable : public FEVariablesBase
   {
   public:
 
+    //! Deprecated, old style constructor
+    /*! This constructor is used for when there is possibly old deprecated
+        styles of input for which we do additional checks/warnings. Otherwise,
+        you should use the new constructor. */
     SingleFETypeVariable( const GetPot& input,
                           const std::string& physics_name,
                           const std::string& old_var_suffix,
                           const std::string& subsection,
                           const std::string& default_family,
                           const std::string& default_order );
+
+    //! Primary constructor
+    /*! Will parse from input section [Variables/<subsection>]. */
+    SingleFETypeVariable( const GetPot& input,
+                          const std::string& subsection );
 
     ~SingleFETypeVariable(){};
 
@@ -80,9 +93,13 @@ namespace GRINS
                                        const std::string& default_family,
                                        const std::string& default_order,
                                        const std::string& subsection,
-                                       std::string& parsed_family,
-                                       std::string& parsed_order );
+                                       GRINSEnums::FEFamily& family,
+                                       GRINSEnums::Order& order );
 
+    void parse_new_style( const GetPot& input,
+                          const std::string& subsection,
+                          GRINSEnums::FEFamily& family,
+                          GRINSEnums::Order& order );
   };
 
 } // end namespace GRINS
