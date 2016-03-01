@@ -94,7 +94,8 @@ check_PROGRAMS += generic_solution_regression
 check_PROGRAMS += axisym_reacting_low_mach_regression
 
 
-
+# AMR Tests
+check_PROGRAMS += generic_amr_testing_app
 
 # Unit test source files
 antioch_mixture_SOURCES = unit/antioch_mixture.C
@@ -135,6 +136,9 @@ elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
 suspended_cable_regression_SOURCES = regression/suspended_cable_regression.C
 generic_solution_regression_SOURCES = regression/generic_solution_regression.C
 axisym_reacting_low_mach_regression_SOURCES = regression/axisym_reacting_low_mach_regression.C
+
+# AMR test source files
+generic_amr_testing_app_SOURCES = amr/generic_amr_testing_app.C
 
 
 #Define tests to actually be run
