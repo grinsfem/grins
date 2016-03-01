@@ -1,6 +1,7 @@
 
 AM_TESTS_ENVIRONMENT  = GRINS_TEST_DIR=$(top_builddir)/test; export GRINS_TEST_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_BUILDSRC_DIR=$(top_builddir)/src; export GRINS_BUILDSRC_DIR;
+AM_TESTS_ENVIRONMENT += GRINS_TEST_SRCDIR_DIR=$(top_srcdir)/test; export GRINS_TEST_SRCDIR_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; export GRINS_TEST_INPUT_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
@@ -262,6 +263,10 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_unifref.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
+
+
+#AMR TESTS
+TESTS += amr/convection_diffusion_unsteady_2d.sh
 
 CLEANFILES =
 
