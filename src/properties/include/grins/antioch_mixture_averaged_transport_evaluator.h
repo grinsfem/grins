@@ -57,26 +57,15 @@ namespace GRINS
 
     AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
 
-    virtual ~AntiochMixtureAveragedTransportEvaluator();
-
-    libMesh::Real mu( const CachedValues& cache, unsigned int qp );
-
-    libMesh::Real k( const CachedValues& cache, unsigned int qp );
-
-    void mu_and_k( const CachedValues& cache, unsigned int qp,
-                   libMesh::Real& mu, libMesh::Real& k );
+    virtual ~AntiochMixtureAveragedTransportEvaluator(){};
 
     libMesh::Real mu( const libMesh::Real T,
+                      const libMesh::Real P,
                       const std::vector<libMesh::Real>& Y );
 
     libMesh::Real k( const libMesh::Real T,
+                     const libMesh::Real P,
                      const std::vector<libMesh::Real>& Y );
-
-    void D( const libMesh::Real T,
-            const libMesh::Real rho,
-            const libMesh::Real cp,
-            const std::vector<libMesh::Real>& Y,
-            std::vector<libMesh::Real>& D );
 
     void mu_and_k_and_D( const libMesh::Real T,
                          const libMesh::Real rho,

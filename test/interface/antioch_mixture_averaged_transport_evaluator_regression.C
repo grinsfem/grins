@@ -128,11 +128,12 @@ int test_evaluator( const GetPot& input )
 
   std::vector<libMesh::Real> Y(n_species,0.2);
 
+  libMesh::Real p0 = rho*T*evaluator.R_mix(Y);
   libMesh::Real mu = 0.0;
   libMesh::Real k = 0.0;
   std::vector<libMesh::Real> D(n_species,0.0);
 
-  evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,Y), Y, mu, k, D );
+  evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,p0,Y), Y, mu, k, D );
 
   std::cout << std::scientific << std::setprecision(16)
             << "mu = " << mu << std::endl;

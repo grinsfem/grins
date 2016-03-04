@@ -471,76 +471,11 @@ namespace GRINS
     std::vector<libMesh::Real> rho;
     rho.resize(n_qpoints);
 
-    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
-      {
-	u[qp] = context.interior_value(this->_flow_vars.u(), qp);
-	v[qp] = context.interior_value(this->_flow_vars.v(), qp);
-
-	grad_u[qp] = context.interior_gradient(this->_flow_vars.u(), qp);
-	grad_v[qp] = context.interior_gradient(this->_flow_vars.v(), qp);
-	if( this->_dim > 2 )
-	  {
-	    w[qp] = context.interior_value(this->_flow_vars.w(), qp);
-	    grad_w[qp] = context.interior_gradient(this->_flow_vars.w(), qp);
-	  }
-	T[qp] = context.interior_value(this->_temp_vars.T(), qp);
-	grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
-
-	p[qp] = context.interior_value(this->_press_var.p(), qp);
-	p0[qp] = this->get_p0_steady(context, qp);
-
-	mass_fractions[qp].resize(this->_n_species);
-	grad_mass_fractions[qp].resize(this->_n_species);
-
-	for( unsigned int s = 0; s < this->_n_species; s++ )
-	  {
-	    /*! \todo Need to figure out something smarter for controling species
-	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species(s),qp), 0.0 );
-	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species(s),qp);
-	  }
-	
-	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
-
-	R[qp] = gas_evaluator.R_mix( mass_fractions[qp] );
-
-	rho[qp] = this->rho( T[qp], p0[qp], R[qp] );
-      }
-    
-    cache.set_values(Cache::X_VELOCITY, u);
-    cache.set_values(Cache::Y_VELOCITY, v);
-    
-    cache.set_gradient_values(Cache::X_VELOCITY_GRAD, grad_u);
-    cache.set_gradient_values(Cache::Y_VELOCITY_GRAD, grad_v);
-    
-    if(this->_dim > 2)
-      {
-	cache.set_values(Cache::Z_VELOCITY, w);
-	cache.set_gradient_values(Cache::Z_VELOCITY_GRAD, grad_w);
-      }
-
-    cache.set_values(Cache::TEMPERATURE, T);
-    cache.set_gradient_values(Cache::TEMPERATURE_GRAD, grad_T);
-
-    cache.set_values(Cache::PRESSURE, p);
-    cache.set_values(Cache::THERMO_PRESSURE, p0);
-
-    cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fractions);
-    cache.set_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD, grad_mass_fractions);
-
-    cache.set_values(Cache::MOLAR_MASS, M);
-
-    cache.set_values(Cache::MIXTURE_GAS_CONSTANT, R);
-
-    cache.set_values(Cache::MIXTURE_DENSITY, rho);
-
-    /* These quantities must be computed after T, mass_fractions, p0
-       are set into the cache. */
-    std::vector<libMesh::Real> mu;
-    mu.resize(n_qpoints);
-
     std::vector<libMesh::Real> cp;
     cp.resize(n_qpoints);
+
+    std::vector<libMesh::Real> mu;
+    mu.resize(n_qpoints);
 
     std::vector<libMesh::Real> k;
     k.resize(n_qpoints);
@@ -556,28 +491,79 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-        cp[qp] = gas_evaluator.cp(cache,qp);
+	u[qp] = context.interior_value(this->_flow_vars.u(), qp);
+	v[qp] = context.interior_value(this->_flow_vars.v(), qp);
+
+	grad_u[qp] = context.interior_gradient(this->_flow_vars.u(), qp);
+	grad_v[qp] = context.interior_gradient(this->_flow_vars.v(), qp);
+	if( this->_dim > 2 )
+	  {
+	    w[qp] = context.interior_value(this->_flow_vars.w(), qp);
+	    grad_w[qp] = context.interior_gradient(this->_flow_vars.w(), qp);
+	  }
+
+	T[qp] = context.interior_value(this->_temp_vars.T(), qp);
+	grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
+
+	p[qp] = context.interior_value(this->_press_var.p(), qp);
+	p0[qp] = this->get_p0_steady(context, qp);
+
+	mass_fractions[qp].resize(this->_n_species);
+	grad_mass_fractions[qp].resize(this->_n_species);
+        h_s[qp].resize(this->_n_species);
+
+	for( unsigned int s = 0; s < this->_n_species; s++ )
+	  {
+	    /*! \todo Need to figure out something smarter for controling species
+	              that go slightly negative. */
+	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species(s),qp), 0.0 );
+	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species(s),qp);
+            h_s[qp][s] = gas_evaluator.h_s( T[qp], s );
+	  }
+	
+	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
+
+	R[qp] = gas_evaluator.R_mix( mass_fractions[qp] );
+
+	rho[qp] = this->rho( T[qp], p0[qp], R[qp] );
+
+        cp[qp] = gas_evaluator.cp(T[qp], p0[qp], mass_fractions[qp]);
 
         D_s[qp].resize(this->_n_species);
 
         gas_evaluator.mu_and_k_and_D( T[qp], rho[qp], cp[qp], mass_fractions[qp],
                                       mu[qp], k[qp], D_s[qp] );
 
-	h_s[qp].resize(this->_n_species);
-	gas_evaluator.h_s( cache, qp, h_s[qp] );
-
-	omega_dot_s[qp].resize(this->_n_species);
-	gas_evaluator.omega_dot( cache, qp, omega_dot_s[qp] );
+        omega_dot_s[qp].resize(this->_n_species);
+        gas_evaluator.omega_dot( T[qp], rho[qp], mass_fractions[qp], omega_dot_s[qp] );
+      }
+    
+    cache.set_values(Cache::X_VELOCITY, u);
+    cache.set_values(Cache::Y_VELOCITY, v);
+    cache.set_gradient_values(Cache::X_VELOCITY_GRAD, grad_u);
+    cache.set_gradient_values(Cache::Y_VELOCITY_GRAD, grad_v);
+    
+    if(this->_dim > 2)
+      {
+	cache.set_values(Cache::Z_VELOCITY, w);
+	cache.set_gradient_values(Cache::Z_VELOCITY_GRAD, grad_w);
       }
 
-    cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
+    cache.set_values(Cache::TEMPERATURE, T);
+    cache.set_gradient_values(Cache::TEMPERATURE_GRAD, grad_T);
+    cache.set_values(Cache::PRESSURE, p);
+    cache.set_values(Cache::THERMO_PRESSURE, p0);
+    cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fractions);
+    cache.set_vector_gradient_values(Cache::MASS_FRACTIONS_GRAD, grad_mass_fractions);
+    cache.set_values(Cache::MOLAR_MASS, M);
+    cache.set_values(Cache::MIXTURE_GAS_CONSTANT, R);
+    cache.set_values(Cache::MIXTURE_DENSITY, rho);
     cache.set_values(Cache::MIXTURE_SPECIFIC_HEAT_P, cp);
+    cache.set_values(Cache::MIXTURE_VISCOSITY, mu);
     cache.set_values(Cache::MIXTURE_THERMAL_CONDUCTIVITY, k);
-    cache.set_vector_values(Cache::SPECIES_ENTHALPY, h_s);
     cache.set_vector_values(Cache::DIFFUSION_COEFFS, D_s);
+    cache.set_vector_values(Cache::SPECIES_ENTHALPY, h_s);
     cache.set_vector_values(Cache::OMEGA_DOT, omega_dot_s);
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>
@@ -643,24 +629,27 @@ namespace GRINS
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.mu( T, Y );
+        value = gas_evaluator.mu( T, p0, Y );
       }
     else if( quantity_index == this->_k_index )
       {
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.k( T, Y );
+        value = gas_evaluator.k( T, p0, Y );
       }
     else if( quantity_index == this->_cp_index )
       {
         std::vector<libMesh::Real> Y( this->_n_species );
         libMesh::Real T = this->T(point,context);
         this->mass_fractions( point, context, Y );
+        libMesh::Real p0 = this->get_p0_steady(context,point);
 
-        value = gas_evaluator.cp( T, Y );
+        value = gas_evaluator.cp( T, p0, Y );
       }
     // Now check for species dependent stuff
     else

@@ -49,21 +49,12 @@ namespace GRINS
   CanteraTransport::CanteraTransport( CanteraMixture& mixture )
     : _cantera_gas( mixture.get_chemistry() ),
       _cantera_transport( mixture.get_transport() )
-  {
-    return;
-  }
+  {}
 
-  CanteraTransport::~CanteraTransport()
+  libMesh::Real CanteraTransport::mu( const libMesh::Real& T,
+                                      const libMesh::Real P,
+                                      const std::vector<libMesh::Real>& Y )
   {
-    return;
-  }
-
-  libMesh::Real CanteraTransport::mu( const CachedValues& cache, unsigned int qp ) const
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real mu = 0.0;
@@ -89,12 +80,10 @@ namespace GRINS
     return mu;
   }
 
-  libMesh::Real CanteraTransport::k( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraTransport::k( const libMesh::Real& T,
+                                     const libMesh::Real P,
+                                     const std::vector<libMesh::Real>& Y )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real k = 0.0;
@@ -120,39 +109,9 @@ namespace GRINS
     return k;
   }
 
-  void CanteraTransport::D( const CachedValues& cache, unsigned int qp,
-			    std::vector<libMesh::Real>& D ) const
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    libmesh_assert_equal_to( Y.size(), D.size() );
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    {
-      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
-      /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
-      try
-	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
-	  _cantera_transport.getMixDiffCoeffsMass(&D[0]);
-	}
-      catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
-
-    }
-
-    return;
-  }
-
   void CanteraTransport::mu_and_k_and_D( const libMesh::Real T,
-                                         const libMesh::Real P,
+                                         const libMesh::Real rho,
+                                         const libMesh::Real /*cp*/,
                                          const std::vector<libMesh::Real>& Y,
                                          libMesh::Real& mu, libMesh::Real& k,
                                          std::vector<libMesh::Real>& D )
@@ -163,7 +122,7 @@ namespace GRINS
 	Not sure if we will get thread lock here or not. */
       try
 	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
+	  _cantera_gas.setState_TRY(T, rho, &Y[0]);
 
           mu =  _cantera_transport.viscosity();
           k =  _cantera_transport.thermalConductivity();

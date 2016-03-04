@@ -140,37 +140,21 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
 
   libMesh::Real R_mix = antioch_mixture.R_mix(Y);
 
-  GRINS::CachedValues cache;
-
-  cache.add_quantity(GRINS::Cache::TEMPERATURE);
-  std::vector<double> Tqp(1,T);
-  cache.set_values(GRINS::Cache::TEMPERATURE, Tqp);
-
-  cache.add_quantity(GRINS::Cache::MIXTURE_DENSITY);
-  std::vector<double> rhoqp(1,rho);
-  cache.set_values(GRINS::Cache::MIXTURE_DENSITY, rhoqp);
-
-  cache.add_quantity(GRINS::Cache::MIXTURE_GAS_CONSTANT);
-  std::vector<double> Rqp(1,R_mix);
-  cache.set_values(GRINS::Cache::MIXTURE_GAS_CONSTANT, Rqp);
-
-  cache.add_quantity(GRINS::Cache::MASS_FRACTIONS);
-  std::vector<std::vector<double> > Yqp(1,Y);
-  cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
+  libMesh::Real P = rho*R_mix*T;
 
   std::vector<libMesh::Real> omega_dot(n_species,0.0);
 
-  libMesh::Real cp =  antioch_evaluator.cp( cache, 0 );
+  libMesh::Real cp =  antioch_evaluator.cp( T, P, Y );
 
   std::cout << std::scientific << std::setprecision(16)
             << "cp = " << cp << std::endl;
 
-  libMesh::Real cv =  antioch_evaluator.cv( cache, 0 );
+  libMesh::Real cv =  antioch_evaluator.cv( T, P, Y );
 
   std::cout << std::scientific << std::setprecision(16)
             << "cv = " << cv << std::endl;
 
-  libMesh::Real h_s =  antioch_evaluator.h_s( cache, 0, 0 );
+  libMesh::Real h_s =  antioch_evaluator.h_s( T, 0 );
 
   std::cout << std::scientific << std::setprecision(16)
             << "h_s = " << h_s << std::endl;
@@ -187,7 +171,7 @@ int test_evaluator( const GRINS::AntiochMixture& antioch_mixture )
   return_flag_temp = test_h_s<Thermo>( h_s );
   if( return_flag_temp != 0 ) return_flag = 1;
 
-  antioch_evaluator.omega_dot( cache, 0, omega_dot );
+  antioch_evaluator.omega_dot( T, rho, Y, omega_dot );
 
   for( unsigned int i = 0; i < n_species; i++ )
     {

@@ -43,21 +43,12 @@ namespace GRINS
   CanteraThermodynamics::CanteraThermodynamics( CanteraMixture& mixture )
     : _cantera_mixture(mixture),
       _cantera_gas(mixture.get_chemistry())
-  {
-    return;
-  }
+  {}
 
-  CanteraThermodynamics::~CanteraThermodynamics()
+  libMesh::Real CanteraThermodynamics::cp( const libMesh::Real& T,
+                                           const libMesh::Real P,
+                                           const std::vector<libMesh::Real>& Y )
   {
-    return;
-  }
-
-  libMesh::Real CanteraThermodynamics::cp( const CachedValues& cache, unsigned int qp ) const
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-    
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real cp = 0.0;
@@ -84,12 +75,10 @@ namespace GRINS
     return cp;
   }
 
-  libMesh::Real CanteraThermodynamics::cv( const CachedValues& cache, unsigned int qp ) const
+  libMesh::Real CanteraThermodynamics::cv( const libMesh::Real& T,
+                                           const libMesh::Real P,
+                                           const std::vector<libMesh::Real>& Y )
   {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-    
     libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
 
     libMesh::Real cv = 0.0;
@@ -116,77 +105,7 @@ namespace GRINS
     return cv;
   }
 
-  libMesh::Real CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
-				 unsigned int species ) const
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    std::vector<libMesh::Real> h_RT( Y.size(), 0.0 );
-
-    {
-      /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
-      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-      
-      try
-	{
-	  _cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	  _cantera_gas.getEnthalpy_RT( &h_RT[0] );
-	}
-      catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
-
-    }
-
-    return h_RT[species]*_cantera_mixture.R(species)*T;
-  }
-
-  void CanteraThermodynamics::h( const CachedValues& cache, unsigned int qp,
-				 std::vector<libMesh::Real>& h) const
-  {
-    const libMesh::Real T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
-    const libMesh::Real P = cache.get_cached_values(Cache::THERMO_PRESSURE)[qp];
-    const std::vector<libMesh::Real>& Y = cache.get_cached_vector_values(Cache::MASS_FRACTIONS)[qp];
-
-    libmesh_assert_equal_to( Y.size(), h.size() );
-    libmesh_assert_equal_to( Y.size(), _cantera_gas.nSpecies() );
-
-    {
-      /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
-      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
-      try
-	{
-	  _cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	  _cantera_gas.getEnthalpy_RT( &h[0] );
-	}
-      catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
-
-    for( unsigned int s = 0; s < h.size(); s++ )
-      {
-	h[s] *= _cantera_mixture.R(s)*T;
-      }
-
-    }
-
-    return;
-  }
-
-  libMesh::Real CanteraThermodynamics::h( const libMesh::Real& T, unsigned int species ) const
+  libMesh::Real CanteraThermodynamics::h( const libMesh::Real& T, unsigned int species )
   {
     std::vector<libMesh::Real> h_RT( _cantera_gas.nSpecies(), 0.0 );
 

@@ -67,6 +67,8 @@ int main(int argc, char* argv[])
 
   std::vector<double> Y(5,0.2);
 
+  double rho = P/T/cantera_mixture.R_mix(Y);
+
   GRINS::CachedValues cache;
 
   cache.add_quantity(GRINS::Cache::TEMPERATURE);
@@ -81,12 +83,12 @@ int main(int argc, char* argv[])
   cache.set_values(GRINS::Cache::THERMO_PRESSURE, Pqp);
   cache.set_vector_values(GRINS::Cache::MASS_FRACTIONS, Yqp);
 
-  const double mu = cantera_trans.mu(cache,0);
-  const double k = cantera_trans.k(cache,0);
-  
+  double mu, k;
   std::vector<libMesh::Real> D(5,0.0);
 
-  cantera_trans.D(cache, 0, D);
+  double dummy = 0.0;
+
+  cantera_trans.mu_and_k_and_D( T, rho, dummy, Y, mu, k, D );
 
   int return_flag = 0;
 

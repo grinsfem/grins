@@ -58,7 +58,7 @@ namespace GRINS
 
     AntiochEvaluator( const AntiochMixture& mixture );
 
-    virtual ~AntiochEvaluator();
+    virtual ~AntiochEvaluator(){};
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;
@@ -79,23 +79,13 @@ namespace GRINS
     std::string species_name( unsigned int species_index ) const;
 
     // Thermo
-    libMesh::Real cp( const CachedValues& cache, unsigned int qp );
+    libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
-    libMesh::Real cv( const CachedValues& cache, unsigned int qp );
-     
-    libMesh::Real h_s(const CachedValues& cache, unsigned int qp, unsigned int species);
-
-    void h_s(const CachedValues& cache, unsigned int qp, std::vector<libMesh::Real>& h_s);
+    libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
     libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
 
-    libMesh::Real cp( const libMesh::Real& T,
-                      const std::vector<libMesh::Real>& Y );
-
     // Kinetics
-    void omega_dot( const CachedValues& cache, unsigned int qp,
-		    std::vector<libMesh::Real>& omega_dot );
-
     void omega_dot( const libMesh::Real& T, libMesh::Real rho,
                     const std::vector<libMesh::Real> mass_fractions,
                     std::vector<libMesh::Real>& omega_dot );
@@ -202,6 +192,14 @@ namespace GRINS
   std::string AntiochEvaluator<Thermo>::species_name( unsigned int species_index ) const
   {
     return _chem.species_name(species_index);
+  }
+
+  template<typename Thermo>
+  inline
+  void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
+  {
+    if( _temp_cache->T != T )
+      _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
   }
 
 } // end namespace GRINS

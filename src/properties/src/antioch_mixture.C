@@ -62,13 +62,6 @@ namespace GRINS
     Antioch::read_cea_mixture_data_ascii( *_cea_mixture.get(), cea_data_filename );
 
     this->build_stat_mech_ref_correction();
-
-    return;
-  }
-
-  AntiochMixture::~AntiochMixture()
-  {
-    return;
   }
 
   void AntiochMixture::build_stat_mech_ref_correction()
@@ -81,8 +74,6 @@ namespace GRINS
       {
         _h_stat_mech_ref_correction[s] = -thermo.h_tot( s, 298.15 ) + thermo.e_0(s);
       }
-
-    return;
   }
 
 }// end namespace GRINS

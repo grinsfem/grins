@@ -71,6 +71,8 @@ int do_transport_eval( const GetPot& input )
 
   libMesh::Real T = T0;
 
+  libMesh::Real p0 = rho*T*evaluator.R_mix(Y);
+
   std::ofstream output;
   output.open( "transport.dat", std::ios::trunc );
   
@@ -93,7 +95,7 @@ int do_transport_eval( const GetPot& input )
       libMesh::Real mu;
       libMesh::Real k;
       std::vector<libMesh::Real> D(n_species);
-      evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,Y), Y, mu, k, D );
+      evaluator.mu_and_k_and_D( T, rho, evaluator.cp(T,p0,Y), Y, mu, k, D );
 
       output <<  mu << " ";
       output << k << " ";
