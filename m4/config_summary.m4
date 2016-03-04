@@ -41,8 +41,16 @@ echo libMesh LIBS.................. : $LIBMESH_LIBS
 #echo HDF5.......................... : $HDF5_PREFIX
 #echo GSL........................... : $GSL_PREFIX
 #echo GLPK.......................... : $GLPK_PREFIX
-
-# masa optional check:
+echo
+echo Testing Options:
+if test "x$HAVE_CPPUNIT" = "x1"; then
+  echo '  'CppUnit..................... : yes
+  echo '    'CPPUNIT_VERSION........... : $CPPUNIT_VERSION
+  echo '    'CPPUNIT_CPPFLAGS.......... : $CPPUNIT_CPPFLAGS
+  echo '    'CPPUNIT_LIBS.............. : $CPPUNIT_LIBS
+else
+  echo '  'CppUnit..................... : no
+fi
 echo
 echo Optional Features:
 if test "x$HAVE_BOOST" = "x1"; then

@@ -306,6 +306,17 @@ AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 AX_PATH_ANTIOCH(0.4.0,no)
 
+# -------------------------------------------------------------
+# cppunit C++ unit testing -- enabled by default
+# -------------------------------------------------------------
+AC_ARG_ENABLE(cppunit,
+              AS_HELP_STRING([--disable-cppunit],
+                             [Build without cppunit C++ unit testing support]))
+AS_IF([test "x$enable_cppunit" != "xno"], [
+   AM_PATH_CPPUNIT([1.10.0],[enablecppunit=yes],[enablecppunit=no])
+])
+
+AM_CONDITIONAL(GRINS_ENABLE_CPPUNIT, test x$enablecppunit = xyes)
 
 dnl-------------------
 dnl Check for TRILINOS
