@@ -52,6 +52,14 @@ if MASA_ENABLED
   LIBS += $(MASA_LIBS)
 endif
 
+#----------------
+# CppUnit support
+#----------------
+if GRINS_ENABLE_CPPUNIT
+  AM_CPPFLAGS += $(CPPUNIT_CPPFLAGS)
+  LIBS += $(CPPUNIT_LIBS)
+endif
+
 # These are programs that need to be built in order to run
 # the various tests. They will be built with `make check`
 check_PROGRAMS =
@@ -68,6 +76,7 @@ check_PROGRAMS += power_law_catalycity
 check_PROGRAMS += split_string
 
 # Interface Tests
+check_PROGRAMS += interface_cppunit_test
 check_PROGRAMS += antioch_evaluator_regression
 check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
@@ -110,6 +119,7 @@ power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 split_string_SOURCES = unit/split_string.C
 
 # Interface test source files
+interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C
 antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
 antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
@@ -165,6 +175,7 @@ TESTS += power_law_catalycity
 TESTS += split_string
 
 # Interface TESTS
+TESTS += interface_cppunit_test
 TESTS += interface/antioch_evaluator_regression.sh
 TESTS += interface/antioch_kinetics_regression.sh
 TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
