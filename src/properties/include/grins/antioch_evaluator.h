@@ -198,7 +198,9 @@ namespace GRINS
   inline
   void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
   {
-    if( _temp_cache->T != T )
+    // We can't compare T because it's a reference, so we may have already
+    // changed it upstream. So, we compare the next cheapest thing.
+    if( _temp_cache->T2 != T*T )
       _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
   }
 
