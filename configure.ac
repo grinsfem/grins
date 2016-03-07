@@ -401,6 +401,11 @@ AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test
 AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
 AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
 
+dnl----------------------------------------------
+dnl Generate header with paths for use in testing
+dnl----------------------------------------------
+AC_CONFIG_FILES(test/common/grins_test_paths.h)
+
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
 dnl-----------------------------------------------
