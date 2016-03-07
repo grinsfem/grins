@@ -34,6 +34,8 @@
 // GRINS
 #include "grins/physical_constants.h"
 
+#include "thermochem_test_common.h"
+#include "testing_utils.h"
 #include "nasa_poly_test_base.h"
 
 namespace GRINSTesting
@@ -42,7 +44,48 @@ namespace GRINSTesting
   {
   public:
 
+    template<typename ThermoMixture, typename ThermoEvaluator>
+    void test_cp_common( ThermoMixture& mixture, AirTestBase& testing_funcs, libMesh::Real rel_tol )
+    {
+      const unsigned int n_species = 5;
+      std::vector<libMesh::Real> Y(n_species,0.0);
+      Y[_N2_idx] = 0.15;
+      Y[_O2_idx] = 0.35;
+      Y[_NO_idx] = 0.25;
+      Y[_O_idx] = 0.25;
 
+      ThermoEvaluator evaluator( mixture );
+
+      libMesh::Real R_mix = mixture.R_mix(Y);
+      libMesh::Real rho = 1.0e-3;
+
+      libMesh::Real T = 300;
+      while( T <= 1000 )
+        {
+          libMesh::Real P = rho*R_mix*T;
+
+          libMesh::Real cp_mix_computed =  evaluator.cp( T, P, Y );
+
+          std::vector<libMesh::Real> species_cp(n_species,0.0);
+          species_cp[_N2_idx] = testing_funcs.cp_exact(_N2_idx, T);
+          species_cp[_O2_idx] = testing_funcs.cp_exact(_O2_idx, T);
+          species_cp[_NO_idx] = testing_funcs.cp_exact(_NO_idx, T);
+          species_cp[_O_idx]  = testing_funcs.cp_exact(_O_idx, T);
+
+          libMesh::Real cp_mix_exact =
+            ThermochemTestCommon::compute_mass_frac_mixture_prop( species_cp, Y );
+
+          std::stringstream ss;
+          ss << T;
+          std::string message = "T = "+ss.str();
+
+          libMesh::Real tol = TestingUtils::abs_tol_from_rel_tol( cp_mix_exact, rel_tol );
+
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message, cp_mix_exact, cp_mix_computed, tol );
+
+          T += 100.0;
+        }
+    }
 
   protected:
 
