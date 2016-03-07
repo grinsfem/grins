@@ -87,6 +87,48 @@ namespace GRINSTesting
         }
     }
 
+    template<typename ThermoMixture, typename ThermoEvaluator>
+    void test_h_common( ThermoMixture& mixture, AirTestBase& testing_funcs, libMesh::Real rel_tol )
+    {
+      ThermoEvaluator evaluator( mixture );
+
+      libMesh::Real tol;
+
+      libMesh::Real T = 300;
+      while( T <= 1000 )
+        {
+          std::stringstream ss;
+          ss << T;
+          std::string message = "T = "+ss.str();
+
+          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_N2_idx, T), rel_tol );
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                testing_funcs.h_exact(_N2_idx, T), /* exact */
+                                                evaluator.h_s( T, _N2_idx ), /* computed */
+                                                tol );
+
+          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_O2_idx, T), rel_tol );
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                testing_funcs.h_exact(_O2_idx, T), /* exact */
+                                                evaluator.h_s( T, _O2_idx ), /* computed */
+                                                tol );
+
+          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_NO_idx, T), rel_tol );
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                testing_funcs.h_exact(_NO_idx, T), /* exact */
+                                                evaluator.h_s( T, _NO_idx ), /* computed */
+                                                tol );
+
+          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_O_idx, T), rel_tol );
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                testing_funcs.h_exact(_O_idx, T), /* exact */
+                                                evaluator.h_s( T, _O_idx ), /* computed */
+                                                tol );
+
+          T += 100.0;
+        }
+    }
+
   protected:
 
     virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T ) = 0;
