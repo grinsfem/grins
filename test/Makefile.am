@@ -19,6 +19,10 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
 
+AM_CPPFLAGS += -I$(top_srcdir)/test/interface
+AM_CPPFLAGS += -I$(top_builddir)/test/common
+AM_CPPFLAGS += -I$(top_srcdir)/test/common
+
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
 AM_CPPFLAGS += $(GRVY_CFLAGS)
