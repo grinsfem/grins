@@ -36,7 +36,6 @@
 
 #include "thermochem_test_common.h"
 #include "testing_utils.h"
-#include "nasa_poly_test_base.h"
 
 namespace GRINSTesting
 {
@@ -249,8 +248,7 @@ namespace GRINSTesting
     std::vector<std::vector<libMesh::Real> > _three_body_coeffs;
   };
 
-  class AirNASA7TestBase : public AirTestBase,
-                           public NASA7TestBase
+  class AirNASA7TestBase : public AirTestBase
   {
   public:
     AirNASA7TestBase()
@@ -266,24 +264,24 @@ namespace GRINSTesting
     virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->cp_R_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4])*this->R_species(species_idx);
+      return ThermochemTestCommon::nasa7_cp_R_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4])*this->R_species(species_idx);
     }
 
     virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->h_RT_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5])*this->R_species(species_idx)*T;
+      return ThermochemTestCommon::nasa7_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5])*this->R_species(species_idx)*T;
     }
 
   private:
@@ -342,8 +340,7 @@ namespace GRINSTesting
 
   };
 
-  class AirNASA9TestBase : public AirTestBase,
-                           public NASA9TestBase
+  class AirNASA9TestBase : public AirTestBase
   {
   public:
 
@@ -360,28 +357,28 @@ namespace GRINSTesting
     virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->cp_R_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5],
-                              coeffs[6])*this->R_species(species_idx);
+      return ThermochemTestCommon::nasa9_cp_R_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6])*this->R_species(species_idx);
     }
 
     virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->h_RT_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5],
-                              coeffs[6],
-                              coeffs[7])*this->R_species(species_idx)*T;
+      return ThermochemTestCommon::nasa9_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6],
+                                                    coeffs[7])*this->R_species(species_idx)*T;
     }
 
   private:

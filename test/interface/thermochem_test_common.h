@@ -65,6 +65,50 @@ namespace GRINSTesting
       return A*std::pow(T,b)*std::exp(-Ea/RT);
     }
 
+    static libMesh::Real nasa7_cp_R_exact( libMesh::Real T,
+                                           libMesh::Real a0, libMesh::Real a1, libMesh::Real a2,
+                                           libMesh::Real a3, libMesh::Real a4 )
+    {
+      return a0 + a1*T + a2*T*T + a3*T*T*T + a4*(T*T*T*T);
+    }
+
+    static libMesh::Real nasa7_h_RT_exact( libMesh::Real T,
+                                           libMesh::Real a0, libMesh::Real a1, libMesh::Real a2,
+                                           libMesh::Real a3, libMesh::Real a4, libMesh::Real a5 )
+    {
+      return a0 + a1/2.0*T + a2/3.0*T*T + a3/4.0*T*T*T + a4/5.0*(T*T*T*T) + a5/T;
+    }
+
+    static libMesh::Real nasa7_s_R_exact( libMesh::Real T,
+                                          libMesh::Real a0, libMesh::Real a1, libMesh::Real a2,
+                                          libMesh::Real a3, libMesh::Real a4, libMesh::Real a6 )
+    {
+      return a0*std::log(T) + a1*T + a2/2.0*T*T + a3/3.0*T*T*T + a4/4.0*(T*T*T*T) + a6;
+    }
+
+    static libMesh::Real nasa9_cp_R_exact( libMesh::Real T,
+                                           libMesh::Real a0, libMesh::Real a1, libMesh::Real a2,
+                                           libMesh::Real a3, libMesh::Real a4, libMesh::Real a5, libMesh::Real a6 )
+    {
+      return a0/(T*T) + a1/T + a2 + a3*T + a4*(T*T) + a5*(T*T*T) + a6*(T*T*T*T);
+    }
+
+    static libMesh::Real nasa9_h_RT_exact( libMesh::Real T,
+                                           libMesh::Real a0, libMesh::Real a1, libMesh::Real a2, libMesh::Real a3,
+                                           libMesh::Real a4, libMesh::Real a5, libMesh::Real a6, libMesh::Real a7 )
+    {
+      return -a0/(T*T) + a1*std::log(T)/T + a2 + a3*T/2.0 + a4*(T*T)/3.0
+        + a5*(T*T*T)/4.0 + a6*(T*T*T*T)/5.0 + a7/T;
+    }
+
+    static libMesh::Real nasa9_s_R_exact( libMesh::Real T,
+                                          libMesh::Real a0, libMesh::Real a1, libMesh::Real a2, libMesh::Real a3,
+                                          libMesh::Real a4, libMesh::Real a5, libMesh::Real a6, libMesh::Real a8 )
+    {
+      return -a0/(2.*T*T) - a1/T + a2*std::log(T) + a3*T + a4*(T*T)/2.0
+        + a5*(T*T*T)/3.0 + a6*(T*T*T*T)/4.0 + a8;
+    }
+
   };
 
 } // end namespace GRINSTesting
