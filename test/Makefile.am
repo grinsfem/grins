@@ -127,7 +127,8 @@ split_string_SOURCES = unit/split_string.C
 interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C \
                                  interface/antioch_thermo.C \
                                  interface/cantera_thermo.C \
-                                 interface/antioch_kinetics.C 
+                                 interface/antioch_kinetics.C \
+                                 interface/cantera_kinetics.C
 
 antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
 antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
