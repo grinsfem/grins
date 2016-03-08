@@ -290,6 +290,47 @@ namespace GRINSTesting
       return _N2_200_1000_coeffs;
     }
 
+    void compute_reaction_rates( libMesh::Real T,
+                                 const std::vector<libMesh::Real>& molar_densities,
+                                 std::vector<libMesh::Real>& forward_rates,
+                                 std::vector<libMesh::Real>& backward_rates )
+    {
+      forward_rates.resize(_n_reactions,1.0);
+      backward_rates.resize(_n_reactions,1.0);
+
+      for( unsigned int r = 0; r < _n_reactions; r++ )
+        {
+          libMesh::Real fwd_rate_coeff = ThermochemTestCommon::arrhenius_rate( _preexp_coeffs[r],
+                                                                               _temp_exp_coeffs[r],
+                                                                               _Ea_coeffs[r],
+                                                                               T );
+
+          libMesh::Real Keq = this->eq_constant(T,
+                                                _reactant_stoich_coeffs[r],
+                                                _product_stoich_coeffs[r]);
+
+          libMesh::Real bkwd_rate_coeff = fwd_rate_coeff/Keq;
+
+          forward_rates[r] *= fwd_rate_coeff;
+          backward_rates[r] *= bkwd_rate_coeff;
+
+          for( unsigned int s = 0; s < _n_species; s++ )
+            {
+              forward_rates[r] *= std::pow(molar_densities[s],_reactant_stoich_coeffs[r][s]);
+
+              backward_rates[r] *= std::pow(molar_densities[s],_product_stoich_coeffs[r][s]);
+            }
+
+          if( _is_three_body_rxn[r] )
+            {
+              libMesh::Real M = ThermochemTestCommon::compute_third_body_molar_density( molar_densities,
+                                                                                        _three_body_coeffs[r] );
+              forward_rates[r] *= M;
+              backward_rates[r] *= M;
+            }
+        }
+    }
+
     libMesh::Real eq_constant( libMesh::Real T,
                                std::vector<libMesh::Real>& reactant_stoich_coeffs,
                                std::vector<libMesh::Real>& product_stoich_coeffs )
