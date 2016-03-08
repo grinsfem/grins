@@ -54,7 +54,8 @@ namespace GRINSTesting
         _Ea_coeffs(_n_reactions),
         _preexp_coeffs(_n_reactions),
         _temp_exp_coeffs(_n_reactions),
-        _three_body_coeffs(3), // only 3, three-body reactions
+        _three_body_coeffs(_n_reactions),
+        _is_three_body_rxn(_n_reactions,false),
         _reactant_stoich_coeffs(_n_reactions),
         _product_stoich_coeffs(_n_reactions)
     {
@@ -82,14 +83,17 @@ namespace GRINSTesting
       _temp_exp_coeffs[3] = 0.42;
       _temp_exp_coeffs[4] = 0.0;
 
+      _is_three_body_rxn[0] = true;
       _three_body_coeffs[0].resize(_n_species, 1.0);
       _three_body_coeffs[0][_N_idx] = 4.2857;
       _three_body_coeffs[0][_O_idx] = 4.2857;
 
+      _is_three_body_rxn[1] = true;
       _three_body_coeffs[1].resize(_n_species, 1.0);
       _three_body_coeffs[1][_N_idx] = 5.0;
       _three_body_coeffs[1][_O_idx] = 5.0;
 
+      _is_three_body_rxn[2] = true;
       _three_body_coeffs[2].resize(_n_species, 1.0);
       _three_body_coeffs[2][_N_idx]  = 22.0;
       _three_body_coeffs[2][_O_idx]  = 22.0;
@@ -320,7 +324,9 @@ namespace GRINSTesting
     std::vector<libMesh::Real> _Ea_coeffs;
     std::vector<libMesh::Real> _preexp_coeffs;
     std::vector<libMesh::Real> _temp_exp_coeffs;
+
     std::vector<std::vector<libMesh::Real> > _three_body_coeffs;
+    std::vector<bool> _is_three_body_rxn;
 
     std::vector<std::vector<libMesh::Real> > _reactant_stoich_coeffs;
     std::vector<std::vector<libMesh::Real> > _product_stoich_coeffs;
