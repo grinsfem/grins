@@ -222,6 +222,66 @@ namespace GRINSTesting
                                                 testing_funcs.h_exact(_N_idx, T), /* exact */
                                                 evaluator.h_s( T, _N_idx ), /* computed */
                                                 tol );
+
+          T += 100.0;
+        }
+    }
+
+    template<typename ThermoMixture, typename ThermoEvaluator>
+    void test_omega_dot_common( ThermoMixture& mixture,
+                                libMesh::Real rel_tol )
+    {
+      std::vector<libMesh::Real> Y(_n_species,0.0);
+      Y[_N2_idx] = 0.15;
+      Y[_O2_idx] = 0.35;
+      Y[_NO_idx] = 0.25;
+      Y[_O_idx] = 0.2;
+      Y[_N_idx] = 0.05;
+
+      ThermoEvaluator evaluator( mixture );
+
+      libMesh::Real rho = 1.0e-3;
+
+      std::vector<libMesh::Real> molar_densities(_n_species,0.0);
+      for( unsigned int s = 0; s < _n_species; s++ )
+        molar_densities[s] = rho*Y[s]/this->molar_mass(s);
+
+      libMesh::Real T = 300;
+      while( T <= 1000 )
+        {
+          std::vector<libMesh::Real> forward_rates, backward_rates;
+          this->compute_reaction_rates( T, molar_densities, forward_rates, backward_rates );
+
+          std::vector<libMesh::Real> omega_dot_exact(_n_species, 0.0);
+          std::vector<libMesh::Real> omega_dot_computed(_n_species);
+
+          evaluator.omega_dot( T, rho, Y, omega_dot_computed );
+
+          for( unsigned int s = 0; s < _n_species; s++ )
+            for( unsigned int r = 0; r < _n_reactions; r++ )
+              {
+                libMesh::Real stoich = _product_stoich_coeffs[r][s] - _reactant_stoich_coeffs[r][s];
+
+                omega_dot_exact[s] += this->molar_mass(s)*stoich*( forward_rates[r] - backward_rates[r] );
+              }
+
+          for( unsigned int s = 0; s < _n_species; s++ )
+            {
+              std::stringstream ss;
+              ss << T;
+              std::string message = "T = "+ss.str();
+
+              ss.str(std::string());
+              ss << s;
+              message += ", species = "+mixture.species_name(s);
+
+              libMesh::Real tol = TestingUtils::abs_tol_from_rel_tol( omega_dot_exact[s], rel_tol );
+              CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                    omega_dot_exact[s],
+                                                    omega_dot_computed[s],
+                                                    tol );
+            }
+
           T += 100.0;
         }
     }
