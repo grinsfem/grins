@@ -51,8 +51,48 @@ namespace GRINSTesting
         _O2_idx(1),
         _O_idx(4),
         _N_idx(3),
-        _NO_idx(2)
+        _NO_idx(2),
+        _Ea_coeffs(_n_reactions),
+        _preexp_coeffs(_n_reactions),
+        _temp_exp_coeffs(_n_reactions),
+        _three_body_coeffs(3) // only 3, three-body reactions
     {
+      // All in cal/mol
+      _Ea_coeffs[0] = 224801.3;
+      _Ea_coeffs[1] = 117881.7;
+      _Ea_coeffs[2] = 149943.0;
+      _Ea_coeffs[3] = 85269.6;
+      _Ea_coeffs[4] = 38526.0;
+
+      // Convert to J/kmol (since this is what GRINS::Constants::R_universal is in)
+      for( unsigned int r = 0; r < _n_reactions; r++ )
+        _Ea_coeffs[r] *= 1000.0*4.1868;
+
+      // m^3/kmol
+      _preexp_coeffs[0] = 7.e+18;
+      _preexp_coeffs[1] = 2.e+18;
+      _preexp_coeffs[2] = 5.e+12;
+      _preexp_coeffs[3] = 5.7e+9;
+      _preexp_coeffs[4] = 8.4e+09;
+
+      _temp_exp_coeffs[0] = -1.6;
+      _temp_exp_coeffs[1] = -1.5;
+      _temp_exp_coeffs[2] = 0.0;
+      _temp_exp_coeffs[3] = 0.42;
+      _temp_exp_coeffs[4] = 0.0;
+
+      _three_body_coeffs[0].resize(_n_species, 1.0);
+      _three_body_coeffs[0][_N_idx] = 4.2857;
+      _three_body_coeffs[0][_O_idx] = 4.2857;
+
+      _three_body_coeffs[1].resize(_n_species, 1.0);
+      _three_body_coeffs[1][_N_idx] = 5.0;
+      _three_body_coeffs[1][_O_idx] = 5.0;
+
+      _three_body_coeffs[2].resize(_n_species, 1.0);
+      _three_body_coeffs[2][_N_idx]  = 22.0;
+      _three_body_coeffs[2][_O_idx]  = 22.0;
+      _three_body_coeffs[2][_NO_idx] = 22.0;
     }
 
     template<typename ThermoMixture, typename ThermoEvaluator>
@@ -202,6 +242,11 @@ namespace GRINSTesting
     std::vector<libMesh::Real> _O2_200_1000_coeffs;
     std::vector<libMesh::Real> _O_200_1000_coeffs;
     std::vector<libMesh::Real> _NO_200_1000_coeffs;
+
+    std::vector<libMesh::Real> _Ea_coeffs;
+    std::vector<libMesh::Real> _preexp_coeffs;
+    std::vector<libMesh::Real> _temp_exp_coeffs;
+    std::vector<std::vector<libMesh::Real> > _three_body_coeffs;
   };
 
   class AirNASA7TestBase : public AirTestBase,
