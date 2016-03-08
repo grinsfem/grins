@@ -44,11 +44,16 @@ namespace GRINSTesting
   {
   public:
 
+    AirTestBase()
+      : _n_species(5),
+        _n_reactions(5)
+    {
+    }
+
     template<typename ThermoMixture, typename ThermoEvaluator>
     void test_cp_common( ThermoMixture& mixture, AirTestBase& testing_funcs, libMesh::Real rel_tol )
     {
-      const unsigned int n_species = 5;
-      std::vector<libMesh::Real> Y(n_species,0.0);
+      std::vector<libMesh::Real> Y(_n_species,0.0);
       Y[_N2_idx] = 0.15;
       Y[_O2_idx] = 0.35;
       Y[_NO_idx] = 0.25;
@@ -66,7 +71,7 @@ namespace GRINSTesting
 
           libMesh::Real cp_mix_computed =  evaluator.cp( T, P, Y );
 
-          std::vector<libMesh::Real> species_cp(n_species,0.0);
+          std::vector<libMesh::Real> species_cp(_n_species,0.0);
           species_cp[_N2_idx] = testing_funcs.cp_exact(_N2_idx, T);
           species_cp[_O2_idx] = testing_funcs.cp_exact(_O2_idx, T);
           species_cp[_NO_idx] = testing_funcs.cp_exact(_NO_idx, T);
@@ -182,6 +187,8 @@ namespace GRINSTesting
       // dummy to avoid warning
       return _N2_200_1000_coeffs;
     }
+
+    unsigned int _n_species, _n_reactions;
 
     // Species indices. Should be set by subclass at init time.
     unsigned int _N2_idx, _O2_idx, _O_idx, _N_idx, _NO_idx;
