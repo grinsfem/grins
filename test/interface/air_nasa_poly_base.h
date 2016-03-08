@@ -286,6 +286,26 @@ namespace GRINSTesting
       return _N2_200_1000_coeffs;
     }
 
+    libMesh::Real eq_constant( libMesh::Real T,
+                               std::vector<libMesh::Real>& reactant_stoich_coeffs,
+                               std::vector<libMesh::Real>& product_stoich_coeffs )
+    {
+      libMesh::Real coeff_sum = 0.0;
+      libMesh::Real exp_sum = 0.0;
+
+      for( unsigned int s = 0; s < _n_species; s++ )
+        {
+          libMesh::Real stoich = (product_stoich_coeffs[s] - reactant_stoich_coeffs[s]);
+
+          coeff_sum += stoich;
+          exp_sum += stoich*( this->h_RT_exact(s,T) - this->s_R_exact(s,T) );
+        }
+
+      libMesh::Real P_RT = 1e5/(GRINS::Constants::R_universal*T);
+
+      return std::pow(P_RT,coeff_sum)*std::exp(-exp_sum);
+    }
+
     unsigned int _n_species, _n_reactions;
 
     // Species indices. Should be set by subclass at init time.
