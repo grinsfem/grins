@@ -63,11 +63,16 @@ namespace GRINSTesting
       std::string input_file = std::string(GRINS_TEST_SRCDIR)+"/input_files/cantera_chem_thermo.in";
       this->init_cantera(input_file, "TestMaterial");
 
-      _N2_idx = _cantera_mixture->species_index("N2");
-      _O2_idx = _cantera_mixture->species_index("O2");
-      _N_idx = _cantera_mixture->species_index("N");
-      _O_idx = _cantera_mixture->species_index("O");
-      _NO_idx = _cantera_mixture->species_index("NO");
+      this->check_indices();
+    }
+
+    void check_indices()
+    {
+      CPPUNIT_ASSERT_EQUAL( _N2_idx, _cantera_mixture->species_index("N2") );
+      CPPUNIT_ASSERT_EQUAL( _O2_idx,  _cantera_mixture->species_index("O2") );
+      CPPUNIT_ASSERT_EQUAL( _N_idx,  _cantera_mixture->species_index("N") );
+      CPPUNIT_ASSERT_EQUAL( _O_idx,  _cantera_mixture->species_index("O") );
+      CPPUNIT_ASSERT_EQUAL( _NO_idx, _cantera_mixture->species_index("NO") );
     }
 
     void test_cp()

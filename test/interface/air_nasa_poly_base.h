@@ -46,7 +46,12 @@ namespace GRINSTesting
 
     AirTestBase()
       : _n_species(5),
-        _n_reactions(5)
+        _n_reactions(5),
+        _N2_idx(0),
+        _O2_idx(1),
+        _O_idx(4),
+        _N_idx(3),
+        _NO_idx(2)
     {
     }
 
