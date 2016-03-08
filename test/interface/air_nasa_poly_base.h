@@ -101,7 +101,8 @@ namespace GRINSTesting
       Y[_N2_idx] = 0.15;
       Y[_O2_idx] = 0.35;
       Y[_NO_idx] = 0.25;
-      Y[_O_idx] = 0.25;
+      Y[_O_idx] = 0.2;
+      Y[_N_idx] = 0.05;
 
       ThermoEvaluator evaluator( mixture );
 
@@ -120,6 +121,7 @@ namespace GRINSTesting
           species_cp[_O2_idx] = testing_funcs.cp_exact(_O2_idx, T);
           species_cp[_NO_idx] = testing_funcs.cp_exact(_NO_idx, T);
           species_cp[_O_idx]  = testing_funcs.cp_exact(_O_idx, T);
+          species_cp[_N_idx]  = testing_funcs.cp_exact(_N_idx, T);
 
           libMesh::Real cp_mix_exact =
             ThermochemTestCommon::compute_mass_frac_mixture_prop( species_cp, Y );
@@ -174,6 +176,11 @@ namespace GRINSTesting
                                                 evaluator.h_s( T, _O_idx ), /* computed */
                                                 tol );
 
+          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_N_idx, T), rel_tol );
+          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                testing_funcs.h_exact(_N_idx, T), /* exact */
+                                                evaluator.h_s( T, _N_idx ), /* computed */
+                                                tol );
           T += 100.0;
         }
     }
@@ -200,6 +207,9 @@ namespace GRINSTesting
       else if(idx == _O_idx)
         value = 16.0;
 
+      else if(idx == _N_idx)
+        value = 14.008;
+
       else
         CPPUNIT_FAIL("Invalid idx for molar_mass");
 
@@ -225,6 +235,9 @@ namespace GRINSTesting
       else if(idx == _O_idx)
         return _O_200_1000_coeffs;
 
+      else if(idx == _N_idx)
+        return _N_200_1000_coeffs;
+
       else
         CPPUNIT_FAIL("Invalid idx for nasa_coeffs");
 
@@ -241,6 +254,7 @@ namespace GRINSTesting
     std::vector<libMesh::Real> _O2_200_1000_coeffs;
     std::vector<libMesh::Real> _O_200_1000_coeffs;
     std::vector<libMesh::Real> _NO_200_1000_coeffs;
+    std::vector<libMesh::Real> _N_200_1000_coeffs;
 
     std::vector<libMesh::Real> _Ea_coeffs;
     std::vector<libMesh::Real> _preexp_coeffs;
@@ -257,6 +271,7 @@ namespace GRINSTesting
       this->init_O2_coeffs();
       this->init_O_coeffs();
       this->init_NO_coeffs();
+      this->init_N_coeffs();
     }
 
   protected:
@@ -338,6 +353,19 @@ namespace GRINSTesting
       _NO_200_1000_coeffs[6] =  2.28061001E+00;
     }
 
+    void init_N_coeffs()
+    {
+      _N_200_1000_coeffs.resize(7);
+
+      _N_200_1000_coeffs[0] =  2.50000000E+00;
+      _N_200_1000_coeffs[1] =  0.0;
+      _N_200_1000_coeffs[2] =  0.0;
+      _N_200_1000_coeffs[3] =  0.0;
+      _N_200_1000_coeffs[4] =  0.0;
+      _N_200_1000_coeffs[5] =  5.61046378E+04;
+      _N_200_1000_coeffs[6] =  4.19390932E+00;
+    }
+
   };
 
   class AirNASA9TestBase : public AirTestBase
@@ -350,6 +378,7 @@ namespace GRINSTesting
       this->init_O2_coeffs();
       this->init_O_coeffs();
       this->init_NO_coeffs();
+      this->init_N_coeffs();
     }
 
   protected:
@@ -441,6 +470,21 @@ namespace GRINSTesting
       _NO_200_1000_coeffs[6] =  2.38679758e-12;
       _NO_200_1000_coeffs[7] =  9.09794974e+03;
       _NO_200_1000_coeffs[8] =  6.72872795e+00;
+    }
+
+    void init_N_coeffs()
+    {
+      _N_200_1000_coeffs.resize(9);
+
+      _N_200_1000_coeffs[0] =  0.0;
+      _N_200_1000_coeffs[1] =  0.0;
+      _N_200_1000_coeffs[2] =  2.5;
+      _N_200_1000_coeffs[3] =  0.0;
+      _N_200_1000_coeffs[4] =  0.0;
+      _N_200_1000_coeffs[5] =  0.0;
+      _N_200_1000_coeffs[6] =  0.0;
+      _N_200_1000_coeffs[7] =  5.61046378e+04;
+      _N_200_1000_coeffs[8] =  4.19390932e+00;
     }
 
   };
