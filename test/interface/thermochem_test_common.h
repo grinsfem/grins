@@ -55,6 +55,16 @@ namespace GRINSTesting
       return mixed_value;
     }
 
+    static libMesh::Real arrhenius_rate( libMesh::Real A, /* preexponential */
+                                         libMesh::Real b, /* temp. exponent */
+                                         libMesh::Real Ea, /* Activation energy */
+                                         libMesh::Real T )
+    {
+      libMesh::Real RT = GRINS::Constants::R_universal*T;
+
+      return A*std::pow(T,b)*std::exp(-Ea/RT);
+    }
+
   };
 
 } // end namespace GRINSTesting
