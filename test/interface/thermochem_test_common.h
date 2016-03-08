@@ -65,6 +65,19 @@ namespace GRINSTesting
       return A*std::pow(T,b)*std::exp(-Ea/RT);
     }
 
+    static libMesh::Real compute_third_body_molar_density( const std::vector<libMesh::Real>& molar_densities,
+                                                           const std::vector<libMesh::Real>& three_body_efficiencies )
+    {
+      CPPUNIT_ASSERT_EQUAL( molar_densities.size(), three_body_efficiencies.size() );
+
+      libMesh::Real M = 0.0;
+
+      for(unsigned int s = 0; s < molar_densities.size(); s++ )
+        M += molar_densities[s]*three_body_efficiencies[s];
+
+      return M;
+    }
+
     static libMesh::Real nasa7_cp_R_exact( libMesh::Real T,
                                            libMesh::Real a0, libMesh::Real a1, libMesh::Real a2,
                                            libMesh::Real a3, libMesh::Real a4 )
