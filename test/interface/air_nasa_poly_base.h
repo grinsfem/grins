@@ -191,6 +191,10 @@ namespace GRINSTesting
 
     virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T ) = 0;
 
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
     libMesh::Real molar_mass( unsigned int idx )
     {
       libMesh::Real value = 0.0;
@@ -297,6 +301,30 @@ namespace GRINSTesting
                                                     coeffs[3],
                                                     coeffs[4],
                                                     coeffs[5])*this->R_species(species_idx)*T;
+    }
+
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa7_s_R_exact(T,
+                                                   coeffs[0],
+                                                   coeffs[1],
+                                                   coeffs[2],
+                                                   coeffs[3],
+                                                   coeffs[4],
+                                                   coeffs[6]);
+    }
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa7_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5]);
     }
 
   private:
@@ -408,6 +436,34 @@ namespace GRINSTesting
                                                     coeffs[5],
                                                     coeffs[6],
                                                     coeffs[7])*this->R_species(species_idx)*T;
+    }
+
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa9_s_R_exact(T,
+                                                   coeffs[0],
+                                                   coeffs[1],
+                                                   coeffs[2],
+                                                   coeffs[3],
+                                                   coeffs[4],
+                                                   coeffs[5],
+                                                   coeffs[6],
+                                                   coeffs[8]);
+    }
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa9_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6],
+                                                    coeffs[7]);
     }
 
   private:
