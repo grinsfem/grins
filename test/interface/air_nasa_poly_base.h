@@ -54,7 +54,9 @@ namespace GRINSTesting
         _Ea_coeffs(_n_reactions),
         _preexp_coeffs(_n_reactions),
         _temp_exp_coeffs(_n_reactions),
-        _three_body_coeffs(3) // only 3, three-body reactions
+        _three_body_coeffs(3), // only 3, three-body reactions
+        _reactant_stoich_coeffs(_n_reactions),
+        _product_stoich_coeffs(_n_reactions)
     {
       // All in cal/mol
       _Ea_coeffs[0] = 224801.3;
@@ -92,6 +94,41 @@ namespace GRINSTesting
       _three_body_coeffs[2][_N_idx]  = 22.0;
       _three_body_coeffs[2][_O_idx]  = 22.0;
       _three_body_coeffs[2][_NO_idx] = 22.0;
+
+      // N_2 + M <=> 2N + M
+      _reactant_stoich_coeffs[0].resize(_n_species, 0.0);
+      _product_stoich_coeffs[0].resize(_n_species, 0.0);
+      _reactant_stoich_coeffs[0][_N2_idx] = 1.0;
+      _product_stoich_coeffs[0][_N_idx] = 2.0;
+
+      // O_2 + M <=> 2O + M
+      _reactant_stoich_coeffs[1].resize(_n_species, 0.0);
+      _product_stoich_coeffs[1].resize(_n_species, 0.0);
+      _reactant_stoich_coeffs[1][_O2_idx] = 1.0;
+      _product_stoich_coeffs[1][_O_idx] = 2.0;
+
+      // NO + M <=> N + O + M
+      _reactant_stoich_coeffs[2].resize(_n_species, 0.0);
+      _product_stoich_coeffs[2].resize(_n_species, 0.0);
+      _reactant_stoich_coeffs[2][_NO_idx] = 1.0;
+      _product_stoich_coeffs[2][_O_idx] = 1.0;
+      _product_stoich_coeffs[2][_N_idx] = 1.0;
+
+      // N2 + 0 <=> NO + N
+      _reactant_stoich_coeffs[3].resize(_n_species, 0.0);
+      _product_stoich_coeffs[3].resize(_n_species, 0.0);
+      _reactant_stoich_coeffs[3][_N2_idx] = 1.0;
+      _reactant_stoich_coeffs[3][_O_idx] = 1.0;
+      _product_stoich_coeffs[3][_NO_idx] = 1.0;
+      _product_stoich_coeffs[3][_N_idx] = 1.0;
+
+      // NO + 0 <=> O2 + N
+      _reactant_stoich_coeffs[4].resize(_n_species, 0.0);
+      _product_stoich_coeffs[4].resize(_n_species, 0.0);
+      _reactant_stoich_coeffs[4][_NO_idx] = 1.0;
+      _reactant_stoich_coeffs[4][_O_idx] = 1.0;
+      _product_stoich_coeffs[4][_O2_idx] = 1.0;
+      _product_stoich_coeffs[4][_N_idx] = 1.0;
     }
 
     template<typename ThermoMixture, typename ThermoEvaluator>
@@ -264,6 +301,9 @@ namespace GRINSTesting
     std::vector<libMesh::Real> _preexp_coeffs;
     std::vector<libMesh::Real> _temp_exp_coeffs;
     std::vector<std::vector<libMesh::Real> > _three_body_coeffs;
+
+    std::vector<std::vector<libMesh::Real> > _reactant_stoich_coeffs;
+    std::vector<std::vector<libMesh::Real> > _product_stoich_coeffs;
   };
 
   class AirNASA7TestBase : public AirTestBase
