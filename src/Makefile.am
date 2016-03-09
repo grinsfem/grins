@@ -139,6 +139,7 @@ libgrins_la_SOURCES += physics/src/convection_diffusion.C
 libgrins_la_SOURCES += physics/src/physics_factory_base.C
 libgrins_la_SOURCES += physics/src/physics_factory_basic.C
 libgrins_la_SOURCES += physics/src/physics_factory_with_core.C
+libgrins_la_SOURCES += physics/src/physics_factory_incompressible_flow.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -376,6 +377,7 @@ include_HEADERS += physics/include/grins/convection_diffusion.h
 include_HEADERS += physics/include/grins/physics_factory_base.h
 include_HEADERS += physics/include/grins/physics_factory_basic.h
 include_HEADERS += physics/include/grins/physics_factory_with_core.h
+include_HEADERS += physics/include/grins/physics_factory_incompressible_flow.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
