@@ -83,7 +83,6 @@ check_PROGRAMS += split_string
 # Interface Tests
 check_PROGRAMS += interface_cppunit_test
 check_PROGRAMS += antioch_evaluator_regression
-check_PROGRAMS += antioch_kinetics_regression
 check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
 check_PROGRAMS += cantera_chem_thermo_test
 check_PROGRAMS += cantera_evaluator_regression
@@ -128,7 +127,6 @@ interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C \
                                  interface/air_5sp.C
 
 antioch_evaluator_regression_SOURCES = interface/antioch_evaluator_regression.C
-antioch_kinetics_regression_SOURCES = interface/antioch_kinetics_regression.C
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 cantera_chem_thermo_test_SOURCES = interface/cantera_chem_thermo_test.C
 cantera_evaluator_regression_SOURCES = interface/cantera_evaluator_regression.C
@@ -184,7 +182,6 @@ TESTS += split_string
 # Interface TESTS
 TESTS += interface_cppunit_test
 TESTS += interface/antioch_evaluator_regression.sh
-TESTS += interface/antioch_kinetics_regression.sh
 TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
 TESTS += interface/cantera_chem_thermo_test.sh
 TESTS += interface/cantera_evaluator_regression.sh
