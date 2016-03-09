@@ -1,0 +1,7 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+DEFAULT_SOLVER_OPTIONS="-pc_type bjacobi -sub_pc_type lu"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/transient_amr/convection_diffusion_unsteady_2d_amr.in $GRINS_SOLVER_OPTIONS

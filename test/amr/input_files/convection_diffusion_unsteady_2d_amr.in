@@ -1,0 +1,103 @@
+
+# This is the exact solution, assuming the initial condition
+# is this function at t = 0 and that the Dirichlet boundary
+# conditions adhere to this function.
+# Here the velocity field is (0.8, 0.8) and the diffusivity is 0.01
+#
+# This was taken from libMesh example transient_ex1
+[TestExactSolution]
+   value = 'exp(-((x-0.8*t-0.2)^2+(y-0.8*t-0.2)^2)/(0.01*(4.0*t+1.0)))/(4.0*t+1.0)'
+[]
+
+
+# Material section
+[Materials]
+  [./TestMaterial]
+    [./Diffusivity]
+       value = '0.01'
+[]
+
+[Physics]
+
+   enabled_physics = 'ConvectionDiffusion'
+
+   [./ConvectionDiffusion]
+
+       material = 'TestMaterial'
+
+       velocity_field = '0.8 0.8'
+
+       bc_ids = '0 1 2 3'
+       bc_types = 'parsed_dirichlet parsed_dirichlet parsed_dirichlet parsed_dirichlet'
+       bc_variables = 'u u u u'
+
+       # Same function for every boundary since it's the exact solution
+       bc_values = '${TestExactSolution/value}
+                    ${TestExactSolution/value}
+                    ${TestExactSolution/value}
+                    ${TestExactSolution/value}'
+
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'u'
+      ic_values = '${TestExactSolution/value}'
+[]
+
+[Variables]
+   [./ConvectionDiffusion]
+      names = 'u'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+[Mesh]
+   [./Read]
+      filename = './grids/mixed_quad_tri_square_mesh.xda'
+   [../Refinement]
+      uniformly_refine = '5'
+[]
+
+[MeshAdaptivity]
+   mesh_adaptive = 'true'
+   absolute_global_tolerance = '0.0'
+   estimator_type = 'kelly'
+   plot_cell_errors = 'false'
+   max_refinement_steps = '1'
+   refine_percentage = '0.8'
+   coarsen_percentage = '0.07'
+   refinement_strategy = 'error_fraction'
+   max_h_level = '5'
+[]
+
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      delta_t = '0.025'
+      n_timesteps = '25'
+      theta = '0.5'
+[]
+
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  30
+   max_linear_iterations = 5000
+   verify_analytic_jacobians = '0.0'
+   minimum_linear_tolerance = 1.0e-15
+   relative_residual_tolerance = 1.0e-12
+   relative_step_tolerance = 1.0e-6
+[]
+
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'convection_diffusion_unsteady_2d_amr'
+   output_format = 'xdr mesh_only'
+[]
+
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   system_name = 'GRINS-TEST'
+[]

@@ -52,6 +52,7 @@ namespace GRINS
       _edge_level_mismatch_limit( input("MeshAdaptivity/edge_level_mismatch_limit", 0 ) ),
       _face_level_mismatch_limit( input("MeshAdaptivity/face_level_mismatch_limit", 1 ) ),
       _enforce_mismatch_limit_prior_to_refinement( input("MeshAdaptivity/enforce_mismatch_limit_prior_to_refinement", false ) ),
+      _max_h_level(input("MeshAdaptivity/max_h_level",libMesh::invalid_uint)),
       _refinement_type(INVALID),
       _mesh_refinement(NULL)
   {
@@ -78,8 +79,7 @@ namespace GRINS
     _mesh_refinement->edge_level_mismatch_limit() = _edge_level_mismatch_limit;
     _mesh_refinement->face_level_mismatch_limit() = _face_level_mismatch_limit;
     _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_enforce_mismatch_limit_prior_to_refinement);
-
-    return;
+    _mesh_refinement->max_h_level() = _max_h_level;
   }
 
   void MeshAdaptiveSolverBase::set_refinement_type( const GetPot& input,

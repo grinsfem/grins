@@ -31,6 +31,7 @@
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
 #include "grins/steady_mesh_adaptive_solver.h"
+#include "grins/unsteady_mesh_adaptive_solver.h"
 #include "grins/displacement_continuation_solver.h"
 
 // libMesh
@@ -62,7 +63,7 @@ namespace GRINS
       }
     else if( solver_type == SolverNames::unsteady_mesh_adaptive_solver() )
       {
-        libmesh_not_implemented();
+        solver.reset( new UnsteadyMeshAdaptiveSolver(input) );
       }
     else
       {

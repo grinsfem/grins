@@ -409,6 +409,7 @@ AC_CONFIG_FILES(examples/inflating_sheet/run.sh,             [chmod +x examples/
 AC_CONFIG_FILES(examples/sa_airfoil/run.sh,         [chmod +x examples/sa_airfoil/run.sh])
 AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/suspended_cable/run.sh])
 AC_CONFIG_FILES(examples/mixed_dim_inflating_sheet/run.sh,   [chmod +x examples/mixed_dim_inflating_sheet/run.sh])
+AC_CONFIG_FILES(examples/transient_amr/run.sh,   [chmod +x examples/transient_amr/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files

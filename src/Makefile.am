@@ -195,6 +195,7 @@ libgrins_la_SOURCES += solver/src/displacement_continuation_solver.C
 libgrins_la_SOURCES += solver/src/solver_parsing.C
 libgrins_la_SOURCES += solver/src/strategies_parsing.C
 libgrins_la_SOURCES += solver/src/time_stepping_parsing.C
+libgrins_la_SOURCES += solver/src/unsteady_mesh_adaptive_solver.C
 
 #src/variables
 libgrins_la_SOURCES += variables/src/variables_base.C
@@ -436,6 +437,7 @@ include_HEADERS += solver/include/grins/solver_names.h
 include_HEADERS += solver/include/grins/strategies_parsing.h
 include_HEADERS += solver/include/grins/time_stepping_parsing.h
 include_HEADERS += solver/include/grins/simulation_parsing.h
+include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h

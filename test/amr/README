@@ -1,0 +1,8 @@
+Currently, there are a couple of assumptions about the file naming.
+
+1. The "gold data" should have <prefix>.<int>.xdr naming scheme while
+   the "gold mesh" files should have <prefix>_mesh.<int>.exo naming scheme.
+
+2. The "test data" (rewritten out during the GRINS run) should have <prefix>.<int>.xdr
+   naming scheme while the mesh files should be <prefix>.<int>_mesh.xda. These currently
+   correspond to the default outputs from output_formats = 'xdr mesh_only' in the input file.
