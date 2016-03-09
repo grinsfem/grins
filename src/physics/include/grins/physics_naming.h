@@ -188,6 +188,9 @@ namespace GRINS
     static PhysicsName parsed_source_term()
     { return "ParsedSourceTerm"+_suffix; }
 
+    static PhysicsName convection_diffusion()
+    { return "ConvectionDiffusion"+_suffix; }
+
   private:
 
     static std::string physics_name_delimiter()

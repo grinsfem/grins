@@ -812,7 +812,7 @@ namespace GRINS
         physics_list[physics_to_add] =
           PhysicsPtr(new ParsedSourceTerm(physics_to_add,input));
       }
-    else if( physics_to_add == std::string("ConvectionDiffusion") )
+    else if( physics_to_add == PhysicsNaming::convection_diffusion() )
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new ConvectionDiffusion(physics_to_add,input));
