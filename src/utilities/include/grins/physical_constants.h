@@ -26,6 +26,8 @@
 #ifndef GRINS_PHYSICAL_CONSTANTS_H
 #define GRINS_PHYSICAL_CONSTANTS_H
 
+#include "libmesh/libmesh_common.h"
+
 namespace GRINS
 {
   namespace Constants
