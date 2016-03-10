@@ -27,7 +27,6 @@
 #define GRINS_SIMULATION_BUILDER_H
 
 // GRINS
-#include "grins/physics_factory.h"
 #include "grins/mesh_builder.h"
 #include "grins/solver_factory.h"
 #include "grins/visualization_factory.h"
@@ -42,7 +41,7 @@ namespace GRINS
   class SimulationBuilder
   {
   public:
-    
+
     SimulationBuilder();
     virtual ~SimulationBuilder();
 
@@ -50,8 +49,6 @@ namespace GRINS
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
-
-    GRINS::PhysicsList build_physics( const GetPot& input );
 
     SharedPtr<GRINS::Solver> build_solver( const GetPot& input );
 
@@ -71,12 +68,10 @@ namespace GRINS
     SharedPtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
                                                               const libMesh::QoISet& qoi_set );
 
-    void attach_physics_factory( SharedPtr<PhysicsFactory> physics_factory );
-
     void attach_solver_factory( SharedPtr<SolverFactory> solver_factory );
 
     void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
-    
+
     void attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory );
 
     void attach_bc_factory( SharedPtr<BoundaryConditionsFactory> bc_factory );
@@ -90,8 +85,7 @@ namespace GRINS
     const MeshBuilder& mesh_builder() const;
 
   protected:
-    
-    SharedPtr<PhysicsFactory> _physics_factory;
+
     SharedPtr<MeshBuilder> _mesh_builder;
     SharedPtr<SolverFactory> _solver_factory;
     SharedPtr<VisualizationFactory> _vis_factory;
@@ -99,7 +93,7 @@ namespace GRINS
     SharedPtr<QoIFactory> _qoi_factory;
     SharedPtr<PostprocessingFactory> _postprocessing_factory;
     SharedPtr<ErrorEstimatorFactory> _error_estimator_factory;
-      
+
   }; //class SimulationBuilder
 } // namespace GRINS
 

@@ -33,8 +33,7 @@
 namespace GRINS
 {
   SimulationBuilder::SimulationBuilder()
-    : _physics_factory( new PhysicsFactory ),
-      _mesh_builder( new MeshBuilder ),
+    : _mesh_builder( new MeshBuilder ),
       _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
@@ -49,13 +48,7 @@ namespace GRINS
   {
     return;
   }
-  
-  void SimulationBuilder::attach_physics_factory( SharedPtr<PhysicsFactory> physics_factory )
-  {
-    this->_physics_factory = physics_factory;
-    return;
-  }
-  
+
   void SimulationBuilder::attach_solver_factory( SharedPtr<SolverFactory> solver_factory )
   {
     this->_solver_factory = solver_factory;
@@ -67,7 +60,7 @@ namespace GRINS
     this->_mesh_builder = mesh_builder;
     return;
   }
-    
+
   void SimulationBuilder::attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory )
   {
     this->_vis_factory = vis_factory;
@@ -87,7 +80,7 @@ namespace GRINS
 
   void SimulationBuilder::attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory )
   {
-    this->_postprocessing_factory = postprocessing_factory; 
+    this->_postprocessing_factory = postprocessing_factory;
   }
 
   void SimulationBuilder::attach_error_estimator_factory( SharedPtr<ErrorEstimatorFactory> error_estimator_factory )
@@ -102,11 +95,6 @@ namespace GRINS
     return (this->_mesh_builder)->build(input, comm);
   }
 
-  GRINS::PhysicsList SimulationBuilder::build_physics( const GetPot& input )
-  {
-    return (this->_physics_factory)->build(input);
-  }
-  
   SharedPtr<GRINS::Solver> SimulationBuilder::build_solver( const GetPot& input )
   {
     return (this->_solver_factory)->build(input);
@@ -128,7 +116,7 @@ namespace GRINS
   {
     return (this->_bc_factory)->build_neumann(equation_system);
   }
-  
+
   SharedPtr<CompositeQoI> SimulationBuilder::build_qoi( const GetPot& input )
   {
     return (this->_qoi_factory)->build(input);
