@@ -93,6 +93,9 @@ namespace GRINS
     //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );
 
+    const PhysicsList& get_physics_list() const
+    { return _physics_list; }
+
     //! Reads input options for this class and all physics that are enabled
     /*!
       This function reads the input options for the MultiphysicsSystem class and then
