@@ -125,9 +125,6 @@ namespace GRINS
     static PhysicsName heat_transfer()
     { return "HeatTransfer"+_suffix; }
 
-    static PhysicsName heat_transfer_source()
-    { return "HeatTransferSource"+_suffix; }
-
     static PhysicsName heat_transfer_adjoint_stab()
     { return "HeatTransferAdjointStabilization"+_suffix; }
 
