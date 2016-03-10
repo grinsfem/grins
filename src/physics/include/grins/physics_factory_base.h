@@ -26,11 +26,8 @@
 #define GRINS_PHYSICS_FACTORY_BASE_H
 
 // GRINS
+#include "grins/factory_with_getpot.h"
 #include "grins/physics.h"
-
-// libMesh
-#include "libmesh/factory.h"
-#include "libmesh/getpot.h"
 
 namespace GRINS
 {
@@ -40,11 +37,11 @@ namespace GRINS
       at construction time, both set_getpot() and  set_physics_name() MUST be called
       before build() function. Note that set_physics_name() MUST be called each time
       a new Physics is built.*/
-  class PhysicsFactoryBase : public libMesh::Factory<Physics>
+  class PhysicsFactoryBase : public FactoryWithGetPot<Physics>
   {
   public:
     PhysicsFactoryBase( const std::string& physics_name )
-      : Factory<Physics>(physics_name)
+      : FactoryWithGetPot<Physics>(physics_name)
     {}
 
     ~PhysicsFactoryBase(){};
@@ -57,20 +54,12 @@ namespace GRINS
     static void set_physics_name( const std::string& physics_name )
     { _physics_name = physics_name; }
 
-    static void set_getpot( const GetPot& input )
-    { _input = &input; }
-
   protected:
 
     virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
                                                        const std::string& physics_name ) =0;
 
     static std::string _physics_name;
-
-    /*! We store only a raw pointer here because we *can't* make a copy.
-        Otherwise, the UFO detection will be all screwed. We are not taking
-        ownership of this, so we need to *not* delete this.*/
-    static const GetPot* _input;
 
   private:
 
