@@ -145,6 +145,7 @@ libgrins_la_SOURCES += physics/src/physics_factory_heat_transfer.C
 libgrins_la_SOURCES += physics/src/physics_factory_variable_density_flow.C
 libgrins_la_SOURCES += physics/src/physics_factory_plane_stress_solids.C
 libgrins_la_SOURCES += physics/src/physics_factory_one_d_stress_solids.C
+libgrins_la_SOURCES += physics/src/physics_factory_reacting_flows.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -388,6 +389,7 @@ include_HEADERS += physics/include/grins/physics_factory_heat_transfer.h
 include_HEADERS += physics/include/grins/physics_factory_variable_density_flow.h
 include_HEADERS += physics/include/grins/physics_factory_plane_stress_solids.h
 include_HEADERS += physics/include/grins/physics_factory_one_d_stress_solids.h
+include_HEADERS += physics/include/grins/physics_factory_reacting_flows.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
