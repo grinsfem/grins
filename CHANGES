@@ -1,4 +1,5 @@
 Version 0.7.0 (In progress)
+   * Added support for output of 'base_velocity' in averaged_fan
 
 Version 0.6.1
 https://github.com/grinsfem/grins/releases/tag/v0.6.1

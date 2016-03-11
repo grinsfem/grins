@@ -43,6 +43,8 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+output_vars = 'base_velocity'
+
 []
 
 [Variables]

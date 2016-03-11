@@ -29,6 +29,9 @@
 // GRINS
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/spalart_allmaras_viscosity.h"
+#include "grins/postprocessed_quantities.h"
+
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -39,7 +42,10 @@ namespace GRINS
 
   template<class Mu>
   AveragedFan<Mu>::AveragedFan( const std::string& physics_name, const GetPot& input )
-    : AveragedFanBase<Mu>(physics_name, input)
+    : AveragedFanBase<Mu>(physics_name, input),
+      _base_velocity_x_index(0),
+      _base_velocity_y_index(0),
+      _base_velocity_z_index(0)
   {
     return;
   }
@@ -60,6 +66,38 @@ namespace GRINS
     return;
   }
 
+  template<class Mu>
+  void AveragedFan<Mu>::register_postprocessing_vars( const GetPot& input,
+                                                      PostProcessedQuantities<libMesh::Real>& postprocessing )
+  {
+    std::string section = "Physics/"+this->_physics_name+"/output_vars";
+
+    if( input.have_variable(section) )
+      {
+        unsigned int n_vars = input.vector_variable_size(section);
+
+        for( unsigned int v = 0; v < n_vars; v++ )
+          {
+            std::string name = input(section,"DIE!",v);
+
+            if( name == std::string("base_velocity") )
+              {
+                this->_base_velocity_x_index = postprocessing.register_quantity("base_vel_x");
+                this->_base_velocity_y_index = postprocessing.register_quantity("base_vel_y");
+                this->_base_velocity_z_index = postprocessing.register_quantity("base_vel_z" );
+              }
+            else
+              {
+                std::cerr << "Error: Invalid output_vars value for "+this->_physics_name << std::endl
+                          << "       Found " << name << std::endl
+                          << "       Acceptable values are: base_velocity" << std::endl;
+                libmesh_error();
+              }
+          }
+      }
+
+    return;
+  }
 
   template<class Mu>
   void AveragedFan<Mu>::element_time_derivative( bool compute_jacobian,
@@ -172,6 +210,33 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AveragedFan::element_time_derivative");
 #endif
+
+    return;
+  }
+
+  template<class Mu>
+  void AveragedFan<Mu>::compute_postprocessed_quantity( unsigned int quantity_index,
+                                                        const AssemblyContext& context,
+                                                        const libMesh::Point& point,
+                                                        libMesh::Real& value )
+  {
+    libMesh::DenseVector<libMesh::Number> output_vec(3);
+
+    if( quantity_index == this->_base_velocity_x_index )
+      {
+        this->base_velocity_function(point, context.time, output_vec);
+        value = output_vec(0);
+      }
+    else if( quantity_index == this->_base_velocity_y_index )
+      {
+        this->base_velocity_function(point, context.time, output_vec);
+        value = output_vec(1);
+      }
+    else if( quantity_index == this->_base_velocity_z_index )
+      {
+        this->base_velocity_function(point, context.time, output_vec);
+        value = output_vec(2);
+      }
 
     return;
   }
