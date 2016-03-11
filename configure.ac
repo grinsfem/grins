@@ -306,6 +306,17 @@ AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 AX_PATH_ANTIOCH(0.4.0,no)
 
+# -------------------------------------------------------------
+# cppunit C++ unit testing -- enabled by default
+# -------------------------------------------------------------
+AC_ARG_ENABLE(cppunit,
+              AS_HELP_STRING([--disable-cppunit],
+                             [Build without cppunit C++ unit testing support]))
+AS_IF([test "x$enable_cppunit" != "xno"], [
+   AM_PATH_CPPUNIT([1.10.0],[enablecppunit=yes],[enablecppunit=no])
+])
+
+AM_CONDITIONAL(GRINS_ENABLE_CPPUNIT, test x$enablecppunit = xyes)
 
 dnl-------------------
 dnl Check for TRILINOS
@@ -389,6 +400,11 @@ AC_CONFIG_LINKS([test/input_files/air_4sp.xml:test/input_files/air_4sp.xml])
 AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test.xml])
 AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
 AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
+
+dnl----------------------------------------------
+dnl Generate header with paths for use in testing
+dnl----------------------------------------------
+AC_CONFIG_FILES(test/common/grins_test_paths.h)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
