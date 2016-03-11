@@ -35,6 +35,7 @@ libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/spalart_allmaras_bc_handling.C
 
 # src/boundary_conditions files
+libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/boundary_conditions.C
 libgrins_la_SOURCES += boundary_conditions/src/bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_func_obj.C
@@ -300,6 +301,7 @@ include_HEADERS += boundary_conditions/include/grins/constant_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/arrhenius_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/power_law_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/bc_factory_abstract.h
+include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_abstract.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
