@@ -56,7 +56,7 @@ namespace GRINS
     ~AveragedFan();
 
 
-    //! Register postprocessing variables for HeatTransfer
+    //! Register postprocessing variables for visualization output
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
 

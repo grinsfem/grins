@@ -29,7 +29,6 @@
 // GRINS
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_nav_stokes_macro.h"
-#include "grins/spalart_allmaras_viscosity.h"
 #include "grins/postprocessed_quantities.h"
 
 
@@ -95,8 +94,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<class Mu>
@@ -237,8 +234,6 @@ namespace GRINS
         this->base_velocity_function(point, context.time, output_vec);
         value = output_vec(2);
       }
-
-    return;
   }
 
 } // namespace GRINS
