@@ -299,6 +299,7 @@ include_HEADERS += boundary_conditions/include/grins/catalycity_base.h
 include_HEADERS += boundary_conditions/include/grins/constant_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/arrhenius_catalycity.h
 include_HEADERS += boundary_conditions/include/grins/power_law_catalycity.h
+include_HEADERS += boundary_conditions/include/grins/bc_factory_abstract.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
