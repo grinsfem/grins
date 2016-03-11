@@ -50,7 +50,12 @@ namespace GRINS
 
     ~VariablesBase(){};
 
-
+    //! Subclasses implement this to add variables to the system
+    /*! This method assumes that the variable names were setup
+        during construction. Then, we'll just grab the variable
+        number based on the variable name. */
+    virtual void init( libMesh::FEMSystem* system )
+    { this->default_var_init(system); }
 
   protected:
 

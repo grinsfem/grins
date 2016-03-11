@@ -51,9 +51,6 @@ namespace GRINS
 
     ~SpeciesMassFractionsVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
-
     unsigned int n_species() const;
 
     VariableIndex species( unsigned int species ) const;

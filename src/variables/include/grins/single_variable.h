@@ -55,9 +55,6 @@ namespace GRINS
 
     ~SingleVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
-
   private:
 
     SingleVariable();
