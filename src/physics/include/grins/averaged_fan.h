@@ -55,6 +55,12 @@ namespace GRINS
 
     ~AveragedFan();
 
+
+    //! Register postprocessing variables for HeatTransfer
+    virtual void register_postprocessing_vars( const GetPot& input,
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+
+
     virtual void init_context( AssemblyContext& context );
 
     // residual and jacobian calculations
@@ -65,9 +71,26 @@ namespace GRINS
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
+    //! Compute value of postprocessed quantities at libMesh::Point.
+    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
+                                                 const AssemblyContext& context,
+                                                 const libMesh::Point& point,
+                                                 libMesh::Real& value );
+
   private:
 
+    //! Index from registering this postprocessed quantity
+    unsigned int _base_velocity_x_index;
+
+    //! Index from registering this postprocessed quantity
+    unsigned int _base_velocity_y_index;
+
+    //! Index from registering this postprocessed quantity
+    unsigned int _base_velocity_z_index;
+
     AveragedFan();
+
+
   };
 
 } // end namespace block
