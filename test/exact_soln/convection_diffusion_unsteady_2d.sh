@@ -10,7 +10,7 @@ TESTDATA="./convection_diffusion_unsteady_2d.49.xdr"
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
 
 # Now run the test part to make sure we're getting the correct thing
-${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
+${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
                  input=$INPUT \
                  vars='u' \
                  norms='L2' \
