@@ -248,6 +248,7 @@ TESTS += regression/dirichlet_fem.sh
 TESTS += regression/dirichlet_nan.sh
 TESTS += regression/simple_ode.sh
 TESTS += regression/parsed_qoi.sh
+TESTS += regression/parsed_qoi_scalar.sh
 TESTS += regression/low_mach_cavity_benchmark.sh
 TESTS += regression/backward_facing_step.sh
 TESTS += regression/locally_refine.sh
