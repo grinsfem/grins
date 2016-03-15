@@ -176,7 +176,6 @@ int main(int argc, char* argv[])
   }
 
   es.read(test_data,
-          GRINSEnums::DECODE,
           libMesh::EquationSystems::READ_HEADER |
           libMesh::EquationSystems::READ_DATA |
           libMesh::EquationSystems::READ_ADDITIONAL_DATA);
