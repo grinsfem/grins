@@ -20,7 +20,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'ns_poiseuille_flow'
-   output_format = 'xdr'
+   output_format = 'xda'
 []
 
 # Options for print info to the screen

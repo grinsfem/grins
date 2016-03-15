@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/poiseuille_flow_input.in"
-TESTDATA="./ns_poiseuille_flow.xdr"
+TESTDATA="./ns_poiseuille_flow.xda"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
