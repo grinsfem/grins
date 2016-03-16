@@ -73,7 +73,8 @@ enabled_subdomains = '2'
 
 ##### Linear and nonlinear solver options #####
 [linear-nonlinear-solver]
-relative_residual_tolerance = '1.0e-10'
+relative_residual_tolerance = '1.0e-11'
+relative_step_tolerance = '1.0e-11'
 
 max_nonlinear_iterations =  '50'
 max_linear_iterations = '2500'
