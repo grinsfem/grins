@@ -11,7 +11,7 @@ ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
 # Now run the test part to make sure we're getting the correct thing
 ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
                  input=$INPUT vars='u v p' \
-                 norms='L2' tol='1.0e-10' \
+                 norms='L2' tol='2.0e-9' \
                  u_L2_error='1.0e-10' \
                  v_L2_error='1.0e-10' \
                  p_L2_error='1.0e-10' \
