@@ -20,6 +20,9 @@ verify_analytic_jacobians = 1.0e-6
 
 initial_linear_tolerance = 1.0e-12
 
+relative_residual_tolerance = 1.0e-11
+relative_step_tolerance = 1.0e-11
+
 # Visualization options
 [vis-options]
 output_vis = 'false'
