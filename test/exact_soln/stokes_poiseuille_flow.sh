@@ -5,8 +5,10 @@ set -e
 INPUT="${GRINS_TEST_INPUT_DIR}/stokes_poiseuille_flow_input.in"
 TESTDATA="./stokes_poiseuille_flow.xdr"
 
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_factor_shift_type nonzero -sub_pc_factor_levels 4"
+
 # First run the case with grins
-${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
+${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT $PETSC_OPTIONS
 
 # Now run the test part to make sure we're getting the correct thing
 ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
