@@ -48,7 +48,7 @@ namespace GRINS
 
     VariablesBase(){};
 
-    ~VariablesBase(){};
+    virtual ~VariablesBase(){};
 
     //! Subclasses implement this to add variables to the system
     /*! This method assumes that the variable names were setup
