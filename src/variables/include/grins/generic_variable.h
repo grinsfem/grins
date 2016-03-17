@@ -30,12 +30,13 @@ class GetPot;
 
 // GRINS
 #include "grins/single_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
   //! Generic variable for generic physics
   /*! The variable inputs, e.g. name, will be tied to the input physics_name.
-      Thus, the input specification will be [Variables/<physics_name>/name],
+      Thus, the input specification will be [Variables/GenericVariable:<physics_name>/name],
       etc.*/
   class GenericVariable : public SingleVariable
   {
@@ -44,7 +45,7 @@ namespace GRINS
     GenericVariable( const GetPot& input,
                      const std::string& physics_name )
       : SingleVariable(input,
-                       physics_name,
+                       this->section_name(physics_name),
                        this->default_name())
     {}
 
@@ -53,6 +54,9 @@ namespace GRINS
     VariableIndex var() const;
 
   protected:
+
+    std::string section_name(const std::string& physics_name) const
+    { return VariablesParsing::generic_section()+":"+physics_name; }
 
     std::string default_name() const
     { return "u"; }

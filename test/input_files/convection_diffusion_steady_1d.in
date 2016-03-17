@@ -32,7 +32,7 @@
 []
 
 [Variables]
-   [./ConvectionDiffusion]
+   [./GenericVariable:ConvectionDiffusion]
       names = 'u'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
