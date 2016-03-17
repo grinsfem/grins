@@ -216,6 +216,7 @@ libgrins_la_SOURCES += variables/src/velocity_fe_variables.C
 libgrins_la_SOURCES += variables/src/displacement_variables.C
 libgrins_la_SOURCES += variables/src/displacement_fe_variables.C
 libgrins_la_SOURCES += variables/src/species_mass_fracs_variables.C
+libgrins_la_SOURCES += variables/src/variables_factory_base.C
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -481,6 +482,7 @@ include_HEADERS += variables/include/grins/turbulence_fe_variables.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
 include_HEADERS += variables/include/grins/variables_base.h
 include_HEADERS += variables/include/grins/variables_parsing.h
+include_HEADERS += variables/include/grins/variables_factory_base.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h
