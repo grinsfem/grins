@@ -40,7 +40,8 @@ namespace libMesh
 // Definition of static members
 namespace GRINS
 {
-  std::string PhysicsFactoryBase::_physics_name = std::string("DIE!");
+  template<>
+  std::string FactoryWithGetPotPhysicsName<Physics>::_physics_name = std::string("DIE!");
 
   template<>
   const GetPot* FactoryWithGetPot<Physics>::_input = NULL;
