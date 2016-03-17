@@ -125,9 +125,6 @@ namespace GRINS
     static PhysicsName heat_transfer()
     { return "HeatTransfer"+_suffix; }
 
-    static PhysicsName heat_transfer_source()
-    { return "HeatTransferSource"+_suffix; }
-
     static PhysicsName heat_transfer_adjoint_stab()
     { return "HeatTransferAdjointStabilization"+_suffix; }
 
@@ -187,6 +184,9 @@ namespace GRINS
 
     static PhysicsName parsed_source_term()
     { return "ParsedSourceTerm"+_suffix; }
+
+    static PhysicsName convection_diffusion()
+    { return "ConvectionDiffusion"+_suffix; }
 
   private:
 

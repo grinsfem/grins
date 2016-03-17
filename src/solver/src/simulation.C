@@ -33,6 +33,7 @@
 #include "grins/solver_context.h"
 #include "grins/simulation_parsing.h"
 #include "grins/strategies_parsing.h"
+#include "grins/physics_builder.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -147,7 +148,7 @@ namespace GRINS
     libMesh::perflog.disable_logging();
     if( this->_print_log_info ) libMesh::perflog.enable_logging();
 
-    PhysicsList physics_list = sim_builder.build_physics(input);
+    PhysicsList physics_list = PhysicsBuilder::build_physics_map(input);
 
     _multiphysics_system->attach_physics_list( physics_list );
 

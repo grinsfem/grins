@@ -152,30 +152,6 @@ EXTRA_DIST += $(simpleprop_DATA)
 
 
 #=======================================================================
-# Laminar Flame Example
-#=======================================================================
-laminarflamedir = $(prefix)/examples/laminar_flame
-laminarflame_PROGRAMS = bunsen
-laminarflame_DATA  = $(top_srcdir)/examples/laminar_flame/bunsen.in
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/elements.xml
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h
-laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
-
-EXTRA_DIST += $(laminarflame_DATA)
-
-bunsen_SOURCES  = laminar_flame/bunsen.C
-bunsen_SOURCES += laminar_flame/constant_with_exp_layer.C
-bunsen_SOURCES += laminar_flame/bunsen_source.C
-bunsen_SOURCES += laminar_flame/ignite_initial_guess.C
-
-bunsen_LDADD = $(LIBGRINS_LIBS)
-bunsen_CPPFLAGS = -I$(top_srcdir)/examples/laminar_flame $(AM_CPPFLAGS)
-
-
-#=======================================================================
 # Elastic Sheet Example
 #=======================================================================
 elasticsheetdir = $(prefix)/examples/elastic_sheet
