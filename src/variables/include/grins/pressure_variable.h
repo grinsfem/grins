@@ -30,6 +30,7 @@ class GetPot;
 
 // GRINS
 #include "grins/single_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
@@ -54,7 +55,7 @@ namespace GRINS
     { return "pressure"; }
 
     std::string subsection() const
-    { return "Pressure"; }
+    { return VariablesParsing::pressure_section(); }
 
     std::string default_name() const
     { return "p"; }

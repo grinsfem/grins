@@ -30,6 +30,7 @@
 
 // GRINS
 #include "grins/variables_base.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
@@ -62,7 +63,7 @@ namespace GRINS
   protected:
 
     std::string subsection() const
-    { return "Displacement"; }
+    { return VariablesParsing::displacement_section(); }
 
     bool _have_v;
     bool _have_w;

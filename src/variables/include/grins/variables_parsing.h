@@ -31,6 +31,27 @@ namespace GRINS
   {
   public:
 
+    static std::string displacement_section()
+    { return "Displacement"; }
+
+    static std::string pressure_section()
+    { return "Pressure"; }
+
+    static std::string temperature_section()
+    { return "Temperature"; }
+
+    static std::string thermo_pressure_section()
+    { return "ThermoPressure"; }
+
+    static std::string turbulence_section()
+    { return "TurbulentViscosity"; }
+
+    static std::string species_mass_fractions_section()
+    { return "SpeciesMassFractions"; }
+
+    static std::string velocity_section()
+    { return "Velocity"; }
+
     //! Helper function to encapsualte the overall [Variables] section name.
     static std::string variables_section()
     { return "Variables"; }

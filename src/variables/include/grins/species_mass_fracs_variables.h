@@ -32,6 +32,7 @@
 // GRINS
 #include "grins/variables_base.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -58,7 +59,7 @@ namespace GRINS
   protected:
 
     std::string subsection() const
-    { return "SpeciesMassFractions"; }
+    { return VariablesParsing::species_mass_fractions_section(); }
 
   private:
 
