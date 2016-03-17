@@ -63,13 +63,16 @@ tau_factor = '0.05'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  25
+max_nonlinear_iterations =  50
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
 relative_step_tolerance = 1.0e-10
+
+# We'll override this nonsense via PETSc options
+initial_linear_tolerance = 0.5
+minimum_linear_tolerance = 0.5
 
 use_numerical_jacobians_only = 'true'
 

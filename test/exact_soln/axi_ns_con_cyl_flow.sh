@@ -12,7 +12,7 @@ PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 12 -sub_pc_type ilu -sub_pc_factor_m
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT $PETSC_OPTIONS
 
 # Now run the test part to make sure we're getting the correct thing
-${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
+${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
                  input=$INPUT \
                  vars='u_r u_z' \
                  norms='L2' \

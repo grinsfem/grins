@@ -176,7 +176,6 @@ int main(int argc, char* argv[])
   }
 
   es.read(test_data,
-          GRINSEnums::DECODE,
           libMesh::EquationSystems::READ_HEADER |
           libMesh::EquationSystems::READ_DATA |
           libMesh::EquationSystems::READ_ADDITIONAL_DATA);
@@ -270,7 +269,7 @@ int test_error_norm( libMesh::ExactSolution& exact_sol,
     }
   else
     {
-      std::cerr << "ERROR: Invalid norm " << norm << std::endl;
+      std::cout << "ERROR: Invalid norm " << norm << std::endl;
       exit(1);
     }
 
@@ -278,7 +277,7 @@ int test_error_norm( libMesh::ExactSolution& exact_sol,
     {
       return_flag = 1;
 
-      std::cerr << "Tolerance exceeded for generic regression test!" << std::endl
+      std::cout << "Tolerance exceeded for generic regression test!" << std::endl
                 << "tolerance     = " << tol << std::endl
                 << "norm of error = " << error << std::endl
                 << "exact error   = " << exact_error << std::endl

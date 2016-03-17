@@ -136,7 +136,8 @@ relative_residual_tolerance = '1.0e-10'
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
+initial_linear_tolerance = 1.0e-4
+minimum_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
 

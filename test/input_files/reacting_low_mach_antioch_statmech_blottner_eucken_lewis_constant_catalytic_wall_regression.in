@@ -121,7 +121,8 @@ max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
-initial_linear_tolerance = 1.0e-10
+initial_linear_tolerance = 1.0e-8
+minimum_linear_tolerance = 1.0e-8
 
 relative_step_tolerance = 1.0e-10
 
