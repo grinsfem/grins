@@ -43,7 +43,7 @@ namespace GRINSTesting
         to get back the corresponding absolute tolerance. */
     static libMesh::Real abs_tol_from_rel_tol( libMesh::Real exact, libMesh::Real rel_tol )
     {
-      return exact*rel_tol;
+      return std::abs(exact)*rel_tol;
     }
 
     //! Convenience function

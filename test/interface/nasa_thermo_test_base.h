@@ -22,37 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_AIR_NASA_POLY_BASE_H
-#define GRINS_AIR_NASA_POLY_BASE_H
+#ifndef GRINS_NASA_THERMO_TEST_BASE_H
+#define GRINS_NASA_THERMO_TEST_BASE_H
 
-// C++
-#include <vector>
+#include "grins_config.h"
 
-// libMesh
-#include "libmesh/libmesh_common.h"
+#ifdef GRINS_HAVE_CPPUNIT
 
-// GRINS
-#include "grins/physical_constants.h"
+#include <cppunit/extensions/HelperMacros.h>
 
+#include "species_test_base.h"
 #include "thermochem_test_common.h"
 #include "testing_utils.h"
-#include "nasa_poly_test_base.h"
 
 namespace GRINSTesting
 {
-  class AirTestBase
+  class NASAThermoTestBase : public SpeciesTestBase
   {
   public:
 
+    virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
+    virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T ) = 0;
+
     template<typename ThermoMixture, typename ThermoEvaluator>
-    void test_cp_common( ThermoMixture& mixture, AirTestBase& testing_funcs, libMesh::Real rel_tol )
+    void test_cp_common( ThermoMixture& mixture, const std::vector<libMesh::Real>& Y, libMesh::Real rel_tol )
     {
-      const unsigned int n_species = 5;
-      std::vector<libMesh::Real> Y(n_species,0.0);
-      Y[_N2_idx] = 0.15;
-      Y[_O2_idx] = 0.35;
-      Y[_NO_idx] = 0.25;
-      Y[_O_idx] = 0.25;
+      CPPUNIT_ASSERT_EQUAL(_active_species.size(), Y.size() );
 
       ThermoEvaluator evaluator( mixture );
 
@@ -66,11 +66,9 @@ namespace GRINSTesting
 
           libMesh::Real cp_mix_computed =  evaluator.cp( T, P, Y );
 
-          std::vector<libMesh::Real> species_cp(n_species,0.0);
-          species_cp[_N2_idx] = testing_funcs.cp_exact(_N2_idx, T);
-          species_cp[_O2_idx] = testing_funcs.cp_exact(_O2_idx, T);
-          species_cp[_NO_idx] = testing_funcs.cp_exact(_NO_idx, T);
-          species_cp[_O_idx]  = testing_funcs.cp_exact(_O_idx, T);
+          std::vector<libMesh::Real> species_cp(_active_species.size(),0.0);
+          for( unsigned int s = 0; s < _active_species.size(); s++ )
+            species_cp[s] = this->cp_exact(_active_species[s], T);
 
           libMesh::Real cp_mix_exact =
             ThermochemTestCommon::compute_mass_frac_mixture_prop( species_cp, Y );
@@ -88,7 +86,7 @@ namespace GRINSTesting
     }
 
     template<typename ThermoMixture, typename ThermoEvaluator>
-    void test_h_common( ThermoMixture& mixture, AirTestBase& testing_funcs, libMesh::Real rel_tol )
+    void test_h_common( ThermoMixture& mixture, libMesh::Real rel_tol )
     {
       ThermoEvaluator evaluator( mixture );
 
@@ -101,66 +99,24 @@ namespace GRINSTesting
           ss << T;
           std::string message = "T = "+ss.str();
 
-          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_N2_idx, T), rel_tol );
-          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
-                                                testing_funcs.h_exact(_N2_idx, T), /* exact */
-                                                evaluator.h_s( T, _N2_idx ), /* computed */
-                                                tol );
+          for( unsigned int s = 0; s < _active_species.size(); s++ )
+            {
+              libMesh::Real h_exact = this->h_exact(_active_species[s], T);
 
-          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_O2_idx, T), rel_tol );
-          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
-                                                testing_funcs.h_exact(_O2_idx, T), /* exact */
-                                                evaluator.h_s( T, _O2_idx ), /* computed */
-                                                tol );
+              libMesh::Real h_computed = evaluator.h_s( T, _active_species[s] );
+              tol = TestingUtils::abs_tol_from_rel_tol( h_exact, rel_tol );
 
-          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_NO_idx, T), rel_tol );
-          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
-                                                testing_funcs.h_exact(_NO_idx, T), /* exact */
-                                                evaluator.h_s( T, _NO_idx ), /* computed */
-                                                tol );
-
-          tol = TestingUtils::abs_tol_from_rel_tol( testing_funcs.h_exact(_O_idx, T), rel_tol );
-          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
-                                                testing_funcs.h_exact(_O_idx, T), /* exact */
-                                                evaluator.h_s( T, _O_idx ), /* computed */
-                                                tol );
+              CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE( message,
+                                                    h_exact,
+                                                    h_computed,
+                                                    tol );
+            }
 
           T += 100.0;
         }
     }
 
   protected:
-
-    virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T ) = 0;
-
-    virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T ) = 0;
-
-    libMesh::Real molar_mass( unsigned int idx )
-    {
-      libMesh::Real value = 0.0;
-
-      if(idx == _N2_idx)
-          value = 28.016;
-
-      else if( idx == _O2_idx)
-        value = 32.0;
-
-      else if( idx == _NO_idx)
-        value = 30.008;
-
-      else if(idx == _O_idx)
-        value = 16.0;
-
-      else
-        CPPUNIT_FAIL("Invalid idx for molar_mass");
-
-      return value;
-    }
-
-    libMesh::Real R_species( unsigned int idx )
-    {
-      return GRINS::Constants::R_universal/this->molar_mass(idx);
-    }
 
     const std::vector<libMesh::Real>& nasa_coeffs( unsigned int idx )
     {
@@ -176,6 +132,9 @@ namespace GRINSTesting
       else if(idx == _O_idx)
         return _O_200_1000_coeffs;
 
+      else if(idx == _N_idx)
+        return _N_200_1000_coeffs;
+
       else
         CPPUNIT_FAIL("Invalid idx for nasa_coeffs");
 
@@ -183,50 +142,72 @@ namespace GRINSTesting
       return _N2_200_1000_coeffs;
     }
 
-    // Species indices. Should be set by subclass at init time.
-    unsigned int _N2_idx, _O2_idx, _O_idx, _N_idx, _NO_idx;
-
     std::vector<libMesh::Real> _N2_200_1000_coeffs;
     std::vector<libMesh::Real> _O2_200_1000_coeffs;
     std::vector<libMesh::Real> _O_200_1000_coeffs;
     std::vector<libMesh::Real> _NO_200_1000_coeffs;
+    std::vector<libMesh::Real> _N_200_1000_coeffs;
+
   };
 
-  class AirNASA7TestBase : public AirTestBase,
-                           public NASA7TestBase
+  class NASA7ThermoTestBase : public NASAThermoTestBase
   {
   public:
-    AirNASA7TestBase()
+
+    NASA7ThermoTestBase()
     {
       this->init_N2_coeffs();
       this->init_O2_coeffs();
       this->init_O_coeffs();
       this->init_NO_coeffs();
+      this->init_N_coeffs();
     }
-
-  protected:
 
     virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->cp_R_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4])*this->R_species(species_idx);
+      return ThermochemTestCommon::nasa7_cp_R_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4])*this->R_species(species_idx);
     }
 
     virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->h_RT_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5])*this->R_species(species_idx)*T;
+      return ThermochemTestCommon::nasa7_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5])*this->R_species(species_idx)*T;
+    }
+
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa7_s_R_exact(T,
+                                                   coeffs[0],
+                                                   coeffs[1],
+                                                   coeffs[2],
+                                                   coeffs[3],
+                                                   coeffs[4],
+                                                   coeffs[6]);
+    }
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa7_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5]);
     }
 
   private:
@@ -283,48 +264,87 @@ namespace GRINSTesting
       _NO_200_1000_coeffs[6] =  2.28061001E+00;
     }
 
+    void init_N_coeffs()
+    {
+      _N_200_1000_coeffs.resize(7);
+
+      _N_200_1000_coeffs[0] =  2.50000000E+00;
+      _N_200_1000_coeffs[1] =  0.0;
+      _N_200_1000_coeffs[2] =  0.0;
+      _N_200_1000_coeffs[3] =  0.0;
+      _N_200_1000_coeffs[4] =  0.0;
+      _N_200_1000_coeffs[5] =  5.61046378E+04;
+      _N_200_1000_coeffs[6] =  4.19390932E+00;
+    }
+
   };
 
-  class AirNASA9TestBase : public AirTestBase,
-                           public NASA9TestBase
+  class NASA9ThermoTestBase : public NASAThermoTestBase
   {
   public:
 
-    AirNASA9TestBase()
+    NASA9ThermoTestBase()
     {
       this->init_N2_coeffs();
       this->init_O2_coeffs();
       this->init_O_coeffs();
       this->init_NO_coeffs();
+      this->init_N_coeffs();
     }
-
-  protected:
 
     virtual libMesh::Real cp_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->cp_R_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5],
-                              coeffs[6])*this->R_species(species_idx);
+      return ThermochemTestCommon::nasa9_cp_R_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6])*this->R_species(species_idx);
     }
 
     virtual libMesh::Real h_exact( unsigned int species_idx, libMesh::Real T )
     {
       const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
-      return this->h_RT_exact(T,
-                              coeffs[0],
-                              coeffs[1],
-                              coeffs[2],
-                              coeffs[3],
-                              coeffs[4],
-                              coeffs[5],
-                              coeffs[6],
-                              coeffs[7])*this->R_species(species_idx)*T;
+      return ThermochemTestCommon::nasa9_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6],
+                                                    coeffs[7])*this->R_species(species_idx)*T;
+    }
+
+    virtual libMesh::Real s_R_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa9_s_R_exact(T,
+                                                   coeffs[0],
+                                                   coeffs[1],
+                                                   coeffs[2],
+                                                   coeffs[3],
+                                                   coeffs[4],
+                                                   coeffs[5],
+                                                   coeffs[6],
+                                                   coeffs[8]);
+    }
+
+    virtual libMesh::Real h_RT_exact( unsigned int species_idx, libMesh::Real T )
+    {
+      const std::vector<libMesh::Real> coeffs = this->nasa_coeffs(species_idx);
+      return ThermochemTestCommon::nasa9_h_RT_exact(T,
+                                                    coeffs[0],
+                                                    coeffs[1],
+                                                    coeffs[2],
+                                                    coeffs[3],
+                                                    coeffs[4],
+                                                    coeffs[5],
+                                                    coeffs[6],
+                                                    coeffs[7]);
     }
 
   private:
@@ -389,7 +409,25 @@ namespace GRINSTesting
       _NO_200_1000_coeffs[8] =  6.72872795e+00;
     }
 
-  };
-}
+    void init_N_coeffs()
+    {
+      _N_200_1000_coeffs.resize(9);
 
-#endif // GRINS_AIR_NASA_POLY_BASE_H
+      _N_200_1000_coeffs[0] =  0.0;
+      _N_200_1000_coeffs[1] =  0.0;
+      _N_200_1000_coeffs[2] =  2.5;
+      _N_200_1000_coeffs[3] =  0.0;
+      _N_200_1000_coeffs[4] =  0.0;
+      _N_200_1000_coeffs[5] =  0.0;
+      _N_200_1000_coeffs[6] =  0.0;
+      _N_200_1000_coeffs[7] =  5.61046378e+04;
+      _N_200_1000_coeffs[8] =  4.19390932e+00;
+    }
+
+  };
+
+} // end namespace GRINSTesting
+
+#endif // GRINS_HAVE_CPPUNIT
+
+#endif // GRINS_NASA_THERMO_TEST_BASE_H
