@@ -44,13 +44,20 @@ namespace GRINS
   public:
 
     SpeciesMassFractionsVariables( const GetPot& input, const std::string& material_name )
-      : VariablesBase()
+      : VariablesBase(),
+        _prefix( input("Variables/"+this->subsection()+"/names", "w_" ) )
     {
-      std::string prefix = input("Variables/"+this->subsection()+"/names", "w_" );
-      MaterialsParsing::parse_species_varnames(input, material_name, prefix, _var_names);
+      MaterialsParsing::parse_species_varnames(input, material_name, _prefix, _var_names);
     }
 
+    SpeciesMassFractionsVariables( const GetPot& input )
+      : VariablesBase(),
+        _prefix( input("Variables/"+this->subsection()+"/names", "w_" ) )
+    {}
+
     ~SpeciesMassFractionsVariables(){};
+
+    virtual void init_vars( libMesh::FEMSystem* system );
 
     unsigned int n_species() const;
 
@@ -60,6 +67,10 @@ namespace GRINS
 
     std::string subsection() const
     { return VariablesParsing::species_mass_fractions_section(); }
+
+    void vars_from_species_prefix( libMesh::FEMSystem* system );
+
+    std::string _prefix;
 
   private:
 
