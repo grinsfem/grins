@@ -50,6 +50,17 @@ namespace GRINS
       return returnval;
     }
 
+    template <typename T>
+    inline
+    std::string T_to_string(const T input)
+    {
+      std::stringstream converter;
+      converter << input;
+      if (converter.fail())
+        libmesh_error();
+      return converter.str();
+    }
+
     /*!
       Split on colon, and return name, int value pair.
       Taken from FIN-S for XML parsing.
