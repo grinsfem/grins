@@ -276,6 +276,7 @@ include_HEADERS += bc_handling/include/grins/spalart_allmaras_bc_handling.h
 
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
+include_HEADERS += boundary_conditions/include/grins/boundary_condition_names.h
 include_HEADERS += boundary_conditions/include/grins/boundary_conditions.h
 include_HEADERS += boundary_conditions/include/grins/bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/neumann_func_obj.h
