@@ -46,7 +46,7 @@ namespace GRINS
     VelocityVariables( const GetPot& input );
     ~VelocityVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init_vars( libMesh::FEMSystem* system );
 
     VariableIndex u() const;
     VariableIndex v() const;

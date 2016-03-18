@@ -390,7 +390,7 @@ namespace GRINS
     // Call base class
     LowMachNavierStokesBCHandling::init_bc_data(system);
 
-    _species_vars.init( const_cast<libMesh::FEMSystem*>(&system) );
+    _species_vars.init_vars( const_cast<libMesh::FEMSystem*>(&system) );
 
     // See if we have a catalytic wall and initialize them if we do
     for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _neumann_bc_map.begin();

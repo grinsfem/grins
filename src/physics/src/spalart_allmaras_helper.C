@@ -50,10 +50,8 @@ namespace GRINS
   {
     this->_dim = system->get_mesh().mesh_dimension();
 
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
-
-    return;
+    this->_flow_vars.init_vars(system);
+    this->_press_var.init_vars(system);
   }
 
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const

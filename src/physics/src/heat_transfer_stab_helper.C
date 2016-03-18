@@ -66,11 +66,9 @@ namespace GRINS
 
   void HeatTransferStabilizationHelper::init( libMesh::FEMSystem& system )
   {
-    _temp_vars.init(&system);
-    _flow_vars.init(&system);
-    _press_var.init(&system);
-
-    return;
+    _temp_vars.init_vars(&system);
+    _flow_vars.init_vars(&system);
+    _press_var.init_vars(&system);
   }
 
   libMesh::Real HeatTransferStabilizationHelper::compute_res_energy_steady( AssemblyContext& context,

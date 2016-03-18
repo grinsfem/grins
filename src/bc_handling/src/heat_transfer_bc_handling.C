@@ -82,9 +82,7 @@ namespace GRINS
 
   void HeatTransferBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _temp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
-
-    return;
+    _temp_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
   }
   
   void HeatTransferBCHandling::init_bc_types( const BoundaryID bc_id, 

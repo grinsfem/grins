@@ -96,9 +96,7 @@ namespace GRINS
 
   void SolidMechanicsBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _disp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
-
-    return;
+    _disp_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
   }
 
   void SolidMechanicsBCHandling::init_bc_types( const BoundaryID bc_id,

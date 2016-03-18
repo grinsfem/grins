@@ -67,10 +67,8 @@ namespace GRINS
 
   void IncompressibleNavierStokesStabilizationHelper::init( libMesh::FEMSystem& system )
   {
-    _flow_vars.init(&system);
-    _press_var.init(&system);
-
-    return;
+    _flow_vars.init_vars(&system);
+    _press_var.init_vars(&system);
   }
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U, 

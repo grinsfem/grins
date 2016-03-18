@@ -64,17 +64,15 @@ namespace GRINS
 
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
-    this->_flow_vars.init(&system);
-    this->_press_var.init(&system);
+    this->_flow_vars.init_vars(&system);
+    this->_press_var.init_vars(&system);
 
-    this->_turbulence_vars.init(&system);
+    this->_turbulence_vars.init_vars(&system);
 
     // Init the variables belonging to SA helper
     _spalart_allmaras_helper.init_variables(&system);
 
     this->_dim = system.get_mesh().mesh_dimension();
-
-    return;
   }
 
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
