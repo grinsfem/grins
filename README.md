@@ -60,7 +60,16 @@ METHOD
 By default, GRINS leverages the METHOD environment variable
 (described [here](https://github.com/libMesh/libmesh/blob/master/README.md)) in order to
 retrieve the CXXFLAGS variable from the [libMesh](https://github.com/libMesh/libmesh.git)
-installation (if METHOD is not present, the default is "opt"). The user can define
+installation (if METHOD is not present, the default is "opt"). Note that unlike libMesh,
+GRINS currently only supports building one METHOD at a time. Hence, we use `METHOD` and
+not `METHODS`. For example
+<pre><code>
+./configure METHOD=devel
+</code>
+</pre>
+is valid.
+
+The user can define
 their own CXXFLAGS variable by passing 
 <pre><code>
 --disable-libmesh-flags CXXFLAGS="your flags here"
