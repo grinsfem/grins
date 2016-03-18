@@ -57,6 +57,11 @@ namespace GRINS
     virtual void init_vars( libMesh::FEMSystem* system )
     { this->default_var_init(system); }
 
+    //! Return the var names that are active from this class
+    /*! This must not be called until init_vars has been called. */
+    const std::vector<std::string>& active_var_names() const
+    { return _var_names; }
+
   protected:
 
     //! Default method for init'ing variables
