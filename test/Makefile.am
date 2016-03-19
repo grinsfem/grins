@@ -70,7 +70,7 @@ endif
 check_PROGRAMS =
 
 # Unit Tests
-check_PROGRAMS += unit_cppunit_test
+check_PROGRAMS += unit_driver
 check_PROGRAMS += antioch_mixture
 check_PROGRAMS += arrhenius_catalycity
 check_PROGRAMS += cantera_mixture
@@ -109,8 +109,8 @@ check_PROGRAMS += axisym_reacting_low_mach_regression
 check_PROGRAMS += generic_amr_testing_app
 
 # Unit test source files
-unit_cppunit_test_SOURCES = unit/unit_cppunit_test.C \
-                            unit/string_utils.C
+unit_driver_SOURCES = unit/unit_driver.C \
+                      unit/string_utils.C
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -162,7 +162,7 @@ TESTS =
 XFAIL_TESTS =
 
 # Unit TESTS
-TESTS += unit_cppunit_test
+TESTS += unit_driver
 TESTS += unit/antioch_mixture.sh
 TESTS += arrhenius_catalycity
 TESTS += unit/cantera_mixture.sh
