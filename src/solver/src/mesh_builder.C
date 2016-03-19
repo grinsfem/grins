@@ -42,17 +42,6 @@
 
 namespace GRINS
 {
-
-  MeshBuilder::MeshBuilder()
-  {
-    return;
-  }
-
-  MeshBuilder::~MeshBuilder()
-  {
-    return;
-  }
-
   SharedPtr<libMesh::UnstructuredMesh> MeshBuilder::build
     (const GetPot& input,
      const libMesh::Parallel::Communicator &comm)

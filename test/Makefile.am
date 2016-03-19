@@ -70,7 +70,7 @@ endif
 check_PROGRAMS =
 
 # Unit Tests
-check_PROGRAMS += unit_cppunit_test
+check_PROGRAMS += unit_driver
 check_PROGRAMS += antioch_mixture
 check_PROGRAMS += arrhenius_catalycity
 check_PROGRAMS += cantera_mixture
@@ -81,7 +81,7 @@ check_PROGRAMS += gas_solid_catalytic_wall
 check_PROGRAMS += power_law_catalycity
 
 # Interface Tests
-check_PROGRAMS += interface_cppunit_test
+check_PROGRAMS += interface_driver
 check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
 check_PROGRAMS += cantera_transport_regression
 
@@ -109,8 +109,9 @@ check_PROGRAMS += axisym_reacting_low_mach_regression
 check_PROGRAMS += generic_amr_testing_app
 
 # Unit test source files
-unit_cppunit_test_SOURCES = unit/unit_cppunit_test.C \
-                            unit/string_utils.C
+unit_driver_SOURCES = unit/unit_driver.C \
+                      unit/string_utils.C \
+                      unit/mesh_builder.C
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -121,8 +122,8 @@ gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 
 # Interface test source files
-interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C \
-                                 interface/air_5sp.C
+interface_driver_SOURCES = interface/interface_driver.C \
+                           interface/air_5sp.C
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
@@ -162,7 +163,7 @@ TESTS =
 XFAIL_TESTS =
 
 # Unit TESTS
-TESTS += unit_cppunit_test
+TESTS += unit_driver
 TESTS += unit/antioch_mixture.sh
 TESTS += arrhenius_catalycity
 TESTS += unit/cantera_mixture.sh
@@ -175,7 +176,7 @@ TESTS += unit/gas_solid_catalytic_wall_cantera.sh
 TESTS += power_law_catalycity
 
 # Interface TESTS
-TESTS += interface_cppunit_test
+TESTS += interface_driver
 TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
 TESTS += interface/cantera_transport_regression.sh
 
@@ -274,6 +275,8 @@ TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 #AMR TESTS
 TESTS += amr/convection_diffusion_unsteady_2d.sh
+
+EXTRA_DIST = unit/input_files
 
 CLEANFILES =
 

@@ -28,4 +28,6 @@
 #define GRINS_TEST_SRCDIR "@abs_top_srcdir@/test"
 #define GRINS_TEST_BUILDDIR "@abs_top_buiddir@/test"
 
+#define GRINS_TEST_UNIT_INPUT_SRCDIR "@abs_top_srcdir@/test/unit/input_files"
+
 #endif // GRINS_TEST_PATHS_H

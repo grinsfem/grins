@@ -1,0 +1,7 @@
+# Mesh related options                                                                                                                                                                                                                       
+[Mesh]
+   [./Generation]
+      dimension = '1'
+      element_type = 'EDGE2'
+      n_elems_x = '22'
+[]
