@@ -47,6 +47,11 @@ namespace GRINS
 
     ~OldStyleBCBuilder(){};
 
+  protected:
+
+    virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
+                            std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+
   };
 } // end namespace GRINS
 
