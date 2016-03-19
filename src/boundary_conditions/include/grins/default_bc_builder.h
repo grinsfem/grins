@@ -82,6 +82,9 @@ namespace GRINS
                                   std::set<std::string>& var_sections,
                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs);
 
+    void parse_and_build_bc_id_map( const GetPot& input,
+                                    std::map<std::string,std::set<BoundaryID> >& bc_id_map );
+
   };
 } // end namespace GRINS
 

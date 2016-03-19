@@ -243,4 +243,58 @@ namespace GRINS
       } // end loop over variable sections
   }
 
+  void DefaultBCBuilder::parse_and_build_bc_id_map( const GetPot& input,
+                                                    std::map<std::string,std::set<BoundaryID> >& bc_id_map )
+  {
+    // First, make sure the proper input variables have been set
+    if( !input.have_variable(BoundaryConditionNames::bc_ids_var()) ||
+        !input.have_variable(BoundaryConditionNames::bc_id_name_map_var()) )
+      {
+        std::string error_msg = "ERROR: Must specify both "+BoundaryConditionNames::bc_ids_var();
+        error_msg += " and "+BoundaryConditionNames::bc_id_name_map_var()+"!";
+        libmesh_error_msg(error_msg);
+      }
+
+    // Make sure the vectors are the same size
+    unsigned int n_ids = input.vector_variable_size(BoundaryConditionNames::bc_ids_var());
+    unsigned int n_names = input.vector_variable_size(BoundaryConditionNames::bc_id_name_map_var());
+
+    if( n_ids != n_names )
+      libmesh_error_msg("ERROR: Must have matching number of boundary id sets and boundary names!");
+
+    // We'll build this up along the way and then double check
+    // that we have a one-to-one match with the boundary ids
+    // that the mesh knows about
+    std::set<BoundaryID> all_bc_ids;
+
+    // Now build up the map
+    for( unsigned int i = 0; i < n_names; i++ )
+      {
+        std::string bc_name = input(BoundaryConditionNames::bc_id_name_map_var(),std::string("DIE!"),i);
+        std::string bc_ids_input = input(BoundaryConditionNames::bc_ids_var(),std::string("DIE!"),i);
+
+        // Users can group multiple bc_ids together with the ':' delimiter
+        std::vector<std::string> bc_ids_str;
+        StringUtilities::split_string( bc_ids_input, ":", bc_ids_str );
+        std::set<BoundaryID> bc_ids;
+
+        for(std::vector<std::string>::const_iterator it = bc_ids_str.begin();
+            it < bc_ids_str.end(); ++it )
+          {
+            BoundaryID id = StringUtilities::string_to_T<BoundaryID>(*it);
+
+            // Can only specify a boundary id once
+            if( (bc_ids.find(id) != bc_ids.end()) ||
+                (all_bc_ids.find(id) != all_bc_ids.end())   )
+              libmesh_error_msg("ERROR: Can only specify a boundary ID once!");
+
+            bc_ids.insert(id);
+            all_bc_ids.insert(id);
+          }
+
+        // Insert pair into the bc_id_map
+        bc_id_map.insert( std::make_pair( bc_name, bc_ids ) );
+      }
+  }
+
 } // end namespace GRINS
