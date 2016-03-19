@@ -45,10 +45,48 @@ namespace GRINSTesting
   public:
     CPPUNIT_TEST_SUITE( DefaultBCBuilderTest );
 
+    CPPUNIT_TEST( test_parse_and_build_bc_id_map );
+
     CPPUNIT_TEST_SUITE_END();
 
   public:
 
+    void test_parse_and_build_bc_id_map()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
+      GetPot input(filename);
+
+      std::map<std::string,std::set<GRINS::BoundaryID> > bc_id_map;
+      this->parse_and_build_bc_id_map(input,bc_id_map);
+
+      // Make sure we have the right sections
+      CPPUNIT_ASSERT_EQUAL(3,(int)bc_id_map.size());
+      CPPUNIT_ASSERT( bc_id_map.find("Hot") != bc_id_map.end() );
+      CPPUNIT_ASSERT( bc_id_map.find("Together") != bc_id_map.end() );
+      CPPUNIT_ASSERT( bc_id_map.find("Cold") != bc_id_map.end() );
+
+      // Make sure we have the right number and values of the bc ids
+      {
+        std::set<GRINS::BoundaryID> bc_ids = bc_id_map["Hot"];
+        CPPUNIT_ASSERT_EQUAL(1,(int)bc_ids.size());
+        CPPUNIT_ASSERT(bc_ids.find(0) != bc_ids.end());
+      }
+
+      // Make sure we have the right number and values of the bc ids
+      {
+        std::set<GRINS::BoundaryID> bc_ids = bc_id_map["Together"];
+        CPPUNIT_ASSERT_EQUAL(2,(int)bc_ids.size());
+        CPPUNIT_ASSERT(bc_ids.find(1) != bc_ids.end());
+        CPPUNIT_ASSERT(bc_ids.find(2) != bc_ids.end());
+      }
+
+      // Make sure we have the right number and values of the bc ids
+      {
+        std::set<GRINS::BoundaryID> bc_ids = bc_id_map["Cold"];
+        CPPUNIT_ASSERT_EQUAL(1,(int)bc_ids.size());
+        CPPUNIT_ASSERT(bc_ids.find(3) != bc_ids.end());
+      }
+    }
   };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( DefaultBCBuilderTest );
