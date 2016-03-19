@@ -39,6 +39,7 @@
 #include "grins/velocity_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/variables_factory.h"
 
 namespace GRINSTesting
 {
@@ -90,6 +91,16 @@ namespace GRINSTesting
         const std::vector<std::string>& var_names = vel_vars.active_var_names();
         this->test_vel_var_names_2d(var_names);
       }
+
+      // Now try using the variables factory
+      {
+        GRINS::VariablesFactoryBase::set_getpot(*_input);
+        libMesh::UniquePtr<GRINS::VariablesBase> vel_vars =  GRINS::VariablesFactoryBase::build("Velocity");
+        vel_vars->init_vars(_system);
+
+        const std::vector<std::string>& var_names = vel_vars->active_var_names();
+        this->test_vel_var_names_2d(var_names);
+      }
     }
 
     void test_velocity_3d()
@@ -118,6 +129,16 @@ namespace GRINSTesting
         vel_vars.init_vars(_system);
 
         const std::vector<std::string>& var_names = vel_vars.active_var_names();
+        this->test_vel_var_names_3d(var_names);
+      }
+
+      // Now try using the variables factory
+      {
+        GRINS::VariablesFactoryBase::set_getpot(*_input);
+        libMesh::UniquePtr<GRINS::VariablesBase> vel_vars =  GRINS::VariablesFactoryBase::build("Velocity");
+        vel_vars->init_vars(_system);
+
+        const std::vector<std::string>& var_names = vel_vars->active_var_names();
         this->test_vel_var_names_3d(var_names);
       }
     }
@@ -150,6 +171,16 @@ namespace GRINSTesting
         const std::vector<std::string>& var_names = temp_vars.active_var_names();
         this->test_temp_var_names(var_names);
       }
+
+      // Now try using the variables factory
+      {
+        GRINS::VariablesFactoryBase::set_getpot(*_input);
+        libMesh::UniquePtr<GRINS::VariablesBase> temp_vars =  GRINS::VariablesFactoryBase::build("Temperature");
+        temp_vars->init_vars(_system);
+
+        const std::vector<std::string>& var_names = temp_vars->active_var_names();
+        this->test_temp_var_names(var_names);
+      }
     }
 
     void test_species_mass_fracs()
@@ -180,13 +211,17 @@ namespace GRINSTesting
 
         const std::vector<std::string>& var_names =
         species_vars.active_var_names();
+        this->test_species_var_names_no_order(var_names);
+      }
 
-        // For this one, we can't guarantee the order, so we check to
-        // make sure both the species are there.
-        CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N2")
-                        != var_names.end() );
-        CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N")
-                        != var_names.end() );
+      // Now try using the variables factory
+      {
+        GRINS::VariablesFactoryBase::set_getpot(*_input);
+        libMesh::UniquePtr<GRINS::VariablesBase> species_vars =  GRINS::VariablesFactoryBase::build("SpeciesMassFractions");
+        species_vars->init_vars(_system);
+
+        const std::vector<std::string>& var_names = species_vars->active_var_names();
+        this->test_species_var_names_no_order(var_names);
       }
     }
 
@@ -220,6 +255,17 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(2,(int)var_names.size());
       CPPUNIT_ASSERT_EQUAL(std::string("Y_N2"),var_names[0]);
       CPPUNIT_ASSERT_EQUAL(std::string("Y_N"),var_names[1]);
+    }
+
+    void test_species_var_names_no_order( const std::vector<std::string>& var_names )
+    {
+      // For this one, we can't guarantee the order, so we check to
+      // make sure both the species are there.
+      CPPUNIT_ASSERT_EQUAL(2,(int)var_names.size());
+      CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N2")
+                        != var_names.end() );
+      CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N")
+                        != var_names.end() );
     }
 
     void test_vel_fe_2d( const libMesh::System& system )
