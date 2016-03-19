@@ -111,9 +111,9 @@ namespace GRINS
 
   void LowMachNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _flow_vars.init(const_cast<libMesh::FEMSystem*>(&system));
+    _flow_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
 
-    _temp_vars.init(const_cast<libMesh::FEMSystem*>(&system));
+    _temp_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
 
     return;
   }

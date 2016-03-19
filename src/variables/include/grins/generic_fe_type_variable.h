@@ -36,7 +36,7 @@ namespace GRINS
 {
   //! Generic FE variable for generic physics
   /*! The variable inputs, e.g. fe_family, will be tied to the input physics_name.
-      Thus, the input specification will be [Variables/<physics_name>/fe_family],
+      Thus, the input specification will be [Variables/GenericVariable:<physics_name>/fe_family],
       etc.*/
   class GenericFETypeVariable : public SingleFETypeVariable,
                                 public GenericVariable
@@ -45,7 +45,7 @@ namespace GRINS
 
     GenericFETypeVariable( const GetPot& input,
                            const std::string& physics_name )
-      : SingleFETypeVariable(input,physics_name),
+      : SingleFETypeVariable(input,this->section_name(physics_name)),
         GenericVariable(input,physics_name)
     {}
 

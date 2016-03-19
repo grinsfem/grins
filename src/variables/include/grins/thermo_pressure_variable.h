@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/single_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
@@ -52,7 +53,7 @@ namespace GRINS
     { return "thermo_presure"; }
 
     std::string subsection() const
-    { return "ThermoPressure"; }
+    { return VariablesParsing::thermo_pressure_section(); }
 
     std::string default_name() const
     { return "p0"; }

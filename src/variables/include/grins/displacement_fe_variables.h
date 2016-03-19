@@ -37,20 +37,28 @@ namespace GRINS
   {
   public:
 
-    DisplacementFEVariables( const GetPot& input, const std::string& physics_name );
+    //! Constructor
+    /*! The arguments specify whether the spatial mesh is really 2D or 3D.
+     *  This is needed for cases such as a 1D beam in 2D (is_2D = true)
+     *  or 3D (is_3D = true) space or 2D shell manifolds in 3D (is_3D = true). */
+    DisplacementFEVariables( const GetPot& input,
+                             const std::string& physics_name,
+                             bool is_2D, bool is_3D );
+
     virtual ~DisplacementFEVariables(){};
 
     //! Initialize System variables
-    /*!
-     *  Additional arguments specify whether the spatial mesh is really 2D or 3D.
-     * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
-     * space or 2D shell manifolds in 3D (is_3D = true).
-     */
-    void init( libMesh::FEMSystem* system, bool is_2D, bool is_3D );
+    virtual void init( libMesh::FEMSystem* system );
 
   private:
 
     DisplacementFEVariables();
+
+    //! Tracks whether this is a 2D problem
+    bool _is_2D;
+
+    //! Tracks whether this is a 3D problem
+    bool _is_3D;
 
   };
 

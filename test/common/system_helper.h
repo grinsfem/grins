@@ -22,54 +22,45 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRIMITIVE_TEMP_VARIABLES_H
-#define GRINS_PRIMITIVE_TEMP_VARIABLES_H
-
-// libMesh forward declarations
-class GetPot;
-
 // GRINS
-#include "grins/single_variable.h"
-#include "grins/variables_parsing.h"
+#include "grins/shared_ptr.h"
+#include "grins/multiphysics_sys.h"
+#include "grins/mesh_builder.h"
 
-namespace GRINS
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/unstructured_mesh.h"
+#include "libmesh/equation_systems.h"
+
+namespace GRINSTesting
 {
-  class PrimitiveTempVariables : public SingleVariable
+  //! Helper class for setting up basic GRINS::MultiphysicsSystem for unit testing
+  class SystemHelper
   {
-  public:
-
-    PrimitiveTempVariables( const GetPot& input )
-      : SingleVariable(input,
-                       this->old_var_name(),
-                       this->subsection(),
-                       this->default_name())
-    {}
-
-    ~PrimitiveTempVariables(){};
-
-    VariableIndex T() const;
-
   protected:
 
-    std::string old_var_name() const
-    { return VariablesParsing::temperature_section(); }
+    void setup_multiphysics_system(const std::string& filename)
+    {
+      _input.reset( new GetPot(filename) );
+      GRINS::MeshBuilder mesh_builder;
+      _mesh = mesh_builder.build( *_input, *TestCommWorld );
+      _es.reset( new libMesh::EquationSystems(*_mesh) );
+      _system = &_es->add_system<GRINS::MultiphysicsSystem>( "GRINS-TEST" );
+    }
 
-    std::string subsection() const
-    { return VariablesParsing::temperature_section(); }
+    void reset_all()
+    {
+      _input.reset();
+      _es.reset(); // This will delete the system
+      _mesh.reset();
+    }
 
-    std::string default_name() const
-    { return "T"; }
+    libMesh::UniquePtr<GetPot> _input;
+    GRINS::SharedPtr<libMesh::UnstructuredMesh> _mesh;
+    libMesh::UniquePtr<libMesh::EquationSystems> _es;
 
-    PrimitiveTempVariables();
-
+    // Needs to be an ordinar pointer since EquationSystems owns this
+    GRINS::MultiphysicsSystem* _system;
   };
 
-  inline
-  VariableIndex PrimitiveTempVariables::T() const
-  {
-    return _vars[0];
-  }
-
-} // end namespace GRINS
-
-#endif // GRINS_PRIMITIVE_TEMP_VARIABLES_H
+} // end namespace GRINSTesting

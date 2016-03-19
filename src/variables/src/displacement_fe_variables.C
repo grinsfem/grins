@@ -35,22 +35,26 @@
 namespace GRINS
 {
 
-  DisplacementFEVariables::DisplacementFEVariables( const GetPot& input, const std::string& physics_name )
+  DisplacementFEVariables::DisplacementFEVariables( const GetPot& input,
+                                                    const std::string& physics_name,
+                                                    bool is_2D, bool is_3D )
     :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"LAGRANGE","FIRST"),
-       DisplacementVariables(input)
+       DisplacementVariables(input),
+       _is_2D(is_2D),
+       _is_3D(is_3D)
   {}
 
-  void DisplacementFEVariables::init( libMesh::FEMSystem* system, bool is_2D, bool is_3D )
+  void DisplacementFEVariables::init( libMesh::FEMSystem* system )
   {
     unsigned int mesh_dim = system->get_mesh().mesh_dimension();
 
     // The order matters here. We *must* do w first since we use pop_back().
-    if ( mesh_dim == 3 || is_3D )
+    if ( mesh_dim == 3 || _is_3D )
       _have_w = true;
     else
       _var_names.pop_back();
 
-    if ( mesh_dim >= 2 || is_2D || is_3D)
+    if ( mesh_dim >= 2 || _is_2D || _is_3D)
         _have_v = true;
     else
         _var_names.pop_back();

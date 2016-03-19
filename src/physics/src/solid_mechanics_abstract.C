@@ -37,13 +37,12 @@ namespace GRINS
   SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName& physics_name,
                                                  const GetPot& input )
     : Physics(physics_name,input),
-      _disp_vars(input,physics_name)
+      _disp_vars(input,physics_name,false,true)// is_2D = false, is_3D = true
   {}
 
   void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )
   {
-    // is_2D = false, is_3D = true
-    _disp_vars.init(system,false,true);
+    _disp_vars.init(system);
   }
 
   void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )

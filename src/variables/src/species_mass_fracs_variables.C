@@ -22,54 +22,38 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRIMITIVE_TEMP_VARIABLES_H
-#define GRINS_PRIMITIVE_TEMP_VARIABLES_H
+// This class
+#include "grins/species_mass_fracs_variables.h"
 
-// libMesh forward declarations
-class GetPot;
-
-// GRINS
-#include "grins/single_variable.h"
-#include "grins/variables_parsing.h"
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class PrimitiveTempVariables : public SingleVariable
+  void SpeciesMassFractionsVariables::init_vars( libMesh::FEMSystem* system )
   {
-  public:
+    if( !_var_names.empty() )
+      VariablesBase::init_vars(system);
+    else
+      this->vars_from_species_prefix(system);
+  }
 
-    PrimitiveTempVariables( const GetPot& input )
-      : SingleVariable(input,
-                       this->old_var_name(),
-                       this->subsection(),
-                       this->default_name())
-    {}
-
-    ~PrimitiveTempVariables(){};
-
-    VariableIndex T() const;
-
-  protected:
-
-    std::string old_var_name() const
-    { return VariablesParsing::temperature_section(); }
-
-    std::string subsection() const
-    { return VariablesParsing::temperature_section(); }
-
-    std::string default_name() const
-    { return "T"; }
-
-    PrimitiveTempVariables();
-
-  };
-
-  inline
-  VariableIndex PrimitiveTempVariables::T() const
+  void SpeciesMassFractionsVariables::vars_from_species_prefix( libMesh::FEMSystem* system )
   {
-    return _vars[0];
+    std::vector<unsigned int> all_var_nums;
+    system->get_all_variable_numbers(all_var_nums);
+
+    for( std::vector<unsigned int>::const_iterator it = all_var_nums.begin();
+         it < all_var_nums.end(); ++it )
+      {
+        const std::string& var_name = system->variable_name(*it);
+
+        if( var_name.find(_prefix) != std::string::npos )
+          {
+            _var_names.push_back(var_name);
+            _vars.push_back(*it);
+          }
+      }
   }
 
 } // end namespace GRINS
-
-#endif // GRINS_PRIMITIVE_TEMP_VARIABLES_H

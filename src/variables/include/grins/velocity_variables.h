@@ -35,6 +35,7 @@ namespace libMesh
 
 // GRINS
 #include "grins/variables_base.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
@@ -46,7 +47,7 @@ namespace GRINS
     VelocityVariables( const GetPot& input );
     ~VelocityVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system );
+    virtual void init_vars( libMesh::FEMSystem* system );
 
     VariableIndex u() const;
     VariableIndex v() const;
@@ -55,7 +56,7 @@ namespace GRINS
   protected:
 
     std::string subsection() const
-    { return "Velocity"; }
+    { return VariablesParsing::velocity_section(); }
 
     unsigned int _u_idx, _v_idx, _w_idx;
 

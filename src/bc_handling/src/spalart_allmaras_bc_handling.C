@@ -74,9 +74,7 @@ namespace GRINS
 
   void SpalartAllmarasBCHandling::init_bc_data( const libMesh::FEMSystem& system )
   {
-    _turb_vars.init(const_cast<libMesh::FEMSystem*>(&system));
-
-    return;
+    _turb_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
   }
 
   void SpalartAllmarasBCHandling::init_bc_types( const BoundaryID bc_id,

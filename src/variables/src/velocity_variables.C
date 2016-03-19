@@ -58,7 +58,7 @@ namespace GRINS
       this->parse_names_from_input(input,this->subsection(),_var_names,default_names);
   }
 
-  void VelocityVariables::init( libMesh::FEMSystem* system )
+  void VelocityVariables::init_vars( libMesh::FEMSystem* system )
   {
     libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
 
