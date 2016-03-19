@@ -35,6 +35,9 @@ libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
 libgrins_la_SOURCES += bc_handling/src/spalart_allmaras_bc_handling.C
 
 # src/boundary_conditions files
+libgrins_la_SOURCES += boundary_conditions/src/bc_builder.C
+libgrins_la_SOURCES += boundary_conditions/src/default_bc_builder.C
+libgrins_la_SOURCES += boundary_conditions/src/old_style_bc_builder.C
 libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_function_base.C
 libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_function_old_style_base.C
@@ -303,6 +306,9 @@ include_HEADERS += bc_handling/include/grins/spalart_allmaras_bc_handling.h
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
 include_HEADERS += boundary_conditions/include/grins/boundary_condition_names.h
+include_HEADERS += boundary_conditions/include/grins/bc_builder.h
+include_HEADERS += boundary_conditions/include/grins/default_bc_builder.h
+include_HEADERS += boundary_conditions/include/grins/old_style_bc_builder.h
 include_HEADERS += boundary_conditions/include/grins/boundary_conditions.h
 include_HEADERS += boundary_conditions/include/grins/bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/neumann_func_obj.h
