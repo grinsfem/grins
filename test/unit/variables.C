@@ -36,8 +36,6 @@
 
 // GRINS
 #include "grins/grins_enums.h"
-#include "grins/physics_naming.h"
-#include "grins/velocity_variables.h"
 #include "grins/velocity_fe_variables.h"
 
 namespace GRINSTesting
@@ -67,7 +65,7 @@ namespace GRINSTesting
 
       // This will add the variables to the system
       {
-        GRINS::VelocityFEVariables vel_vars(*_input,GRINS::PhysicsNaming::incompressible_navier_stokes());
+        GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
         vel_vars.init(_system);
         CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
 
@@ -97,7 +95,7 @@ namespace GRINSTesting
 
       // This will add the variables to the system
       {
-        GRINS::VelocityFEVariables vel_vars(*_input,GRINS::PhysicsNaming::incompressible_navier_stokes());
+        GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
         vel_vars.init(_system);
         CPPUNIT_ASSERT_EQUAL((unsigned int)3,_system->n_vars());
 

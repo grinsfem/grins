@@ -23,6 +23,3 @@
       order = 'FIRST'
 []
 
-[Physics]
-   enabled_physics = 'IncompressibleNavierStokes HeatTransfer'
-[]
