@@ -62,6 +62,17 @@ namespace GRINS
                                                      const std::string& bc_type_str,
                                                      std::string& var_section );
 
+    void construct_bcs_old_style( const GetPot& input,
+                                  MultiphysicsSystem& system,
+                                  const std::string& raw_physics_name,
+                                  const std::string& section_name,
+                                  const std::string& bc_id_str,
+                                  const std::string& bc_type_str,
+                                  const std::string& bc_value_str,
+                                  const std::string& bc_var_str,
+                                  libMesh::DofMap& dof_map,
+                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+
   };
 } // end namespace GRINS
 

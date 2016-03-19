@@ -31,6 +31,13 @@
 #include "grins/physics_naming.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/dirichlet_bc_factory_abstract.h"
+#include "grins/neumann_bc_factory_abstract.h"
+#include "grins/parsed_function_neumann_old_style_bc_factory.h"
+#include "grins/variable_warehouse.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/primitive_temp_fe_variables.h"
+#include "grins/displacement_fe_variables.h"
+#include "grins/species_mass_fracs_fe_variables.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -78,7 +85,6 @@ namespace GRINS
             this->construct_bcs_old_style(input,
                                           system,
                                           raw_physics_name,
-                                          physics_name,
                                           section_name,
                                           "bc_ids",
                                           "bc_types",
@@ -94,7 +100,6 @@ namespace GRINS
             this->construct_bcs_old_style(input,
                                           system,
                                           raw_physics_name,
-                                          physics_name,
                                           section_name,
                                           "vel_bc_ids",
                                           "vel_bc_types",
@@ -106,7 +111,6 @@ namespace GRINS
             this->construct_bcs_old_style(input,
                                           system,
                                           raw_physics_name,
-                                          physics_name,
                                           section_name,
                                           "temp_bc_ids",
                                           "temp_bc_types",
@@ -121,7 +125,6 @@ namespace GRINS
             this->construct_bcs_old_style(input,
                                           system,
                                           raw_physics_name,
-                                          physics_name,
                                           section_name,
                                           "species_bc_ids",
                                           "species_bc_types",
@@ -169,6 +172,100 @@ namespace GRINS
       libmesh_error();
 
     return &GRINSPrivate::VariableWarehouse::get_variable(var_section);
+  }
+
+  void OldStyleBCBuilder::construct_bcs_old_style( const GetPot& input,
+                                                   MultiphysicsSystem& system,
+                                                   const std::string& raw_physics_name,
+                                                   const std::string& section_name,
+                                                   const std::string& bc_id_str,
+                                                   const std::string& bc_type_str,
+                                                   const std::string& bc_value_str,
+                                                   const std::string& bc_var_str,
+                                                   libMesh::DofMap& dof_map,
+                                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+  {
+    unsigned int num_ids = input.vector_variable_size(section_name+"/"+bc_id_str);
+    unsigned int num_types = input.vector_variable_size(section_name+"/"+bc_type_str);
+
+    if( num_ids != num_types )
+      libmesh_error_msg("Error: Must specify equal number of boundary ids and boundary conditions");
+
+    for( unsigned int i = 0; i < num_ids; i++ )
+      {
+        // Parse the bc type, add "_old_style" at the end to distinguish for deprecated construction
+        std::string bc_type = input(section_name+"/"+bc_type_str, std::string("DIE!"), i );
+        bc_type += "_old_style";
+
+        BoundaryID bc_id = input(section_name+"/"+bc_id_str, -1, i );
+
+        // If this is a periodic boundary condition, we can immediately
+        // apply and move to the next one
+        if( bc_type == std::string("periodic_old_style") )
+          {
+            this->build_periodic_bc( input, section_name, bc_id, dof_map );
+            continue;
+          }
+
+        // We use the set for compatibility with the BCFactories
+        std::set<BoundaryID> bc_ids;
+        bc_ids.insert(bc_id);
+
+        std::string variable_group_name;
+
+        const FEVariablesBase* fe_var_ptr = this->determine_variable_group( raw_physics_name,
+                                                                            bc_type_str,
+                                                                            variable_group_name );
+
+        libmesh_assert(fe_var_ptr);
+
+        // We need the var_names for the old style parsing
+        std::vector<std::string> var_names;
+        var_names = fe_var_ptr->active_var_names();
+
+        // Axisymmetric is special. It depends on the variable type.
+        // So, we prepend the type with the variable name in that
+        // case.
+        if( bc_type == "axisymmetric_old_style" )
+          bc_type = variable_group_name+"_"+bc_type;
+
+
+        // For these types of boundary conditions, we need to treat one
+        // variable at a time, so extract the relevant one.
+        if( bc_type == std::string("parsed_dirichlet_old_style") ||
+            bc_type == std::string("constant_dirichlet_old_style") ||
+            bc_type == std::string("parsed_fem_dirichlet_old_style") ||
+            bc_type == std::string("parsed_neumann_old_style") )
+          {
+            var_names.clear();
+            var_names.resize(1, input(section_name+"/"+bc_var_str, std::string("DIE!"), i ) );
+          }
+
+        if( this->is_dirichlet_bc_type(bc_type) )
+          {
+            // Tell the old style DirichletBCFactory where to parse the value of the BC
+            this->set_dirichlet_bc_factory_old_style_quantities<libMesh::FunctionBase<libMesh::Number> >
+              ( bc_value_str, i, var_names );
+            this->set_dirichlet_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >
+              ( bc_value_str, i, var_names );
+
+            this->construct_dbc_core( input, system, bc_ids, *fe_var_ptr,
+                                      section_name, bc_type, dof_map );
+          }
+        else if( this->is_neumann_bc_type(bc_type) )
+          {
+            // Tell the old style NeumannBCFactory where to parse the value of the BC
+            this->set_neumann_bc_factory_old_style_quantities<libMesh::FunctionBase<libMesh::Number> >
+              ( bc_value_str, i, var_names );
+            this->set_neumann_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >
+              ( bc_value_str, i, var_names );
+            this->construct_nbc_core( input, system, bc_ids, *fe_var_ptr,
+                                      section_name, bc_type, neumann_bcs );
+          }
+        else
+          libmesh_error_msg("ERROR: Invalid bc_type "+bc_type+"!");
+
+      }
   }
 
 } // end namespace GRINS
