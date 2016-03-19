@@ -372,6 +372,12 @@ DX_INIT_DOXYGEN(GRINS, doxygen/grins.dox, docs/doxygen)
 AC_CONFIG_FILES(doxygen/txt_common/about_vpath.page)
 
 dnl-------------------------------------------------------------------------
+dnl Generate symlink to helper script for running tests through sequence of
+dnl LIBMESH_RUN settings.
+dnl-------------------------------------------------------------------------
+AC_CONFIG_LINKS([test/run_tests_parallel_loop.sh:test/run_tests_parallel_loop.sh],[chmod +x test/run_tests_parallel_loop.sh])
+
+dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read grids without having to require
 dnl AC_CONFIG_FILES to generate the input files.
 dnl NOTE: AC_CONFIG_LINKS will generate the rules for `make dist`
