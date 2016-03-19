@@ -73,6 +73,12 @@ namespace GRINS
                                   libMesh::DofMap& dof_map,
                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
 
+    void build_basic_physics( std::set<std::string>& physics_names );
+
+    void build_vel_and_temp_physics( std::set<std::string>& physics_names );
+
+    void build_reacting_physics( std::set<std::string>& physics_names );
+
   };
 } // end namespace GRINS
 

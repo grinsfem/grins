@@ -268,4 +268,27 @@ namespace GRINS
       }
   }
 
+  void OldStyleBCBuilder::build_basic_physics( std::set<std::string>& physics_names )
+  {
+    physics_names.insert(PhysicsNaming::incompressible_navier_stokes());
+    physics_names.insert(PhysicsNaming::stokes());
+    physics_names.insert(PhysicsNaming::elastic_membrane());
+    physics_names.insert(PhysicsNaming::elastic_cable());
+    physics_names.insert(PhysicsNaming::convection_diffusion());
+    physics_names.insert(PhysicsNaming::spalart_allmaras());
+    physics_names.insert(PhysicsNaming::axisymmetric_heat_transfer());
+    physics_names.insert(PhysicsNaming::heat_conduction());
+    physics_names.insert(PhysicsNaming::heat_transfer());
+  }
+
+  void OldStyleBCBuilder::build_vel_and_temp_physics( std::set<std::string>& physics_names )
+  {
+    physics_names.insert(PhysicsNaming::low_mach_navier_stokes());
+  }
+
+  void OldStyleBCBuilder::build_reacting_physics( std::set<std::string>& physics_names )
+  {
+    physics_names.insert(PhysicsNaming::reacting_low_mach_navier_stokes());
+  }
+
 } // end namespace GRINS
