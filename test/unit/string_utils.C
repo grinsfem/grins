@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <limits>
 
 #include "grins/string_utils.h"
 
@@ -43,6 +44,7 @@ namespace GRINSTesting
     CPPUNIT_TEST_SUITE( StringUtilitiesTest );
 
     CPPUNIT_TEST( test_split_string );
+    CPPUNIT_TEST( test_string_to_T );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -105,6 +107,21 @@ namespace GRINSTesting
         GRINS::StringUtilities::split_string( str_4, " ", str_4_split);
         this->test_string( str_4_split, test_4_split_exact );
       }
+    }
+
+    void test_string_to_T()
+    {
+      std::string one = "1";
+      int ione = GRINS::StringUtilities::string_to_T<int>(one);
+      unsigned int uione = GRINS::StringUtilities::string_to_T<unsigned int>(one);
+      CPPUNIT_ASSERT_EQUAL(1,ione);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)1,uione);
+
+      std::string tenp1 = "10.1";
+      double dtenp1 = GRINS::StringUtilities::string_to_T<double>(tenp1);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(10.1,
+                                   dtenp1,
+                                   std::numeric_limits<double>::epsilon());
     }
 
   private:
