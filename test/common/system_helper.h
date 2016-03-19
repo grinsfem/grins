@@ -1,0 +1,66 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2010-2013 The PECOS Development Team
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
+// Public License as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
+//
+//-----------------------------------------------------------------------el-
+
+// GRINS
+#include "grins/shared_ptr.h"
+#include "grins/multiphysics_sys.h"
+#include "grins/mesh_builder.h"
+
+// libMesh
+#include "libmesh/getpot.h"
+#include "libmesh/unstructured_mesh.h"
+#include "libmesh/equation_systems.h"
+
+namespace GRINSTesting
+{
+  //! Helper class for setting up basic GRINS::MultiphysicsSystem for unit testing
+  class SystemHelper
+  {
+  protected:
+
+    void setup_multiphysics_system(const std::string& filename)
+    {
+      _input.reset( new GetPot(filename) );
+      GRINS::MeshBuilder mesh_builder;
+      _mesh = mesh_builder.build( *_input, *TestCommWorld );
+      _es.reset( new libMesh::EquationSystems(*_mesh) );
+      _system = &_es->add_system<GRINS::MultiphysicsSystem>( "GRINS-TEST" );
+    }
+
+    void reset_all()
+    {
+      _input.reset();
+      _es.reset(); // This will delete the system
+      _mesh.reset();
+    }
+
+    libMesh::UniquePtr<GetPot> _input;
+    GRINS::SharedPtr<libMesh::UnstructuredMesh> _mesh;
+    libMesh::UniquePtr<libMesh::EquationSystems> _es;
+
+    // Needs to be an ordinar pointer since EquationSystems owns this
+    GRINS::MultiphysicsSystem* _system;
+  };
+
+} // end namespace GRINSTesting
