@@ -29,9 +29,20 @@
 #include <cppunit/ui/text/TestRunner.h>
 #endif // GRINS_HAVE_CPPUNIT
 
-int main()
+#include <libmesh/libmesh.h>
+
+#include "test_comm.h"
+
+int main(int argc, char **argv)
 {
 #ifdef GRINS_HAVE_CPPUNIT
+
+  // Initialize the library.  This is necessary because the library
+  // may depend on a number of other libraries (i.e. MPI  and Petsc)
+  // that require initialization before use.
+  libMesh::LibMeshInit init(argc, argv);
+  TestCommWorld = &init.comm();
+
   CppUnit::TextUi::TestRunner runner;
   CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
   runner.addTest( registry.makeTest() );
@@ -49,3 +60,7 @@ int main()
   return 77;
 #endif // GRINS_HAVE_CPPUNIT
 }
+
+#ifdef GRINS_HAVE_CPPUNIT
+libMesh::Parallel::Communicator *TestCommWorld;
+#endif // GRINS_HAVE_CPPUNIT
