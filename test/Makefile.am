@@ -110,7 +110,8 @@ check_PROGRAMS += generic_amr_testing_app
 
 # Unit test source files
 unit_driver_SOURCES = unit/unit_driver.C \
-                      unit/string_utils.C
+                      unit/string_utils.C \
+                      unit/mesh_builder.C
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -274,6 +275,8 @@ TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 #AMR TESTS
 TESTS += amr/convection_diffusion_unsteady_2d.sh
+
+EXTRA_DIST = unit/input_files
 
 CLEANFILES =
 

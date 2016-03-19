@@ -1,0 +1,9 @@
+# Mesh related options                                                                                                                                                                                                                       
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX8'
+      n_elems_x = '5'
+      n_elems_y = '5'
+      n_elems_z = '5'
+[]
