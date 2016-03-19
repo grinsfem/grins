@@ -79,7 +79,6 @@ check_PROGRAMS += constant_catalycity
 check_PROGRAMS += gas_recombination_catalytic_wall
 check_PROGRAMS += gas_solid_catalytic_wall
 check_PROGRAMS += power_law_catalycity
-check_PROGRAMS += split_string
 
 # Interface Tests
 check_PROGRAMS += interface_cppunit_test
@@ -114,7 +113,8 @@ check_PROGRAMS += axisym_reacting_low_mach_regression
 check_PROGRAMS += generic_amr_testing_app
 
 # Unit test source files
-unit_cppunit_test_SOURCES = unit/unit_cppunit_test.C 
+unit_cppunit_test_SOURCES = unit/unit_cppunit_test.C \
+                            unit/split_string.C
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -123,7 +123,6 @@ constant_catalycity_SOURCES = unit/constant_catalycity.C
 gas_recombination_catalytic_wall_SOURCES = unit/gas_recombination_catalytic_wall.C
 gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
-split_string_SOURCES = unit/split_string.C
 
 # Interface test source files
 interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C \
@@ -183,7 +182,6 @@ TESTS += unit/gas_recombination_catalytic_wall_cantera.sh
 TESTS += unit/gas_solid_catalytic_wall_antioch.sh
 TESTS += unit/gas_solid_catalytic_wall_cantera.sh
 TESTS += power_law_catalycity
-TESTS += split_string
 
 # Interface TESTS
 TESTS += interface_cppunit_test
