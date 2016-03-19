@@ -289,6 +289,8 @@ include_HEADERS += boundary_conditions/include/grins/power_law_catalycity.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
+include_HEADERS += common/include/grins/factory_with_getpot.h
+include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
 
 # src/error_estimation headers
 include_HEADERS += error_estimation/include/grins/error_estimation_factory.h

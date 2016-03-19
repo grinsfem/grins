@@ -22,27 +22,38 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/physics_factory_base.h"
+#ifndef GRINS_FACTORY_WITH_GETPOT_H
+#define GRINS_FACTORY_WITH_GETPOT_H
 
-// Full specialization for the Factory<Physics>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, libMesh::Factory<GRINS::Physics>*>&
-  libMesh::Factory<GRINS::Physics>::factory_map()
-  {
-    static std::map<std::string, libMesh::Factory<GRINS::Physics>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
+// libMesh
+#include "libmesh/factory.h"
+#include "libmesh/getpot.h"
 
-// Definition of static members
 namespace GRINS
 {
-  template<>
-  std::string FactoryWithGetPotPhysicsName<Physics>::_physics_name = std::string("DIE!");
+  //! Abstract factory that provides availability of GetPot
+  template<typename Base>
+  class FactoryWithGetPot : public libMesh::Factory<Base>
+  {
+  public:
+    FactoryWithGetPot( const std::string& name )
+      : libMesh::Factory<Base>(name)
+    {}
 
-  template<>
-  const GetPot* FactoryWithGetPot<Physics>::_input = NULL;
+    ~FactoryWithGetPot(){};
+
+    static void set_getpot( const GetPot& input )
+    { _input = &input; }
+
+  protected:
+
+    /*! We store only a raw pointer here because we *can't* make a copy.
+        Otherwise, the UFO detection will be all screwed. We are not taking
+        ownership of this, so we need to *not* delete this.*/
+    static const GetPot* _input;
+
+  };
+
 } // end namespace GRINS
+
+#endif // GRINS_FACTORY_WITH_GETPOT_H
