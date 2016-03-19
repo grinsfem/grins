@@ -81,7 +81,7 @@ check_PROGRAMS += gas_solid_catalytic_wall
 check_PROGRAMS += power_law_catalycity
 
 # Interface Tests
-check_PROGRAMS += interface_cppunit_test
+check_PROGRAMS += interface_driver
 check_PROGRAMS += antioch_mixture_averaged_transport_evaluator_regression
 check_PROGRAMS += cantera_transport_regression
 
@@ -121,8 +121,8 @@ gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 
 # Interface test source files
-interface_cppunit_test_SOURCES = interface/interface_cppunit_test.C \
-                                 interface/air_5sp.C
+interface_driver_SOURCES = interface/interface_driver.C \
+                           interface/air_5sp.C
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
@@ -175,7 +175,7 @@ TESTS += unit/gas_solid_catalytic_wall_cantera.sh
 TESTS += power_law_catalycity
 
 # Interface TESTS
-TESTS += interface_cppunit_test
+TESTS += interface_driver
 TESTS += interface/antioch_mixture_averaged_transport_evaluator_regression.sh
 TESTS += interface/cantera_transport_regression.sh
 
