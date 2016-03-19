@@ -45,6 +45,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_split_string );
     CPPUNIT_TEST( test_string_to_T );
+    CPPUNIT_TEST( test_T_to_string );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -122,6 +123,27 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_DOUBLES_EQUAL(10.1,
                                    dtenp1,
                                    std::numeric_limits<double>::epsilon());
+    }
+
+    void test_T_to_string()
+    {
+      std::string one_exact = "1";
+      std::string tenp1_exact = "10.1";
+
+      {
+        std::string one_test =  GRINS::StringUtilities::T_to_string<int>(1);
+        CPPUNIT_ASSERT_EQUAL(one_exact,one_test);
+      }
+
+      {
+        std::string one_test =  GRINS::StringUtilities::T_to_string<unsigned int>(1);
+        CPPUNIT_ASSERT_EQUAL(one_exact,one_test);
+      }
+
+      {
+        std::string tenp1_test =  GRINS::StringUtilities::T_to_string<double>(10.1);
+        CPPUNIT_ASSERT_EQUAL(tenp1_exact,tenp1_test);
+      }
     }
 
   private:
