@@ -40,16 +40,23 @@
 namespace GRINSTesting
 {
   class DefaultBCBuilderTest : public CppUnit::TestCase,
+                               public SystemHelper,
                                public GRINS::DefaultBCBuilder // So we can test proctected methods
   {
   public:
     CPPUNIT_TEST_SUITE( DefaultBCBuilderTest );
 
     CPPUNIT_TEST( test_parse_and_build_bc_id_map );
+    CPPUNIT_TEST( test_verify_bc_ids_with_mesh );
 
     CPPUNIT_TEST_SUITE_END();
 
   public:
+
+    void tearDown()
+    {
+      this->reset_all();
+    }
 
     void test_parse_and_build_bc_id_map()
     {
@@ -86,6 +93,18 @@ namespace GRINSTesting
         CPPUNIT_ASSERT_EQUAL(1,(int)bc_ids.size());
         CPPUNIT_ASSERT(bc_ids.find(3) != bc_ids.end());
       }
+    }
+
+    void test_verify_bc_ids_with_mesh()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
+      this->setup_multiphysics_system(filename);
+
+      std::map<std::string,std::set<GRINS::BoundaryID> > bc_id_map;
+      this->parse_and_build_bc_id_map(*_input,bc_id_map);
+
+      // This shouldn't error
+      this->verify_bc_ids_with_mesh( *_system, bc_id_map );
     }
   };
 
