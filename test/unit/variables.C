@@ -38,6 +38,7 @@
 #include "grins/grins_enums.h"
 #include "grins/velocity_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
+#include "grins/species_mass_fracs_fe_variables.h"
 
 namespace GRINSTesting
 {
@@ -50,6 +51,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_velocity_2d );
     CPPUNIT_TEST( test_velocity_3d );
     CPPUNIT_TEST( test_temp );
+    CPPUNIT_TEST( test_species_mass_fracs );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -150,6 +152,44 @@ namespace GRINSTesting
       }
     }
 
+    void test_species_mass_fracs()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
+      this->setup_multiphysics_system(filename);
+
+      // This will add the variables to the system
+      {
+        GRINS::SpeciesMassFractionsFEVariables species_vars(*_input,"TestSpeciesMassFractionsVariables");
+        species_vars.init(_system);
+        CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        this->test_species_var_names(var_names);
+
+        // Verify the FE part
+        this->test_species_fe(*_system);
+      }
+
+      // Now we should be able to also use a basic SpeciesMassFractionsVariables class
+      // and get the right var names out once the variables are added to the
+      // system. Note we're testing the "GetPot" only constructor
+      // exercising the case where the material name is not available.
+      {
+        GRINS::SpeciesMassFractionsVariables species_vars(*_input);
+        species_vars.init_vars(_system);
+
+        const std::vector<std::string>& var_names =
+        species_vars.active_var_names();
+
+        // For this one, we can't guarantee the order, so we check to
+        // make sure both the species are there.
+        CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N2")
+                        != var_names.end() );
+        CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N")
+                        != var_names.end() );
+      }
+    }
+
   private:
 
     void test_vel_var_names_2d( const std::vector<std::string>& var_names )
@@ -173,6 +213,13 @@ namespace GRINSTesting
     {
       CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
       CPPUNIT_ASSERT_EQUAL(std::string("T"),var_names[0]);
+    }
+
+    void test_species_var_names( const std::vector<std::string>& var_names )
+    {
+      CPPUNIT_ASSERT_EQUAL(2,(int)var_names.size());
+      CPPUNIT_ASSERT_EQUAL(std::string("Y_N2"),var_names[0]);
+      CPPUNIT_ASSERT_EQUAL(std::string("Y_N"),var_names[1]);
     }
 
     void test_vel_fe_2d( const libMesh::System& system )
@@ -201,6 +248,17 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
     }
 
+
+    void test_species_fe( const libMesh::System& system )
+    {
+      libMesh::Order order = system.variable_type("Y_N2").order;
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,system.variable_type("Y_N2").family);
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::SECOND,order);
+
+      order = system.variable_type("Y_N").order;
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,system.variable_type("Y_N").family);
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::SECOND,order);
+    }
   };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( VariablesTest );
