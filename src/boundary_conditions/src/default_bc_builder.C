@@ -297,4 +297,42 @@ namespace GRINS
       }
   }
 
+  void DefaultBCBuilder::verify_bc_ids_with_mesh( const MultiphysicsSystem& system,
+                                                  const std::map<std::string,std::set<BoundaryID> >& bc_id_map ) const
+  {
+    const libMesh::MeshBase& mesh = system.get_mesh();
+    const libMesh::BoundaryInfo& boundary_info = mesh.get_boundary_info();
+
+    const std::set<BoundaryID> mesh_ids = boundary_info.get_boundary_ids();
+
+    // Collect all the bc_ids into one set so we can just compare the sets
+    std::set<BoundaryID> all_ids;
+
+    for( std::map<std::string,std::set<BoundaryID> >::const_iterator bc_it = bc_id_map.begin();
+         bc_it != bc_id_map.end(); ++bc_it )
+      all_ids.insert( (bc_it->second).begin(), (bc_it->second).end() );
+
+    if( mesh_ids != all_ids )
+      {
+        std::string err_msg = "ERROR: Mismatch between specified boundary ids and the boundary ids in the mesh!\n";
+        err_msg += "User specified ids: ";
+
+        for( std::set<BoundaryID>::const_iterator it = all_ids.begin();
+             it != all_ids.end(); ++it )
+          err_msg += StringUtilities::T_to_string<BoundaryID>(*it)+" ";
+
+        err_msg += "\n";
+
+        err_msg += "Mesh specified ids: ";
+
+        for( std::set<BoundaryID>::const_iterator it = mesh_ids.begin();
+             it != mesh_ids.end(); ++it )
+          err_msg += StringUtilities::T_to_string<BoundaryID>(*it)+" ";
+
+        err_msg += "\n";
+
+        libmesh_error_msg(err_msg);
+      }
+  }
+
 } // end namespace GRINS

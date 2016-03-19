@@ -85,6 +85,9 @@ namespace GRINS
     void parse_and_build_bc_id_map( const GetPot& input,
                                     std::map<std::string,std::set<BoundaryID> >& bc_id_map );
 
+    void verify_bc_ids_with_mesh( const MultiphysicsSystem& system,
+                                  const std::map<std::string,std::set<BoundaryID> >& bc_id_map ) const;
+
   };
 } // end namespace GRINS
 
