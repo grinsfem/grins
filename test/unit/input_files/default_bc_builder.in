@@ -1,0 +1,6 @@
+
+#Boundary Conditions
+[BoundaryConditions]
+   bc_ids = '0 1:2 3'
+   bc_id_name_map = 'Hot Together Cold'
+[]
