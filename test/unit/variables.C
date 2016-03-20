@@ -55,6 +55,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_velocity_3d );
     CPPUNIT_TEST( test_temp );
     CPPUNIT_TEST( test_species_mass_fracs );
+    CPPUNIT_TEST( test_pressure );
     CPPUNIT_TEST( test_var_constraint_and_warehouse );
 
     CPPUNIT_TEST_SUITE_END();
@@ -258,6 +259,46 @@ namespace GRINSTesting
 
     }
 
+    void test_pressure()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
+      this->setup_multiphysics_system(filename);
+
+      // This will add the variables to the system
+      {
+        GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+        press_vars.init(_system);
+        CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
+
+        const std::vector<std::string>& var_names = press_vars.active_var_names();
+        this->test_press_var_names(var_names);
+
+        // Verify the FE part
+        this->test_press_fe(*_system);
+      }
+
+      // Now we should be able to also use a basic PrimitiveTempVariables class
+      // and get the right var names out once the variables are added to the
+      // system
+      {
+        GRINS::PressureVariable press_vars(*_input);
+        press_vars.init_vars(_system);
+
+        const std::vector<std::string>& var_names = press_vars.active_var_names();
+        this->test_press_var_names(var_names);
+      }
+
+      // Now try using the variables factory
+      {
+        GRINS::VariablesFactoryBase::set_getpot(*_input);
+        libMesh::UniquePtr<GRINS::VariablesBase> press_vars =  GRINS::VariablesFactoryBase::build("Pressure");
+        press_vars->init_vars(_system);
+
+        const std::vector<std::string>& var_names = press_vars->active_var_names();
+        this->test_press_var_names(var_names);
+      }
+    }
+
   private:
 
     void test_vel_var_names_2d( const std::vector<std::string>& var_names )
@@ -288,6 +329,12 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(2,(int)var_names.size());
       CPPUNIT_ASSERT_EQUAL(std::string("Y_N2"),var_names[0]);
       CPPUNIT_ASSERT_EQUAL(std::string("Y_N"),var_names[1]);
+    }
+
+    void test_press_var_names( const std::vector<std::string>& var_names )
+    {
+      CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
+      CPPUNIT_ASSERT_EQUAL(std::string("p"),var_names[0]);
     }
 
     void test_species_var_names_no_order( const std::vector<std::string>& var_names )
@@ -324,6 +371,13 @@ namespace GRINSTesting
     {
       libMesh::Order order = system.variable_type("T").order;
       CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,system.variable_type("T").family);
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
+    }
+
+    void test_press_fe( const libMesh::System& system )
+    {
+      libMesh::Order order = system.variable_type("p").order;
+      CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,system.variable_type("p").family);
       CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
     }
 
