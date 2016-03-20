@@ -41,15 +41,10 @@ g = '0.0 0.0' #[m/s^2]
 # i = bottom -> 3
 # i = top    -> 1
 
-vel_bc_ids = '3 2 0'
-vel_bc_types = 'parabolic_profile no_slip no_slip'
-
-parabolic_profile_var_3 = 'u'
-parabolic_profile_fix_3 = 'v'
-
-# c = -U0/y0^2, f = U0
-# y0 = 1.0 
-parabolic_profile_coeffs_3 = '0.0 0.0 -1 0.0 0.0 1'
+vel_bc_ids = '3 3 2 0'
+vel_bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
+vel_bc_variables = 'u v na na'
+vel_bc_values = '(1-y^2) 0.0 na na'
 
 temp_bc_ids = '3 2 0'
 temp_bc_types = 'isothermal isothermal isothermal'
