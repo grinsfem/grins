@@ -14,12 +14,10 @@ material = 'TestMaterial'
 # 2 - no slip walls
 # 3 - outlet
 
-bc_ids = '1 2'
-bc_types = 'parabolic_profile no_slip'
-
-parabolic_profile_coeffs_1 = '0.0 0.0 -480.0 0.0 240.0 0.0'
-parabolic_profile_var_1 = 'u'
-parabolic_profile_fix_1 = 'v'
+bc_ids = '1 1 2'
+bc_types = 'parsed_dirichlet parsed_dirichlet no_slip'
+bc_variables = 'u v na'
+bc_values = '240*y*(1-2*y) 0.0 na'
 
 pin_pressure = 'false'
 
