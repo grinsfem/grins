@@ -55,12 +55,10 @@ material = 'TestMaterial'
 
 enabled_subdomains = '2'
 
-bc_ids = '4 6 7 8'
-bc_types = 'no_slip no_slip parabolic_profile no_slip'
-
-parabolic_profile_coeffs_7 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_var_7 = 'u'
-parabolic_profile_fix_7 = 'v'
+bc_ids = '7 7 4 6 8'
+bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip no_slip'
+bc_variables = 'u v na na na'
+bc_values = '4*y*(1-y) 0.0 na na na'
 
 # Options for Navier Stokes physics
 [../IncompressibleNavierStokes]
