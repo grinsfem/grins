@@ -51,6 +51,9 @@ namespace GRINS
 
   void MultiphysicsSystem::read_input_options( const GetPot& input )
   {
+    // Cache this for building boundary condition later
+    _input = &input;
+
     // Read options for MultiphysicsSystem first
     this->verify_analytic_jacobians = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
     this->print_solution_norms = input("screen-options/print_solution_norms", false );

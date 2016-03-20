@@ -196,6 +196,12 @@ namespace GRINS
     // A list of values for per-variable numerical jacobian deltas
     std::vector<libMesh::Real> _numerical_jacobian_h_values;
 
+    //! Cached for helping build boundary conditions
+    /*! We can't make a copy because it will muck up the UFO detection
+        amongst other things. So, we keep a raw pointer. We don't own this
+        so we *MUST* not delete. */
+    const GetPot* _input;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
