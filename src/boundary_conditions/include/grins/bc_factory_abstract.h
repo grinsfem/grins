@@ -69,16 +69,6 @@ namespace GRINS
     static void set_section( const std::string& section )
     { _section = section; }
 
-    //! Input variable for parsing old style
-    /*! Deprecated, only used for backward compatibility. */
-    static void set_value_var_old_style( const std::string& value_var )
-    { _value_var_old_style = value_var; }
-
-    //! Input variable index for parsing old style
-    /*! Deprecated, only used for backward compatibility. */
-    static void set_value_index_old_style( unsigned int idx )
-    { _value_idx_old_style = idx; }
-
     static bool have_bc_type( const std::string& bc_type );
 
   protected:
@@ -117,9 +107,6 @@ namespace GRINS
 
     static std::string _section;
 
-    static std::string _value_var_old_style;
-
-    static unsigned int _value_idx_old_style;
   };
 
   template<typename Base>
