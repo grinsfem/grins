@@ -39,6 +39,7 @@ libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_function_base.C
 libgrins_la_SOURCES += boundary_conditions/src/dirichlet_bc_factory_function_old_style_base.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_factory_helper.C
+libgrins_la_SOURCES += boundary_conditions/src/parsed_function_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/boundary_conditions.C
 libgrins_la_SOURCES += boundary_conditions/src/bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_func_obj.C
@@ -308,6 +309,7 @@ include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_abstra
 include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_function_base.h
 include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_function_old_style_base.h
 include_HEADERS += boundary_conditions/include/grins/parsed_function_factory_helper.h
+include_HEADERS += boundary_conditions/include/grins/parsed_function_dirichlet_bc_factory.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
