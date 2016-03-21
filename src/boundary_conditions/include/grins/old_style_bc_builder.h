@@ -52,6 +52,16 @@ namespace GRINS
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
                             std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
 
+  private:
+
+    //! Determine the FEVariable type from the raw_physics_name
+    /*! This will set var_section and return the FEVariablesBase pointer. We do
+        it this way, instead of a void function, to avoid a [-Wunused-but-set-parameter]
+        warning on setting the FEVariablesBase pointer. */
+    const FEVariablesBase* determine_variable_group( const std::string& raw_physics_name,
+                                                     const std::string& bc_type_str,
+                                                     std::string& var_section );
+
   };
 } // end namespace GRINS
 

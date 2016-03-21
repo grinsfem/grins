@@ -133,4 +133,42 @@ namespace GRINS
       }
   }
 
+  const FEVariablesBase* OldStyleBCBuilder::determine_variable_group( const std::string& raw_physics_name,
+                                                                      const std::string& bc_type_str,
+                                                                      std::string& var_section )
+  {
+    if( bc_type_str == std::string("bc_types") )
+      {
+        if( raw_physics_name == PhysicsNaming::incompressible_navier_stokes() ||
+            raw_physics_name == PhysicsNaming::stokes() )
+          var_section = VariablesParsing::velocity_section();
+        else if( raw_physics_name == PhysicsNaming::heat_conduction() ||
+                 raw_physics_name == PhysicsNaming::heat_transfer() ||
+                 raw_physics_name == PhysicsNaming::axisymmetric_heat_transfer() )
+          var_section = VariablesParsing::temperature_section();
+        else if( raw_physics_name == PhysicsNaming::spalart_allmaras() )
+          var_section = VariablesParsing::turbulence_section();
+        else if( raw_physics_name == PhysicsNaming::elastic_membrane() ||
+                 raw_physics_name == PhysicsNaming::elastic_cable() )
+          var_section = VariablesParsing::displacement_section();
+        else if( raw_physics_name == PhysicsNaming::convection_diffusion() )
+          var_section = VariablesParsing::generic_section()+":"+raw_physics_name;
+        else
+          libmesh_error();
+      }
+    else if( bc_type_str == std::string("vel_bc_types") )
+      var_section = VariablesParsing::velocity_section();
+
+    else if( bc_type_str == std::string("temp_bc_types") )
+      var_section = VariablesParsing::temperature_section();
+
+    else if( bc_type_str == std::string("species_bc_types") )
+      var_section = VariablesParsing::species_mass_fractions_section();
+
+    else
+      libmesh_error();
+
+    return &GRINSPrivate::VariableWarehouse::get_variable(var_section);
+  }
+
 } // end namespace GRINS
