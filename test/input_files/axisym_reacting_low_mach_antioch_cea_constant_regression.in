@@ -47,7 +47,7 @@ g = '0.0 0.0' #[m/s^2]
 vel_bc_ids       = '0 0 1 3'
 vel_bc_types     = 'parsed_dirichlet parsed_dirichlet no_slip axisymmetric'
 vel_bc_variables = 'v u na na'
-vel_bc_values    = '(1-y^2) 0.0 na na'
+vel_bc_values    = '(1-x^2) 0.0 na na'
 
 temp_bc_ids = '0 1'
 temp_bc_types = 'isothermal isothermal'
