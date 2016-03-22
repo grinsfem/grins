@@ -39,7 +39,9 @@
 #include "grins/velocity_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 #include "grins/variables_factory.h"
+#include "grins/variable_warehouse.h"
 
 namespace GRINSTesting
 {
@@ -53,6 +55,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_velocity_3d );
     CPPUNIT_TEST( test_temp );
     CPPUNIT_TEST( test_species_mass_fracs );
+    CPPUNIT_TEST( test_var_constraint_and_warehouse );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -223,6 +226,36 @@ namespace GRINSTesting
         const std::vector<std::string>& var_names = species_vars->active_var_names();
         this->test_species_var_names_no_order(var_names);
       }
+    }
+
+    void test_var_constraint_and_warehouse()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_3d.in";
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+      GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest",true /*is_constraint_variable*/ );
+
+      GRINS::GRINSPrivate::VariableWarehouse::register_variable("Velocity", vel_vars);
+      GRINS::GRINSPrivate::VariableWarehouse::register_variable("Pressure", press_vars);
+
+      // This should not throw an error
+      GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Velocity", vel_vars);
+      GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Pressure", press_vars);
+
+      vel_vars.init(_system);
+      press_vars.init(_system);
+
+      {
+        const GRINS::FEVariablesBase& vel_base =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable("Velocity");
+        CPPUNIT_ASSERT(!vel_base.is_constraint_var());
+
+        const GRINS::FEVariablesBase& press_base =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable("Pressure");
+        CPPUNIT_ASSERT(press_base.is_constraint_var());
+      }
+
     }
 
   private:
