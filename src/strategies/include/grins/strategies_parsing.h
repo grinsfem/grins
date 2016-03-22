@@ -63,6 +63,19 @@ namespace GRINS
     static void parse_component_norm( const GetPot& input, libMesh::SystemNorm& component_norm );
 
     static int extra_quadrature_order( const GetPot& input );
+
+    static std::string adjoint_residual_error_estimator()
+    { return "adjoint_residual"; }
+
+    static std::string adjoint_refinement_error_estimator()
+    { return "adjoint_refinement"; }
+
+    static std::string kelly_error_estimator()
+    { return "kelly"; }
+
+    static std::string patch_recovery_error_estimator()
+    { return "patch_recovery"; }
+
   };
 
 } // end namespace GRINS
