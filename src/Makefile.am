@@ -6,7 +6,7 @@ CLEANFILES =
 
 lib_LTLIBRARIES = libgrins.la
 
-bin_PROGRAMS    = grins grins_version 
+bin_PROGRAMS    = grins grins_version
 
 if CANTERA_ENABLED
    bin_PROGRAMS += cantera_kinetic_rates
@@ -51,9 +51,6 @@ libgrins_la_SOURCES += boundary_conditions/src/catalycity_base.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/arrhenius_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/power_law_catalycity.C
-
-# src/error_estimation files
-libgrins_la_SOURCES += error_estimation/src/error_estimation_factory.C
 
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
@@ -201,9 +198,12 @@ libgrins_la_SOURCES += solver/src/parameter_manager.C
 libgrins_la_SOURCES += solver/src/parameter_user.C
 libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/solver_parsing.C
-libgrins_la_SOURCES += solver/src/strategies_parsing.C
 libgrins_la_SOURCES += solver/src/time_stepping_parsing.C
 libgrins_la_SOURCES += solver/src/unsteady_mesh_adaptive_solver.C
+
+# src/strategies files
+libgrins_la_SOURCES += strategies/src/strategies_parsing.C
+libgrins_la_SOURCES += strategies/src/error_estimation_factory.C
 
 #src/variables
 libgrins_la_SOURCES += variables/src/variables_base.C
@@ -294,9 +294,6 @@ include_HEADERS += boundary_conditions/include/grins/power_law_catalycity.h
 include_HEADERS += common/include/grins/common.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
 include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
-
-# src/error_estimation headers
-include_HEADERS += error_estimation/include/grins/error_estimation_factory.h
 
 # src/ic_handling headers
 include_HEADERS += ic_handling/include/grins/ic_handling_base.h
@@ -457,10 +454,13 @@ include_HEADERS += solver/include/grins/parameter_user.h
 include_HEADERS += solver/include/grins/steady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/solver_parsing.h
 include_HEADERS += solver/include/grins/solver_names.h
-include_HEADERS += solver/include/grins/strategies_parsing.h
 include_HEADERS += solver/include/grins/time_stepping_parsing.h
 include_HEADERS += solver/include/grins/simulation_parsing.h
 include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
+
+# src/strategies headers
+include_HEADERS += strategies/include/grins/error_estimation_factory.h
+include_HEADERS += strategies/include/grins/strategies_parsing.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h
@@ -557,16 +557,16 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
-AM_CPPFLAGS += -I$(top_srcdir)/src/error_estimation/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/properties/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/qoi/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/solver/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/strategies/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/utilities/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/variables/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
