@@ -48,7 +48,7 @@ namespace GRINS
                                                              const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, core_physics_name),
-      _press_var(input,core_physics_name),
+      _press_var(input,core_physics_name, true /*is_constraint_var*/),
       _temp_vars(input, core_physics_name),
       _p0_var(NULL),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
@@ -57,7 +57,7 @@ namespace GRINS
   {
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
-      _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name) );
+      _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name, true /*is_constraint_var*/) );
 
     this->read_input_options(input);
   }

@@ -42,7 +42,7 @@ namespace GRINS
   BoussinesqBuoyancyBase::BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input,PhysicsNaming::heat_transfer()),
       _rho(0.0),
       _T_ref(1.0),
@@ -68,7 +68,7 @@ namespace GRINS
 
     _g(0) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 1 );
-  
+
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 2 );
 
