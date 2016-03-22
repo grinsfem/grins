@@ -38,16 +38,8 @@ namespace GRINS
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
       _qoi_factory( new QoIFactory ),
-      _postprocessing_factory( new PostprocessingFactory ),
-      _error_estimator_factory( new ErrorEstimatorFactory )
-  {
-    return;
-  }
-
-  SimulationBuilder::~SimulationBuilder()
-  {
-    return;
-  }
+      _postprocessing_factory( new PostprocessingFactory )
+  {}
 
   void SimulationBuilder::attach_solver_factory( SharedPtr<SolverFactory> solver_factory )
   {
@@ -81,11 +73,6 @@ namespace GRINS
   void SimulationBuilder::attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory )
   {
     this->_postprocessing_factory = postprocessing_factory;
-  }
-
-  void SimulationBuilder::attach_error_estimator_factory( SharedPtr<ErrorEstimatorFactory> error_estimator_factory )
-  {
-    this->_error_estimator_factory = error_estimator_factory;
   }
 
   SharedPtr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh
@@ -127,12 +114,6 @@ namespace GRINS
   {
     return (this->_postprocessing_factory)->build(input);
   }
-
-  SharedPtr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input,
-                                                                                          const libMesh::QoISet& qoi_set)
-   {
-     return (this->_error_estimator_factory)->build(input,qoi_set);
-   }
 
   const MeshBuilder& SimulationBuilder::mesh_builder() const
   {
