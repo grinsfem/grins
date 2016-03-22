@@ -34,6 +34,7 @@
 #include "grins/simulation_parsing.h"
 #include "grins/strategies_parsing.h"
 #include "grins/physics_builder.h"
+#include "grins/error_estimator_factory_base.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -81,7 +82,13 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
+    if( estimator_type != std::string("none") )
+      {
+        ErrorEstimatorFactoryBase::set_getpot(input);
+        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
+        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
+      }
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
@@ -126,7 +133,13 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
+    if( estimator_type != std::string("none") )
+      {
+        ErrorEstimatorFactoryBase::set_getpot(input);
+        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
+        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
+      }
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
