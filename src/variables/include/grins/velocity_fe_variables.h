@@ -38,7 +38,8 @@ namespace GRINS
   {
   public:
 
-    VelocityFEVariables( const GetPot& input, const std::string& physics_name );
+    VelocityFEVariables( const GetPot& input, const std::string& physics_name,
+                         bool _is_constraint_var = false );
     ~VelocityFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );

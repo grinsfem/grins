@@ -103,6 +103,7 @@ namespace GRINS
     std::vector<VariableIndex> _vars;
 
     std::vector<std::string> _var_names;
+
   };
 
 } // end namespace GRINS

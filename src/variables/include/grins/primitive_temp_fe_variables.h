@@ -43,8 +43,9 @@ namespace GRINS
   {
   public:
 
-    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name )
-      :  SingleFETypeVariable(input,physics_name,"T_",this->subsection(),"LAGRANGE","SECOND"),
+    PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name,
+                              bool _is_constraint_var = false  )
+      :  SingleFETypeVariable(input,physics_name,"T_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
          PrimitiveTempVariables(input)
     {}
 

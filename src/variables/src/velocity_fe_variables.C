@@ -35,8 +35,9 @@
 
 namespace GRINS
 {
-  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name )
-    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND"),
+  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name,
+                                            bool _is_constraint_var)
+    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
        VelocityVariables(input)
   {}
 

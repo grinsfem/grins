@@ -47,12 +47,14 @@ namespace GRINS
                           const std::string& old_var_suffix,
                           const std::string& subsection,
                           const std::string& default_family,
-                          const std::string& default_order );
+                          const std::string& default_order,
+                          bool _is_constraint_var );
 
     //! Primary constructor
     /*! Will parse from input section [Variables/<subsection>]. */
     SingleFETypeVariable( const GetPot& input,
-                          const std::string& subsection );
+                          const std::string& subsection,
+                          bool _is_constraint_var);
 
     ~SingleFETypeVariable(){};
 

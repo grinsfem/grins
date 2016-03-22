@@ -37,8 +37,9 @@ namespace GRINS
   {
   public:
 
-    ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name )
-      :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"SCALAR","FIRST"),
+    ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name,
+                              bool _is_constraint_var = false )
+      :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"SCALAR","FIRST",_is_constraint_var),
          ThermoPressureVariable(input)
     {
       // Currently only support SCALAR and FIRST
