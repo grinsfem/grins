@@ -35,7 +35,7 @@ namespace GRINS
   template<typename EstimatorType>
   libMesh::UniquePtr<libMesh::ErrorEstimator>
   ErrorEstimatorFactoryBasic<EstimatorType>::build_error_estimator
-  ( const GetPot& /*input*/, MultiphysicsSystem& /*system*/ )
+  ( const GetPot& /*input*/, MultiphysicsSystem& /*system*/, const ErrorEstimatorOptions& /*estimator_options*/ )
   {
     return libMesh::UniquePtr<libMesh::ErrorEstimator>( new EstimatorType );
   }

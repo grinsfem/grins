@@ -43,4 +43,6 @@ namespace GRINS
   const GetPot* FactoryWithGetPot<libMesh::ErrorEstimator>::_input = NULL;
 
   MultiphysicsSystem* ErrorEstimatorFactoryBase::_system = NULL;
+
+  const ErrorEstimatorOptions* ErrorEstimatorFactoryBase::_estimator_options = NULL;
 } // end namespace GRINS

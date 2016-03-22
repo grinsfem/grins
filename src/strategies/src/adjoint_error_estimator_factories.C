@@ -31,7 +31,8 @@
 
 namespace GRINS
 {
-  void AdjointResidualErrorEstimatorFactory::set_adjoint_estimator_options( const GetPot& input,
+  void AdjointResidualErrorEstimatorFactory::set_adjoint_estimator_options( const GetPot& /*input*/,
+                                                                            const ErrorEstimatorOptions& estimator_options,
                                                                             libMesh::AdjointResidualErrorEstimator& estimator )
   {
     libMesh::PatchRecoveryErrorEstimator*
@@ -44,7 +45,7 @@ namespace GRINS
 
     estimator.dual_error_estimator().reset( p2 );
 
-    bool patch_reuse = input( "MeshAdaptivity/patch_reuse", false );
+    bool patch_reuse = estimator_options.patch_reuse();
     estimator.primal_error_estimator()->error_norm.set_type( 0, libMesh::H1_SEMINORM );
     p1->set_patch_reuse( patch_reuse );
 
@@ -52,11 +53,12 @@ namespace GRINS
     p2->set_patch_reuse( patch_reuse );
   }
 
-  void AdjointRefinementErrorEstimatorFactory::set_adjoint_estimator_options( const GetPot& input,
+  void AdjointRefinementErrorEstimatorFactory::set_adjoint_estimator_options( const GetPot& /*input*/,
+                                                                              const ErrorEstimatorOptions& estimator_options,
                                                                               libMesh::AdjointRefinementEstimator& estimator )
   {
-    estimator.number_h_refinements = input( "MeshAdaptivity/n_adjoint_h_refinements", 1 );
-    estimator.number_p_refinements = input( "MeshAdaptivity/n_adjoint_p_refinements", 0 );
+    estimator.number_h_refinements = estimator_options.n_adjoint_h_refinements();
+    estimator.number_p_refinements = estimator_options.n_adjoint_p_refinements();
   }
 
   // Instantiate adjoint ErrorEstimator factories

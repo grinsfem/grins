@@ -48,7 +48,8 @@ namespace GRINS
   protected:
 
     virtual libMesh::UniquePtr<libMesh::ErrorEstimator>
-    build_error_estimator( const GetPot& input, MultiphysicsSystem& system )
+    build_error_estimator( const GetPot& input, MultiphysicsSystem& system,
+                           const ErrorEstimatorOptions& estimator_options )
     {
       libMesh::UniquePtr<libMesh::ErrorEstimator>
         raw_error_estimator( new EstimatorType );
@@ -62,12 +63,13 @@ namespace GRINS
       adjoint_error_estimator->qoi_set() = qoi_set;
 
       // Now set the options for the derived type
-      this->set_adjoint_estimator_options( input, *adjoint_error_estimator );
+      this->set_adjoint_estimator_options( input, estimator_options, *adjoint_error_estimator );
 
       return raw_error_estimator;
     }
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
+                                                const ErrorEstimatorOptions& estimator_options,
                                                 EstimatorType& estimator ) =0;
   };
 
@@ -84,6 +86,7 @@ namespace GRINS
   protected:
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
+                                                const ErrorEstimatorOptions& estimator_options,
                                                 libMesh::AdjointResidualErrorEstimator& estimator );
   };
 
@@ -100,6 +103,7 @@ namespace GRINS
   protected:
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
+                                                const ErrorEstimatorOptions& estimator_options,
                                                 libMesh::AdjointRefinementEstimator& estimator );
   };
 } // end namespace GRINS

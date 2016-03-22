@@ -42,7 +42,8 @@ namespace GRINS
   protected:
 
     virtual libMesh::UniquePtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-                                                                               MultiphysicsSystem& system );
+                                                                               MultiphysicsSystem& system,
+                                                                               const ErrorEstimatorOptions& estimator_options);
 
   };
 

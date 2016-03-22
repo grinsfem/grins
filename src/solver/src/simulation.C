@@ -67,6 +67,7 @@ namespace GRINS
        _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
        _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
        _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+       _error_estimator_options(input),
        _error_estimator(), // effectively NULL
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
@@ -82,13 +83,7 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
-    if( estimator_type != std::string("none") )
-      {
-        ErrorEstimatorFactoryBase::set_getpot(input);
-        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
-        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
-      }
+    this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
@@ -120,6 +115,7 @@ namespace GRINS
        _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
        _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
        _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+       _error_estimator_options(input),
        _error_estimator(), // effectively NULL
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
@@ -133,13 +129,7 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    std::string estimator_type = input("MeshAdaptivity/estimator_type", "none");
-    if( estimator_type != std::string("none") )
-      {
-        ErrorEstimatorFactoryBase::set_getpot(input);
-        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
-        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
-      }
+    this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
@@ -147,11 +137,6 @@ namespace GRINS
     bool warning_only = command_line.search("--warn-only-unused-var");
     this->check_for_unused_vars(input, warning_only );
 
-  }
-
-  Simulation::~Simulation()
-  {
-    return;
   }
 
   void Simulation::init_multiphysics_system( const GetPot& input,
@@ -592,6 +577,18 @@ namespace GRINS
       }
 
     return do_adjoint_solve;
+  }
+
+  void Simulation::build_error_estimator(const GetPot& input)
+  {
+    std::string estimator_type = _error_estimator_options.estimator_type();
+    if( estimator_type != std::string("none") )
+      {
+        ErrorEstimatorFactoryBase::set_getpot(input);
+        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
+        ErrorEstimatorFactoryBase::set_estimator_options(_error_estimator_options);
+        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
+      }
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

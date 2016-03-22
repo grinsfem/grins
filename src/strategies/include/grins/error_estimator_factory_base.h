@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/factory_with_getpot.h"
 #include "grins/multiphysics_sys.h"
+#include "grins/error_estimator_options.h"
 
 // libMesh
 #include "libmesh/error_estimator.h"
@@ -50,16 +51,24 @@ namespace GRINS
     static void set_system( MultiphysicsSystem& system )
     { _system = &system; }
 
+    static void set_estimator_options( const ErrorEstimatorOptions& estimator_options )
+    { _estimator_options = &estimator_options; }
+
   protected:
 
     //! Subclasses implement this method for building the ErrorEstimator object.
     virtual libMesh::UniquePtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-                                                                               MultiphysicsSystem& system ) =0;
+                                                                               MultiphysicsSystem& system,
+                                                                               const ErrorEstimatorOptions& estimator_options ) =0;
 
     //! Cache pointer to system
     /*! We can't copy this so it must be a pointer. We do *not* own
         this so do not delete! */
     static MultiphysicsSystem* _system;
+
+    //! Cache pointer to system
+    /*! We do *not* own this so do not delete! */
+    static const ErrorEstimatorOptions* _estimator_options;
 
   private:
 
@@ -74,9 +83,11 @@ namespace GRINS
       libmesh_error_msg("ERROR: must call set_getpot() before building ErrorEstimator!");
     if( !_system )
       libmesh_error_msg("ERROR: must call set_system() before building ErrorEstimator!");
+    if( !_estimator_options )
+      libmesh_error_msg("ERROR: must call set_estimator_options() before building ErrorEstimator!");
 
     libMesh::UniquePtr<libMesh::ErrorEstimator>
-      new_estimator = this->build_error_estimator( *_input, *_system );
+      new_estimator = this->build_error_estimator( *_input, *_system, *_estimator_options );
 
     libmesh_assert(new_estimator);
 
