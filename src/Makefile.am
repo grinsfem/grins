@@ -204,6 +204,7 @@ libgrins_la_SOURCES += solver/src/unsteady_mesh_adaptive_solver.C
 # src/strategies files
 libgrins_la_SOURCES += strategies/src/strategies_parsing.C
 libgrins_la_SOURCES += strategies/src/error_estimation_factory.C
+libgrins_la_SOURCES += strategies/src/error_estimator_factory_base.C
 
 #src/variables
 libgrins_la_SOURCES += variables/src/variables_base.C
@@ -461,6 +462,7 @@ include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
 # src/strategies headers
 include_HEADERS += strategies/include/grins/error_estimation_factory.h
 include_HEADERS += strategies/include/grins/strategies_parsing.h
+include_HEADERS += strategies/include/grins/error_estimator_factory_base.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h
