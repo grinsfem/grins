@@ -30,6 +30,8 @@
 // GRINS
 #include "grins/common.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -72,12 +74,22 @@ namespace GRINS
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 2 );
 
-    return;
+    this->register_variables();
   }
 
   BoussinesqBuoyancyBase::~BoussinesqBuoyancyBase()
   {
     return;
+  }
+
+  void BoussinesqBuoyancyBase::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
   }
 
   void BoussinesqBuoyancyBase::init_variables( libMesh::FEMSystem* system )

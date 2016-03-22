@@ -108,6 +108,8 @@ namespace GRINS
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
 
+    void register_variables();
+
   }; // class ReactingLowMachNavierStokesAbstract
 
 

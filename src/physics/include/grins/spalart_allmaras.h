@@ -118,6 +118,8 @@ namespace GRINS
   private:
     SpalartAllmaras();
 
+    void register_variables();
+
   };
 
 } //End namespace block

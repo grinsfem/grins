@@ -62,6 +62,8 @@ namespace GRINS
 
     SolidMechanicsAbstract();
 
+    void register_variables();
+
   };
 
 } // end namespace GRINS

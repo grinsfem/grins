@@ -92,6 +92,7 @@ namespace GRINS
   private:
     HeatTransferBase();
 
+    void register_variables();
   };
 
 } //End namespace block

@@ -85,6 +85,8 @@ namespace GRINS
 
     BoussinesqBuoyancyBase();
 
+    void register_variables();
+
   };
 
 } // end namespace GRINS

@@ -34,6 +34,8 @@
 #include "grins/heat_transfer_macros.h"
 #include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -54,6 +56,8 @@ namespace GRINS
 
     MaterialsParsing::read_specific_heat( PhysicsNaming::heat_conduction(), input, (*this), this->_Cp );
 
+    this->register_variables();
+
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
@@ -65,6 +69,13 @@ namespace GRINS
   HeatConduction<K>::~HeatConduction()
   {
     return;
+  }
+
+  template<class K>
+  void HeatConduction<K>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
   }
 
   template<class K>

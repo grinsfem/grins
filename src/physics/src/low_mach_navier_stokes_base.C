@@ -33,6 +33,8 @@
 #include "grins/constant_conductivity.h"
 #include "grins/grins_enums.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -60,6 +62,21 @@ namespace GRINS
       _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name, true /*is_constraint_var*/) );
 
     this->read_input_options(input);
+    this->register_variables();
+  }
+
+  template<class Mu, class SH, class TC>
+  void LowMachNavierStokesBase<Mu,SH,TC>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
+    if( this->_enable_thermo_press_calc )
+      GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::thermo_pressure_section(),
+                                                                   *(this->_p0_var));
   }
 
   template<class Mu, class SH, class TC>

@@ -92,6 +92,8 @@ namespace GRINS
   private:
     IncompressibleNavierStokesBase();
 
+    void register_variables();
+
   };
 
 } //End namespace block

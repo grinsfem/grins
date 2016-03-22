@@ -32,6 +32,8 @@
 #include "grins/physics_naming.h"
 #include "grins/inc_nav_stokes_macro.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -52,6 +54,16 @@ namespace GRINS
       _mu(input,MaterialsParsing::material_name(input,core_physics_name))
   {
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
+    this->register_variables();
+  }
+
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
   }
 
   template<class Mu>
