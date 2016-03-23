@@ -123,16 +123,16 @@ tau_factor = '0.05'
       n_elems_y = '50'
 []
 
-# Options for tiem solvers
-[unsteady-solver]
-transient = 'false'
+[Strategies]
+   [./MeshAdaptivity]
+      mesh_adaptive = 'true'
+      absolute_global_tolerance = '1.0e-2'
+      plot_cell_errors = 'false'
+      max_refinement_steps = '5'
 
-[MeshAdaptivity]
-mesh_adaptive = 'true'
-absolute_global_tolerance = '1.0e-2'
-estimator_type = 'adjoint_residual'
-plot_cell_errors = 'false'
-max_refinement_steps = '5'
+   [../ErrorEstimation]
+      estimator_type = 'adjoint_residual'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -144,6 +144,7 @@ verify_analytic_jacobians = 0.0
 initial_linear_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
+[]
 
 # Visualization options
 [vis-options]
@@ -155,6 +156,7 @@ vis_output_file_prefix = 'cavity'
 output_residual = 'false'
 
 output_format = 'ExodusII'
+[]
 
 # Options for print info to the screen
 [screen-options]
