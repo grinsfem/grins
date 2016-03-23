@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/grins_solver.h"
+#include "grins/adaptive_time_stepping_options.h"
 
 //libMesh
 #include "libmesh/system_norm.h"
@@ -66,10 +67,7 @@ namespace GRINS
     double _deltat;
 
     // Options for adaptive time solvers
-    double _target_tolerance;
-    double _upper_tolerance;
-    double _max_growth;
-    libMesh::SystemNorm _component_norm;
+    AdaptiveTimeSteppingOptions _adapt_time_step_options;
 
     //! Track whether is this a second order (in time) solver or not
     /*! If it is, we need to potentially initialize the acceleration */
