@@ -207,6 +207,7 @@ libgrins_la_SOURCES += strategies/src/error_estimator_factory_base.C
 libgrins_la_SOURCES += strategies/src/error_estimator_factory_basic.C
 libgrins_la_SOURCES += strategies/src/adjoint_error_estimator_factories.C
 libgrins_la_SOURCES += strategies/src/error_estimator_options.C
+libgrins_la_SOURCES += strategies/src/adaptive_time_stepping_options.C
 
 #src/variables
 libgrins_la_SOURCES += variables/src/variables_base.C
@@ -467,6 +468,7 @@ include_HEADERS += strategies/include/grins/error_estimator_factory_base.h
 include_HEADERS += strategies/include/grins/error_estimator_factory_basic.h
 include_HEADERS += strategies/include/grins/adjoint_error_estimator_factories.h
 include_HEADERS += strategies/include/grins/error_estimator_options.h
+include_HEADERS += strategies/include/grins/adaptive_time_stepping_options.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/single_variable.h
