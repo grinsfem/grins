@@ -66,7 +66,7 @@ namespace GRINS
   {
     // If we are computing QoI error estimates, we have to be using
     // the Adjoint Refinement Error Estimator
-    if( this->_compute_qoi_error_estimate )
+    if( _error_estimator_options.compute_qoi_error_estimate() )
       if(context.error_estimator->type() != libMesh::ADJOINT_REFINEMENT)
       {
 	std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
@@ -87,11 +87,12 @@ namespace GRINS
 
     /*! \todo This output cannot be toggled in the input file, but it should be able to be. */
     std::cout << "==========================================================" << std::endl
-              << "Performing " << this->_max_refinement_steps << " adaptive refinements" << std::endl
+              << "Performing " << _mesh_adaptivity_options.max_refinement_steps()
+              << " adaptive refinements" << std::endl
               << "==========================================================" << std::endl;
 
     // GRVY timers contained in here (if enabled)
-    for ( unsigned int r_step = 0; r_step < this->_max_refinement_steps; r_step++ )
+    for ( unsigned int r_step = 0; r_step < _mesh_adaptivity_options.max_refinement_steps(); r_step++ )
       {
         std::cout << "==========================================================" << std::endl
                   << "Adaptive Refinement Step " << r_step << std::endl
@@ -123,7 +124,7 @@ namespace GRINS
         this->estimate_error_for_amr( context, error );
 
 	// Get the global error estimate if you can and are asked to
-	if( this->_compute_qoi_error_estimate )
+	if( _error_estimator_options.compute_qoi_error_estimate() )
 	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
 	  {
 	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
@@ -144,7 +145,7 @@ namespace GRINS
         else
           {
             // Only bother refining if we're on the last step.
-            if( r_step < this->_max_refinement_steps -1 )
+            if( r_step < _mesh_adaptivity_options.max_refinement_steps() -1 )
               {
                 this->perform_amr(context, error);
 

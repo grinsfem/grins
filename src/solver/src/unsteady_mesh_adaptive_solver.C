@@ -78,7 +78,7 @@ namespace GRINS
         // need to update them with the current solution.
         this->update_dirichlet_bcs(context);
 
-        for ( unsigned int r_step = 0; r_step < this->_max_refinement_steps; r_step++ )
+        for ( unsigned int r_step = 0; r_step < _mesh_adaptivity_options.max_refinement_steps(); r_step++ )
           {
             std::cout << "==========================================================" << std::endl
                       << "Adaptive Refinement Step " << r_step << std::endl
@@ -125,7 +125,7 @@ namespace GRINS
             else
               {
                 // Only bother refining if we're not on the last step.
-                if( r_step < this->_max_refinement_steps )
+                if( r_step < _mesh_adaptivity_options.max_refinement_steps() )
                   this->perform_amr(context,error);
               }
 
