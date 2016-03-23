@@ -58,6 +58,8 @@ namespace GRINS
     static std::string patch_recovery_error_estimator()
     { return "patch_recovery"; }
 
+    //! Option to let user manually trigger adjoint solve
+    static bool do_adjoint_solve( const GetPot& input );
   };
 
 } // end namespace GRINS

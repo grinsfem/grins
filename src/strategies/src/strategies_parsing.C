@@ -42,4 +42,23 @@ namespace GRINS
     return extra_order;
   }
 
+  bool StrategiesParsing::do_adjoint_solve( const GetPot& input )
+  {
+    bool do_adjoint_solve = false;
+    std::string old_option = "linear-nonlinear-solver/do_adjoint_solve";
+    std::string new_option = "Strategies/Adjoint/do_adjoint_solve";
+
+    bool have_old_option = input.have_variable(old_option);
+    bool have_new_option = input.have_variable(new_option);
+    if( have_old_option  &&  have_new_option )
+      libmesh_error_msg("ERROR: Cannot specify both "+old_option+" and "+new_option+"!");
+
+    if( have_old_option )
+      do_adjoint_solve = input( old_option, false );
+
+    if( have_new_option )
+      do_adjoint_solve = input( new_option, false );
+
+    return do_adjoint_solve;
+  }
 } // end namespace GRINS

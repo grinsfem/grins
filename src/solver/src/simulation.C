@@ -570,10 +570,8 @@ namespace GRINS
 
     // Now check if the user requested to do an adjoint solve regardless
     /*! \todo This option name WILL change at some point. */
-    if( input( "linear-nonlinear-solver/do_adjoint_solve", false ) )
-      {
-        do_adjoint_solve = true;
-      }
+    if( StrategiesParsing::do_adjoint_solve(input) )
+      do_adjoint_solve = true;
 
     return do_adjoint_solve;
   }
