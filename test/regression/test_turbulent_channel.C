@@ -77,16 +77,18 @@ private:
   libMesh::MeshFunction* turbulent_bc_values;
 };
 
-// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
-class TurbulentBdyFunctionU : public libMesh::FunctionBase<libMesh::Number>
+
+class TurbBoundFuncBase : public libMesh::FunctionBase<libMesh::Number>
 {
 public:
-  TurbulentBdyFunctionU (libMesh::MeshFunction* _turbulent_bc_values) :
-    turbulent_bc_values(_turbulent_bc_values)
+  TurbBoundFuncBase (libMesh::MeshFunction* turbulent_bc_values) :
+    _turbulent_bc_values(turbulent_bc_values)
   { this->_initialized = true; }
 
   virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
   { libmesh_not_implemented(); }
+
+  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) =0;
 
   virtual void operator() (const libMesh::Point& p,
                            const libMesh::Real t,
@@ -109,60 +111,47 @@ public:
     p_copy(0) = 2*p_copy(0);
 
     libMesh::DenseVector<libMesh::Number> u_nu_values;
-    turbulent_bc_values->operator()(p_copy, t, u_nu_values);
+    _turbulent_bc_values->operator()(p_copy, t, u_nu_values);
 
-    output(0) = u_nu_values(0)/21.995539;
+    output(0) = this->compute_final_value(u_nu_values);
   }
 
-  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(turbulent_bc_values)); }
+protected:
 
-private:
-  libMesh::MeshFunction* turbulent_bc_values;
+  libMesh::MeshFunction* _turbulent_bc_values;
+
+};
+
+
+// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
+class TurbulentBdyFunctionU : public TurbBoundFuncBase
+{
+public:
+  TurbulentBdyFunctionU (libMesh::MeshFunction* turbulent_bc_values)
+    : TurbBoundFuncBase(turbulent_bc_values)
+  {}
+
+  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+  { return  u_nu_values(0)/21.995539; }
+
+  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
 };
 
 // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
-class TurbulentBdyFunctionNu : public libMesh::FunctionBase<libMesh::Number>
+class TurbulentBdyFunctionNu : public TurbBoundFuncBase
 {
 public:
-  TurbulentBdyFunctionNu (libMesh::MeshFunction* _turbulent_bc_values) :
-    turbulent_bc_values(_turbulent_bc_values)
-  { this->_initialized = true; }
+  TurbulentBdyFunctionNu (libMesh::MeshFunction* turbulent_bc_values)
+    : TurbBoundFuncBase(turbulent_bc_values)
+  {}
 
-  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
-  { libmesh_not_implemented(); }
-
-  virtual void operator() (const libMesh::Point& p,
-                           const libMesh::Real t,
-                           libMesh::DenseVector<libMesh::Number>& output)
-  {
-    output.resize(1);
-    output.zero();
-
-    // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
-    libMesh::Point p_copy(p);
-    // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
-    p_copy(0) = p_copy(1);
-    p_copy(1)= 0.0;
-    // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
-    // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
-    if(p_copy(0) > 0.5)
-      {
-        p_copy(0) = 1 - p_copy(0);
-      }
-    p_copy(0) = 2*p_copy(0);
-
-    libMesh::DenseVector<libMesh::Number> u_nu_values;
-    turbulent_bc_values->operator()(p_copy, t, u_nu_values);
-
-    output(0) = u_nu_values(1)/(2.0*21.995539);
-  }
+  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+  { return  u_nu_values(1)/(2.0*21.995539); }
 
   virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(turbulent_bc_values)); }
+  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
 
-private:
-  libMesh::MeshFunction* turbulent_bc_values;
 };
 
 
