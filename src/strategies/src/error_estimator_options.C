@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/common.h"
+#include "grins/strategies_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -85,4 +86,13 @@ namespace GRINS
     _compute_qoi_error_estimate = input("Strategies/ErrorEstimation/compute_qoi_error_estimate", false);
   }
 
+  bool ErrorEstimatorOptions::estimator_requires_adjoint() const
+  {
+    bool requires_adjoint = false;
+    if( _estimator_type == StrategiesParsing::adjoint_residual_error_estimator() ||
+        _estimator_type == StrategiesParsing::adjoint_residual_error_estimator() )
+      requires_adjoint = true;
+
+    return requires_adjoint;
+  }
 } // end namespace GRINS

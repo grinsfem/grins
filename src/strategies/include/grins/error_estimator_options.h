@@ -56,6 +56,8 @@ namespace GRINS
     bool compute_qoi_error_estimate() const
     { return _compute_qoi_error_estimate; }
 
+    bool estimator_requires_adjoint() const;
+
   private:
 
     void check_dup_input_style( const GetPot& input ) const;

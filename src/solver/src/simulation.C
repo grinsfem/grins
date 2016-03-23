@@ -556,13 +556,12 @@ namespace GRINS
 
   bool Simulation::check_for_adjoint_solve( const GetPot& input ) const
   {
-    /*! \todo We need to collect these options into one spot */
-    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
+    std::string error_estimator = _error_estimator_options.estimator_type();
 
     bool do_adjoint_solve = false;
 
     // First check if the error estimator requires an adjoint solve
-    if( error_estimator.find("adjoint") != std::string::npos || error_estimator.find("ADJOINT") != std::string::npos )
+    if( _error_estimator_options.estimator_requires_adjoint() )
       do_adjoint_solve = true;
 
     // Next check if parameter sensitivies require an adjoint solve
