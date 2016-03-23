@@ -25,7 +25,7 @@
 // These functions
 #include "grins/solver_names.h"
 #include "grins/solver_parsing.h"
-#include "grins/strategies_parsing.h"
+#include "grins/mesh_adaptivity_options.h"
 
 // GRINS
 #include "grins/common.h"
@@ -37,7 +37,9 @@ namespace GRINS
 {
   std::string SolverParsing::solver_type(const GetPot& input)
   {
-    bool mesh_adaptive = StrategiesParsing::is_mesh_adaptive(input);
+    //! \todo We should just pass this object in from the calling function
+    MeshAdaptivityOptions mesh_adaptivity_options(input);
+    bool mesh_adaptive = mesh_adaptivity_options.is_mesh_adaptive();
 
     bool transient = SolverParsing::is_transient(input);
 

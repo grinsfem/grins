@@ -44,9 +44,6 @@ namespace GRINS
 
     ~StrategiesParsing(){};
 
-    //! Checks input to see if mesh adaptivity options are present
-    static bool is_mesh_adaptive( const GetPot& input );
-
     static int extra_quadrature_order( const GetPot& input );
 
     static std::string adjoint_residual_error_estimator()

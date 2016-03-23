@@ -31,10 +31,6 @@
 
 namespace GRINS
 {
-  bool StrategiesParsing::is_mesh_adaptive( const GetPot& input )
-  {
-    return input("MeshAdaptivity/mesh_adaptive", false );
-  }
 
   int StrategiesParsing::extra_quadrature_order( const GetPot& input )
   {
