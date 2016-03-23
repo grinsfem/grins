@@ -1,6 +1,0 @@
-#!/bin/sh
-
-GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
-GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
-
-$GRINS_RUN @prefix@/examples/mass_injection/injection @prefix@/examples/mass_injection/injection.in $GRINS_SOLVER_OPTIONS

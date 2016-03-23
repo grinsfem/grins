@@ -98,20 +98,6 @@ convectioncell_SCRIPTS = $(top_builddir)/examples/convection_cell/run.sh
 EXTRA_DIST += $(convectioncell_DATA)
 
 #=======================================================================
-# Mass Injection Example
-#=======================================================================
-massinjectiondir = $(prefix)/examples/mass_injection
-massinjection_PROGRAMS = injection
-massinjection_DATA  = $(top_srcdir)/examples/mass_injection/injection.in
-massinjection_DATA += $(top_srcdir)/examples/mass_injection/injection_grid.e
-massinjection_SCRIPTS = $(top_builddir)/examples/mass_injection/run.sh
-
-EXTRA_DIST += $(massinjection_DATA)
-
-injection_SOURCES = mass_injection/injection.C
-injection_LDADD = $(LIBGRINS_LIBS)
-
-#=======================================================================
 # Rayleigh-Taylor Example
 #=======================================================================
 rayleighdir = $(prefix)/examples/rayleigh_taylor
