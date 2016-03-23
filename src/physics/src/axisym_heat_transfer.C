@@ -33,6 +33,8 @@
 #include "grins/grins_enums.h"
 #include "grins/heat_transfer_macros.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -49,7 +51,7 @@ namespace GRINS
 								    const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer()),
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::axisymmetric_heat_transfer()))
   {
@@ -58,6 +60,8 @@ namespace GRINS
     // This is deleted in the base class
     this->_bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
+
+    this->register_variables();
   }
 
   template< class Conductivity>
@@ -66,6 +70,17 @@ namespace GRINS
     MaterialsParsing::read_density( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_rho );
 
     MaterialsParsing::read_specific_heat( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_Cp );
+  }
+
+  template< class Conductivity>
+  void AxisymmetricHeatTransfer<Conductivity>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
   }
 
   template< class Conductivity>

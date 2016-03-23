@@ -51,7 +51,9 @@ namespace GRINS
   {
   public:
 
-    FEVariablesBase(){};
+    FEVariablesBase( bool _is_constraint_var )
+      : _is_constraint_var(_is_constraint_var)
+    {}
 
     ~FEVariablesBase(){};
 
@@ -60,6 +62,9 @@ namespace GRINS
         time. Most subclasses should be able to use default_fe_init, once
         they subclass this and VariablesBase. */
     virtual void init( libMesh::FEMSystem* system ) =0;
+
+    bool is_constraint_var() const
+    { return _is_constraint_var; }
 
   protected:
 
@@ -76,6 +81,15 @@ namespace GRINS
     std::vector<GRINSEnums::FEFamily> _family;
 
     std::vector<GRINSEnums::Order> _order;
+
+    //! Tracks whether this is a constraint variable
+    /*! By constraint variable, we mean a variable that is
+        effectively a Lagrange multiplier. The intended use
+        case is to determine whether this variable requires
+        boundary conditions to be specified (constraint variables
+        do not). This should be set by the finite element
+        type subclasses. */
+    bool _is_constraint_var;
 
   };
 } // end namespace GRINS

@@ -44,8 +44,9 @@ namespace GRINS
   public:
 
     GenericFETypeVariable( const GetPot& input,
-                           const std::string& physics_name )
-      : SingleFETypeVariable(input,this->section_name(physics_name)),
+                           const std::string& physics_name,
+                           bool _is_constraint_var = false )
+      : SingleFETypeVariable(input,this->section_name(physics_name),_is_constraint_var),
         GenericVariable(input,physics_name)
     {}
 

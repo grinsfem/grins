@@ -43,8 +43,9 @@ namespace GRINS
   {
   public:
 
-    TurbulenceFEVariables( const GetPot& input, const std::string& physics_name )
-      :  SingleFETypeVariable(input,physics_name,"TU_",this->subsection(),"LAGRANGE","FIRST"),
+    TurbulenceFEVariables( const GetPot& input, const std::string& physics_name,
+                           bool _is_constraint_var = false )
+      :  SingleFETypeVariable(input,physics_name,"TU_",this->subsection(),"LAGRANGE","FIRST",_is_constraint_var),
          TurbulenceVariables(input)
     {}
 

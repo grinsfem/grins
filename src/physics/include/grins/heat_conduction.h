@@ -83,6 +83,7 @@ namespace GRINS
 
     HeatConduction();
 
+    void register_variables();
 
   };
 

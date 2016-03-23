@@ -37,8 +37,9 @@ namespace GRINS
 
   DisplacementFEVariables::DisplacementFEVariables( const GetPot& input,
                                                     const std::string& physics_name,
-                                                    bool is_2D, bool is_3D )
-    :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"LAGRANGE","FIRST"),
+                                                    bool is_2D, bool is_3D,
+                                                    bool _is_constraint_var )
+    :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"LAGRANGE","FIRST",_is_constraint_var),
        DisplacementVariables(input),
        _is_2D(is_2D),
        _is_3D(is_3D)

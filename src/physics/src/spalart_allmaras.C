@@ -35,6 +35,8 @@
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -47,7 +49,7 @@ namespace GRINS
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
     _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-    _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
+    _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
     _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
     _spalart_allmaras_helper(input),
     _sa_params(input),
@@ -67,6 +69,8 @@ namespace GRINS
         std::cout<<"Boundary Id: "<<*b_id<<std::endl;
       }
 
+    this->register_variables();
+
     // This is deleted in the base class
     this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
 
@@ -79,6 +83,17 @@ namespace GRINS
   SpalartAllmaras<Mu>::~SpalartAllmaras()
   {
     return;
+  }
+
+  template<class Mu>
+  void SpalartAllmaras<Mu>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::turbulence_section(),
+                                                                 this->_turbulence_vars);
   }
 
   template<class Mu>

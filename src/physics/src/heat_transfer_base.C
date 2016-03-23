@@ -32,6 +32,8 @@
 #include "grins/assembly_context.h"
 #include "grins/heat_transfer_macros.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -47,7 +49,7 @@ namespace GRINS
                                          const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input,PhysicsNaming::heat_transfer()),
       _rho(0.0),
       _Cp(0.0),
@@ -56,6 +58,19 @@ namespace GRINS
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 
     MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
+
+    this->register_variables();
+  }
+
+  template<class K>
+  void HeatTransferBase<K>::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
   }
 
   template<class K>

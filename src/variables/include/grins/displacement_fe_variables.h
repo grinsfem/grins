@@ -43,7 +43,8 @@ namespace GRINS
      *  or 3D (is_3D = true) space or 2D shell manifolds in 3D (is_3D = true). */
     DisplacementFEVariables( const GetPot& input,
                              const std::string& physics_name,
-                             bool is_2D, bool is_3D );
+                             bool is_2D, bool is_3D,
+                             bool _is_constraint_var = false );
 
     virtual ~DisplacementFEVariables(){};
 

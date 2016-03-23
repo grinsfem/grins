@@ -23,32 +23,16 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/velocity_fe_variables.h"
-
-// GRINS
-#include "grins/variable_name_defaults.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/string_to_enum.h"
-#include "libmesh/fem_system.h"
+#include "grins/variable_warehouse.h"
 
 namespace GRINS
 {
-  VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name,
-                                            bool _is_constraint_var)
-    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
-       VelocityVariables(input)
-  {}
-
-  void VelocityFEVariables::init( libMesh::FEMSystem* system )
+  namespace GRINSPrivate
   {
-    libmesh_assert_greater_equal(system->get_mesh().mesh_dimension(), 2);
-
-    if ( system->get_mesh().mesh_dimension() < 3)
-      _var_names.pop_back();
-
-    this->default_fe_init(system, _var_names, _vars );
-  }
-
+    std::map<std::string,const FEVariablesBase*>& VariableWarehouse::var_map()
+    {
+      static std::map<std::string, const FEVariablesBase*> _var_map;
+      return _var_map;
+    }
+  } // end namespace GRINSPrivate
 } // end namespace GRINS

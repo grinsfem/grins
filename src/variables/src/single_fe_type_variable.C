@@ -40,8 +40,9 @@ namespace GRINS
                                               const std::string& old_var_suffix,
                                               const std::string& subsection,
                                               const std::string& default_family,
-                                              const std::string& default_order )
-    :  FEVariablesBase()
+                                              const std::string& default_order,
+                                              bool _is_constraint_var )
+    :  FEVariablesBase(_is_constraint_var)
   {
     _family.resize(1,libMesh::INVALID_FE);
     _order.resize(1,libMesh::INVALID_ORDER);
@@ -60,8 +61,9 @@ namespace GRINS
   }
 
   SingleFETypeVariable::SingleFETypeVariable( const GetPot& input,
-                                              const std::string& subsection )
-    :  FEVariablesBase()
+                                              const std::string& subsection,
+                                              bool _is_constraint_var)
+    :  FEVariablesBase(_is_constraint_var)
   {
      _family.resize(1,libMesh::INVALID_FE);
      _order.resize(1,libMesh::INVALID_ORDER);

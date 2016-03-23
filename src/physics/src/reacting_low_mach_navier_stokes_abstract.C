@@ -35,6 +35,8 @@
 #include "grins/grins_enums.h"
 #include "grins/antioch_mixture.h"
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/string_to_enum.h"
@@ -48,7 +50,7 @@ namespace GRINS
                                                                            const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
-      _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes()),
+      _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _p0_var(NULL),
       _species_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
@@ -62,9 +64,10 @@ namespace GRINS
 
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
-      _p0_var.reset( new ThermoPressureFEVariable(input, PhysicsNaming::reacting_low_mach_navier_stokes()) );
+      _p0_var.reset( new ThermoPressureFEVariable(input, PhysicsNaming::reacting_low_mach_navier_stokes(), true /*is_constraint_var*/) );
 
     this->read_input_options(input);
+    this->register_variables();
   }
 
   void ReactingLowMachNavierStokesAbstract::read_input_options( const GetPot& input )
@@ -86,6 +89,21 @@ namespace GRINS
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 2 );
 
+  }
+
+  void ReactingLowMachNavierStokesAbstract::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::species_mass_fractions_section(),
+                                                                 this->_species_vars);
+    if( this->_enable_thermo_press_calc )
+      GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::thermo_pressure_section(),
+                                                                   *(this->_p0_var));
   }
 
   void ReactingLowMachNavierStokesAbstract::init_variables( libMesh::FEMSystem* system )

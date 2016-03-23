@@ -27,6 +27,8 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -38,7 +40,9 @@ namespace GRINS
                                                  const GetPot& input )
     : Physics(physics_name,input),
       _disp_vars(input,physics_name,false,true)// is_2D = false, is_3D = true
-  {}
+  {
+    this->register_variables();
+  }
 
   void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )
   {
@@ -51,6 +55,12 @@ namespace GRINS
     system->time_evolving(_disp_vars.u());
     system->time_evolving(_disp_vars.v());
     system->time_evolving(_disp_vars.w());
+  }
+
+  void SolidMechanicsAbstract::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::displacement_section(),
+                                                                 this->_disp_vars);
   }
 
 } // end namespace GRINS

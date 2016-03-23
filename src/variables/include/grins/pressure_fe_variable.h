@@ -43,8 +43,9 @@ namespace GRINS
   {
   public:
 
-    PressureFEVariable( const GetPot& input, const std::string& physics_name )
-      :  SingleFETypeVariable(input,physics_name,"P_",this->subsection(),"LAGRANGE","FIRST"),
+    PressureFEVariable( const GetPot& input, const std::string& physics_name,
+                        bool _is_constraint_var = false )
+      :  SingleFETypeVariable(input,physics_name,"P_",this->subsection(),"LAGRANGE","FIRST",_is_constraint_var),
          PressureVariable(input)
     {}
 

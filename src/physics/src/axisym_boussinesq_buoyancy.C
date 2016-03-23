@@ -29,6 +29,8 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/grins_enums.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/utility.h"
@@ -44,10 +46,11 @@ namespace GRINS
 								  const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes()),
+      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer())
   {
     this->read_input_options(input);
+    this->register_variables();
   }
 
   void AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
@@ -66,6 +69,16 @@ namespace GRINS
     _g(1) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 1 );
 
     return;
+  }
+
+  void AxisymmetricBoussinesqBuoyancy::register_variables()
+  {
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
+                                                                 this->_press_var);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
+                                                                 this->_flow_vars);
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
+                                                                 this->_temp_vars);
   }
 
   void AxisymmetricBoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )

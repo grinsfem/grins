@@ -38,8 +38,9 @@ namespace GRINS
   {
   public:
 
-    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name )
-      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),"LAGRANGE","SECOND"),
+    SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name,
+                                     bool _is_constraint_var = false)
+      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
          SpeciesMassFractionsVariables(input, MaterialsParsing::material_name(input,physics_name) )
     {}
 
