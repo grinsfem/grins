@@ -32,7 +32,6 @@
 #include "grins/grins_unsteady_solver.h"
 #include "grins/steady_mesh_adaptive_solver.h"
 #include "grins/unsteady_mesh_adaptive_solver.h"
-#include "grins/displacement_continuation_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -45,11 +44,7 @@ namespace GRINS
 
     SharedPtr<Solver> solver;  // Effectively NULL
 
-    if( solver_type == SolverNames::displacement_continuation() )
-      {
-        solver.reset( new DisplacementContinuationSolver(input) );
-      }
-    else if(solver_type == SolverNames::unsteady_solver() )
+    if(solver_type == SolverNames::unsteady_solver() )
       {
         solver.reset( new UnsteadySolver(input) );
       }

@@ -43,11 +43,7 @@ namespace GRINS
 
     std::string solver_type = input("SolverOptions/solver_type", "DIE!");
 
-    if( solver_type == SolverNames::displacement_continuation() )
-      {
-        // Don't need to do anything
-      }
-    else if(transient && !mesh_adaptive)
+    if(transient && !mesh_adaptive)
       {
         solver_type = SolverNames::unsteady_solver();
       }
