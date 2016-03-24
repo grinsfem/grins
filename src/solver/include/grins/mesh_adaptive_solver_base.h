@@ -28,6 +28,10 @@
 // C++
 #include <string>
 
+// GRINS
+#include "grins/mesh_adaptivity_options.h"
+#include "grins/error_estimator_options.h"
+
 //libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/mesh_refinement.h"
@@ -50,9 +54,12 @@ namespace GRINS
 
     MeshAdaptiveSolverBase( const GetPot& input );
 
-    virtual ~MeshAdaptiveSolverBase();
+    virtual ~MeshAdaptiveSolverBase(){}
 
   protected:
+
+    ErrorEstimatorOptions _error_estimator_options;
+    MeshAdaptivityOptions _mesh_adaptivity_options;
 
     enum RefinementFlaggingType{ INVALID = 0,
                                  ERROR_TOLERANCE,
@@ -61,24 +68,6 @@ namespace GRINS
                                  ELEM_FRACTION,
                                  MEAN_STD_DEV };
 
-    unsigned int _max_refinement_steps;
-    bool _coarsen_by_parents;
-    libMesh::Real _absolute_global_tolerance;
-    unsigned int _nelem_target;
-    libMesh::Real _refine_fraction;
-    libMesh::Real _coarsen_fraction;
-    libMesh::Real _coarsen_threshold;
-    bool _compute_qoi_error_estimate;
-    bool _plot_cell_errors;
-    std::string _error_plot_prefix;
-
-    unsigned int _node_level_mismatch_limit;
-    unsigned int _edge_level_mismatch_limit;
-    unsigned int _face_level_mismatch_limit;
-    bool _enforce_mismatch_limit_prior_to_refinement;
-
-    unsigned int _max_h_level;
-
     RefinementFlaggingType _refinement_type;
 
     libMesh::UniquePtr<libMesh::MeshRefinement> _mesh_refinement;
@@ -86,6 +75,7 @@ namespace GRINS
     void build_mesh_refinement( libMesh::MeshBase& mesh );
 
     void set_refinement_type( const GetPot& input,
+                              const MeshAdaptivityOptions& mesh_adaptivity_options,
                               RefinementFlaggingType& refinement_type );
 
     bool check_for_convergence( SolverContext& context,

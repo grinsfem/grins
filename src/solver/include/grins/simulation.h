@@ -40,6 +40,7 @@
 #include "grins/dbc_container.h"
 #include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
+#include "grins/error_estimator_options.h"
 
 // libMesh
 #include "libmesh/error_estimator.h"
@@ -75,8 +76,8 @@ namespace GRINS
                 const libMesh::Parallel::Communicator &comm
                 LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    virtual ~Simulation();
-	
+    virtual ~Simulation(){};
+
     void run();
 
     void print_sim_info();
@@ -127,6 +128,8 @@ namespace GRINS
     //! Helper function
     void init_adjoint_solve( const GetPot& input, bool output_adjoint );
 
+    void build_error_estimator(const GetPot& input);
+
     SharedPtr<libMesh::UnstructuredMesh> _mesh;
 
     SharedPtr<libMesh::EquationSystems> _equation_system;
@@ -161,6 +164,7 @@ namespace GRINS
     unsigned int _timesteps_per_vis;
     unsigned int _timesteps_per_perflog;
 
+    ErrorEstimatorOptions _error_estimator_options;
     SharedPtr<libMesh::ErrorEstimator> _error_estimator;
 
     ParameterManager _adjoint_parameters;

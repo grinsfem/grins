@@ -33,7 +33,6 @@
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
-#include "grins/error_estimation_factory.h"
 #include "grins/shared_ptr.h"
 
 namespace GRINS
@@ -43,7 +42,7 @@ namespace GRINS
   public:
 
     SimulationBuilder();
-    virtual ~SimulationBuilder();
+    virtual ~SimulationBuilder(){};
 
     SharedPtr<libMesh::UnstructuredMesh> build_mesh
       ( const GetPot& input,
@@ -65,9 +64,6 @@ namespace GRINS
 
     SharedPtr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
 
-    SharedPtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-                                                              const libMesh::QoISet& qoi_set );
-
     void attach_solver_factory( SharedPtr<SolverFactory> solver_factory );
 
     void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
@@ -80,8 +76,6 @@ namespace GRINS
 
     void attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory );
 
-    void attach_error_estimator_factory( SharedPtr<ErrorEstimatorFactory> error_estimator_factory );
-
     const MeshBuilder& mesh_builder() const;
 
   protected:
@@ -92,7 +86,6 @@ namespace GRINS
     SharedPtr<BoundaryConditionsFactory> _bc_factory;
     SharedPtr<QoIFactory> _qoi_factory;
     SharedPtr<PostprocessingFactory> _postprocessing_factory;
-    SharedPtr<ErrorEstimatorFactory> _error_estimator_factory;
 
   }; //class SimulationBuilder
 } // namespace GRINS

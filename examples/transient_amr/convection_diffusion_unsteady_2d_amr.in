@@ -44,7 +44,7 @@
 []
 
 [Variables]
-   [./ConvectionDiffusion]
+   [./GenericVariable:ConvectionDiffusion]
       names = 'u'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
@@ -57,16 +57,19 @@
       uniformly_refine = '5'
 []
 
-[MeshAdaptivity]
-   mesh_adaptive = 'true'
-   absolute_global_tolerance = '0.0'
-   estimator_type = 'kelly'
-   plot_cell_errors = 'false'
-   max_refinement_steps = '1'
-   refine_percentage = '0.8'
-   coarsen_percentage = '0.07'
-   refinement_strategy = 'error_fraction'
-   max_h_level = '5'
+[Strategies]
+   [./MeshAdaptivity]
+      mesh_adaptive = 'true'
+      absolute_global_tolerance = '0.0'
+      plot_cell_errors = 'false'
+      max_refinement_steps = '1'
+      refine_percentage = '0.8'
+      coarsen_percentage = '0.07'
+      refinement_strategy = 'error_fraction'
+      max_h_level = '5'
+
+   [../ErrorEstimation]
+      estimator_type = 'kelly'
 []
 
 [SolverOptions]

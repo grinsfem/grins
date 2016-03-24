@@ -365,3 +365,71 @@
       # The default value if not specified is theta = '0.5'
       theta = '1.0'
 []
+
+# The block below illustrates specifying options for "strategies"
+# that augment the solution process, such as mesh adaptivity.
+[Strategies]
+
+   # These options relate to computing error estimates in the solution
+   # and error indicators that drive adaptive mesh refinement. Currently,
+   # these options are only relevant with mesh adaptivity; in the future
+   # these will be enabled even for non-adaptive solutions. See the
+   # ErrorEstimatorOptions object for the full set of options.
+   [./ErrorEstimation]
+       
+       # The type of error estimator to be used. Defaults to none.
+       # Valid selections include: kelly
+       #                           patch_recovery
+       #                           adjoint_residual
+       #                           adjoint_refinement
+       #
+       # The adjoint* estimators are currently only supported
+       # for steady solvers. They will trigger the solution
+       # of the adjoint problem.    
+       estimator_type = 'none' 
+
+   # These options relate to enabling adaptive time stepping.
+   # Currently, we use the libMesh::TwoStepSolver for this.
+   # See AdaptiveTimeSteppingOptions object for the full list of options.
+   [../AdaptiveTimeStepping]
+     
+      # The target error tolerance for the current time step
+      # Defaults to 0.0. A positive value will trigger the use
+      # of adaptive timestepping.
+      target_tolerance = '0.0'
+
+   # These options relate to performing mesh adaptivity during the
+   # solution process. See tje MeshAdaptivityOptions object for the
+   # full list of options.
+   [../MeshAdaptivity]
+      
+       # Triggers the use of mesh adaptivity in the solution process.
+       mesh_adaptive = 'false'
+
+       # Strategy used for refining/coarsening mesh. Defaults to elem_fraction.
+       # Valid options are: elem_fraction
+       #                    error_tolerance
+       #                    nelem_target
+       #                    error_fraction
+       #                    mean_std_dev
+       refinement_strategy = 'elem_fraction'
+
+       # The number of adaptive refinement/coarsening steps to perform.
+       # Defaults to 0.
+       max_refinement_steps = '0'
+
+   # These options relate to augmenting the assembly process.
+   [../Assembly]
+      
+      # This will increase the quadrature order, by
+      # the supplied, during the assembly process.
+      # Defaults to 0 (no extra quadrature).
+      extra_quadrature_order = '0'
+
+   # These options relate to the solution of the adjoint problem.
+   [../Adjoint]
+      
+      # Manually trigger the solution of the adjoint problem.
+      # Currently only applies to steady solvers.
+      do_adjoint_solve = 'false'
+[]

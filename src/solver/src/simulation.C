@@ -34,6 +34,7 @@
 #include "grins/simulation_parsing.h"
 #include "grins/strategies_parsing.h"
 #include "grins/physics_builder.h"
+#include "grins/error_estimator_factory_base.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -66,6 +67,7 @@ namespace GRINS
        _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
        _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
        _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+       _error_estimator_options(input),
        _error_estimator(), // effectively NULL
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
@@ -81,7 +83,7 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+    this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
@@ -113,6 +115,7 @@ namespace GRINS
        _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
        _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
        _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
+       _error_estimator_options(input),
        _error_estimator(), // effectively NULL
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
@@ -126,7 +129,7 @@ namespace GRINS
     this->init_adjoint_solve(input,_output_adjoint);
 
     // Must be called after setting QoI on the MultiphysicsSystem
-    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
+    this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
@@ -134,11 +137,6 @@ namespace GRINS
     bool warning_only = command_line.search("--warn-only-unused-var");
     this->check_for_unused_vars(input, warning_only );
 
-  }
-
-  Simulation::~Simulation()
-  {
-    return;
   }
 
   void Simulation::init_multiphysics_system( const GetPot& input,
@@ -558,13 +556,12 @@ namespace GRINS
 
   bool Simulation::check_for_adjoint_solve( const GetPot& input ) const
   {
-    /*! \todo We need to collect these options into one spot */
-    std::string error_estimator = input("MeshAdaptivity/estimator_type", "none");
+    std::string error_estimator = _error_estimator_options.estimator_type();
 
     bool do_adjoint_solve = false;
 
     // First check if the error estimator requires an adjoint solve
-    if( error_estimator.find("adjoint") != std::string::npos || error_estimator.find("ADJOINT") != std::string::npos )
+    if( _error_estimator_options.estimator_requires_adjoint() )
       do_adjoint_solve = true;
 
     // Next check if parameter sensitivies require an adjoint solve
@@ -573,12 +570,22 @@ namespace GRINS
 
     // Now check if the user requested to do an adjoint solve regardless
     /*! \todo This option name WILL change at some point. */
-    if( input( "linear-nonlinear-solver/do_adjoint_solve", false ) )
-      {
-        do_adjoint_solve = true;
-      }
+    if( StrategiesParsing::do_adjoint_solve(input) )
+      do_adjoint_solve = true;
 
     return do_adjoint_solve;
+  }
+
+  void Simulation::build_error_estimator(const GetPot& input)
+  {
+    std::string estimator_type = _error_estimator_options.estimator_type();
+    if( estimator_type != std::string("none") )
+      {
+        ErrorEstimatorFactoryBase::set_getpot(input);
+        ErrorEstimatorFactoryBase::set_system(*_multiphysics_system);
+        ErrorEstimatorFactoryBase::set_estimator_options(_error_estimator_options);
+        _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
+      }
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

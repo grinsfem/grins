@@ -22,49 +22,60 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_STRATEGIES_PARSING_H
-#define GRINS_STRATEGIES_PARSING_H
+#ifndef GRINS_ERROR_ESTIMATOR_OPTIONS_H
+#define GRINS_ERROR_ESTIMATOR_OPTIONS_H
 
 // C++
 #include <string>
 
-// Forward declarations
+// libmMesh forward declarations
 class GetPot;
-namespace libMesh
-{
-  class SystemNorm;
-}
+
 namespace GRINS
 {
-  class StrategiesParsing
+  //! Container for ErrorEstimator options
+  class ErrorEstimatorOptions
   {
   public:
 
-    StrategiesParsing(){};
+    ErrorEstimatorOptions( const GetPot& input );
+    ~ErrorEstimatorOptions(){};
 
-    ~StrategiesParsing(){};
+    const std::string& estimator_type() const
+    { return _estimator_type; }
 
-    //! Checks input to see if mesh adaptivity options are present
-    static bool is_mesh_adaptive( const GetPot& input );
+    bool patch_reuse() const
+    { return _patch_reuse; }
 
-    //! Parses target tolerance parameter for adaptive time stepping
-    /*! 0.0 means there is no adaptive time stepping enabled. To enable
-        adaptive time stepping with the libMesh::TwostepTimeSolver, this
-        parameter should be positive. */
-    static double parse_target_tolerance( const GetPot& input );
+    unsigned char n_adjoint_h_refinements() const
+    { return _n_adjoint_h_refinements; }
 
-    //! Parses upper tolerance parameter for adaptive time stepping
-    static double parse_upper_tolerance( const GetPot& input );
+    unsigned char n_adjoint_p_refinements() const
+    { return _n_adjoint_p_refinements; }
 
-    //! Parses max growth parameter for adaptive time stepping
-    static double parse_max_growth( const GetPot& input );
+    bool compute_qoi_error_estimate() const
+    { return _compute_qoi_error_estimate; }
 
-    //! Parses the norm to use for each solution variable for adaptive time stepping
-    static void parse_component_norm( const GetPot& input, libMesh::SystemNorm& component_norm );
+    bool estimator_requires_adjoint() const;
 
-    static int extra_quadrature_order( const GetPot& input );
+  private:
+
+    void check_dup_input_style( const GetPot& input ) const;
+
+    bool is_old_style( const GetPot& input ) const;
+
+    void parse_old_style(const GetPot& input);
+
+    void parse_new_style(const GetPot& input);
+
+    std::string _estimator_type;
+    bool _patch_reuse;
+    unsigned char _n_adjoint_h_refinements;
+    unsigned char _n_adjoint_p_refinements;
+    bool _compute_qoi_error_estimate;
+
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_STRATEGIES_PARSING_H
+#endif // GRINS_ERROR_ESTIMATOR_OPTIONS_H

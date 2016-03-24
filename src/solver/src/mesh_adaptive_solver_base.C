@@ -38,63 +38,35 @@
 namespace GRINS
 {
   MeshAdaptiveSolverBase::MeshAdaptiveSolverBase( const GetPot& input )
-    : _max_refinement_steps( input("MeshAdaptivity/max_refinement_steps", 5) ),
-      _coarsen_by_parents(true),
-      _absolute_global_tolerance( input("MeshAdaptivity/absolute_global_tolerance", 0) ),
-      _nelem_target( input("MeshAdaptivity/nelem_target", 0) ),
-      _refine_fraction( input("MeshAdaptivity/refine_percentage", 0.2) ),
-      _coarsen_fraction( input("MeshAdaptivity/coarsen_percentage", 0.2) ),
-      _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
-      _compute_qoi_error_estimate( input("MeshAdaptivity/compute_qoi_error_estimate", false)),
-      _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
-      _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
-      _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),
-      _edge_level_mismatch_limit( input("MeshAdaptivity/edge_level_mismatch_limit", 0 ) ),
-      _face_level_mismatch_limit( input("MeshAdaptivity/face_level_mismatch_limit", 1 ) ),
-      _enforce_mismatch_limit_prior_to_refinement( input("MeshAdaptivity/enforce_mismatch_limit_prior_to_refinement", false ) ),
-      _max_h_level(input("MeshAdaptivity/max_h_level",libMesh::invalid_uint)),
+    : _error_estimator_options(input),
+      _mesh_adaptivity_options(input),
       _refinement_type(INVALID),
       _mesh_refinement(NULL)
   {
-    this->set_refinement_type( input, _refinement_type );
-
-    return;
-  }
-
-  MeshAdaptiveSolverBase::~MeshAdaptiveSolverBase()
-  {
-    return;
+    this->set_refinement_type( input, _mesh_adaptivity_options, _refinement_type );
   }
 
   void MeshAdaptiveSolverBase::build_mesh_refinement( libMesh::MeshBase& mesh )
   {
     _mesh_refinement.reset( new libMesh::MeshRefinement( mesh ) );
-    _mesh_refinement->coarsen_by_parents() = _coarsen_by_parents;
-    _mesh_refinement->absolute_global_tolerance() = _absolute_global_tolerance;
-    _mesh_refinement->nelem_target() = _nelem_target;
-    _mesh_refinement->refine_fraction() = _refine_fraction;
-    _mesh_refinement->coarsen_fraction() = _coarsen_fraction;
-    _mesh_refinement->coarsen_threshold() = _coarsen_threshold;
-    _mesh_refinement->node_level_mismatch_limit() = _node_level_mismatch_limit;
-    _mesh_refinement->edge_level_mismatch_limit() = _edge_level_mismatch_limit;
-    _mesh_refinement->face_level_mismatch_limit() = _face_level_mismatch_limit;
-    _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_enforce_mismatch_limit_prior_to_refinement);
-    _mesh_refinement->max_h_level() = _max_h_level;
+    _mesh_refinement->coarsen_by_parents() = _mesh_adaptivity_options.coarsen_by_parents();
+    _mesh_refinement->absolute_global_tolerance() = _mesh_adaptivity_options.absolute_global_tolerance();
+    _mesh_refinement->nelem_target() = _mesh_adaptivity_options.nelem_target();
+    _mesh_refinement->refine_fraction() = _mesh_adaptivity_options.refine_fraction();
+    _mesh_refinement->coarsen_fraction() = _mesh_adaptivity_options.coarsen_fraction();
+    _mesh_refinement->coarsen_threshold() = _mesh_adaptivity_options.coarsen_threshold();
+    _mesh_refinement->node_level_mismatch_limit() = _mesh_adaptivity_options.node_level_mismatch_limit();
+    _mesh_refinement->edge_level_mismatch_limit() = _mesh_adaptivity_options.edge_level_mismatch_limit();
+    _mesh_refinement->face_level_mismatch_limit() = _mesh_adaptivity_options.face_level_mismatch_limit();
+    _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_mesh_adaptivity_options.enforce_mismatch_limit_prior_to_refinement());
+    _mesh_refinement->max_h_level() = _mesh_adaptivity_options.max_h_level();
   }
 
   void MeshAdaptiveSolverBase::set_refinement_type( const GetPot& input,
+                                                    const MeshAdaptivityOptions& mesh_adaptivity_options,
                                                     MeshAdaptiveSolverBase::RefinementFlaggingType& refinement_type )
   {
-    std::string refinement_stategy = input("MeshAdaptivity/refinement_strategy", "elem_fraction" );
-
-    if( !input.have_variable("MeshAdaptivity/absolute_global_tolerance" ) )
-      {
-        std::cerr << "Error: Must specify absolute_global_tolerance for" << std::endl
-                  << "       adaptive refinement algorithms."
-                  << std::endl;
-
-        libmesh_error();
-      }
+    const std::string& refinement_stategy = mesh_adaptivity_options.refinement_strategy();
 
     if( refinement_stategy == std::string("error_tolerance") )
       {
@@ -171,7 +143,7 @@ namespace GRINS
               << "==========================================================" << std::endl;
 
     // For now, we just check the norm
-    if( std::fabs(error_estimate) <= _absolute_global_tolerance )
+    if( std::fabs(error_estimate) <= _mesh_adaptivity_options.absolute_global_tolerance() )
       {
         converged = true;
       }
@@ -241,9 +213,9 @@ namespace GRINS
     libMesh::MeshBase& mesh = context.equation_system->get_mesh();
 
     // Plot error vector
-    if( this->_plot_cell_errors )
+    if( _mesh_adaptivity_options.plot_cell_errors() )
       {
-        error.plot_error( this->_error_plot_prefix+".exo", mesh );
+        error.plot_error( _mesh_adaptivity_options.error_plot_prefix()+".exo", mesh );
       }
   }
 

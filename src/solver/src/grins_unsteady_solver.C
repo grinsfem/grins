@@ -56,13 +56,9 @@ namespace GRINS
       _backtrack_deltat( TimeSteppingParsing::parse_backtrack_deltat(input) ),
       _theta( TimeSteppingParsing::parse_theta(input) ),
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
-      _target_tolerance( StrategiesParsing::parse_target_tolerance(input) ),
-      _upper_tolerance( StrategiesParsing::parse_upper_tolerance(input) ),
-      _max_growth( StrategiesParsing::parse_max_growth(input) ),
+      _adapt_time_step_options(input),
       _is_second_order_in_time(false)
-  {
-    StrategiesParsing::parse_component_norm(input,_component_norm);
-  }
+  {}
 
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
@@ -88,20 +84,21 @@ namespace GRINS
     else
       libmesh_error_msg("ERROR: Unsupported time stepper "+_time_solver_name);
 
-    if (_target_tolerance)
+    if( _adapt_time_step_options.is_time_adaptive() )
       {
         libMesh::TwostepTimeSolver *outer_solver =
           new libMesh::TwostepTimeSolver(*system);
 
-        outer_solver->target_tolerance = _target_tolerance;
-        outer_solver->upper_tolerance = _upper_tolerance;
-        outer_solver->max_growth = _max_growth;
+        outer_solver->target_tolerance = _adapt_time_step_options.target_tolerance();
+        outer_solver->upper_tolerance = _adapt_time_step_options.upper_tolerance();
+        outer_solver->max_growth = _adapt_time_step_options.max_growth();
+        outer_solver->component_norm = _adapt_time_step_options.component_norm();
         outer_solver->quiet = false;
 
         outer_solver->core_time_solver =
           libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(outer_solver);
-      } 
+      }
     else
       {
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);

@@ -22,44 +22,31 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_H
-#define GRINS_ERROR_ESTIMATOR_FACTORY_H
+#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H
+#define GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H
 
-// GRINS
-#include "grins/qoi_base.h"
-#include "grins/shared_ptr.h"
-
-// libMesh
-#include "libmesh/error_estimator.h"
-
-// libMesh forward declartions
-class GetPot;
+#include "grins/error_estimator_factory_base.h"
 
 namespace GRINS
 {
-  class ErrorEstimatorFactory
+  template<typename EstimatorType>
+  class ErrorEstimatorFactoryBasic : public ErrorEstimatorFactoryBase
   {
   public:
+    ErrorEstimatorFactoryBasic( const std::string& estimator_name )
+      : ErrorEstimatorFactoryBase(estimator_name)
+    {}
 
-    ErrorEstimatorFactory();
-
-    virtual ~ErrorEstimatorFactory();
-
-    virtual SharedPtr<libMesh::ErrorEstimator> build( const GetPot& input,
-                                                      const libMesh::QoISet& qoi_set );
+    ~ErrorEstimatorFactoryBasic(){};
 
   protected:
 
-    enum ErrorEstimatorEnum{ ADJOINT_RESIDUAL = 0,
-                             ADJOINT_REFINEMENT,
-                             KELLY,
-                             PATCH_RECOVERY,
-                             WEIGHTED_PATCH_RECOVERY,
-                             UNIFORM_REFINEMENT };
-
-    ErrorEstimatorEnum string_to_enum( const std::string& estimator_type ) const;
+    virtual libMesh::UniquePtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
+                                                                               MultiphysicsSystem& system,
+                                                                               const ErrorEstimatorOptions& estimator_options);
 
   };
 
 } // end namespace GRINS
-#endif // GRINS_ERROR_ESTIMATOR_FACTORY_H
+
+#endif // GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H

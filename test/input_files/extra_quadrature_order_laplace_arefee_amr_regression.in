@@ -19,15 +19,16 @@
    [./Assembly]
       # Value must be >= 0
       extra_quadrature_order = 15
-[]
 
-[MeshAdaptivity]
-   mesh_adaptive = 'true'
-   absolute_global_tolerance = '0.0'
-   estimator_type = 'adjoint_refinement'
-   refine_percentage = 0.1
-   max_refinement_steps = '5'
-   compute_qoi_error_estimate = true
+   [../MeshAdaptivity]
+      mesh_adaptive = 'true'
+      absolute_global_tolerance = '0.0'
+      refine_percentage = 0.1
+      max_refinement_steps = '5'
+
+   [../ErrorEstimation]
+      estimator_type = 'adjoint_refinement'
+      compute_qoi_error_estimate = 'true'
 []
 
 #Linear and nonlinear solver options
