@@ -43,9 +43,6 @@ namespace GRINS
     static const std::string unsteady_mesh_adaptive_solver()
     { return "grins_unsteady_mesh_adaptive_solver"; }
 
-    static const std::string displacement_continuation()
-    { return "displacement_continuation"; }
-
     static const std::string libmesh_euler_solver()
     { return "libmesh_euler_solver"; }
 

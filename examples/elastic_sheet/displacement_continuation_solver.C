@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/displacement_continuation_solver.h"
+#include "displacement_continuation_solver.h"
 
 // GRINS
 #include "grins/multiphysics_sys.h"
@@ -84,7 +84,7 @@ namespace GRINS
     return;
   }
 
-  void DisplacementContinuationSolver::initialize( const GetPot& input, 
+  void DisplacementContinuationSolver::initialize( const GetPot& input,
                                                    SharedPtr<libMesh::EquationSystems> equation_system,
                                                    GRINS::MultiphysicsSystem* system )
   {
@@ -122,7 +122,7 @@ namespace GRINS
       {
 
         libMesh::Real disp = _displacements[s];
-        
+
         std::cout << "==========================================================" << std::endl
                   << "   Displacement step " << s  << ", displacement = " << disp << std::endl
                   << "==========================================================" << std::endl;
@@ -140,7 +140,7 @@ namespace GRINS
 
     return;
   }
-  
+
   void DisplacementContinuationSolver::increment_displacement( GRINS::MultiphysicsSystem& system,
                                                                libMesh::EquationSystems& equation_system,
                                                                const libMesh::Real displacement )
@@ -151,6 +151,7 @@ namespace GRINS
     // Get the DirichletBoundary we want
     libMesh::DirichletBoundary* dirichlet = (*d_vector)[_bc_index];
 
+    std::cout << "displacement = " << displacement << std::endl;
     // Kill the old FunctionBase object and put in our new one.
     dirichlet->f.reset( new libMesh::ConstFunction<libMesh::Real>( displacement ) );
 
@@ -159,6 +160,6 @@ namespace GRINS
 
     return;
   }
-  
+
 
 } // end namespace GRINS

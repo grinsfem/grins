@@ -43,17 +43,6 @@ displacement_1 = '0.1 0.0 0.0'
       order = 'FIRST'
 []
 
-[SolverOptions]
-
-solver_type = 'displacement_continuation'
-
-[./DisplacementContinuation]
-
-boundary = '1'
-final_displacement = '8.0'
-n_increments = '50'
-
-[]
 
 # Mesh related options
 [Mesh]

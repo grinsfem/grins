@@ -141,10 +141,19 @@ EXTRA_DIST += $(simpleprop_DATA)
 # Elastic Sheet Example
 #=======================================================================
 elasticsheetdir = $(prefix)/examples/elastic_sheet
-elasticsheet_DATA = $(top_srcdir)/examples/elastic_sheet/sheet.in
+elasticsheet_PROGRAMS = stretching_sheet
+elasticsheet_DATA  = $(top_srcdir)/examples/elastic_sheet/sheet.in
+elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver_factory.h
+elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver.h
 elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
 
 EXTRA_DIST += $(elasticsheet_DATA)
+
+stretching_sheet_SOURCES  = elastic_sheet/stretching_sheet.C
+stretching_sheet_SOURCES += elastic_sheet/displacement_continuation_solver.C
+
+stretching_sheet_LDADD = $(LIBGRINS_LIBS)
+stretching_sheet_CPPFLAGS = -I$(top_srcdir)/examples/elastic_sheet $(AM_CPPFLAGS)
 
 #=======================================================================
 # Inflating Sheet Example

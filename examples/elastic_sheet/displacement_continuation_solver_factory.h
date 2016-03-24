@@ -22,50 +22,44 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/solver_factory.h"
+#ifndef GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H
+#define GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H
 
 // GRINS
-#include "grins/solver_names.h"
+#include "grins/solver_factory.h"
 #include "grins/solver_parsing.h"
-#include "grins/grins_steady_solver.h"
-#include "grins/grins_unsteady_solver.h"
-#include "grins/steady_mesh_adaptive_solver.h"
-#include "grins/unsteady_mesh_adaptive_solver.h"
 
-// libMesh
-#include "libmesh/getpot.h"
+#include "displacement_continuation_solver.h"
 
 namespace GRINS
 {
-  SharedPtr<Solver> SolverFactory::build(const GetPot& input)
+  class DisplacementContinuationSolverFactory : public SolverFactory
   {
-    std::string solver_type = SolverParsing::solver_type(input);
+  public:
+    DisplacementContinuationSolverFactory(){};
+    virtual ~DisplacementContinuationSolverFactory(){};
+
+    virtual SharedPtr<GRINS::Solver> build(const GetPot& input);
+  };
+
+  SharedPtr<GRINS::Solver> DisplacementContinuationSolverFactory::build(const GetPot& input)
+  {
+     std::cout << "HELLO!!!" << std::endl;
+
+    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
 
     SharedPtr<Solver> solver;  // Effectively NULL
 
-    if(solver_type == SolverNames::unsteady_solver() )
+    if( solver_type == std::string("displacement_continuation") )
       {
-        solver.reset( new UnsteadySolver(input) );
-      }
-    else if( solver_type == SolverNames::steady_solver() )
-      {
-        solver.reset( new SteadySolver(input) );
-      }
-    else if( solver_type == SolverNames::steady_mesh_adaptive_solver() )
-      {
-        solver.reset( new SteadyMeshAdaptiveSolver(input) );
-      }
-    else if( solver_type == SolverNames::unsteady_mesh_adaptive_solver() )
-      {
-        solver.reset( new UnsteadyMeshAdaptiveSolver(input) );
+        solver.reset( new DisplacementContinuationSolver(input) );
       }
     else
-      {
-        libmesh_error_msg("Invalid solver_type: "+solver_type);
-      }
+      solver = SolverFactory::build(input);
 
     return solver;
   }
 
-} // namespace GRINS
+} // end namespace GRINS
+
+#endif // GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H

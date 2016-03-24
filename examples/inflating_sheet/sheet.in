@@ -3,6 +3,8 @@
    [./Membrane]
       [./MembraneThickness]
          value = '0.05'
+      [../Density]
+         value = '1.0'
       [../StressStrainLaw]
          model = 'incompressible_hyperelasticity'
          strain_energy = 'mooney_rivlin'
