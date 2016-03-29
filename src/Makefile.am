@@ -66,6 +66,7 @@ libgrins_la_SOURCES += boundary_conditions/src/catalycity_base.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/arrhenius_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/power_law_catalycity.C
+libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_function_base.C
 
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
@@ -323,6 +324,7 @@ include_HEADERS += boundary_conditions/include/grins/prescribed_vector_value_dir
 include_HEADERS += boundary_conditions/include/grins/isothermal_dirichlet_old_style_bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/symmetry_type_bc_factories.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_abstract.h
+include_HEADERS += boundary_conditions/include/grins/neumann_bc_function_base.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
