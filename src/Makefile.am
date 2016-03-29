@@ -322,6 +322,7 @@ include_HEADERS += boundary_conditions/include/grins/homogeneous_dirichlet_bc_fa
 include_HEADERS += boundary_conditions/include/grins/prescribed_vector_value_dirichlet_old_style_bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/isothermal_dirichlet_old_style_bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/symmetry_type_bc_factories.h
+include_HEADERS += boundary_conditions/include/grins/neumann_bc_abstract.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
