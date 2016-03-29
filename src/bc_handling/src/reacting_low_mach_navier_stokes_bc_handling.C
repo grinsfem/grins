@@ -246,7 +246,7 @@ namespace GRINS
                   /* ------------- Parse and construct the corresponding catalyticities ------------- */
 
                   // These are temporary and will be cloned, so let them be destroyed when we're done
-                  libMesh::UniquePtr<CatalycityBase> gamma_r(NULL);
+                  libMesh::UniquePtr<CatalycityBase> gamma_r;
 
                   this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r );
 
@@ -358,7 +358,7 @@ namespace GRINS
                 const unsigned int p_species  = _chemistry.species_index( product );
 
                 // This is temporary and will be cloned, so let it be destroyed when we're done
-                libMesh::UniquePtr<CatalycityBase> gamma_r(NULL);
+                libMesh::UniquePtr<CatalycityBase> gamma_r;
 
                 this->build_catalycities( input, gas_reactant, bc_id_string, bc_id, gamma_r );
 

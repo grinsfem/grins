@@ -52,7 +52,6 @@ namespace GRINS
       _flow_vars(input, core_physics_name),
       _press_var(input,core_physics_name, true /*is_constraint_var*/),
       _temp_vars(input, core_physics_name),
-      _p0_var(NULL),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))

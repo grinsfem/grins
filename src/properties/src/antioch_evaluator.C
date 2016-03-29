@@ -42,7 +42,6 @@ namespace GRINS
   template<typename Thermo>
   AntiochEvaluator<Thermo>::AntiochEvaluator( const AntiochMixture& mixture )
     : _chem( mixture ),
-      _thermo( NULL ),
       _kinetics( new AntiochKinetics(mixture) ),
       _temp_cache( new Antioch::TempCache<libMesh::Real>(1.0) )
   {

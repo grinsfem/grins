@@ -39,8 +39,6 @@
 namespace GRINS
 {
   CanteraMixture::CanteraMixture( const GetPot& input, const std::string& material )
-    : _cantera_gas(NULL),
-      _cantera_transport(NULL)
   {
     const std::string cantera_chem_file = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
 

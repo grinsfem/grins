@@ -52,7 +52,6 @@ namespace GRINS
       _flow_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _press_var(input,PhysicsNaming::reacting_low_mach_navier_stokes(), true /*is_constraint_var*/),
       _temp_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
-      _p0_var(NULL),
       _species_vars(input, PhysicsNaming::reacting_low_mach_navier_stokes()),
       _n_species(_species_vars.n_species()),
       _fixed_density( input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_density", false ) ),

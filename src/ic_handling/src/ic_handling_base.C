@@ -50,8 +50,7 @@
 namespace GRINS
 {
   ICHandlingBase::ICHandlingBase(const std::string& physics_name)
-    : _ic_func(NULL),
-      _physics_name( physics_name )
+    : _physics_name( physics_name )
   {
     return;
   }

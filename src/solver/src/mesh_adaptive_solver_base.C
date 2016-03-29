@@ -40,8 +40,7 @@ namespace GRINS
   MeshAdaptiveSolverBase::MeshAdaptiveSolverBase( const GetPot& input )
     : _error_estimator_options(input),
       _mesh_adaptivity_options(input),
-      _refinement_type(INVALID),
-      _mesh_refinement(NULL)
+      _refinement_type(INVALID)
   {
     this->set_refinement_type( input, _mesh_adaptivity_options, _refinement_type );
   }
