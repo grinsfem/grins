@@ -70,11 +70,11 @@ namespace GRINS
     // the solution and the rhs vector stashed in the system. Once we're done,
     // we'll reset the time solver pointer back to the original guy.
 
-    libMesh::AutoPtr<libMesh::TimeSolver> prev_time_solver(system->time_solver);
+    libMesh::UniquePtr<libMesh::TimeSolver> prev_time_solver(system->time_solver);
 
     libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
 
-    system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(steady_solver);
+    system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(steady_solver);
 
     system->assembly( true /*residual*/, false /*jacobian*/ );
     system->rhs->close();

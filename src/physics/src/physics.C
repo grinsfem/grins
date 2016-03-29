@@ -299,7 +299,7 @@ namespace GRINS
 
     unsigned int elem_dim = &elem ? elem.dim() : 0;
 
-    AutoPtr<FEGenericBase<libMesh::Real> >
+    UniquePtr<FEGenericBase<libMesh::Real> >
       fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
 
     // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h

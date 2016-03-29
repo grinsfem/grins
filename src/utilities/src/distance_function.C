@@ -500,7 +500,7 @@ namespace GRINS {
                     // physical space and use it to evaluate the distance
 
                     // assuming first order lagrange basis here
-                    libMesh::AutoPtr<libMesh::FEBase> fe( libMesh::FEBase::build(2, libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)) );
+                    libMesh::UniquePtr<libMesh::FEBase> fe( libMesh::FEBase::build(2, libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE)) );
 
                     std::vector<libMesh::Point> xi(1);
                     xi[0](0) = X(0);
@@ -611,7 +611,7 @@ namespace GRINS {
   //---------------------------------------------------
   // Interpolate nodal data
   //
-  libMesh::AutoPtr< libMesh::DenseVector<libMesh::Real> >
+  libMesh::UniquePtr< libMesh::DenseVector<libMesh::Real> >
   DistanceFunction::interpolate (const libMesh::Elem* elem, const std::vector<libMesh::Point>& qpts) const
   {
     libmesh_assert( elem != NULL );    // can't interpolate in NULL elem
@@ -630,7 +630,7 @@ namespace GRINS {
     const unsigned int n_pts = qpts.size();
 
     // instantiate auto_ptr to dense vector to hold results
-    libMesh::AutoPtr< DenseVector<libMesh::Real> > ap( new libMesh::DenseVector<libMesh::Real>(qpts.size()) );
+    libMesh::UniquePtr< DenseVector<libMesh::Real> > ap( new libMesh::DenseVector<libMesh::Real>(qpts.size()) );
     (*ap).zero();
 
     // pull off distance function at nodes on this element

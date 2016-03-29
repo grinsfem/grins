@@ -80,10 +80,10 @@ namespace GRINS
                                 CachedValues& cache );
 
     // A distance function to get distances from boundaries to qps
-    libMesh::AutoPtr<DistanceFunction> distance_function;
+    libMesh::UniquePtr<DistanceFunction> distance_function;
 
     // Boundary mesh objected that will be updated using the wall ids
-    libMesh::AutoPtr<libMesh::SerialMesh> boundary_mesh;
+    libMesh::UniquePtr<libMesh::SerialMesh> boundary_mesh;
 
     // Registers all parameters in this physics and in its property
     // classes

@@ -45,9 +45,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > GRINS::GaussianXYProfile::clone() const
+  libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> > GRINS::GaussianXYProfile::clone() const
   {
-    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new GaussianXYProfile( _a, _mu, std::sqrt(_variance), _b ) );
+    return libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> >( new GaussianXYProfile( _a, _mu, std::sqrt(_variance), _b ) );
   }
 
   libMesh::Number GRINS::GaussianXYProfile::operator()( const libMesh::Point &p, 

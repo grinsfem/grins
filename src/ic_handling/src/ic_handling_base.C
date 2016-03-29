@@ -181,14 +181,14 @@ namespace GRINS
       {
       case(PARSED):
 	{
-          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
+          _ic_func = libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
             (new libMesh::ParsedFunction<libMesh::Number>(ic_value_string));
 	}
 	break;
 
       case(CONSTANT):
 	{
-          _ic_func = libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> >
+          _ic_func = libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
             (new libMesh::ConstFunction<libMesh::Number>
               (StringUtilities::string_to_T<libMesh::Number>(ic_value_string)));
 	}
