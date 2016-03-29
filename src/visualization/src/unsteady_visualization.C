@@ -70,7 +70,7 @@ namespace GRINS
     // the solution and the rhs vector stashed in the system. Once we're done,
     // we'll reset the time solver pointer back to the original guy.
 
-    libMesh::UniquePtr<libMesh::TimeSolver> prev_time_solver(system->time_solver);
+    libMesh::TimeSolver* prev_time_solver = system->time_solver.get();
 
     libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
 
@@ -90,9 +90,7 @@ namespace GRINS
     system->solution->swap( *(system->rhs) );
     equation_system->update();
 
-    system->time_solver = prev_time_solver;
-
-    return;
+    system->time_solver.reset(prev_time_solver);
   }
 
   void UnsteadyVisualization::output_residual_sensitivities
