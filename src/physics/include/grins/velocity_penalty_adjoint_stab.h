@@ -59,8 +59,6 @@ namespace GRINS
 
   protected:
 
-    Viscosity _mu;
-
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
   private:
