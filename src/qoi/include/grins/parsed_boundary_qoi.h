@@ -75,14 +75,14 @@ namespace GRINS
 
   protected:
 
-    libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
       qoi_functional;
 
 
     //! List of boundary ids on which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;
 
-    //! Manual copy constructor due to the AutoPtr
+    //! Manual copy constructor due to the UniquePtr
     ParsedBoundaryQoI(const ParsedBoundaryQoI& original);
 
   private:

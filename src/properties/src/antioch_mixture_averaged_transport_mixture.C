@@ -41,13 +41,7 @@ namespace GRINS
   template<typename T, typename V, typename C, typename D>
   AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input,
                                                                                            const std::string& material )
-    : AntiochMixture(input,material),
-      _trans_mixture(NULL),
-      _wilke_mixture(NULL),
-      _thermo(NULL),
-      _viscosity(NULL),
-      _conductivity(NULL),
-      _diffusivity(NULL)
+    : AntiochMixture(input,material)
   {
     std::string transport_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
     if( transport_data_filename == std::string("default") )

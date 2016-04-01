@@ -114,8 +114,8 @@ public:
     output(0) = u_nu_values(0)/21.995539;
   }
 
-  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(turbulent_bc_values)); }
+  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(turbulent_bc_values)); }
 
 private:
   libMesh::MeshFunction* turbulent_bc_values;
@@ -158,8 +158,8 @@ public:
     output(0) = u_nu_values(1)/(2.0*21.995539);
   }
 
-  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(turbulent_bc_values)); }
+  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(turbulent_bc_values)); }
 
 private:
   libMesh::MeshFunction* turbulent_bc_values;
@@ -223,9 +223,9 @@ int main(int argc, char* argv[])
   equation_systems.print_info();
 
   // Prepare a global solution and a MeshFunction of the Turbulent system
-  libMesh::AutoPtr<libMesh::MeshFunction> turbulent_bc_values;
+  libMesh::UniquePtr<libMesh::MeshFunction> turbulent_bc_values;
 
-  libMesh::AutoPtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
+  libMesh::UniquePtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
 
   std::vector<libMesh::Number> flow_soln;
 
@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
   turbulent_bc_system_variables.push_back(0);
   turbulent_bc_system_variables.push_back(1);
 
-  turbulent_bc_values = libMesh::AutoPtr<libMesh::MeshFunction>
+  turbulent_bc_values = libMesh::UniquePtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
 			       *turbulent_bc_soln,
 			       turbulent_bc_system.get_dof_map(),

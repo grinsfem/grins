@@ -54,9 +54,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > ParabolicProfile::clone() const
+  libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> > ParabolicProfile::clone() const
   {
-    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ParabolicProfile( _a, _b, _c, _d, _e, _f ) );
+    return libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> >( new ParabolicProfile( _a, _b, _c, _d, _e, _f ) );
   }
 
   libMesh::Number ParabolicProfile::operator()( const libMesh::Point &p, 

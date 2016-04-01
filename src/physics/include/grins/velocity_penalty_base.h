@@ -65,10 +65,10 @@ namespace GRINS
 
     bool _quadratic_scaling;
 
-    libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
       normal_vector_function;
 
-    libMesh::AutoPtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
       base_velocity_function;
 
   private:

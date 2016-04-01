@@ -115,7 +115,7 @@ namespace GRINS
         libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
-    virtual libMesh::AutoPtr<libMesh::DiffContext> build_context();
+    virtual libMesh::UniquePtr<libMesh::DiffContext> build_context();
 
     //! Context initialization. Calls each physics implementation of init_context()
     virtual void init_context( libMesh::DiffContext &context );

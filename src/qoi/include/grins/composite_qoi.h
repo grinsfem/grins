@@ -63,7 +63,7 @@ namespace GRINS
     //! Required to provide clone for adding QoI object to libMesh objects.
     /*! Note that we do a deep copy here since the previous object might
         get destroyed and wipe out the objects being pointed to in _qois. */
-    virtual libMesh::AutoPtr<libMesh::DifferentiableQoI> clone();
+    virtual libMesh::UniquePtr<libMesh::DifferentiableQoI> clone();
 
     virtual void add_qoi( const QoIBase& qoi );
 

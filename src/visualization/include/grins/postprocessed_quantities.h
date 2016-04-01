@@ -47,10 +47,10 @@ namespace GRINS
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context);
 
-    virtual libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> >
+    virtual libMesh::UniquePtr<libMesh::FEMFunctionBase<NumericType> >
     clone() const
     {
-      return libMesh::AutoPtr<libMesh::FEMFunctionBase<NumericType> >
+      return libMesh::UniquePtr<libMesh::FEMFunctionBase<NumericType> >
         ( new PostProcessedQuantities(*this) );
     }
 

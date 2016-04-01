@@ -38,10 +38,7 @@ namespace GRINS
   template<typename Thermo>
   AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input,
                                                                             const std::string& material )
-    : AntiochMixture(input,material),
-      _mu(NULL),
-      _conductivity(NULL),
-      _diffusivity(NULL)
+    : AntiochMixture(input,material)
   {
     libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
     _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );

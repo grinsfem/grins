@@ -83,7 +83,7 @@ namespace GRINS
     
   protected:
 
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > _ic_func;
+    libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > _ic_func;
 
     std::string _physics_name;
 

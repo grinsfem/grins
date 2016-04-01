@@ -57,9 +57,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > ConcentricCylinderProfile::clone() const
+  libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> > ConcentricCylinderProfile::clone() const
   {
-    return libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
+    return libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> >( new ConcentricCylinderProfile( _u0, _r0, _r1 ) );
   }
 
   libMesh::Number ConcentricCylinderProfile::operator()( const libMesh::Point& p, 

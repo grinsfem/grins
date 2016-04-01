@@ -53,7 +53,7 @@ namespace GRINS
 
     virtual ~ParabolicProfile( );
 
-    virtual libMesh::AutoPtr< libMesh::FunctionBase<libMesh::Number> > clone() const;
+    virtual libMesh::UniquePtr< libMesh::FunctionBase<libMesh::Number> > clone() const;
 
     virtual libMesh::Number operator()( const libMesh::Point &p, const libMesh::Real time );
 
