@@ -327,6 +327,7 @@ include_HEADERS += boundary_conditions/include/grins/symmetry_type_bc_factories.
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_abstract.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_function_base.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_parsed.h
+include_HEADERS += boundary_conditions/include/grins/neumann_bc_container.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
