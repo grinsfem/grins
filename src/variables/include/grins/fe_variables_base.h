@@ -66,6 +66,12 @@ namespace GRINS
     bool is_constraint_var() const
     { return _is_constraint_var; }
 
+    static void set_is_axisymmetric( bool is_axisymmetric )
+    { _is_axisymmetric = is_axisymmetric; }
+
+    static bool is_axisymmetric()
+    { return _is_axisymmetric; }
+
   protected:
 
     //! Default method for init'ing variables
@@ -90,6 +96,11 @@ namespace GRINS
         do not). This should be set by the finite element
         type subclasses. */
     bool _is_constraint_var;
+
+    //! Track whether this is an axisymmetric problem
+    /*! This is static because either everyone thinks the problem
+        axisymmetric or not. */
+    static bool _is_axisymmetric;
 
   };
 } // end namespace GRINS

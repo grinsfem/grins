@@ -31,6 +31,10 @@
 
 namespace GRINS
 {
+  // Instantiate static variables
+  bool FEVariablesBase::_is_axisymmetric = false;
+
+  // Implementations
   void FEVariablesBase::default_fe_init( libMesh::FEMSystem* system,
                                          const std::vector<std::string>& var_names,
                                          std::vector<VariableIndex>& vars ) const
