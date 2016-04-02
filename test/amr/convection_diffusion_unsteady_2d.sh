@@ -13,7 +13,7 @@ ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
 # Untar the files into a local directory in the build tree
 LOCALTESTDIR="./convection_diffusion_unsteady_2d_amr_test_tmp"
 
-mkdir $LOCALTESTDIR
+mkdir -p $LOCALTESTDIR
 tar -xzf ${GRINS_TEST_SRCDIR_DIR}/amr/gold_data/convection_diffusion_unsteady_2d/files.tar.gz --directory $LOCALTESTDIR
 
 # Now give prefixes for the gold data
