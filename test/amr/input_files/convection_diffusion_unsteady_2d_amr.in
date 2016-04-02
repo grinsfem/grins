@@ -51,6 +51,7 @@
 []
 
 [Mesh]
+   class = 'serial'
    [./Read]
       filename = './grids/mixed_quad_tri_square_mesh.xda'
    [../Refinement]
