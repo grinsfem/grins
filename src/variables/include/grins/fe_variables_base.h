@@ -29,12 +29,14 @@
 // C++
 #include <vector>
 #include <string>
+#include <limits>
 
 // GRINS
 #include "grins/grins_enums.h"
 #include "grins/var_typedefs.h"
 
 // libMesh
+#include "libmesh/libmesh_common.h"
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_fe_family.h"
 
@@ -52,7 +54,8 @@ namespace GRINS
   public:
 
     FEVariablesBase( bool is_constraint_var )
-      : _is_constraint_var(is_constraint_var)
+      : _is_constraint_var(is_constraint_var),
+        _neumann_bc_sign(1.0)
     {}
 
     ~FEVariablesBase(){};
@@ -71,6 +74,14 @@ namespace GRINS
 
     static bool is_axisymmetric()
     { return _is_axisymmetric; }
+
+    //! Reset Neumann bc sign to 1.0 or -1.0.
+    /*! Error is thrown if incoming neumann_bc_sign does not have
+        magnitude 1. */
+    void reset_neumann_bc_sign( libMesh::Real neumann_bc_sign );
+
+    libMesh::Real neumann_bc_sign() const
+    { return _neumann_bc_sign; }
 
   protected:
 
@@ -102,7 +113,21 @@ namespace GRINS
         axisymmetric or not. */
     static bool _is_axisymmetric;
 
+    //! Track the sign of the Neumann BC term. Defaults to 1.0.
+    /*! Depending on the Physics/Variable combination, the sign in
+        front of the Neumann boundary term can change. */
+    libMesh::Real _neumann_bc_sign;
+
   };
+
+  inline
+  void FEVariablesBase::reset_neumann_bc_sign( libMesh::Real neumann_bc_sign )
+  {
+    _neumann_bc_sign = neumann_bc_sign;
+    if( std::abs( _neumann_bc_sign - 1.0 ) > std::numeric_limits<libMesh::Real>::epsilon() )
+      libmesh_error_msg("ERROR: neumann_bc_sign must be 1.0 or -1.0!");
+  }
+
 } // end namespace GRINS
 
 #endif // GRINS_FE_VARIABLES_BASE_H
