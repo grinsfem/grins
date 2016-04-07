@@ -51,8 +51,8 @@ namespace GRINS
   {
   public:
 
-    FEVariablesBase( bool _is_constraint_var )
-      : _is_constraint_var(_is_constraint_var)
+    FEVariablesBase( bool is_constraint_var )
+      : _is_constraint_var(is_constraint_var)
     {}
 
     ~FEVariablesBase(){};
