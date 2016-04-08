@@ -126,4 +126,57 @@ namespace GRINS
       }
   }
 
+  void DefaultBCBuilder::build_axisymmetric_bcs( const GetPot& input,
+                                                 MultiphysicsSystem& system,
+                                                 const std::set<BoundaryID>& bc_ids,
+                                                 libMesh::DofMap& dof_map,
+                                                 const std::string& bc_type,
+                                                 std::set<std::string>& var_sections,
+                                                 std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+  {
+    // Axisymmetric depends on the variable type.
+    // So, we loop over all the Variable names and prepend the type
+    // with the variable name. So, the factories for axisymmetric
+    // need to be instantiated with, e.g., Velocity_axisymmetric
+    for( std::set<std::string>::const_iterator vars = var_sections.begin();
+         vars != var_sections.end(); ++vars )
+      {
+        const std::string& var_section = *vars;
+
+        // Grab FEVariable
+        const FEVariablesBase& fe_var =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(var_section);
+
+        // We don't need to do anything for constraint variables
+        if( fe_var.is_constraint_var() )
+          continue;
+
+        std::string full_bc_type = var_section+"_"+bc_type;
+
+        // Axisymmetric is Dirichlet or Neumann, depending on the Variable
+        if( this->is_dirichlet_bc_type(full_bc_type) )
+          {
+            this->construct_dbc_core( input,
+                                      system,
+                                      bc_ids,
+                                      fe_var,
+                                      std::string("dummy"), // No section needed for axisymmetric
+                                      full_bc_type,
+                                      dof_map );
+          }
+        else if( this->is_neumann_bc_type(full_bc_type) )
+          {
+            this->construct_nbc_core( input,
+                                      system,
+                                      bc_ids,
+                                      fe_var,
+                                      std::string("dummy"), // No section needed for axisymmetric
+                                      full_bc_type,
+                                      neumann_bcs );
+          }
+        else
+          libmesh_error_msg("ERROR! Invalid axisymmetric type: "+full_bc_type);
+      }
+  }
+
 } // end namespace GRINS

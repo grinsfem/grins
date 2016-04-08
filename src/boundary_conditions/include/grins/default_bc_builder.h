@@ -62,6 +62,14 @@ namespace GRINS
                                std::set<std::string>& var_sections,
                                std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
 
+    void build_axisymmetric_bcs( const GetPot& input,
+                                 MultiphysicsSystem& system,
+                                 const std::set<BoundaryID>& bc_ids,
+                                 libMesh::DofMap& dof_map,
+                                 const std::string& bc_type,
+                                 std::set<std::string>& var_sections,
+                                 std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+
   };
 } // end namespace GRINS
 
