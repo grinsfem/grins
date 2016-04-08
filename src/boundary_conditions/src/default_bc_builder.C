@@ -179,4 +179,68 @@ namespace GRINS
       }
   }
 
+  void DefaultBCBuilder::build_bcs_by_var_section(const GetPot& input,
+                                                  MultiphysicsSystem& system,
+                                                  const std::string& bc_name,
+                                                  const std::set<BoundaryID>& bc_ids,
+                                                  libMesh::DofMap& dof_map,
+                                                  std::set<std::string>& var_sections,
+                                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs)
+  {
+    for( std::set<std::string>::const_iterator vars = var_sections.begin();
+         vars != var_sections.end(); ++vars )
+      {
+        const std::string& var_section = *vars;
+
+        // Setup the input section we're in. We use this, but
+        // this is also the section where the BCFactory will try
+        // to parse the values, if it needs to, so let's set up
+        // once and reuse it.
+        std::string input_section = std::string(BoundaryConditionNames::bc_section()+"/"+bc_name+"/"+var_section);
+
+        // Make sure this section is there, unless that variable is a constraint variable
+        if( !input.have_section(input_section) )
+          {
+            const FEVariablesBase& var =
+              GRINS::GRINSPrivate::VariableWarehouse::get_variable(var_section);
+            if( var.is_constraint_var() )
+              continue;
+            else
+              libmesh_error_msg("ERROR: Could not find boundary condition specification for "+input_section+"!");
+          }
+
+        // Grab the FEVariable
+        const FEVariablesBase& fe_var =
+          GRINSPrivate::VariableWarehouse::get_variable(var_section);
+
+        // Grab the type of the boundary condition
+        // There may be more than one type (e.g. pin displacement in two directions and
+        // and load in the third direction).
+        std::string bc_type_section = input_section+"/type";
+        unsigned int n_bc_types = input.vector_variable_size(bc_type_section);
+
+        for( unsigned int bc_type_idx = 0; bc_type_idx < n_bc_types; bc_type_idx++ )
+          {
+            std::string bc_type = input(bc_type_section, std::string("DIE!"), bc_type_idx);
+
+            if( this->is_dirichlet_bc_type(bc_type) )
+              {
+                this->construct_dbc_core( input,system, bc_ids,
+                                          fe_var, input_section,
+                                          bc_type, dof_map );
+              }
+            else if( this->is_neumann_bc_type(bc_type) )
+              {
+                this->construct_nbc_core( input,system, bc_ids,
+                                          fe_var, input_section,
+                                          bc_type, neumann_bcs );
+              }
+            else
+              libmesh_error_msg("ERROR: Invalid bc_type "+bc_type+"!");
+
+          } // end loop over bc_types
+
+      } // end loop over variable sections
+  }
+
 } // end namespace GRINS

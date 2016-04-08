@@ -70,6 +70,18 @@ namespace GRINS
                                  std::set<std::string>& var_sections,
                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
 
+    //! Helper function to build boundary conditions using Variable sections
+    /*! This is the "standard" part. We parse for each Variable section that
+        should have boundary conditions and then parse the boundary condition
+        type. */
+    void build_bcs_by_var_section(const GetPot& input,
+                                  MultiphysicsSystem& system,
+                                  const std::string& bc_name,
+                                  const std::set<BoundaryID>& bc_ids,
+                                  libMesh::DofMap& dof_map,
+                                  std::set<std::string>& var_sections,
+                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs);
+
   };
 } // end namespace GRINS
 
