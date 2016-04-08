@@ -52,6 +52,16 @@ namespace GRINS
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
                             std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
 
+    //! Helper function to build boundary conditions specified by a single type
+    /*! Examples include axisymmetric and periodic. */
+    void build_type_based_bcs( const GetPot& input,
+                               MultiphysicsSystem& system,
+                               const std::set<BoundaryID>& bc_ids,
+                               libMesh::DofMap& dof_map,
+                               const std::string& type_input_section,
+                               std::set<std::string>& var_sections,
+                               std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+
   };
 } // end namespace GRINS
 

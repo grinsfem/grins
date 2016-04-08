@@ -89,4 +89,41 @@ namespace GRINS
       }
   }
 
+  void DefaultBCBuilder::build_type_based_bcs( const GetPot& input,
+                                               MultiphysicsSystem& system,
+                                               const std::set<BoundaryID>& bc_ids,
+                                               libMesh::DofMap& dof_map,
+                                               const std::string& type_input_section,
+                                               std::set<std::string>& var_sections,
+                                               std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs)
+  {
+    std::string type_input = type_input_section+"/type";
+    std::string bc_type = input( type_input, std::string("DIE!") );
+
+    if( bc_type == BoundaryConditionNames::axisymmetric() )
+      {
+        // Check and make sure the Physics thinks it's axisymmetric, otherwise error
+        if( !Physics::is_axisymmetric() )
+          libmesh_error_msg("ERROR: Must specify Physics/is_axisymmetric = true for axisymmetric BC!");
+
+        // Now build the boundary condition
+        this->build_axisymmetric_bcs(input,system,bc_ids,dof_map,
+                                     bc_type,var_sections,neumann_bcs);
+      }
+    else if( bc_type == BoundaryConditionNames::periodic() )
+      {
+        this->build_periodic_bc(input,system,bc_ids,type_input_section);
+      }
+    else
+      {
+        std::string error_msg = "ERROR: Invalid type '"+bc_type+"' for "+type_input+"!\n";
+        error_msg += "       Valid values are: "+BoundaryConditionNames::axisymmetric()+"\n";
+        error_msg += "                         "+BoundaryConditionNames::periodic()+"\n";
+        error_msg += "       If your boundary condition is not one of these types, then \n";
+        error_msg += "       you must specify the boundary condition type for each Variable\n";
+        error_msg += "       section. Please have a look at the examples.\n";
+        libmesh_error_msg(error_msg);
+      }
+  }
+
 } // end namespace GRINS
