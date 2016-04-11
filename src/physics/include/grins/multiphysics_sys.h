@@ -228,6 +228,10 @@ namespace GRINS
     void get_active_neumann_bcs( BoundaryID bc_id,
                                  const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
                                  std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs );
+
+    //! Applies the subset of _neumann_bcs that are active on the current element side
+    bool apply_neumann_bcs( bool request_jacobian,
+                            libMesh::DiffContext& context );
   };
 
   inline

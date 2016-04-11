@@ -28,6 +28,8 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/fe_variables_base.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -441,6 +443,47 @@ namespace GRINS
          it < neumann_bcs.end(); ++it )
       if( (*it)->has_bc_id( bc_id ) )
           active_neumann_bcs.push_back( *it );
+  }
+
+  bool MultiphysicsSystem::apply_neumann_bcs( bool request_jacobian,
+                                              libMesh::DiffContext& context )
+  {
+    AssemblyContext& assembly_context =
+      libMesh::libmesh_cast_ref<AssemblyContext&>( context );
+
+    std::vector<BoundaryID> ids = assembly_context.side_boundary_ids();
+
+    bool compute_jacobian = request_jacobian;
+    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
+    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
+         it != ids.end(); it++ )
+      {
+        BoundaryID bc_id = *it;
+
+        libmesh_assert_not_equal_to(bc_id, libMesh::BoundaryInfo::invalid_id);
+
+        // Retreive the NeumannBCContainers that are active on the current bc_id
+        std::vector<SharedPtr<NeumannBCContainer> > active_neumann_bcs;
+        this->get_active_neumann_bcs( bc_id, _neumann_bcs, active_neumann_bcs );
+
+        if( !active_neumann_bcs.empty() )
+          {
+            typedef std::vector<SharedPtr<NeumannBCContainer> >::iterator BCIt;
+
+            for( BCIt container = active_neumann_bcs.begin(); container < active_neumann_bcs.end(); ++container )
+              {
+                SharedPtr<NeumannBCAbstract>& func = (*container)->get_func();
+
+                const FEVariablesBase& var = (*container)->get_fe_var();
+
+                func->eval_flux( compute_jacobian, assembly_context,
+                                 var.neumann_bc_sign(), Physics::is_axisymmetric() );
+              }
+          }
+      } // end loop over boundary ids
+
+    return compute_jacobian;
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS
