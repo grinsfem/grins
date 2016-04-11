@@ -32,6 +32,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/physics.h"
+#include "grins/neumann_bc_container.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -201,6 +202,13 @@ namespace GRINS
         amongst other things. So, we keep a raw pointer. We don't own this
         so we *MUST* not delete. */
     const GetPot* _input;
+
+    //! Neumann boundary conditions
+    /*! Store each NeumannBCContainer for each set of BoundaryIDs and Variables,
+        as specified in the input file. The container knows what BoundaryIDs and
+        Variables it applies to. We use SharedPtr here because
+        libMesh::UniquePtr may still actually be an AutoPtr. */
+    std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
