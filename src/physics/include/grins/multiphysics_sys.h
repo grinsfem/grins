@@ -223,6 +223,11 @@ namespace GRINS
 			    libMesh::DiffContext& context,
                             ResFuncType resfunc,
                             CacheFuncType cachefunc);
+
+    //! Extract the bcs from neumann_bcs that are active on bc_id and return them in active_neumann_bcs
+    void get_active_neumann_bcs( BoundaryID bc_id,
+                                 const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
+                                 std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs );
   };
 
   inline

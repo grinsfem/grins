@@ -432,6 +432,17 @@ namespace GRINS
     return;
   }
 
+  void MultiphysicsSystem::get_active_neumann_bcs( BoundaryID bc_id,
+                                                   const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
+                                                   std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs )
+  {
+    // Manually writing the loop since std::copy_if is C++11 only
+    for( std::vector<SharedPtr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
+         it < neumann_bcs.end(); ++it )
+      if( (*it)->has_bc_id( bc_id ) )
+          active_neumann_bcs.push_back( *it );
+  }
+
 #ifdef GRINS_USE_GRVY_TIMERS
   void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
   {
