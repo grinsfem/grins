@@ -117,7 +117,7 @@ namespace GRINS
 #endif // ANTIOCH_HAVE_GSL
               }
             else
-              this->antioch_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
+              this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
           }
 
         else if( transport_model == std::string("constant") )
@@ -157,7 +157,7 @@ namespace GRINS
                                   (physics_name,input) );
               }
             else
-              this->antioch_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
+              this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
           }
         else // transport_model
           {
@@ -188,10 +188,11 @@ namespace GRINS
   }
 
   template<template<typename,typename> class DerivedPhysics>
-  void PhysicsFactoryReactingFlows<DerivedPhysics>::antioch_error_msg( const std::string& viscosity_model,
-                                                                       const std::string& conductivity_model,
-                                                                       const std::string& diffusivity_model,
-                                                                       const std::string& thermo_model ) const
+  void PhysicsFactoryReactingFlows<DerivedPhysics>::grins_antioch_model_error_msg
+  ( const std::string& viscosity_model,
+    const std::string& conductivity_model,
+    const std::string& diffusivity_model,
+    const std::string& thermo_model ) const
   {
     std::string error = "Error: Unknown Antioch model combination:\n";
     error += "viscosity_model    = "+viscosity_model+"\n";
