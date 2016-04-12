@@ -90,6 +90,14 @@ namespace GRINS
     this->_press_var.init(system);
   }
 
+  void AxisymmetricBoussinesqBuoyancy::init_context( AssemblyContext& context )
+  {
+      context.get_element_fe(_flow_vars.u())->get_JxW();
+      context.get_element_fe(_flow_vars.u())->get_phi();
+      context.get_element_fe(_flow_vars.u())->get_xyz();
+      context.get_element_fe(_temp_vars.T())->get_phi();
+  }
+
   void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
 								AssemblyContext& context,
 								CachedValues& /*cache*/ )
