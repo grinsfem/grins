@@ -49,6 +49,19 @@ namespace GRINS
     return;
   }
 
+  void ParsedSourceTerm::init_context( AssemblyContext& context )
+  {
+    for( std::vector<VariableIndex>::const_iterator v_it = _vars.begin();
+         v_it != _vars.end(); ++v_it )
+      {
+        VariableIndex var = *v_it;
+
+        context.get_element_fe(var)->get_JxW();
+        context.get_element_fe(var)->get_phi();
+        context.get_element_fe(var)->get_xyz();
+      }
+  }
+
   void ParsedSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
                                                   AssemblyContext& context,
                                                   CachedValues& /*cache*/ )

@@ -66,6 +66,8 @@ namespace GRINS
     //! Initialization of AxisymmetricBoussinesqBuoyancy variables
     virtual void init_variables( libMesh::FEMSystem* system );
 
+    virtual void init_context( AssemblyContext& context );
+
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
         the AxisymmetricIncompNavierStokes class.
