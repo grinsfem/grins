@@ -46,10 +46,10 @@ namespace GRINS
     virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
                                                        const std::string& physics_name );
 
-    void antioch_error_msg( const std::string& viscosity_model,
-                            const std::string& conductivity_model,
-                            const std::string& diffusivity_model,
-                            const std::string& thermo_model ) const;
+    void grins_antioch_model_error_msg( const std::string& viscosity_model,
+                                        const std::string& conductivity_model,
+                                        const std::string& diffusivity_model,
+                                        const std::string& thermo_model ) const;
 
   };
 
