@@ -36,11 +36,11 @@ namespace GRINS
   {
   public:
 
-    static void set_suffix( const std::string& suffix )
-    { _suffix = suffix; }
+    static void set_suffix( const std::string& suff )
+    { PhysicsNaming::suffix() = suff; }
 
     static void clear_suffix()
-    { _suffix.clear(); }
+    { PhysicsNaming::suffix().clear(); }
 
     //! Extract the physics name and the suffix from the full_name
     /*! Note returned suffix includes the delimiter */
@@ -60,140 +60,144 @@ namespace GRINS
     static std::string extract_suffix( const std::string& full_name );
 
     static PhysicsName stokes()
-    { return "Stokes"+_suffix; }
+    { return "Stokes"+suffix(); }
 
     static PhysicsName incompressible_navier_stokes()
-    { return "IncompressibleNavierStokes"+_suffix; }
+    { return "IncompressibleNavierStokes"+suffix(); }
 
     static PhysicsName incompressible_navier_stokes_adjoint_stab()
-    { return  "IncompressibleNavierStokesAdjointStabilization"+_suffix; }
+    { return  "IncompressibleNavierStokesAdjointStabilization"+suffix(); }
 
     static PhysicsName incompressible_navier_stokes_spgsm_stab()
-    { return "IncompressibleNavierStokesSPGSMStabilization"+_suffix; }
+    { return "IncompressibleNavierStokesSPGSMStabilization"+suffix(); }
 
     static PhysicsName velocity_drag()
-    { return "VelocityDrag"+_suffix; }
+    { return "VelocityDrag"+suffix(); }
 
     static PhysicsName velocity_drag_adjoint_stab()
-    { return "VelocityDragAdjointStabilization"+_suffix; }
+    { return "VelocityDragAdjointStabilization"+suffix(); }
 
     static PhysicsName velocity_penalty()
-    { return "VelocityPenalty"+_suffix; }
+    { return "VelocityPenalty"+suffix(); }
 
     static PhysicsName velocity_penalty2()
-    { return "VelocityPenalty2"+_suffix; }
+    { return "VelocityPenalty2"+suffix(); }
 
     static PhysicsName velocity_penalty3()
-    { return "VelocityPenalty3"+_suffix; }
+    { return "VelocityPenalty3"+suffix(); }
 
     static PhysicsName velocity_penalty_adjoint_stab()
-    { return "VelocityPenaltyAdjointStabilization"+_suffix; }
+    { return "VelocityPenaltyAdjointStabilization"+suffix(); }
 
     static PhysicsName velocity_penalty2_adjoint_stab()
-    { return "VelocityPenalty2AdjointStabilization"+_suffix; }
+    { return "VelocityPenalty2AdjointStabilization"+suffix(); }
 
     static PhysicsName velocity_penalty3_adjoint_stab()
-    { return "VelocityPenalty3AdjointStabilization"+_suffix; }
+    { return "VelocityPenalty3AdjointStabilization"+suffix(); }
 
     static PhysicsName parsed_velocity_source()
-    { return "ParsedVelocitySource"+_suffix; }
+    { return "ParsedVelocitySource"+suffix(); }
 
     static PhysicsName parsed_velocity_source_adjoint_stab()
-    { return "ParsedVelocitySourceAdjointStabilization"+_suffix; }
+    { return "ParsedVelocitySourceAdjointStabilization"+suffix(); }
 
     static PhysicsName averaged_fan()
-    { return "AveragedFan"+_suffix; }
+    { return "AveragedFan"+suffix(); }
 
     static PhysicsName averaged_fan_adjoint_stab()
-    { return "AveragedFanAdjointStabilization"+_suffix; }
+    { return "AveragedFanAdjointStabilization"+suffix(); }
 
     static PhysicsName averaged_turbine()
-    { return "AveragedTurbine"+_suffix; }
+    { return "AveragedTurbine"+suffix(); }
 
     static PhysicsName spalart_allmaras()
-    { return "SpalartAllmaras"+_suffix; }
+    { return "SpalartAllmaras"+suffix(); }
 
     static PhysicsName spalart_allmaras_spgsm_stab()
-    { return "SpalartAllmarasSPGSMStabilization"+_suffix; }
+    { return "SpalartAllmarasSPGSMStabilization"+suffix(); }
 
     static PhysicsName scalar_ode()
-    { return "ScalarODE"+_suffix; }
+    { return "ScalarODE"+suffix(); }
 
     static PhysicsName heat_conduction()
-    { return "HeatConduction"+_suffix; }
+    { return "HeatConduction"+suffix(); }
 
     static PhysicsName heat_transfer()
-    { return "HeatTransfer"+_suffix; }
+    { return "HeatTransfer"+suffix(); }
 
     static PhysicsName heat_transfer_adjoint_stab()
-    { return "HeatTransferAdjointStabilization"+_suffix; }
+    { return "HeatTransferAdjointStabilization"+suffix(); }
 
     static PhysicsName heat_transfer_spgsm_stab()
-    { return "HeatTransferSPGSMStabilization"+_suffix; }
+    { return "HeatTransferSPGSMStabilization"+suffix(); }
 
     static PhysicsName axisymmetric_heat_transfer()
-    { return "AxisymmetricHeatTransfer"+_suffix; }
+    { return "AxisymmetricHeatTransfer"+suffix(); }
 
     static PhysicsName boussinesq_buoyancy()
-    { return "BoussinesqBuoyancy"+_suffix; }
+    { return "BoussinesqBuoyancy"+suffix(); }
 
     static PhysicsName boussinesq_buoyancy_adjoint_stab()
-    { return "BoussinesqBuoyancyAdjointStabilization"+_suffix; }
+    { return "BoussinesqBuoyancyAdjointStabilization"+suffix(); }
 
     static PhysicsName boussinesq_buoyancy_spgsm_stab()
-    { return "BoussinesqBuoyancySPGSMStabilization"+_suffix; }
+    { return "BoussinesqBuoyancySPGSMStabilization"+suffix(); }
 
     static PhysicsName axisymmetric_boussinesq_buoyancy()
-    { return "AxisymmetricBoussinesqBuoyancy"+_suffix; }
+    { return "AxisymmetricBoussinesqBuoyancy"+suffix(); }
 
     static PhysicsName low_mach_navier_stokes()
-    { return "LowMachNavierStokes"+_suffix; }
+    { return "LowMachNavierStokes"+suffix(); }
 
     static PhysicsName low_mach_navier_stokes_braack_stab()
-    { return "LowMachNavierStokesBraackStabilization"+_suffix; }
+    { return "LowMachNavierStokesBraackStabilization"+suffix(); }
 
     static PhysicsName low_mach_navier_stokes_spgsm_stab()
-    { return "LowMachNavierStokesSPGSMStabilization"+_suffix; }
+    { return "LowMachNavierStokesSPGSMStabilization"+suffix(); }
 
     static PhysicsName low_mach_navier_stokes_vms_stab()
-    { return "LowMachNavierStokesVMSStabilization"+_suffix; }
+    { return "LowMachNavierStokesVMSStabilization"+suffix(); }
 
     static PhysicsName reacting_low_mach_navier_stokes()
-    { return "ReactingLowMachNavierStokes"+_suffix; }
+    { return "ReactingLowMachNavierStokes"+suffix(); }
 
     static PhysicsName elastic_membrane()
-    { return "ElasticMembrane"+_suffix; }
+    { return "ElasticMembrane"+suffix(); }
 
     static PhysicsName elastic_cable()
-    { return "ElasticCable"+_suffix; }
+    { return "ElasticCable"+suffix(); }
 
     static PhysicsName elastic_cable_rayleigh_damping()
-    { return "ElasticCableRayleighDamping"+_suffix; }
+    { return "ElasticCableRayleighDamping"+suffix(); }
 
     static PhysicsName elastic_membrane_rayleigh_damping()
-    { return "ElasticMembraneRayleighDamping"+_suffix; }
+    { return "ElasticMembraneRayleighDamping"+suffix(); }
 
     static PhysicsName elastic_membrane_constant_pressure()
-    { return "ElasticMembraneConstantPressure"+_suffix; }
+    { return "ElasticMembraneConstantPressure"+suffix(); }
 
     static PhysicsName elastic_cable_constant_gravity()
-    { return "ElasticCableConstantGravity"+_suffix; }
+    { return "ElasticCableConstantGravity"+suffix(); }
 
     static PhysicsName constant_source_term()
-    { return "ConstantSourceTerm"+_suffix; }
+    { return "ConstantSourceTerm"+suffix(); }
 
     static PhysicsName parsed_source_term()
-    { return "ParsedSourceTerm"+_suffix; }
+    { return "ParsedSourceTerm"+suffix(); }
 
     static PhysicsName convection_diffusion()
-    { return "ConvectionDiffusion"+_suffix; }
+    { return "ConvectionDiffusion"+suffix(); }
 
   private:
 
     static std::string physics_name_delimiter()
     { return ":"; }
 
-    static std::string _suffix;
+    static std::string& suffix()
+    {
+      static std::string _suffix;
+      return _suffix;
+    };
 
   };
 

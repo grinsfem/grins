@@ -28,8 +28,6 @@
 namespace GRINS
 {
 
-  std::string PhysicsNaming::_suffix = std::string("");
-
   void PhysicsNaming::extract_physics_and_suffix( const std::string& full_name,
                                                   std::string& physics_name,
                                                   std::string& suffix )
