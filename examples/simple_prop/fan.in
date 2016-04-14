@@ -40,7 +40,7 @@ ic_values = 1
 
 torque = '0'
 
-base_velocity = '{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(-sin(theta))}{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(cos(theta))}{0}'
+base_velocity = '{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*-sin(theta))}{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*cos(theta))}{0}'
 
 local_vertical = '{0}{0}{1}'
 
