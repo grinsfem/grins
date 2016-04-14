@@ -65,6 +65,13 @@ namespace GRINS
 
     virtual ~AntiochMixture(){};
 
+    // Registers all parameters in this physics and in its property
+    // classes
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+    const;
+
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 
     const Antioch::CEAThermoMixture<libMesh::Real>& cea_mixture() const;

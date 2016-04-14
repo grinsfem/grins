@@ -32,6 +32,7 @@
 
 // GRINS
 #include "grins/property_types.h"
+#include "grins/parameter_user.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -55,7 +56,7 @@ namespace GRINS
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
    */
-  class AntiochChemistry
+  class AntiochChemistry : public ParameterUser
   {
   public:
 
