@@ -25,6 +25,10 @@
 #ifndef GRINS_PARAMETER_ANTIOCH_RESET_H
 #define GRINS_PARAMETER_ANTIOCH_RESET_H
 
+#include "grins_config.h"
+
+#ifdef GRINS_HAVE_ANTIOCH
+
 // Antioch ------------------------------------------
 #include "antioch/reaction_set.h"
 
@@ -108,5 +112,7 @@ private:
 };
 
 } // namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH
 
 #endif // GRINS_PARAMETER_ANTIOCH_RESET_H

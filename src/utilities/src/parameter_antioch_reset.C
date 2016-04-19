@@ -25,6 +25,8 @@
 // Local Includes -----------------------------------
 #include "grins/parameter_antioch_reset.h"
 
+#ifdef GRINS_HAVE_ANTIOCH
+
 // Antioch ------------------------------------------
 #include "antioch/kinetics_parsing.h"
 
@@ -112,3 +114,5 @@ const libMesh::Number & ParameterAntiochReset::get () const
   }
 
 } // namespace GRINS
+
+#endif // GRINS_HAVE_ANTIOCH
