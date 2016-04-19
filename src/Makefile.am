@@ -231,6 +231,7 @@ libgrins_la_SOURCES += utilities/src/input_utils.C
 libgrins_la_SOURCES += utilities/src/cached_values.C
 libgrins_la_SOURCES += utilities/src/distance_function.C
 libgrins_la_SOURCES += utilities/src/string_utils.C
+libgrins_la_SOURCES += utilities/src/parameter_antioch_reset.C
 
 # src/visualization files
 libgrins_la_SOURCES += visualization/src/steady_visualization.C
@@ -509,6 +510,7 @@ include_HEADERS += utilities/include/grins/cached_values.h
 include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
 include_HEADERS += utilities/include/grins/distance_function.h
+include_HEADERS += utilities/include/grins/parameter_antioch_reset.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h

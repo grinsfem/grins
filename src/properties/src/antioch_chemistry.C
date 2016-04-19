@@ -43,6 +43,7 @@ namespace GRINS
 {
   AntiochChemistry::AntiochChemistry( const GetPot& input,
                                       const std::string& material )
+    : ParameterUser("AntiochChemistry")
   {
     std::vector<std::string> species_list;
     MaterialsParsing::parse_chemical_species(input,material,species_list);

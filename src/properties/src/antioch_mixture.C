@@ -29,12 +29,14 @@
 
 // This class
 #include "grins/antioch_mixture.h"
+#include "grins/parameter_antioch_reset.h"
 
 // GRINS
 #include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/parameter_multiaccessor.h"
 
 // Antioch
 #include "antioch/read_reaction_set_data.h"
@@ -63,6 +65,22 @@ namespace GRINS
 
     this->build_stat_mech_ref_correction();
   }
+
+  void AntiochMixture::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+    const
+  {
+    // Use common code for any GRINS parameters
+    AntiochChemistry::register_parameter(param_name, param_pointer);
+
+    // Create a special setter/getter for any Antioch-only parameters
+    if (param_name.find("Antioch") == 0) // name starts with Antioch
+      param_pointer.push_back
+        (ParameterAntiochReset
+          (*this->_reaction_set.get(), param_name));
+  }
+
 
   void AntiochMixture::build_stat_mech_ref_correction()
   {

@@ -42,6 +42,9 @@
 // libMesh
 #include "libmesh/auto_ptr.h" // libMesh::UniquePtr
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh forward declarations
 class GetPot;
 
@@ -59,7 +62,7 @@ namespace GRINS
     be built regardless if Cantera is included in the GRINS build or not. Check configure
     output to confirm that Cantera was included in the build if you wish to use it.
    */
-  class CanteraMixture
+  class CanteraMixture : public ParameterUser
   {
   public:
 

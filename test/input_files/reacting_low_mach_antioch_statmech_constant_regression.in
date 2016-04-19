@@ -63,6 +63,21 @@ pin_pressure = 'false'
 
 []
 
+[QoI]
+enabled_qois = 'parsed_interior parsed_boundary'
+
+adjoint_sensitivity_parameters = 'Antioch/0001/A Antioch/0001/B'
+forward_sensitivity_parameters = ${QoI/adjoint_sensitivity_parameters}
+
+[./ParsedBoundary]
+bc_ids = '1'
+qoi_functional = 'a:=1;a+w_N2'
+
+[../ParsedInterior]
+qoi_functional = 'a:=1;a*w_N'
+
+[]
+
 [Variables]
    [./Temperature]
       names = 'T'
