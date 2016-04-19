@@ -44,18 +44,12 @@ ParameterAntiochReset::ParameterAntiochReset
   std::stringstream stream(param_name);
   std::string keyword;
 
-#ifndef NDEBUG
-  bool foundword =
-#endif
   std::getline(stream, keyword, '/');
-  libmesh_assert(foundword);
+  libmesh_assert(!stream.fail());
   libmesh_assert_equal_to(keyword, "Antioch");
 
-#ifndef NDEBUG
-  foundword =
-#endif
   std::getline(stream, keyword, '/');
-  libmesh_assert(foundword);
+  libmesh_assert(!stream.fail());
   _reaction_id = keyword;
 
   while (std::getline(stream, keyword, '/')) {
