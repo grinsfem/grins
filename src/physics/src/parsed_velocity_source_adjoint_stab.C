@@ -41,7 +41,6 @@ namespace GRINS
   template<class Mu>
   ParsedVelocitySourceAdjointStabilization<Mu>::ParsedVelocitySourceAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : ParsedVelocitySourceBase<Mu>(physics_name,input),
-      _mu( input ),
       _stab_helper( physics_name+"StabHelper", input )
   {
   }
