@@ -39,6 +39,7 @@
 namespace GRINS
 {
   CanteraMixture::CanteraMixture( const GetPot& input, const std::string& material )
+    : ParameterUser("CanteraMixture")
   {
     const std::string cantera_chem_file = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
 
