@@ -42,6 +42,14 @@ namespace GRINS
       _disp_vars(input,physics_name,false,true)// is_2D = false, is_3D = true
   {
     this->register_variables();
+
+    // For solid mechanics problems, we need to set the sign for tractions
+    // to '-' since the second order time solvers use a Newton residual of the form
+    // M(u)\ddot{u} + C(u)\dot{u} + F(u) + G(u) = 0
+    // In this case, then, the natural boundary conditions for the weak form
+    // will all have a '-', so we need to set that so the input tractions are
+    // positive.
+    _disp_vars.set_neumann_bc_is_positive(false);
   }
 
   void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )

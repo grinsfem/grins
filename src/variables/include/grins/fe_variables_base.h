@@ -75,10 +75,11 @@ namespace GRINS
     static bool is_axisymmetric()
     { return _is_axisymmetric; }
 
-    //! Reset Neumann bc sign to 1.0 or -1.0.
-    /*! Error is thrown if incoming neumann_bc_sign does not have
-        magnitude 1. */
-    void reset_neumann_bc_sign( libMesh::Real neumann_bc_sign );
+    //! Reset whetever Neumann bc is postive or not
+    /*! Postive means a value of 1.0 will be used in front of
+        NeumannBC terms while is_positive = false indicates a
+        value of -1.0 should be used.*/
+    void set_neumann_bc_is_positive( bool is_positive );
 
     libMesh::Real neumann_bc_sign() const
     { return _neumann_bc_sign; }
@@ -121,11 +122,12 @@ namespace GRINS
   };
 
   inline
-  void FEVariablesBase::reset_neumann_bc_sign( libMesh::Real neumann_bc_sign )
+  void FEVariablesBase::set_neumann_bc_is_positive( bool is_positive )
   {
-    _neumann_bc_sign = neumann_bc_sign;
-    if( std::abs( _neumann_bc_sign - 1.0 ) > std::numeric_limits<libMesh::Real>::epsilon() )
-      libmesh_error_msg("ERROR: neumann_bc_sign must be 1.0 or -1.0!");
+    if(is_positive)
+      _neumann_bc_sign = 1.0;
+    else
+      _neumann_bc_sign = -1.0;
   }
 
 } // end namespace GRINS
