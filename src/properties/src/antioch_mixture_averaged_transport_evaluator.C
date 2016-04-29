@@ -51,9 +51,9 @@ namespace GRINS
   }
 
   template<typename Th, typename V, typename C, typename D>
-  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const libMesh::Real T,
-                                                                       const libMesh::Real P,
-                                                                       const std::vector<libMesh::Real>& Y )
+  libMesh::Real AntiochMixtureAveragedTransportEvaluator<Th,V,C,D>::k( const libMesh::Real /*T*/,
+                                                                       const libMesh::Real /*P*/,
+                                                                       const std::vector<libMesh::Real>& /*Y*/ )
   {
     libmesh_error();
     return 0.0;//_wilke_evaluator->k( T, Y );
