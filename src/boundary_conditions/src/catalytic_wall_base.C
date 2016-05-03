@@ -22,7 +22,6 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 // This class
 #include "grins/catalytic_wall_base.h"
 
@@ -37,33 +36,42 @@
 namespace GRINS
 {
   template<typename Chemistry>
+  CatalyticWallBase<Chemistry>::CatalyticWallBase( SharedPtr<Chemistry>& chem,
+                                                   SharedPtr<CatalycityBase>& gamma,
+                                                   const std::vector<VariableIndex>& species_vars,
+                                                   VariableIndex T_var,
+                                                   libMesh::Real p0,
+                                                   unsigned int reactant_species_idx)
+  : _chem_ptr(chem),
+    _chemistry(*(chem.get())),// This will be removed after NeumannBC refactoring
+    _gamma_ptr(gamma),
+    _C( std::sqrt( chem->R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
+    _species_vars(species_vars),
+    _T_var(T_var),
+    _p0(p0)
+  {}
+
+  template<typename Chemistry>
   CatalyticWallBase<Chemistry>::CatalyticWallBase( const Chemistry& chemistry,
                                                    CatalycityBase& gamma,
                                                    const unsigned int reactant_species_idx )
     : _chemistry(chemistry),
       _gamma_s( gamma.clone() ),
       _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) )
-  {
-    return;
-  }
-
-  template<typename Chemistry>
-  CatalyticWallBase<Chemistry>::~CatalyticWallBase()
-  {
-    return;
-  }
-
-  template<typename Chemistry>
-  void CatalyticWallBase<Chemistry>::init( const libMesh::FEMSystem& /*system*/ )
-  {
-    return;
-  }
+  {}
 
   template<typename Chemistry>
   void CatalyticWallBase<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )
   {
-    _gamma_s->set_params( params );
-    return;
+    if(_gamma_s)
+      {
+        libmesh_deprecated();
+        _gamma_s->set_params( params );
+      }
+    else if( _gamma_ptr)
+      _gamma_ptr->set_params( params );
+    else
+      libmesh_error();
   }
 
 } // end namespace GRINS

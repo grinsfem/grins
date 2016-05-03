@@ -37,18 +37,34 @@ namespace GRINS
   {
   public:
 
+    GasRecombinationCatalyticWall( SharedPtr<Chemistry>& chem,
+                                   SharedPtr<CatalycityBase>& gamma,
+                                   const std::vector<VariableIndex>& species_vars,
+                                   VariableIndex T_var,
+                                   libMesh::Real p0,
+                                   unsigned int reactant_species_idx,
+                                   unsigned int product_species_idx );
+
+    //! Deprecated
     GasRecombinationCatalyticWall( const Chemistry& chem_mixture,
                                    CatalycityBase& gamma,
                                    const unsigned int reactant_species_idx,
                                    const unsigned int product_species_idx );
 
-    virtual ~GasRecombinationCatalyticWall();
+    virtual ~GasRecombinationCatalyticWall(){};
 
+    //! Deprecated
     virtual void init( const libMesh::FEMSystem& system );
 
+    //! Deprecated
     virtual void apply_fluxes( AssemblyContext& context,
                                const CachedValues& cache,
                                const bool request_jacobian );
+
+    virtual bool eval_flux( bool compute_jacobian,
+                            AssemblyContext& context,
+                            libMesh::Real sign,
+                            bool is_axisymmetric );
 
     libMesh::Real compute_reactant_mass_flux( const libMesh::Real rho,
                                               const libMesh::Real Y_r,
@@ -73,9 +89,9 @@ namespace GRINS
   libMesh::Real GasRecombinationCatalyticWall<Chemistry>::compute_reactant_mass_flux( const libMesh::Real rho,
                                                                                       const libMesh::Real Y_r,
                                                                                       const libMesh::Real T )
-  {  
+  {
     const libMesh::Real rho_r = rho*Y_r;
-    
+
     const libMesh::Real omega_dot = this->omega_dot( rho_r, T );
 
     return -omega_dot;

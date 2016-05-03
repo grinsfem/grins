@@ -27,6 +27,9 @@
 
 // GRINS
 #include "grins/catalycity_base.h"
+#include "grins/neumann_bc_abstract.h"
+#include "grins/shared_ptr.h"
+#include "grins/var_typedefs.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -39,27 +42,37 @@ namespace libMesh
 
 namespace GRINS
 {
-
   // Forward declarations
   class AssemblyContext;
   class CachedValues;
 
   template<typename Chemistry>
-  class CatalyticWallBase
+  class CatalyticWallBase : public NeumannBCAbstract
   {
   public:
 
+    CatalyticWallBase( SharedPtr<Chemistry>& chem,
+                       SharedPtr<CatalycityBase>& gamma,
+                       const std::vector<VariableIndex>& species_vars,
+                       VariableIndex T_var,
+                       libMesh::Real p0,
+                       unsigned int reactant_species_idx);
+
+    //! Deprecated
     CatalyticWallBase( const Chemistry& chem_mixture,
                        CatalycityBase& gamma,
                        const unsigned int reactant_species_idx );
 
-    virtual ~CatalyticWallBase();
+    virtual ~CatalyticWallBase(){};
 
+    //! Deprecated
     virtual void apply_fluxes( AssemblyContext& context,
                                const CachedValues& cache,
                                const bool request_jacobian ) =0;
 
-    virtual void init( const libMesh::FEMSystem& system );
+    virtual void init( const libMesh::FEMSystem& /*system*/ ){};
+
+    libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
     //! \f$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } \f$
     libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
@@ -73,16 +86,41 @@ namespace GRINS
 
   protected:
 
+    SharedPtr<Chemistry> _chem_ptr;
+
+    //! Deprecated
     const Chemistry& _chemistry;
 
+    SharedPtr<CatalycityBase> _gamma_ptr;
+
+    //! Deprecated
     libMesh::UniquePtr<CatalycityBase> _gamma_s;
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi} } \f$
     const libMesh::Real _C;
 
+    //! \todo make const
+    std::vector<VariableIndex> _species_vars;
+
+    //! \todo make const
+    VariableIndex _T_var;
+
+    //! Thermodynamic pressure
+    /*! Currently, we assume that the thermodynamic pressure is constant. This
+        is not true in cavity type systems.
+
+        \todo make const */
+    libMesh::Real _p0;
   };
 
   /* ------------------------- Inline Functions -------------------------*/
+  template<typename Chemistry>
+  inline
+  libMesh::Real CatalyticWallBase<Chemistry>::rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const
+  {
+    return p0/(R_mix*T);
+  }
+
   template<typename Chemistry>
   inline
   libMesh::Real CatalyticWallBase<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const

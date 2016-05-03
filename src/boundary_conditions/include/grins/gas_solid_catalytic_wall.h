@@ -37,16 +37,33 @@ namespace GRINS
   {
   public:
 
+    GasSolidCatalyticWall(SharedPtr<Chemistry>& chem,
+                          SharedPtr<CatalycityBase>& gamma,
+                          const std::vector<VariableIndex>& species_vars,
+                          VariableIndex T_var,
+                          libMesh::Real p0,
+                          unsigned int reactant_gas_species_idx,
+                          unsigned int reactant_solid_species_idx,
+                          unsigned int product_species_idx);
+
+    //! Deprecated
     GasSolidCatalyticWall( const Chemistry& chem_mixture,
                            CatalycityBase& gamma,
                            const unsigned int reactant_gas_species_idx,
                            const unsigned int reactant_solid_species_idx,
                            const unsigned int product_species_idx );
 
-    virtual ~GasSolidCatalyticWall();
+    virtual ~GasSolidCatalyticWall(){};
 
+    //! Deprecated
     virtual void init( const libMesh::FEMSystem& system );
 
+    virtual bool eval_flux( bool compute_jacobian,
+                            AssemblyContext& context,
+                            libMesh::Real sign,
+                            bool is_axisymmetric );
+
+    //! Deprecated
     virtual void apply_fluxes( AssemblyContext& context,
                                const CachedValues& cache,
                                const bool request_jacobian );
