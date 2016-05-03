@@ -80,11 +80,9 @@ namespace GRINS
 
   protected:
 
-    void build_catalycities( const GetPot& input,
-                             const std::string& reactant,
-                             const std::string& bc_id_string,
-                             const BoundaryID bc_id,
-                             libMesh::UniquePtr<CatalycityBase>& gamma_r );
+    libMesh::UniquePtr<CatalycityBase> build_catalycities( const GetPot& input,
+                                                           const std::string& reactant,
+                                                           const std::string& bc_id_string );
 
      // We need a another container to stash dirichlet values for the speccies
     std::map< GRINS::BoundaryID, std::vector<libMesh::Real> > _species_bc_values;
