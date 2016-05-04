@@ -86,6 +86,12 @@ namespace GRINS
 
   protected:
 
+    //! Temporary helper to deal with intermediate refactoring
+    libMesh::Real eval_gamma( libMesh::Real T ) const;
+
+    //! Temporary helper to deal with intermediate refactoring
+    libMesh::Real eval_gamma_dT( libMesh::Real T ) const;
+
     SharedPtr<Chemistry> _chem_ptr;
 
     //! Deprecated
@@ -123,9 +129,41 @@ namespace GRINS
 
   template<typename Chemistry>
   inline
+  libMesh::Real CatalyticWallBase<Chemistry>::eval_gamma( libMesh::Real T ) const
+  {
+    libMesh::Real value;
+
+    if(_gamma_s)
+      value = (*_gamma_s)(T);
+    else if(_gamma_ptr)
+      value = (*_gamma_ptr)(T);
+    else
+      libmesh_error();
+
+    return value;
+  }
+
+  template<typename Chemistry>
+  inline
+  libMesh::Real CatalyticWallBase<Chemistry>::eval_gamma_dT( libMesh::Real T ) const
+  {
+    libMesh::Real value;
+
+    if(_gamma_s)
+      value = (*_gamma_s).dT(T);
+    else if(_gamma_ptr)
+      value = (*_gamma_ptr).dT(T);
+    else
+      libmesh_error();
+
+    return value;
+  }
+
+  template<typename Chemistry>
+  inline
   libMesh::Real CatalyticWallBase<Chemistry>::omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const
   {
-    return rho_s*(*_gamma_s)(T)*_C*std::sqrt(T);
+    return rho_s*this->eval_gamma(T)*_C*std::sqrt(T);
   }
 
   template<typename Chemistry>
@@ -142,7 +180,7 @@ namespace GRINS
   {
     libMesh::Real sqrtT = std::sqrt(T);
 
-    return rho_s*_C*( 0.5/sqrtT*(*_gamma_s)(T) + sqrtT*(*_gamma_s).dT(T) );
+    return rho_s*_C*( 0.5/sqrtT*this->eval_gamma(T) + sqrtT*this->eval_gamma_dT(T) );
   }
 
 } // end namespace GRINS
