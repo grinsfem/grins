@@ -90,6 +90,6 @@ namespace GRINS
 
   // This needs to die. Axisymmetry should be handled within heat_transfer
   PhysicsFactoryHeatTransfer<AxisymmetricHeatTransfer> grins_factory_axi_heat_transfer
-  (PhysicsNaming::axisymmetric_heat_transfer(),PhysicsNaming::heat_transfer());
+  (PhysicsNaming::axisymmetric_heat_transfer(),PhysicsNaming::axisymmetric_heat_transfer());
 
 } // end namespace GRINS
