@@ -26,6 +26,9 @@
 // This class
 #include "grins/heat_transfer_bc_handling.h"
 
+// GRINS
+#include "grins/physics.h"
+
 // libMesh
 #include "libmesh/const_function.h"
 #include "libmesh/dirichlet_boundaries.h"
@@ -191,7 +194,7 @@ namespace GRINS
 	// Prescribed constant heat flux
       case(PRESCRIBED_HEAT_FLUX):
 	{
-          if( this->is_axisymmetric() )
+          if(Physics::is_axisymmetric())
             {
               _bound_conds.apply_neumann_axisymmetric( context, _temp_vars.T(), -1.0,
                                                        this->get_neumann_bc_value(bc_id) );
@@ -206,7 +209,7 @@ namespace GRINS
 	// General heat flux from user specified function
       case(GENERAL_HEAT_FLUX):
 	{
-          if( this->is_axisymmetric() )
+          if(Physics::is_axisymmetric())
             {
               _bound_conds.apply_neumann_axisymmetric( context, cache, request_jacobian, _temp_vars.T(), -1.0, 
                                                        this->get_neumann_bound_func( bc_id, _temp_vars.T() ) );

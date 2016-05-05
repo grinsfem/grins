@@ -52,9 +52,6 @@ namespace GRINS
     this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<typename Mixture::ChemistryParent>( physics_name, input,
                                                                                                       this->_gas_mixture.chemistry() );
 
-    if( this->_bc_handler->is_axisymmetric() )
-      Physics::set_is_axisymmetric(true);
-
     this->_pin_pressure = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/pin_pressure", false );
 
     this->_ic_handler = new GenericICHandler( physics_name, input );

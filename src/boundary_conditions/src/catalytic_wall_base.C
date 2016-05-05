@@ -42,8 +42,7 @@ namespace GRINS
                                                    const unsigned int reactant_species_idx )
     : _chemistry(chemistry),
       _gamma_s( gamma.clone() ),
-      _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
-      _is_axisymmetric(false)
+      _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) )
   {
     return;
   }
@@ -59,15 +58,6 @@ namespace GRINS
   {
     return;
   }
-
-  template<typename Chemistry>
-  void CatalyticWallBase<Chemistry>::set_axisymmetric( bool is_axisymmetric )
-  {
-    this->_is_axisymmetric = is_axisymmetric;
-
-    return;
-  }
-  
 
   template<typename Chemistry>
   void CatalyticWallBase<Chemistry>::set_catalycity_params( const std::vector<libMesh::Real>& params )

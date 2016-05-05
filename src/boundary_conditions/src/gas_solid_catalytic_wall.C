@@ -25,6 +25,9 @@
 // This class
 #include "grins/gas_solid_catalytic_wall.h"
 
+// GRINS
+#include "grins/physics.h"
+
 // libMesh
 #include "libmesh/quadrature.h"
 
@@ -101,7 +104,7 @@ namespace GRINS
       {
         libMesh::Real jac = JxW_side[qp];
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             const libMesh::Number r = var_qpoint[qp](0);
             jac *= r;
