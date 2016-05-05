@@ -51,6 +51,7 @@
 [Physics]
 
    enabled_physics = 'IncompressibleNavierStokes'
+   is_axisymmetric = 'true'
 
    [./IncompressibleNavierStokes]
 
