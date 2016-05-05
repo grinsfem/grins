@@ -35,6 +35,7 @@
 #include "grins/power_law_catalycity.h"
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
+#include "grins/catalycity_factory_old_style_base.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -246,9 +247,8 @@ namespace GRINS
                   /* ------------- Parse and construct the corresponding catalyticities ------------- */
 
                   // These are temporary and will be cloned, so let them be destroyed when we're done
-                  libMesh::UniquePtr<CatalycityBase> gamma_r;
-
-                  this->build_catalycities( input, reactant, bc_id_string, bc_id, gamma_r );
+                  libMesh::UniquePtr<CatalycityBase> gamma_r =
+                    this->build_catalycities( input, reactant, bc_id_string );
 
                   /* ------------- Now cache the CatalyticWall functions to init later ------------- */
                   libmesh_assert( gamma_r );
@@ -358,9 +358,8 @@ namespace GRINS
                 const unsigned int p_species  = _chemistry.species_index( product );
 
                 // This is temporary and will be cloned, so let it be destroyed when we're done
-                libMesh::UniquePtr<CatalycityBase> gamma_r;
-
-                this->build_catalycities( input, gas_reactant, bc_id_string, bc_id, gamma_r );
+                libMesh::UniquePtr<CatalycityBase> gamma_r =
+                  this->build_catalycities( input, gas_reactant, bc_id_string );
 
                 libmesh_assert( gamma_r );
 
@@ -562,100 +561,20 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void ReactingLowMachNavierStokesBCHandling<Chemistry>::build_catalycities( const GetPot& input,
-                                                                             const std::string& reactant,
-                                                                             const std::string& bc_id_string,
-                                                                             const BoundaryID bc_id,
-                                                                             libMesh::UniquePtr<CatalycityBase>& gamma_r )
+  libMesh::UniquePtr<CatalycityBase>
+  ReactingLowMachNavierStokesBCHandling<Chemistry>::build_catalycities( const GetPot& input,
+                                                                        const std::string& reactant,
+                                                                        const std::string& bc_id_string )
   {
+    CatalycityFactoryOldStyleBase::set_getpot(input);
+    CatalycityFactoryOldStyleBase::set_section("Physics/"+_physics_name);
+    CatalycityFactoryOldStyleBase::set_reactant(reactant);
+    CatalycityFactoryOldStyleBase::set_bc_id(bc_id_string);
+
     std::string catalycity_type = input("Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string+"_type", "none");
 
-    if( catalycity_type == std::string("constant") )
-      {
-        std::string gamma_r_string = "Physics/"+_physics_name+"/gamma_"+reactant+"_"+bc_id_string;
-        libMesh::Real gamma = input(gamma_r_string, 0.0);
-
-        if( !input.have_variable(gamma_r_string) )
-          {
-            std::cout << "Error: Could not find catalycity for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        gamma_r.reset( new ConstantCatalycity( gamma ) );
-      }
-    else if( catalycity_type == std::string("arrhenius") )
-      {
-        std::string gamma_r_string = "Physics/"+_physics_name+"/gamma0_"+reactant+"_"+bc_id_string;
-        std::string Ta_r_string = "Physics/"+_physics_name+"/Ta_"+reactant+"_"+bc_id_string;
-
-        libMesh::Real gamma0 = input(gamma_r_string, 0.0);
-        libMesh::Real Ta = input(Ta_r_string, 0.0);
-
-        if( !input.have_variable(gamma_r_string) )
-          {
-            std::cout << "Error: Could not find gamma0 for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        if( !input.have_variable(Ta_r_string) )
-          {
-            std::cout << "Error: Could not find Ta for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        gamma_r.reset( new ArrheniusCatalycity( gamma0, Ta ) );
-      }
-    else if( catalycity_type == std::string("power") )
-      {
-        std::string gamma_r_string = "Physics/"+_physics_name+"/gamma0_"+reactant+"_"+bc_id_string;
-        std::string Tref_r_string = "Physics/"+_physics_name+"/Tref_"+reactant+"_"+bc_id_string;
-        std::string alpha_r_string = "Physics/"+_physics_name+"/alpha_"+reactant+"_"+bc_id_string;
-
-        libMesh::Real gamma0 = input(gamma_r_string, 0.0);
-        libMesh::Real Tref = input(Tref_r_string, 0.0);
-        libMesh::Real alpha = input(alpha_r_string, 0.0);
-
-        if( !input.have_variable(gamma_r_string) )
-          {
-            std::cout << "Error: Could not find gamma0 for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        if( !input.have_variable(Tref_r_string) )
-          {
-            std::cout << "Error: Could not find Tref for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        if( !input.have_variable(alpha_r_string) )
-          {
-            std::cout << "Error: Could not find alpha for species " << reactant
-                      << ", for boundary " << bc_id << std::endl;
-            libmesh_error();
-          }
-
-        /*! \todo We assuming single reaction and single product the product is generated
-          at minus the rate the reactant is consumed. Might want to remove this someday. */
-        gamma_r.reset( new PowerLawCatalycity( gamma0, Tref, alpha ) );
-      }
-    else
-      {
-        std::cerr << "Error: Unsupported catalycity type " << catalycity_type << std::endl
-                  << "       for reactant " << reactant << std::endl
-                  << "Valid catalycity types are: constant" << std::endl
-                  << "                            arrhenius" << std::endl
-                  << "                            power" << std::endl;
-
-        libmesh_error();
-      }
-
-
-    return;
+    // "_old_style" added at the end since this parsing style is the "old style".
+    return CatalycityFactoryOldStyleBase::build(catalycity_type+"_old_style");
   }
 
   template<typename Chemistry>
