@@ -29,6 +29,7 @@
 // GRINS
 #include "grins/string_utils.h"
 #include "grins/shared_ptr.h"
+#include "grins/physics.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -304,6 +305,10 @@ namespace GRINS
       {
         bc_type_out = AXISYMMETRIC;
         this->_axisymmetric = true;
+
+        // Check and make sure the Physics is axisymmetric. If not, that's an error
+        if( !Physics::is_axisymmetric() )
+          libmesh_error_msg("ERROR: Physics/is_axisymmetric must be set to true if using axisymmetric boundary conditions!\n");
       }
     else
       {
