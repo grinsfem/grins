@@ -39,21 +39,23 @@ namespace GRINS
 {
   // Initialize static members
   bool Physics::_is_steady = false;
+  bool Physics::_is_axisymmetric = false;
 
   Physics::Physics( const std::string& physics_name,
 		    const GetPot& input )
     : ParameterUser(physics_name),
       _physics_name( physics_name ),
       _bc_handler(NULL),
-      _ic_handler(new ICHandlingBase(physics_name)),
-      _is_axisymmetric(false)
+      _ic_handler(new ICHandlingBase(physics_name))
   {
     this->parse_enabled_subdomains(input,physics_name);
 
-    if( input( "Physics/is_axisymmetric", false ) )
-      {
-        _is_axisymmetric = true;
-      }
+    // Check if this is an axisymmetric problem
+    // There will be redundant calls for multiple Physics objects,
+    // but this guarantees we've parsed is_axisymmetric and then
+    // we can check in subclasses and error out if the Physics
+    // doesn't support axisymmetry.
+    Physics::set_is_axisymmetric( input("Physics/is_axisymmetric",false) );
   }
 
   Physics::~Physics()
