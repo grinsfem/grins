@@ -65,17 +65,6 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
-
-    _stab_helper.init(*system);
-
-    return;
-  }
-
 } // namespace GRINS
 
 // Instantiate

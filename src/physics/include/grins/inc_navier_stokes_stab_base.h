@@ -45,8 +45,6 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;

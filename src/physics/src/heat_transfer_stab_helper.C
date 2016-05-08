@@ -26,6 +26,13 @@
 // This class
 #include "grins/heat_transfer_stab_helper.h"
 
+// GRINS
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/primitive_temp_fe_variables.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
+
 //libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/system.h"
@@ -40,9 +47,9 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _temp_vars(input),
-      _flow_vars(input),
-      _press_var(input)
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {
     if (input.have_variable("Stabilization/tau_constant_T"))
       this->set_parameter
@@ -62,13 +69,6 @@ namespace GRINS
   HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
   {
     return;
-  }
-
-  void HeatTransferStabilizationHelper::init( libMesh::FEMSystem& system )
-  {
-    _temp_vars.init_vars(&system);
-    _flow_vars.init_vars(&system);
-    _press_var.init_vars(&system);
   }
 
   libMesh::Real HeatTransferStabilizationHelper::compute_res_energy_steady( AssemblyContext& context,

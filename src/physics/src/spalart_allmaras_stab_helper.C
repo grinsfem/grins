@@ -26,6 +26,13 @@
 // This class
 #include "grins/spalart_allmaras_stab_helper.h"
 
+// GRINS
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
+#include "grins/turbulence_fe_variables.h"
+
 //libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/mesh.h"
@@ -39,9 +46,9 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1.0 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
-      _flow_vars(input),
-      _press_var(input),
-      _turbulence_vars(input),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
+      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turbulence_section())),
       _spalart_allmaras_helper(input),
       _sa_params(input)
   {
@@ -64,11 +71,6 @@ namespace GRINS
 
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
-    this->_flow_vars.init_vars(&system);
-    this->_press_var.init_vars(&system);
-
-    this->_turbulence_vars.init_vars(&system);
-
     // Init the variables belonging to SA helper
     _spalart_allmaras_helper.init_variables(&system);
 
