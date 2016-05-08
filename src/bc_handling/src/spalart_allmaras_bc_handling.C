@@ -26,6 +26,11 @@
 // This class
 #include "grins/spalart_allmaras_bc_handling.h"
 
+// GRINS
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/turbulence_fe_variables.h"
+
 // libMesh
 #include "libmesh/const_function.h"
 #include "libmesh/dirichlet_boundaries.h"
@@ -38,7 +43,7 @@ namespace GRINS
   SpalartAllmarasBCHandling::SpalartAllmarasBCHandling(const std::string& physics_name,
                                                        const GetPot& input)
     : BCHandlingBase(physics_name),
-      _turb_vars(input)
+      _turb_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turbulence_section()))
   {
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
@@ -70,11 +75,6 @@ namespace GRINS
       }
 
     return bc_type_out;
-  }
-
-  void SpalartAllmarasBCHandling::init_bc_data( const libMesh::FEMSystem& system )
-  {
-    _turb_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
   }
 
   void SpalartAllmarasBCHandling::init_bc_types( const BoundaryID bc_id,

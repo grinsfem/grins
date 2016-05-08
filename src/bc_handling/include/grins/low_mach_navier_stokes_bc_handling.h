@@ -27,12 +27,13 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/parabolic_profile.h"
-#include "grins/velocity_variables.h"
-#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class VelocityFEVariables;
+  class PrimitiveTempFEVariables;
+
   //! Base class for reading and handling boundary conditions for physics classes
   class LowMachNavierStokesBCHandling : public BCHandlingBase
   {
@@ -44,13 +45,11 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const libMesh::FEMSystem& system );
-
-    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
-				const std::string& bc_id_string, 
-				const int bc_type, 
-				const std::string& bc_vars, 
-				const std::string& bc_value, 
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id,
+				const std::string& bc_id_string,
+				const int bc_type,
+				const std::string& bc_vars,
+				const std::string& bc_value,
 				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system, libMesh::DofMap& dof_map,
@@ -64,9 +63,9 @@ namespace GRINS
 
   protected:
 
-    VelocityVariables _flow_vars;
+    const VelocityFEVariables& _flow_vars;
 
-    PrimitiveTempVariables _temp_vars;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     // We need a second container to stash dirichlet values for the energy equation
     std::map< GRINS::BoundaryID, libMesh::Real > _T_values;

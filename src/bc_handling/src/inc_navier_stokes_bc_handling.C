@@ -28,6 +28,9 @@
 
 // GRINS
 #include "grins/parabolic_profile.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/velocity_fe_variables.h"
 
 // libMesh
 #include "libmesh/zero_function.h"
@@ -41,7 +44,7 @@ namespace GRINS
   IncompressibleNavierStokesBCHandling::IncompressibleNavierStokesBCHandling(const std::string& physics_name,
 									     const GetPot& input)
     : BCHandlingBase(physics_name),
-      _flow_vars(input)
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section()))
   {
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
@@ -83,16 +86,11 @@ namespace GRINS
     return bc_type_out;
   }
 
-  void IncompressibleNavierStokesBCHandling::init_bc_data( const libMesh::FEMSystem& system )
-  {
-    _flow_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
-  }
-
-  void IncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
-							    const std::string& bc_id_string, 
-							    const int bc_type, 
-					                    const std::string& bc_vars, 
-							    const std::string& bc_value, 
+  void IncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id,
+							    const std::string& bc_id_string,
+							    const int bc_type,
+					                    const std::string& bc_vars,
+							    const std::string& bc_value,
 							    const GetPot& input )
   {
     switch(bc_type)

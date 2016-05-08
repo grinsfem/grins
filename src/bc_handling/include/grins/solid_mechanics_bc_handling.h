@@ -27,10 +27,11 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/displacement_variables.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class DisplacementFEVariables;
 
   class SolidMechanicsBCHandling : public BCHandlingBase
   {
@@ -42,8 +43,6 @@ namespace GRINS
     virtual ~SolidMechanicsBCHandling();
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
-
-    virtual void init_bc_data( const libMesh::FEMSystem& system );
 
     virtual void init_bc_types( const GRINS::BoundaryID bc_id,
 				const std::string& bc_id_string,
@@ -65,7 +64,7 @@ namespace GRINS
 
   protected:
 
-    DisplacementVariables _disp_vars;
+    const DisplacementFEVariables& _disp_vars;
 
   private:
 

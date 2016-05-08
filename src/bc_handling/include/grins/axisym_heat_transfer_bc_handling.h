@@ -27,10 +27,12 @@
 
 //GRINS
 #include "bc_handling_base.h"
-#include "grins/primitive_temp_variables.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class PrimitiveTempFEVariables;
+
   //! Base class for reading and handling boundary conditions for physics classes
   class AxisymmetricHeatTransferBCHandling : public BCHandlingBase
   {
@@ -42,13 +44,11 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const libMesh::FEMSystem& system );
-
-    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
-				const std::string& bc_id_string, 
-				const int bc_type, 
-				const std::string& bc_vars, 
-				const std::string& bc_value, 
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id,
+				const std::string& bc_id_string,
+				const int bc_type,
+				const std::string& bc_vars,
+				const std::string& bc_value,
 				const GetPot& input );
 
     virtual void user_apply_neumann_bcs( AssemblyContext& context,
@@ -66,7 +66,7 @@ namespace GRINS
 
     AxisymmetricHeatTransferBCHandling();
 
-    PrimitiveTempVariables _temp_vars;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     enum AHT_BC_TYPES{AXISYMMETRIC=0,
 		      ISOTHERMAL_WALL,
