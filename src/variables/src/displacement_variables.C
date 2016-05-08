@@ -60,20 +60,4 @@ namespace GRINS
       this->parse_names_from_input(input,this->subsection(),_var_names,default_names);
   }
 
-  void DisplacementVariables::init_vars( libMesh::FEMSystem* system )
-  {
-    // The order matters here. We *must* do w first since we use pop_back().
-    if ( system->has_variable( _var_names[_w_idx] ) )
-        _have_w = true;
-    else
-      _var_names.pop_back();
-
-    if ( system->has_variable( _var_names[_v_idx] ) )
-        _have_v = true;
-    else
-      _var_names.pop_back();
-
-    this->default_var_init(system);
-  }
-
 } // end namespace GRINS

@@ -30,14 +30,6 @@
 
 namespace GRINS
 {
-  void SpeciesMassFractionsVariables::init_vars( libMesh::FEMSystem* system )
-  {
-    if( !_var_names.empty() )
-      VariablesBase::init_vars(system);
-    else
-      this->vars_from_species_prefix(system);
-  }
-
   void SpeciesMassFractionsVariables::vars_from_species_prefix( libMesh::FEMSystem* system )
   {
     std::vector<unsigned int> all_var_nums;

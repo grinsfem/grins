@@ -35,19 +35,6 @@
 
 namespace GRINS
 {
-  void VariablesBase::default_var_init( libMesh::FEMSystem* system )
-  {
-    unsigned int n_vars = _var_names.size();
-
-    _vars.resize(n_vars);
-
-    for( unsigned int v = 0; v < n_vars; v++ )
-      {
-        libmesh_assert( system->has_variable(_var_names[v]) );
-        _vars[v] = system->variable_number(_var_names[v]);
-      }
-  }
-
   void VariablesBase::parse_names_from_input( const GetPot& input,
                                               const std::string& subsection,
                                               std::vector<std::string>& var_names,

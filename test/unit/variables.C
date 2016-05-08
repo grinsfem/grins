@@ -73,38 +73,15 @@ namespace GRINSTesting
       this->setup_multiphysics_system(filename);
 
       // This will add the variables to the system
-      {
-        GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-        vel_vars.init(_system);
-        CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
+      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+      vel_vars.init(_system);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
 
-        const std::vector<std::string>& var_names = vel_vars.active_var_names();
-        this->test_vel_var_names_2d(var_names);
+      const std::vector<std::string>& var_names = vel_vars.active_var_names();
+      this->test_vel_var_names_2d(var_names);
 
-        // Verify the FE part
-        this->test_vel_fe_2d(*_system);
-      }
-
-      // Now we should be able to also use a basic VelocityVariables class
-      // and get the right var names out once the variables are added to the
-      // system
-      {
-        GRINS::VelocityVariables vel_vars(*_input);
-        vel_vars.init_vars(_system);
-
-        const std::vector<std::string>& var_names = vel_vars.active_var_names();
-        this->test_vel_var_names_2d(var_names);
-      }
-
-      // Now try using the variables factory
-      {
-        GRINS::VariablesFactoryBase::set_getpot(*_input);
-        libMesh::UniquePtr<GRINS::VariablesBase> vel_vars =  GRINS::VariablesFactoryBase::build("Velocity");
-        vel_vars->init_vars(_system);
-
-        const std::vector<std::string>& var_names = vel_vars->active_var_names();
-        this->test_vel_var_names_2d(var_names);
-      }
+      // Verify the FE part
+      this->test_vel_fe_2d(*_system);
     }
 
     void test_velocity_3d()
@@ -113,38 +90,15 @@ namespace GRINSTesting
       this->setup_multiphysics_system(filename);
 
       // This will add the variables to the system
-      {
-        GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-        vel_vars.init(_system);
-        CPPUNIT_ASSERT_EQUAL((unsigned int)3,_system->n_vars());
+      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+      vel_vars.init(_system);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)3,_system->n_vars());
 
-        const std::vector<std::string>& var_names = vel_vars.active_var_names();
-        this->test_vel_var_names_3d(var_names);
+      const std::vector<std::string>& var_names = vel_vars.active_var_names();
+      this->test_vel_var_names_3d(var_names);
 
-        // Verify the FE part
-        this->test_vel_fe_3d(*_system);
-      }
-
-      // Now we should be able to also use a basic VelocityVariables class
-      // and get the right var names out once the variables are added to the
-      // system
-      {
-        GRINS::VelocityVariables vel_vars(*_input);
-        vel_vars.init_vars(_system);
-
-        const std::vector<std::string>& var_names = vel_vars.active_var_names();
-        this->test_vel_var_names_3d(var_names);
-      }
-
-      // Now try using the variables factory
-      {
-        GRINS::VariablesFactoryBase::set_getpot(*_input);
-        libMesh::UniquePtr<GRINS::VariablesBase> vel_vars =  GRINS::VariablesFactoryBase::build("Velocity");
-        vel_vars->init_vars(_system);
-
-        const std::vector<std::string>& var_names = vel_vars->active_var_names();
-        this->test_vel_var_names_3d(var_names);
-      }
+      // Verify the FE part
+      this->test_vel_fe_3d(*_system);
     }
 
     void test_temp()
@@ -153,38 +107,15 @@ namespace GRINSTesting
       this->setup_multiphysics_system(filename);
 
       // This will add the variables to the system
-      {
-        GRINS::PrimitiveTempFEVariables temp_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-        temp_vars.init(_system);
-        CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
+      GRINS::PrimitiveTempFEVariables temp_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+      temp_vars.init(_system);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
 
-        const std::vector<std::string>& var_names = temp_vars.active_var_names();
-        this->test_temp_var_names(var_names);
+      const std::vector<std::string>& var_names = temp_vars.active_var_names();
+      this->test_temp_var_names(var_names);
 
-        // Verify the FE part
-        this->test_temp_fe(*_system);
-      }
-
-      // Now we should be able to also use a basic PrimitiveTempVariables class
-      // and get the right var names out once the variables are added to the
-      // system
-      {
-        GRINS::PrimitiveTempVariables temp_vars(*_input);
-        temp_vars.init_vars(_system);
-
-        const std::vector<std::string>& var_names = temp_vars.active_var_names();
-        this->test_temp_var_names(var_names);
-      }
-
-      // Now try using the variables factory
-      {
-        GRINS::VariablesFactoryBase::set_getpot(*_input);
-        libMesh::UniquePtr<GRINS::VariablesBase> temp_vars =  GRINS::VariablesFactoryBase::build("Temperature");
-        temp_vars->init_vars(_system);
-
-        const std::vector<std::string>& var_names = temp_vars->active_var_names();
-        this->test_temp_var_names(var_names);
-      }
+      // Verify the FE part
+      this->test_temp_fe(*_system);
     }
 
     void test_species_mass_fracs()
@@ -193,40 +124,15 @@ namespace GRINSTesting
       this->setup_multiphysics_system(filename);
 
       // This will add the variables to the system
-      {
-        GRINS::SpeciesMassFractionsFEVariables species_vars(*_input,"TestSpeciesMassFractionsVariables");
-        species_vars.init(_system);
-        CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
+      GRINS::SpeciesMassFractionsFEVariables species_vars(*_input,"TestSpeciesMassFractionsVariables");
+      species_vars.init(_system);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
 
-        const std::vector<std::string>& var_names = species_vars.active_var_names();
-        this->test_species_var_names(var_names);
+      const std::vector<std::string>& var_names = species_vars.active_var_names();
+      this->test_species_var_names(var_names);
 
-        // Verify the FE part
-        this->test_species_fe(*_system);
-      }
-
-      // Now we should be able to also use a basic SpeciesMassFractionsVariables class
-      // and get the right var names out once the variables are added to the
-      // system. Note we're testing the "GetPot" only constructor
-      // exercising the case where the material name is not available.
-      {
-        GRINS::SpeciesMassFractionsVariables species_vars(*_input);
-        species_vars.init_vars(_system);
-
-        const std::vector<std::string>& var_names =
-        species_vars.active_var_names();
-        this->test_species_var_names_no_order(var_names);
-      }
-
-      // Now try using the variables factory
-      {
-        GRINS::VariablesFactoryBase::set_getpot(*_input);
-        libMesh::UniquePtr<GRINS::VariablesBase> species_vars =  GRINS::VariablesFactoryBase::build("SpeciesMassFractions");
-        species_vars->init_vars(_system);
-
-        const std::vector<std::string>& var_names = species_vars->active_var_names();
-        this->test_species_var_names_no_order(var_names);
-      }
+      // Verify the FE part
+      this->test_species_fe(*_system);
     }
 
     void test_var_constraint_and_warehouse()
@@ -265,38 +171,15 @@ namespace GRINSTesting
       this->setup_multiphysics_system(filename);
 
       // This will add the variables to the system
-      {
-        GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-        press_vars.init(_system);
-        CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
+      GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
+      press_vars.init(_system);
+      CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
 
-        const std::vector<std::string>& var_names = press_vars.active_var_names();
-        this->test_press_var_names(var_names);
+      const std::vector<std::string>& var_names = press_vars.active_var_names();
+      this->test_press_var_names(var_names);
 
-        // Verify the FE part
-        this->test_press_fe(*_system);
-      }
-
-      // Now we should be able to also use a basic PrimitiveTempVariables class
-      // and get the right var names out once the variables are added to the
-      // system
-      {
-        GRINS::PressureVariable press_vars(*_input);
-        press_vars.init_vars(_system);
-
-        const std::vector<std::string>& var_names = press_vars.active_var_names();
-        this->test_press_var_names(var_names);
-      }
-
-      // Now try using the variables factory
-      {
-        GRINS::VariablesFactoryBase::set_getpot(*_input);
-        libMesh::UniquePtr<GRINS::VariablesBase> press_vars =  GRINS::VariablesFactoryBase::build("Pressure");
-        press_vars->init_vars(_system);
-
-        const std::vector<std::string>& var_names = press_vars->active_var_names();
-        this->test_press_var_names(var_names);
-      }
+      // Verify the FE part
+      this->test_press_fe(*_system);
     }
 
   private:

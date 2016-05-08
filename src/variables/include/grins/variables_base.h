@@ -50,26 +50,12 @@ namespace GRINS
 
     virtual ~VariablesBase(){};
 
-    //! Read, not add, variable numbers from the system
-    /*! This method assumes that the variable names were setup
-        during construction. Then, we'll just grab the variable
-        number based on the variable name. */
-    virtual void init_vars( libMesh::FEMSystem* system )
-    { this->default_var_init(system); }
-
     //! Return the var names that are active from this class
     /*! This must not be called until init_vars has been called. */
     const std::vector<std::string>& active_var_names() const
     { return _var_names; }
 
   protected:
-
-    //! Default method for init'ing variables
-    /*! This method assumes that the variable has already been
-        added to the System elsewhere and we're just grabbing the
-        variable number from the system. We attempt to grab
-        a variable number for every entry in _var_names. */
-    void default_var_init( libMesh::FEMSystem* system );
 
     //! Method to parse variable names from input
     /*! Names parsed from: [Variables/<subsection>/names] and then

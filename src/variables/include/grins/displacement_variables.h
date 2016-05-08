@@ -41,14 +41,6 @@ namespace GRINS
     DisplacementVariables( const GetPot& input );
     virtual ~DisplacementVariables(){};
 
-    //! Initialize System variables
-    /*!
-     * Additional arguments specify whether the spatial mesh is really 2D or 3D.
-     * This is needed for cases such as a 1D beam in 2D (is_2D = true) or 3D (is_3D = true)
-     * space or 2D shell manifolds in 3D (is_3D = true).
-     */
-    virtual void init_vars( libMesh::FEMSystem* system );
-
     bool have_v() const;
     bool have_w() const;
 
