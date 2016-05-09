@@ -487,7 +487,6 @@ include_HEADERS += variables/include/grins/species_mass_fracs_fe_variables.h
 include_HEADERS += variables/include/grins/thermo_pressure_fe_variable.h
 include_HEADERS += variables/include/grins/turbulence_fe_variables.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
-include_HEADERS += variables/include/grins/variables_base.h
 include_HEADERS += variables/include/grins/variables_parsing.h
 include_HEADERS += variables/include/grins/variable_warehouse.h
 
