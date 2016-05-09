@@ -27,13 +27,12 @@
 #define GRINS_DISPLACEMENT_FE_VARIABLES_H
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/displacement_variables.h"
+#include "grins/multi_var_single_fe_type_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
-  class DisplacementFEVariables : public SingleFETypeVariable,
-                                  public DisplacementVariables
+  class DisplacementFEVariables : public MultiVarSingleFETypeVariable
   {
   public:
 
@@ -44,16 +43,53 @@ namespace GRINS
     DisplacementFEVariables( const GetPot& input,
                              const std::string& physics_name,
                              bool is_2D, bool is_3D,
-                             bool _is_constraint_var = false );
+                             bool is_constraint_var = false );
 
     virtual ~DisplacementFEVariables(){};
 
     //! Initialize System variables
     virtual void init( libMesh::FEMSystem* system );
 
+    bool have_v() const;
+    bool have_w() const;
+
+    VariableIndex u() const;
+    VariableIndex v() const;
+    VariableIndex w() const;
+
+    const std::string& u_name() const;
+    const std::string& v_name() const;
+    const std::string& w_name() const;
+
   private:
 
+    std::string subsection() const
+    { return VariablesParsing::displacement_section(); }
+
+    std::vector<std::string> old_var_names()
+    {
+      std::vector<std::string> var_names(3);
+      var_names[0] = "u_displacment";
+      var_names[1] = "v_displacment";
+      var_names[2] = "w_displacment";
+      return var_names;
+    }
+
+    std::vector<std::string> default_names()
+    {
+      std::vector<std::string> var_names(3);
+      var_names[0] = "u";
+      var_names[1] = "v";
+      var_names[2] = "w";
+      return var_names;
+    }
+
     DisplacementFEVariables();
+
+    bool _have_v;
+    bool _have_w;
+
+    unsigned int _u_idx, _v_idx, _w_idx;
 
     //! Tracks whether this is a 2D problem
     bool _is_2D;
@@ -62,6 +98,56 @@ namespace GRINS
     bool _is_3D;
 
   };
+
+  inline
+  VariableIndex DisplacementFEVariables::u() const
+  {
+    return this->_vars[_u_idx];
+  }
+
+  inline
+  VariableIndex DisplacementFEVariables::v() const
+  {
+    libmesh_assert(_have_v);
+    return this->_vars[_v_idx];
+  }
+
+  inline
+  VariableIndex DisplacementFEVariables::w() const
+  {
+    libmesh_assert(_have_w);
+    return this->_vars[_w_idx];
+  }
+
+  inline
+  bool DisplacementFEVariables::have_v() const
+  {
+    return _have_v;
+  }
+
+  inline
+  bool DisplacementFEVariables::have_w() const
+  {
+    return _have_w;
+  }
+
+  inline
+  const std::string& DisplacementFEVariables::u_name() const
+  {
+    return this->_var_names[_u_idx];
+  }
+
+  inline
+  const std::string& DisplacementFEVariables::v_name() const
+  {
+    return this->_var_names[_v_idx];
+  }
+
+  inline
+  const std::string& DisplacementFEVariables::w_name() const
+  {
+    return this->_var_names[_w_idx];
+  }
 
 } // end namespace GRINS
 

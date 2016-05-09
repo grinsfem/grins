@@ -25,9 +25,6 @@
 // This class
 #include "grins/velocity_fe_variables.h"
 
-// GRINS
-#include "grins/variable_name_defaults.h"
-
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
@@ -36,9 +33,12 @@
 namespace GRINS
 {
   VelocityFEVariables::VelocityFEVariables( const GetPot& input, const std::string& physics_name,
-                                            bool _is_constraint_var)
-    :  SingleFETypeVariable(input,physics_name,"V_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
-       VelocityVariables(input)
+                                            bool is_constraint_var)
+    :  MultiVarSingleFETypeVariable(input,physics_name,"V_",this->old_var_names(),this->default_names(),
+                                    this->subsection(),"LAGRANGE","SECOND",is_constraint_var),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2)
   {}
 
   void VelocityFEVariables::init( libMesh::FEMSystem* system )
@@ -48,7 +48,7 @@ namespace GRINS
     if ( system->get_mesh().mesh_dimension() < 3)
       _var_names.pop_back();
 
-    this->default_fe_init(system, _var_names, _vars );
+    SingleFETypeVariable::init(system);
   }
 
 } // end namespace GRINS

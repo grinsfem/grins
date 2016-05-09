@@ -31,6 +31,7 @@
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/string_to_enum.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -72,6 +73,19 @@ namespace GRINS
 
      libmesh_assert_not_equal_to( _family[0], libMesh::INVALID_FE);
      libmesh_assert_not_equal_to( _order[0], libMesh::INVALID_ORDER);
+  }
+
+  void SingleFETypeVariable::init( libMesh::FEMSystem* system )
+  {
+    // Make sure there's only one order and family
+    libmesh_assert_equal_to(_order.size(), 1);
+    libmesh_assert_equal_to(_family.size(), 1);
+
+    const unsigned int n_vars = _var_names.size();
+    _vars.resize(n_vars);
+
+    for( unsigned int v = 0; v < n_vars; v++ )
+      _vars[v] = system->add_variable( _var_names[v], _order[0], _family[0]);
   }
 
   void SingleFETypeVariable::parse_family_and_order( const GetPot& input,

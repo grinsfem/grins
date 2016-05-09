@@ -22,57 +22,26 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRESSURE_FE_VARIABLE_H
-#define GRINS_PRESSURE_FE_VARIABLE_H
+// This class
+#include "grins/species_mass_fracs_fe_variables.h"
 
 // GRINS
-#include "grins/single_var_single_fe_type_variable.h"
-#include "grins/variables_parsing.h"
+#include "grins/materials_parsing.h"
 
-// libMesh forward declarations
-class GetPot;
-namespace libMesh
-{
-  class FEMSystem;
-}
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class PressureFEVariable : public SingleVarSingleFETypeVariable
-  {
-  public:
-
-    PressureFEVariable( const GetPot& input, const std::string& physics_name,
-                        bool _is_constraint_var = false )
-      :  SingleVarSingleFETypeVariable(input,physics_name,"P_",this->old_var_name(),this->default_name(),
-                                       this->subsection(),"LAGRANGE","FIRST",_is_constraint_var)
-    {}
-
-    ~PressureFEVariable(){};
-
-    VariableIndex p() const;
-
-  private:
-
-    PressureFEVariable();
-
-    std::string old_var_name() const
-    { return "pressure"; }
-
-    std::string subsection() const
-    { return VariablesParsing::pressure_section(); }
-
-    std::string default_name() const
-    { return "p"; }
-
-  };
-
-  inline
-  VariableIndex PressureFEVariable::p() const
-  {
-    return _vars[0];
-  }
+  SpeciesMassFractionsFEVariables::SpeciesMassFractionsFEVariables( const GetPot& input,
+                                                                    const std::string& physics_name,
+                                                                    bool is_constraint_var )
+      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),
+                              "LAGRANGE","SECOND",is_constraint_var),
+         _prefix(input("Variables/"+this->subsection()+"/names", "w_" )),
+         _material(MaterialsParsing::material_name(input,physics_name))
+    {
+      MaterialsParsing::parse_species_varnames(input, _material, _prefix, _var_names);
+    }
 
 } // end namespace GRINS
-
-#endif // GRINS_PRESSURE_FE_VARIABLE_H

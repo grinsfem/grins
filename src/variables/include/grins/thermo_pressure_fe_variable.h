@@ -26,21 +26,20 @@
 #define GRINS_THERMO_PRESSURE_FE_VARIABLE_H
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/thermo_pressure_variable.h"
+#include "grins/single_var_single_fe_type_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
 
-  class ThermoPressureFEVariable : public SingleFETypeVariable,
-                                   public ThermoPressureVariable
+  class ThermoPressureFEVariable : public SingleVarSingleFETypeVariable
   {
   public:
 
     ThermoPressureFEVariable( const GetPot& input, const std::string& physics_name,
                               bool _is_constraint_var = false )
-      :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"SCALAR","FIRST",_is_constraint_var),
-         ThermoPressureVariable(input)
+      :  SingleVarSingleFETypeVariable(input,physics_name,"",this->old_var_name(),this->default_name(),
+                                       this->subsection(),"SCALAR","FIRST",_is_constraint_var)
     {
       // Currently only support SCALAR and FIRST
       libmesh_assert_equal_to( _family[0], libMesh::SCALAR );
@@ -49,14 +48,28 @@ namespace GRINS
 
     virtual ~ThermoPressureFEVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_fe_init(system, _var_names, _vars ); }
+    VariableIndex p0() const;
 
   private:
 
     ThermoPressureFEVariable();
 
+    std::string old_var_name() const
+    { return "thermo_presure"; }
+
+    std::string subsection() const
+    { return VariablesParsing::thermo_pressure_section(); }
+
+    std::string default_name() const
+    { return "p0"; }
+
   };
+
+  inline
+  VariableIndex ThermoPressureFEVariable::p0() const
+  {
+    return _vars[0];
+  }
 
 } // end namespace GRINS
 

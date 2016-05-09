@@ -29,8 +29,8 @@
 class GetPot;
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/generic_variable.h"
+#include "grins/single_var_single_fe_type_variable.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
@@ -38,28 +38,37 @@ namespace GRINS
   /*! The variable inputs, e.g. fe_family, will be tied to the input physics_name.
       Thus, the input specification will be [Variables/GenericVariable:<physics_name>/fe_family],
       etc.*/
-  class GenericFETypeVariable : public SingleFETypeVariable,
-                                public GenericVariable
+  class GenericFETypeVariable : public SingleVarSingleFETypeVariable
   {
   public:
 
     GenericFETypeVariable( const GetPot& input,
                            const std::string& physics_name,
                            bool _is_constraint_var = false )
-      : SingleFETypeVariable(input,this->section_name(physics_name),_is_constraint_var),
-        GenericVariable(input,physics_name)
+      : SingleVarSingleFETypeVariable(input,this->section_name(physics_name),this->default_name(),_is_constraint_var)
     {}
 
     ~GenericFETypeVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_fe_init(system, _var_names, _vars ); }
+    VariableIndex var() const;
 
   protected:
 
     GenericFETypeVariable();
 
+    std::string section_name(const std::string& physics_name) const
+    { return VariablesParsing::generic_section()+":"+physics_name; }
+
+    std::string default_name() const
+    { return "u"; }
+
   };
+
+  inline
+  VariableIndex GenericFETypeVariable::var() const
+  {
+    return _vars[0];
+  }
 
 } // end namespace GRINS
 

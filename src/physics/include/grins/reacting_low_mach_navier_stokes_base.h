@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/reacting_low_mach_navier_stokes_abstract.h"
+#include "grins/materials_parsing.h"
 
 namespace GRINS
 {

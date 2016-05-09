@@ -40,7 +40,6 @@
 #include "grins/primitive_temp_fe_variables.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 #include "grins/pressure_fe_variable.h"
-#include "grins/variables_factory.h"
 #include "grins/variable_warehouse.h"
 
 namespace GRINSTesting

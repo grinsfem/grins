@@ -25,6 +25,9 @@
 // This class
 #include "grins/fe_variables_base.h"
 
+// GRINS
+#include "grins/common.h"
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
@@ -32,17 +35,44 @@
 namespace GRINS
 {
   // Implementations
-  void FEVariablesBase::default_fe_init( libMesh::FEMSystem* system,
-                                         const std::vector<std::string>& var_names,
-                                         std::vector<VariableIndex>& vars ) const
+  void FEVariablesBase::parse_names_from_input( const GetPot& input,
+                                                const std::string& subsection,
+                                                std::vector<std::string>& var_names,
+                                                const std::vector<std::string>& default_names )
   {
-    const unsigned int n_vars = var_names.size();
-    vars.resize(n_vars);
+    libmesh_assert_equal_to( var_names.size(), default_names.size() );
 
-    for( unsigned int v = 0; v < n_vars; v++ )
+    unsigned int n_names = default_names.size();
+
+    for( unsigned int n = 0; n < n_names; n++ )
+      var_names[n] = input(VariablesParsing::varnames_input_name(subsection), default_names[n], n);
+  }
+
+  void FEVariablesBase::duplicate_name_section_check( const GetPot& input ) const
+  {
+    if( input.have_section("Physics/VariableNames") &&
+        input.have_section(VariablesParsing::variables_section()) )
+      libmesh_error_msg("ERROR: Cannot have both Physics/VariableNames and "
+                        +VariablesParsing::variables_section()+" in input!");
+  }
+
+  bool FEVariablesBase::check_dep_name_input( const GetPot& input,
+                                              const std::string& subsection ) const
+  {
+    this->duplicate_name_section_check(input);
+
+    bool is_old_input_style = false;
+
+    if( input.have_section("Physics/VariableNames") )
       {
-        vars[v] = system->add_variable( var_names[v], this->_order[0], _family[0]);
+        is_old_input_style = true;
+
+        std::string warning = "WARNING: Specifying variable names with Physics/VariableNames is DEPRECATED!\n";
+        warning += "         Please update to use ["+VariablesParsing::varnames_input_name(subsection)+"].\n";
+        grins_warning(warning);
       }
+
+    return is_old_input_style;
   }
 
 } // end namespace GRINS

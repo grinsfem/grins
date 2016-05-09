@@ -26,8 +26,8 @@
 #define GRINS_PRIMITIVE_TEMP_FE_VARIABLES_H
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/primitive_temp_variables.h"
+#include "grins/single_var_single_fe_type_variable.h"
+#include "grins/variables_parsing.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -38,27 +38,42 @@ namespace libMesh
 
 namespace GRINS
 {
-  class PrimitiveTempFEVariables : public SingleFETypeVariable,
-                                   public PrimitiveTempVariables
+  class PrimitiveTempFEVariables : public SingleVarSingleFETypeVariable
   {
   public:
 
     PrimitiveTempFEVariables( const GetPot& input, const std::string& physics_name,
                               bool _is_constraint_var = false  )
-      :  SingleFETypeVariable(input,physics_name,"T_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
-         PrimitiveTempVariables(input)
+      :  SingleVarSingleFETypeVariable(input,physics_name,"T_",this->old_var_name(),this->default_name(),
+                                       this->subsection(),"LAGRANGE","SECOND",_is_constraint_var)
     {}
 
     ~PrimitiveTempFEVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_fe_init(system, _var_names, _vars ); }
+    VariableIndex T() const;
+
+  protected:
+
+    std::string old_var_name() const
+    { return VariablesParsing::temperature_section(); }
+
+    std::string subsection() const
+    { return VariablesParsing::temperature_section(); }
+
+    std::string default_name() const
+    { return "T"; }
 
   private:
 
     PrimitiveTempFEVariables();
 
   };
+
+  inline
+  VariableIndex PrimitiveTempFEVariables::T() const
+  {
+    return _vars[0];
+  }
 
 } // end namespace GRINS
 
