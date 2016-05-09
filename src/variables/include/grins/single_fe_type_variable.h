@@ -44,7 +44,7 @@ namespace GRINS
         you should use the new constructor. */
     SingleFETypeVariable( const GetPot& input,
                           const std::string& physics_name,
-                          const std::string& old_var_suffix,
+                          const std::string& old_var_prefix,
                           const std::string& subsection,
                           const std::string& default_family,
                           const std::string& default_order,
@@ -69,7 +69,7 @@ namespace GRINS
         family and order. */
     void parse_family_and_order( const GetPot& input,
                                  const std::string& physics_name,
-                                 const std::string& old_var_suffix,
+                                 const std::string& old_var_prefix,
                                  const std::string& subsection,
                                  std::vector<GRINSEnums::FEFamily>& family,
                                  std::vector<GRINSEnums::Order>& order,
@@ -81,17 +81,17 @@ namespace GRINS
         of a [Variables] section in order to be conservative. */
     void dup_family_order_check( const GetPot& input,
                                  const std::string& physics_name,
-                                 const std::string& old_var_suffix) const;
+                                 const std::string& old_var_prefix) const;
 
     //! Check for *no* presence of FEFamily/Order input
     bool have_family_or_order( const GetPot& input,
                                const std::string& physics_name,
-                               const std::string& old_var_suffix,
+                               const std::string& old_var_prefix,
                                const std::string& subsection ) const;
 
     void parse_old_style_with_warning( const GetPot& input,
                                        const std::string& physics_name,
-                                       const std::string& old_var_suffix,
+                                       const std::string& old_var_prefix,
                                        const std::string& default_family,
                                        const std::string& default_order,
                                        const std::string& subsection,
