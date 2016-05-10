@@ -84,6 +84,9 @@ namespace GRINS
     const std::vector<std::string>& active_var_names() const
     { return _var_names; }
 
+    const std::vector<VariableIndex>& var_indices() const
+    { return _vars; }
+
   protected:
 
     //! Method to parse variable names from input
