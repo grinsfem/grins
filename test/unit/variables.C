@@ -162,6 +162,8 @@ namespace GRINSTesting
         CPPUNIT_ASSERT(press_base.is_constraint_var());
       }
 
+      // Clear out the VariableWarehouse so it doesn't interfere with other tests.
+      GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
 
     void test_pressure()
