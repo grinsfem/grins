@@ -36,6 +36,7 @@
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
 #include "grins/catalycity_factory_old_style_base.h"
+#include "grins/physics.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -406,14 +407,8 @@ namespace GRINS
             std::pair< it_type, it_type > it_range = _catalytic_walls.equal_range( bc_id );
 
             for( it_type it = it_range.first; it != it_range.second; ++it )
-              {
-                (it->second)->init(system);
+              (it->second)->init(system);
 
-                if( this->is_axisymmetric() )
-                  {
-                    (it->second)->set_axisymmetric(true);
-                  }
-              }
           } // if( bc_type == GAS_RECOMBINATION_CATALYTIC_WALL )
 
       } // end loop over bc_ids
@@ -519,7 +514,7 @@ namespace GRINS
 	    {
               unsigned int var = _species_vars.species(s);
 
-              if( this->is_axisymmetric() )
+              if(Physics::is_axisymmetric())
                 {
                   _bound_conds.apply_neumann_normal_axisymmetric( context, cache,
                                                                   request_jacobian, var, -1.0,

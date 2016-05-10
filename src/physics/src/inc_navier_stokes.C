@@ -50,11 +50,6 @@ namespace GRINS
     // This is deleted in the base class
     this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
 
-    if( this->_bc_handler->is_axisymmetric() )
-      {
-        this->_is_axisymmetric = true;
-      }
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );
@@ -219,7 +214,7 @@ namespace GRINS
 	// Compute the viscosity at this qp
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             jac *= r;
           }
@@ -235,7 +230,7 @@ namespace GRINS
                -_mu_qp*(u_gradphi[i][qp]*grad_u) ); // diffusion term
 
             /*! \todo Would it be better to put this in its own DoF loop and do the if check once?*/
-            if( this->_is_axisymmetric )
+            if(Physics::is_axisymmetric())
               {
                 Fu(i) += u_phi[i][qp]*( p/r - _mu_qp*U(0)/(r*r) )*jac;
               }
@@ -268,7 +263,7 @@ namespace GRINS
                        -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
 
-                    if( this->_is_axisymmetric )
+                    if(Physics::is_axisymmetric())
                       {
                         Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac * context.get_elem_solution_derivative();
                       }
@@ -314,7 +309,7 @@ namespace GRINS
                         (*Kwp)(i,j) += u_gradphi[i][qp](2)*p_phi[j][qp]*jac * context.get_elem_solution_derivative();
                       }
 
-                    if( this->_is_axisymmetric )
+                    if(Physics::is_axisymmetric())
                       {
                         Kup(i,j) += u_phi[i][qp]*p_phi[j][qp]/r*jac * context.get_elem_solution_derivative();
                       }
@@ -406,7 +401,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             libMesh::Number u = context.interior_value( this->_flow_vars.u(), qp );
             divU += u/r;
@@ -430,7 +425,7 @@ namespace GRINS
                     if (this->_dim == 3)
                       (*Kpw)(i,j) += p_phi[i][qp]*u_gradphi[j][qp](2)*jac * context.get_elem_solution_derivative();
 
-                    if( this->_is_axisymmetric )
+                    if(Physics::is_axisymmetric())
                       {
                         Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac * context.get_elem_solution_derivative();
                       }
@@ -510,7 +505,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             jac *= r;
           }

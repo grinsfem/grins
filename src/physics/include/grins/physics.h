@@ -126,6 +126,13 @@ namespace GRINS
     //! Returns whether or not this physics is being solved with a steady solver.
     bool is_steady() const;
 
+    //! Set whether we should treat the problem as axisymmetric
+    static void set_is_axisymmetric( bool is_axisymmetric )
+    { _is_axisymmetric = is_axisymmetric; }
+
+    static bool is_axisymmetric()
+    { return _is_axisymmetric; }
+
     //! Set which variables are time evolving.
     /*!
       Set those variables which evolve in time (as opposed to variables that behave like constraints).
@@ -279,7 +286,8 @@ namespace GRINS
       depending on whether the solver is steady or unsteady. */
     static bool _is_steady;
 
-    bool _is_axisymmetric;
+    //! Caches whether we are solving an axisymmetric problem or not
+    static bool _is_axisymmetric;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;

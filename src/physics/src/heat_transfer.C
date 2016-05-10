@@ -50,11 +50,6 @@ namespace GRINS
     // This is deleted in the base class
     this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
 
-    if( this->_bc_handler->is_axisymmetric() )
-      {
-        this->_is_axisymmetric = true;
-      }
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
 
@@ -169,7 +164,7 @@ namespace GRINS
 	// Compute the conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             jac *= r;
           }
@@ -287,7 +282,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             jac *= r;
           }

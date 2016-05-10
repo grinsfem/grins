@@ -52,11 +52,6 @@ namespace GRINS
     this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<typename Mixture::ChemistryParent>( physics_name, input,
                                                                                                       this->_gas_mixture.chemistry() );
 
-    if( this->_bc_handler->is_axisymmetric() )
-      {
-        this->_is_axisymmetric = true;
-      }
-
     this->_pin_pressure = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/pin_pressure", false );
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
@@ -294,7 +289,7 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-        if( this->_is_axisymmetric )
+        if(Physics::is_axisymmetric())
           {
             divU += U(0)/r;
             jac *= r;
@@ -346,7 +341,7 @@ namespace GRINS
 
             /*! \todo Would it be better to put this in its own DoF loop
                       and do the if check once?*/
-            if( this->_is_axisymmetric )
+            if(Physics::is_axisymmetric())
               {
                 Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) - 2.0/3.0*mu*divU/r )*jac;
               }

@@ -69,12 +69,6 @@ namespace GRINS
     bool is_constraint_var() const
     { return _is_constraint_var; }
 
-    static void set_is_axisymmetric( bool is_axisymmetric )
-    { _is_axisymmetric = is_axisymmetric; }
-
-    static bool is_axisymmetric()
-    { return _is_axisymmetric; }
-
     //! Reset whetever Neumann bc is postive or not
     /*! Postive means a value of 1.0 will be used in front of
         NeumannBC terms while is_positive = false indicates a
@@ -108,11 +102,6 @@ namespace GRINS
         do not). This should be set by the finite element
         type subclasses. */
     bool _is_constraint_var;
-
-    //! Track whether this is an axisymmetric problem
-    /*! This is static because either everyone thinks the problem
-        axisymmetric or not. */
-    static bool _is_axisymmetric;
 
     //! Track the sign of the Neumann BC term. Defaults to 1.0.
     /*! Depending on the Physics/Variable combination, the sign in

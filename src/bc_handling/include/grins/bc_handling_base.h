@@ -123,9 +123,8 @@ namespace GRINS
 					  GRINS::BCType bc_type ) const;
     
 
-    GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;
 
-    bool is_axisymmetric() const;
+    GRINS::BCType get_dirichlet_bc_type( const GRINS::BoundaryID bc_id ) const;
 
   protected:
 
@@ -166,21 +165,12 @@ namespace GRINS
                   PARSED_FEM_DIRICHLET,
                   AXISYMMETRIC };
 
-    //! Flag to cache whether or not there is an axisymmetric boundary present
-    static bool _axisymmetric;
-
   private:
     BCHandlingBase();
 
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  inline
-  bool BCHandlingBase::is_axisymmetric() const
-  {
-    return _axisymmetric;
-  }
-
   inline
   const libMesh::Point& BCHandlingBase::get_neumann_bc_value( GRINS::BoundaryID bc_id ) const
   {
