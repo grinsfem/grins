@@ -260,6 +260,7 @@ namespace GRINS
               ( bc_value_str, i, var_names );
             this->set_neumann_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >
               ( bc_value_str, i, var_names );
+
             this->construct_nbc_core( input, system, bc_ids, *fe_var_ptr,
                                       section_name, bc_type, neumann_bcs );
           }
@@ -302,7 +303,20 @@ namespace GRINS
     DirichletBCFactoryFunctionOldStyleBase<FunctionType>::set_var_names_old_style( var_names );
   }
 
+  template<typename FunctionType>
+  void OldStyleBCBuilder::set_neumann_bc_factory_old_style_quantities( const std::string& bc_value_str,
+                                                                       unsigned int value_idx,
+                                                                       const std::vector<std::string>& /*var_names*/ )
+  {
+    ParsedFunctionNeumannOldStyleBCFactory<FunctionType>::set_value_var_old_style( bc_value_str );
+    ParsedFunctionNeumannOldStyleBCFactory<FunctionType>::set_value_index_old_style( value_idx );
+    //ParsedFunctionNeumannOldStyleBCFactory<FunctionType>::set_var_names_old_style( var_names );
+  }
+
+  // Instantiate
   template void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities<libMesh::FunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
   template void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
+  template void OldStyleBCBuilder::set_neumann_bc_factory_old_style_quantities<libMesh::FunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
+  template void OldStyleBCBuilder::set_neumann_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
 
 } // end namespace GRINS
