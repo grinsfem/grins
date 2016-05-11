@@ -79,6 +79,10 @@ namespace GRINS
 
     void build_reacting_physics( std::set<std::string>& physics_names );
 
+    template<typename FunctionType>
+    void set_dirichlet_bc_factory_old_style_quantities( const std::string& bc_value_str,
+                                                        unsigned int value_idx,
+                                                        const std::vector<std::string>& var_names );
   };
 } // end namespace GRINS
 

@@ -33,6 +33,7 @@
 #include "grins/dirichlet_bc_factory_abstract.h"
 #include "grins/neumann_bc_factory_abstract.h"
 #include "grins/parsed_function_neumann_old_style_bc_factory.h"
+#include "grins/dirichlet_bc_factory_function_old_style_base.h"
 #include "grins/variable_warehouse.h"
 #include "grins/velocity_fe_variables.h"
 #include "grins/primitive_temp_fe_variables.h"
@@ -290,5 +291,18 @@ namespace GRINS
   {
     physics_names.insert(PhysicsNaming::reacting_low_mach_navier_stokes());
   }
+
+  template<typename FunctionType>
+  void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities( const std::string& bc_value_str,
+                                                                         unsigned int value_idx,
+                                                                         const std::vector<std::string>& var_names )
+  {
+    DirichletBCFactoryFunctionOldStyleBase<FunctionType>::set_value_var_old_style( bc_value_str );
+    DirichletBCFactoryFunctionOldStyleBase<FunctionType>::set_value_index_old_style( value_idx );
+    DirichletBCFactoryFunctionOldStyleBase<FunctionType>::set_var_names_old_style( var_names );
+  }
+
+  template void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities<libMesh::FunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
+  template void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities<libMesh::FEMFunctionBase<libMesh::Number> >( const std::string&, unsigned int, const std::vector<std::string>& );
 
 } // end namespace GRINS
