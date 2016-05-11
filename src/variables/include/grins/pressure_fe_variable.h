@@ -26,8 +26,8 @@
 #define GRINS_PRESSURE_FE_VARIABLE_H
 
 // GRINS
-#include "grins/single_fe_type_variable.h"
-#include "grins/pressure_variable.h"
+#include "grins/single_var_single_fe_type_variable.h"
+#include "grins/variables_parsing.h"
 
 // libMesh forward declarations
 class GetPot;
@@ -38,27 +38,40 @@ namespace libMesh
 
 namespace GRINS
 {
-  class PressureFEVariable : public SingleFETypeVariable,
-                             public PressureVariable
+  class PressureFEVariable : public SingleVarSingleFETypeVariable
   {
   public:
 
     PressureFEVariable( const GetPot& input, const std::string& physics_name,
                         bool _is_constraint_var = false )
-      :  SingleFETypeVariable(input,physics_name,"P_",this->subsection(),"LAGRANGE","FIRST",_is_constraint_var),
-         PressureVariable(input)
+      :  SingleVarSingleFETypeVariable(input,physics_name,"P_",this->old_var_name(),this->default_name(),
+                                       this->subsection(),"LAGRANGE","FIRST",_is_constraint_var)
     {}
 
     ~PressureFEVariable(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_fe_init(system, _var_names, _vars ); }
+    VariableIndex p() const;
 
   private:
 
     PressureFEVariable();
 
+    std::string old_var_name() const
+    { return "pressure"; }
+
+    std::string subsection() const
+    { return VariablesParsing::pressure_section(); }
+
+    std::string default_name() const
+    { return "p"; }
+
   };
+
+  inline
+  VariableIndex PressureFEVariable::p() const
+  {
+    return _vars[0];
+  }
 
 } // end namespace GRINS
 

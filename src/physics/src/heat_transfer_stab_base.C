@@ -42,17 +42,6 @@ namespace GRINS
   {}
 
   template<class K>
-  void HeatTransferStabilizationBase<K>::init_variables( libMesh::FEMSystem* system )
-  {
-    // First call base class
-    HeatTransferBase<K>::init_variables(system);
-
-    _stab_helper.init(*system);
-
-    return;
-  }
-
-  template<class K>
   void HeatTransferStabilizationBase<K>::init_context( AssemblyContext& context )
   {
     // First call base class

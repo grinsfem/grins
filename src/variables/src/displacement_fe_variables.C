@@ -25,9 +25,6 @@
 // This class
 #include "grins/displacement_fe_variables.h"
 
-// GRINS
-#include "grins/common.h"
-
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
@@ -38,9 +35,14 @@ namespace GRINS
   DisplacementFEVariables::DisplacementFEVariables( const GetPot& input,
                                                     const std::string& physics_name,
                                                     bool is_2D, bool is_3D,
-                                                    bool _is_constraint_var )
-    :  SingleFETypeVariable(input,physics_name,"",this->subsection(),"LAGRANGE","FIRST",_is_constraint_var),
-       DisplacementVariables(input),
+                                                    bool is_constraint_var )
+    :  MultiVarSingleFETypeVariable(input,physics_name,"",this->old_var_names(),this->default_names(),
+                                    this->subsection(),"LAGRANGE","FIRST",is_constraint_var),
+       _have_v(false),
+       _have_w(false),
+       _u_idx(0),
+       _v_idx(1),
+       _w_idx(2),
        _is_2D(is_2D),
        _is_3D(is_3D)
   {}
@@ -60,7 +62,7 @@ namespace GRINS
     else
         _var_names.pop_back();
 
-    this->default_fe_init(system, _var_names, _vars );
+    SingleFETypeVariable::init(system);
   }
 
 } // end namespace GRINS

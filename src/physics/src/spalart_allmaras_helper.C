@@ -31,6 +31,10 @@
 #include "grins/generic_ic_handler.h"
 #include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/turbulence_models_macro.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -42,16 +46,13 @@ namespace GRINS
 {
 
   SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& input )
-    : _flow_vars(input),
-      _press_var(input)
+    : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {}
 
   void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();
-
-    this->_flow_vars.init_vars(system);
-    this->_press_var.init_vars(system);
   }
 
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const

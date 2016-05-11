@@ -30,10 +30,12 @@
 
 namespace GRINS
 {
-  //! Class to encapsulate a single FEVariable
-  /*! For variables with multiple components associated with it,
-      e.g. Velocity, a separate subclass of FEVariableBase should be
-      used. */
+  //! Class to encapsulate variables that have only one FEType/Order
+  /*! This class only handles the FEType and Order. Subclasses
+      will handle the construction/parsing of the variable names since
+      we can have both "single variables" and variables like Velocity that
+      have the same FEType for all the variables, but multiple variables
+      with unique names. */
   class SingleFETypeVariable : public FEVariablesBase
   {
   public:
@@ -44,19 +46,24 @@ namespace GRINS
         you should use the new constructor. */
     SingleFETypeVariable( const GetPot& input,
                           const std::string& physics_name,
-                          const std::string& old_var_suffix,
+                          const std::string& old_var_prefix,
                           const std::string& subsection,
                           const std::string& default_family,
                           const std::string& default_order,
-                          bool _is_constraint_var );
+                          bool is_constraint_var );
 
     //! Primary constructor
     /*! Will parse from input section [Variables/<subsection>]. */
     SingleFETypeVariable( const GetPot& input,
                           const std::string& subsection,
-                          bool _is_constraint_var);
+                          bool is_constraint_var);
 
     ~SingleFETypeVariable(){};
+
+    //! Add variables to the system
+    /*! This expects that _var_names has been setup during construction
+        time by the subclasses. */
+    virtual void init( libMesh::FEMSystem* system );
 
   protected:
 
@@ -69,7 +76,7 @@ namespace GRINS
         family and order. */
     void parse_family_and_order( const GetPot& input,
                                  const std::string& physics_name,
-                                 const std::string& old_var_suffix,
+                                 const std::string& old_var_prefix,
                                  const std::string& subsection,
                                  std::vector<GRINSEnums::FEFamily>& family,
                                  std::vector<GRINSEnums::Order>& order,
@@ -81,17 +88,17 @@ namespace GRINS
         of a [Variables] section in order to be conservative. */
     void dup_family_order_check( const GetPot& input,
                                  const std::string& physics_name,
-                                 const std::string& old_var_suffix) const;
+                                 const std::string& old_var_prefix) const;
 
     //! Check for *no* presence of FEFamily/Order input
     bool have_family_or_order( const GetPot& input,
                                const std::string& physics_name,
-                               const std::string& old_var_suffix,
+                               const std::string& old_var_prefix,
                                const std::string& subsection ) const;
 
     void parse_old_style_with_warning( const GetPot& input,
                                        const std::string& physics_name,
-                                       const std::string& old_var_suffix,
+                                       const std::string& old_var_prefix,
                                        const std::string& default_family,
                                        const std::string& default_order,
                                        const std::string& subsection,

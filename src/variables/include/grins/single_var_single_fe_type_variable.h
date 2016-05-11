@@ -22,19 +22,16 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SINGLE_VARIABLE_H
-#define GRINS_SINGLE_VARIABLE_H
+#ifndef GRINS_SINGLE_VAR_SINGLE_FE_TYPE_VARIABLE_H
+#define GRINS_SINGLE_VAR_SINGLE_FE_TYPE_VARIABLE_H
 
 // GRINS
-#include "grins/variables_base.h"
+#include "grins/single_fe_type_variable.h"
 
 namespace GRINS
 {
-  //! Class to encapsulate a single Variable
-  /*! For variables with multiple components associated with it,
-      e.g. Velocity, a separate subclass of VariableBase should be
-      used. */
-  class SingleVariable : public VariablesBase
+  //! Base class for variables with a single component
+  class SingleVarSingleFETypeVariable : public SingleFETypeVariable
   {
   public:
 
@@ -42,25 +39,27 @@ namespace GRINS
     /*! This constructor is used for when there is possibly old deprecated
         styles of input for which we do additional checks/warnings. Otherwise,
         you should use the new constructor. */
-    SingleVariable( const GetPot& input,
-                    const std::string& old_var_name,
-                    const std::string& subsection,
-                    const std::string& default_name );
+    SingleVarSingleFETypeVariable( const GetPot& input,
+                                   const std::string& physics_name,
+                                   const std::string& old_var_prefix,
+                                   const std::string& old_var_name,
+                                   const std::string& default_name,
+                                   const std::string& subsection,
+                                   const std::string& default_family,
+                                   const std::string& default_order,
+                                   bool is_constraint_var );
 
     //! Primary constructor
     /*! Will parse from input section [Variables/<subsection>]. */
-    SingleVariable( const GetPot& input,
-                    const std::string& subsection,
-                    const std::string& default_name );
+    SingleVarSingleFETypeVariable( const GetPot& input,
+                                   const std::string& subsection,
+                                   const std::string& default_name,
+                                   bool is_constraint_var);
 
-    ~SingleVariable(){};
-
-  private:
-
-    SingleVariable();
+    ~SingleVarSingleFETypeVariable(){};
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_SINGLE_VARIABLE_H
+#endif // GRINS_SINGLE_VAR_SINGLE_FE_TYPE_VARIABLE_H

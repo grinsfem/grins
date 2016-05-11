@@ -67,6 +67,16 @@ namespace GRINS
 
       static const FEVariablesBase& get_variable( const std::string& var_name );
 
+      template <typename DerivedType>
+      static const DerivedType& get_variable_subclass( const std::string& var_name )
+      {
+        const FEVariablesBase& var_base = VariableWarehouse::get_variable(var_name);
+
+        const DerivedType& derived_var = libMesh::cast_ref<const DerivedType&>( var_base);
+
+        return derived_var;
+      }
+
     protected:
 
       static std::map<std::string,const FEVariablesBase*>& var_map();
@@ -101,7 +111,7 @@ namespace GRINS
     inline
     const FEVariablesBase& VariableWarehouse::get_variable( const std::string& var_name )
     {
-      if( var_map().find(var_name) == var_map().end() )
+      if( !VariableWarehouse::is_registered(var_name) )
         libmesh_error_msg("ERROR: Could not find FEVariable "+var_name+"!");
 
       const FEVariablesBase* var_ptr = var_map()[var_name];

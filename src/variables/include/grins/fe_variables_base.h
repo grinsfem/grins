@@ -34,6 +34,7 @@
 // GRINS
 #include "grins/grins_enums.h"
 #include "grins/var_typedefs.h"
+#include "grins/variables_parsing.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
@@ -78,17 +79,45 @@ namespace GRINS
     libMesh::Real neumann_bc_sign() const
     { return _neumann_bc_sign; }
 
+    //! Return the var names that are active from this class
+    /*! This must not be called until init_vars has been called. */
+    const std::vector<std::string>& active_var_names() const
+    { return _var_names; }
+
   protected:
 
-    //! Default method for init'ing variables
-    /*! This method will init all variables in the var_names
-        vector using the first _family and the first _order
-        finite elements and populate the vars vector with the
-        corresponding variable numbers. If the user has more than
-        one FE type, they should not use this method. */
-    void default_fe_init( libMesh::FEMSystem* system,
-                          const std::vector<std::string>& var_names,
-                          std::vector<VariableIndex>& vars ) const;
+    //! Method to parse variable names from input
+    /*! Names parsed from: [Variables/<subsection>/names] and then
+        populated into the supplied var_names vector. It is assumed
+        that var_names has been properly sized, that default_names
+        and var_names have the same size, and that default_names has
+        been populated with unique strings. */
+    void parse_names_from_input( const GetPot& input,
+                                 const std::string& subsection,
+                                 std::vector<std::string>& var_names,
+                                 const std::vector<std::string>& default_names );
+
+    //! Check for old name style and new name style. If both present, error.
+    /*! Old name style: [Physics/VariableNames]
+        New name style: [Variables/<variable type>]
+        Here, we just check for the presence of the sections [Physics/VariableNames]
+        and [Variables]. */
+    void duplicate_name_section_check( const GetPot& input ) const;
+
+    //! Check for deprecated variable name input style
+    /*! If found, this returns true and emits a deprecated warning.
+        Otherwise, this returns false.
+        The string argument is supplied by each variable
+        class for the warning message. E.g. if the variable class
+        is going to look in "Displacement", i.e.
+        [Variables/Displacement/names], then "Displacement" should be
+        passed. */
+    bool check_dep_name_input( const GetPot& input,
+                               const std::string& new_subsection ) const;
+
+    std::vector<VariableIndex> _vars;
+
+    std::vector<std::string> _var_names;
 
     std::vector<GRINSEnums::FEFamily> _family;
 
@@ -99,8 +128,7 @@ namespace GRINS
         effectively a Lagrange multiplier. The intended use
         case is to determine whether this variable requires
         boundary conditions to be specified (constraint variables
-        do not). This should be set by the finite element
-        type subclasses. */
+        do not). */
     bool _is_constraint_var;
 
     //! Track the sign of the Neumann BC term. Defaults to 1.0.

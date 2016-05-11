@@ -22,54 +22,26 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_PRIMITIVE_TEMP_VARIABLES_H
-#define GRINS_PRIMITIVE_TEMP_VARIABLES_H
-
-// libMesh forward declarations
-class GetPot;
+// This class
+#include "grins/species_mass_fracs_fe_variables.h"
 
 // GRINS
-#include "grins/single_variable.h"
-#include "grins/variables_parsing.h"
+#include "grins/materials_parsing.h"
+
+// libMesh
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
-  class PrimitiveTempVariables : public SingleVariable
-  {
-  public:
-
-    PrimitiveTempVariables( const GetPot& input )
-      : SingleVariable(input,
-                       this->old_var_name(),
-                       this->subsection(),
-                       this->default_name())
-    {}
-
-    ~PrimitiveTempVariables(){};
-
-    VariableIndex T() const;
-
-  protected:
-
-    std::string old_var_name() const
-    { return VariablesParsing::temperature_section(); }
-
-    std::string subsection() const
-    { return VariablesParsing::temperature_section(); }
-
-    std::string default_name() const
-    { return "T"; }
-
-    PrimitiveTempVariables();
-
-  };
-
-  inline
-  VariableIndex PrimitiveTempVariables::T() const
-  {
-    return _vars[0];
-  }
+  SpeciesMassFractionsFEVariables::SpeciesMassFractionsFEVariables( const GetPot& input,
+                                                                    const std::string& physics_name,
+                                                                    bool is_constraint_var )
+      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),
+                              "LAGRANGE","SECOND",is_constraint_var),
+         _prefix(input("Variables/"+this->subsection()+"/names", "w_" )),
+         _material(MaterialsParsing::material_name(input,physics_name))
+    {
+      MaterialsParsing::parse_species_varnames(input, _material, _prefix, _var_names);
+    }
 
 } // end namespace GRINS
-
-#endif // GRINS_PRIMITIVE_TEMP_VARIABLES_H

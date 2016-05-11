@@ -31,10 +31,12 @@
 // GRINS
 #include "grins/low_mach_navier_stokes_bc_handling.h"
 #include "grins/catalytic_wall_base.h"
-#include "grins/species_mass_fracs_variables.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class SpeciesMassFractionsFEVariables;
+
   template<typename Chemistry>
   class ReactingLowMachNavierStokesBCHandling : public LowMachNavierStokesBCHandling
   {
@@ -90,7 +92,7 @@ namespace GRINS
     // We also need another map container
     std::vector<std::pair<BoundaryID,BCType> > _species_bc_map;
 
-    SpeciesMassFractionsVariables _species_vars;
+    const SpeciesMassFractionsFEVariables& _species_vars;
 
     unsigned int _n_species;
 

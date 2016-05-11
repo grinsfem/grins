@@ -28,15 +28,17 @@
 //GRINS
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
-#include "grins/primitive_temp_variables.h"
-#include "grins/velocity_variables.h"
-#include "grins/pressure_variable.h"
 
 // libMesh forward declarations
 class GetPot;
 
 namespace GRINS
 {
+  // Forward declarations
+  class PrimitiveTempFEVariables;
+  class VelocityFEVariables;
+  class PressureFEVariable;
+
   class HeatTransferStabilizationHelper : public StabilizationHelper
   {
   public:
@@ -45,8 +47,6 @@ namespace GRINS
                                      const GetPot& input );
 
     ~HeatTransferStabilizationHelper();
-
-    void init( libMesh::FEMSystem& system );
 
     libMesh::Real compute_res_energy_steady( AssemblyContext& context,
                                              unsigned int qp,
@@ -105,10 +105,10 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    PrimitiveTempVariables _temp_vars;
+    const PrimitiveTempFEVariables& _temp_vars;
 
-    VelocityVariables _flow_vars;
-    PressureVariable _press_var;
+    const VelocityFEVariables& _flow_vars;
+    const PressureFEVariable& _press_var;
 
   }; // class HeatTransferStabilizationHelper
 

@@ -28,9 +28,6 @@
 // GRINS
 #include "grins/stab_helper.h"
 #include "grins/assembly_context.h"
-#include "grins/velocity_variables.h"
-#include "grins/pressure_variable.h"
-#include "grins/turbulence_variables.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"
 #include "grins/parameter_user.h"
@@ -43,6 +40,9 @@ class GetPot;
 
 namespace GRINS
 {
+  // Forward declarations
+  class TurbulenceFEVariables;
+
   class SpalartAllmarasStabilizationHelper : public StabilizationHelper
   {
   public:
@@ -141,10 +141,10 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    VelocityVariables _flow_vars;
-    PressureVariable _press_var;
+    const VelocityFEVariables& _flow_vars;
+    const PressureFEVariable& _press_var;
 
-    TurbulenceVariables _turbulence_vars;
+    const TurbulenceFEVariables& _turbulence_vars;
 
     SpalartAllmarasHelper _spalart_allmaras_helper;
 

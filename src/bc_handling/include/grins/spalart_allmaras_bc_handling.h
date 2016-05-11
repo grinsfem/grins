@@ -27,10 +27,12 @@
 
 //GRINS
 #include "grins/bc_handling_base.h"
-#include "grins/turbulence_variables.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class TurbulenceFEVariables;
+
   //! Base class for reading and handling boundary conditions for physics classes
   class SpalartAllmarasBCHandling : public BCHandlingBase
   {
@@ -42,14 +44,12 @@ namespace GRINS
 
     virtual int string_to_int( const std::string& bc_type_in ) const;
 
-    virtual void init_bc_data( const libMesh::FEMSystem& system );
-
-    virtual void init_bc_types( const GRINS::BoundaryID bc_id, 
-				const std::string& bc_id_string, 
-				const int bc_type, 
-				const std::string& bc_vars, 
-				const std::string& bc_value, 
-				const GetPot& input );    
+    virtual void init_bc_types( const GRINS::BoundaryID bc_id,
+				const std::string& bc_id_string,
+				const int bc_type,
+				const std::string& bc_vars,
+				const std::string& bc_value,
+				const GetPot& input );
 
     virtual void user_init_dirichlet_bcs( libMesh::FEMSystem* system,
 					  libMesh::DofMap& dof_map,
@@ -57,8 +57,8 @@ namespace GRINS
 					  GRINS::BCType bc_type ) const;
     
   protected:
-    
-    TurbulenceVariables _turb_vars;
+
+    const TurbulenceFEVariables& _turb_vars;
 
   private:
 

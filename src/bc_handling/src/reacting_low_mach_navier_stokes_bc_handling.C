@@ -37,6 +37,9 @@
 #include "grins/physics_naming.h"
 #include "grins/catalycity_factory_old_style_base.h"
 #include "grins/physics.h"
+#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -51,7 +54,7 @@ namespace GRINS
                                                                                            const GetPot& input,
                                                                                            const Chemistry& chemistry )
     : LowMachNavierStokesBCHandling(physics_name,input),
-      _species_vars(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())),
+      _species_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>(VariablesParsing::species_mass_fractions_section())),
       _n_species(_species_vars.n_species()),
       _chemistry(chemistry)
   {
@@ -389,8 +392,6 @@ namespace GRINS
   {
     // Call base class
     LowMachNavierStokesBCHandling::init_bc_data(system);
-
-    _species_vars.init_vars( const_cast<libMesh::FEMSystem*>(&system) );
 
     // See if we have a catalytic wall and initialize them if we do
     for( std::map< GRINS::BoundaryID, GRINS::BCType>::const_iterator bc_map = _neumann_bc_map.begin();

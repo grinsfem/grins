@@ -28,32 +28,52 @@
 
 // GRINS
 #include "grins/single_fe_type_variable.h"
-#include "grins/species_mass_fracs_variables.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINS
 {
 
-  class SpeciesMassFractionsFEVariables : public SingleFETypeVariable,
-                                          public SpeciesMassFractionsVariables
+  class SpeciesMassFractionsFEVariables : public SingleFETypeVariable
   {
   public:
 
     SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name,
-                                     bool _is_constraint_var = false)
-      :  SingleFETypeVariable(input,physics_name,"species_",this->subsection(),"LAGRANGE","SECOND",_is_constraint_var),
-         SpeciesMassFractionsVariables(input, MaterialsParsing::material_name(input,physics_name) )
-    {}
+                                     bool _is_constraint_var = false);
 
     ~SpeciesMassFractionsFEVariables(){};
 
-    virtual void init( libMesh::FEMSystem* system )
-    { this->default_fe_init(system, _var_names, _vars ); }
+    unsigned int n_species() const;
+
+    VariableIndex species( unsigned int species ) const;
+
+    const std::string& material() const
+    { return _material; }
 
   private:
 
     SpeciesMassFractionsFEVariables();
 
+    std::string subsection() const
+    { return VariablesParsing::species_mass_fractions_section(); }
+
+    std::string _prefix;
+
+    std::string _material;
   };
+
+  inline
+  unsigned int SpeciesMassFractionsFEVariables::n_species() const
+  {
+    // We *must* use the size of _var_names here since that gets populated
+    // at construction time.
+    return _var_names.size();
+  }
+
+  inline
+  VariableIndex SpeciesMassFractionsFEVariables::species( unsigned int species ) const
+  {
+    return _vars[species];
+  }
 
 } // end namespace GRINS
 

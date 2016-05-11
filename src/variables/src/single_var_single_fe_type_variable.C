@@ -23,19 +23,25 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/single_variable.h"
+#include "grins/single_var_single_fe_type_variable.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  SingleVariable::SingleVariable( const GetPot& input,
-                                  const std::string& old_var_name,
-                                  const std::string& subsection,
-                                  const std::string& default_name )
+  SingleVarSingleFETypeVariable::SingleVarSingleFETypeVariable( const GetPot& input,
+                                                                const std::string& physics_name,
+                                                                const std::string& old_var_prefix,
+                                                                const std::string& old_var_name,
+                                                                const std::string& default_name,
+                                                                const std::string& subsection,
+                                                                const std::string& default_family,
+                                                                const std::string& default_order,
+                                                                bool is_constraint_var )
+  : SingleFETypeVariable(input,physics_name,old_var_prefix,subsection,default_family,
+                         default_order,is_constraint_var)
   {
-    _vars.resize(1,invalid_var_index);
     _var_names.resize(1);
 
     std::vector<std::string> default_names(1,default_name);
@@ -46,15 +52,14 @@ namespace GRINS
       this->parse_names_from_input(input,subsection,_var_names,default_names);
   }
 
-  SingleVariable::SingleVariable( const GetPot& input,
-                                  const std::string& subsection,
-                                  const std::string& default_name )
+  SingleVarSingleFETypeVariable::SingleVarSingleFETypeVariable( const GetPot& input,
+                                                                const std::string& subsection,
+                                                                const std::string& default_name,
+                                                                bool is_constraint_var )
+    : SingleFETypeVariable(input,subsection,is_constraint_var)
   {
-    _vars.resize(1,invalid_var_index);
     _var_names.resize(1);
-
     std::vector<std::string> default_names(1,default_name);
-
     this->parse_names_from_input(input,subsection,_var_names,default_names);
   }
 

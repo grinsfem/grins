@@ -26,6 +26,11 @@
 // This class
 #include "grins/solid_mechanics_bc_handling.h"
 
+// GRINS
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/displacement_fe_variables.h"
+
 // libMesh
 #include "libmesh/zero_function.h"
 #include "libmesh/dirichlet_boundaries.h"
@@ -37,7 +42,7 @@ namespace GRINS
   SolidMechanicsBCHandling::SolidMechanicsBCHandling( const std::string& physics_name,
                                                       const GetPot& input )
     : BCHandlingBase(physics_name),
-      _disp_vars(input)
+      _disp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<DisplacementFEVariables>(VariablesParsing::displacement_section()))
   {
     std::string id_str = "Physics/"+_physics_name+"/bc_ids";
     std::string bc_str = "Physics/"+_physics_name+"/bc_types";
@@ -92,11 +97,6 @@ namespace GRINS
       }
 
     return bc_type_out;
-  }
-
-  void SolidMechanicsBCHandling::init_bc_data( const libMesh::FEMSystem& system )
-  {
-    _disp_vars.init_vars(const_cast<libMesh::FEMSystem*>(&system));
   }
 
   void SolidMechanicsBCHandling::init_bc_types( const BoundaryID bc_id,

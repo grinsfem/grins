@@ -26,6 +26,12 @@
 // This class
 #include "grins/inc_navier_stokes_stab_helper.h"
 
+// GRINS
+#include "grins/variables_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/velocity_fe_variables.h"
+#include "grins/pressure_fe_variable.h"
+
 //libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/mesh.h"
@@ -40,8 +46,8 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _flow_vars(input),
-      _press_var(input)
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {
     if (input.have_variable("Stabilization/tau_constant_vel"))
       this->set_parameter
@@ -65,14 +71,8 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesStabilizationHelper::init( libMesh::FEMSystem& system )
-  {
-    _flow_vars.init_vars(&system);
-    _press_var.init_vars(&system);
-  }
-
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U, 
-                                                                                  libMesh::Gradient& grad_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U,
+                                                                                  libMesh::Gradient& grad_u,
                                                                                   libMesh::Gradient& grad_v ) const
   {
     return libMesh::RealGradient( U*grad_u, U*grad_v );
