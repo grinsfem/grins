@@ -70,6 +70,7 @@ libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_function_base.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_parsed.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_old_style_factory_abstract.C
+libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_bc_factory_helper.C
 
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
@@ -332,6 +333,7 @@ include_HEADERS += boundary_conditions/include/grins/neumann_bc_parsed.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_container.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_factory_abstract.h
 include_HEADERS += boundary_conditions/include/grins/neumann_bc_old_style_factory_abstract.h
+include_HEADERS += boundary_conditions/include/grins/parsed_function_neumann_bc_factory_helper.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
