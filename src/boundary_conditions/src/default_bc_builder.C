@@ -59,7 +59,7 @@ namespace GRINS
     // We will be looking for all variable sections in all boundary sections
     // that are not "constraint" variables (i.e. FEVariablesBase::_is_constraint)
     std::set<std::string> var_sections;
-    this->parse_var_sections( input, system, var_sections );
+    this->parse_var_sections( input, var_sections );
 
     for( std::map<std::string,std::set<BoundaryID> >::const_iterator bc_it = bc_id_map.begin();
          bc_it != bc_id_map.end(); ++bc_it )
@@ -333,6 +333,43 @@ namespace GRINS
 
         libmesh_error_msg(err_msg);
       }
+  }
+
+  void DefaultBCBuilder::parse_var_sections( const GetPot& input,
+                                             std::set<std::string>& sections )
+  {
+    if( !input.have_section(VariablesParsing::variables_section()) )
+       libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
+
+    // We need to extract all the Variable sections from the input file
+    // We'll populate the relevant sections in var_sections
+    /*! \todo This would probably be a good function to add to libMesh::GetPot */
+    std::vector<std::string> all_sections = input.get_section_names();
+    for( std::vector<std::string>::const_iterator s = all_sections.begin();
+         s < all_sections.end(); ++s )
+      {
+        // First check that it contains "Variable" as the first slot
+        if( s->find(VariablesParsing::variables_section()) == 0 )
+          {
+            // Now check it only has 2 elements when we split on "/"
+            std::vector<std::string> split_str;
+            StringUtilities::split_string(*s, "/", split_str );
+
+            // Our Variable should be the second part of the split
+            if( split_str.size() == 2 )
+              {
+                // Make sure we don't already have that section
+                if( sections.find(split_str[1]) != sections.end() )
+                  libmesh_error_msg("ERROR: Found duplicate Variable section "+split_str[1]+"!");
+
+                sections.insert( split_str[1] );
+              }
+          }
+      }
+
+    // Make sure we found some variable subsections
+    if( sections.empty() )
+       libmesh_error_msg("ERROR: Did not find any Variable subsections!");
   }
 
 } // end namespace GRINS
