@@ -48,6 +48,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_parse_and_build_bc_id_map );
     CPPUNIT_TEST( test_verify_bc_ids_with_mesh );
+    CPPUNIT_TEST( test_parse_var_sections );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -106,6 +107,32 @@ namespace GRINSTesting
       // This shouldn't error
       this->verify_bc_ids_with_mesh( *_system, bc_id_map );
     }
+
+    void test_parse_var_sections()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
+      this->setup_multiphysics_system(filename);
+
+      // Now we can parse the variable sections and names
+      std::set<std::string> sections;
+      this->parse_var_sections(*_input,sections);
+
+      // Make sure we have the right sections
+      CPPUNIT_ASSERT_EQUAL(4,(int)sections.size());
+      CPPUNIT_ASSERT( sections.find("Velocity") != sections.end() );
+      CPPUNIT_ASSERT( sections.find("Pressure") != sections.end() );
+      CPPUNIT_ASSERT( sections.find("Temperature") != sections.end() );
+      CPPUNIT_ASSERT( sections.find("SpeciesMassFractions") != sections.end() );
+    }
+
+  private:
+
+    void test_for_var_name( const std::vector<std::string>& var_names,
+                            const std::string& var_to_find )
+    {
+      CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(), var_to_find ) != var_names.end() );
+    }
+
   };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( DefaultBCBuilderTest );
