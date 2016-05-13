@@ -106,6 +106,8 @@ namespace GRINS
                                           libMesh::boundary_id_type& master_id,
                                           libMesh::boundary_id_type& slave_id ) const;
 
+    libMesh::RealVectorValue parse_periodic_offset(const GetPot& input,
+                                                   const std::string& section) const;
   };
 } // end namespace GRINS
 

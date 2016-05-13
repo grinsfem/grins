@@ -415,4 +415,25 @@ namespace GRINS
     slave_id = input(section+"/slave_id", invalid_bid);
   }
 
+  libMesh::RealVectorValue DefaultBCBuilder::parse_periodic_offset
+  (const GetPot& input, const std::string& section) const
+  {
+    std::string input_section = section+"/boundary_offset";
+    if( !input.have_variable(input_section) )
+      libmesh_error_msg("ERROR: Could not find boundary_offset in section "+section);
+
+    unsigned int n_comps = input.vector_variable_size(input_section);
+
+    if( n_comps > 3 )
+      libmesh_error_msg("ERROR: Cannot specify more than 3 components for boundary_offset!");
+
+    libMesh::RealVectorValue offset;
+    libMesh::Real invalid_real = std::numeric_limits<libMesh::Real>::max();
+
+    for( unsigned int i = 0; i < n_comps; i++ )
+      offset(i) = input(input_section, invalid_real, i );
+
+    return offset;
+  }
+
 } // end namespace GRINS
