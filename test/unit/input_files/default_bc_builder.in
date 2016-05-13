@@ -3,6 +3,13 @@
 [BoundaryConditions]
    bc_ids = '0 1:2 3'
    bc_id_name_map = 'Hot Together Cold'
+
+   [./Together]
+      type = 'periodic'
+      master_id = '1'
+      slave_id = '2'
+      boundary_offset = '1.0 0.0'
+   [../]
 []
 
 [Mesh]

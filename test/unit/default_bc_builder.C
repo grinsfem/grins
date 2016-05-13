@@ -36,6 +36,7 @@
 
 // GRINS
 #include "grins/default_bc_builder.h"
+#include "grins/boundary_condition_names.h"
 
 namespace GRINSTesting
 {
@@ -49,6 +50,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_parse_and_build_bc_id_map );
     CPPUNIT_TEST( test_verify_bc_ids_with_mesh );
     CPPUNIT_TEST( test_parse_var_sections );
+    CPPUNIT_TEST( test_parse_periodic_master_slave_ids );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -123,6 +125,25 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( sections.find("Pressure") != sections.end() );
       CPPUNIT_ASSERT( sections.find("Temperature") != sections.end() );
       CPPUNIT_ASSERT( sections.find("SpeciesMassFractions") != sections.end() );
+    }
+
+    void test_parse_periodic_master_slave_ids()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
+      this->setup_multiphysics_system(filename);
+
+      libMesh::boundary_id_type invalid_bid =
+        std::numeric_limits<libMesh::boundary_id_type>::max();
+
+      libMesh::boundary_id_type master_id = invalid_bid;
+      libMesh::boundary_id_type slave_id = invalid_bid;
+
+      std::string section = GRINS::BoundaryConditionNames::bc_section()+"/Together";
+
+      this->parse_periodic_master_slave_ids(*_input,section,master_id,slave_id);
+
+      CPPUNIT_ASSERT_EQUAL(1,(int)master_id);
+      CPPUNIT_ASSERT_EQUAL(2,(int)slave_id);
     }
 
   private:
