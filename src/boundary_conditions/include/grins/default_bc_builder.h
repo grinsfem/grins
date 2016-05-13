@@ -101,6 +101,11 @@ namespace GRINS
                             const std::set<BoundaryID>& bc_ids,
                             const std::string& section );
 
+    void parse_periodic_master_slave_ids( const GetPot& input,
+                                          const std::string& section,
+                                          libMesh::boundary_id_type& master_id,
+                                          libMesh::boundary_id_type& slave_id ) const;
+
   };
 } // end namespace GRINS
 

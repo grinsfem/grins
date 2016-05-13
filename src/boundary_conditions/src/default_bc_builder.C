@@ -397,4 +397,22 @@ namespace GRINS
     this->add_periodic_bc_to_dofmap( master_id, slave_id, offset_vector, dof_map );
   }
 
+  void DefaultBCBuilder::parse_periodic_master_slave_ids
+  ( const GetPot& input, const std::string& section,
+    libMesh::boundary_id_type& master_id,
+    libMesh::boundary_id_type& slave_id ) const
+  {
+    if( !input.have_variable(section+"/master_id") )
+      libmesh_error_msg("ERROR: Could not find master_id in section "+section);
+
+    if( !input.have_variable(section+"/slave_id") )
+      libmesh_error_msg("ERROR: Could not find slave_id in section "+section);
+
+    libMesh::boundary_id_type invalid_bid =
+      std::numeric_limits<libMesh::boundary_id_type>::max();
+
+    master_id = input(section+"/master_id", invalid_bid);
+    slave_id = input(section+"/slave_id", invalid_bid);
+  }
+
 } // end namespace GRINS
