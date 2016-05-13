@@ -51,6 +51,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_verify_bc_ids_with_mesh );
     CPPUNIT_TEST( test_parse_var_sections );
     CPPUNIT_TEST( test_parse_periodic_master_slave_ids );
+    CPPUNIT_TEST( test_parse_periodic_offset );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -144,6 +145,21 @@ namespace GRINSTesting
 
       CPPUNIT_ASSERT_EQUAL(1,(int)master_id);
       CPPUNIT_ASSERT_EQUAL(2,(int)slave_id);
+    }
+
+    void test_parse_periodic_offset()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
+      this->setup_multiphysics_system(filename);
+
+      std::string section = GRINS::BoundaryConditionNames::bc_section()+"/Together";
+
+      libMesh::RealVectorValue offset =
+        this->parse_periodic_offset(*_input,section);
+
+      libMesh::Real tol = std::numeric_limits<libMesh::Real>::epsilon()*10;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(1.21,offset(0),tol);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0,offset(1),tol);
     }
 
   private:

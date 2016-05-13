@@ -8,7 +8,7 @@
       type = 'periodic'
       master_id = '1'
       slave_id = '2'
-      boundary_offset = '1.0 0.0'
+      boundary_offset = '1.21 0.0'
    [../]
 []
 
