@@ -28,6 +28,12 @@
 // GRINS
 #include "grins/bc_builder.h"
 
+// libMesh foward declarations
+namespace libMesh
+{
+  class System;
+}
+
 namespace GRINS
 {
   //! Manages runtime construction of Dirichlet boundary conditions
@@ -89,6 +95,11 @@ namespace GRINS
                                   const std::map<std::string,std::set<BoundaryID> >& bc_id_map ) const;
 
     void parse_var_sections( const GetPot& input, std::set<std::string>& sections );
+
+    void build_periodic_bc( const GetPot& input,
+                            libMesh::System& system,
+                            const std::set<BoundaryID>& bc_ids,
+                            const std::string& section );
 
   };
 } // end namespace GRINS

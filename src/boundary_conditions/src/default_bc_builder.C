@@ -372,4 +372,29 @@ namespace GRINS
        libmesh_error_msg("ERROR: Did not find any Variable subsections!");
   }
 
+  void DefaultBCBuilder::build_periodic_bc( const GetPot& input,
+                                            libMesh::System& system,
+                                            const std::set<BoundaryID>& bc_ids,
+                                            const std::string& section )
+  {
+    libMesh::boundary_id_type invalid_bid =
+      std::numeric_limits<libMesh::boundary_id_type>::max();
+
+    libMesh::boundary_id_type slave_id = invalid_bid;
+    libMesh::boundary_id_type master_id = invalid_bid;
+
+    this->parse_periodic_master_slave_ids(input,section,master_id,slave_id);
+
+    if( bc_ids.find(slave_id) == bc_ids.end() ||
+        bc_ids.find(master_id) == bc_ids.end() )
+      libmesh_error_msg("ERROR: Mismatch between bc_ids and master/slave ids for perioid bcs!");
+
+    libMesh::RealVectorValue offset_vector =
+      this->parse_periodic_offset(input,section);
+
+    libMesh::DofMap& dof_map = system.get_dof_map();
+
+    this->add_periodic_bc_to_dofmap( master_id, slave_id, offset_vector, dof_map );
+  }
+
 } // end namespace GRINS
