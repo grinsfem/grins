@@ -88,6 +88,12 @@ namespace GRINS
     void set_neumann_bc_factory_old_style_quantities( const std::string& bc_value_str,
                                                       unsigned int value_idx,
                                                       const std::vector<std::string>& var_names );
+
+    void build_periodic_bc( const GetPot& input,
+                            const std::string& section_name,
+                            BoundaryID bc_id,
+                            libMesh::DofMap& dof_map );
+
   };
 } // end namespace GRINS
 

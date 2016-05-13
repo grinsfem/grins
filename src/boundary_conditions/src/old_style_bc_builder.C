@@ -293,6 +293,51 @@ namespace GRINS
     physics_names.insert(PhysicsNaming::reacting_low_mach_navier_stokes());
   }
 
+  void OldStyleBCBuilder::build_periodic_bc( const GetPot& input,
+                                             const std::string& section,
+                                             BoundaryID bc_id,
+                                             libMesh::DofMap& dof_map )
+  {
+    std::string wall_input = section+"/periodic_wall_";
+    wall_input += StringUtilities::T_to_string<BoundaryID>(bc_id);
+
+    if( input.have_variable(wall_input) )
+      {
+        libMesh::boundary_id_type invalid_bid =
+          std::numeric_limits<libMesh::boundary_id_type>::max();
+
+        libMesh::boundary_id_type slave_id = invalid_bid;
+        libMesh::boundary_id_type master_id = invalid_bid;
+
+        if( input.vector_variable_size(wall_input) != 2 )
+          libmesh_error_msg("ERROR: "+wall_input+" must have only 2 components!");
+
+        master_id = bc_id;
+
+        if( input(wall_input,invalid_bid,0) == bc_id )
+          slave_id = input(wall_input,invalid_bid,1);
+        else
+          slave_id = input(wall_input,invalid_bid,0);
+
+        std::string offset_input = section+"/periodic_offset_";
+        offset_input += StringUtilities::T_to_string<BoundaryID>(bc_id);
+
+        if( !input.have_variable(offset_input) )
+          libmesh_error_msg("ERROR: Could not find "+offset_input+"!");
+
+        unsigned int n_comps = input.vector_variable_size(offset_input);
+
+        libMesh::Real invalid_real = std::numeric_limits<libMesh::Real>::max();
+
+        libMesh::RealVectorValue offset_vector;
+        for( unsigned int i = 0; i < n_comps; i++ )
+          offset_vector(i) = input(offset_input,invalid_real,i);
+
+        this->add_periodic_bc_to_dofmap( master_id, slave_id,
+                                         offset_vector, dof_map );
+      }
+  }
+
   template<typename FunctionType>
   void OldStyleBCBuilder::set_dirichlet_bc_factory_old_style_quantities( const std::string& bc_value_str,
                                                                          unsigned int value_idx,
