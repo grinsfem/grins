@@ -195,7 +195,11 @@ TESTS += exact_soln/stokes_poiseuille_flow.sh
 TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity.sh
 TESTS += exact_soln/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.sh
 TESTS += exact_soln/vorticity_qoi.sh
-
+TESTS += exact_soln/poisson_periodic_2d_x.sh
+TESTS += exact_soln/poisson_periodic_2d_y.sh
+TESTS += exact_soln/poisson_periodic_3d_xy.sh
+TESTS += exact_soln/poisson_periodic_3d_xz.sh
+TESTS += exact_soln/poisson_periodic_3d_yz.sh
 
 # Error/xfail TESTS
 TESTS += error_xfail/error_ufo.sh
