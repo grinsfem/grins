@@ -46,6 +46,7 @@
 #include "libmesh/linear_implicit_system.h"
 #include "libmesh/gmv_io.h"
 #include "libmesh/exact_solution.h"
+#include "libmesh/zero_function.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -386,6 +387,13 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
 
   cont_u.set_func( turbulent_inlet_u );
 
+  GRINS::DBCContainer cont_v;
+  cont_v.add_var_name( "v" );
+  cont_v.add_bc_id( 3 );
+
+  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > zero( new libMesh::ZeroFunction<libMesh::Number>() );
+  cont_v.set_func(zero);
+
   GRINS::DBCContainer cont_nu;
   cont_nu.add_var_name( "nu" );
   cont_nu.add_bc_id( 3 );
@@ -395,6 +403,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::bui
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont_u) );
+
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont_v) );
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::spalart_allmaras(),  cont_nu) );
 
