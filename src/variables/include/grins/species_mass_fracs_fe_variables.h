@@ -49,6 +49,9 @@ namespace GRINS
     const std::string& material() const
     { return _material; }
 
+    const std::string& prefix() const
+    { return _prefix; }
+
   private:
 
     SpeciesMassFractionsFEVariables();
