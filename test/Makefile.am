@@ -101,7 +101,6 @@ check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += generic_solution_regression
-check_PROGRAMS += axisym_reacting_low_mach_regression
 
 
 # AMR Tests
@@ -146,7 +145,6 @@ elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
 3d_low_mach_jacobians_yz_SOURCES = regression/3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = regression/suspended_cable_regression.C
 generic_solution_regression_SOURCES = regression/generic_solution_regression.C
-axisym_reacting_low_mach_regression_SOURCES = regression/axisym_reacting_low_mach_regression.C
 
 # AMR test source files
 generic_amr_testing_app_SOURCES = amr/generic_amr_testing_app.C
