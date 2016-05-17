@@ -54,10 +54,6 @@ namespace GRINS
 					  AssemblyContext& context,
 					  CachedValues& cache );
 
-    virtual void side_time_derivative( bool compute_jacobian,
-				       AssemblyContext& context,
-				       CachedValues& cache );
-
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
                                      CachedValues& cache );
@@ -69,9 +65,6 @@ namespace GRINS
 
     virtual void compute_element_time_derivative_cache( const AssemblyContext& context, 
 							CachedValues& cache );
-
-    virtual void compute_side_time_derivative_cache( const AssemblyContext& context, 
-						     CachedValues& cache );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,

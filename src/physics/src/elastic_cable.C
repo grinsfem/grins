@@ -46,8 +46,6 @@ namespace GRINS
                                                bool is_compressible )
     : ElasticCableBase<StressStrainLaw>(physics_name,input,is_compressible)
   {
-    this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler(physics_name, input);
   }
 
@@ -104,22 +102,6 @@ namespace GRINS
           }
       }
     return;
-  }
-
-  template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::side_time_derivative( bool compute_jacobian,
-                                                            AssemblyContext& context,
-                                                            CachedValues& cache )
-  {
-    std::vector<BoundaryID> ids = context.side_boundary_ids();
-
-    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-	 it != ids.end(); it++ )
-      {
-	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
-
-	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
-      }
   }
 
   template<typename StressStrainLaw>

@@ -57,8 +57,6 @@ namespace GRINS
   {
     this->read_input_options(input);
 
-    // This is deleted in the base class
-    this->_bc_handler = new AxisymmetricHeatTransferBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     this->register_variables();
@@ -246,32 +244,6 @@ namespace GRINS
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("AxisymmetricHeatTransfer::element_time_derivative");
-#endif
-
-    return;
-  }
-
-  template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::side_time_derivative( bool compute_jacobian,
-								     AssemblyContext& context,
-								     CachedValues& cache )
-  {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("AxisymmetricHeatTransfer::side_time_derivative");
-#endif
-
-    std::vector<BoundaryID> ids = context.side_boundary_ids();
-
-    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-	 it != ids.end(); it++ )
-      {
-	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
-
-	_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
-      }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("AxisymmetricHeatTransfer::side_time_derivative");
 #endif
 
     return;

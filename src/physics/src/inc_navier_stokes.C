@@ -48,8 +48,6 @@ namespace GRINS
     _mu_index(0)
   {
     // This is deleted in the base class
-    this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );

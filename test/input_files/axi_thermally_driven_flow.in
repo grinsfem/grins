@@ -72,9 +72,6 @@ is_axisymmetric = 'true'
 
 material = 'TestMaterial'
 
-bc_ids = '2 3 1 0'
-bc_types = 'no_slip axisymmetric no_slip no_slip'
-
 pin_pressure = true 
 pin_location = '0.5 1.0'
 pin_value = 0.0
@@ -83,14 +80,6 @@ pin_value = 0.0
 
 material = 'TestMaterial'
 
-bc_ids = '3 0 2 1'
-
-bc_types = 'axisymmetric isothermal_wall isothermal_wall prescribed_heat_flux'
-
-q_wall_1 = '-1.0 0.0'
-T_wall_0 = 10
-T_wall_2 = 1
-
 [../AxisymmetricBoussinesqBuoyancy]
 
 T_ref = 1.0
@@ -98,6 +87,36 @@ beta_T = 1.0
 
 g = '0 -9.8'
 
+[]
+
+[BoundaryConditions]
+
+   bc_ids = '0 1 2 3'
+   bc_id_name_map = 'Bottom Right Top Symmetry'
+
+   [./Bottom]
+      [./Velocity]
+         type = 'no_slip'
+      [../Temperature]
+         type = 'isothermal'
+         T = '10.0'
+
+   [../../Right]
+      [./Velocity]
+         type = 'no_slip'
+      [../Temperature]
+         type = 'parsed_neumann'
+         normal_flux = '1.0'
+
+   [../../Top]
+      [./Velocity]
+          type = 'no_slip'
+      [../Temperature]
+          type = 'isothermal'
+          T = '1.0'
+
+   [../../Symmetry]
+      type = 'axisymmetric'
 []
 
 [Variables]

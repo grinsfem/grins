@@ -66,7 +66,7 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMSta
 material = 'TestMaterial'
 
 bc_ids = '3 2 0'
-bc_types = 'general_velocity no_slip no_slip '
+bc_types = 'testing_turb_u no_slip no_slip '
 
 ic_ids = '0'
 ic_types = 'parsed'
@@ -81,11 +81,9 @@ pin_pressure = 'false'
 material = 'TestMaterial'
 
 bc_ids = '0 2 3'
-bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
-#bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
-bc_variables = 'nu nu nu'
-bc_values = '0.0 0.0 0.0'
-#bc_values = '0.0 0.0 0.01*y*(1.0-y)'
+bc_types = 'constant_dirichlet constant_dirichlet testing_turb_nu'
+bc_variables = 'nu nu na'
+bc_values = '0.0 0.0 na'
 no_of_walls = 2
 wall_ids = '0 2'
 

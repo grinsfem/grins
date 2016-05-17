@@ -62,7 +62,6 @@ namespace GRINS
 
     GRINSPrivate::VariableWarehouse::check_and_register_variable(this->_var.section_name(physics_name), this->_var);
 
-    _bc_handler = new GenericBCHandling(physics_name,input);
     _ic_handler = new GenericICHandler(physics_name,input);
   }
 

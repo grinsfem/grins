@@ -30,6 +30,7 @@
 #include "grins/assembly_context.h"
 #include "grins/fe_variables_base.h"
 #include "grins/variable_warehouse.h"
+#include "grins/bc_builder.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -130,6 +131,9 @@ namespace GRINS
 	(physics_iter->second)->init_variables( this );
       }
 
+    libmesh_assert(_input);
+    BCBuilder::build_boundary_conditions(*_input,*this,_neumann_bcs);
+
     // If any variables need custom numerical_jacobian_h, we can set those
     // values now that variable names are all registered with the System
     for (unsigned int i=0; i != _numerical_jacobian_h_values.size(); ++i)
@@ -153,14 +157,6 @@ namespace GRINS
     {
       (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
     }
-
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Initialize builtin BC's for each physics
-	(physics_iter->second)->init_bcs( this );
-      }
 
     // Next, call parent init_data function to intialize everything.
     libMesh::FEMSystem::init_data();
@@ -316,13 +312,19 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
-						 libMesh::DiffContext& context )
+                                                 libMesh::DiffContext& context )
   {
-    return this->_general_residual
+    bool jacobian_computed = this->apply_neumann_bcs(request_jacobian,
+                                                     context);
+
+    jacobian_computed = jacobian_computed &&
+      this->_general_residual
       (request_jacobian,
        context,
        &GRINS::Physics::side_time_derivative,
        &GRINS::Physics::compute_side_time_derivative_cache);
+
+    return jacobian_computed;
   }
 
   bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,

@@ -48,8 +48,6 @@ namespace GRINS
       _p_pinning(input,physics_name),
       _rho_index(0) // Initialize to zero
   {
-    // This is deleted in the base class
-    this->_bc_handler = new LowMachNavierStokesBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     this->_pin_pressure = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/pin_pressure", false );
@@ -133,27 +131,6 @@ namespace GRINS
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("LowMachNavierStokes::element_time_derivative");
 #endif
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::side_time_derivative( bool compute_jacobian,
-							    AssemblyContext& context,
-							    CachedValues& /*cache*/ )
-  {
-    if( this->_enable_thermo_press_calc )
-      {
-#ifdef GRINS_USE_GRVY_TIMERS
-	this->_timer->BeginTimer("LowMachNavierStokes::side_time_derivative");
-#endif
-
-	this->assemble_thermo_press_side_time_deriv( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-	this->_timer->EndTimer("LowMachNavierStokes::side_time_derivative");
-#endif
-      }
 
     return;
   }

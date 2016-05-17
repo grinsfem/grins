@@ -48,8 +48,6 @@ namespace GRINS
                                                      bool is_compressible )
     : ElasticMembraneBase<StressStrainLaw>(physics_name,input,is_compressible)
   {
-    this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler(physics_name, input);
   }
 
