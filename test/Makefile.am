@@ -90,7 +90,6 @@ check_PROGRAMS += generic_exact_solution_testing_app
 check_PROGRAMS += vorticity_qoi
 
 # Regression Tests
-check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += test_turbulent_channel
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += low_mach_cavity_benchmark_regression
@@ -136,7 +135,6 @@ vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 
 # Regression test source files
-test_thermally_driven_flow_SOURCES = regression/test_thermally_driven_flow.C
 test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
 gaussian_profiles_SOURCES = regression/gaussian_profiles.C
 low_mach_cavity_benchmark_regression_SOURCES = regression/low_mach_cavity_benchmark_regression.C
