@@ -207,14 +207,8 @@ namespace GRINS
                                          AssemblyContext& context,
                                          CachedValues& cache );
 
-    void init_bcs( libMesh::FEMSystem* system );
-
     void init_ics( libMesh::FEMSystem* system,
                    libMesh::CompositeFunction<libMesh::Number>& all_ics );
-
-    void attach_neumann_bound_func( GRINS::NBCContainer& neumann_bcs );
-
-    void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
     virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
                                                         CachedValues& cache );
@@ -248,8 +242,6 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
-    BCHandlingBase* get_bc_handler();
-
     ICHandlingBase* get_ic_handler();
 
 #ifdef GRINS_USE_GRVY_TIMERS
@@ -274,8 +266,6 @@ namespace GRINS
      * in trouble. */
     const PhysicsName _physics_name;
 
-    GRINS::BCHandlingBase* _bc_handler;
-
     GRINS::ICHandlingBase* _ic_handler;
 
     //! Subdomains on which the current Physics class is enabled
@@ -299,13 +289,6 @@ namespace GRINS
   }; // End Physics class declarations
 
   /* ------------------------- Inline Functions -------------------------*/
-
-  inline
-  BCHandlingBase* Physics::get_bc_handler()
-  {
-    return _bc_handler;
-  }
-
   inline
   ICHandlingBase* Physics::get_ic_handler()
   {

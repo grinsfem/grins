@@ -27,7 +27,6 @@
 #include "grins/physics.h"
 
 // GRINS
-#include "grins/bc_handling_base.h"
 #include "grins/ic_handling_base.h"
 
 // libMesh
@@ -45,7 +44,6 @@ namespace GRINS
 		    const GetPot& input )
     : ParameterUser(physics_name),
       _physics_name( physics_name ),
-      _bc_handler(NULL),
       _ic_handler(new ICHandlingBase(physics_name))
   {
     this->parse_enabled_subdomains(input,physics_name);
@@ -60,9 +58,6 @@ namespace GRINS
 
   Physics::~Physics()
   {
-    // If a derived class created a bc_handler object, we kill it here.
-    if( _bc_handler ) delete _bc_handler;
-
     if( _ic_handler ) delete _ic_handler;
   }
 
@@ -113,20 +108,6 @@ namespace GRINS
     return;
   }
 
-  void Physics::init_bcs( libMesh::FEMSystem* system )
-  {
-    // Only need to init BC's if the physics actually created a handler
-    if( _bc_handler )
-      {
-	_bc_handler->init_bc_data( *system );
-	_bc_handler->init_dirichlet_bcs( system );
-	_bc_handler->init_dirichlet_bc_func_objs( system );
-	_bc_handler->init_periodic_bcs( system );
-      }
-
-    return;
-  }
-
 
   void Physics::init_ics( libMesh::FEMSystem* system,
                           libMesh::CompositeFunction<libMesh::Number>& all_ics )
@@ -136,18 +117,6 @@ namespace GRINS
 	_ic_handler->init_ic_data( *system, all_ics );
       }
 
-    return;
-  }
-
-  void Physics::attach_neumann_bound_func( NBCContainer& neumann_bcs )
-  {
-    _bc_handler->attach_neumann_bound_func( neumann_bcs );
-    return;
-  }
-
-  void Physics::attach_dirichlet_bound_func( const DBCContainer& dirichlet_bc )
-  {
-    _bc_handler->attach_dirichlet_bound_func( dirichlet_bc );
     return;
   }
 

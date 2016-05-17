@@ -30,7 +30,6 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
 #include "grins/postprocessed_quantities.h"
 
 // libMesh

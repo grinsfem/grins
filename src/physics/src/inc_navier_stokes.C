@@ -30,7 +30,6 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/postprocessed_quantities.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh

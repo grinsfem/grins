@@ -30,7 +30,6 @@
 #include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/heat_transfer_bc_handling.h"
 #include "grins/heat_transfer_macros.h"
 #include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"

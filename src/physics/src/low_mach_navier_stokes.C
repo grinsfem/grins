@@ -29,7 +29,6 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
-#include "grins/low_mach_navier_stokes_bc_handling.h"
 #include "grins/constant_viscosity.h"
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_conductivity.h"

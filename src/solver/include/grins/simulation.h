@@ -96,14 +96,8 @@ namespace GRINS
 #endif
 
   protected:
-    
-    void read_restart( const GetPot& input );
 
-    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
-				  GRINS::MultiphysicsSystem* system );
-    
-    void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
-				    GRINS::MultiphysicsSystem* system );
+    void read_restart( const GetPot& input );
 
     //! Helper function
     void init_multiphysics_system( const GetPot& input,

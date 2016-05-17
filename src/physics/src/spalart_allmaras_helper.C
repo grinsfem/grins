@@ -29,7 +29,6 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/turbulence_models_macro.h"
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"

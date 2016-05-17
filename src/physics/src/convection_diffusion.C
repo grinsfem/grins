@@ -30,7 +30,6 @@
 #include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/materials_parsing.h"
-#include "grins/generic_bc_handling.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/variable_warehouse.h"
 

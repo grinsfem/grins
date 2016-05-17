@@ -28,7 +28,6 @@
 
 // GRINS
 #include "grins/assembly_context.h"
-#include "grins/axisym_heat_transfer_bc_handling.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/grins_enums.h"
 #include "grins/heat_transfer_macros.h"

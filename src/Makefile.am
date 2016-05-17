@@ -23,17 +23,6 @@ endif
 #----------------------------------------------
 libgrins_la_SOURCES =
 
-# src/bc_handling files
-libgrins_la_SOURCES += bc_handling/src/bc_handling_base.C
-libgrins_la_SOURCES += bc_handling/src/generic_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/heat_transfer_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/axisym_heat_transfer_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/inc_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/low_mach_navier_stokes_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/reacting_low_mach_navier_stokes_bc_handling_instantiate.C
-libgrins_la_SOURCES += bc_handling/src/solid_mechanics_bc_handling.C
-libgrins_la_SOURCES += bc_handling/src/spalart_allmaras_bc_handling.C
-
 # src/boundary_conditions files
 libgrins_la_SOURCES += boundary_conditions/src/bc_builder.C
 libgrins_la_SOURCES += boundary_conditions/src/default_bc_builder.C
@@ -275,7 +264,6 @@ libgrins_la_SOURCES += visualization/src/postprocessing_factory.C
 # with different template parameters in user code
 sfilesdir = $(prefix)/src
 sfiles_DATA  = physics/src/axisym_heat_transfer.C
-sfiles_DATA += bc_handling/src/reacting_low_mach_navier_stokes_bc_handling.C
 sfiles_DATA += boundary_conditions/src/catalytic_wall_base.C
 sfiles_DATA += boundary_conditions/src/gas_recombination_catalytic_wall.C
 sfiles_DATA += boundary_conditions/src/gas_solid_catalytic_wall.C
@@ -291,17 +279,6 @@ sfiles_DATA += properties/src/antioch_constant_transport_evaluator.C
 #----------------------------
 includedir = $(prefix)/include/grins
 include_HEADERS =
-
-# src/bc_handling headers
-include_HEADERS += bc_handling/include/grins/axisym_heat_transfer_bc_handling.h
-include_HEADERS += bc_handling/include/grins/bc_handling_base.h
-include_HEADERS += bc_handling/include/grins/generic_bc_handling.h
-include_HEADERS += bc_handling/include/grins/heat_transfer_bc_handling.h
-include_HEADERS += bc_handling/include/grins/inc_navier_stokes_bc_handling.h
-include_HEADERS += bc_handling/include/grins/low_mach_navier_stokes_bc_handling.h
-include_HEADERS += bc_handling/include/grins/reacting_low_mach_navier_stokes_bc_handling.h
-include_HEADERS += bc_handling/include/grins/solid_mechanics_bc_handling.h
-include_HEADERS += bc_handling/include/grins/spalart_allmaras_bc_handling.h
 
 # src/boundary_conditions headers
 include_HEADERS += boundary_conditions/include/grins/bc_types.h
@@ -625,7 +602,6 @@ endif
 #Local Directories to include for build
 #--------------------------------------
 AM_CPPFLAGS =
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include

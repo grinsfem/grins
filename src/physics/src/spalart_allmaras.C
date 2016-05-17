@@ -29,7 +29,6 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/spalart_allmaras_bc_handling.h"
 #include "grins/turbulence_models_macro.h"
 
 #include "grins/constant_viscosity.h"
