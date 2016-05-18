@@ -36,8 +36,6 @@
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
 #include "grins/physics_naming.h"
-#include "grins/nbc_container.h"
-#include "grins/dbc_container.h"
 #include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/error_estimator_options.h"
@@ -100,8 +98,7 @@ namespace GRINS
     void read_restart( const GetPot& input );
 
     //! Helper function
-    void init_multiphysics_system( const GetPot& input,
-                                   SimulationBuilder& sim_builder );
+    void init_multiphysics_system( const GetPot& input );
 
     //! Helper function
     void init_qois( const GetPot& input, SimulationBuilder& sim_builder );

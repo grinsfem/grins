@@ -27,7 +27,7 @@
 #define GRINS_SOLVER_H
 
 // GRINS
-#include "grins/nbc_container.h"
+#include "grins/shared_ptr.h"
 
 // libMesh
 #include "libmesh/equation_systems.h"
@@ -112,11 +112,6 @@ namespace GRINS
     // Screen display options
     bool _solver_quiet;
     bool _solver_verbose;
-
-    /* Keep copies of the boundary conditions around
-       in case they need to be updated during a solve;
-       for example parameter continuation. */
-    std::map< std::string, GRINS::NBCContainer > _neumann_bc_funcs;
 
     void set_solver_options( libMesh::DiffSolver& solver );
 

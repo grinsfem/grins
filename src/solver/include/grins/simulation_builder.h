@@ -30,7 +30,6 @@
 #include "grins/mesh_builder.h"
 #include "grins/solver_factory.h"
 #include "grins/visualization_factory.h"
-#include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
 #include "grins/shared_ptr.h"
@@ -56,10 +55,6 @@ namespace GRINS
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet_bcs();
-
-    std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
-
     SharedPtr<CompositeQoI> build_qoi( const GetPot& input );
 
     SharedPtr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
@@ -69,8 +64,6 @@ namespace GRINS
     void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
 
     void attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory );
-
-    void attach_bc_factory( SharedPtr<BoundaryConditionsFactory> bc_factory );
 
     void attach_qoi_factory( SharedPtr<QoIFactory> qoi_factory );
 
@@ -83,7 +76,6 @@ namespace GRINS
     SharedPtr<MeshBuilder> _mesh_builder;
     SharedPtr<SolverFactory> _solver_factory;
     SharedPtr<VisualizationFactory> _vis_factory;
-    SharedPtr<BoundaryConditionsFactory> _bc_factory;
     SharedPtr<QoIFactory> _qoi_factory;
     SharedPtr<PostprocessingFactory> _postprocessing_factory;
 

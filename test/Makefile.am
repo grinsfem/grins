@@ -90,7 +90,6 @@ check_PROGRAMS += vorticity_qoi
 
 # Regression Tests
 check_PROGRAMS += test_turbulent_channel
-check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
 check_PROGRAMS += elastic_sheet_regression
@@ -134,7 +133,6 @@ vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 # Regression test source files
 test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
-gaussian_profiles_SOURCES = regression/gaussian_profiles.C
 low_mach_cavity_benchmark_regression_SOURCES = regression/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = regression/grins_flow_regression.C
 elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
@@ -218,7 +216,6 @@ TESTS += error_xfail/viscosity_options_conflict_3.sh
 XFAIL_TESTS += error_xfail/viscosity_options_conflict_3.sh
 
 # Regression TESTS
-TESTS += gaussian_profiles
 TESTS += regression/warn_only_ufo.sh
 TESTS += regression/poisson_weighted_flux.sh
 TESTS += regression/sa_2d_turbulent_channel.sh

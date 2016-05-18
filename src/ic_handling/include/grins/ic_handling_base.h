@@ -27,7 +27,6 @@
 //GRINS
 #include "grins/variable_name_defaults.h"
 #include "grins/var_typedefs.h"
-#include "grins/bc_types.h"
 #include "grins/cached_values.h"
 
 //libMesh

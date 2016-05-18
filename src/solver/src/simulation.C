@@ -74,7 +74,7 @@ namespace GRINS
   {
     libmesh_deprecated();
 
-    this->init_multiphysics_system(input,sim_builder);
+    this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
 
@@ -120,7 +120,7 @@ namespace GRINS
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
   {
-    this->init_multiphysics_system(input,sim_builder);
+    this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
 
@@ -139,8 +139,7 @@ namespace GRINS
 
   }
 
-  void Simulation::init_multiphysics_system( const GetPot& input,
-                                             SimulationBuilder& sim_builder )
+  void Simulation::init_multiphysics_system( const GetPot& input )
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
