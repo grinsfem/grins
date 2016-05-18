@@ -251,6 +251,7 @@ XFAIL_TESTS += regression/reacting_low_mach_cantera.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant_prandtl.sh
 TESTS += regression/reacting_low_mach_antioch_cea_constant.sh
+TESTS += regression/reacting_low_mach_antioch_cea_constant_mole_fraction_input.sh
 TESTS += regression/axisym_reacting_low_mach_antioch_cea_constant.sh
 TESTS += regression/reacting_low_mach_antioch_cea_constant_prandtl.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis.sh
