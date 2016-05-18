@@ -32,6 +32,7 @@
 #include "grins/materials_parsing.h"
 #include "grins/generic_bc_handling.h"
 #include "grins/generic_ic_handler.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -58,6 +59,8 @@ namespace GRINS
     this->set_parameter(this->_kappa, input,
                         "Materials/"+material_name+"/Diffusivity/value",
                         "DIE!");
+
+    GRINSPrivate::VariableWarehouse::check_and_register_variable(this->_var.section_name(physics_name), this->_var);
 
     _bc_handler = new GenericBCHandling(physics_name,input);
     _ic_handler = new GenericICHandler(physics_name,input);

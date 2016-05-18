@@ -77,6 +77,10 @@ namespace GRINS
         return derived_var;
       }
 
+      //! Clears the var_map()
+      static void clear()
+      { var_map().clear(); }
+
     protected:
 
       static std::map<std::string,const FEVariablesBase*>& var_map();

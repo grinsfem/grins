@@ -52,12 +52,12 @@ namespace GRINS
 
     VariableIndex var() const;
 
+    std::string section_name(const std::string& physics_name) const
+    { return VariablesParsing::generic_section()+":"+physics_name; }
+
   protected:
 
     GenericFETypeVariable();
-
-    std::string section_name(const std::string& physics_name) const
-    { return VariablesParsing::generic_section()+":"+physics_name; }
 
     std::string default_name() const
     { return "u"; }
