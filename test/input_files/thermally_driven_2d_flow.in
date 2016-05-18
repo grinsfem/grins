@@ -7,25 +7,23 @@
       n_elems_y = '10'
 []
 
-# Options for tiem solvers
-
- 
-
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 1.0e-6
 
 initial_linear_tolerance = 1.0e-10
 relative_step_tolerance = 1.0e-10
+[]
 
 # Visualization options
 [vis-options]
 output_vis = 'false'
-vis_output_file_prefix = thermally_driven_2d
-output_format = 'ExodusII xdr'
+vis_output_file_prefix = 'thermally_driven_2d_flow'
+output_format = 'xda'
+[]
 
 # Options for print info to the screen
 [screen-options]
@@ -36,6 +34,7 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
+[]
 
 [Materials]
    [./TestMaterial]
@@ -83,7 +82,7 @@ material = 'TestMaterial'
 
 bc_ids = '3 0 2 1'
 
-bc_types = 'isothermal_wall general_heat_flux adiabatic_wall isothermal_wall'
+bc_types = 'isothermal_wall adiabatic_wall adiabatic_wall isothermal_wall'
 
 T_wall_1 = 1
 T_wall_3 = 10

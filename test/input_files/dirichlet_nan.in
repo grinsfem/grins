@@ -86,14 +86,9 @@ material = 'TestMaterial'
 
 bc_ids = '3 0 2 1'
 
-bc_types = 'parsed_dirichlet general_heat_flux adiabatic_wall isothermal_wall'
+bc_types = 'parsed_dirichlet adiabatic_wall adiabatic_wall isothermal_wall'
 bc_variables = 'T na na na'
-#bc_values = '{if(y>.5,10,-1^.5)} na na na'
-#bc_values = '{if(y>.8,10,NaN)} na na na'
-#bc_values = '{if(1>2,10,1)} na na na'
-#bc_values = '{NaN} na na na'
 bc_values = '{if(y>.5,10,NaN)} na na na'
-#bc_values = '{10} na na na'
 
 T_wall_1 = 1
 

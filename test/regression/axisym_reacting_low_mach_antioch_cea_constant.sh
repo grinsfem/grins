@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROG="${GRINS_TEST_DIR}/axisym_reacting_low_mach_regression"
+PROG="${GRINS_TEST_DIR}/generic_solution_regression"
 
 INPUT="${GRINS_TEST_INPUT_DIR}/axisym_reacting_low_mach_antioch_cea_constant_regression.in"
 DATA="${GRINS_TEST_DATA_DIR}/axisym_reacting_low_mach_antioch_cea_constant_regression.xdr"

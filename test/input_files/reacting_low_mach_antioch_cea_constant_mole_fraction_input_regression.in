@@ -8,7 +8,7 @@
 
         [./Antioch]
            transport_model = 'constant'
-           thermo_model = 'stat_mech'
+           thermo_model = 'cea'
            viscosity_model = 'constant'
            thermal_conductivity_model = 'constant'
            mass_diffusivity_model = 'constant_lewis'
@@ -22,7 +22,6 @@
    [../LewisNumber]
       value = '1.4'
 []
-
 
 [Physics]
 
@@ -60,26 +59,11 @@ T_wall_2 = '300'
 T_wall_3 = '300'
 
 species_bc_ids = '3'
-species_bc_types = 'prescribed_species'
-bound_species_3 = '0.6 0.4'
+species_bc_types = 'prescribed_mole_fracs'
+bound_species_3 = '0.4285714285714285 0.5714285714285715'
 
 enable_thermo_press_calc = 'false'
 pin_pressure = 'false'
-
-[]
-
-[QoI]
-enabled_qois = 'parsed_interior parsed_boundary'
-
-adjoint_sensitivity_parameters = 'Antioch/0001/A Antioch/0001/B'
-forward_sensitivity_parameters = ${QoI/adjoint_sensitivity_parameters}
-
-[./ParsedBoundary]
-bc_ids = '1'
-qoi_functional = 'a:=1;a+w_N2'
-
-[../ParsedInterior]
-qoi_functional = 'a:=1;a*w_N'
 
 []
 
@@ -106,9 +90,6 @@ qoi_functional = 'a:=1;a*w_N'
 
 []
 
-[restart-options]
-
-#restart_file = 'cavity.xdr'
 
 # Mesh related options
 [Mesh]
@@ -123,34 +104,33 @@ qoi_functional = 'a:=1;a*w_N'
        n_elems_y = '5'
 []
 
-# Options for tiem solvers
-
- 
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 100 
+max_nonlinear_iterations = 100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
 initial_linear_tolerance = 1.0e-10
 
-relative_step_tolerance = 1.0e-11
+relative_step_tolerance = 1.0e-10
 
 use_numerical_jacobians_only = 'true'
+
+[]
 
 # Visualization options
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'nitridation' 
+vis_output_file_prefix = 'nitridation'
 
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
 
-#output_vars = 'rho_mix mole_fractions'
+[]
 
 # Options for print info to the screen
 [screen-options]

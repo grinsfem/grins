@@ -90,19 +90,16 @@ check_PROGRAMS += generic_exact_solution_testing_app
 check_PROGRAMS += vorticity_qoi
 
 # Regression Tests
-check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += test_turbulent_channel
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
-check_PROGRAMS += reacting_low_mach_regression
 check_PROGRAMS += elastic_sheet_regression
 check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += generic_solution_regression
-check_PROGRAMS += axisym_reacting_low_mach_regression
 
 
 # AMR Tests
@@ -136,19 +133,16 @@ vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 
 # Regression test source files
-test_thermally_driven_flow_SOURCES = regression/test_thermally_driven_flow.C
 test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
 gaussian_profiles_SOURCES = regression/gaussian_profiles.C
 low_mach_cavity_benchmark_regression_SOURCES = regression/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = regression/grins_flow_regression.C
-reacting_low_mach_regression_SOURCES = regression/reacting_low_mach_regression.C
 elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
 3d_low_mach_jacobians_xy_SOURCES = regression/3d_low_mach_jacobians.C
 3d_low_mach_jacobians_xz_SOURCES = regression/3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = regression/3d_low_mach_jacobians.C
 suspended_cable_regression_SOURCES = regression/suspended_cable_regression.C
 generic_solution_regression_SOURCES = regression/generic_solution_regression.C
-axisym_reacting_low_mach_regression_SOURCES = regression/axisym_reacting_low_mach_regression.C
 
 # AMR test source files
 generic_amr_testing_app_SOURCES = amr/generic_amr_testing_app.C
@@ -257,6 +251,7 @@ XFAIL_TESTS += regression/reacting_low_mach_cantera.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant_prandtl.sh
 TESTS += regression/reacting_low_mach_antioch_cea_constant.sh
+TESTS += regression/reacting_low_mach_antioch_cea_constant_mole_fraction_input.sh
 TESTS += regression/axisym_reacting_low_mach_antioch_cea_constant.sh
 TESTS += regression/reacting_low_mach_antioch_cea_constant_prandtl.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis.sh
