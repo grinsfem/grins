@@ -30,6 +30,9 @@
 
 namespace GRINS
 {
+  // Forward declarations
+  class SpeciesMassFractionsFEVariables;
+
   class PrescribedVectorValueDirichletOldStyleBCFactory : public DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >
   {
   public:
@@ -100,6 +103,30 @@ namespace GRINS
 
     virtual std::string var_input_string()
     { return "bound_species"; }
+
+  };
+
+  class PrescribedMoleFractionsDirichletOldStyleBCFactory : public PrescribedSpeciesDirichletOldStyleBCFactory
+  {
+  public:
+
+    PrescribedMoleFractionsDirichletOldStyleBCFactory( const std::string& bc_type_name )
+      : PrescribedSpeciesDirichletOldStyleBCFactory(bc_type_name)
+    {}
+
+  protected:
+
+    virtual void add_funcs( const GetPot& input,
+                            MultiphysicsSystem& system,
+                            const std::string& input_string,
+                            const std::vector<std::string>& var_names,
+                            libMesh::CompositeFunction<libMesh::Number>& composite_func ) const;
+
+    template<typename ChemistryType>
+    void convert_mole_fracs_and_add_to_func(const GetPot& input,
+                                            const std::vector<libMesh::Number>& species_mole_fracs,
+                                            const SpeciesMassFractionsFEVariables& species_fe_var,
+                                            libMesh::CompositeFunction<libMesh::Number>& composite_func) const;
 
   };
 
