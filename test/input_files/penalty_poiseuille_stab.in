@@ -64,11 +64,10 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 
 material = 'TestMaterial'
 
-bc_ids = '1 3 2 0'
-bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
-bc_variables = 'u u na na'
-#bc_values = '{y-y^2} {y-y^2} na na'
-bc_values = '{(abs(y-.5)<.25)*(y-.25)*(.75-y)} {(abs(y-.5)<.25)*(y-.25)*(.75-y)} na na'
+bc_ids = '1 3 1 3 2 0'
+bc_types = 'parsed_dirichlet parsed_dirichlet constant_dirichlet constant_dirichlet no_slip no_slip'
+bc_variables = 'u u v v na na'
+bc_values = '{(abs(y-.5)<.25)*(y-.25)*(.75-y)} {(abs(y-.5)<.25)*(y-.25)*(.75-y)} 0.0 0.0 na na'
 
 pin_pressure = true
 pin_value = 100.0
