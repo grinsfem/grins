@@ -18,14 +18,6 @@
 
    [./HeatConduction]
 
-      bc_ids = '0 2 1 3'
-      bc_types = 'constant_dirichlet constant_dirichlet periodic periodic'
-      bc_variables = 'u u na na'
-      bc_values = '0.0 0.0 na na'
-
-      periodic_wall_1 = '1 3'
-      periodic_offset_1 = '-1.0 0.0'
-
       material = 'TestMaterial'
 
    [../ParsedSourceTerm]
@@ -36,6 +28,24 @@
          names = 'u'
          FE_types = 'LAGRANGE'
          FE_orders = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:2 1:3'
+   bc_id_name_map = 'Dirichlet Periodic'
+
+   [./Dirichlet]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         u = '0.0'
+      [../]
+   [../]
+   [./Periodic]
+      type = 'periodic'
+      master_id = '1'
+      slave_id = '3'
+      boundary_offset = '-1.0 0.0'
+   [../]
 []
 
 [Variables]

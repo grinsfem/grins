@@ -146,11 +146,11 @@ namespace GRINSTesting
 
   };
 
-  class SATurbBCFactoryBase : public GRINS::DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >
+  class SATurbBCFactoryBase : public GRINS::DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >
   {
   public:
     SATurbBCFactoryBase( const std::string& bc_type_name )
-      : DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
+      : DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
     {}
 
     static void set_turb_bc_values( libMesh::MeshFunction* turbulent_bc_values )
@@ -233,8 +233,8 @@ namespace GRINSTesting
     }
   };
 
-  SATurbUBCFactory grins_factory_testing_turb_u_bc("testing_turb_u_old_style");
-  SATurbNuBCFactory grins_factory_testing_turb_nu_bc("testing_turb_nu_old_style");
+  SATurbUBCFactory grins_factory_testing_turb_u_bc("testing_turb_u");
+  SATurbNuBCFactory grins_factory_testing_turb_nu_bc("testing_turb_nu");
 
 } // end namespace GRINSTesting
 

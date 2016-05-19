@@ -48,10 +48,29 @@
    [./IncompressibleNavierStokes:TestDelimiter]
 
       material = 'TestMaterial'
+[]
 
-      bc_ids = '2 0'
-      bc_types = 'prescribed_vel no_slip'
-      bound_vel_2 = '10.0 0.0 0.0'
+[BoundaryConditions]
+   bc_ids = '0 2 1:3'
+   bc_id_name_map = 'Bottom Top OpenBoundaries'
+   [./Bottom]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+
+   [./Top]
+      [./Velocity]
+         type = 'constant_dirichlet'
+         u = '10.0'
+      [../]
+   [../]
+
+   [./OpenBoundaries]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]

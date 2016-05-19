@@ -6,11 +6,11 @@
 
 # Options for time solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 relative_step_tolerance = 1.0e-12
@@ -19,13 +19,13 @@ verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
-output_vis = 'false' 
+output_vis = 'false'
 vis_output_file_prefix = temp
 output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'false' 
+print_equation_system_info = 'false'
 print_mesh_info = 'false'
 print_log_info = 'false'
 solver_verbose = 'false'
@@ -45,23 +45,38 @@ print_qoi = 'true' # print numerical values of QoIs
       value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'Stokes'
+   enabled_physics = 'Stokes'
 
-# Options for Stokes physics
-[./Stokes]
+   [./Stokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
+      pin_pressure = 'false'
+[]
 
-bc_ids = '1 1 3 4'
-bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
-bc_variables = 'u v na na'
-bc_values = '4*y*(1-y) 0.0 na na'
+[BoundaryConditions]
+   bc_ids = '1 3:4 2'
+   bc_id_name_map = 'Inlet Walls Outlet'
 
-pin_pressure = 'false'
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '4*y*(1-y)'
+      [../]
+   [../]
 
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]

@@ -14,29 +14,34 @@
         value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticMembrane
-                   ElasticMembraneConstantPressure'
+   enabled_physics = 'ElasticMembrane
+                      ElasticMembraneConstantPressure'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticMembrane]
+   [./ElasticMembrane]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-bc_ids = '1'
-bc_types = 'pinned'
+      ic_ids = '1'
+      ic_types = 'parsed'
+      ic_variables = 'w'
+      ic_values = '0.3*cos(pi/2*sqrt(x^2+y^2))'
 
-ic_ids = '1'
-ic_types = 'parsed'
-ic_variables = 'w'
-ic_values = '0.3*cos(pi/2*sqrt(x^2+y^2))'
+   [../ElasticMembraneConstantPressure]
 
-[../ElasticMembraneConstantPressure]
+      pressure = '0.3'
+[]
 
-pressure = '0.3'
+[BoundaryConditions]
+   bc_ids = '1'
+   bc_id_name_map = 'Boundary'
 
+   [./Boundary]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -46,13 +51,11 @@ pressure = '0.3'
       order = 'FIRST'
 []
 
-# Mesh related options
 [Mesh]
     [./Read]
        filename = './grids/circular_sheet.e'
 []
 
-#Linear and nonlinear solver options
 [linear-nonlinear-solver]
 relative_residual_tolerance = '1.0e-11'
 relative_step_tolerance = '1.0e-11'
@@ -65,6 +68,8 @@ verify_analytic_jacobians = '1.0e-6'
 initial_linear_tolerance = '1.0e-10'
 
 use_numerical_jacobians_only = 'false'
+[]
+
 
 # Visualization options
 [vis-options]
@@ -75,6 +80,7 @@ vis_output_file_prefix = 'sheet'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]

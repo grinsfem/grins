@@ -29,15 +29,6 @@ enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointS
 
 material = 'TestMaterial'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
-
-bc_ids = '0 1 2 3'
-bc_types = 'no_slip no_slip no_slip no_slip'
-
 pin_pressure = true
 pin_location = '0.0 0.0'
 pin_value = '0.0'
@@ -50,19 +41,6 @@ ic_values = '(abs(x)<=2)*0.001'
 [../HeatTransfer]
 
 material = 'TestMaterial'
-
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
-
-bc_ids = '0 1 2 3'
-bc_types = 'parsed_dirichlet adiabatic_wall isothermal_wall adiabatic_wall'
-bc_variables = 'T na na na'
-bc_values = '{340.0+(abs(x)<=2)*30} na na na'
-
-T_wall_2 = '280.0'
 
 ic_ids = '0'
 ic_types = 'constant'
@@ -86,6 +64,40 @@ tau_factor_T = '3.0'
 
 []
 
+[BoundaryConditions]
+   bc_ids = '1:3 0 2'
+   bc_id_name_map = 'SideWalls Bottom Top'
+
+   [./SideWalls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
+
+   [./Bottom]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         T = '340.0+(abs(x)<=2)*30'
+      [../]
+   [../]
+
+   [./Top]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'constant_dirichlet'
+         T = '280'
+      [../]
+   [../]
+[]
+
 [Variables]
    [./Velocity]
       names = 'u v'
@@ -101,15 +113,6 @@ tau_factor_T = '3.0'
       order = 'FIRST'
 []
 
-[restart-options]
-
-#restart_file = 'convection_cell.xdr'
-
-[]
-
-
-
-# Mesh related options
 [Mesh]
    [./Generation]
       dimension = '2'
@@ -121,7 +124,6 @@ tau_factor_T = '3.0'
       n_elems_y = '8'
 []
 
-# Options for tiem solvers
 [SolverOptions]
    [./TimeStepping]
       solver_type = 'libmesh_euler_solver'
@@ -146,11 +148,11 @@ use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis = 'false' 
+output_vis = 'false'
 
-vis_output_file_prefix = 'convection_cell' 
+vis_output_file_prefix = 'convection_cell'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII'
 

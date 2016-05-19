@@ -10,26 +10,26 @@
 
 # Options for tiem solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 50 
+max_nonlinear_iterations = 50
 max_linear_iterations = 2000
 
-verify_analytic_jacobians = 1.0e-6 
+verify_analytic_jacobians = 1.0e-6
 
 relative_step_tolerance = 1.0e-10
 
 # Visualization options
 [vis-options]
-output_vis = false 
+output_vis = false
 vis_output_file_prefix = thermally_driven_3d_flow
 output_format = 'ExodusII xdr'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
 solver_verbose = 'true'
@@ -56,48 +56,60 @@ echo_physics = 'true'
          value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
+   enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-# Boundary ids:
-# k = bottom -> 0
-# k = top    -> 5
-# j = bottom -> 1
-# j = top    -> 3
-# i = bottom -> 4
-# i = top    -> 2
+      pin_pressure = true
+      pin_value = 100.0
+      pin_location = '0.5 0.5'
 
-bc_ids = '0 1 2 3 4 5'
-bc_types = 'no_slip no_slip no_slip no_slip no_slip no_slip'
+   [../HeatTransfer]
 
-pin_pressure = true 
-pin_value = 100.0
-pin_location = '0.5 0.5'
+      material = 'TestMaterial'
 
-[../HeatTransfer]
+   [../BoussinesqBuoyancy]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
+      g = '0 -9.8 0'
+[]
 
-bc_ids = '4 2 0 5 1 3'
+[BoundaryConditions]
+   bc_id_name_map = 'HotWall ColdWall AdiabaticWalls'
+   bc_ids = '2 4 0:1:3:5'
 
-bc_types = 'isothermal_wall isothermal_wall adiabatic_wall adiabatic_wall adiabatic_wall adiabatic_wall'
+   [./HotWall]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '10'
+      [../]
+   [../]
 
-T_wall_4 = 1
-T_wall_2 = 10
+   [./ColdWall]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '1'
+      [../]
+   [../]
 
-[../BoussinesqBuoyancy]
-
-material = 'TestMaterial'
-
-g = '0 -9.8 0'
-
+   [./AdiabaticWalls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
 []
 
 [Variables]

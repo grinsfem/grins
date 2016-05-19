@@ -81,11 +81,6 @@
 
       material = 'TestMaterial'
 
-      bc_ids = '0 1 2 3'
-      bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
-      bc_variables = 'T T T T'
-      bc_values = '0 0 0 0'
-
    [../ParsedSourceTerm]
       [./Function]
          value = 'alpha:=${Materials/TestMaterial/ThermalConductivity/value};-alpha * ( ( (- 4 * alpha * alpha) * exp(-alpha*x) * y * (1 - y) ) + ( -8 + ( 8 * exp(-alpha*x) ) + ( 8 * ( 1 - exp(-alpha) )* x) ) )'
@@ -93,6 +88,16 @@
          names = 'T'
          FE_types = 'LAGRANGE'
          FE_orders = 'SECOND'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:1:2:3'
+   bc_id_name_map = 'Boundary'
+
+   [./Boundary]
+      [./Temperature]
+         type = 'constant_dirichlet'
+         T = '0'
 []
 
 [Variables]

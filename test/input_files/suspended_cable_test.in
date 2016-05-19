@@ -25,14 +25,6 @@ enabled_physics = 'ElasticCable
 
 material = 'TestMaterial'
 
-# Boundary ids:
-# j = left -> 0
-# j = right-> 1
-bc_ids = '0 1 1'
-bc_types = 'pinned roller_x constant_traction'
-
-traction_1 = '5.7735 0.0 0.0'
-
 #ic_ids = '1'
 #ic_types = 'parsed'
 #ic_variables = 'w'
@@ -42,6 +34,21 @@ traction_1 = '5.7735 0.0 0.0'
 
 gravity ='0 0 -32.2'
 
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'LeftWall RightWall'
+ 
+   [./LeftWall]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+   [./RightWall]
+      [./Displacement]
+         type = 'roller_x parsed_traction'
+         traction = '5.7735 0.0 0.0'
 []
 
 [Variables]

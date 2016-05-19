@@ -27,20 +27,20 @@
 
        velocity_field = '0.8 0.8'
 
-       bc_ids = '0 1 2 3'
-       bc_types = 'parsed_dirichlet parsed_dirichlet parsed_dirichlet parsed_dirichlet'
-       bc_variables = 'u u u u'
-
-       # Same function for every boundary since it's the exact solution
-       bc_values = '${TestExactSolution/value}
-                    ${TestExactSolution/value}
-                    ${TestExactSolution/value}
-                    ${TestExactSolution/value}'
-
       ic_ids = '0'
       ic_types = 'parsed'
       ic_variables = 'u'
       ic_values = '${TestExactSolution/value}'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:1:2:3'
+   bc_id_name_map = 'WholeBoundary'
+
+   [./WholeBoundary]
+      [./GenericVariable:ConvectionDiffusion]
+         type = 'parsed_dirichlet'
+         u = '${TestExactSolution/value}'
 []
 
 [Variables]
@@ -77,8 +77,8 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'convection_diffusion_unsteady_2d'
-   output_format = 'xdr'
-   timesteps_per_vis = '50'
+   output_format = 'ExodusII xdr'
+   #timesteps_per_vis = '50'
 []
 
 [screen-options]

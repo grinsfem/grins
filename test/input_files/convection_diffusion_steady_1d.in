@@ -16,10 +16,6 @@
 
        material = 'TestMaterial'
        velocity_field = '1.0'
-       bc_ids = '0 1'
-       bc_types = 'constant_dirichlet constant_dirichlet'
-       bc_variables = 'u u'
-       bc_values = '0.0 0.0'
 
    [../ParsedSourceTerm]
       [./Variables]
@@ -36,6 +32,15 @@
       names = 'u'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:1'
+   bc_id_name_map = 'EndPoints'
+   [./EndPoints]
+      [./GenericVariable:ConvectionDiffusion]
+         type = 'parsed_dirichlet'
+         u = '0.0'
 []
 
 # Mesh related options

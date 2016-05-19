@@ -9,28 +9,39 @@
       value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization'
+   enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesAdjointStabilization'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
 
-# Boundary ids:
-# 1 - Inlet
-# 2 - no slip walls
-# 3 - outlet
+      pin_pressure = 'false'
+[]
 
-bc_ids = '1 1 2'
-bc_types = 'parsed_dirichlet parsed_dirichlet no_slip'
-bc_variables = 'u v na'
-bc_values = '40*y*(1-y) 0.0 na'
+[BoundaryConditions]
+   bc_ids = '1 2 3'
+   bc_id_name_map = 'Inlet Walls Outlet'
 
-pin_pressure = 'false'
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '40*y*(1-y)'
+      [../]
+   [../]
 
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]
