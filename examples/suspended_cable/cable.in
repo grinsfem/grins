@@ -12,36 +12,34 @@
            E = '1.0e6'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticCable
-                   ElasticCableConstantGravity'
+   enabled_physics = 'ElasticCable
+                      ElasticCableConstantGravity'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticCable]
+   [./ElasticCable]
 
-material = 'Cable'
+      material = 'Cable'
+      output_vars = 'stress strain force'
 
-# Boundary ids:
-# j = left -> 0
-# j = right-> 1
-bc_ids = '0 1 1'
-bc_types = 'pinned roller_x constant_traction'
+   [../ElasticCableConstantGravity]
 
-traction_1 = '5.7735 0.0 0.0'
+      gravity ='0 0 -32.2'
+[]
 
-#ic_ids = '1'
-#ic_types = 'parsed'
-#ic_variables = 'w'
-#ic_values = '-1*sin(pi*x)'
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'LeftWall RightWall'
 
-output_vars = 'stress strain force'
-
-[../ElasticCableConstantGravity]
-
-gravity ='0 0 -32.2'
-
+   [./LeftWall]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+   [./RightWall]
+      [./Displacement]
+         type = 'roller_x constant_traction'
+         traction = '5.7735 0.0 0.0'
 []
 
 [Variables]
@@ -51,7 +49,6 @@ gravity ='0 0 -32.2'
       order = 'FIRST'
 []
 
-# Mesh related options
 [Mesh]
    [./Generation]
       dimension = '1'
@@ -70,6 +67,7 @@ verify_analytic_jacobians = '0.0'
 initial_linear_tolerance = '1.0e-10'
 
 use_numerical_jacobians_only = 'false'
+[]
 
 # Visualization options
 [vis-options]
@@ -80,6 +78,7 @@ vis_output_file_prefix = 'cable'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]

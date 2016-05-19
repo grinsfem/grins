@@ -13,24 +13,31 @@
           nu = '0.45'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticCable'
+   enabled_physics = 'ElasticCable'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticCable]
+   [./ElasticCable]
 
-material = 'Cable'
+      material = 'Cable'
+[]
 
-# Boundary ids:
-# j = left -> 0
-# j = right-> 1
-bc_ids = '0 1'
-bc_types = 'pinned constant_displacement'
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'Left Right'
 
-displacement_1 = '0.1 0.0 0.0'
+   [./Left]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
 
+   [./Right]
+      [./Displacement]
+         type = 'constant_displacement'
+         u = '0.1'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -40,19 +47,6 @@ displacement_1 = '0.1 0.0 0.0'
       order = 'FIRST'
 []
 
-[SolverOptions]
-
-solver_type = 'displacement_continuation'
-
-[./DisplacementContinuation]
-
-boundary = '1'
-final_displacement = '8.0'
-n_increments = '50'
-
-[]
-
-# Mesh related options
 [Mesh]
    [./Generation]
       dimension = '1'

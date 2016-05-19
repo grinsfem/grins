@@ -100,14 +100,10 @@ EXTRA_DIST += $(convectioncell_DATA)
 # Rayleigh-Taylor Example
 #=======================================================================
 rayleighdir = $(prefix)/examples/rayleigh_taylor
-rayleigh_PROGRAMS = rayleigh
 rayleigh_DATA = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.in
 rayleigh_SCRIPTS = $(top_builddir)/examples/rayleigh_taylor/run.sh
 
 EXTRA_DIST += $(rayleigh_DATA)
-
-rayleigh_SOURCES = rayleigh_taylor/rayleigh.C
-rayleigh_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
 # Coupled Stokes-Navier-Stokes Example

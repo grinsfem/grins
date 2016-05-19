@@ -8,49 +8,52 @@
          value = '1.846e-1'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes AveragedTurbine'
+   enabled_physics = 'IncompressibleNavierStokes AveragedTurbine'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'Fluid'
+      material = 'Fluid'
 
-# Boundary ids:
-# imin,imax = 4, 2
-# jmin,jmax = 1, 3
-# kmin,kmax = 0, 5
- bc_ids = '0 4 3 2 5 1'
- bc_types = 'no_slip no_slip no_slip no_slip no_slip no_slip'
+      pin_pressure = 'true'
+      pin_location = '-0.5 -0.5 0.0'
+      pin_value = '0.0'
 
-pin_pressure = 'true'
-pin_location = '-0.5 -0.5 0.0'
-pin_value = '0.0'
+   [../AveragedTurbine]
 
-[../AveragedTurbine]
+      moment_of_inertia = 1000
 
-moment_of_inertia = 1000
+      ic_ids = 0
+      ic_variables = fan_speed
+      ic_types = constant
+      ic_values = 1
 
-ic_ids = 0
-ic_variables = fan_speed
-ic_types = constant
-ic_values = 1
+      torque = '0'
 
-torque = '0'
+      base_velocity = '{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*-sin(theta))}{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*cos(theta))}{0}'
 
-base_velocity = '{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*-sin(theta))}{r:=sqrt(x^2+y^2); theta := atan2(y,x); (r<.3)*(z>.4)*(z<.6)*(r*cos(theta))}{0}'
+      local_vertical = '{0}{0}{1}'
 
-local_vertical = '{0}{0}{1}'
-
-lift = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,theta*9,sin(2*theta))'
-drag = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,0.005+theta*theta*81/25,1-0.8*cos(2*theta))'
-chord_length = '.2*sqrt(2)'
-area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
-angle_of_attack = '{pi/4}'
-
+      lift = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,theta*9,sin(2*theta))'
+      drag = 'theta:=((t+pi/2)%pi)-pi/2; if(abs(theta)<pi/24,0.005+theta*theta*81/25,1-0.8*cos(2*theta))'
+      chord_length = '.2*sqrt(2)'
+      area_swept = '{r:=sqrt(x^2+y^2); 2*pi*r*(.6-.4)/4}' # 4 blade fan
+      angle_of_attack = '{pi/4}'
 []
+
+[BoundaryConditions]
+
+   bc_id_name_map = 'Walls'
+   bc_ids = '0:1:2:3:4:5'
+
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+[]
+
 
 [Variables]
    [./Velocity]

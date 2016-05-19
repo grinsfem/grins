@@ -35,6 +35,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/const_function.h"
+#include "libmesh/composite_function.h"
 
 namespace GRINS
 {
@@ -151,9 +152,15 @@ namespace GRINS
     // Get the DirichletBoundary we want
     libMesh::DirichletBoundary* dirichlet = (*d_vector)[_bc_index];
 
-    std::cout << "displacement = " << displacement << std::endl;
     // Kill the old FunctionBase object and put in our new one.
-    dirichlet->f.reset( new libMesh::ConstFunction<libMesh::Real>( displacement ) );
+    libMesh::FunctionBase<libMesh::Real>* composite_func_ptr = new libMesh::CompositeFunction<libMesh::Real>;
+    libMesh::CompositeFunction<libMesh::Real>& composite_func = libMesh::cast_ref<libMesh::CompositeFunction<libMesh::Real>&>( *composite_func_ptr );
+
+    std::vector<VariableIndex> var_idx(1,0); // Hardcoding to Ux displacement component
+    composite_func.attach_subfunction( libMesh::ConstFunction<libMesh::Real>(displacement), var_idx );
+
+    // DirichletBoundary now takes ownership of the pointer
+    dirichlet->f.reset(composite_func_ptr);
 
     // Need to reinit system
     equation_system.reinit();
