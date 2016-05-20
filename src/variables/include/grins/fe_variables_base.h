@@ -67,6 +67,14 @@ namespace GRINS
         they subclass this and VariablesBase. */
     virtual void init( libMesh::FEMSystem* system ) =0;
 
+    //! Set whether or not this is a "constraint" variable
+    /*! Constraint variables are things like Lagrange multipliers.
+        The primary implication is that if the Variable is a constraint
+        variable, then no boundary conditions are required/used for
+        that variable. */
+    void set_is_constraint_var( bool is_constraint_var )
+    { _is_constraint_var = is_constraint_var; }
+
     bool is_constraint_var() const
     { return _is_constraint_var; }
 
