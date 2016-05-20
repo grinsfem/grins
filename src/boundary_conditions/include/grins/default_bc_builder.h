@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/bc_builder.h"
+#include "grins/builder_helper.h"
 
 // libMesh foward declarations
 namespace libMesh
@@ -43,12 +44,14 @@ namespace GRINS
       classes. This builder classes merely manages tasks around the
       factories as needed.  To add new Dirichlet boundary conditions,
       the user should instantiate an appropriate factory sub class. */
-  class DefaultBCBuilder : public BCBuilder
+  class DefaultBCBuilder : public BCBuilder,
+                           public BuilderHelper
   {
   public:
 
     DefaultBCBuilder()
-      : BCBuilder()
+      : BCBuilder(),
+        BuilderHelper()
     {};
 
     ~DefaultBCBuilder(){};
@@ -93,8 +96,6 @@ namespace GRINS
 
     void verify_bc_ids_with_mesh( const MultiphysicsSystem& system,
                                   const std::map<std::string,std::set<BoundaryID> >& bc_id_map ) const;
-
-    void parse_var_sections( const GetPot& input, std::set<std::string>& sections );
 
     void build_periodic_bc( const GetPot& input,
                             libMesh::System& system,

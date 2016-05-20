@@ -64,6 +64,9 @@ libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_old_sty
 libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_old_style_factories.C
 
+# src/common
+libgrins_la_SOURCES += common/src/builder_helper.C
+
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
 libgrins_la_SOURCES += ic_handling/src/generic_ic_handler.C
@@ -320,6 +323,7 @@ include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
+include_HEADERS += common/include/grins/builder_helper.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
 include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
 

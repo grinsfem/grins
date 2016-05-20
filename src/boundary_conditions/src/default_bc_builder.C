@@ -336,43 +336,6 @@ namespace GRINS
       }
   }
 
-  void DefaultBCBuilder::parse_var_sections( const GetPot& input,
-                                             std::set<std::string>& sections )
-  {
-    if( !input.have_section(VariablesParsing::variables_section()) )
-       libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
-
-    // We need to extract all the Variable sections from the input file
-    // We'll populate the relevant sections in var_sections
-    /*! \todo This would probably be a good function to add to libMesh::GetPot */
-    std::vector<std::string> all_sections = input.get_section_names();
-    for( std::vector<std::string>::const_iterator s = all_sections.begin();
-         s < all_sections.end(); ++s )
-      {
-        // First check that it contains "Variable" as the first slot
-        if( s->find(VariablesParsing::variables_section()) == 0 )
-          {
-            // Now check it only has 2 elements when we split on "/"
-            std::vector<std::string> split_str;
-            StringUtilities::split_string(*s, "/", split_str );
-
-            // Our Variable should be the second part of the split
-            if( split_str.size() == 2 )
-              {
-                // Make sure we don't already have that section
-                if( sections.find(split_str[1]) != sections.end() )
-                  libmesh_error_msg("ERROR: Found duplicate Variable section "+split_str[1]+"!");
-
-                sections.insert( split_str[1] );
-              }
-          }
-      }
-
-    // Make sure we found some variable subsections
-    if( sections.empty() )
-       libmesh_error_msg("ERROR: Did not find any Variable subsections!");
-  }
-
   void DefaultBCBuilder::build_periodic_bc( const GetPot& input,
                                             libMesh::System& system,
                                             const std::set<BoundaryID>& bc_ids,
