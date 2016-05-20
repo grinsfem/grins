@@ -49,7 +49,6 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_parse_and_build_bc_id_map );
     CPPUNIT_TEST( test_verify_bc_ids_with_mesh );
-    CPPUNIT_TEST( test_parse_var_sections );
     CPPUNIT_TEST( test_parse_periodic_master_slave_ids );
     CPPUNIT_TEST( test_parse_periodic_offset );
 
@@ -111,22 +110,7 @@ namespace GRINSTesting
       this->verify_bc_ids_with_mesh( *_system, bc_id_map );
     }
 
-    void test_parse_var_sections()
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/default_bc_builder.in";
-      this->setup_multiphysics_system(filename);
 
-      // Now we can parse the variable sections and names
-      std::set<std::string> sections;
-      this->parse_var_sections(*_input,sections);
-
-      // Make sure we have the right sections
-      CPPUNIT_ASSERT_EQUAL(4,(int)sections.size());
-      CPPUNIT_ASSERT( sections.find("Velocity") != sections.end() );
-      CPPUNIT_ASSERT( sections.find("Pressure") != sections.end() );
-      CPPUNIT_ASSERT( sections.find("Temperature") != sections.end() );
-      CPPUNIT_ASSERT( sections.find("SpeciesMassFractions") != sections.end() );
-    }
 
     void test_parse_periodic_master_slave_ids()
     {

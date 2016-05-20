@@ -109,7 +109,9 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/string_utils.C \
                       unit/mesh_builder.C \
                       unit/variables.C \
+                      unit/builder_helper.C \
                       unit/default_bc_builder.C
+
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
