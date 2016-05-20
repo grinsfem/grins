@@ -62,7 +62,7 @@
       #    dimension = 1: n_elems_x
       #    dimension = 2: n_elems_x, n_elems_y
       #    dimension = 3: n_elems_x, n_elems_y, n_elems_z
-      # Acceptable values: postive integer
+      # Acceptable values: positive integer
       n_elems_x = '10'
       n_elems_y = '10'
       n_elems_z = '10'
@@ -140,9 +140,9 @@
 
        # Specify a function of (x,y,z) suitable for libMesh::ParsedFunction.
        # Nodal (x,y,z) locations will be mapped according to the function given.
-       # See libMesh::MeshTools::Modification::redistribute. Note each mapping componenet
+       # See libMesh::MeshTools::Modification::redistribute. Note each mapping component
        # is in separated by {}. In the example given, the x-components of the node will be
-       # mapped by x+x*(x-30)/30, the y-compoenents of the nodes will by scaled by a factor of 2,
+       # mapped by x+x*(x-30)/30, the y-components of the nodes will by scaled by a factor of 2,
        # and z-components remain unchanged.
        function = '{x+x*(x-30)/30}{y*2}{z}'
 
@@ -410,7 +410,7 @@
       target_tolerance = '0.0'
 
    # These options relate to performing mesh adaptivity during the
-   # solution process. See tje MeshAdaptivityOptions object for the
+   # solution process. See the MeshAdaptivityOptions object for the
    # full list of options.
    [../MeshAdaptivity]
 
@@ -452,7 +452,7 @@
 # for every boundary id and for every non-constraint Variable. There are two
 # exceptions for specifying for every variable: axisymmetric and
 # periodic. In either of those two cases, that boundary condition will
-# apply to all variables and the approriate boundary condition will be
+# apply to all variables and the appropriate boundary condition will be
 # used for each variable automatically for non-GenericVariables.
 [BoundaryConditions]
 
@@ -465,14 +465,14 @@
    bc_ids = '0 1 2:3 4:5:6 7'
 
    # This associates a name to each set of the boundary ids given in
-   # bc_ids variable. These are arbitrary with the only requirement,
-   # beyond no white space in the name, is that they match with the
-   # section names below. GRINS only parses these and makes no
-   # behavior determination other than searching for sections below.
-   # For example, naming the boundary "Periodic" does not imply that
-   # that periodic boundary conditions will be used (that is
-   # controlled by the "type" variable below). Because there were
-   # 5 sets of bc_ids, there must be 5 boundary names in bc_id_name_map.
+   # bc_ids variable. These are arbitrary with the only requirement
+   # that they match with the section names below. GRINS only parses
+   # these and makes no behavior determination other than searching
+   # for sections below.  For example, naming the boundary "Periodic"
+   # does not imply that periodic boundary conditions will be
+   # used (that is controlled by the "type" variable below). Because
+   # there were 5 sets of bc_ids, there must be 5 boundary names in
+   # bc_id_name_map.
    bc_id_name_map = 'MyBoundary Hot Periodic Cold Axisymmetric'
 
    # For each of the boundary names in bc_id_name_map, there must be a
@@ -507,14 +507,7 @@
       #
       #  parsed_fem_dirichlet - Dirichlet boundary condition specified
       #                         by a parsed expression that can be
-      #                         function of solution variables. Note
-      #                         that, currently, we do not
-      #                         automatically differentiate the
-      #                         expression, nor are there input
-      #                         variables for the derivatives,
-      #                         so this option will require the use of
-      #                         'use_numerical_jacobians only = true
-      #                         in the solver options section.
+      #                         function of solution variables.
       #
       #  homogeneous_dirichlet - Zero-valued Dirichlet boundary conditions
       #
@@ -524,7 +517,13 @@
       #
       #  parsed_fem_neumann - Analogous to parsed_fem_dirichlet except this
       #                       will specify Neumann boundary conditions
-      #                       for the variable.
+      #                       for the variable.  Note that, currently,
+      #                       we do not automatically differentiate
+      #                       the expression, nor are there input
+      #                       variables for the derivatives, so this
+      #                       option will require the use of
+      #                       'use_numerical_jacobians only = true in
+      #                       the solver options section.
       #
       #  homogeneous_neumann - "Do nothing" natural boundary conditions.
       #
@@ -577,8 +576,8 @@
          u = '1.0'
       [../]
       [./Temperature]
-         # Temperature variables additonally admit 'type = isothermal', which is
-         # functionally idential to constant_dirichlet. Additonally, one
+         # Temperature variables additionally admit 'type = isothermal', which is
+         # functionally identical to constant_dirichlet. Additionally, one
          # can set type = 'adiabatic', which is functionally identical
          # to homogeneous_neumann.
          type = 'isothermal'
@@ -586,9 +585,9 @@
       [../]
       [./Displacement]
          # Displacement variables additionally admit 'type = pinned',
-         # which is functionally idential to
+         # which is functionally identical to
          # homogeneous_dirichlet. Furthermore, additional Neumann types
-         # for Diplacement variables include parsed_traction,
+         # for Displacement variables include parsed_traction,
          # parsed_fem_traction, and constant_traction; these are
          # functionally identical to parsed_neumann, parsed_fem_neumann,
          # and parsed_neumann, respectively.
@@ -598,9 +597,9 @@
       [./SpeciesMassFractions]
          # SpeciesMassFractions are somewhat special since the
          # variables are tied to species name. The names of each
-         # variable corresond to <prefix>_<species name>, where prefix
+         # variable correspond to <prefix>_<species name>, where prefix
          # is the prefix given in the [Variables/SpeciesMassFractions]
-         # section and the species name corresponds to the names fo
+         # section and the species name corresponds to the names of
          # the species in the species list.
          #
          # SpeciesMassFractions additionally admit 'type =
@@ -659,10 +658,10 @@
          # Gas-solid catalytic walls correspond to the special
          # case of gaseous species reacting with a solid species
          # to form a product. Again, it is assumed the gaseous species
-         # and the product are not part of other surface chemistry reactions.with no other surface
-         # reactions involving those species. For example,
-         # N+C(s)->CN. We're assuming that N and C form CN so N and C
-         # should not be involved in other surface reacctions.
+         # and the product are not part of other surface chemistry
+         # reactions. For example, take  N+C(s)->CN. We're assuming
+         # that N and C form CN so N and C
+         # should not be involved in other surface reactions.
          # The reaction is specified as catalytic_reaction =
          # 'N+C(s)->CN' The (s) should immediately follow the solid
          # species name; if there is no (s), an error will be thrown.
@@ -706,7 +705,7 @@
    # Note the corresponding bc_id set can have *only* two boundary ids
    # in it. If there are multiple sets of periodic boundaries, they
    # need to each be contained in there own bc_id set/boundary name.
-   # Furthermore, there are 3 additonal variables that must be
+   # Furthermore, there are 3 additional variables that must be
    # specified in this section. The first 2 are the master and slave
    # ids. These must match the two boundary ids in the bc_id set for
    # this boundary. Which is master and slave depends on the
