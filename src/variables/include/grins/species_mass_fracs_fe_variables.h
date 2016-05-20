@@ -40,6 +40,15 @@ namespace GRINS
     SpeciesMassFractionsFEVariables( const GetPot& input, const std::string& physics_name,
                                      bool _is_constraint_var = false);
 
+    SpeciesMassFractionsFEVariables( const std::vector<std::string>& var_names,
+                                     const std::vector<VariableIndex>& var_indices,
+                                     const std::string& prefix,
+                                     const std::string& material )
+      : SingleFETypeVariable(var_names,var_indices),
+        _prefix(prefix),
+        _material(material)
+    {}
+
     ~SpeciesMassFractionsFEVariables(){};
 
     unsigned int n_species() const;

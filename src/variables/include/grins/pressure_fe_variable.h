@@ -48,6 +48,11 @@ namespace GRINS
                                        this->subsection(),"LAGRANGE","FIRST",_is_constraint_var)
     {}
 
+    PressureFEVariable( const std::vector<std::string>& var_names,
+                        const std::vector<VariableIndex>& var_indices )
+      : SingleVarSingleFETypeVariable(var_names,var_indices)
+    {}
+
     ~PressureFEVariable(){};
 
     VariableIndex p() const;

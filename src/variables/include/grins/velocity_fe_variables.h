@@ -39,6 +39,15 @@ namespace GRINS
 
     VelocityFEVariables( const GetPot& input, const std::string& physics_name,
                          bool is_constraint_var = false );
+
+    VelocityFEVariables( const std::vector<std::string>& var_names,
+                         const std::vector<VariableIndex>& var_indices )
+      : MultiVarSingleFETypeVariable(var_names,var_indices),
+        _u_idx(0),
+        _v_idx(1),
+        _w_idx(2)
+    {}
+
     ~VelocityFEVariables(){};
 
     virtual void init( libMesh::FEMSystem* system );

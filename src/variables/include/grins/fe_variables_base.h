@@ -59,6 +59,16 @@ namespace GRINS
         _neumann_bc_sign(1.0)
     {}
 
+    FEVariablesBase( const std::vector<std::string>& var_names,
+                     const std::vector<VariableIndex>& var_indices )
+      : _vars(var_indices),
+        _var_names(var_names),
+        _is_constraint_var(false),
+        _neumann_bc_sign(1.0)
+    {
+      libmesh_assert_equal_to(var_names.size(), var_indices.size());
+    }
+
     ~FEVariablesBase(){};
 
     //! Add variables to the system

@@ -98,6 +98,63 @@ namespace GRINS
 
   };
 
+
+  //! Factory to build "standard" FEVariablesBase classes
+  template<typename VariableType>
+  class VariableFactoryBasic : public VariableFactoryAbstract
+  {
+  public:
+
+    VariableFactoryBasic( const std::string& name )
+      : VariableFactoryAbstract(name)
+    {}
+
+    ~VariableFactoryBasic(){}
+
+  protected:
+
+    virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
+                                                              const std::vector<VariableIndex>& var_indices )
+    { return libMesh::UniquePtr<FEVariablesBase>( new VariableType(var_names,var_indices) ); }
+
+    //! The basic factory implementation looks in [Variables/<VariableName>/names].
+    virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
+
+  };
+
+
+  //! Factory to build FEVariablesBase classes that use species names as variables
+  /*! Thus, we need a special way to parse the input to figure out what all
+      the species names are. */
+  template<typename VariableType>
+  class SpeciesVariableFactory : public VariableFactoryAbstract
+  {
+  public:
+
+    SpeciesVariableFactory( const std::string& name )
+      : VariableFactoryAbstract(name)
+    {}
+
+    ~SpeciesVariableFactory(){}
+
+  protected:
+
+    //! Implementation species variable name parsing
+    /*! First, we look for the [Variables/<VariableType>/prefix], which is the prefix for all
+        the species variable component names. The, we need to look up the material to figure out
+        where to grab the species from. With the material name, then we look up the species names
+        and accordingly build up the variable names. */
+    virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
+
+    virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
+                                                              const std::vector<VariableIndex>& var_indices )
+    { return libMesh::UniquePtr<FEVariablesBase>( new VariableType(var_names,var_indices,_prefix,_material) ); }
+
+    std::string _prefix;
+
+    std::string _material;
+  };
+
 } // end namespace GRINS
 
 #endif // GRINS_VARIABLE_FACTORY_H

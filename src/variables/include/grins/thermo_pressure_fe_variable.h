@@ -46,6 +46,11 @@ namespace GRINS
       libmesh_assert_equal_to( _order[0], libMesh::FIRST );
     }
 
+    ThermoPressureFEVariable( const std::vector<std::string>& var_names,
+                              const std::vector<VariableIndex>& var_indices )
+      : SingleVarSingleFETypeVariable(var_names,var_indices)
+    {}
+
     virtual ~ThermoPressureFEVariable(){};
 
     VariableIndex p0() const;

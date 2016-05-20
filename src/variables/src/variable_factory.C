@@ -25,6 +25,17 @@
 // This class
 #include "grins/variable_factory.h"
 
+// GRINS
+#include "grins/materials_parsing.h"
+#include "grins/displacement_fe_variables.h"
+#include "grins/generic_fe_type_variable.h"
+#include "grins/pressure_fe_variable.h"
+#include "grins/primitive_temp_fe_variables.h"
+#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/thermo_pressure_fe_variable.h"
+#include "grins/turbulence_fe_variables.h"
+#include "grins/velocity_fe_variables.h"
+
 namespace GRINS
 {
   libMesh::UniquePtr<FEVariablesBase> VariableFactoryAbstract::create()
@@ -76,6 +87,49 @@ namespace GRINS
     _var_indices = NULL;
   }
 
+  template<typename VariableType>
+  std::vector<std::string> VariableFactoryBasic<VariableType>::parse_var_names( const GetPot& input,
+                                                                                const std::string& var_section )
+  {
+    std::vector<std::string> var_names;
+
+    std::string input_sec = var_section+"/names";
+
+    // Make sure the names are present
+    if( !input.have_variable(input_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+input_sec);
+
+    unsigned int n_names = input.vector_variable_size(input_sec);
+
+    var_names.resize(n_names);
+    for( unsigned int i = 0; i < n_names; i++ )
+      var_names[i] = input(input_sec,std::string("DIE!"),i);
+
+    return var_names;
+  }
+
+  template<typename VariableType>
+  std::vector<std::string> SpeciesVariableFactory<VariableType>::parse_var_names( const GetPot& input,
+                                                                                  const std::string& var_section )
+  {
+    // Make sure the prefix is present
+    std::string prefix_sec = var_section+"/names";
+    if( !input.have_variable(prefix_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+prefix_sec+" for species prefix!");
+
+    // Make sure the material is present
+    std::string material_sec = var_section+"/material";
+    if( !input.have_variable(material_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+material_sec+" for species material!");
+
+    this->_prefix = input(prefix_sec,std::string("DIE!"));
+    this->_material = input(material_sec,std::string("DIE!"));
+
+    std::vector<std::string> var_names;
+    MaterialsParsing::parse_species_varnames(input,this->_material,this->_prefix,var_names);
+
+    return var_names;
+  }
 
   // Full specialization for the Factory<FEVariablesBase>
   template<>
@@ -92,5 +146,29 @@ namespace GRINS
   const std::vector<std::string>* VariableFactoryAbstract::_var_names = NULL;
   const std::vector<VariableIndex>* VariableFactoryAbstract::_var_indices = NULL;
   std::string VariableFactoryAbstract::_var_section = std::string("DIE!");
+
+  VariableFactoryBasic<DisplacementFEVariables>
+  grins_factory_disp_fe_var(VariablesParsing::displacement_section());
+
+  VariableFactoryBasic<GenericFETypeVariable>
+  grins_factory_generic_fe_var(VariablesParsing::generic_section());
+
+  VariableFactoryBasic<PressureFEVariable>
+  grins_factory_press_fe_var(VariablesParsing::pressure_section());
+
+  VariableFactoryBasic<PrimitiveTempFEVariables>
+  grins_factory_temp_fe_var(VariablesParsing::temperature_section());
+
+  SpeciesVariableFactory<SpeciesMassFractionsFEVariables>
+  grins_factory_species_mass_frac_fe_var(VariablesParsing::species_mass_fractions_section());
+
+  VariableFactoryBasic<ThermoPressureFEVariable>
+  grins_factory_thermo_press_fe_var(VariablesParsing::thermo_pressure_section());
+
+  VariableFactoryBasic<TurbulenceFEVariables>
+  grins_factory_turb_fe_var(VariablesParsing::turbulence_section());
+
+  VariableFactoryBasic<VelocityFEVariables>
+  grins_factory_velocity_fe_var(VariablesParsing::velocity_section());
 
 } // end namespace GRINS
