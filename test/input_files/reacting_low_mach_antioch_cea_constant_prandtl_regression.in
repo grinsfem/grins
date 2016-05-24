@@ -92,26 +92,26 @@
 []
 
 [Variables]
+   [./SpeciesMassFractions]
+      names = 'w_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
    [./Temperature]
       names = 'T'
       fe_family = 'LAGRANGE'
       order = 'SECOND'
-
-   [../Velocity]
-      names = 'u v w'
-      fe_family = 'LAGRANGE'
-      order = 'SECOND'
-
-   [../Pressure]
-      names = 'p'
-      fe_family = 'LAGRANGE'
-      order = 'FIRST'
-
-   [../SpeciesMassFractions]
-      names = 'w_'
-      fe_family = 'LAGRANGE'
-      order = 'SECOND'
-
+   [../]
 []
 
 # Mesh related options
