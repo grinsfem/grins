@@ -32,10 +32,25 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+// C++
+#include <algorithm>
+
 namespace GRINS
 {
   void BuilderHelper::parse_var_sections( const GetPot& input,
                                           std::set<std::string>& sections ) const
+  {
+    std::vector<std::string> sec_vec;
+    this->parse_var_sections_vector(input,sec_vec);
+
+    // Now convert populated vector to a set
+    for(std::vector<std::string>::const_iterator it = sec_vec.begin();
+        it != sec_vec.end(); ++it )
+      sections.insert(*it);
+  }
+
+  void BuilderHelper::parse_var_sections_vector( const GetPot& input,
+                                                 std::vector<std::string>& sections ) const
   {
     if( !input.have_section(VariablesParsing::variables_section()) )
        libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
@@ -58,10 +73,13 @@ namespace GRINS
             if( split_str.size() == 2 )
               {
                 // Make sure we don't already have that section
-                if( sections.find(split_str[1]) != sections.end() )
+                // We don't want to sort the vector since this function is supposed to maintain
+                // the ordering, so we just do the stupid thing for the search. Nevertheless,
+                // the list of variable subsections should never be very large.
+                if( std::find(sections.begin(), sections.end(), split_str[1]) != sections.end() )
                   libmesh_error_msg("ERROR: Found duplicate Variable section "+split_str[1]+"!");
 
-                sections.insert( split_str[1] );
+                sections.push_back( split_str[1] );
               }
           }
       }
