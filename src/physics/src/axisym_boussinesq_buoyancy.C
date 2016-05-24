@@ -67,8 +67,6 @@ namespace GRINS
 
     _g(0) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 1 );
-
-    return;
   }
 
   void AxisymmetricBoussinesqBuoyancy::register_variables()
@@ -83,8 +81,6 @@ namespace GRINS
 
   void AxisymmetricBoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
   {
-    this->_dim = system->get_mesh().mesh_dimension();
-
     this->_temp_vars.init(system);
     this->_flow_vars.init(system);
     this->_press_var.init(system);

@@ -135,10 +135,6 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
-
     libMesh::Real _C, _tau_factor;
 
     const VelocityFEVariables& _flow_vars;

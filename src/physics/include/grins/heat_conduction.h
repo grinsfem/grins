@@ -70,8 +70,6 @@ namespace GRINS
 
   protected:
 
-    unsigned int _dim;
-
     PrimitiveTempFEVariables _temp_vars;
 
     libMesh::Number _rho, _Cp;

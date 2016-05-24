@@ -51,7 +51,6 @@ namespace GRINS
 
   void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
   {
-    this->_dim = system->get_mesh().mesh_dimension();
   }
 
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const
@@ -63,7 +62,7 @@ namespace GRINS
     libMesh::Real vorticity_value;
     vorticity_value = fabs(grad_v(0) - grad_u(1));
 
-    if(this->_dim == 3)
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
       {
         libMesh::Gradient grad_w;
         grad_w = context.interior_gradient(this->_flow_vars.w(), qp);

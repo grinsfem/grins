@@ -94,14 +94,9 @@ namespace GRINS
 
   void BoussinesqBuoyancyBase::init_variables( libMesh::FEMSystem* system )
   {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
     _temp_vars.init(system);
     _flow_vars.init(system);
     this->_press_var.init(system);
-
-    return;
   }
 
   void BoussinesqBuoyancyBase::read_property( const GetPot& input,

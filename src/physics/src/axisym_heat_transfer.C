@@ -83,9 +83,6 @@ namespace GRINS
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::init_variables( libMesh::FEMSystem* system )
   {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
     this->_temp_vars.init(system);
     this->_flow_vars.init(system);
     this->_press_var.init(system);
@@ -96,7 +93,6 @@ namespace GRINS
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(this->_temp_vars.T());
-    return;
   }
 
   template< class Conductivity>
@@ -114,11 +110,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    // _u_var is registered so can we assume things related to _u_var
-    // are available in FEMContext
-
-    return;
   }
 
   template< class Conductivity>

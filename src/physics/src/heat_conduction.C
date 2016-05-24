@@ -77,12 +77,7 @@ namespace GRINS
   template<class K>
   void HeatConduction<K>::init_variables( libMesh::FEMSystem* system )
   {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
     _temp_vars.init(system);
-    
-    return;
   }
 
   template<class K>
@@ -90,8 +85,6 @@ namespace GRINS
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T());
-
-    return;
   }
 
   template<class K>
@@ -109,8 +102,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    return;
   }
 
   template<class K>

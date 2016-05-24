@@ -69,14 +69,10 @@ namespace GRINS
   template<class Mu>
   void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
   {
-    this->_dim = system->get_mesh().mesh_dimension();
-
     this->_flow_vars.init(system);
     this->_press_var.init(system);
 
     this->_mu.init(system);
-
-    return;
   }
 
   template<class Mu>
@@ -97,8 +93,6 @@ namespace GRINS
 
     if (dim == 3)
       system->time_evolving(_flow_vars.w());
-
-    return;
   }
 
   template<class Mu>
@@ -119,8 +113,6 @@ namespace GRINS
     context.get_side_fe(_flow_vars.u())->get_phi();
     context.get_side_fe(_flow_vars.u())->get_dphi();
     context.get_side_fe(_flow_vars.u())->get_xyz();
-
-    return;
   }
 
   template<class Mu>

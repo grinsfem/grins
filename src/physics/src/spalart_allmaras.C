@@ -104,7 +104,7 @@ namespace GRINS
     _spalart_allmaras_helper.init_variables(system);
 
     // Initialize Boundary Mesh
-    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , this->_dim));
+    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , system->get_mesh().mesh_dimension()) );
 
     // Use the _wall_ids set to build the boundary mesh object
     (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);
@@ -116,8 +116,6 @@ namespace GRINS
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-
-    return;
   }
 
   template<class Mu>
@@ -148,8 +146,6 @@ namespace GRINS
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
     system->time_evolving(this->_turbulence_vars.nu());
-
-    return;
   }
 
   template<class Mu>
@@ -231,7 +227,7 @@ namespace GRINS
         v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (this->_dim == 3)
+        if (this->mesh_dim(context) == 3)
           U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         //The source term

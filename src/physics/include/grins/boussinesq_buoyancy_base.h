@@ -78,9 +78,6 @@ namespace GRINS
     //! Gravitational vector
     libMesh::Point _g;
 
-     //! Physical dimension of problem
-    unsigned int _dim;
-
   private:
 
     BoussinesqBuoyancyBase();

@@ -118,9 +118,6 @@ namespace GRINS
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBase<Mu,SH,TC>::init_variables( libMesh::FEMSystem* system )
   {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
     this->_flow_vars.init(system);
     this->_press_var.init(system);
     this->_temp_vars.init(system);
@@ -129,8 +126,6 @@ namespace GRINS
        order scalar variable. */
     if( _enable_thermo_press_calc )
       _p0_var->init(system);
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -149,8 +144,6 @@ namespace GRINS
 
     if( _enable_thermo_press_calc )
       system->time_evolving(_p0_var->p0());
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -171,8 +164,6 @@ namespace GRINS
 
     context.get_element_fe(_press_var.p())->get_phi();
     context.get_element_fe(_press_var.p())->get_xyz();
-
-    return;
   }
 
   template<class Mu, class SH, class TC>

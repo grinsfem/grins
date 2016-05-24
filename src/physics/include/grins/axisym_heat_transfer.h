@@ -88,10 +88,6 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Make this static member of base class? */
-    unsigned int _dim;
-
     VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;

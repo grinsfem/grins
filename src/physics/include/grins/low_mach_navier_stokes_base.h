@@ -92,9 +92,6 @@ namespace GRINS
 
     libMesh::Number _p0, _R, _T0;
 
-    //! Physical dimension of problem
-    unsigned int _dim;
-
     VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;
     PrimitiveTempFEVariables _temp_vars;

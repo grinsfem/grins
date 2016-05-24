@@ -76,9 +76,6 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
 
     VelocityFEVariables _flow_vars;
     PressureFEVariable _press_var;

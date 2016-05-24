@@ -27,18 +27,17 @@
 
 // GRINS
 #include "grins/parameter_user.h"
+#include "grins/assembly_context.h"
 
 // libMesh
 #include "libmesh/vector_value.h"
 #include "libmesh/tensor_value.h"
 #include "libmesh/fe_base.h"
-
+#include "libmesh/system.h"
+#include "libmesh/mesh_base.h"
 
 namespace GRINS
 {
-  // GRINS forward declarations
-  class AssemblyContext;
-
   class StabilizationHelper : public ParameterUser
   {
   public:
@@ -55,6 +54,8 @@ namespace GRINS
 				   AssemblyContext& c,
 				   unsigned int qp ) const;
 
+   unsigned int mesh_dim( const AssemblyContext& context ) const                                                                                                                                                                          
+    { return context.get_system().get_mesh().mesh_dimension(); }
   };
 
 } // namespace GRINS
