@@ -115,7 +115,7 @@ namespace GRINS
     virtual ~Physics();
 
     //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system ) = 0;
+    virtual void init_variables( libMesh::FEMSystem* /*system*/ ){};
 
     //! Find if current physics is active on supplied element
     virtual bool enabled_on_elem( const libMesh::Elem* elem );
