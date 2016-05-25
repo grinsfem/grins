@@ -134,7 +134,7 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
     const TurbulenceFEVariables& _turbulence_vars;

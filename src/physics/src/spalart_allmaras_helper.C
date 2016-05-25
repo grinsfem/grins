@@ -32,7 +32,7 @@
 #include "grins/turbulence_models_macro.h"
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
 
 // libMesh
@@ -45,7 +45,7 @@ namespace GRINS
 {
 
   SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& /*input*/ )
-    : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+    : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {}
 

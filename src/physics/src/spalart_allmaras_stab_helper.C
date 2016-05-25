@@ -29,7 +29,7 @@
 // GRINS
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
 
 //libMesh
@@ -45,7 +45,7 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1.0 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
       _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turbulence_section())),
       _spalart_allmaras_helper(input),

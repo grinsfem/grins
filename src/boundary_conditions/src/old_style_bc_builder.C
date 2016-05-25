@@ -35,9 +35,9 @@
 #include "grins/parsed_function_neumann_old_style_bc_factory.h"
 #include "grins/dirichlet_bc_factory_function_old_style_base.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
-#include "grins/displacement_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 
 // libMesh

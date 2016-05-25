@@ -36,7 +36,7 @@
 
 // GRINS
 #include "grins/grins_enums.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 #include "grins/single_variable.h"
 #include "grins/variable_warehouse.h"

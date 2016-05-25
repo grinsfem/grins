@@ -28,7 +28,7 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
 
 // libMesh
@@ -58,7 +58,7 @@ namespace GRINS
                            const std::string& material,
                            const std::string& property );
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
     const PrimitiveTempFEVariables& _temp_vars;
 

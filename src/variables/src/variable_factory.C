@@ -27,13 +27,13 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
-#include "grins/displacement_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/generic_fe_type_variable.h"
 #include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
 #include "grins/single_variable.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 
 namespace GRINS
 {
@@ -146,7 +146,7 @@ namespace GRINS
   const std::vector<VariableIndex>* VariableFactoryAbstract::_var_indices = NULL;
   std::string VariableFactoryAbstract::_var_section = std::string("DIE!");
 
-  VariableFactoryBasic<DisplacementFEVariables>
+  VariableFactoryBasic<DisplacementVariable>
   grins_factory_disp_fe_var(VariablesParsing::displacement_section());
 
   VariableFactoryBasic<GenericFETypeVariable>
@@ -167,7 +167,7 @@ namespace GRINS
   VariableFactoryBasic<TurbulenceFEVariables>
   grins_factory_turb_fe_var(VariablesParsing::turbulence_section());
 
-  VariableFactoryBasic<VelocityFEVariables>
+  VariableFactoryBasic<VelocityVariable>
   grins_factory_velocity_fe_var(VariablesParsing::velocity_section());
 
 } // end namespace GRINS

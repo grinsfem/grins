@@ -27,7 +27,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/displacement_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 
 // libMesh
 #include "libmesh/fem_context.h"
@@ -47,7 +47,7 @@ namespace GRINS
 
   protected:
 
-    DisplacementFEVariables& _disp_vars;
+    DisplacementVariable& _disp_vars;
 
     typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
 

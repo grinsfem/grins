@@ -30,7 +30,7 @@
 #include "grins_config.h"
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
 
 // libMesh
@@ -74,7 +74,7 @@ namespace GRINS
 
   protected:
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
     const PrimitiveTempFEVariables& _temp_vars;
 

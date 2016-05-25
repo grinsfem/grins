@@ -32,7 +32,7 @@
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
-#include "grins/velocity_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
 #include "grins/thermo_pressure_fe_variable.h"
 #include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
@@ -74,7 +74,7 @@ namespace GRINS
 
     libMesh::Number _p0;
 
-    VelocityFEVariables& _flow_vars;
+    VelocityVariable& _flow_vars;
     PressureFEVariable& _press_var;
     PrimitiveTempFEVariables& _temp_vars;
 
