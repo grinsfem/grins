@@ -53,13 +53,21 @@ enabled_physics = 'ScalarODE'
 
 [./ScalarODE]
 
-ic_ids = 0
-ic_variables = 'scalar_var'
-ic_types = constant
-ic_values = 1
+ic_ids = '0'
+ic_variables = 'u'
+ic_types = 'constant'
+ic_values = '1'
 
-mass_residual = 'scalar_var'
-time_deriv = '-scalar_var'
+mass_residual = 'u'
+time_deriv = '-u'
 
+[]
+
+[Variables]
+   [./GenericVariable]
+      names = 'u'
+      fe_family = 'SCALAR'
+      order = 'FIRST'
+   [../]
 []
 

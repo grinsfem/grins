@@ -49,10 +49,7 @@ namespace GRINS
 
     SpalartAllmarasStabilizationHelper( const std::string& helper_name, const GetPot& input );
 
-    ~SpalartAllmarasStabilizationHelper(){}; 
-
-    void init( libMesh::FEMSystem& system );
-
+    ~SpalartAllmarasStabilizationHelper(){};
 
     libMesh::Real compute_tau_spalart( AssemblyContext& c,
                                        unsigned int qp,

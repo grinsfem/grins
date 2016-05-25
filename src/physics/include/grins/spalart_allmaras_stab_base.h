@@ -45,8 +45,6 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter

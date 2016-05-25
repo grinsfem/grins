@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/inc_nav_stokes_macro.h"
+#include "grins/variable_warehouse.h"
 
 namespace GRINS
 {
@@ -44,19 +45,10 @@ namespace GRINS
       torque_function(""),
       chord_function(""),
       area_swept_function(""),
-      aoa_function("")
+      aoa_function(""),
+    _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<GenericFETypeVariable>(VariablesParsing::generic_section()))
   {
     this->read_input_options(input);
-  }
-
-  template<class Mu>
-  void AveragedTurbineBase<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
-                                                libMesh::FIRST,
-                                                libMesh::SCALAR);
-
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
   }
 
   template<class Mu>
@@ -146,10 +138,6 @@ namespace GRINS
       (this->initial_speed, input,
        "Physics/"+PhysicsNaming::averaged_turbine()+"/initial_speed",
        libMesh::Number(0));
-
-    this->_fan_speed_var_name = input("Physics/VariableNames/fan_speed",
-                                      fan_speed_var_name_default);
-
   }
 
   template<class Mu>

@@ -45,9 +45,6 @@ namespace GRINS
 
     ~BoussinesqBuoyancyBase(){};
 
-    //! Initialization of BoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
-
   protected:
 
     //! Helper function for parsing/maintaing backward compatibility
@@ -62,9 +59,9 @@ namespace GRINS
                            const std::string& material,
                            const std::string& property );
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityFEVariables& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
@@ -81,8 +78,6 @@ namespace GRINS
   private:
 
     BoussinesqBuoyancyBase();
-
-    void register_variables();
 
   };
 

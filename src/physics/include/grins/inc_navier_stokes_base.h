@@ -52,12 +52,6 @@ namespace GRINS
 
     ~IncompressibleNavierStokesBase(){};
 
-    //! Initialization of Navier-Stokes variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -76,9 +70,9 @@ namespace GRINS
 
   protected:
 
+    VelocityFEVariables& _flow_vars;
+    PressureFEVariable& _press_var;
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
@@ -88,8 +82,6 @@ namespace GRINS
 
   private:
     IncompressibleNavierStokesBase();
-
-    void register_variables();
 
   };
 

@@ -64,12 +64,6 @@ namespace GRINS
     this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
-  void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
-  {
-    // Init the variables belonging to SA helper
-    _spalart_allmaras_helper.init_variables(&system);
-  }
-
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
                                                                                 unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp, const bool infinite_distance) const
   {

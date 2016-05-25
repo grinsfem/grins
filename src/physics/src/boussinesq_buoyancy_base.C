@@ -43,9 +43,9 @@ namespace GRINS
 
   BoussinesqBuoyancyBase::BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
-      _temp_vars(input,PhysicsNaming::heat_transfer()),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
       _rho(0.0),
       _T_ref(1.0),
       _beta_T(1.0)
@@ -73,25 +73,6 @@ namespace GRINS
 
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 2 );
-
-    this->register_variables();
-  }
-
-  void BoussinesqBuoyancyBase::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-  }
-
-  void BoussinesqBuoyancyBase::init_variables( libMesh::FEMSystem* system )
-  {
-    _temp_vars.init(system);
-    _flow_vars.init(system);
-    this->_press_var.init(system);
   }
 
   void BoussinesqBuoyancyBase::read_property( const GetPot& input,

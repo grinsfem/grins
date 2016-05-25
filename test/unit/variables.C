@@ -139,8 +139,8 @@ namespace GRINSTesting
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_3d.in";
       this->setup_multiphysics_system(filename);
 
-      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest",true /*is_constraint_variable*/ );
+      GRINS::SharedPtr<GRINS::FEVariablesBase> vel_vars( new GRINS::VelocityFEVariables(*_input,"PhysicsNameIsDUMMYForThisTest") );
+      GRINS::SharedPtr<GRINS::FEVariablesBase> press_vars( new GRINS::PressureFEVariable(*_input,"PhysicsNameIsDUMMYForThisTest",true /*is_constraint_variable*/ ) );
 
       GRINS::GRINSPrivate::VariableWarehouse::register_variable("Velocity", vel_vars);
       GRINS::GRINSPrivate::VariableWarehouse::register_variable("Pressure", press_vars);
@@ -149,8 +149,8 @@ namespace GRINSTesting
       GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Velocity", vel_vars);
       GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Pressure", press_vars);
 
-      vel_vars.init(_system);
-      press_vars.init(_system);
+      vel_vars->init(_system);
+      press_vars->init(_system);
 
       {
         const GRINS::FEVariablesBase& vel_base =

@@ -41,9 +41,6 @@ namespace GRINS
     HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input );
     ~HeatConduction(){};
 
-    //! Initialize variables for this physics.
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     //! Initialize context for added physics variables
@@ -70,7 +67,7 @@ namespace GRINS
 
   protected:
 
-    PrimitiveTempFEVariables _temp_vars;
+    PrimitiveTempFEVariables& _temp_vars;
 
     libMesh::Number _rho, _Cp;
 
@@ -80,8 +77,6 @@ namespace GRINS
   private:
 
     HeatConduction();
-
-    void register_variables();
 
   };
 

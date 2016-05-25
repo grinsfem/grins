@@ -39,10 +39,8 @@ namespace GRINS
   SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName& physics_name,
                                                  const GetPot& input )
     : Physics(physics_name,input),
-      _disp_vars(input,physics_name,false,true)// is_2D = false, is_3D = true
+      _disp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<DisplacementFEVariables>(VariablesParsing::displacement_section()))
   {
-    this->register_variables();
-
     // For solid mechanics problems, we need to set the sign for tractions
     // to '-' since the second order time solvers use a Newton residual of the form
     // M(u)\ddot{u} + C(u)\dot{u} + F(u) + G(u) = 0
@@ -52,23 +50,12 @@ namespace GRINS
     _disp_vars.set_neumann_bc_is_positive(false);
   }
 
-  void SolidMechanicsAbstract::init_variables( libMesh::FEMSystem* system )
-  {
-    _disp_vars.init(system);
-  }
-
   void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_disp_vars.u());
     system->time_evolving(_disp_vars.v());
     system->time_evolving(_disp_vars.w());
-  }
-
-  void SolidMechanicsAbstract::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::displacement_section(),
-                                                                 this->_disp_vars);
   }
 
 } // end namespace GRINS

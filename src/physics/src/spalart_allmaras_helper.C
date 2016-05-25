@@ -49,10 +49,6 @@ namespace GRINS
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {}
 
-  void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
-  {
-  }
-
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const
   {
     libMesh::Gradient grad_u, grad_v;

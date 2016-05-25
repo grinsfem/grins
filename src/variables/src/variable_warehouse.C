@@ -29,9 +29,9 @@ namespace GRINS
 {
   namespace GRINSPrivate
   {
-    std::map<std::string,const FEVariablesBase*>& VariableWarehouse::var_map()
+    std::map<std::string,SharedPtr<FEVariablesBase> >& VariableWarehouse::var_map()
     {
-      static std::map<std::string, const FEVariablesBase*> _var_map;
+      static std::map<std::string,SharedPtr<FEVariablesBase> > _var_map;
       return _var_map;
     }
   } // end namespace GRINSPrivate

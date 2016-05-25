@@ -54,12 +54,6 @@ namespace GRINS
 
     ~AxisymmetricHeatTransfer(){};
 
-    //! Initialization  AxisymmetricHeatTransfer variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -88,9 +82,9 @@ namespace GRINS
 
   protected:
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityFEVariables& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
@@ -108,7 +102,6 @@ namespace GRINS
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
 
-    void register_variables();
   };
 
 } //End namespace block

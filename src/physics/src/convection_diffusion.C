@@ -46,7 +46,7 @@ namespace GRINS
     : Physics(physics_name,input),
       _v(3,libMesh::ParsedFunction<libMesh::Number>("0.0") ),
       _kappa("0.0"),
-      _var(input,physics_name)
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<GenericFETypeVariable>(VariablesParsing::generic_section()))
   {
     unsigned int n_v_comps = input.vector_variable_size("Physics/"+physics_name+"/velocity_field");
 
@@ -59,14 +59,7 @@ namespace GRINS
                         "Materials/"+material_name+"/Diffusivity/value",
                         "DIE!");
 
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(this->_var.section_name(physics_name), this->_var);
-
     _ic_handler = new GenericICHandler(physics_name,input);
-  }
-
-  void ConvectionDiffusion::init_variables( libMesh::FEMSystem* system )
-  {
-    _var.init(system);
   }
 
   void ConvectionDiffusion::set_time_evolving_vars( libMesh::FEMSystem* system )

@@ -286,7 +286,7 @@ namespace GRINS
             context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
     const libMesh::DenseSubVector<libMesh::Number> &Us =
-      context.get_elem_solution_rate(this->_fan_speed_var);
+      context.get_elem_solution_rate(this->fan_speed_var());
 
     const libMesh::Number& fan_speed = Us(0);
 

@@ -51,8 +51,6 @@ namespace GRINS
 
     TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     ~TurbulenceModelsBase(){};
 
     // Registers all parameters in this physics and in its property

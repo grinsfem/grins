@@ -63,9 +63,6 @@ namespace GRINS
 
     ~AxisymmetricBoussinesqBuoyancy(){};
 
-    //! Initialization of AxisymmetricBoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     virtual void init_context( AssemblyContext& context );
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
@@ -78,9 +75,9 @@ namespace GRINS
 
   protected:
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityFEVariables& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
@@ -101,8 +98,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
-
-    void register_variables();
 
   }; // class AxisymmetricBoussinesqBuoyancy
 

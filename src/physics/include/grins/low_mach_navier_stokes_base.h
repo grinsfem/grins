@@ -56,8 +56,6 @@ namespace GRINS
 
     ~LowMachNavierStokesBase(){};
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -92,11 +90,13 @@ namespace GRINS
 
     libMesh::Number _p0, _R, _T0;
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    VelocityFEVariables& _flow_vars;
+    PressureFEVariable& _press_var;
+    PrimitiveTempFEVariables& _temp_vars;
 
-    libMesh::UniquePtr<ThermoPressureFEVariable> _p0_var;
+    /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
+              we can use dynamic_pointer_cast to get a SharedPtr. */
+    ThermoPressureFEVariable*  _p0_var;
 
     //! Viscosity object
     Viscosity _mu;
@@ -119,9 +119,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
-
-    void register_variables();
-
   };
 
   template<class V, class SH, class TC>

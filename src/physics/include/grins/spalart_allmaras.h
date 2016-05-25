@@ -95,10 +95,10 @@ namespace GRINS
   protected:
 
     // The flow variables
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
+    VelocityFEVariables& _flow_vars;
+    PressureFEVariable& _press_var;
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;
+    TurbulenceFEVariables& _turbulence_vars;
 
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
@@ -117,9 +117,6 @@ namespace GRINS
 
   private:
     SpalartAllmaras();
-
-    void register_variables();
-
   };
 
 } //End namespace block

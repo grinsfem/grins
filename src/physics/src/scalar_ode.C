@@ -28,7 +28,7 @@
 
 // GRINS
 #include "grins/generic_ic_handler.h"
-#include "grins/variable_name_defaults.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/boundary_info.h"
@@ -39,20 +39,13 @@ namespace GRINS
 
   ScalarODE::ScalarODE( const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
-      _order(1),
       _epsilon(1e-6),
-      _input(input)
+      _input(input),
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<GenericFETypeVariable>(VariablesParsing::generic_section()))
   {
     this->read_input_options(input);
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
-  }
-
-  void ScalarODE::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_scalar_ode_var = system->add_variable(_scalar_ode_var_name,
-                                                 libMesh::Order(this->_order),
-                                                 libMesh::SCALAR);
   }
 
   void ScalarODE::set_time_evolving_vars( libMesh::FEMSystem* system )
@@ -98,11 +91,6 @@ namespace GRINS
   void ScalarODE::read_input_options( const GetPot& input )
   {
     this->_epsilon = input("Physics/"+PhysicsNaming::scalar_ode()+"/epsilon", 1e-6);
-
-    this->_order = input("Physics/"+PhysicsNaming::scalar_ode()+"/order", 1);
-
-    _scalar_ode_var_name = input("Physics/VariableNames/scalar_ode",
-                                 scalar_ode_var_name_default);
   }
 
 
@@ -119,10 +107,10 @@ namespace GRINS
 				           CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(_scalar_ode_var, _scalar_ode_var); // R_{s},{s}
+            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(_scalar_ode_var); // R_{s}
+            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number time_deriv =
       (*time_deriv_function)(context, libMesh::Point(0),
@@ -136,7 +124,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(_scalar_ode_var)); // U_{s}
+            (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
@@ -165,10 +153,10 @@ namespace GRINS
 				         CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(_scalar_ode_var, _scalar_ode_var); // R_{s},{s}
+            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(_scalar_ode_var); // R_{s}
+            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number mass_res =
       (*mass_residual_function)(context, libMesh::Point(0),
@@ -182,7 +170,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution_rate(_scalar_ode_var)); // U_{s}
+            (context.get_elem_solution_rate(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
@@ -211,10 +199,10 @@ namespace GRINS
 				      CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(_scalar_ode_var, _scalar_ode_var); // R_{s},{s}
+            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(_scalar_ode_var); // R_{s}
+            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number constraint =
       (*constraint_function)(context, libMesh::Point(0),
@@ -228,7 +216,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(_scalar_ode_var)); // U_{s}
+            (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;

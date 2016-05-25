@@ -29,6 +29,7 @@
 #include "grins/default_variable_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/variable_factory.h"
+#include "grins/variable_warehouse.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -48,7 +49,7 @@ namespace GRINS
   void VariableBuilder::add_variable_to_warehouse( SharedPtr<FEVariablesBase>& fe_var,
                                                    const std::string& var_name )
   {
-    libmesh_not_implemented();
+    GRINSPrivate::VariableWarehouse::register_variable(var_name,fe_var);
   }
 
   void VariableBuilder::add_vars_to_system( MultiphysicsSystem& system,

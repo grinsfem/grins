@@ -48,31 +48,14 @@ namespace GRINS
                                                                      const std::string& core_physics_name,
                                                                      const GetPot& input )
     : Physics(my_physics_name, input),
-      _flow_vars(input, core_physics_name),
-      _press_var(input, core_physics_name, true /*is_constraint_var*/),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
       _rho(0.0),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name))
   {
+    _press_var.set_is_constraint_var(true);
+
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
-    this->register_variables();
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-  }
-
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
-
-    this->_mu.init(system);
   }
 
   template<class Mu>
