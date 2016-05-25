@@ -29,7 +29,7 @@
 #include "grins/catalycity_factory_abstract.h"
 #include "grins/fe_variables_base.h"
 #include "grins/species_mass_fracs_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/single_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/gas_recombination_catalytic_wall_neumann_bc_factory_impl.h"
 #include "grins/gas_solid_catalytic_wall_neumann_bc_factory_impl.h"

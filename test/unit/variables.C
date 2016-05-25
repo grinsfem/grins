@@ -37,9 +37,8 @@
 // GRINS
 #include "grins/grins_enums.h"
 #include "grins/velocity_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
 #include "grins/species_mass_fracs_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/single_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/variable_builder.h"
 #include "grins/variables_parsing.h"

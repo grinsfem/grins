@@ -28,7 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/single_variable.h"
 
 //Utils
 #include "grins/distance_function.h"

@@ -29,9 +29,8 @@
 // GRINS
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/primitive_temp_fe_variables.h"
 #include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/single_variable.h"
 
 //libMesh
 #include "libmesh/getpot.h"

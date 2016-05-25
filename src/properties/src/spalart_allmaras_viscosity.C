@@ -24,7 +24,7 @@
 #include "grins/parsed_viscosity.h"
 #include "grins/variable_warehouse.h"
 #include "grins/variables_parsing.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/getpot.h"

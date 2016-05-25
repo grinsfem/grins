@@ -29,8 +29,7 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/single_variable.h"
 #include "grins/turbulence_models_base.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"

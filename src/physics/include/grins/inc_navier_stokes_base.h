@@ -29,7 +29,7 @@
 //GRINS
 #include "grins/physics.h"
 #include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {

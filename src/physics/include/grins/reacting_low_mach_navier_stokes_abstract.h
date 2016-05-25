@@ -33,9 +33,8 @@
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
 #include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
+#include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 
 namespace GRINS

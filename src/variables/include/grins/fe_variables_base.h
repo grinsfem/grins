@@ -75,7 +75,7 @@ namespace GRINS
     /*! This expects that _var_names has been setup during construction
         time. Most subclasses should be able to use default_fe_init, once
         they subclass this and VariablesBase. */
-    virtual void init( libMesh::FEMSystem* system ) =0;
+    virtual void init( libMesh::FEMSystem* /*system*/ ){};
 
     //! Set whether or not this is a "constraint" variable
     /*! Constraint variables are things like Lagrange multipliers.

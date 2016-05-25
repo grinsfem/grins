@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {

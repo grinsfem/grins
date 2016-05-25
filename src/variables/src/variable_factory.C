@@ -29,11 +29,10 @@
 #include "grins/materials_parsing.h"
 #include "grins/displacement_fe_variables.h"
 #include "grins/generic_fe_type_variable.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 #include "grins/thermo_pressure_fe_variable.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/single_variable.h"
 #include "grins/velocity_fe_variables.h"
 
 namespace GRINS
