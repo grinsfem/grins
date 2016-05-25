@@ -41,15 +41,7 @@ namespace GRINS
                                                                                             const GetPot& input )
     : SpalartAllmaras<Mu>(physics_name,input),
       _stab_helper( physics_name+"StabHelper", input )
-  {
-    return;
-  }
-
-  template<class Mu>
-  SpalartAllmarasStabilizationBase<Mu>::~SpalartAllmarasStabilizationBase()
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   void SpalartAllmarasStabilizationBase<Mu>::init_context( AssemblyContext& context )
@@ -59,8 +51,6 @@ namespace GRINS
       
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_turbulence_vars.nu())->get_d2phi();
-
-    return;
   }
 
   template<class Mu>

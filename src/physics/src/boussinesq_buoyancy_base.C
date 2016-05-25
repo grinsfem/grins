@@ -77,11 +77,6 @@ namespace GRINS
     this->register_variables();
   }
 
-  BoussinesqBuoyancyBase::~BoussinesqBuoyancyBase()
-  {
-    return;
-  }
-
   void BoussinesqBuoyancyBase::register_variables()
   {
     GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),

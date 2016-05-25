@@ -91,8 +91,6 @@ namespace GRINS
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T());
-
-    return;
   }
 
   template<class K>
@@ -110,8 +108,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    return;
   }
 
   template<class K>

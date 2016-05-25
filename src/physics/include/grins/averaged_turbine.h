@@ -55,7 +55,7 @@ namespace GRINS
 
     AveragedTurbine( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbine();
+    ~AveragedTurbine(){};
 
     virtual void init_context( AssemblyContext& context );
 

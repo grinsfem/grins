@@ -61,7 +61,7 @@ namespace GRINS
 
     SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
-    ~SpalartAllmaras();
+    ~SpalartAllmaras(){};
 
     virtual void init_variables( libMesh::FEMSystem* system );
 

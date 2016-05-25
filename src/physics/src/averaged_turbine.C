@@ -43,24 +43,13 @@ namespace GRINS
     : AveragedTurbineBase<Mu>(physics_name, input)
   {
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
   }
-
-  template<class Mu>
-  AveragedTurbine<Mu>::~AveragedTurbine()
-  {
-    return;
-  }
-
 
   template<class Mu>
   void AveragedTurbine<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
-
-    return;
   }
 
 

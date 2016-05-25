@@ -62,12 +62,6 @@ namespace GRINS
   }
 
   template<class K>
-  HeatConduction<K>::~HeatConduction()
-  {
-    return;
-  }
-
-  template<class K>
   void HeatConduction<K>::register_variables()
   {
     GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),

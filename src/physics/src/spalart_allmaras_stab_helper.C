@@ -64,11 +64,6 @@ namespace GRINS
     this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
-  SpalartAllmarasStabilizationHelper::~SpalartAllmarasStabilizationHelper()
-  {
-    return;
-  }
-
   void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
   {
     // Init the variables belonging to SA helper

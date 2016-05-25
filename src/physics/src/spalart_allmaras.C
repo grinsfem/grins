@@ -74,12 +74,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  SpalartAllmaras<Mu>::~SpalartAllmaras()
-  {
-    return;
-  }
-
-  template<class Mu>
   void SpalartAllmaras<Mu>::register_variables()
   {
     GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),

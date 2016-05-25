@@ -59,12 +59,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void TurbulenceModelsBase<Mu>::register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )

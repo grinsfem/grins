@@ -39,7 +39,7 @@ namespace GRINS
   public:
 
     HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input );
-    ~HeatConduction();
+    ~HeatConduction(){};
 
     //! Initialize variables for this physics.
     virtual void init_variables( libMesh::FEMSystem* system );

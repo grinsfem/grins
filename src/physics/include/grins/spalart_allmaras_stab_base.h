@@ -40,7 +40,7 @@ namespace GRINS
 
    SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~SpalartAllmarasStabilizationBase();
+    virtual ~SpalartAllmarasStabilizationBase(){};
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );

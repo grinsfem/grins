@@ -43,7 +43,7 @@ namespace GRINS
     
     BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyBase();
+    ~BoussinesqBuoyancyBase(){};
 
     //! Initialization of BoussinesqBuoyancy variables
     virtual void init_variables( libMesh::FEMSystem* system );
