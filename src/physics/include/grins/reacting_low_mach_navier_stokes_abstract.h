@@ -33,7 +33,7 @@
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
 #include "grins/multi_component_vector_variable.h"
-#include "grins/thermo_pressure_fe_variable.h"
+
 #include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 
@@ -80,7 +80,7 @@ namespace GRINS
 
     /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
               we can use dynamic_pointer_cast to get a SharedPtr. */
-    ThermoPressureFEVariable* _p0_var;
+    ThermoPressureVariable* _p0_var;
 
     SpeciesMassFractionsFEVariables& _species_vars;
 

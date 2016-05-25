@@ -49,7 +49,7 @@ namespace GRINS
         libmesh_error_msg("ERROR: SingleVariable must only have a single index!");
     }
 
-    ~SingleVariable(){};
+    ~SingleVariable(){}
 
     VariableIndex var() const
     { libmesh_assert_equal_to( _vars.size(), 1 );
@@ -68,7 +68,7 @@ namespace GRINS
       : SingleVariable(var_names,var_indices)
     {}
 
-    ~PrimitiveTempFEVariables(){};
+    ~PrimitiveTempFEVariables(){}
 
     VariableIndex T() const
     { return this->var(); }
@@ -86,7 +86,7 @@ namespace GRINS
       : SingleVariable(var_names,var_indices)
     {}
 
-    ~TurbulenceFEVariables(){};
+    ~TurbulenceFEVariables(){}
 
     VariableIndex nu() const
     { return this->var(); }
@@ -104,7 +104,7 @@ namespace GRINS
       : SingleVariable(var_names,var_indices)
     {}
 
-    ~PressureFEVariable(){};
+    ~PressureFEVariable(){}
 
     VariableIndex p() const
     { return this->var(); }
@@ -114,6 +114,40 @@ namespace GRINS
     PressureFEVariable();
   };
 
+  //! Variables with a single SCALAR component
+  /*! Will use the type to assert the SCALAR part in the factory. */
+  class ScalarVariable : public SingleVariable
+  {
+  public:
+    ScalarVariable( const std::vector<std::string>& var_names,
+                    const std::vector<VariableIndex>& var_indices )
+      : SingleVariable(var_names,var_indices)
+    {}
+
+    ~ScalarVariable(){}
+
+  private:
+
+    ScalarVariable();
+  };
+
+  class ThermoPressureVariable : public ScalarVariable
+  {
+  public:
+    ThermoPressureVariable( const std::vector<std::string>& var_names,
+                            const std::vector<VariableIndex>& var_indices )
+      : ScalarVariable(var_names,var_indices)
+    {}
+
+    ~ThermoPressureVariable(){}
+
+    VariableIndex p0() const
+    { return this->var(); }
+
+  private:
+
+    ThermoPressureVariable();
+  };
 } // end namespace GRINS
 
 #endif // GRINS_SINGLE_VARIABLE_H

@@ -31,7 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/grins_enums.h"
 #include "grins/multi_component_vector_variable.h"
-#include "grins/thermo_pressure_fe_variable.h"
+
 #include "grins/single_variable.h"
 
 //libMesh
@@ -95,7 +95,7 @@ namespace GRINS
 
     /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
               we can use dynamic_pointer_cast to get a SharedPtr. */
-    ThermoPressureFEVariable*  _p0_var;
+    ThermoPressureVariable*  _p0_var;
 
     //! Viscosity object
     Viscosity _mu;

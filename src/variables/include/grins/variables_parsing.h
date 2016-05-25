@@ -55,6 +55,9 @@ namespace GRINS
     static std::string generic_section()
     { return "GenericVariable"; }
 
+    static std::string scalar_var_section()
+    { return "ScalarVariable"; }
+
     //! Helper function to encapsualte the overall [Variables] section name.
     static std::string variables_section()
     { return "Variables"; }
