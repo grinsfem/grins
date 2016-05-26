@@ -173,6 +173,31 @@ namespace GRINS
 
   };
 
+  //! Factory to build SCALAR variable
+  /*! In particular, we don't let the user set fe_family in the input file since the
+      implicit assumption is that this is a SCALAR variable. */
+  template<typename VariableType>
+  class ScalarVariableFactory : public VariableFactoryBasic<VariableType>
+  {
+  public:
+
+    ScalarVariableFactory( const std::string& name )
+      : VariableFactoryBasic<VariableType>(name)
+    {}
+
+    ~ScalarVariableFactory(){}
+
+  protected:
+
+    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section )
+    {
+      if( input.have_variable(var_section+"/fe_family") )
+        libmesh_error_msg("ERROR: Cannot specify fe_family for ScalarVariable. It is implicitly SCALAR!");
+
+      return std::string("SCALAR");
+    }
+  };
+
 
   //! Factory to build FEVariablesBase classes that use species names as variables
   /*! Thus, we need a special way to parse the input to figure out what all

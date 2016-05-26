@@ -198,7 +198,7 @@ namespace GRINS
   SpeciesVariableFactory<SpeciesMassFractionsFEVariables>
   grins_factory_species_mass_frac_fe_var(VariablesParsing::species_mass_fractions_section());
 
-  VariableFactoryBasic<ThermoPressureVariable>
+  ScalarVariableFactory<ThermoPressureVariable>
   grins_factory_thermo_press_fe_var(VariablesParsing::thermo_pressure_section());
 
   VariableFactoryBasic<TurbulenceFEVariables>
@@ -207,7 +207,7 @@ namespace GRINS
   VariableFactoryBasic<VelocityVariable>
   grins_factory_velocity_fe_var(VariablesParsing::velocity_section());
 
-  VariableFactoryBasic<ScalarVariable>
+  ScalarVariableFactory<ScalarVariable>
   grins_factory_scalar_var(VariablesParsing::scalar_var_section());
 
 } // end namespace GRINS
