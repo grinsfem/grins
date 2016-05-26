@@ -64,7 +64,7 @@ namespace GRINS
     std::set<std::string> vars_found;
     {
       std::vector<std::string> vars_to_search_for(var_names.size());
-      this->set_vars_to_search_for(var_names,vars_to_search_for);
+      this->set_vars_to_search_for(section,var_names,vars_to_search_for);
       this->check_for_vars(input,section,vars_to_search_for,&vars_found);
     }
 
@@ -128,16 +128,20 @@ namespace GRINS
     species_name = split_name[0];
   }
 
-  void MoleFractionsDirichletBCFactory::set_vars_to_search_for( const std::vector<std::string>& var_names,
+  void MoleFractionsDirichletBCFactory::set_vars_to_search_for( const std::string& section,
+                                                                const std::vector<std::string>& var_names,
                                                                 std::vector<std::string>&vars_to_search_for ) const
   {
     libmesh_assert_equal_to(var_names.size(),vars_to_search_for.size());
+
+    // Strip out the Variable name from the section
+    std::string var_section = extract_var_section(section);
 
     // This only makes sense for SpeciesMassFractionsFEVariables in the VariableWarehouse.
     // This call will error out if it's not there.
     const SpeciesMassFractionsFEVariables& species_fe_var =
       GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
-      (VariablesParsing::species_mass_fractions_section());
+      (var_section);
 
     const std::string& prefix = species_fe_var.prefix();
     for( unsigned int v = 0; v < var_names.size(); v++ )
@@ -165,11 +169,14 @@ namespace GRINS
                                                          std::set<std::string>& /*vars_added*/ ) const
 #endif
   {
+    // Strip out the Variable name from the section
+    std::string var_section = extract_var_section(section);
+
     // This only makes sense for SpeciesMassFractionsFEVariables in the VariableWarehouse.
     // This call will error out if it's not there.
     const SpeciesMassFractionsFEVariables& species_fe_var =
       GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
-      (VariablesParsing::species_mass_fractions_section());
+      (var_section);
 
     const std::string& material = species_fe_var.material();
 
@@ -280,6 +287,13 @@ namespace GRINS
         // Log that we added this variable
         vars_added.insert(prefix+species_names[v]);
       }
+  }
+
+  std::string MoleFractionsDirichletBCFactory::extract_var_section( const std::string& section ) const
+  {
+    std::vector<std::string> tokens;
+    StringUtilities::split_string(section,"/",tokens);
+    return tokens.back();
   }
 
   // Instantiate

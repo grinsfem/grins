@@ -82,7 +82,8 @@ namespace GRINS
         may override this behavior. If this function is overridden, then add_found_vars
         will also need to be overridden. You may assume vars_to_search_for has been
         sized to match var_names. */
-    virtual void set_vars_to_search_for( const std::vector<std::string>& var_names,
+    virtual void set_vars_to_search_for( const std::string& /*section*/,
+                                         const std::vector<std::string>& var_names,
                                          std::vector<std::string>& vars_to_search_for ) const
     { libmesh_assert_equal_to(var_names.size(),vars_to_search_for.size());
       vars_to_search_for = var_names; }
@@ -116,7 +117,8 @@ namespace GRINS
     //! We'll search for mole fractions: X_<species_name>.
     /*! We extract the species name from var_names and then set the corresponding
         vars_to_search_for to X_<species_name>. */
-    virtual void set_vars_to_search_for( const std::vector<std::string>& var_names,
+    virtual void set_vars_to_search_for( const std::string& section,
+                                         const std::vector<std::string>& var_names,
                                          std::vector<std::string>&vars_to_search_for ) const;
 
     template<typename ChemistryType>
@@ -131,6 +133,8 @@ namespace GRINS
     void extract_species_name( const std::string& var_name,
                                const std::string& prefix,
                                std::string& species_name ) const;
+
+    std::string extract_var_section( const std::string& section ) const;
 
   };
 
