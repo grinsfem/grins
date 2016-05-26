@@ -324,6 +324,7 @@ include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_
 # src/common headers
 include_HEADERS += common/include/grins/common.h
 include_HEADERS += common/include/grins/builder_helper.h
+include_HEADERS += common/include/grins/factory_abstract.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
 include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
 
