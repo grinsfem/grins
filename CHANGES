@@ -1,6 +1,50 @@
-Version 0.7.0 (In progress)
+Version 0.7.0
+   * Complete refactoring of material property parsing. Old
+     style is deprecated. See examples, master input file for
+     a description of the new style.
+   * Complete refactoring of Variable parsing and internal
+     object construction. Old style is deprecated. See examples,
+     master input file for a description of new style. Expect
+     the old style to be unsupported soon after 0.7.0 release.
+   * Refactoring in progress for SolverOptions. Except further
+     changes to input parsing for SolverOptions.
+   * Refactoring ErrorEstimation parsing and construction. See
+     examples  master input file for a description of new style.
+   * Complete refactoring of BoundaryCondition parsing and construction.
+     Old input style is deprecated. See examples, master input file
+     for a description of new style. In particular, for Neumann
+     boundary conditions, all fluxes are assumed to *positive outward*
+     in the new format.
+   * Added support for using multiple instances of the same Physics.
+     See examples, master input file for a description.
+   * Added support for second order-in-time problems, including
+     Physics::damping_residual and libMesh::NewmarkSolver.
+   * Minimum version of Antioch is now 0.4.0
+   * Added support for Antioch's MixturedAveraged, KineticsTheory
+     models. This is still experimental.
+   * Further developments on parameter management/parsing for
+     sensitivity calculations.
+   * Better error checking for PressurePinning.
+   * Support for varying numerical Jacobian h values from input.
+   * Boost is now *optional*. If your compiler supports C++11,
+     that will be preferred. If it does not, then we will fallback
+     to Boost. This is specifically for shared_ptr.
+   * Updated testing infrastructure, including support for CppUnit.
    * Added support for output of 'base_velocity' in averaged_fan
-   * Added scalar parsed qoi regression test case
+   * Added scalar parsed qoi regression test case.
+   * Complete refactoring of Physics construction.
+   * Use libMesh::UniquePtr instead of libMesh::AutoPtr
+   * Much internal refactoring.
+   * Increased error checking, testing throughout.
+   * New Physics include:
+     - RayleighDamping
+     - ConvectionDiffusion
+   * New QoIs include:
+     - WeightedFlux
+     - ParsedBoundary
+   * New examples include:
+     - SpalartAllmaras Airfoil
+     - Time-dependent AMR (ConvectionDiffusion Physics)
 
 Version 0.6.1
 https://github.com/grinsfem/grins/releases/tag/v0.6.1
