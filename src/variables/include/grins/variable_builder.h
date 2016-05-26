@@ -60,15 +60,21 @@ namespace GRINS
 
   protected:
 
+    //! Adds/registers the fe_var to VariableWarehouse
     void add_variable_to_warehouse( SharedPtr<FEVariablesBase>& fe_var,
                                     const std::string& var_name );
 
+    //! Given the names, family, and order, this adds the variables to the system and populates var_indices
+    /*! The var_indices are the respective indices returned by the System from the add_variable
+        call. */
     void add_vars_to_system( MultiphysicsSystem& system,
                              const std::vector<std::string>& var_names,
                              const std::string& fe_family,
                              const std::string& order,
                              std::vector<VariableIndex>& var_indices );
 
+
+    //! Sets appropriate data in the VariableFactoryAbstract and calls VariableFactoryAbstract::build()
     SharedPtr<FEVariablesBase> build_fe_var( const std::string& var_type,
                                              const std::vector<std::string>& var_names,
                                              const std::vector<VariableIndex>&  var_indices );

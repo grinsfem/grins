@@ -52,13 +52,17 @@ namespace GRINS
                           const std::string& var_section,
                           std::vector<std::string>& var_names ) const;
 
-    //! Helper function to extract [Varaiable/<var_section>/fe_family] from input
-    std::string parse_fe_family( const GetPot& input, const std::string& var_section ) const
-    { return this->parse_var_option(input,var_section,std::string("fe_family"),std::string("DIE!")); }
+    //! Helper function to extract from input
+    /*! This will dispatch to the VariableFactory. */
+    std::string parse_fe_family( const GetPot& input,
+                                 const std::string& var_section,
+                                 const std::string& var_type ) const;
 
     //! Helper function to extract [Varaiable/<var_section>/order] from input
-    std::string parse_fe_order( const GetPot& input, const std::string& var_section ) const
-    { return this->parse_var_option(input,var_section,std::string("order"),std::string("DIE!")); }
+    /*! This will dispatch to the VariableFactory. */
+    std::string parse_fe_order( const GetPot& input,
+                                const std::string& var_section,
+                                const std::string& var_type ) const;
 
     //! Parses the [Variable/<var_section>/var_type] option
     /*! The var_type is how we distinguish between the Variables so that
@@ -69,13 +73,6 @@ namespace GRINS
                                 const std::string& var_section ) const
     { std::string input_sec = VariablesParsing::variables_section()+"/"+var_section+"/type";
       return input(input_sec,var_section); }
-
-    //! Helper function to reduce code duplication
-    std::string parse_var_option( const GetPot& input,
-                                  const std::string& var_section,
-                                  const std::string& option,
-                                  const std::string& default_val ) const;
-
 
   };
 } // end namespace GRINS

@@ -56,10 +56,10 @@ namespace GRINS
         this->parse_var_names( input, var_type, var_section, var_names );
 
         // Parse FE family
-        std::string fe_family = this->parse_fe_family( input, var_section );
+        std::string fe_family = this->parse_fe_family( input, var_section, var_type );
 
         // Parse FE order
-        std::string order = this->parse_fe_order( input, var_section );
+        std::string order = this->parse_fe_order( input, var_section, var_type );
 
         // Add variables to system
         std::vector<VariableIndex> var_indices;
@@ -87,16 +87,24 @@ namespace GRINS
     var_names = VariableFactoryAbstract::build_var_names(var_type);
   }
 
-  std::string DefaultVariableBuilder::parse_var_option( const GetPot& input,
-                                                        const std::string& var_section,
-                                                        const std::string& option,
-                                                        const std::string& default_val ) const
+  std::string DefaultVariableBuilder::parse_fe_family( const GetPot& input,
+                                                       const std::string& var_section,
+                                                       const std::string& var_type ) const
   {
-    std::string input_sec = VariablesParsing::variables_section()+"/"+var_section+"/"+option;
-    if(!input.have_variable(input_sec))
-      libmesh_error_msg("ERROR: Could not find Variable input option "+input_sec);
+    VariableFactoryAbstract::set_getpot(input);
+    VariableFactoryAbstract::set_var_section(VariablesParsing::variables_section()+"/"+var_section);
 
-    return input(input_sec,default_val);
+    return VariableFactoryAbstract::parse_fe_family(var_type);
+  }
+
+  std::string DefaultVariableBuilder::parse_fe_order( const GetPot& input,
+                                                      const std::string& var_section,
+                                                      const std::string& var_type ) const
+  {
+    VariableFactoryAbstract::set_getpot(input);
+    VariableFactoryAbstract::set_var_section(VariablesParsing::variables_section()+"/"+var_section);
+
+    return VariableFactoryAbstract::parse_fe_order(var_type);
   }
 
 } // end namespace GRINS

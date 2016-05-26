@@ -52,6 +52,10 @@ namespace GRINS
         calling this method. */
     static std::vector<std::string> build_var_names( const std::string& name );
 
+    static std::string parse_fe_family( const std::string& name );
+
+    static std::string parse_fe_order( const std::string& name );
+
     //! Set the variable names before calling create()
     static void set_var_names( const std::vector<std::string>& var_names )
     { _var_names = &var_names; }
@@ -73,6 +77,12 @@ namespace GRINS
     //! Helper function to reset data before next call to create()
     virtual void reset_create_state();
 
+    //! Helper function to check required data is set when calling build_* or parse_* methods
+    static void check_build_parse_state();
+
+    //! Helper function to check required data is set when calling build_* or parse_* methods
+    static void reset_build_parse_state();
+
     //! Subclasses implement construction of the FEVariablesBase object using the var_names and var_indices
     /*! This function will be called from within create(), which called from
         VariableFactoryAbstract::build. Note the var_names can be built a priori
@@ -82,6 +92,23 @@ namespace GRINS
 
     // Subclasses implement this to parse the variable component name(s)
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section ) =0;
+
+    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section ) =0;
+
+    virtual std::string parse_fe_order_impl( const GetPot& input, const std::string& var_section ) =0;
+
+    std::string parse_var_option( const GetPot& input,
+                                  const std::string& var_section,
+                                  const std::string& option,
+                                  const std::string& default_val ) const
+    {
+      std::string input_sec = var_section+"/"+option;
+      if(!input.have_variable(input_sec))
+        libmesh_error_msg("ERROR: Could not find Variable input option "+input_sec);
+
+      return input(input_sec,default_val);
+    }
+
 
     //! Variable component names needed for FEVariableBase construction
     static const std::vector<std::string>* _var_names;
@@ -98,15 +125,39 @@ namespace GRINS
 
   };
 
+  //! Common implementations
+  class VariableFactoryBase : public VariableFactoryAbstract
+  {
+  public:
+
+    VariableFactoryBase( const std::string& name )
+      : VariableFactoryAbstract(name)
+    {}
+
+    ~VariableFactoryBase(){}
+
+  protected:
+
+    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section )
+    {
+      return this->parse_var_option(input,var_section,std::string("fe_family"),std::string("DIE!"));
+    }
+
+    virtual std::string parse_fe_order_impl( const GetPot& input, const std::string& var_section )
+    {
+       return this->parse_var_option(input,var_section,std::string("order"),std::string("DIE!"));
+    }
+
+  };
 
   //! Factory to build "standard" FEVariablesBase classes
   template<typename VariableType>
-  class VariableFactoryBasic : public VariableFactoryAbstract
+  class VariableFactoryBasic : public VariableFactoryBase
   {
   public:
 
     VariableFactoryBasic( const std::string& name )
-      : VariableFactoryAbstract(name)
+      : VariableFactoryBase(name)
     {}
 
     ~VariableFactoryBasic(){}
@@ -127,12 +178,12 @@ namespace GRINS
   /*! Thus, we need a special way to parse the input to figure out what all
       the species names are. */
   template<typename VariableType>
-  class SpeciesVariableFactory : public VariableFactoryAbstract
+  class SpeciesVariableFactory : public VariableFactoryBase
   {
   public:
 
     SpeciesVariableFactory( const std::string& name )
-      : VariableFactoryAbstract(name)
+      : VariableFactoryBase(name)
     {}
 
     ~SpeciesVariableFactory(){}

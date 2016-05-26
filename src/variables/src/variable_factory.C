@@ -53,22 +53,44 @@ namespace GRINS
 
   std::vector<std::string> VariableFactoryAbstract::build_var_names( const std::string& name )
   {
-    if( !_input )
-      libmesh_error_msg("ERROR: Must call set_getpot() before calling VariableFactoryAbstract::build_var_names!");
-
-    if( _var_section == std::string("DIE!") )
-      libmesh_error_msg("ERROR: Must call set_var_section() before calling VariableFactoryAbstract::build_var_names!");
+    check_build_parse_state();
 
     VariableFactoryAbstract& factory = get_factory_subclass<VariableFactoryAbstract>(name);
 
     std::vector<std::string> var_names;
     var_names = factory.parse_var_names( *_input, _var_section );
 
-    // Reset _input to NULL for error checking
-    _input = NULL;
-    _var_section = std::string("DIE!");
+    reset_build_parse_state();
 
     return var_names;
+  }
+
+  std::string VariableFactoryAbstract::parse_fe_family( const std::string& name )
+  {
+    check_build_parse_state();
+
+    VariableFactoryAbstract& factory = get_factory_subclass<VariableFactoryAbstract>(name);
+
+    std::string fe_family;
+    fe_family = factory.parse_fe_family_impl( *_input, _var_section );
+
+    reset_build_parse_state();
+
+    return fe_family;
+  }
+
+  std::string VariableFactoryAbstract::parse_fe_order( const std::string& name )
+  {
+    check_build_parse_state();
+
+    VariableFactoryAbstract& factory = get_factory_subclass<VariableFactoryAbstract>(name);
+
+    std::string order;
+    order = factory.parse_fe_order_impl( *_input, _var_section );
+
+    reset_build_parse_state();
+
+    return order;
   }
 
   void VariableFactoryAbstract::check_create_state() const
@@ -84,6 +106,21 @@ namespace GRINS
   {
     _var_names = NULL;
     _var_indices = NULL;
+  }
+
+  void VariableFactoryAbstract::check_build_parse_state()
+  {
+    if( !_input )
+      libmesh_error_msg("ERROR: Must call set_getpot() before calling VariableFactoryAbstract::build_var_names!");
+
+    if( _var_section == std::string("DIE!") )
+      libmesh_error_msg("ERROR: Must call set_var_section() before calling VariableFactoryAbstract::build_var_names!");
+  }
+
+  void VariableFactoryAbstract::reset_build_parse_state()
+  {
+    _input = NULL;
+    _var_section = std::string("DIE!");
   }
 
   template<typename VariableType>
