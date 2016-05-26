@@ -31,6 +31,7 @@
 #include "grins/variable_warehouse.h"
 #include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
+#include "grins/physics_naming.h"
 
 //libMesh
 #include "libmesh/getpot.h"
@@ -46,9 +47,9 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,PhysicsNaming::heat_transfer()))),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::heat_transfer()))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::heat_transfer())))
   {
     if (input.have_variable("Stabilization/tau_constant_T"))
       this->set_parameter

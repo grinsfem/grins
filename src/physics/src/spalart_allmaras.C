@@ -47,9 +47,9 @@ namespace GRINS
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
-    _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
-    _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
-    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turbulence_section())),
+    _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
+    _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
+    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,physics_name))),
     _spalart_allmaras_helper(input),
     _sa_params(input),
     _no_of_walls(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/no_of_walls", 0)),

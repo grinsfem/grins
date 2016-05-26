@@ -41,7 +41,7 @@ namespace GRINS
     : Physics(physics_name, input),
       _epsilon(1e-6),
       _input(input),
-      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::scalar_var_section()))
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::physics_scalar_variable_name(input,physics_name)))
   {
     this->read_input_options(input);
 

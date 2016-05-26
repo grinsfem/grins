@@ -49,10 +49,10 @@ namespace GRINS
   ReactingLowMachNavierStokesAbstract::ReactingLowMachNavierStokesAbstract(const std::string& physics_name,
                                                                            const GetPot& input)
     : Physics(physics_name, input),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
-      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
-      _species_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>(VariablesParsing::species_mass_fractions_section())),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,physics_name))),
+      _species_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>(VariablesParsing::physics_species_mass_frac_variable_name(input,physics_name))),
       _p0_var(NULL),
       _n_species(_species_vars.n_species()),
       _fixed_density( input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/fixed_density", false ) ),
@@ -67,7 +67,7 @@ namespace GRINS
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
       {
-        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::thermo_pressure_section());
+        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::physics_thermo_press_variable_name(input,physics_name));
         _p0_var->set_is_constraint_var(true);
       }
 

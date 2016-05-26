@@ -47,7 +47,7 @@ namespace GRINS
     : Physics(physics_name,input),
       _v(3,libMesh::ParsedFunction<libMesh::Number>("0.0") ),
       _kappa("0.0"),
-      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_var_section()))
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::physics_single_variable_name(input,physics_name)))
   {
     unsigned int n_v_comps = input.vector_variable_size("Physics/"+physics_name+"/velocity_field");
 

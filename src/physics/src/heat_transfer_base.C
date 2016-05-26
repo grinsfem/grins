@@ -48,9 +48,9 @@ namespace GRINS
                                          const std::string& core_physics_name,
                                          const GetPot& input )
     : Physics(physics_name, input),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
-      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,core_physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,core_physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,core_physics_name))),
       _rho(0.0),
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
