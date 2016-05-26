@@ -52,8 +52,8 @@ namespace GRINS
     static std::string velocity_section()
     { return "Velocity"; }
 
-    static std::string generic_section()
-    { return "GenericVariable"; }
+    static std::string single_var_section()
+    { return "SingleVariable"; }
 
     static std::string scalar_var_section()
     { return "ScalarVariable"; }

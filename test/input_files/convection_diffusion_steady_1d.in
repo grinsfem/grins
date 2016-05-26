@@ -28,7 +28,7 @@
 []
 
 [Variables]
-   [./GenericVariable]
+   [./SingleVariable]
       names = 'u'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
@@ -38,7 +38,7 @@
    bc_ids = '0:1'
    bc_id_name_map = 'EndPoints'
    [./EndPoints]
-      [./GenericVariable]
+      [./SingleVariable]
          type = 'parsed_dirichlet'
          u = '0.0'
 []

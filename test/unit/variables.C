@@ -121,12 +121,12 @@ namespace GRINSTesting
         this->test_press_fe(*_system);
       }
 
-      // Check Generic variable
+      // Check Single variable
       {
-        const GRINS::FEVariablesBase& generic_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::generic_section());
+        const GRINS::FEVariablesBase& single_var =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::single_var_section());
 
-        const std::vector<std::string>& var_names = generic_vars.active_var_names();
+        const std::vector<std::string>& var_names = single_var.active_var_names();
         CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
         CPPUNIT_ASSERT_EQUAL(std::string("u"),var_names[0]);
 

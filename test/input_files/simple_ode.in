@@ -64,7 +64,7 @@ time_deriv = '-u'
 []
 
 [Variables]
-   [./GenericVariable]
+   [./SingleVariable]
       names = 'u'
       fe_family = 'SCALAR'
       order = 'FIRST'

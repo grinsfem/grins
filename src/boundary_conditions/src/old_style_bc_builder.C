@@ -156,7 +156,7 @@ namespace GRINS
                  raw_physics_name == PhysicsNaming::elastic_cable() )
           var_section = VariablesParsing::displacement_section();
         else if( raw_physics_name == PhysicsNaming::convection_diffusion() )
-          var_section = VariablesParsing::generic_section()+":"+raw_physics_name;
+          var_section = VariablesParsing::single_var_section()+":"+raw_physics_name;
         else
           libmesh_error();
       }

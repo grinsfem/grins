@@ -150,7 +150,7 @@ namespace GRINS
   grins_factory_disp_fe_var(VariablesParsing::displacement_section());
 
   VariableFactoryBasic<SingleVariable>
-  grins_factory_generic_fe_var(VariablesParsing::generic_section());
+  grins_factory_single_var(VariablesParsing::single_var_section());
 
   VariableFactoryBasic<PressureFEVariable>
   grins_factory_press_fe_var(VariablesParsing::pressure_section());
