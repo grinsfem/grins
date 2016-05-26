@@ -17,3 +17,6 @@ ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
                  u_L2_error='4.1180937619033129e-04' \
                  u_exact_soln='x-(1-exp(40*x))/(1-exp(40))' \
                  test_data=$TESTDATA
+
+# Now remove the test turd
+rm $TESTDATA
