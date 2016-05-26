@@ -44,7 +44,7 @@
 namespace GRINS
 {
 
-  SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& input )
+  SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& /*input*/ )
     : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
   {}
