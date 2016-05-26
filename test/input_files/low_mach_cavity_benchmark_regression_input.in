@@ -37,6 +37,8 @@
        pin_pressure = true
        pin_location = '0.0 0.01'
        pin_value = '0.0'
+
+       thermo_pressure_var_name = 'ThePressure'
 []
 
 [BoundaryConditions]
@@ -86,7 +88,8 @@
       names = 'T'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
-   [../ThermoPressure]
+   [../ThePressure]
+      type = 'ThermoPressure'
       names = 'p0'
       order = 'FIRST'
 []

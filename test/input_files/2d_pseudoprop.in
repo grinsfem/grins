@@ -50,10 +50,13 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+var_name = 'TurbineVar'
+
 []
 
 [Variables]
-   [./ScalarVariable]
+   [./TurbineVar]
+      type = 'ScalarVariable'
       names = 'fan_speed'
       order = 'FIRST'
    [../]
