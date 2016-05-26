@@ -32,6 +32,7 @@
 #include "grins/materials_parsing.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/variable_warehouse.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -46,7 +47,7 @@ namespace GRINS
     : Physics(physics_name,input),
       _v(3,libMesh::ParsedFunction<libMesh::Number>("0.0") ),
       _kappa("0.0"),
-      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<GenericFETypeVariable>(VariablesParsing::generic_section()))
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::generic_section()))
   {
     unsigned int n_v_comps = input.vector_variable_size("Physics/"+physics_name+"/velocity_field");
 

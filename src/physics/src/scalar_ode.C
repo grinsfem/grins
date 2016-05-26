@@ -41,7 +41,7 @@ namespace GRINS
     : Physics(physics_name, input),
       _epsilon(1e-6),
       _input(input),
-      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<GenericFETypeVariable>(VariablesParsing::generic_section()))
+      _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::generic_section()))
   {
     this->read_input_options(input);
 

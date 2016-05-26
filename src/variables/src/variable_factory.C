@@ -28,7 +28,7 @@
 // GRINS
 #include "grins/materials_parsing.h"
 #include "grins/multi_component_vector_variable.h"
-#include "grins/generic_fe_type_variable.h"
+
 #include "grins/single_variable.h"
 #include "grins/species_mass_fracs_fe_variables.h"
 
@@ -149,7 +149,7 @@ namespace GRINS
   VariableFactoryBasic<DisplacementVariable>
   grins_factory_disp_fe_var(VariablesParsing::displacement_section());
 
-  VariableFactoryBasic<GenericFETypeVariable>
+  VariableFactoryBasic<SingleVariable>
   grins_factory_generic_fe_var(VariablesParsing::generic_section());
 
   VariableFactoryBasic<PressureFEVariable>

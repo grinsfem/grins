@@ -27,13 +27,16 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/generic_fe_type_variable.h"
+
 
 //libMesh
 #include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
+  // Forward declarations
+  class SingleVariable;
+
   class ConvectionDiffusion : public Physics
   {
   public:
@@ -63,7 +66,7 @@ namespace GRINS
     //! Diffusivity, \f$ \kappa(x,y,z,t) \f$
     libMesh::ParsedFunction<libMesh::Number> _kappa;
 
-    GenericFETypeVariable& _var;
+    SingleVariable& _var;
 
   private:
 

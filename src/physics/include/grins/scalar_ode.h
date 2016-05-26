@@ -31,7 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_values.h"
 #include "grins/inc_navier_stokes_base.h"
-#include "grins/generic_fe_type_variable.h"
+
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -95,7 +95,7 @@ namespace GRINS
 
     const GetPot & _input;
 
-    GenericFETypeVariable& _var;
+    SingleVariable& _var;
 
     ScalarODE();
 

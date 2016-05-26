@@ -29,7 +29,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/inc_navier_stokes_base.h"
-#include "grins/generic_fe_type_variable.h"
+
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -126,7 +126,7 @@ namespace GRINS
     // this will be a constant.
     libMesh::ParsedFunction<libMesh::Number> aoa_function;
 
-    GenericFETypeVariable& _var;
+    SingleVariable& _var;
 
   private:
 
