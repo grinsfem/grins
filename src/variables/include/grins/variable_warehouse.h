@@ -108,20 +108,6 @@ namespace GRINS
     }
 
     inline
-    SharedPtr<FEVariablesBase> VariableWarehouse::get_variable_ptr( const std::string& var_name )
-    {
-      if( !VariableWarehouse::is_registered(var_name) )
-        libmesh_error_msg("ERROR: Could not find FEVariable "+var_name+"!");
-
-      SharedPtr<FEVariablesBase> var_ptr = var_map()[var_name];
-
-      if( !var_ptr )
-        libmesh_error_msg("ERROR: FEVariable "+var_name+" is an invalid pointer!");
-
-      return var_ptr;
-    }
-
-    inline
     FEVariablesBase& VariableWarehouse::get_variable( const std::string& var_name )
     {
       SharedPtr<FEVariablesBase> var_ptr = VariableWarehouse::get_variable_ptr(var_name);
