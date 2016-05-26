@@ -634,7 +634,7 @@ if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
-EXTRA_DIST  = common
+EXTRA_DIST  = common/lcov
 EXTRA_DIST += $(sfiles_DATA)
 
 # Required for AX_AM_MACROS
