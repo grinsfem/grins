@@ -30,21 +30,6 @@ EXTRA_DIST += $(GRINS_TEST_SH_FILES) $(GRINS_TEST_INPUT_FILES) $(GRINS_TEST_DATA
 includedir = $(prefix)/include
 include_HEADERS = $(top_builddir)/grins_config.h
 
-# Eliminate .svn directories in dist tarball
-dist-hook:
-	rm -rf `find $(distdir)/ -name .svn`
-
-#if SVN_CHECKOUT
-#  EXTRA_DIST     += dist_version
-#
-#TODO: check if dist_version is needed in BUILT_SOURCES (in addition to EXTRA_DIST)
-#  BUILT_SOURCES   = dist_version
-#
-#dist_version: FORCE
-#	@SVN_REVISION@ > $(top_srcdir)/dist_version
-#
-#FORCE:
-#endif
 
 # Tools in the auxiliary directory
 
