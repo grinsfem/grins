@@ -25,21 +25,18 @@
 // This class
 #include "grins/physics_factory_base.h"
 
-// Full specialization for the Factory<Physics>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, libMesh::Factory<GRINS::Physics>*>&
-  libMesh::Factory<GRINS::Physics>::factory_map()
-  {
-    static std::map<std::string, libMesh::Factory<GRINS::Physics>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
-
-// Definition of static members
 namespace GRINS
 {
+  // Full specialization for the Factory<Physics>
+  template<>
+  std::map<std::string, FactoryAbstract<Physics>*>&
+  FactoryAbstract<Physics>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<Physics>*> _map;
+    return _map;
+  }
+
+  // Definition of static members
   template<>
   std::string FactoryWithGetPotPhysicsName<Physics>::_physics_name = std::string("DIE!");
 

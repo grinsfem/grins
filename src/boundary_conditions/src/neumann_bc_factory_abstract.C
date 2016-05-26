@@ -71,6 +71,15 @@ namespace GRINS
       }
   }
 
+  // Full specialization for the Factory<NeumannBCContainer>
+  template<>
+  std::map<std::string, FactoryAbstract<NeumannBCContainer>*>&
+  FactoryAbstract<NeumannBCContainer>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<NeumannBCContainer>*> _map;
+    return _map;
+  }
+
   // Definition of static members
   template<>
   const GetPot* FactoryWithGetPot<NeumannBCContainer>::_input = NULL;
@@ -88,15 +97,3 @@ namespace GRINS
   std::string BCFactoryAbstract<NeumannBCContainer>::_section = std::string("DIE!");
 
 } // end namespace GRINS
-
-// Full specialization for the Factory<NeumannBCContainer>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, Factory<GRINS::NeumannBCContainer>*>&
-  Factory<GRINS::NeumannBCContainer>::factory_map()
-  {
-    static std::map<std::string, Factory<GRINS::NeumannBCContainer>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
