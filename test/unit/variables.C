@@ -70,71 +70,11 @@ namespace GRINSTesting
 
       GRINS::VariableBuilder::build_variables((*_input),(*_system));
 
-      // There should be 7 variables generated from that input file
-      CPPUNIT_ASSERT_EQUAL((unsigned int)7,_system->n_vars());
-
-      // Check Velocity variables
-      {
-        const GRINS::FEVariablesBase& vel_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::velocity_section());
-
-        const std::vector<std::string>& var_names = vel_vars.active_var_names();
-        this->test_vel_var_names_2d(var_names);
-
-        // Verify the FE part
-        this->test_vel_fe_2d(*_system);
-      }
-
-      // Check Temperature variables
-      {
-        const GRINS::FEVariablesBase& temp_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::temperature_section());
-
-        const std::vector<std::string>& var_names = temp_vars.active_var_names();
-        this->test_temp_var_names(var_names);
-
-        // Verify the FE part
-        this->test_temp_fe(*_system);
-      }
-
-      // Check SpeciesMassFractions variables
-      {
-        const GRINS::FEVariablesBase& species_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::species_mass_fractions_section());
-
-        const std::vector<std::string>& var_names = species_vars.active_var_names();
-        this->test_species_var_names(var_names);
-
-        // Verify the FE part
-        this->test_species_fe(*_system);
-      }
-
-      // Check Pressure variable
-      {
-        const GRINS::FEVariablesBase& press_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::pressure_section());
-
-        const std::vector<std::string>& var_names = press_vars.active_var_names();
-        this->test_press_var_names(var_names);
-
-        // Verify the FE part
-        this->test_press_fe(*_system);
-      }
-
-      // Check Single variable
-      {
-        const GRINS::FEVariablesBase& single_var =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::single_var_section());
-
-        const std::vector<std::string>& var_names = single_var.active_var_names();
-        CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
-        CPPUNIT_ASSERT_EQUAL(std::string("u"),var_names[0]);
-
-        // Verify the FE part
-        libMesh::Order order = _system->variable_type("u").order;
-        CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,_system->variable_type("u").family);
-        CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
-      }
+      this->test_all_variables( GRINS::VariablesParsing::velocity_section(),
+                                GRINS::VariablesParsing::temperature_section(),
+                                GRINS::VariablesParsing::species_mass_fractions_section(),
+                                GRINS::VariablesParsing::pressure_section(),
+                                GRINS::VariablesParsing::single_var_section() );
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
@@ -162,6 +102,79 @@ namespace GRINSTesting
     }
 
   private:
+
+    void test_all_variables( const std::string& velocity_name,
+                             const std::string& temp_name,
+                             const std::string& species_name,
+                             const std::string& press_name,
+                             const std::string& single_var_name )
+    {
+      // There should be 7 variables generated from that input file
+      CPPUNIT_ASSERT_EQUAL((unsigned int)7,_system->n_vars());
+
+      // Check Velocity variables
+      {
+        const GRINS::FEVariablesBase& vel_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(velocity_name);
+
+        const std::vector<std::string>& var_names = vel_vars.active_var_names();
+        this->test_vel_var_names_2d(var_names);
+
+        // Verify the FE part
+        this->test_vel_fe_2d(*_system);
+      }
+
+      // Check Temperature variables
+      {
+        const GRINS::FEVariablesBase& temp_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(temp_name);
+
+        const std::vector<std::string>& var_names = temp_vars.active_var_names();
+        this->test_temp_var_names(var_names);
+
+        // Verify the FE part
+        this->test_temp_fe(*_system);
+      }
+
+      // Check SpeciesMassFractions variables
+      {
+        const GRINS::FEVariablesBase& species_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(species_name);
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        this->test_species_var_names(var_names);
+
+        // Verify the FE part
+        this->test_species_fe(*_system);
+      }
+
+      // Check Pressure variable
+      {
+        const GRINS::FEVariablesBase& press_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(press_name);
+
+        const std::vector<std::string>& var_names = press_vars.active_var_names();
+        this->test_press_var_names(var_names);
+
+        // Verify the FE part
+        this->test_press_fe(*_system);
+      }
+
+      // Check Single variable
+      {
+        const GRINS::FEVariablesBase& single_var =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(single_var_name);
+
+        const std::vector<std::string>& var_names = single_var.active_var_names();
+        CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
+        CPPUNIT_ASSERT_EQUAL(std::string("u"),var_names[0]);
+
+        // Verify the FE part
+        libMesh::Order order = _system->variable_type("u").order;
+        CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,_system->variable_type("u").family);
+        CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
+      }
+    }
 
     void test_vel_var_names_2d( const std::vector<std::string>& var_names )
     {
