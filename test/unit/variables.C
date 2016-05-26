@@ -53,6 +53,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_variable_builder );
     CPPUNIT_TEST( test_var_constraint );
+    CPPUNIT_TEST( test_variable_arbitrary_names );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -96,6 +97,23 @@ namespace GRINSTesting
 
       CPPUNIT_ASSERT(!vel_vars.is_constraint_var());
       CPPUNIT_ASSERT(press_vars.is_constraint_var());
+
+      // Clear out the VariableWarehouse so it doesn't interfere with other tests.
+      GRINS::GRINSPrivate::VariableWarehouse::clear();
+    }
+
+    void test_variable_arbitrary_names()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_arbitrary_names.in";
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
+
+      this->test_all_variables( "MySpeed",
+                                "TestingIsSoHot",
+                                "MassFractions",
+                                "SoMuchPressure",
+                                "ForeverAlone" );
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
