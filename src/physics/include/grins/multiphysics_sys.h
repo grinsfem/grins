@@ -32,6 +32,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/physics.h"
+#include "grins/neumann_bc_container.h"
 
 // libMesh
 #include "libmesh/fem_system.h"
@@ -92,6 +93,9 @@ namespace GRINS
 
     //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );
+
+    const PhysicsList& get_physics_list() const
+    { return _physics_list; }
 
     //! Reads input options for this class and all physics that are enabled
     /*!
@@ -193,6 +197,19 @@ namespace GRINS
     // A list of values for per-variable numerical jacobian deltas
     std::vector<libMesh::Real> _numerical_jacobian_h_values;
 
+    //! Cached for helping build boundary conditions
+    /*! We can't make a copy because it will muck up the UFO detection
+        amongst other things. So, we keep a raw pointer. We don't own this
+        so we *MUST* not delete. */
+    const GetPot* _input;
+
+    //! Neumann boundary conditions
+    /*! Store each NeumannBCContainer for each set of BoundaryIDs and Variables,
+        as specified in the input file. The container knows what BoundaryIDs and
+        Variables it applies to. We use SharedPtr here because
+        libMesh::UniquePtr may still actually be an AutoPtr. */
+    std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
@@ -206,6 +223,15 @@ namespace GRINS
 			    libMesh::DiffContext& context,
                             ResFuncType resfunc,
                             CacheFuncType cachefunc);
+
+    //! Extract the bcs from neumann_bcs that are active on bc_id and return them in active_neumann_bcs
+    void get_active_neumann_bcs( BoundaryID bc_id,
+                                 const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
+                                 std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs );
+
+    //! Applies the subset of _neumann_bcs that are active on the current element side
+    bool apply_neumann_bcs( bool request_jacobian,
+                            libMesh::DiffContext& context );
   };
 
   inline

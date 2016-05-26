@@ -29,7 +29,6 @@
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/spalart_allmaras_bc_handling.h"
 #include "grins/turbulence_models_macro.h"
 
 #include "grins/constant_viscosity.h"
@@ -71,12 +70,7 @@ namespace GRINS
 
     this->register_variables();
 
-    // This is deleted in the base class
-    this->_bc_handler = new SpalartAllmarasBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
   }
 
   template<class Mu>

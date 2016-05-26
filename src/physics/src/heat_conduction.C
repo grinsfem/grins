@@ -30,7 +30,6 @@
 #include "grins/common.h"
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/heat_transfer_bc_handling.h"
 #include "grins/heat_transfer_macros.h"
 #include "grins/physics_naming.h"
 #include "grins/materials_parsing.h"
@@ -59,10 +58,7 @@ namespace GRINS
     this->register_variables();
 
     // This is deleted in the base class
-    this->_bc_handler = new HeatTransferBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
   }
 
   template<class K>

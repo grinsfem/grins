@@ -28,7 +28,6 @@
 
 //GRINS
 #include "grins/pressure_pinning.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/inc_navier_stokes_base.h"
 
 namespace GRINS

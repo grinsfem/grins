@@ -9,7 +9,6 @@
          value = '1.0'
 []
 
-# Mesh related options
 [Mesh]
    [./Read]
       filename = 'naca_0012_medium_boundary_id.xda'
@@ -18,15 +17,11 @@
 [restart-options]
    # Use the coarser mesh to give us a good initial guess for the solution
    restart_file = './turbulent_airfoil_Re_6000000.xda'
-
 []
 
-# Options for time solvers
 [unsteady-solver]
 transient = false
-#theta = '0.5'
-#n_timesteps = '10'
-#deltat = '0.5'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -48,6 +43,7 @@ output_adjoint = 'true'
 #output_solution_sensitivities = true
 vis_output_file_prefix = 'turbulent_airfoil_Re_6000000_adjoint_sens'
 output_format = 'ExodusII xda'
+[]
 
 # Options for print info to the screen
 [screen-options]
@@ -60,47 +56,61 @@ solver_quiet = 'false'
 echo_physics = 'true'
 echo_qoi = 'true' # which QoIs activated
 print_qoi = 'true' # print numerical values of QoIs
+[]
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
-#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
+   enabled_physics = 'IncompressibleNavierStokes
+                      IncompressibleNavierStokesSPGSMStabilization
+                      SpalartAllmaras
+                      SpalartAllmarasSPGSMStabilization'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'Gas'
+      material = 'Gas'
+      pin_pressure = 'false'
 
-bc_ids = '0 2'
-bc_types = 'no_slip prescribed_vel'
+   [../SpalartAllmaras]
 
-bound_vel_2 = '1.0 0.0 0.0'
+      material = 'Gas'
+      no_of_walls = 1
+      wall_ids = '0'
+[]
 
-#ic_ids = '0'
-#ic_types = 'parsed'
-#ic_variables = 'u'
-#ic_values = '0.0'
+[BoundaryConditions]
 
-pin_pressure = 'false'
+   bc_id_name_map = 'AirfoilBoundary Freestream Outlet'
+   bc_ids = '0 2 1'
 
-# Options for Spalart Allmaras physics
-[../SpalartAllmaras]
+   [./AirfoilBoundary]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./TurbulentViscosity]
+         type = 'constant_dirichlet'
+         nu = '0.0'
+      [../]
+   [../]
 
-material = 'Gas'
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./TurbulentViscosity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 
-bc_ids = '0 2'
-bc_types = 'constant_dirichlet constant_dirichlet'
-bc_variables = 'nu nu'
-bc_values = '0.0 0.000000333'
-no_of_walls = 1
-wall_ids = '0'
-
-#ic_ids = '0'
-#ic_types = 'parsed'
-#ic_variables = 'nu'
-#ic_values = '2.0'
-
+   [./Freestream]
+      [./Velocity]
+         type = 'constant_dirichlet'
+         u = '1.0'
+      [../]
+      [./TurbulentViscosity]
+         type = 'constant_dirichlet'
+         nu = '0.000000333'
+      [../]
+   [../]
 []
 
 [Variables]

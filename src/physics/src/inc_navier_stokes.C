@@ -30,7 +30,6 @@
 #include "grins/assembly_context.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/postprocessed_quantities.h"
-#include "grins/inc_navier_stokes_bc_handling.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh
@@ -48,8 +47,6 @@ namespace GRINS
     _mu_index(0)
   {
     // This is deleted in the base class
-    this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler( physics_name, input );
 
     this->_pin_pressure = input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/pin_pressure", false );

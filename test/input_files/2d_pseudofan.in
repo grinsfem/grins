@@ -19,12 +19,6 @@ enabled_physics = 'IncompressibleNavierStokes AveragedFan'
 
 material = 'TestMaterial'
 
-# Boundary ids:
-# imin,imax = 3, 1
-# jmin,jmax = 0, 3
- bc_ids = '0 1 2 3'
- bc_types = 'no_slip no_slip no_slip no_slip'
-
 pin_pressure = 'true'
 pin_location = '-0.5 -0.5'
 pin_value = '0.0'
@@ -43,6 +37,15 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:1:2:3'
+   bc_id_name_map = 'AllWalls'
+
+   [./AllWalls]
+      [./Velocity]
+         type = 'no_slip'
 []
 
 [Variables]
@@ -81,7 +84,7 @@ angle_of_attack = '{pi/4}'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = '7' 
+max_nonlinear_iterations = '7'
 max_linear_iterations = '500'
 
 relative_residual_tolerance = '1.0e-10'
@@ -96,7 +99,7 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'output/fan' 
+vis_output_file_prefix = 'output/fan'
 
 output_residual = 'false'
 

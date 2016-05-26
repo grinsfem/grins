@@ -55,45 +55,67 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+   enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+   [./IncompressibleNavierStokes]
 
-material = 'TestMaterial'
+       material = 'TestMaterial'
 
-bc_ids = '3 2 0'
-bc_types = 'general_velocity no_slip no_slip '
+       ic_ids = '0'
+       ic_types = 'parsed'
+       ic_variables = 'u'
+       ic_values = '4*y*(1.0-y)'
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'u'
-ic_values = '4*y*(1.0-y)'
+       pin_pressure = 'false'
 
-pin_pressure = 'false'
+   [../SpalartAllmaras]
 
-# Options for Spalart Allmaras physics
-[../SpalartAllmaras]
+      material = 'TestMaterial'
 
-material = 'TestMaterial'
+      no_of_walls = '2'
+      wall_ids = '0 2'
 
-bc_ids = '0 2 3'
-bc_types = 'constant_dirichlet constant_dirichlet general_viscosity'
-#bc_types = 'constant_dirichlet constant_dirichlet parsed_dirichlet'
-bc_variables = 'nu nu nu'
-bc_values = '0.0 0.0 0.0'
-#bc_values = '0.0 0.0 0.01*y*(1.0-y)'
-no_of_walls = 2
-wall_ids = '0 2'
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'nu'
+      ic_values = '0.1*y*(1.0-y)'
+[]
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'nu'
-ic_values = '0.1*y*(1.0-y)'
+[BoundaryConditions]
 
+   bc_id_name_map = 'Walls Inlet Outlet'
+   bc_ids = '0:2 3 1'
+
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./TurbulentViscosity]
+         type = 'constant_dirichlet'
+         nu = '0.0'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./TurbulentViscosity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+
+   # These are implemented in the SA testing program.
+   [./Inlet]
+      [./Velocity]
+         type = 'testing_turb_u'
+      [../]
+      [./TurbulentViscosity]
+         type = 'testing_turb_nu'
+      [../]
+   [../]
 []
 
 [Variables]

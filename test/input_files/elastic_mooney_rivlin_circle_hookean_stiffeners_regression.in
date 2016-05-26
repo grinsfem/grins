@@ -32,36 +32,39 @@
 
 ##### Options related to all Physics #####
 [Physics]
-enabled_physics = 'ElasticMembrane:Membrane1
-                   ElasticMembraneConstantPressure:Membrane1
-                   ElasticCable:Cables'
+   enabled_physics = 'ElasticMembrane:Membrane1
+                      ElasticMembraneConstantPressure:Membrane1
+                      ElasticCable:Cables'
 
-##### Options for Elastic Membrane Physics #####
-[./ElasticMembrane:Membrane1]
+   [./ElasticMembrane:Membrane1]
 
-material = 'Membrane'
+      material = 'Membrane'
+      enabled_subdomains = '1'
 
-enabled_subdomains = '1'
+      ic_ids       = '1'
+      ic_types     = 'parsed'
+      ic_variables = 'w'
+      ic_values    = '-0.5*cos(pi/2*sqrt(x^2+y^2))'
 
-bc_ids   = '1'
-bc_types = 'pinned'
+   [../ElasticMembraneConstantPressure:Membrane1]
 
-ic_ids       = '1'
-ic_types     = 'parsed'
-ic_variables = 'w'
-ic_values    = '-0.5*cos(pi/2*sqrt(x^2+y^2))'
+      pressure = '1.0'
 
-[../ElasticMembraneConstantPressure:Membrane1]
+   [../ElasticCable:Cables]
 
-pressure = '1.0'
+      material = 'Cable'
+      enabled_subdomains = '2'
+[]
 
-##### Options for Elastic Cable Physics #####
-[../ElasticCable:Cables]
+[BoundaryConditions]
+   bc_ids = '1'
+   bc_id_name_map = 'Boundary'
 
-material = 'Cable'
-
-enabled_subdomains = '2'
-
+   [./Boundary]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -96,6 +99,7 @@ vis_output_file_prefix = 'sheet'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
+[]
 
 ##### Options for print info to the screen #####
 [screen-options]

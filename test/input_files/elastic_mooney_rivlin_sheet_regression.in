@@ -17,23 +17,35 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticMembrane'
+   enabled_physics = 'ElasticMembrane'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticMembrane]
+   [./ElasticMembrane]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
+[]
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
-bc_ids = '3 1'
-bc_types = 'pinned constant_displacement'
+[BoundaryConditions]
+   bc_ids = '1 3 0:2'
+   bc_id_name_map = 'Right Left TractionFree'
 
-displacement_1 = '0.1 0.0 0.0'
+   [./Left]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
 
+   [./Right]
+      [./Displacement]
+         type = 'constant_displacement'
+         u = '0.1'
+      [../]
+   [../]
+
+   [./TractionFree]
+      [./Displacement]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]

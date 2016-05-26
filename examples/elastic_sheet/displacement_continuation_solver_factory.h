@@ -44,8 +44,6 @@ namespace GRINS
 
   SharedPtr<GRINS::Solver> DisplacementContinuationSolverFactory::build(const GetPot& input)
   {
-     std::cout << "HELLO!!!" << std::endl;
-
     std::string solver_type = input("SolverOptions/solver_type", "DIE!");
 
     SharedPtr<Solver> solver;  // Effectively NULL

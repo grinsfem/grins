@@ -32,7 +32,8 @@
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
-#include "grins/parabolic_profile.h"
+#include "grins/dirichlet_bc_factory_function_old_style_base.h"
+#include "grins/var_typedefs.h"
 
 //libMesh
 #include "libmesh/dirichlet_boundaries.h"
@@ -47,11 +48,18 @@
 #include "libmesh/gmv_io.h"
 #include "libmesh/exact_solution.h"
 #include "libmesh/zero_function.h"
+#include "libmesh/composite_function.h"
+#include "libmesh/zero_function.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
 #include "grvy.h"
 #endif
+
+namespace GRINS
+{
+  class MultiphysicsSystem;
+}
 
 void test_error_norm( libMesh::ExactSolution& exact_sol,
                       const std::string& system_name,
@@ -60,101 +68,175 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
                       const double tol,
                       int& return_flag );
 
-class TurbulentBCFactory : public GRINS::BoundaryConditionsFactory
+namespace GRINSTesting
 {
-public:
 
-  TurbulentBCFactory(libMesh::MeshFunction* _turbulent_bc_values)
-    : GRINS::BoundaryConditionsFactory(),
-      turbulent_bc_values(_turbulent_bc_values)
-  { return; };
-
-  ~TurbulentBCFactory(){return;};
-
-  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
-
-private:
-  // A pointer to a TurbulentBdyFunction object that build_dirichlet can use to set bcs
-  libMesh::MeshFunction* turbulent_bc_values;
-};
-
-
-class TurbBoundFuncBase : public libMesh::FunctionBase<libMesh::Number>
-{
-public:
-  TurbBoundFuncBase (libMesh::MeshFunction* turbulent_bc_values) :
-    _turbulent_bc_values(turbulent_bc_values)
-  { this->_initialized = true; }
-
-  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
-  { libmesh_not_implemented(); }
-
-  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) =0;
-
-  virtual void operator() (const libMesh::Point& p,
-                           const libMesh::Real t,
-                           libMesh::DenseVector<libMesh::Number>& output)
+  class TurbBoundFuncBase : public libMesh::FunctionBase<libMesh::Number>
   {
-    output.resize(1);
-    output.zero();
+  public:
+    TurbBoundFuncBase (libMesh::MeshFunction* turbulent_bc_values)
+      : _turbulent_bc_values(turbulent_bc_values)
+    { this->_initialized = true; }
 
-    // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
-    libMesh::Point p_copy(p);
-    // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
-    p_copy(0) = p_copy(1);
-    p_copy(1)= 0.0;
-    // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
-    // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
-    if(p_copy(0) > 0.5)
-      {
-        p_copy(0) = 1 - p_copy(0);
-      }
-    p_copy(0) = 2*p_copy(0);
+    virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+    { libmesh_not_implemented(); }
 
-    libMesh::DenseVector<libMesh::Number> u_nu_values;
-    _turbulent_bc_values->operator()(p_copy, t, u_nu_values);
+    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) =0;
 
-    output(0) = this->compute_final_value(u_nu_values);
-  }
+    virtual void operator() (const libMesh::Point& p,
+                             const libMesh::Real t,
+                             libMesh::DenseVector<libMesh::Number>& output)
+    {
+      output.resize(1);
+      output.zero();
 
-protected:
+      // Since the turbulent_bc_values object has a solution from a 1-d problem, we have to zero out the y coordinate of p
+      libMesh::Point p_copy(p);
+      // Also, the 1-d solution provided is on the domain [0, 1] on the x axis and we need to map this to the corresponding point on the y axis
+      p_copy(0) = p_copy(1);
+      p_copy(1)= 0.0;
+      // Also, the 1-d solution provided is actually a symmetry solution, so we have to make the following map
+      // x_GRINS < 0.5 => x_meshfunction = 2*x_GRINS , x_GRINS >= 0.5 => x_GRINS = 1 - x_GRINS, x_meshfunction = 2*x_GRINS
+      if(p_copy(0) > 0.5)
+        {
+          p_copy(0) = 1 - p_copy(0);
+        }
+      p_copy(0) = 2*p_copy(0);
 
-  libMesh::MeshFunction* _turbulent_bc_values;
+      libMesh::DenseVector<libMesh::Number> u_nu_values;
+      _turbulent_bc_values->operator()(p_copy, t, u_nu_values);
 
-};
+      output(0) = this->compute_final_value(u_nu_values);
+    }
 
+  protected:
 
-// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
-class TurbulentBdyFunctionU : public TurbBoundFuncBase
-{
-public:
-  TurbulentBdyFunctionU (libMesh::MeshFunction* turbulent_bc_values)
-    : TurbBoundFuncBase(turbulent_bc_values)
-  {}
+    libMesh::MeshFunction* _turbulent_bc_values;
 
-  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
-  { return  u_nu_values(0)/21.995539; }
+  };
 
-  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
-};
+  // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
+  class TurbulentBdyFunctionU : public TurbBoundFuncBase
+  {
+  public:
+    TurbulentBdyFunctionU (libMesh::MeshFunction* turbulent_bc_values)
+      : TurbBoundFuncBase(turbulent_bc_values)
+    {}
 
-// Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
-class TurbulentBdyFunctionNu : public TurbBoundFuncBase
-{
-public:
-  TurbulentBdyFunctionNu (libMesh::MeshFunction* turbulent_bc_values)
-    : TurbBoundFuncBase(turbulent_bc_values)
-  {}
+    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+    { return  u_nu_values(0)/21.995539; }
 
-  virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
-  { return  u_nu_values(1)/(2.0*21.995539); }
+    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
+  };
 
-  virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-  { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
+  // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
+  class TurbulentBdyFunctionNu : public TurbBoundFuncBase
+  {
+  public:
+    TurbulentBdyFunctionNu (libMesh::MeshFunction* turbulent_bc_values)
+      : TurbBoundFuncBase(turbulent_bc_values)
+    {}
 
-};
+    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+    { return  u_nu_values(1)/(2.0*21.995539); }
 
+    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
+
+  };
+
+  class SATurbBCFactoryBase : public GRINS::DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >
+  {
+  public:
+    SATurbBCFactoryBase( const std::string& bc_type_name )
+      : DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
+    {}
+
+    static void set_turb_bc_values( libMesh::MeshFunction* turbulent_bc_values )
+    { _turbulent_bc_values = turbulent_bc_values; }
+
+  protected:
+
+     static libMesh::MeshFunction* _turbulent_bc_values;
+  };
+
+  libMesh::MeshFunction* SATurbBCFactoryBase::_turbulent_bc_values = NULL;
+
+  class SATurbUBCFactory : public SATurbBCFactoryBase
+  {
+  public:
+
+    SATurbUBCFactory( const std::string& bc_type_name )
+      : SATurbBCFactoryBase(bc_type_name)
+    {}
+
+  protected:
+
+    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    build_func( const GetPot& /*input*/,
+                GRINS::MultiphysicsSystem& system,
+                std::vector<std::string>& var_names,
+                const std::string& /*section*/ )
+    {
+      libmesh_assert_equal_to(var_names.size(), 2);
+      libmesh_assert_equal_to(var_names[0], std::string("u"));
+      libmesh_assert_equal_to(var_names[1], std::string("v"));
+
+      libMesh::UniquePtr<libMesh::CompositeFunction<libMesh::Number> >
+        composite_func( new libMesh::CompositeFunction<libMesh::Number> );
+
+      libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+        bound_func(new TurbulentBdyFunctionU(_turbulent_bc_values) );
+
+      std::vector<GRINS::VariableIndex> vars(1);
+      vars[0] = system.variable_number(var_names[0]);
+      composite_func->attach_subfunction(*bound_func, vars);
+
+      vars[0] = system.variable_number(var_names[1]);
+      composite_func->attach_subfunction(libMesh::ZeroFunction<libMesh::Number>(), vars);
+
+      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
+    }
+  };
+
+  class SATurbNuBCFactory : public SATurbBCFactoryBase
+  {
+  public:
+
+    SATurbNuBCFactory( const std::string& bc_type_name )
+      : SATurbBCFactoryBase(bc_type_name)
+    {}
+
+  protected:
+
+    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    build_func( const GetPot& /*input*/,
+                GRINS::MultiphysicsSystem& system,
+                std::vector<std::string>& var_names,
+                const std::string& /*section*/ )
+    {
+      libmesh_assert_equal_to(var_names.size(), 1);
+      libmesh_assert_equal_to(var_names[0], std::string("nu"));
+
+      libMesh::UniquePtr<libMesh::CompositeFunction<libMesh::Number> >
+        composite_func( new libMesh::CompositeFunction<libMesh::Number> );
+
+      libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+        bound_func( new TurbulentBdyFunctionNu(_turbulent_bc_values) );
+
+      std::vector<GRINS::VariableIndex> vars(1);
+      vars[0] = system.variable_number(var_names[0]);
+      composite_func->attach_subfunction(*bound_func, vars);
+
+      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
+    }
+  };
+
+  SATurbUBCFactory grins_factory_testing_turb_u_bc("testing_turb_u");
+  SATurbNuBCFactory grins_factory_testing_turb_nu_bc("testing_turb_nu");
+
+} // end namespace GRINSTesting
 
 int main(int argc, char* argv[])
 {
@@ -237,11 +319,9 @@ int main(int argc, char* argv[])
 
   turbulent_bc_values->init();
 
+  GRINSTesting::SATurbBCFactoryBase::set_turb_bc_values( turbulent_bc_values.get() );
+
   GRINS::SimulationBuilder sim_builder;
-
-  GRINS::SharedPtr<GRINS::BoundaryConditionsFactory> bc_factory( new TurbulentBCFactory(turbulent_bc_values.get()) );
-
-  sim_builder.attach_bc_factory(bc_factory);
 
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder,
@@ -372,41 +452,4 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
     }
 
   return;
-}
-
-
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > TurbulentBCFactory::build_dirichlet( )
-{
-  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_u( new TurbulentBdyFunctionU(this->turbulent_bc_values) );
-
-  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > turbulent_inlet_nu( new TurbulentBdyFunctionNu(this->turbulent_bc_values) );
-
-  GRINS::DBCContainer cont_u;
-  cont_u.add_var_name( "u" );
-  cont_u.add_bc_id( 3 );
-
-  cont_u.set_func( turbulent_inlet_u );
-
-  GRINS::DBCContainer cont_v;
-  cont_v.add_var_name( "v" );
-  cont_v.add_bc_id( 3 );
-
-  GRINS::SharedPtr<libMesh::FunctionBase<libMesh::Number> > zero( new libMesh::ZeroFunction<libMesh::Number>() );
-  cont_v.set_func(zero);
-
-  GRINS::DBCContainer cont_nu;
-  cont_nu.add_var_name( "nu" );
-  cont_nu.add_bc_id( 3 );
-
-  cont_nu.set_func( turbulent_inlet_nu );
-
-  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
-
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont_u) );
-
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::incompressible_navier_stokes(),  cont_v) );
-
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::PhysicsNaming::spalart_allmaras(),  cont_nu) );
-
-  return mymap;
 }

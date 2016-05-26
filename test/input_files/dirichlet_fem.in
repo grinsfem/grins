@@ -64,47 +64,59 @@ echo_physics = 'true'
          value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
+   enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
+   [./IncompressibleNavierStokes]
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+      material = 'TestMaterial'
 
-material = 'TestMaterial'
+      pin_pressure = 'false'
 
-bc_ids = '2 3 0'
-bc_types = 'prescribed_vel no_slip no_slip'
+   [../HeatTransfer]
 
-bound_vel_2 = '1.0 0.0 0.0'
+      material = 'TestMaterial'
 
-pin_pressure = 'false'
+   [../BoussinesqBuoyancy]
 
-[../HeatTransfer]
+       material = 'TestMaterial'
 
-material = 'TestMaterial'
+       g = '0 -9.8'
+[]
 
-bc_ids = '0 1 2 3'
+[BoundaryConditions]
+   bc_ids = '0:3 2 1'
+   bc_id_name_map = 'Walls Inlet OtherWall'
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
 
-bc_types = 'adiabatic_wall parsed_fem_dirichlet isothermal_wall adiabatic_wall'
-bc_variables = 'na T na na'
-bc_values = 'na {if(u<0,2,NaN)} na na'
+   [./Inlet]
+      [./Velocity]
+         type = 'constant_dirichlet'
+         u = '1.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '1'
+      [../]
+   [../]
 
-T_wall_2 = 1
-
-[../BoussinesqBuoyancy]
-
-material = 'TestMaterial'
-
-g = '0 -9.8'
-
+   [./OtherWall]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'parsed_fem_dirichlet'
+         T = 'if(u<0,2,NaN)'
+      [../]
+   [../]
 []
 
 [Variables]

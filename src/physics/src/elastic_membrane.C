@@ -29,7 +29,6 @@
 #include "grins_config.h"
 #include "grins/math_constants.h"
 #include "grins/assembly_context.h"
-#include "grins/solid_mechanics_bc_handling.h"
 #include "grins/generic_ic_handler.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/elasticity_tensor.h"
@@ -48,8 +47,6 @@ namespace GRINS
                                                      bool is_compressible )
     : ElasticMembraneBase<StressStrainLaw>(physics_name,input,is_compressible)
   {
-    this->_bc_handler = new SolidMechanicsBCHandling( physics_name, input );
-
     this->_ic_handler = new GenericICHandler(physics_name, input);
   }
 

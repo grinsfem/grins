@@ -29,9 +29,8 @@
 
 // GRINS
 #include "grins/simulation.h"
-#include "grins/simulation_builder.h" 
+#include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
-#include "grins/parabolic_profile.h"
 
 //libMesh
 #include "libmesh/exact_solution.h"

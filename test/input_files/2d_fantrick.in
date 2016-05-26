@@ -19,14 +19,6 @@ enabled_physics = 'IncompressibleNavierStokes AveragedFan'
 
 material = 'TestMaterial'
 
-# Boundary ids:
-# imin,imax = 3, 1
-# jmin,jmax = 0, 2
- bc_ids = '0'
- bc_types = 'prescribed_vel'
-
-bound_vel_0 = '0.0 1.0 0.0'
-
 ic_ids = 0
 ic_variables = 'v'
 ic_types = constant
@@ -50,6 +42,25 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 1:2:3'
+   bc_id_name_map = 'Bottom OtherWalls'
+
+   [./Bottom]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '0.0'
+         v = '1.0'
+      [../]
+   [../]
+
+   [./OtherWalls]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -88,7 +99,7 @@ angle_of_attack = '{pi/4}'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = '7' 
+max_nonlinear_iterations = '7'
 max_linear_iterations = '500'
 
 relative_residual_tolerance = '1.0e-10'
@@ -104,7 +115,7 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'output/fantrick' 
+vis_output_file_prefix = 'output/fantrick'
 
 output_residual = 'false'
 

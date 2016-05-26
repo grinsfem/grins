@@ -46,33 +46,43 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes Stokes'
+   enabled_physics = 'IncompressibleNavierStokes Stokes'
 
-# Options for Stokes physics
-[./Stokes]
+   [./Stokes]
 
-material = 'Gas'
+      material = 'Gas'
+      enabled_subdomains = '2'
 
-enabled_subdomains = '2'
+   [../IncompressibleNavierStokes]
 
-bc_ids = '7 7 4 6 8'
-bc_types = 'parsed_dirichlet constant_dirichlet no_slip no_slip no_slip'
+      material = 'Gas'
+      enabled_subdomains = '1'
+[]
 
-bc_variables = 'u v'
-bc_values = '4.0*y*(1.0-y) 0.0'
+[BoundaryConditions]
+   bc_ids = '1:2:3:4:6:8 7 5:9'
+   bc_id_name_map = 'Walls Inlet Outlet'
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
 
-# Options for Navier Stokes physics
-[../IncompressibleNavierStokes]
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '4*y*(1-y)'
+         v = '0.0'
+      [../]
+   [../]
 
-material = 'Gas'
-enabled_subdomains = '1'
-
-bc_ids = '1 2 3'
-bc_types = 'no_slip no_slip no_slip'
-
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]

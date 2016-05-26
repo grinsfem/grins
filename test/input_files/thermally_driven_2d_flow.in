@@ -55,53 +55,67 @@ echo_physics = 'true'
          value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy ConstantSourceTerm'
+   enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy ConstantSourceTerm'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
+   [./IncompressibleNavierStokes]
 
-# Options for Incompressible Navier-Stokes physics
-[./IncompressibleNavierStokes]
+      material = 'TestMaterial'
 
-material = 'TestMaterial'
+      pin_pressure = 'true'
 
-bc_ids = '2 3 1 0'
-bc_types = 'no_slip no_slip no_slip no_slip'
+   [../HeatTransfer]
 
-pin_pressure = 'true'
+      material = 'TestMaterial'
 
-[../HeatTransfer]
+   [../BoussinesqBuoyancy]
 
-material = 'TestMaterial'
+      material = 'TestMaterial'
+      g = '0 -9.8'
 
-bc_ids = '3 0 2 1'
+  [../ConstantSourceTerm]
+     [./Variables]
+        names = 'T'
+        FE_types = 'LAGRANGE'
+        FE_orders = 'SECOND'
 
-bc_types = 'isothermal_wall adiabatic_wall adiabatic_wall isothermal_wall'
+     [../Function]
+        value = '0.0'
+[]
 
-T_wall_1 = 1
-T_wall_3 = 10
+[BoundaryConditions]
+   bc_id_name_map = 'HotWall ColdWall AdiabaticWalls'
+   bc_ids = '3 1 0:2'
 
-[../BoussinesqBuoyancy]
+   [./HotWall]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '10'
+      [../]
+   [../]
 
-material = 'TestMaterial'
+   [./ColdWall]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '1'
+      [../]
+   [../]
 
-g = '0 -9.8'
-
-[../ConstantSourceTerm]
-  [./Variables]
-     names = 'T'
-     FE_types = 'LAGRANGE'
-     FE_orders = 'SECOND'
-
-  [../Function]
-
-    value = '0.0'
+   [./AdiabaticWalls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
 []
 
 [Variables]

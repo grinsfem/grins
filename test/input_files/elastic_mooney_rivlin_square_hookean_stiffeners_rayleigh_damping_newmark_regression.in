@@ -40,15 +40,12 @@
       material = 'Membrane'
       enabled_subdomains = '1'
 
-      bc_ids   = '1 2 3'
-      bc_types = 'pinned yz_symmetry xz_symmetry'
-
    [../ElasticMembraneConstantPressure]
 
       pressure = '1.0'
 
    [../ElasticMembraneRayleighDamping]
-     
+
       lambda_factor = '0.1'
       mu_factor = '0.1'
 
@@ -61,6 +58,29 @@
 
       lambda_factor = '0.1'
       mu_factor = '0.1'
+[]
+
+[BoundaryConditions]
+   bc_ids = '1 2 3'
+   bc_id_name_map = 'Boundary YZSymmetry XZSymmetry'
+
+   [./Boundary]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+
+   [./YZSymmetry]
+      [./Displacement]
+         type = 'yz_symmetry'
+      [../]
+   [../]
+
+   [./XZSymmetry]
+      [./Displacement]
+         type = 'xz_symmetry'
+      [../]
+   [../]
 []
 
 [Variables]

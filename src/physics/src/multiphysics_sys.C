@@ -28,6 +28,9 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/fe_variables_base.h"
+#include "grins/variable_warehouse.h"
+#include "grins/bc_builder.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -51,6 +54,9 @@ namespace GRINS
 
   void MultiphysicsSystem::read_input_options( const GetPot& input )
   {
+    // Cache this for building boundary condition later
+    _input = &input;
+
     // Read options for MultiphysicsSystem first
     this->verify_analytic_jacobians = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
     this->print_solution_norms = input("screen-options/print_solution_norms", false );
@@ -125,6 +131,9 @@ namespace GRINS
 	(physics_iter->second)->init_variables( this );
       }
 
+    libmesh_assert(_input);
+    BCBuilder::build_boundary_conditions(*_input,*this,_neumann_bcs);
+
     // If any variables need custom numerical_jacobian_h, we can set those
     // values now that variable names are all registered with the System
     for (unsigned int i=0; i != _numerical_jacobian_h_values.size(); ++i)
@@ -148,14 +157,6 @@ namespace GRINS
     {
       (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
     }
-
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	// Initialize builtin BC's for each physics
-	(physics_iter->second)->init_bcs( this );
-      }
 
     // Next, call parent init_data function to intialize everything.
     libMesh::FEMSystem::init_data();
@@ -311,13 +312,19 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
-						 libMesh::DiffContext& context )
+                                                 libMesh::DiffContext& context )
   {
-    return this->_general_residual
+    bool jacobian_computed = this->apply_neumann_bcs(request_jacobian,
+                                                     context);
+
+    jacobian_computed = jacobian_computed &&
+      this->_general_residual
       (request_jacobian,
        context,
        &GRINS::Physics::side_time_derivative,
        &GRINS::Physics::compute_side_time_derivative_cache);
+
+    return jacobian_computed;
   }
 
   bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,
@@ -427,6 +434,58 @@ namespace GRINS
           }
       }
     return;
+  }
+
+  void MultiphysicsSystem::get_active_neumann_bcs( BoundaryID bc_id,
+                                                   const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
+                                                   std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs )
+  {
+    // Manually writing the loop since std::copy_if is C++11 only
+    for( std::vector<SharedPtr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
+         it < neumann_bcs.end(); ++it )
+      if( (*it)->has_bc_id( bc_id ) )
+          active_neumann_bcs.push_back( *it );
+  }
+
+  bool MultiphysicsSystem::apply_neumann_bcs( bool request_jacobian,
+                                              libMesh::DiffContext& context )
+  {
+    AssemblyContext& assembly_context =
+      libMesh::libmesh_cast_ref<AssemblyContext&>( context );
+
+    std::vector<BoundaryID> ids = assembly_context.side_boundary_ids();
+
+    bool compute_jacobian = request_jacobian;
+    if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
+
+    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
+         it != ids.end(); it++ )
+      {
+        BoundaryID bc_id = *it;
+
+        libmesh_assert_not_equal_to(bc_id, libMesh::BoundaryInfo::invalid_id);
+
+        // Retreive the NeumannBCContainers that are active on the current bc_id
+        std::vector<SharedPtr<NeumannBCContainer> > active_neumann_bcs;
+        this->get_active_neumann_bcs( bc_id, _neumann_bcs, active_neumann_bcs );
+
+        if( !active_neumann_bcs.empty() )
+          {
+            typedef std::vector<SharedPtr<NeumannBCContainer> >::iterator BCIt;
+
+            for( BCIt container = active_neumann_bcs.begin(); container < active_neumann_bcs.end(); ++container )
+              {
+                SharedPtr<NeumannBCAbstract>& func = (*container)->get_func();
+
+                const FEVariablesBase& var = (*container)->get_fe_var();
+
+                func->eval_flux( compute_jacobian, assembly_context,
+                                 var.neumann_bc_sign(), Physics::is_axisymmetric() );
+              }
+          }
+      } // end loop over boundary ids
+
+    return compute_jacobian;
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

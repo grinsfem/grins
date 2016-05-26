@@ -13,34 +13,39 @@
             C2 = '3.0'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticMembrane
-                   ElasticMembraneConstantPressure'
+   enabled_physics = 'ElasticMembrane
+                      ElasticMembraneConstantPressure'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticMembrane]
+   [./ElasticMembrane]
 
-material = 'Membrane'
+      material = 'Membrane'
 
-bc_ids = '1'
-bc_types = 'pinned'
+      ic_ids = '1'
+      ic_types = 'parsed'
+      ic_variables = 'Uz'
+      ic_values = '0.3*cos(pi/2*sqrt(x^2+y^2))'
 
-ic_ids = '1'
-ic_types = 'parsed'
-ic_variables = 'w'
-ic_values = '0.3*cos(pi/2*sqrt(x^2+y^2))'
+   [../ElasticMembraneConstantPressure]
 
-[../ElasticMembraneConstantPressure]
+      pressure = '0.3'
+[]
 
-pressure = '0.3'
+[BoundaryConditions]
+   bc_ids = '1'
+   bc_id_name_map = 'Boundary'
 
+   [./Boundary]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
 []
 
 [Variables]
    [./Displacement]
-      names = 'u v w'
+      names = 'Ux Uy Uz'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
 []

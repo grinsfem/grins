@@ -19,11 +19,6 @@
    [./HeatConduction]
       material = 'TestMaterial'
 
-      bc_ids = '0 1 2 3'
-      bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
-      bc_variables = 'T T T T'
-      bc_values = '0 0 0 0'
-
    [../ParsedSourceTerm]
       [./Function]
          # Forcing function corresponding to \Delta u,
@@ -37,6 +32,16 @@
          names = 'T'
          FE_types = 'LAGRANGE'
          FE_orders = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:1:2:3'
+   bc_id_name_map = 'Boundary'
+
+   [./Boundary]
+      [./Temperature]
+         type = 'constant_dirichlet'
+         T = '0'
 []
 
 [Variables]

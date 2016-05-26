@@ -1,7 +1,6 @@
 EXTRA_DIST =
 
 AM_CPPFLAGS =
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
@@ -101,14 +100,10 @@ EXTRA_DIST += $(convectioncell_DATA)
 # Rayleigh-Taylor Example
 #=======================================================================
 rayleighdir = $(prefix)/examples/rayleigh_taylor
-rayleigh_PROGRAMS = rayleigh
 rayleigh_DATA = $(top_srcdir)/examples/rayleigh_taylor/rayleigh.in
 rayleigh_SCRIPTS = $(top_builddir)/examples/rayleigh_taylor/run.sh
 
 EXTRA_DIST += $(rayleigh_DATA)
-
-rayleigh_SOURCES = rayleigh_taylor/rayleigh.C
-rayleigh_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
 # Coupled Stokes-Navier-Stokes Example

@@ -48,11 +48,7 @@ namespace GRINS
       _p_pinning(input,physics_name),
       _pin_pressure( input("Physics/"+PhysicsNaming::stokes()+"/pin_pressure", false ) )
   {
-    // This is deleted in the base class
-    this->_bc_handler = new IncompressibleNavierStokesBCHandling( physics_name, input );
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
   }
 
   template<class Mu>

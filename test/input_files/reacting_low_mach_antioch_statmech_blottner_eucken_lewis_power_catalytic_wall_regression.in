@@ -19,57 +19,91 @@
       value = '1.4'
 []
 
-# Options related to all Physics
 [Physics]
 
-enabled_physics = 'ReactingLowMachNavierStokes'
+   enabled_physics = 'ReactingLowMachNavierStokes'
 
-# Options for Incompressible Navier-Stokes physics
-[./ReactingLowMachNavierStokes]
+   [./ReactingLowMachNavierStokes]
 
-material = '2SpeciesNGas'
+      material = '2SpeciesNGas'
 
-# Gravity vector
-g = '0.0 0.0' #[m/s^2]
+      # Gravity vector
+      g = '0.0 0.0' #[m/s^2]
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'T:w_N:w_N2:u'
-ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'T:w_N:w_N2:u'
+      ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
+      enable_thermo_press_calc = 'false'
+      pin_pressure = 'false'
+[]
 
-vel_bc_ids = '3 3 2 0'
-vel_bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
-vel_bc_variables = 'u v na na'
-vel_bc_values = '(1-y^2) 0.0 na na'
+[BoundaryConditions]
+   bc_ids = '0 1 2 3'
+   bc_id_name_map = 'Bottom Outlet Top Inlet'
 
-temp_bc_ids = '3 2 0'
-temp_bc_types = 'isothermal isothermal isothermal'
+   [./Bottom]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300.0'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 
-T_wall_0 = '300'
-T_wall_2 = '300'
-T_wall_3 = '300'
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 
-species_bc_ids = '3 2'
-species_bc_types = 'prescribed_species gas_recombination_catalytic_wall'
+      [./Top]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300.0'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'gas_recombination_catalytic_wall'
+         catalytic_reaction = 'N->N2'
+         catalycity_type = 'power'
+         [./PowerLawCatalycity]
+            gamma0 = '0.001'
+            Tref = '300'
+            alpha = '1.8'
+         [../]
+      [../]
+   [../]
 
-bound_species_3 = '0.6 0.4'
-
-wall_catalytic_reactions_2 = 'N->N2'
-
-gamma_N_2_type = 'power'
-gamma0_N_2 = '0.001'
-Tref_N_2 = '300'
-alpha_N_2 = '1.8'
-
-enable_thermo_press_calc = 'false'
-pin_pressure = 'false'
-
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '(1-y^2)'
+         v = '0.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300.0'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'parsed_dirichlet'
+         w_N2 = '0.6'
+         w_N  = '0.4'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -95,11 +129,6 @@ pin_pressure = 'false'
 
 []
 
-[restart-options]
-
-#restart_file = 'cavity.xdr'
-
-# Mesh related options
 [Mesh]
    [./Generation]
        dimension = '2'
@@ -112,13 +141,9 @@ pin_pressure = 'false'
        n_elems_y = '5'
 []
 
-# Options for tiem solvers
-
- 
-
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 100 
+max_nonlinear_iterations = 100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -133,7 +158,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'nitridation' 
+vis_output_file_prefix = 'nitridation'
 
 output_residual = 'false'
 

@@ -26,46 +26,69 @@
 
 [Physics]
 
-enabled_physics = 'ReactingLowMachNavierStokes'
+   enabled_physics = 'ReactingLowMachNavierStokes'
 
-# Options for Incompressible Navier-Stokes physics
-[./ReactingLowMachNavierStokes]
+   [./ReactingLowMachNavierStokes]
 
-material = '2SpeciesNGas'
+      material = '2SpeciesNGas'
 
-# Gravity vector
-g = '0.0 0.0' #[m/s^2]
+      # Gravity vector
+      g = '0.0 0.0' #[m/s^2]
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'T:w_N:w_N2:u'
-ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
+      enable_thermo_press_calc = 'false'
+      pin_pressure = 'false'
 
-# Boundary ids:
-# j = bottom -> 0
-# j = top    -> 2
-# i = bottom -> 3
-# i = top    -> 1
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'T:w_N:w_N2:u'
+      ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
+[]
 
-vel_bc_ids = '3 3 2 0'
-vel_bc_types = 'parsed_dirichlet parsed_dirichlet no_slip no_slip'
-vel_bc_variables = 'u v na na'
-vel_bc_values = '(1-y^2) 0.0 na na'
+[BoundaryConditions]
+   bc_ids = '0:2 3 1'
+   bc_id_name_map = 'Walls Inlet Outlet'
 
-temp_bc_ids = '3 2 0'
-temp_bc_types = 'isothermal isothermal isothermal'
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 
-T_wall_0 = '300'
-T_wall_2 = '300'
-T_wall_3 = '300'
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '1-y^2'
+         v = '0.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'constant_dirichlet'
+         w_N2 = '0.6'
+         w_N  = '0.4'
+      [../]
+   [../]
 
-species_bc_ids = '3'
-species_bc_types = 'prescribed_species'
-bound_species_3 = '0.6 0.4'
-
-enable_thermo_press_calc = 'false'
-pin_pressure = 'false'
-
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Variables]
@@ -110,11 +133,11 @@ pin_pressure = 'false'
 
 # Options for tiem solvers
 
- 
+
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 100 
+max_nonlinear_iterations = 100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
@@ -129,7 +152,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'nitridation' 
+vis_output_file_prefix = 'nitridation'
 
 output_residual = 'false'
 

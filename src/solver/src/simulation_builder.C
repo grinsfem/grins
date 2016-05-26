@@ -36,7 +36,6 @@ namespace GRINS
     : _mesh_builder( new MeshBuilder ),
       _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
-      _bc_factory( new BoundaryConditionsFactory ),
       _qoi_factory( new QoIFactory ),
       _postprocessing_factory( new PostprocessingFactory )
   {}
@@ -56,12 +55,6 @@ namespace GRINS
   void SimulationBuilder::attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory )
   {
     this->_vis_factory = vis_factory;
-    return;
-  }
-
-  void SimulationBuilder::attach_bc_factory( SharedPtr<BoundaryConditionsFactory> bc_factory )
-  {
-    this->_bc_factory = bc_factory;
     return;
   }
 
@@ -92,16 +85,6 @@ namespace GRINS
       const libMesh::Parallel::Communicator &comm)
   {
     return (this->_vis_factory)->build(input, comm);
-  }
-
-  std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > SimulationBuilder::build_dirichlet_bcs()
-  {
-    return (this->_bc_factory)->build_dirichlet();
-  }
-
-  std::map< GRINS::PhysicsName, GRINS::NBCContainer > SimulationBuilder::build_neumann_bcs( libMesh::EquationSystems& equation_system )
-  {
-    return (this->_bc_factory)->build_neumann(equation_system);
   }
 
   SharedPtr<CompositeQoI> SimulationBuilder::build_qoi( const GetPot& input )

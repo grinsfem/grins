@@ -30,7 +30,6 @@
 #include "grins/assembly_context.h"
 #include "grins/cached_quantities_enum.h"
 #include "grins/generic_ic_handler.h"
-#include "grins/reacting_low_mach_navier_stokes_bc_handling.h"
 #include "grins/postprocessed_quantities.h"
 
 // libMesh
@@ -48,10 +47,6 @@ namespace GRINS
     _k_index(0),
     _cp_index(0)
   {
-    // This is deleted in the base class
-    this->_bc_handler = new ReactingLowMachNavierStokesBCHandling<typename Mixture::ChemistryParent>( physics_name, input,
-                                                                                                      this->_gas_mixture.chemistry() );
-
     this->_pin_pressure = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/pin_pressure", false );
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
@@ -383,26 +378,6 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian,
-                                                                             AssemblyContext& context,
-                                                                             CachedValues& cache )
-  {
-    /*! \todo Need to implement thermodynamic pressure calcuation for cases where it's needed. */
-
-    std::vector<BoundaryID> ids = context.side_boundary_ids();
-
-    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-	 it != ids.end(); it++ )
-      {
-	libmesh_assert (*it != libMesh::BoundaryInfo::invalid_id);
-
-	this->_bc_handler->apply_neumann_bcs( context, cache, compute_jacobian, *it );
-      }
-
-    return;
-  }
-
-  template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_constraint( bool compute_jacobian,
                                                                            AssemblyContext& context,
                                                                            CachedValues& /* cache */ )
@@ -559,47 +534,6 @@ namespace GRINS
     cache.set_vector_values(Cache::DIFFUSION_COEFFS, D_s);
     cache.set_vector_values(Cache::SPECIES_ENTHALPY, h_s);
     cache.set_vector_values(Cache::OMEGA_DOT, omega_dot_s);
-  }
-
-  template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_side_time_derivative_cache( const AssemblyContext& context, 
-                                                                                           CachedValues& cache )
-  {
-    Evaluator gas_evaluator( this->_gas_mixture );
-
-    const unsigned int n_qpoints = context.get_side_qrule().n_points();
-
-    // Need for Catalytic Wall
-    /*! \todo Add mechanism for checking if this side is a catalytic wall so we don't 
-              compute these quantities unnecessarily. */
-    std::vector<libMesh::Real> T, rho;
-    T.resize(n_qpoints);
-    rho.resize(n_qpoints);
-
-    std::vector<std::vector<libMesh::Real> > mass_fractions;
-    mass_fractions.resize(n_qpoints);
-
-    for (unsigned int qp = 0; qp != n_qpoints; ++qp)
-      {
-	T[qp] = context.side_value(this->_temp_vars.T(), qp);
-
-	mass_fractions[qp].resize(this->_n_species);
-	for( unsigned int s = 0; s < this->_n_species; s++ )
-	  {
-	    /*! \todo Need to figure out something smarter for controling species
-	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.side_value(this->_species_vars.species(s),qp), 0.0 );
-	  }
-	const libMesh::Real p0 = this->get_p0_steady_side(context, qp);
-
-	rho[qp] = this->rho( T[qp], p0, gas_evaluator.R_mix(mass_fractions[qp]) );
-      }
-
-    cache.set_values(Cache::TEMPERATURE, T);
-    cache.set_vector_values(Cache::MASS_FRACTIONS, mass_fractions);
-    cache.set_values(Cache::MIXTURE_DENSITY, rho);
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>

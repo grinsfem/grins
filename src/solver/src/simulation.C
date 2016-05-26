@@ -74,7 +74,7 @@ namespace GRINS
   {
     libmesh_deprecated();
 
-    this->init_multiphysics_system(input,sim_builder);
+    this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
 
@@ -120,7 +120,7 @@ namespace GRINS
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
   {
-    this->init_multiphysics_system(input,sim_builder);
+    this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
 
@@ -139,8 +139,7 @@ namespace GRINS
 
   }
 
-  void Simulation::init_multiphysics_system( const GetPot& input,
-                                             SimulationBuilder& sim_builder )
+  void Simulation::init_multiphysics_system( const GetPot& input )
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
@@ -153,9 +152,6 @@ namespace GRINS
     _multiphysics_system->read_input_options( input );
 
     _multiphysics_system->register_postprocessing_vars( input, *(_postprocessing) );
-
-    // This *must* be done before equation_system->init
-    this->attach_dirichlet_bc_funcs( sim_builder.build_dirichlet_bcs(), _multiphysics_system );
 
     /* Postprocessing needs to be initialized before the solver since that's
        where equation_system gets init'ed */
@@ -170,8 +166,6 @@ namespace GRINS
       }
 
     // This *must* be done after equation_system->init in order to get variable indices
-    this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
-
     // Set any extra quadrature order the user requested. By default, is 0.
     _multiphysics_system->extra_quadrature_order = StrategiesParsing::extra_quadrature_order(input);
   }
@@ -495,39 +489,6 @@ namespace GRINS
         system.update();
       }
 
-    return;
-  }
-
-  void Simulation::attach_neumann_bc_funcs( std::map< std::string, NBCContainer > neumann_bcs,
-                                            MultiphysicsSystem* system )
-  {
-    //_neumann_bc_funcs = neumann_bcs;
-
-    if( neumann_bcs.size() > 0 )
-      {
-        for( std::map< std::string, NBCContainer >::iterator bc = neumann_bcs.begin();
-             bc != neumann_bcs.end();
-             bc++ )
-          {
-            SharedPtr<Physics> physics = system->get_physics( bc->first );
-            physics->attach_neumann_bound_func( bc->second );
-          }
-      }
-
-    return;
-  }
-
-  void Simulation::attach_dirichlet_bc_funcs( std::multimap< PhysicsName, DBCContainer > dbc_map,
-                                              MultiphysicsSystem* system )
-  {
-    for( std::multimap< PhysicsName, DBCContainer >::const_iterator it = dbc_map.begin();
-         it != dbc_map.end();
-         it++ )
-      {
-        SharedPtr<Physics> physics = system->get_physics( it->first );
-
-        physics->attach_dirichlet_bound_func( it->second );
-      }
     return;
   }
 

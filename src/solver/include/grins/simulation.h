@@ -36,8 +36,6 @@
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
 #include "grins/physics_naming.h"
-#include "grins/nbc_container.h"
-#include "grins/dbc_container.h"
 #include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/error_estimator_options.h"
@@ -96,18 +94,11 @@ namespace GRINS
 #endif
 
   protected:
-    
+
     void read_restart( const GetPot& input );
 
-    void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
-				  GRINS::MultiphysicsSystem* system );
-    
-    void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
-				    GRINS::MultiphysicsSystem* system );
-
     //! Helper function
-    void init_multiphysics_system( const GetPot& input,
-                                   SimulationBuilder& sim_builder );
+    void init_multiphysics_system( const GetPot& input );
 
     //! Helper function
     void init_qois( const GetPot& input, SimulationBuilder& sim_builder );

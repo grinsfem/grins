@@ -7,7 +7,6 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 
 AM_CPPFLAGS =
-AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include
@@ -91,7 +90,6 @@ check_PROGRAMS += vorticity_qoi
 
 # Regression Tests
 check_PROGRAMS += test_turbulent_channel
-check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += low_mach_cavity_benchmark_regression
 check_PROGRAMS += grins_flow_regression
 check_PROGRAMS += elastic_sheet_regression
@@ -109,7 +107,8 @@ check_PROGRAMS += generic_amr_testing_app
 unit_driver_SOURCES = unit/unit_driver.C \
                       unit/string_utils.C \
                       unit/mesh_builder.C \
-                      unit/variables.C
+                      unit/variables.C \
+                      unit/default_bc_builder.C
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -134,7 +133,6 @@ vorticity_qoi_SOURCES = exact_soln/vorticity_qoi.C
 
 # Regression test source files
 test_turbulent_channel_SOURCES = regression/test_turbulent_channel.C
-gaussian_profiles_SOURCES = regression/gaussian_profiles.C
 low_mach_cavity_benchmark_regression_SOURCES = regression/low_mach_cavity_benchmark_regression.C
 grins_flow_regression_SOURCES = regression/grins_flow_regression.C
 elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
@@ -218,7 +216,6 @@ TESTS += error_xfail/viscosity_options_conflict_3.sh
 XFAIL_TESTS += error_xfail/viscosity_options_conflict_3.sh
 
 # Regression TESTS
-TESTS += gaussian_profiles
 TESTS += regression/warn_only_ufo.sh
 TESTS += regression/poisson_weighted_flux.sh
 TESTS += regression/sa_2d_turbulent_channel.sh
