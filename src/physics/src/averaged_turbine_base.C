@@ -46,7 +46,7 @@ namespace GRINS
       chord_function(""),
       area_swept_function(""),
       aoa_function(""),
-    _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_var_section()))
+    _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::scalar_var_section()))
   {
     this->read_input_options(input);
   }

@@ -53,7 +53,7 @@ angle_of_attack = '{pi/4}'
 []
 
 [Variables]
-   [./SingleVariable]
+   [./ScalarVariable]
       names = 'fan_speed'
       fe_family = 'SCALAR'
       order = 'FIRST'

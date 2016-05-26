@@ -95,7 +95,7 @@ namespace GRINS
 
     const GetPot & _input;
 
-    SingleVariable& _var;
+    ScalarVariable& _var;
 
     ScalarODE();
 

@@ -126,7 +126,7 @@ namespace GRINS
     // this will be a constant.
     libMesh::ParsedFunction<libMesh::Number> aoa_function;
 
-    SingleVariable& _var;
+    ScalarVariable& _var;
 
   private:
 
