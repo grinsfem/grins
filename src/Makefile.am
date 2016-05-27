@@ -226,10 +226,6 @@ libgrins_la_SOURCES += strategies/src/adaptive_time_stepping_options.C
 libgrins_la_SOURCES += strategies/src/mesh_adaptivity_options.C
 
 #src/variables
-libgrins_la_SOURCES += variables/src/fe_variables_base.C
-libgrins_la_SOURCES += variables/src/single_fe_type_variable.C
-libgrins_la_SOURCES += variables/src/single_var_single_fe_type_variable.C
-libgrins_la_SOURCES += variables/src/multi_var_single_fe_type_variable.C
 libgrins_la_SOURCES += variables/src/variable_warehouse.C
 libgrins_la_SOURCES += variables/src/variable_factory.C
 libgrins_la_SOURCES += variables/src/variable_builder.C
@@ -504,9 +500,6 @@ include_HEADERS += strategies/include/grins/mesh_adaptivity_options.h
 include_HEADERS += variables/include/grins/fe_variables_base.h
 include_HEADERS += variables/include/grins/single_variable.h
 include_HEADERS += variables/include/grins/multi_component_vector_variable.h
-include_HEADERS += variables/include/grins/single_fe_type_variable.h
-include_HEADERS += variables/include/grins/single_var_single_fe_type_variable.h
-include_HEADERS += variables/include/grins/multi_var_single_fe_type_variable.h
 include_HEADERS += variables/include/grins/multicomponent_variable.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
 include_HEADERS += variables/include/grins/variables_parsing.h

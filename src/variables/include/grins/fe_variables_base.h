@@ -54,11 +54,6 @@ namespace GRINS
   {
   public:
 
-    FEVariablesBase( bool is_constraint_var )
-      : _is_constraint_var(is_constraint_var),
-        _neumann_bc_sign(1.0)
-    {}
-
     FEVariablesBase( const std::vector<std::string>& var_names,
                      const std::vector<VariableIndex>& var_indices )
       : _vars(var_indices),
@@ -69,13 +64,7 @@ namespace GRINS
       libmesh_assert_equal_to(var_names.size(), var_indices.size());
     }
 
-    ~FEVariablesBase(){};
-
-    //! Add variables to the system
-    /*! This expects that _var_names has been setup during construction
-        time. Most subclasses should be able to use default_fe_init, once
-        they subclass this and VariablesBase. */
-    virtual void init( libMesh::FEMSystem* /*system*/ ){};
+    virtual ~FEVariablesBase(){};
 
     //! Set whether or not this is a "constraint" variable
     /*! Constraint variables are things like Lagrange multipliers.
@@ -107,42 +96,9 @@ namespace GRINS
 
   protected:
 
-    //! Method to parse variable names from input
-    /*! Names parsed from: [Variables/<subsection>/names] and then
-        populated into the supplied var_names vector. It is assumed
-        that var_names has been properly sized, that default_names
-        and var_names have the same size, and that default_names has
-        been populated with unique strings. */
-    void parse_names_from_input( const GetPot& input,
-                                 const std::string& subsection,
-                                 std::vector<std::string>& var_names,
-                                 const std::vector<std::string>& default_names );
-
-    //! Check for old name style and new name style. If both present, error.
-    /*! Old name style: [Physics/VariableNames]
-        New name style: [Variables/<variable type>]
-        Here, we just check for the presence of the sections [Physics/VariableNames]
-        and [Variables]. */
-    void duplicate_name_section_check( const GetPot& input ) const;
-
-    //! Check for deprecated variable name input style
-    /*! If found, this returns true and emits a deprecated warning.
-        Otherwise, this returns false.
-        The string argument is supplied by each variable
-        class for the warning message. E.g. if the variable class
-        is going to look in "Displacement", i.e.
-        [Variables/Displacement/names], then "Displacement" should be
-        passed. */
-    bool check_dep_name_input( const GetPot& input,
-                               const std::string& new_subsection ) const;
-
     std::vector<VariableIndex> _vars;
 
     std::vector<std::string> _var_names;
-
-    std::vector<GRINSEnums::FEFamily> _family;
-
-    std::vector<GRINSEnums::Order> _order;
 
     //! Tracks whether this is a constraint variable
     /*! By constraint variable, we mean a variable that is
