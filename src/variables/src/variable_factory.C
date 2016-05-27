@@ -27,12 +27,8 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
-#include "grins/multi_component_vector_variable.h"
-
 #include "grins/single_variable.h"
-#include "grins/species_mass_fracs_fe_variables.h"
-
-#include "grins/single_variable.h"
+#include "grins/multicomponent_variable.h"
 #include "grins/multi_component_vector_variable.h"
 
 namespace GRINS
@@ -195,7 +191,7 @@ namespace GRINS
   VariableFactoryBasic<PrimitiveTempFEVariables>
   grins_factory_temp_fe_var(VariablesParsing::temperature_section());
 
-  SpeciesVariableFactory<SpeciesMassFractionsFEVariables>
+  SpeciesVariableFactory<SpeciesMassFractionsVariable>
   grins_factory_species_mass_frac_fe_var(VariablesParsing::species_mass_fractions_section());
 
   ScalarVariableFactory<ThermoPressureVariable>

@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/physics_naming.h"
 #include "grins/physics_factory_helper.h"
@@ -127,10 +127,10 @@ namespace GRINS
 
     // To avoid compiler warnings without GRINS or Cantera
 #if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
-    // This only makes sense for SpeciesMassFractionsFEVariables in the
+    // This only makes sense for SpeciesMassFractionsVariable in the
     // VariableWarehouse. This call will error out if it's not there.
-    const SpeciesMassFractionsFEVariables& species_fe_var =
-      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
+    const SpeciesMassFractionsVariable& species_fe_var =
+      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>
       (VariablesParsing::species_mass_fractions_section());
 #endif
 
@@ -169,7 +169,7 @@ namespace GRINS
   void PrescribedMoleFractionsDirichletOldStyleBCFactory::
   convert_mole_fracs_and_add_to_func
   (const GetPot& input, const std::vector<libMesh::Number>& species_mole_fracs,
-   const SpeciesMassFractionsFEVariables& species_fe_var,
+   const SpeciesMassFractionsVariable& species_fe_var,
    libMesh::CompositeFunction<libMesh::Number>& composite_func) const
   {
     const std::string& material = species_fe_var.material();
@@ -198,11 +198,11 @@ namespace GRINS
 
   //Instantiate
 #ifdef GRINS_HAVE_CANTERA
-  template void PrescribedMoleFractionsDirichletOldStyleBCFactory::convert_mole_fracs_and_add_to_func<CanteraMixture>(const GetPot&, const std::vector<libMesh::Number>&, const SpeciesMassFractionsFEVariables&,libMesh::CompositeFunction<libMesh::Number>& ) const;
+  template void PrescribedMoleFractionsDirichletOldStyleBCFactory::convert_mole_fracs_and_add_to_func<CanteraMixture>(const GetPot&, const std::vector<libMesh::Number>&, const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>& ) const;
 #endif
 
 #ifdef GRINS_HAVE_ANTIOCH
-  template void PrescribedMoleFractionsDirichletOldStyleBCFactory::convert_mole_fracs_and_add_to_func<AntiochChemistry>(const GetPot&, const std::vector<libMesh::Number>&, const SpeciesMassFractionsFEVariables&,libMesh::CompositeFunction<libMesh::Number>& ) const;
+  template void PrescribedMoleFractionsDirichletOldStyleBCFactory::convert_mole_fracs_and_add_to_func<AntiochChemistry>(const GetPot&, const std::vector<libMesh::Number>&, const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>& ) const;
 #endif
 
   // Register factories

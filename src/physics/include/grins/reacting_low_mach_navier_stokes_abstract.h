@@ -35,7 +35,7 @@
 #include "grins/multi_component_vector_variable.h"
 
 #include "grins/single_variable.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multicomponent_variable.h"
 
 namespace GRINS
 {
@@ -82,7 +82,7 @@ namespace GRINS
               we can use dynamic_pointer_cast to get a SharedPtr. */
     ThermoPressureVariable* _p0_var;
 
-    SpeciesMassFractionsFEVariables& _species_vars;
+    SpeciesMassFractionsVariable& _species_vars;
 
     //! Number of species
     unsigned int _n_species;

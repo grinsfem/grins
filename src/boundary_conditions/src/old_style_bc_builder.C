@@ -38,7 +38,7 @@
 #include "grins/multi_component_vector_variable.h"
 #include "grins/single_variable.h"
 #include "grins/multi_component_vector_variable.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multicomponent_variable.h"
 
 // libMesh
 #include "libmesh/dof_map.h"

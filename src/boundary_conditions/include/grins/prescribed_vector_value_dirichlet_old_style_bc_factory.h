@@ -31,7 +31,7 @@
 namespace GRINS
 {
   // Forward declarations
-  class SpeciesMassFractionsFEVariables;
+  class SpeciesMassFractionsVariable;
 
   class PrescribedVectorValueDirichletOldStyleBCFactory : public DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >
   {
@@ -125,7 +125,7 @@ namespace GRINS
     template<typename ChemistryType>
     void convert_mole_fracs_and_add_to_func(const GetPot& input,
                                             const std::vector<libMesh::Number>& species_mole_fracs,
-                                            const SpeciesMassFractionsFEVariables& species_fe_var,
+                                            const SpeciesMassFractionsVariable& species_fe_var,
                                             libMesh::CompositeFunction<libMesh::Number>& composite_func) const;
 
   };

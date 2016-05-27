@@ -35,7 +35,7 @@
 namespace GRINS
 {
   // Foward declarations
-  class SpeciesMassFractionsFEVariables;
+  class SpeciesMassFractionsVariable;
 
   //! Constructs ConstFunction objects for Dirichlet boundary conditions
   class ConstantFunctionDirichletBCFactory : public DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >,
@@ -105,7 +105,7 @@ namespace GRINS
 
     //! Here, we're expected vars_found to correspond to mole fractions and we'll add mass fractions
     /*! vars_found should have things like X_N, etc. The prefix will be "X_" for mole fractions.
-        Then, we'll add mass fractions, using the corresponding names in the SpeciesMassFractionsFEVariables.
+        Then, we'll add mass fractions, using the corresponding names in the SpeciesMassFractionsVariable.
         We'll match them based on the species names. */
     virtual void add_found_vars(const GetPot& input,
                                 MultiphysicsSystem& system,
@@ -126,7 +126,7 @@ namespace GRINS
                                     const std::string& section,
                                     const std::set<std::string>& vars_found,
                                     const std::string& material,
-                                    const SpeciesMassFractionsFEVariables& species_fe_var,
+                                    const SpeciesMassFractionsVariable& species_fe_var,
                                     libMesh::CompositeFunction<libMesh::Number>& composite_func,
                                     std::set<std::string>& vars_added) const;
 
