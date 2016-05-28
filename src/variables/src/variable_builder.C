@@ -81,11 +81,13 @@ namespace GRINS
 
   SharedPtr<FEVariablesBase> VariableBuilder::build_fe_var( const std::string& var_type,
                                                             const std::vector<std::string>& var_names,
-                                                            const std::vector<VariableIndex>&  var_indices )
+                                                            const std::vector<VariableIndex>&  var_indices,
+                                                            const std::set<libMesh::subdomain_id_type>& subdomain_ids )
   {
     // Setup VariableFactory
     VariableFactoryAbstract::set_var_names(var_names);
     VariableFactoryAbstract::set_var_indices(var_indices);
+    VariableFactoryAbstract::set_subdomain_ids(subdomain_ids);
 
     libMesh::UniquePtr<FEVariablesBase> var = VariableFactoryAbstract::build(var_type);
 

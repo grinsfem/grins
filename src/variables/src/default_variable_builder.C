@@ -79,7 +79,7 @@ namespace GRINS
 
 
         // Build FEVariablesBase object
-        SharedPtr<FEVariablesBase> fe_var = this->build_fe_var( var_type, var_names, var_indices );
+        SharedPtr<FEVariablesBase> fe_var = this->build_fe_var( var_type, var_names, var_indices, subdomain_ids );
 
         // Add to VariableWarehouse
         this->add_variable_to_warehouse( fe_var, var_section );

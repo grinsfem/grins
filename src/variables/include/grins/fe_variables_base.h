@@ -56,16 +56,14 @@ namespace GRINS
 
     FEVariablesBase( const std::vector<std::string>& var_names,
                      const std::vector<VariableIndex>& var_indices,
-                     std::set<libMesh::subdomain_id_type>* subdomain_ids )
+                     const std::set<libMesh::subdomain_id_type>& subdomain_ids )
       : _vars(var_indices),
         _var_names(var_names),
         _is_constraint_var(false),
-        _neumann_bc_sign(1.0)
+        _neumann_bc_sign(1.0),
+        _subdomain_ids(subdomain_ids)
     {
       libmesh_assert_equal_to(var_names.size(), var_indices.size());
-
-      if(subdomain_ids)
-        _subdomain_ids = *subdomain_ids;
     }
 
     virtual ~FEVariablesBase(){};

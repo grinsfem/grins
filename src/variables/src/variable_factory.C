@@ -38,8 +38,9 @@ namespace GRINS
     // Make sure all necessary state has been setup
     this->check_create_state();
 
-    libMesh::UniquePtr<FEVariablesBase> func =
-      this->build_fe_var( *_var_names, *_var_indices );
+    libMesh::UniquePtr<FEVariablesBase> func;
+
+    func = this->build_fe_var( *_var_names, *_var_indices, *_subdomain_ids );
 
     // Reset state for error checking during next construction
     this->reset_create_state();
@@ -96,12 +97,16 @@ namespace GRINS
 
     if( !this->_var_indices )
       libmesh_error_msg("ERROR: must call set_var_indices() before building FEVariablesBase!");
+
+    if( !this->_subdomain_ids )
+      libmesh_error_msg("ERROR: must call set_subdomain_ids() before building FEVariablesBase!");
   }
 
   void VariableFactoryAbstract::reset_create_state()
   {
     _var_names = NULL;
     _var_indices = NULL;
+    _subdomain_ids = NULL;
   }
 
   void VariableFactoryAbstract::check_build_parse_state()
