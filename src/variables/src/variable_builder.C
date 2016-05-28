@@ -56,7 +56,8 @@ namespace GRINS
                                             const std::vector<std::string>& var_names,
                                             const std::string& fe_family,
                                             const std::string& order,
-                                            std::vector<VariableIndex>& var_indices )
+                                            std::vector<VariableIndex>& var_indices,
+                                            const std::set<libMesh::subdomain_id_type>& subdomain_ids )
   {
     const unsigned int n_vars = var_names.size();
 
@@ -64,10 +65,18 @@ namespace GRINS
     libmesh_assert( var_indices.empty() );
     var_indices.resize(n_vars);
 
-    for( unsigned int v = 0; v < n_vars; v++ )
-      var_indices[v] = system.add_variable( var_names[v],
-                                            libMesh::Utility::string_to_enum<GRINSEnums::Order>(order),
-                                            libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(fe_family) );
+    if( subdomain_ids.empty() )
+      for( unsigned int v = 0; v < n_vars; v++ )
+        var_indices[v] = system.add_variable( var_names[v],
+                                              libMesh::Utility::string_to_enum<GRINSEnums::Order>(order),
+                                              libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(fe_family) );
+
+    else
+      for( unsigned int v = 0; v < n_vars; v++ )
+        var_indices[v] = system.add_variable( var_names[v],
+                                              libMesh::Utility::string_to_enum<GRINSEnums::Order>(order),
+                                              libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(fe_family),
+                                              &subdomain_ids );
   }
 
   SharedPtr<FEVariablesBase> VariableBuilder::build_fe_var( const std::string& var_type,

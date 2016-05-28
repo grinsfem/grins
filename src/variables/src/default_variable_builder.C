@@ -61,9 +61,13 @@ namespace GRINS
         // Parse FE order
         std::string order = this->parse_fe_order( input, var_section, var_type );
 
+        // Parse the subdomain_ids
+        std::set<libMesh::subdomain_id_type> subdomain_ids;
+
         // Add variables to system
         std::vector<VariableIndex> var_indices;
-        this->add_vars_to_system( system, var_names, fe_family, order, var_indices );
+        this->add_vars_to_system( system, var_names, fe_family, order, var_indices, subdomain_ids );
+
 
         // Build FEVariablesBase object
         SharedPtr<FEVariablesBase> fe_var = this->build_fe_var( var_type, var_names, var_indices );
