@@ -178,6 +178,7 @@ namespace GRINS
   const std::vector<std::string>* VariableFactoryAbstract::_var_names = NULL;
   const std::vector<VariableIndex>* VariableFactoryAbstract::_var_indices = NULL;
   std::string VariableFactoryAbstract::_var_section = std::string("DIE!");
+  const std::set<libMesh::subdomain_id_type>* VariableFactoryAbstract::_subdomain_ids = NULL;
 
   VariableFactoryBasic<DisplacementVariable>
   grins_factory_disp_fe_var(VariablesParsing::displacement_section());

@@ -69,6 +69,9 @@ namespace GRINS
     static void set_var_section( const std::string& var_section )
     { _var_section = var_section; }
 
+    static void set_subdomain_ids( const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+    { _subdomain_ids = &subdomain_ids; }
+
   protected:
 
     //! Helper function to check required data is set when calling create()
@@ -118,6 +121,9 @@ namespace GRINS
 
     //! Section of input to parse variable names in build_var_names
     static std::string _var_section;
+
+    //! Subdomain ids for the variable
+    static const std::set<libMesh::subdomain_id_type>* _subdomain_ids;
 
   private:
 
