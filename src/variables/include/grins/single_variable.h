@@ -39,8 +39,9 @@ namespace GRINS
   public:
 
     SingleVariable( const std::vector<std::string>& var_names,
-                    const std::vector<VariableIndex>& var_indices )
-      : FEVariablesBase(var_names,var_indices)
+                    const std::vector<VariableIndex>& var_indices,
+                    std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : FEVariablesBase(var_names,var_indices, subdomain_ids )
     {
       if( var_names.size() != 1 )
         libmesh_error_msg("ERROR: SingleVariable must only have a single name!");
@@ -64,8 +65,9 @@ namespace GRINS
   {
   public:
     PrimitiveTempFEVariables( const std::vector<std::string>& var_names,
-                              const std::vector<VariableIndex>& var_indices )
-      : SingleVariable(var_names,var_indices)
+                              const std::vector<VariableIndex>& var_indices,
+                              std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : SingleVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~PrimitiveTempFEVariables(){}
@@ -82,8 +84,9 @@ namespace GRINS
   {
   public:
     TurbulenceFEVariables( const std::vector<std::string>& var_names,
-                           const std::vector<VariableIndex>& var_indices )
-      : SingleVariable(var_names,var_indices)
+                           const std::vector<VariableIndex>& var_indices,
+                           std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : SingleVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~TurbulenceFEVariables(){}
@@ -100,8 +103,9 @@ namespace GRINS
   {
   public:
     PressureFEVariable( const std::vector<std::string>& var_names,
-                        const std::vector<VariableIndex>& var_indices )
-      : SingleVariable(var_names,var_indices)
+                        const std::vector<VariableIndex>& var_indices,
+                        std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : SingleVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~PressureFEVariable(){}
@@ -120,8 +124,9 @@ namespace GRINS
   {
   public:
     ScalarVariable( const std::vector<std::string>& var_names,
-                    const std::vector<VariableIndex>& var_indices )
-      : SingleVariable(var_names,var_indices)
+                    const std::vector<VariableIndex>& var_indices,
+                    std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : SingleVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~ScalarVariable(){}
@@ -135,8 +140,9 @@ namespace GRINS
   {
   public:
     ThermoPressureVariable( const std::vector<std::string>& var_names,
-                            const std::vector<VariableIndex>& var_indices )
-      : ScalarVariable(var_names,var_indices)
+                            const std::vector<VariableIndex>& var_indices,
+                            std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : ScalarVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~ThermoPressureVariable(){}

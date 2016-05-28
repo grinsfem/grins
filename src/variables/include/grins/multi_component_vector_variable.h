@@ -39,8 +39,9 @@ namespace GRINS
   public:
 
     MultcomponentVectorVariable( const std::vector<std::string>& var_names,
-                                 const std::vector<VariableIndex>& var_indices )
-      : FEVariablesBase(var_names,var_indices),
+                                 const std::vector<VariableIndex>& var_indices,
+                                 std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : FEVariablesBase(var_names,var_indices,subdomain_ids),
         _u_idx(0),
         _v_idx(1),
         _w_idx(2)
@@ -75,8 +76,9 @@ namespace GRINS
   public:
 
     DisplacementVariable( const std::vector<std::string>& var_names,
-                             const std::vector<VariableIndex>& var_indices )
-      : MultcomponentVectorVariable(var_names,var_indices)
+                          const std::vector<VariableIndex>& var_indices,
+                          std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : MultcomponentVectorVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~DisplacementVariable(){}
@@ -87,8 +89,9 @@ namespace GRINS
   public:
 
     VelocityVariable( const std::vector<std::string>& var_names,
-                         const std::vector<VariableIndex>& var_indices )
-      : MultcomponentVectorVariable(var_names,var_indices)
+                      const std::vector<VariableIndex>& var_indices,
+                      std::set<libMesh::subdomain_id_type>* subdomain_ids = NULL )
+      : MultcomponentVectorVariable(var_names,var_indices,subdomain_ids)
     {}
 
     ~VelocityVariable(){}
