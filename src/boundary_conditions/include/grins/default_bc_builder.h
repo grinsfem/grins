@@ -117,6 +117,10 @@ namespace GRINS
     ( const MultiphysicsSystem& system,
       std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map ) const;
 
+    //! Check if the Variable var is active on the given subdomain_id
+    bool is_var_active( const FEVariablesBase& var,
+                        const std::vector<libMesh::subdomain_id_type>& subdomain_ids ) const;
+
   };
 } // end namespace GRINS
 

@@ -464,4 +464,30 @@ namespace GRINS
       }
   }
 
+  bool DefaultBCBuilder::is_var_active( const FEVariablesBase& var,
+                                        const std::vector<libMesh::subdomain_id_type>& subdomain_ids ) const
+  {
+    bool var_active = false;
+
+    // If the var subdomain_ids are empty, then this var is active
+    // on the whole domain and we don't need to do anything
+    if( var.subdomain_ids().empty() )
+      var_active = true;
+
+    else
+      {
+        // Now check if this variable is enabled on this subdomain
+        const std::set<libMesh::subdomain_id_type>& var_subdomain_ids =
+          var.subdomain_ids();
+
+        for(std::vector<libMesh::subdomain_id_type>::const_iterator id = subdomain_ids.begin(); id < subdomain_ids.end(); ++id )
+          {
+            if( var_subdomain_ids.find(*id) != var_subdomain_ids.end() )
+              var_active = true;
+          }
+      }
+
+    return var_active;
+  }
+
 } // end namespace GRINS
