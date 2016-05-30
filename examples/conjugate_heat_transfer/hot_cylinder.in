@@ -123,9 +123,6 @@
          type = 'isothermal'
          T = '10.0'
       [../]
-      [./Velocity]
-         type = 'homogeneous_neumann'
-      [../]
    [../]
 
    [./Interface]
