@@ -89,6 +89,7 @@ namespace GRINS
                                   const std::set<BoundaryID>& bc_ids,
                                   libMesh::DofMap& dof_map,
                                   std::set<std::string>& var_sections,
+                                  const std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map,
                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs);
 
     void parse_and_build_bc_id_map( const GetPot& input,

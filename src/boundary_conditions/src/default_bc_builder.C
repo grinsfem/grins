@@ -63,6 +63,16 @@ namespace GRINS
     std::set<std::string> var_sections;
     this->parse_var_sections( input, var_sections );
 
+    // Cache the map between boundary ids and subdomain ids
+    // We map to a vector because it's possible to have an "interface"
+    // boundary id that touches multiple elements with differing
+    // subdomain ids
+    std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >
+             bc_id_to_subdomain_id_map;
+
+    this->build_bc_to_subdomain_map_check_with_mesh( system,
+                                                     bc_id_to_subdomain_id_map );
+
     for( std::map<std::string,std::set<BoundaryID> >::const_iterator bc_it = bc_id_map.begin();
          bc_it != bc_id_map.end(); ++bc_it )
       {
@@ -70,7 +80,7 @@ namespace GRINS
 
         const std::set<BoundaryID>& bc_ids = bc_it->second;
 
-        // First check for special types of boundary conditions that can be
+        // Check for special types of boundary conditions that can be
         // specified as a single type that applies to all boundaries
         std::string type_input_section = BoundaryConditionNames::bc_section()+"/"+bc_name;
         std::string type_input = type_input_section+"/type";
@@ -86,7 +96,8 @@ namespace GRINS
         else
           {
             this->build_bcs_by_var_section(input,system,bc_name,bc_ids,dof_map,
-                                           var_sections,neumann_bcs);
+                                           var_sections,bc_id_to_subdomain_id_map,
+                                           neumann_bcs);
           }
       }
   }
@@ -187,6 +198,7 @@ namespace GRINS
                                                   const std::set<BoundaryID>& bc_ids,
                                                   libMesh::DofMap& dof_map,
                                                   std::set<std::string>& var_sections,
+                                                  const std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map,
                                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs)
   {
     for( std::set<std::string>::const_iterator vars = var_sections.begin();
@@ -200,24 +212,44 @@ namespace GRINS
         // once and reuse it.
         std::string input_section = std::string(BoundaryConditionNames::bc_section()+"/"+bc_name+"/"+var_section);
 
-        // Make sure this section is there, unless that variable is a constraint variable
-        if( !input.have_section(input_section) )
-          {
-            const FEVariablesBase& var =
-              GRINS::GRINSPrivate::VariableWarehouse::get_variable(var_section);
-            if( var.is_constraint_var() )
-              continue;
-            else
-              libmesh_error_msg("ERROR: Could not find boundary condition specification for "+input_section+"!");
-          }
+        // All the boundary ids have the same subdomain id (this is checked
+        // earlier), so just grab the first one
+        const std::vector<libMesh::subdomain_id_type>& subdomain_ids =
+          bc_id_to_subdomain_id_map.find((*bc_ids.begin()))->second;
 
         // Grab the FEVariable
         const FEVariablesBase& fe_var =
           GRINSPrivate::VariableWarehouse::get_variable(var_section);
 
+        bool var_active = this->is_var_active( fe_var, subdomain_ids );
+
+        // If the variable is *not* active and the section is there,
+        // that's an error.
+        if( !var_active && input.have_section(input_section) )
+          {
+            std::stringstream error_msg;
+            error_msg << "ERROR: Cannot specify boundary condition for variable "
+                      << var_section << " on boundary " << bc_name << std::endl
+                      << "since it is inactive on the subdomain associated "
+                      << "with this boundary." <<  std::endl;
+            libmesh_error_msg(error_msg.str());
+          }
+
+        // Make sure this section is there,
+        // unless that variable is a constraint variable
+        // or it's not enabled on this subdomain
+        if( !input.have_section(input_section) )
+          {
+            if( fe_var.is_constraint_var() || !var_active )
+              continue;
+            else
+              libmesh_error_msg("ERROR: Could not find boundary condition specification for "+input_section+"!");
+
+          }
+
         // Grab the type of the boundary condition
-        // There may be more than one type (e.g. pin displacement in two directions and
-        // and load in the third direction).
+        // There may be more than one type (e.g. pin displacement in
+        // two directions and load in the third direction).
         std::string bc_type_section = input_section+"/type";
         unsigned int n_bc_types = input.vector_variable_size(bc_type_section);
 
