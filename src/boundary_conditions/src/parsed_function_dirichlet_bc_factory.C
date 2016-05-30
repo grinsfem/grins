@@ -33,6 +33,45 @@
 #include "libmesh/zero_function.h"
 #include "libmesh/const_fem_function.h"
 
+// Anonymous namespace for helper metafunctions
+namespace
+{
+template <typename FunctionType,
+	  bool is_fem_function =
+            GRINS::ParsedFunctionTraits<FunctionType>::is_fem_function>
+struct TypeFrom {
+  typedef libMesh::CompositeFunction<libMesh::Number> to_composite;
+
+  static libMesh::ParsedFunction<libMesh::Number>
+  to_parsed(const libMesh::System & /* system */,
+            const std::string & expression) {
+    return libMesh::ParsedFunction<libMesh::Number>(expression);
+  }
+
+  static libMesh::ZeroFunction<libMesh::Number>
+  to_zero() {
+    return libMesh::ZeroFunction<libMesh::Number>();
+  }
+};
+
+template <typename FunctionType>
+struct TypeFrom<FunctionType, true> {
+  typedef libMesh::CompositeFEMFunction<libMesh::Number> to_composite;
+
+  static libMesh::ParsedFEMFunction<libMesh::Number>
+  to_parsed(const libMesh::System & system,
+            const std::string & expression) {
+    return libMesh::ParsedFEMFunction<libMesh::Number>(system, expression);
+  }
+
+  static libMesh::ConstFEMFunction<libMesh::Number>
+  to_zero() {
+    return libMesh::ConstFEMFunction<libMesh::Number>(0);
+  }
+};
+
+}
+
 namespace GRINS
 {
   template<typename FunctionType>
@@ -44,8 +83,13 @@ namespace GRINS
   {
     libmesh_assert( !var_names.empty() );
 
-    //! This is really a "composite" function. We'll cast in the helper functions.
+    //! This is really a "composite" function.
     libMesh::UniquePtr<FunctionType> all_funcs;
+    all_funcs.reset( this->build_composite_func().release() );
+
+    typedef typename TypeFrom<FunctionType>::to_composite composite_type;
+    composite_type * composite_func =
+      libMesh::libmesh_cast_ptr<composite_type *>(all_funcs.get());
 
     // We're given the active variables in var_names. Let's first check
     // which ones the user actually set in the input file.
@@ -54,8 +98,6 @@ namespace GRINS
     // case here.
     std::set<std::string> vars_found;
     this->check_for_vars(input,section,var_names,&vars_found);
-
-    all_funcs.reset( this->build_composite_func().release() );
 
     for( std::vector<std::string>::const_iterator var = var_names.begin();
          var < var_names.end(); ++var )
@@ -68,42 +110,14 @@ namespace GRINS
           {
             std::string expression = input(section+"/"+(*var),"DIE!");
 
-            if( ParsedFunctionTraits<FunctionType>::is_fem_function )
-              {
-                libMesh::CompositeFEMFunction<libMesh::Number>* composite_func =
-                  libMesh::libmesh_cast_ptr<libMesh::CompositeFEMFunction<libMesh::Number>*>(all_funcs.get());
-
-                libMesh::ParsedFEMFunction<libMesh::Number> parsed_func(system,expression);
-                composite_func->attach_subfunction(parsed_func,var_idx);
-              }
-            else
-              {
-                libMesh::CompositeFunction<libMesh::Number>* composite_func =
-                  libMesh::libmesh_cast_ptr<libMesh::CompositeFunction<libMesh::Number>*>(all_funcs.get());
-
-                libMesh::ParsedFunction<libMesh::Number> parsed_func(expression);
-                composite_func->attach_subfunction(parsed_func,var_idx);
-              }
+            composite_func->attach_subfunction
+              (TypeFrom<FunctionType>::to_parsed(system, expression), var_idx);
           }
         // Otherwise, we set this variable to be zero.
         else
           {
-            if( ParsedFunctionTraits<FunctionType>::is_fem_function )
-              {
-                libMesh::CompositeFEMFunction<libMesh::Number>* composite_func =
-                  libMesh::libmesh_cast_ptr<libMesh::CompositeFEMFunction<libMesh::Number>*>(all_funcs.get());
-
-                libMesh::ConstFEMFunction<libMesh::Number> zero_func(0.0);
-                composite_func->attach_subfunction(zero_func,var_idx);
-              }
-            else
-              {
-                libMesh::CompositeFunction<libMesh::Number>* composite_func =
-                  libMesh::libmesh_cast_ptr<libMesh::CompositeFunction<libMesh::Number>*>(all_funcs.get());
-
-                libMesh::ZeroFunction<libMesh::Number> zero_func;
-                composite_func->attach_subfunction(zero_func,var_idx);
-              }
+            composite_func->attach_subfunction
+              (TypeFrom<FunctionType>::to_zero(), var_idx);
           }
       }
 
