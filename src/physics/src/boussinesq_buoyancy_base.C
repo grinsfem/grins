@@ -73,6 +73,10 @@ namespace GRINS
 
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::boussinesq_buoyancy()+"/g", 0.0, 2 );
+
+    this->check_var_subdomain_consistency(_flow_vars);
+    this->check_var_subdomain_consistency(_press_var);
+    this->check_var_subdomain_consistency(_temp_vars);
   }
 
   void BoussinesqBuoyancyBase::read_property( const GetPot& input,

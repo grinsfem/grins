@@ -57,6 +57,8 @@ namespace GRINS
 
     // This is deleted in the base class
     this->_ic_handler = new GenericICHandler( physics_name, input );
+
+    this->check_var_subdomain_consistency(_temp_vars);
   }
 
   template<class K>

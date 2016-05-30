@@ -61,6 +61,8 @@ namespace GRINS
                         "DIE!");
 
     _ic_handler = new GenericICHandler(physics_name,input);
+
+    this->check_var_subdomain_consistency(_var);
   }
 
   void ConvectionDiffusion::set_time_evolving_vars( libMesh::FEMSystem* system )
