@@ -38,6 +38,7 @@
 #include "libmesh/mesh_base.h"
 #include "libmesh/boundary_info.h"
 #include "libmesh/parallel_mesh.h"
+#include "libmesh/elem.h"
 
 namespace GRINS
 {
@@ -412,6 +413,55 @@ namespace GRINS
       offset(i) = input(input_section, invalid_real, i );
 
     return offset;
+  }
+
+  void DefaultBCBuilder::build_bc_to_subdomain_map_check_with_mesh
+  ( const MultiphysicsSystem& system,
+    std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map ) const
+  {
+    std::vector<libMesh::dof_id_type> elem_ids;
+    std::vector<unsigned short int> side_ids;
+    std::vector<BoundaryID> bc_ids;
+
+    const libMesh::MeshBase& mesh = system.get_mesh();
+
+    // Extract the list of elements on the boundary
+    mesh.get_boundary_info().build_active_side_list( elem_ids, side_ids, bc_ids );
+
+    libmesh_assert_equal_to( elem_ids.size(), side_ids.size() );
+    libmesh_assert_equal_to( elem_ids.size(), bc_ids.size() );
+
+    for( unsigned int i = 0; i < elem_ids.size(); i++ )
+      {
+        const libMesh::Elem* elem_ptr = mesh.elem(elem_ids[i]);
+
+        libMesh::subdomain_id_type subdomain_id = elem_ptr->subdomain_id();
+
+        std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >::iterator
+          map_it = bc_id_to_subdomain_id_map.find(bc_ids[i]);
+
+        if( map_it == bc_id_to_subdomain_id_map.end() )
+          {
+            std::vector<libMesh::subdomain_id_type> sid(1,subdomain_id);
+            bc_id_to_subdomain_id_map.insert(std::make_pair(bc_ids[i],sid));
+          }
+        else
+          {
+            std::vector<libMesh::subdomain_id_type>& sids = map_it->second;
+            bool found_sid = false;
+
+            for( unsigned int i = 0; i < sids.size(); i++ )
+              {
+                if( sids[i] == subdomain_id )
+                  found_sid = true;
+              }
+
+            if( !found_sid && (sids.size() > 2) )
+              libmesh_error_msg("ERROR: How do you have more than 2 subdomain ids for a boundary id?!");
+            else if( !found_sid && sids.size() < 2 )
+              sids.push_back(subdomain_id);
+          }
+      }
   }
 
 } // end namespace GRINS
