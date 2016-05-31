@@ -47,26 +47,16 @@ namespace GRINS
     std::string section_str = section+"/"+DirichletBCFactoryFunctionOldStyleBase<FunctionType>::_value_var_old_style;
     std::string expression = input(section_str,"DIE!",DirichletBCFactoryFunctionOldStyleBase<FunctionType>::_value_idx_old_style);
 
-    libMesh::UniquePtr<FunctionType> composite_func = this->build_composite_func();
+    libMesh::UniquePtr<FunctionType> all_funcs = this->build_composite_func();
 
-    if( ParsedFunctionTraits<FunctionType>::is_fem_function )
-      {
-        libMesh::CompositeFEMFunction<libMesh::Number>* remapped_func =
-          libMesh::libmesh_cast_ptr<libMesh::CompositeFEMFunction<libMesh::Number>*>(composite_func.get());
+    typedef typename TypeFrom<FunctionType>::to_composite composite_type;
+    composite_type * composite_func =
+      libMesh::libmesh_cast_ptr<composite_type *>(all_funcs.get());
 
-        libMesh::ParsedFEMFunction<libMesh::Number> parsed_func(system,expression);
-        remapped_func->attach_subfunction(parsed_func, dbc_vars);
-      }
-    else
-      {
-        libMesh::CompositeFunction<libMesh::Number>* remapped_func =
-          libMesh::libmesh_cast_ptr<libMesh::CompositeFunction<libMesh::Number>*>(composite_func.get());
+    composite_func->attach_subfunction
+      (TypeFrom<FunctionType>::to_parsed(system, expression), dbc_vars);
 
-        libMesh::ParsedFunction<libMesh::Number> parsed_func(expression);
-        remapped_func->attach_subfunction(parsed_func, dbc_vars);
-      }
-
-    return composite_func;
+    return all_funcs;
   }
 
   // Instantiate all the ParsedDirichletOldStyle factories.
