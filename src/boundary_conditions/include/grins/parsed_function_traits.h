@@ -26,8 +26,14 @@
 #define GRINS_PARSED_FUNCTION_TRAITS_H
 
 // libMesh
-#include "libmesh/function_base.h"
+#include "libmesh/composite_fem_function.h"
+#include "libmesh/composite_function.h"
+#include "libmesh/const_fem_function.h"
 #include "libmesh/fem_function_base.h"
+#include "libmesh/function_base.h"
+#include "libmesh/parsed_fem_function.h"
+#include "libmesh/parsed_function.h"
+#include "libmesh/zero_function.h"
 
 namespace GRINS
 {
@@ -44,6 +50,42 @@ namespace GRINS
   struct ParsedFunctionTraits<libMesh::FEMFunctionBase<FEShape> >
   {
     static bool const is_fem_function = true;
+  };
+
+
+  // Helper metafunctions
+  template <typename FunctionType,
+	    bool is_fem_function =
+              ParsedFunctionTraits<FunctionType>::is_fem_function>
+  struct TypeFrom {
+    typedef libMesh::CompositeFunction<libMesh::Number> to_composite;
+
+    static libMesh::ParsedFunction<libMesh::Number>
+    to_parsed(const libMesh::System & /* system */,
+              const std::string & expression) {
+      return libMesh::ParsedFunction<libMesh::Number>(expression);
+    }
+
+    static libMesh::ZeroFunction<libMesh::Number>
+    to_zero() {
+      return libMesh::ZeroFunction<libMesh::Number>();
+    }
+  };
+
+  template <typename FunctionType>
+  struct TypeFrom<FunctionType, true> {
+    typedef libMesh::CompositeFEMFunction<libMesh::Number> to_composite;
+
+    static libMesh::ParsedFEMFunction<libMesh::Number>
+    to_parsed(const libMesh::System & system,
+              const std::string & expression) {
+      return libMesh::ParsedFEMFunction<libMesh::Number>(system, expression);
+    }
+
+    static libMesh::ConstFEMFunction<libMesh::Number>
+    to_zero() {
+      return libMesh::ConstFEMFunction<libMesh::Number>(0);
+    }
   };
 
 } // end namespace GRINS
