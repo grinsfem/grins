@@ -33,45 +33,6 @@
 #include "libmesh/zero_function.h"
 #include "libmesh/const_fem_function.h"
 
-// Anonymous namespace for helper metafunctions
-namespace
-{
-template <typename FunctionType,
-	  bool is_fem_function =
-            GRINS::ParsedFunctionTraits<FunctionType>::is_fem_function>
-struct TypeFrom {
-  typedef libMesh::CompositeFunction<libMesh::Number> to_composite;
-
-  static libMesh::ParsedFunction<libMesh::Number>
-  to_parsed(const libMesh::System & /* system */,
-            const std::string & expression) {
-    return libMesh::ParsedFunction<libMesh::Number>(expression);
-  }
-
-  static libMesh::ZeroFunction<libMesh::Number>
-  to_zero() {
-    return libMesh::ZeroFunction<libMesh::Number>();
-  }
-};
-
-template <typename FunctionType>
-struct TypeFrom<FunctionType, true> {
-  typedef libMesh::CompositeFEMFunction<libMesh::Number> to_composite;
-
-  static libMesh::ParsedFEMFunction<libMesh::Number>
-  to_parsed(const libMesh::System & system,
-            const std::string & expression) {
-    return libMesh::ParsedFEMFunction<libMesh::Number>(system, expression);
-  }
-
-  static libMesh::ConstFEMFunction<libMesh::Number>
-  to_zero() {
-    return libMesh::ConstFEMFunction<libMesh::Number>(0);
-  }
-};
-
-}
-
 namespace GRINS
 {
   template<typename FunctionType>
