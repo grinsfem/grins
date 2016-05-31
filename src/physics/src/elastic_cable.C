@@ -130,7 +130,7 @@ namespace GRINS
         const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( this->_disp_vars.w() );
 
         // Build new FE for the current point. We need this to build tensors at point.
-        libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( context.get_elem(), this->get_fe(context), point );
+        libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( &context.get_elem(), this->get_fe(context), point );
 
         const std::vector<std::vector<libMesh::Real> >& dphi_dxi =  fe_new->get_dphidxi();
 

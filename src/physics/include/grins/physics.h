@@ -251,7 +251,7 @@ namespace GRINS
   protected:
 
     /*! \todo This is straight up copied from libMesh. Need to make this available from libMesh. */
-    libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
+    libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem* elem,
                                                                              const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                              const libMesh::Point p );
 
