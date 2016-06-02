@@ -37,6 +37,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/mesh_base.h"
 #include "libmesh/boundary_info.h"
+#include "libmesh/parallel_mesh.h"
 
 namespace GRINS
 {
@@ -377,6 +378,20 @@ namespace GRINS
                                             const std::set<BoundaryID>& bc_ids,
                                             const std::string& section )
   {
+    // Make sure we're not using a ParallelMesh
+    // https://github.com/libMesh/libmesh/issues/977
+    const libMesh::MeshBase& mesh = system.get_mesh();
+    const libMesh::ParallelMesh* pmesh = dynamic_cast<const libMesh::ParallelMesh*>(&mesh);
+    if(pmesh)
+      {
+        std::stringstream error_msg;
+        error_msg << "ERROR: Cannot use ParallelMesh with periodic boundary conditions!"
+                  << std::endl
+                  << "       See https://github.com/libMesh/libmesh/issues/977 for discussion."
+                  << std::endl;
+        libmesh_error_msg(error_msg.str());
+      }
+
     libMesh::boundary_id_type invalid_bid =
       std::numeric_limits<libMesh::boundary_id_type>::max();
 
