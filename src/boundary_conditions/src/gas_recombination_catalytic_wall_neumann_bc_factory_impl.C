@@ -38,11 +38,20 @@
 
 namespace GRINS
 {
+  // To avoid compiler warnings without GRINS or Cantera
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
   SharedPtr<NeumannBCAbstract>
   GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
   ( const GetPot& input, const std::string& reaction,SharedPtr<CatalycityBase>& gamma_ptr,
     const std::vector<VariableIndex>& species_vars,const std::string& material,
     VariableIndex T_var,libMesh::Real p0,const std::string& thermochem_lib )
+#else
+  SharedPtr<NeumannBCAbstract>
+  GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
+  ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+    const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
+    VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
+#endif
   {
     std::string reactant;
     std::string product;

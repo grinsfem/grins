@@ -38,7 +38,11 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+#ifdef GRINS_HAVE_ANTIOCH
 int main( int argc, char* argv[] )
+#else
+int main()
+#endif
 {
 #ifdef GRINS_HAVE_ANTIOCH
   // Check command line count.

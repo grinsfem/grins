@@ -148,12 +148,22 @@ namespace GRINS
       }
   }
 
+  // To avoid compiler warnings without GRINS or Cantera
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
   void MoleFractionsDirichletBCFactory::add_found_vars( const GetPot& input,
                                                         MultiphysicsSystem& /*system*/,
                                                         const std::string& section,
                                                         const std::set<std::string>& vars_found,
                                                         libMesh::CompositeFunction<libMesh::Number>& composite_func,
                                                         std::set<std::string>& vars_added ) const
+#else
+   void MoleFractionsDirichletBCFactory::add_found_vars( const GetPot& input,
+                                                         MultiphysicsSystem& /*system*/,
+                                                         const std::string& /*section*/,
+                                                         const std::set<std::string>& /*vars_found*/,
+                                                         libMesh::CompositeFunction<libMesh::Number>& /*composite_func*/,
+                                                         std::set<std::string>& /*vars_added*/ ) const
+#endif
   {
     // This only makes sense for SpeciesMassFractionsFEVariables in the VariableWarehouse.
     // This call will error out if it's not there.
