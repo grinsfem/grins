@@ -176,6 +176,12 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
+    std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs()
+    { return _neumann_bcs; }
+
+    const std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs() const
+    { return _neumann_bcs; }
+
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
