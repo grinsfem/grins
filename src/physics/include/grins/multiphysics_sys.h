@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -175,6 +175,12 @@ namespace GRINS
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
+
+    std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs()
+    { return _neumann_bcs; }
+
+    const std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs() const
+    { return _neumann_bcs; }
 
 #ifdef GRINS_USE_GRVY_TIMERS
     //! Add GRVY Timer object to system for timing physics.

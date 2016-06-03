@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -38,11 +38,20 @@
 
 namespace GRINS
 {
+  // To avoid compiler warnings without GRINS or Cantera
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
   SharedPtr<NeumannBCAbstract>
   GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
   ( const GetPot& input, const std::string& reaction,SharedPtr<CatalycityBase>& gamma_ptr,
     const std::vector<VariableIndex>& species_vars,const std::string& material,
     VariableIndex T_var,libMesh::Real p0,const std::string& thermochem_lib )
+#else
+  SharedPtr<NeumannBCAbstract>
+  GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
+  ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+    const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
+    VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
+#endif
   {
     std::string reactant;
     std::string product;

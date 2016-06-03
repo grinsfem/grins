@@ -465,6 +465,11 @@ _AC_SRCDIRS(.)
 ABS_TOP_SRC_DIR=$ac_abs_top_srcdir
 TOP_SRC_DIR=$ac_srcdir
 
+# Since we don't distribute the lic_utils, check and make sure it's there.
+# This way, we won't run the license stamping perl script on distributed
+# tarballs, only on the repository clones
+AM_CONDITIONAL(GRINS_LICENSESTAMPEXISTS, [test -f $ABS_TOP_SRC_DIR/src/common/lic_utils/update_license.pl])
+
 # We have to do this by subdirectory because otherwise distcheck
 # breaks as we start picking up files in the directories
 # that it uses.

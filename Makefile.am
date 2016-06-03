@@ -1,8 +1,6 @@
 include $(top_srcdir)/doxygen/aminclude.am
 
-BUILT_SOURCES   = .license.stamp
 
-CLEANFILES = .license.stamp
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS  = -I m4 -I m4/common
@@ -28,23 +26,9 @@ EXTRA_DIST += $(GRINS_TEST_SH_FILES) $(GRINS_TEST_INPUT_FILES) $(GRINS_TEST_DATA
 #doxygen_DATA = $(top_srcdir)/docs/doxygen/GRINS.tag
 
 includedir = $(prefix)/include
+BUILT_SOURCES = grins_config.h
 include_HEADERS = $(top_builddir)/grins_config.h
 
-# Eliminate .svn directories in dist tarball
-dist-hook:
-	rm -rf `find $(distdir)/ -name .svn`
-
-#if SVN_CHECKOUT
-#  EXTRA_DIST     += dist_version
-#
-#TODO: check if dist_version is needed in BUILT_SOURCES (in addition to EXTRA_DIST)
-#  BUILT_SOURCES   = dist_version
-#
-#dist_version: FORCE
-#	@SVN_REVISION@ > $(top_srcdir)/dist_version
-#
-#FORCE:
-#endif
 
 # Tools in the auxiliary directory
 
@@ -89,9 +73,17 @@ MOSTLYCLEANFILES     = $(DX_CLEANFILES) \
 #     works.
 #STAMPED_FILES  = $(shell find $(top_srcdir)/src -name '*.h' -or -name '*.C')
 
+# Since we don't distribute the lic_utils, check and make sure it's there.
+# This way, we won't run this on distributed tarballs, only on the repos clones
+
+if GRINS_LICENSESTAMPEXISTS
+BUILT_SOURCES += .license.stamp
 .license.stamp: $(top_srcdir)/LICENSE
 	@$(top_srcdir)/src/common/lic_utils/update_license.pl $(top_srcdir)/LICENSE $(GRINS_STAMPED_FILES)
 	echo 'updated source license headers' >$@
+
+CLEANFILES = .license.stamp
+endif
 
 # -------------------------------------------
 # Optional support for code coverage analysis

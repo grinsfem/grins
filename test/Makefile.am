@@ -5,6 +5,7 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_SRCDIR_DIR=$(top_srcdir)/test; export GRINS_T
 AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; export GRINS_TEST_INPUT_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
+AM_TESTS_ENVIRONMENT += GRINS_ANTIOCH_ENABLED=@HAVE_ANTIOCH@; export GRINS_ANTIOCH_ENABLED;
 
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
@@ -119,10 +120,21 @@ gas_solid_catalytic_wall_SOURCES = unit/gas_solid_catalytic_wall.C
 power_law_catalycity_SOURCES = unit/power_law_catalycity.C
 
 # Interface test source files
+# Automake manual suggests for "convenience or program headers,
+# to just put them in the SOURCES. Note we can't just blanket
+# EXTRA_DIST the interface directory because then the .C files
+# get excluded (for some unknown reason).
 interface_driver_SOURCES = interface/interface_driver.C \
+                           interface/antioch_test_base.h \
+                           interface/cantera_test_base.h \
+                           interface/kinetics_test_base.h \
+                           interface/nasa_thermo_test_base.h \
+                           interface/species_test_base.h \
+                           interface/thermochem_test_common.h \
                            interface/air_5sp.C
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
+
 cantera_transport_regression_SOURCES = interface/cantera_transport_regression.C
 
 
@@ -274,7 +286,7 @@ TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 #AMR TESTS
 TESTS += amr/convection_diffusion_unsteady_2d.sh
 
-EXTRA_DIST = unit/input_files
+EXTRA_DIST = unit/input_files common amr/gold_data amr/input_files amr/README exact_soln/README
 
 CLEANFILES =
 

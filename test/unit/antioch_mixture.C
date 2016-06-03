@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -38,7 +38,11 @@
 // libMesh
 #include "libmesh/getpot.h"
 
+#ifdef GRINS_HAVE_ANTIOCH
 int main( int argc, char* argv[] )
+#else
+int main()
+#endif
 {
 #ifdef GRINS_HAVE_ANTIOCH
   // Check command line count.

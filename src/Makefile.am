@@ -291,6 +291,7 @@ include_HEADERS += boundary_conditions/include/grins/bc_factory_abstract.h
 include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_abstract.h
 include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_function_base.h
 include_HEADERS += boundary_conditions/include/grins/dirichlet_bc_factory_function_old_style_base.h
+include_HEADERS += boundary_conditions/include/grins/parsed_function_traits.h
 include_HEADERS += boundary_conditions/include/grins/parsed_function_factory_helper.h
 include_HEADERS += boundary_conditions/include/grins/parsed_function_dirichlet_bc_factory.h
 include_HEADERS += boundary_conditions/include/grins/constant_function_dirichlet_bc_factory.h
@@ -506,6 +507,7 @@ include_HEADERS += variables/include/grins/displacement_fe_variables.h
 include_HEADERS += variables/include/grins/species_mass_fracs_fe_variables.h
 include_HEADERS += variables/include/grins/thermo_pressure_fe_variable.h
 include_HEADERS += variables/include/grins/turbulence_fe_variables.h
+include_HEADERS += variables/include/grins/generic_fe_type_variable.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
 include_HEADERS += variables/include/grins/variables_parsing.h
 include_HEADERS += variables/include/grins/variable_warehouse.h
@@ -632,7 +634,7 @@ if CODE_COVERAGE_ENABLED
   CLEANFILES += *.gcda *.gcno
 endif
 
-EXTRA_DIST  = common
+EXTRA_DIST  = common/lcov
 EXTRA_DIST += $(sfiles_DATA)
 
 # Required for AX_AM_MACROS

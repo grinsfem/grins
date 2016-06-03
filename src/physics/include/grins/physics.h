@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -251,7 +251,7 @@ namespace GRINS
   protected:
 
     /*! \todo This is straight up copied from libMesh. Need to make this available from libMesh. */
-    libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem& elem,
+    libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem* elem,
                                                                              const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                              const libMesh::Point p );
 

@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -88,11 +88,20 @@ namespace GRINS
       }
   }
 
+  // To avoid compiler warnings without GRINS or Cantera
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
   void PrescribedMoleFractionsDirichletOldStyleBCFactory::add_funcs( const GetPot& input,
                                                                      MultiphysicsSystem& /*system*/,
                                                                      const std::string& input_string,
                                                                      const std::vector<std::string>& var_names,
                                                                      libMesh::CompositeFunction<libMesh::Number>& composite_func ) const
+#else
+  void PrescribedMoleFractionsDirichletOldStyleBCFactory::add_funcs( const GetPot& input,
+                                                                     MultiphysicsSystem& /*system*/,
+                                                                     const std::string& input_string,
+                                                                     const std::vector<std::string>& var_names,
+                                                                     libMesh::CompositeFunction<libMesh::Number>& /*composite_func*/ ) const
+#endif
   {
     const unsigned int n_vars = var_names.size();
 
@@ -116,11 +125,14 @@ namespace GRINS
       libmesh_error_msg("ERROR: Mole fractions do not sum to 1! Found sum = "+StringUtilities::T_to_string<libMesh::Number>(sum));
 
 
+    // To avoid compiler warnings without GRINS or Cantera
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
     // This only makes sense for SpeciesMassFractionsFEVariables in the
     // VariableWarehouse. This call will error out if it's not there.
     const SpeciesMassFractionsFEVariables& species_fe_var =
       GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
       (VariablesParsing::species_mass_fractions_section());
+#endif
 
     std::string thermochem_lib;
     PhysicsFactoryHelper::parse_thermochemistry_model( input,

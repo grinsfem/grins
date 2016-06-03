@@ -65,6 +65,10 @@
 
 # Mesh related options
 [Mesh]
+   # This must be serial for periodic boundaries until libMesh/libmesh#977 is resolved
+   # https://github.com/libMesh/libmesh/issues/977
+   class = 'serial'
+
    [./Generation]
       dimension = '3'
       n_elems_x = '10'

@@ -33,7 +33,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'axi_ns_poiseuille_flow'
-   output_format = 'xdr ExodusII'
+   output_format = 'xdr'
 []
 
 # Options for print info to the screen

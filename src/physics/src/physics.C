@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2015 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -256,7 +256,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem& elem,
+  libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem* elem,
                                                                                     const libMesh::FEGenericBase<libMesh::Real>* fe,
                                                                                     const libMesh::Point p )
   {
@@ -266,23 +266,23 @@ namespace GRINS
     // If we don't have an Elem to evaluate on, then the only functions
     // we can sensibly evaluate are the scalar dofs which are the same
     // everywhere.
-    libmesh_assert(&elem || fe_type.family == SCALAR);
+    libmesh_assert(elem || fe_type.family == SCALAR);
 
-    unsigned int elem_dim = &elem ? elem.dim() : 0;
+    unsigned int elem_dim = elem ? elem->dim() : 0;
 
     UniquePtr<FEGenericBase<libMesh::Real> >
       fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
 
     // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h
     // Build a vector of point co-ordinates to send to reinit
-    Point master_point = &elem ?
-      FEInterface::inverse_map(elem_dim, fe_type, &elem, p) :
+    Point master_point = elem ?
+      FEInterface::inverse_map(elem_dim, fe_type, elem, p) :
       Point(0);
 
     std::vector<Point> coor(1, master_point);
 
     // Reinitialize the element and compute the shape function values at coor
-    fe_new->reinit (&elem, &coor);
+    fe_new->reinit (elem, &coor);
 
     return fe_new;
   }

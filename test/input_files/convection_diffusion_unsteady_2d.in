@@ -77,8 +77,8 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'convection_diffusion_unsteady_2d'
-   output_format = 'ExodusII xdr'
-   #timesteps_per_vis = '50'
+   output_format = 'xdr'
+   timesteps_per_vis = '50'
 []
 
 [screen-options]
