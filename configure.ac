@@ -2,7 +2,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(grins, 0.7.0, grins-users@googlegroups.com)
+AC_INIT(grins, 0.8.0, grins-users@googlegroups.com)
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADER(grins_config.h.tmp)
