@@ -1,0 +1,11 @@
+<map id="GRINS::HeatTransferStabilizationHelper" name="GRINS::HeatTransferStabilizationHelper">
+<area shape="rect" id="node2" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="769,5,951,32"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="508,5,671,32"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="765,56,955,83"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1SingleVarSingleFETypeVariable.html" title="Base class for variables with a single component. " alt="" coords="483,85,696,126"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="745,107,975,133"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1SingleFETypeVariable.html" title="Class to encapsulate variables that have only one FEType/Order. " alt="" coords="229,133,433,160"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1MultiVarSingleFETypeVariable.html" title="Base class for variables with multiple components that all have the same FEType. " alt="" coords="487,150,691,191"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,133,180,160"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1VelocityFEVariables.html" title="GRINS::VelocityFEVariables" alt="" coords="765,157,955,184"/>
+</map>

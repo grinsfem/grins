@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classGRINS_1_1MeshAdaptiveSolverBase.html" title="GRINS::MeshAdaptiveSolverBase" alt="" coords="5,9,229,35"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1SteadyMeshAdaptiveSolver.html" title="GRINS::SteadyMeshAdaptive\lSolver" alt="" coords="277,31,475,72"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1UnsteadyMeshAdaptiveSolver.html" title="GRINS::UnsteadyMeshAdaptive\lSolver" alt="" coords="523,56,735,97"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1Solver.html" title="GRINS::Solver" alt="" coords="63,97,172,123"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1SteadySolver.html" title="GRINS::SteadySolver" alt="" coords="301,97,451,123"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1UnsteadySolver.html" title="GRINS::UnsteadySolver" alt="" coords="293,147,459,174"/>
+</map>

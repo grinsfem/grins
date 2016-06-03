@@ -1,0 +1,7 @@
+<map id="src/boundary_conditions/include/grins/gas_recombination_catalytic_wall.h" name="src/boundary_conditions/include/grins/gas_recombination_catalytic_wall.h">
+<area shape="rect" id="node2" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="228,199,371,225"/>
+<area shape="rect" id="node10" href="$catalytic__wall__base_8h.html" title="grins/catalytic_wall\l_base.h" alt="" coords="503,109,637,151"/>
+<area shape="rect" id="node7" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="389,273,519,300"/>
+<area shape="rect" id="node11" href="$catalycity__base_8h.html" title="grins/catalycity_base.h" alt="" coords="491,199,649,225"/>
+<area shape="rect" id="node14" href="$neumann__bc__abstract_8h.html" title="grins/neumann_bc_abstract.h" alt="" coords="723,199,921,225"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="src/strategies/include/grins/mesh_adaptivity_options.h" name="src/strategies/include/grins/mesh_adaptivity_options.h">
+<area shape="rect" id="node2" href="$mesh__adaptive__solver__base_8h.html" title="src/solver/include\l/grins/mesh_adaptive\l_solver_base.h" alt="" coords="300,109,449,165"/>
+<area shape="rect" id="node9" href="$solver__parsing_8C.html" title="src/solver/src/solver\l_parsing.C" alt="" coords="474,117,614,158"/>
+<area shape="rect" id="node10" href="$mesh__adaptivity__options_8C.html" title="src/strategies/src\l/mesh_adaptivity_options.C" alt="" coords="638,117,823,158"/>
+<area shape="rect" id="node3" href="$steady__mesh__adaptive__solver_8h.html" title="src/solver/include\l/grins/steady_mesh_adaptive\l_solver.h" alt="" coords="78,213,274,269"/>
+<area shape="rect" id="node6" href="$unsteady__mesh__adaptive__solver_8h.html" title="src/solver/include\l/grins/unsteady_mesh\l_adaptive_solver.h" alt="" coords="299,213,451,269"/>
+<area shape="rect" id="node8" href="$mesh__adaptive__solver__base_8C.html" title="src/solver/src/mesh\l_adaptive_solver_base.C" alt="" coords="475,221,647,262"/>
+<area shape="rect" id="node4" href="$solver__factory_8C.html" title="src/solver/src/solver\l_factory.C" alt="" coords="206,317,346,359"/>
+<area shape="rect" id="node5" href="$steady__mesh__adaptive__solver_8C.html" title="src/solver/src/steady\l_mesh_adaptive_solver.C" alt="" coords="5,317,181,359"/>
+<area shape="rect" id="node7" href="$unsteady__mesh__adaptive__solver_8C.html" title="src/solver/src/unsteady\l_mesh_adaptive_solver.C" alt="" coords="371,317,547,359"/>
+</map>

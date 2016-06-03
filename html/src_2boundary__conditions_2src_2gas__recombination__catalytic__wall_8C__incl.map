@@ -1,0 +1,14 @@
+<map id="src/boundary_conditions/src/gas_recombination_catalytic_wall.C" name="src/boundary_conditions/src/gas_recombination_catalytic_wall.C">
+<area shape="rect" id="node2" href="$gas__recombination__catalytic__wall_8h.html" title="grins/gas_recombination\l_catalytic_wall.h" alt="" coords="519,109,686,151"/>
+<area shape="rect" id="node17" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1118,206,1229,233"/>
+<area shape="rect" id="node3" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="531,295,674,322"/>
+<area shape="rect" id="node11" href="$catalytic__wall__base_8h.html" title="grins/catalytic_wall\l_base.h" alt="" coords="376,199,509,240"/>
+<area shape="rect" id="node8" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="457,385,586,411"/>
+<area shape="rect" id="node12" href="$catalycity__base_8h.html" title="grins/catalycity_base.h" alt="" coords="248,295,405,322"/>
+<area shape="rect" id="node15" href="$neumann__bc__abstract_8h.html" title="grins/neumann_bc_abstract.h" alt="" coords="27,295,224,322"/>
+<area shape="rect" id="node19" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="935,288,1078,329"/>
+<area shape="rect" id="node20" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="698,295,859,322"/>
+<area shape="rect" id="node21" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1153,295,1308,322"/>
+<area shape="rect" id="node25" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1673,295,1833,322"/>
+<area shape="rect" id="node24" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="1143,377,1305,419"/>
+</map>

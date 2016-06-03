@@ -1,0 +1,9 @@
+<map id="GRINS::AdjointRefinementErrorEstimatorFactory" name="GRINS::AdjointRefinementErrorEstimatorFactory">
+<area shape="rect" id="node2" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointRefinement\lEstimator \&gt;" alt="" coords="1709,131,1980,187"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1ErrorEstimatorFactoryBase.html" title="Builds VariableBase objects. " alt="" coords="996,137,1228,163"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; EstimatorType \&gt;" alt="" coords="1277,171,1483,212"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="637,71,821,112"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1FactoryWithGetPot.html" title="Abstract factory that provides availability of GetPot. " alt="" coords="228,71,412,112"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1MultiphysicsSystem.html" title="Interface with libMesh for solving Multiphysics problems. " alt="" coords="634,137,823,163"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1ErrorEstimatorOptions.html" title="Container for ErrorEstimator options. " alt="" coords="627,187,831,214"/>
+</map>

@@ -1,0 +1,19 @@
+\form#0:$ \rho_s \gamma \sqrt{ \frac{R_s T}{2\pi} } $
+\form#1:$ \sqrt{ \frac{R_s}{2\pi} } $
+\form#2:$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} $
+\form#3:$ \rho = $
+\form#4:$ T_0 = $
+\form#5:$ \beta_T = $
+\form#6:$ \mathbf{g} = $
+\form#7:$ \rho_0 = $
+\form#8:$ v(x,y,z,t) $
+\form#9:$ \kappa(x,y,z,t) $
+\form#10:$M(u)\dot{u} = F(u)$
+\form#11:$M(u_{\theta})(u^n - u^{n+1}) + \Delta t F(u) = 0$
+\form#12:$F(u)$
+\form#13:$M(u)\dot{u}$
+\form#14:$C(u)\dot{u}$
+\form#15:$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}$
+\form#16:$ \Delta t $
+\form#17:$ \theta $
+\form#18:$ \theta \in [0,1] $

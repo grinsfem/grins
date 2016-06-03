@@ -1,0 +1,6 @@
+<map id="GRINS::SteadyMeshAdaptiveSolver" name="GRINS::SteadyMeshAdaptiveSolver">
+<area shape="rect" id="node2" href="$classGRINS_1_1Solver.html" title="GRINS::Solver" alt="" coords="5,95,115,121"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1MeshAdaptiveSolverBase.html" title="GRINS::MeshAdaptiveSolverBase" alt="" coords="139,95,363,121"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1MeshAdaptivityOptions.html" title="Container for mesh adaptivity options. " alt="" coords="31,5,239,32"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1ErrorEstimatorOptions.html" title="Container for ErrorEstimator options. " alt="" coords="263,5,467,32"/>
+</map>

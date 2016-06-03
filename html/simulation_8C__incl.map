@@ -1,0 +1,33 @@
+<map id="src/solver/src/simulation.C" name="src/solver/src/simulation.C">
+<area shape="rect" id="node2" href="$simulation_8h.html" title="grins/simulation.h" alt="" coords="1073,177,1199,203"/>
+<area shape="rect" id="node24" href="$multiphysics__sys_8h.html" title="grins/multiphysics\l_sys.h" alt="" coords="1627,348,1754,389"/>
+<area shape="rect" id="node33" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="1867,87,2010,114"/>
+<area shape="rect" id="node34" href="$simulation__builder_8h.html" title="grins/simulation_builder.h" alt="" coords="825,87,999,114"/>
+<area shape="rect" id="node42" href="$solver__context_8h.html" title="grins/solver_context.h" alt="" coords="1408,177,1560,203"/>
+<area shape="rect" id="node43" href="$simulation__parsing_8h.html" title="grins/simulation_parsing.h" alt="" coords="2357,266,2534,293"/>
+<area shape="rect" id="node44" href="$strategies__parsing_8h.html" title="grins/strategies_parsing.h" alt="" coords="2579,437,2754,464"/>
+<area shape="rect" id="node45" href="$physics__builder_8h.html" title="grins/physics_builder.h" alt="" coords="2195,437,2352,464"/>
+<area shape="rect" id="node46" href="$error__estimator__factory__base_8h.html" title="grins/error_estimator\l_factory_base.h" alt="" coords="2137,169,2282,211"/>
+<area shape="rect" id="node3" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="634,601,763,628"/>
+<area shape="rect" id="node6" href="$grins__solver_8h.html" title="grins/grins_solver.h" alt="" coords="843,266,981,293"/>
+<area shape="rect" id="node8" href="$qoi__base_8h.html" title="grins/qoi_base.h" alt="" coords="771,437,891,464"/>
+<area shape="rect" id="node16" href="$visualization_8h.html" title="grins/visualization.h" alt="" coords="1576,266,1715,293"/>
+<area shape="rect" id="node18" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="2089,519,2250,546"/>
+<area shape="rect" id="node19" href="$parameter__manager_8h.html" title="grins/parameter_manager.h" alt="" coords="632,266,819,293"/>
+<area shape="rect" id="node22" href="$postprocessed__quantities_8h.html" title="grins/postprocessed\l_quantities.h" alt="" coords="1259,259,1400,300"/>
+<area shape="rect" id="node30" href="$error__estimator__options_8h.html" title="grins/error_estimator\l_options.h" alt="" coords="2187,259,2333,300"/>
+<area shape="rect" id="node11" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1635,519,1795,546"/>
+<area shape="rect" id="node15" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1187,519,1330,546"/>
+<area shape="rect" id="node25" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1478,437,1589,464"/>
+<area shape="rect" id="node28" href="$neumann__bc__container_8h.html" title="grins/neumann_bc_container.h" alt="" coords="1187,437,1392,464"/>
+<area shape="rect" id="node26" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1870,512,2013,553"/>
+<area shape="rect" id="node27" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1456,519,1611,546"/>
+<area shape="rect" id="node35" href="$mesh__builder_8h.html" title="grins/mesh_builder.h" alt="" coords="381,177,526,203"/>
+<area shape="rect" id="node37" href="$solver__factory_8h.html" title="grins/solver_factory.h" alt="" coords="837,177,987,203"/>
+<area shape="rect" id="node38" href="$visualization__factory_8h.html" title="grins/visualization\l_factory.h" alt="" coords="1585,169,1711,211"/>
+<area shape="rect" id="node39" href="$qoi__factory_8h.html" title="grins/qoi_factory.h" alt="" coords="144,266,275,293"/>
+<area shape="rect" id="node41" href="$postprocessing__factory_8h.html" title="grins/postprocessing\l_factory.h" alt="" coords="1223,169,1367,211"/>
+<area shape="rect" id="node36" href="$common_8h.html" title="grins/common.h" alt="" coords="299,266,416,293"/>
+<area shape="rect" id="node40" href="$composite__qoi_8h.html" title="grins/composite_qoi.h" alt="" coords="617,355,769,382"/>
+<area shape="rect" id="node47" href="$factory__with__getpot_8h.html" title="grins/factory_with\l_getpot.h" alt="" coords="1936,259,2061,300"/>
+</map>

@@ -1,0 +1,17 @@
+<map id="GRINS::LowMachNavierStokesSPGSMStabilization&lt; Viscosity, SpecificHeat, ThermalConductivity &gt;" name="GRINS::LowMachNavierStokesSPGSMStabilization&lt; Viscosity, SpecificHeat, ThermalConductivity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1LowMachNavierStokesStabilizationBase.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="1764,112,2005,168"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1LowMachNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="1169,81,1377,137"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="873,107,991,133"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="508,157,671,184"/>
+<area shape="rect" id="node16" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="841,265,1023,292"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1ICHandlingBase.html" title="Base class for reading and handling initial conditions for physics classes. " alt="" coords="505,105,673,132"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="837,56,1027,83"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1IncompressibleNavierStokesStabilizationHelper.html" title="GRINS::IncompressibleNavier\lStokesStabilizationHelper" alt="" coords="1173,210,1373,251"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1SingleVarSingleFETypeVariable.html" title="Base class for variables with a single component. " alt="" coords="483,39,696,81"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="817,5,1047,32"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1SingleFETypeVariable.html" title="Class to encapsulate variables that have only one FEType/Order. " alt="" coords="229,115,433,141"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1MultiVarSingleFETypeVariable.html" title="Base class for variables with multiple components that all have the same FEType. " alt="" coords="487,209,691,250"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,115,180,141"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1VelocityFEVariables.html" title="GRINS::VelocityFEVariables" alt="" coords="837,215,1027,241"/>
+<area shape="rect" id="node14" href="$classGRINS_1_1LowMachNavierStokesStabilizationHelper.html" title="GRINS::LowMachNavierStokes\lStabilizationHelper" alt="" coords="1427,161,1635,202"/>
+</map>

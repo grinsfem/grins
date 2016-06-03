@@ -1,0 +1,13 @@
+<map id="src/physics/include/grins/heat_transfer_stab_helper.h" name="src/physics/include/grins/heat_transfer_stab_helper.h">
+<area shape="rect" id="node2" href="$boussinesq__buoyancy__spgsm__stab_8h.html" title="src/physics/include\l/grins/boussinesq_buoyancy\l_spgsm_stab.h" alt="" coords="197,109,388,165"/>
+<area shape="rect" id="node5" href="$heat__transfer__stab__base_8h.html" title="src/physics/include\l/grins/heat_transfer\l_stab_base.h" alt="" coords="487,109,624,165"/>
+<area shape="rect" id="node12" href="$heat__transfer__stab__helper_8C.html" title="src/physics/src/heat\l_transfer_stab_helper.C" alt="" coords="649,117,814,158"/>
+<area shape="rect" id="node3" href="$boussinesq__buoyancy__spgsm__stab_8C.html" title="src/physics/src/boussinesq\l_buoyancy_spgsm_stab.C" alt="" coords="5,221,185,262"/>
+<area shape="rect" id="node4" href="$physics__factory__incompressible__flow_8C.html" title="src/physics/src/physics\l_factory_incompressible\l_flow.C" alt="" coords="210,213,375,269"/>
+<area shape="rect" id="node6" href="$heat__transfer__adjoint__stab_8h.html" title="src/physics/include\l/grins/heat_transfer\l_adjoint_stab.h" alt="" coords="400,213,537,269"/>
+<area shape="rect" id="node9" href="$heat__transfer__spgsm__stab_8h.html" title="src/physics/include\l/grins/heat_transfer\l_spgsm_stab.h" alt="" coords="561,213,699,269"/>
+<area shape="rect" id="node11" href="$heat__transfer__stab__base_8C.html" title="src/physics/src/heat\l_transfer_stab_base.C" alt="" coords="723,221,881,262"/>
+<area shape="rect" id="node7" href="$heat__transfer__adjoint__stab_8C.html" title="src/physics/src/heat\l_transfer_adjoint_stab.C" alt="" coords="273,317,440,359"/>
+<area shape="rect" id="node8" href="$physics__factory__heat__transfer_8C.html" title="src/physics/src/physics\l_factory_heat_transfer.C" alt="" coords="464,317,633,359"/>
+<area shape="rect" id="node10" href="$heat__transfer__spgsm__stab_8C.html" title="src/physics/src/heat\l_transfer_spgsm_stab.C" alt="" coords="657,317,824,359"/>
+</map>

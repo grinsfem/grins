@@ -1,0 +1,10 @@
+<map id="GRINS::ErrorEstimatorFactoryBase" name="GRINS::ErrorEstimatorFactoryBase">
+<area shape="rect" id="node6" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointRefinement\lEstimator \&gt;" alt="" coords="1573,5,1844,61"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointResidual\lErrorEstimator \&gt;" alt="" coords="1581,97,1836,153"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; EstimatorType \&gt;" alt="" coords="1141,74,1347,115"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1ErrorEstimatorFactoryBasic.html" title="GRINS::ErrorEstimatorFactory\lBasic\&lt; EstimatorType \&gt;" alt="" coords="1143,191,1345,233"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="627,103,811,145"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1FactoryWithGetPot.html" title="Abstract factory that provides availability of GetPot. " alt="" coords="228,143,412,185"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1AdjointRefinementErrorEstimatorFactory.html" title="GRINS::AdjointRefinement\lErrorEstimatorFactory" alt="" coords="1900,13,2080,54"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1AdjointResidualErrorEstimatorFactory.html" title="GRINS::AdjointResidualError\lEstimatorFactory" alt="" coords="1893,105,2087,146"/>
+</map>

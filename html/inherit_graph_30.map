@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classGRINS_1_1NeumannBCAbstract.html" title="GRINS::NeumannBCAbstract" alt="" coords="5,173,203,199"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1CatalyticWallBase.html" title="GRINS::CatalyticWallBase\l\&lt; Chemistry \&gt;" alt="" coords="275,63,453,104"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1NeumannBCFunctionBase.html" title="GRINS::NeumannBCFunction\lBase\&lt; FunctionType, FEShape \&gt;" alt="" coords="255,128,473,169"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1NeumannBCFunctionBase.html" title="GRINS::NeumannBCFunction\lBase\&lt; libMesh::FEMFunctionBase\l\&lt; FEShape \&gt;, FEShape \&gt;" alt="" coords="251,194,477,250"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1NeumannBCFunctionBase.html" title="GRINS::NeumannBCFunction\lBase\&lt; libMesh::FunctionBase\l\&lt; FEShape \&gt;, FEShape \&gt;" alt="" coords="265,274,463,330"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1GasRecombinationCatalyticWall.html" title="GRINS::GasRecombinationCatalytic\lWall\&lt; Chemistry \&gt;" alt="" coords="539,5,775,47"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1GasSolidCatalyticWall.html" title="GRINS::GasSolidCatalytic\lWall\&lt; Chemistry \&gt;" alt="" coords="569,71,746,112"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1CompositeParsedFEMNeumannBC.html" title="GRINS::CompositeParsedFEMNeumann\lBC\&lt; FEShape \&gt;" alt="" coords="525,143,789,184"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1ParsedFEMNeumannBC.html" title="GRINS::ParsedFEMNeumannBC\l\&lt; FEShape \&gt;" alt="" coords="548,208,767,249"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1CompositeParsedNeumannBC.html" title="GRINS::CompositeParsedNeumann\lBC\&lt; FEShape \&gt;" alt="" coords="539,277,775,319"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1ParsedNeumannBC.html" title="GRINS::ParsedNeumannBC\l\&lt; FEShape \&gt;" alt="" coords="562,343,753,384"/>
+</map>

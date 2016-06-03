@@ -1,0 +1,17 @@
+<map id="src/physics/src/inc_navier_stokes_stab_helper.C" name="src/physics/src/inc_navier_stokes_stab_helper.C">
+<area shape="rect" id="node2" href="$inc__navier__stokes__stab__helper_8h.html" title="grins/inc_navier_stokes\l_stab_helper.h" alt="" coords="545,273,706,315"/>
+<area shape="rect" id="node15" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="1840,452,2011,479"/>
+<area shape="rect" id="node16" href="$variable__warehouse_8h.html" title="grins/variable_warehouse.h" alt="" coords="1257,281,1442,307"/>
+<area shape="rect" id="node28" href="$velocity__fe__variables_8h.html" title="grins/velocity_fe_variables.h" alt="" coords="1699,109,1888,136"/>
+<area shape="rect" id="node31" href="$pressure__fe__variable_8h.html" title="grins/pressure_fe_variable.h" alt="" coords="1484,109,1674,136"/>
+<area shape="rect" id="node3" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="206,370,342,397"/>
+<area shape="rect" id="node13" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="540,370,712,397"/>
+<area shape="rect" id="node4" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="363,452,523,479"/>
+<area shape="rect" id="node17" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="1326,363,1453,404"/>
+<area shape="rect" id="node20" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="1494,452,1637,479"/>
+<area shape="rect" id="node21" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1193,452,1336,479"/>
+<area shape="rect" id="node23" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="1218,527,1348,553"/>
+<area shape="rect" id="node29" href="$multi__var__single__fe__type__variable_8h.html" title="grins/multi_var_single\l_fe_type_variable.h" alt="" coords="1686,184,1837,225"/>
+<area shape="rect" id="node30" href="$single__fe__type__variable_8h.html" title="grins/single_fe_type\l_variable.h" alt="" coords="1466,273,1606,315"/>
+<area shape="rect" id="node32" href="$single__var__single__fe__type__variable_8h.html" title="grins/single_var_single\l_fe_type_variable.h" alt="" coords="1454,184,1611,225"/>
+</map>

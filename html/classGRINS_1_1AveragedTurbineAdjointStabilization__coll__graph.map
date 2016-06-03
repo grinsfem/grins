@@ -1,0 +1,17 @@
+<map id="GRINS::AveragedTurbineAdjointStabilization&lt; Viscosity &gt;" name="GRINS::AveragedTurbineAdjointStabilization&lt; Viscosity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1AveragedTurbineBase.html" title="GRINS::AveragedTurbineBase\l\&lt; Viscosity \&gt;" alt="" coords="1568,153,1772,194"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1IncompressibleNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="1184,153,1384,194"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="854,133,971,160"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="508,247,671,273"/>
+<area shape="rect" id="node16" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="821,340,1004,367"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1ICHandlingBase.html" title="Base class for reading and handling initial conditions for physics classes. " alt="" coords="505,120,673,147"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="817,289,1008,316"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1IncompressibleNavierStokesStabilizationHelper.html" title="GRINS::IncompressibleNavier\lStokesStabilizationHelper" alt="" coords="1184,266,1384,307"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1SingleVarSingleFETypeVariable.html" title="Base class for variables with a single component. " alt="" coords="483,298,696,339"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1SingleFETypeVariable.html" title="Class to encapsulate variables that have only one FEType/Order. " alt="" coords="229,237,433,264"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1MultiVarSingleFETypeVariable.html" title="Base class for variables with multiple components that all have the same FEType. " alt="" coords="487,181,691,222"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,237,180,264"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1VelocityFEVariables.html" title="GRINS::VelocityFEVariables" alt="" coords="817,197,1008,224"/>
+<area shape="rect" id="node13" href="$classlibMesh_1_1ParsedFunction.html" title="libMesh::ParsedFunction\l\&lt; libMesh::Number \&gt;" alt="" coords="1199,78,1369,119"/>
+<area shape="rect" id="node14" href="$classlibMesh_1_1ParsedFunction.html" title="libMesh::ParsedFunction\l\&lt; Output, OutputGradient \&gt;" alt="" coords="821,67,1005,109"/>
+</map>

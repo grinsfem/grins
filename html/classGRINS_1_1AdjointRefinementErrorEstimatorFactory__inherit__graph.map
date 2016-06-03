@@ -1,0 +1,7 @@
+<map id="GRINS::AdjointRefinementErrorEstimatorFactory" name="GRINS::AdjointRefinementErrorEstimatorFactory">
+<area shape="rect" id="node2" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointRefinement\lEstimator \&gt;" alt="" coords="1573,33,1844,89"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1ErrorEstimatorFactoryBase.html" title="Builds VariableBase objects. " alt="" coords="860,38,1092,65"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; EstimatorType \&gt;" alt="" coords="1141,72,1347,113"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="627,31,811,72"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1FactoryWithGetPot.html" title="Abstract factory that provides availability of GetPot. " alt="" coords="228,71,412,112"/>
+</map>
