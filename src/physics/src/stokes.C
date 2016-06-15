@@ -80,7 +80,7 @@ namespace GRINS
     // Check number of dofs is same for this->_flow_vars.u(), v_var and w_var.
     libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
 
-    if (this->mesh_dim(context) == 3)
+    if (this->_flow_vars.dim() == 3)
       libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
     // We get some references to cell-specific data that
@@ -117,7 +117,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
-    if( this->mesh_dim(context) == 3 )
+    if( this->_flow_vars.dim() == 3 )
       {
         Kww = &context.get_elem_jacobian(this->_flow_vars.w(), this->_flow_vars.w()); // R_{w},{w}
         Kwp = &context.get_elem_jacobian(this->_flow_vars.w(), this->_press_var.p()); // R_{w},{p}
@@ -139,17 +139,17 @@ namespace GRINS
         p = context.interior_value(this->_press_var.p(), qp);
         u = context.interior_value(this->_flow_vars.u(), qp);
         v = context.interior_value(this->_flow_vars.v(), qp);
-        if (this->mesh_dim(context) == 3)
+        if (this->_flow_vars.dim() == 3)
           w = context.interior_value(this->_flow_vars.w(), qp);
 
         libMesh::Gradient grad_u, grad_v, grad_w;
         grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
         grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
-        if (this->mesh_dim(context) == 3)
+        if (this->_flow_vars.dim() == 3)
           grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
 
         libMesh::NumberVectorValue Uvec (u,v);
-        if (this->mesh_dim(context) == 3)
+        if (this->_flow_vars.dim() == 3)
           Uvec(2) = w;
 
 	// Compute the viscosity at this qp
@@ -167,7 +167,7 @@ namespace GRINS
             Fv(i) += JxW[qp] *
               ( p*u_gradphi[i][qp](1)              // pressure term
                 -_mu_qp*(u_gradphi[i][qp]*grad_v) ); // diffusion term
-            if (this->mesh_dim(context) == 3)
+            if (this->_flow_vars.dim() == 3)
               {
                 (*Fw)(i) += JxW[qp] *
                   ( p*u_gradphi[i][qp](2)              // pressure term
@@ -189,7 +189,7 @@ namespace GRINS
                     Kvv(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
                       (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-                    if (this->mesh_dim(context) == 3)
+                    if (this->_flow_vars.dim() == 3)
                       {
                         (*Kww)(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
                           (-_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
@@ -201,7 +201,7 @@ namespace GRINS
                   {
                     Kup(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](0)*p_phi[j][qp];
                     Kvp(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](1)*p_phi[j][qp];
-                    if (this->mesh_dim(context) == 3)
+                    if (this->_flow_vars.dim() == 3)
                       (*Kwp)(i,j) += context.get_elem_solution_derivative() * JxW[qp]*u_gradphi[i][qp](2)*p_phi[j][qp];
                   } // end of the inner dof (j) loop
 
@@ -257,7 +257,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
 
-    if( this->mesh_dim(context) == 3 )
+    if( this->_flow_vars.dim() == 3 )
       {
         Kpw = &context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.w()); // R_{p},{w}
       }
@@ -270,7 +270,7 @@ namespace GRINS
         libMesh::Gradient grad_u, grad_v, grad_w;
         grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
         grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
-        if (this->mesh_dim(context) == 3)
+        if (this->_flow_vars.dim() == 3)
           grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
 
         // Now a loop over the pressure degrees of freedom.  This
@@ -279,7 +279,7 @@ namespace GRINS
           {
             Fp(i) += JxW[qp] * p_phi[i][qp] *
               (grad_u(0) + grad_v(1));
-            if (this->mesh_dim(context) == 3)
+            if (this->_flow_vars.dim() == 3)
               Fp(i) += JxW[qp] * p_phi[i][qp] *
                 (grad_w(2));
 
@@ -289,7 +289,7 @@ namespace GRINS
                   {
                     Kpu(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
                     Kpv(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
-                    if (this->mesh_dim(context) == 3)
+                    if (this->_flow_vars.dim() == 3)
                       (*Kpw)(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
                   } // end of the inner dof (j) loop
 
@@ -340,7 +340,7 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Real> &M_vv = context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v());
     libMesh::DenseSubMatrix<libMesh::Real>* M_ww = NULL;
 
-    if( this->mesh_dim(context) == 3 )
+    if( this->_flow_vars.dim() == 3 )
       {
         F_w  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
         M_ww = &context.get_elem_jacobian(this->_flow_vars.w(), this->_flow_vars.w());
@@ -359,7 +359,7 @@ namespace GRINS
         context.interior_rate(this->_flow_vars.u(), qp, u_dot);
         context.interior_rate(this->_flow_vars.v(), qp, v_dot);
 
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           context.interior_rate(this->_flow_vars.w(), qp, w_dot);
       
         for (unsigned int i = 0; i != n_u_dofs; ++i)
@@ -367,7 +367,7 @@ namespace GRINS
             F_u(i) -= JxW[qp]*this->_rho*u_dot*u_phi[i][qp];
             F_v(i) -= JxW[qp]*this->_rho*v_dot*u_phi[i][qp];
 
-            if( this->mesh_dim(context) == 3 )
+            if( this->_flow_vars.dim() == 3 )
               (*F_w)(i) -= JxW[qp]*this->_rho*w_dot*u_phi[i][qp];
           
             if( compute_jacobian )
@@ -381,7 +381,7 @@ namespace GRINS
                     M_uu(i,j) -= value;
                     M_vv(i,j) -= value;
 
-                    if( this->mesh_dim(context) == 3)
+                    if( this->_flow_vars.dim() == 3)
                       {
                         (*M_ww)(i,j) -= value;
                       }

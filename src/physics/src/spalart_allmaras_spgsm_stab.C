@@ -125,7 +125,7 @@ namespace GRINS
         v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (this->mesh_dim(context) == 3)
+        if (this->_flow_vars.dim() == 3)
           U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         // Stabilization terms
@@ -202,7 +202,7 @@ namespace GRINS
         // Compute the viscosity at this qp
         libMesh::Real _mu_qp = this->_mu(context, qp);
 
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }

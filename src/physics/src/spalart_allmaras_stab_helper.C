@@ -72,7 +72,7 @@ namespace GRINS
     v = context.interior_value(this->_flow_vars.v(), qp);
 
     libMesh::NumberVectorValue U(u,v);
-    if ( this->mesh_dim(context) == 3 )
+    if ( this->_flow_vars.dim() == 3 )
       U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
@@ -88,7 +88,7 @@ namespace GRINS
     libMesh::Number rhoUdotGradnu = rho*(U*grad_nu);
 
     // The diffusion term
-    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sa_params.get_sigma())*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->mesh_dim(context) == 3)?hess_nu(2,2):0)) + this->_sa_params.get_cb2()*grad_nu*grad_nu);
+    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sa_params.get_sigma())*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_flow_vars.dim() == 3)?hess_nu(2,2):0)) + this->_sa_params.get_cb2()*grad_nu*grad_nu);
 
     // The source term
     libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
