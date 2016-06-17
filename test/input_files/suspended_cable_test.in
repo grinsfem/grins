@@ -17,23 +17,30 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticCable
-                   ElasticCableConstantGravity'
+   enabled_physics = 'ElasticCable
+                      ParsedSourceTerm'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticCable]
+   # Options for Incompressible Navier-Stokes physics
+   [./ElasticCable]
+      material = 'TestMaterial'
 
-material = 'TestMaterial'
+      #ic_ids = '1'
+      #ic_types = 'parsed'
+      #ic_variables = 'w'
+      #ic_values = '-1*sin(pi*x)'
+   [../]
 
-#ic_ids = '1'
-#ic_types = 'parsed'
-#ic_variables = 'w'
-#ic_values = '-1*sin(pi*x)'
+   [./ParsedSourceTerm]
+      [./Variables]
+         names = 'w'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+      [../]
 
-[../ElasticCableConstantGravity]
-
-gravity ='0 0 -32.2'
-
+      [./Function]
+         value = '32.2*0.1*0.031056'
+      [../]
+   [../]
 []
 
 [BoundaryConditions]
