@@ -264,9 +264,6 @@ namespace GRINS
     void parse_enabled_subdomains( const GetPot& input,
                                    const std::string& physics_name );
 
-    unsigned int mesh_dim( const AssemblyContext& context ) const
-    { return context.get_system().get_mesh().mesh_dimension(); }
-
     //! Check that var is enabled on at least the subdomains this Physics is
     void check_var_subdomain_consistency( const FEVariablesBase& var ) const;
 

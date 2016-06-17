@@ -53,9 +53,6 @@ namespace GRINS
     libMesh::RealTensor compute_G( libMesh::FEBase* fe,
 				   AssemblyContext& c,
 				   unsigned int qp ) const;
-
-   unsigned int mesh_dim( const AssemblyContext& context ) const                                                                                                                                                                          
-    { return context.get_system().get_mesh().mesh_dimension(); }
   };
 
 } // namespace GRINS
