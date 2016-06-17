@@ -80,7 +80,7 @@ namespace GRINS
     if( this->_is_axisymmetric )
       divU += U(0)/r;
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         U(2) = context.interior_value(this->_flow_vars.w(), qp);
         divU += (context.interior_gradient(this->_flow_vars.w(), qp))(2);
@@ -147,7 +147,7 @@ namespace GRINS
     libMesh::RealGradient divGradUT;
     libMesh::RealGradient divdivU;
 
-    if( this->mesh_dim(context) < 3 )
+    if( this->_flow_vars.dim() < 3 )
       {
         rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
 
@@ -192,7 +192,7 @@ namespace GRINS
 
         libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
 
-        if(this->mesh_dim(context) == 3)
+        if(this->_flow_vars.dim() == 3)
           {
             libMesh::Gradient grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
 
@@ -297,7 +297,7 @@ namespace GRINS
     libMesh::RealGradient u_dot;
     context.interior_rate(this->_flow_vars.u(), qp, u_dot(0));
     context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       context.interior_rate(this->_flow_vars.w(), qp, u_dot(2));
 
     libMesh::Real T_dot;
