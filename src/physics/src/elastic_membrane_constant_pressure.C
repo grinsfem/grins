@@ -60,6 +60,9 @@ namespace GRINS
                         +PhysicsNaming::elastic_membrane()+".");
 
     this->parse_enabled_subdomains(input,PhysicsNaming::elastic_membrane());
+
+    if( this->_disp_vars.dim() != 3 )
+      libmesh_error_msg("ERROR: ElasticMembraneConstantPressure only valid for three dimensions! Make sure you have three components in your Displacement type variable.");
   }
 
   void ElasticMembraneConstantPressure::element_time_derivative( bool compute_jacobian,

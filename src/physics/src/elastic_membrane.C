@@ -125,19 +125,31 @@ namespace GRINS
     // Residuals that we're populating
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_disp_vars.u());
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_disp_vars.v());
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_disp_vars.w());
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
     libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.u());
     libMesh::DenseSubMatrix<libMesh::Number>& Kuv = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.v());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kuw = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.w());
 
     libMesh::DenseSubMatrix<libMesh::Number>& Kvu = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.u());
     libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.v());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kvw = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.w());
 
-    libMesh::DenseSubMatrix<libMesh::Number>& Kwu = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.u());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kwv = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.v());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+    libMesh::DenseSubMatrix<libMesh::Number>* Kuw = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kvw = NULL;
+
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number>* Kww = NULL;
+
+    if( this->_disp_vars.dim() == 3 )
+      {
+        Fw = &context.get_elem_residual(this->_disp_vars.w());
+
+        Kuw = &context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.w());
+        Kvw = &context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.w());
+        Kwu = &context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.u());
+        Kwv = &context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.v());
+        Kww = &context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+      }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -150,30 +162,33 @@ namespace GRINS
 
     const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
     const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( this->_disp_vars.v() );
-    const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( this->_disp_vars.w() );
+    const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
+
+    if( this->_disp_vars.dim() == 3 )
+      w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
 
     // Need these to build up the covariant and contravariant metric tensors
     const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
     const std::vector<libMesh::RealGradient>& dxdeta = this->get_fe(context)->get_dxyzdeta();
 
-    const unsigned int dim = 2; // The manifold dimension is always 2 for this physics
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
         // Gradients are w.r.t. master element coordinates
         libMesh::Gradient grad_u, grad_v, grad_w;
+
         for( unsigned int d = 0; d < n_u_dofs; d++ )
           {
             libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
             grad_u += u_coeffs(d)*u_gradphi;
             grad_v += v_coeffs(d)*u_gradphi;
-            grad_w += w_coeffs(d)*u_gradphi;
+
+            if( this->_disp_vars.dim() == 3 )
+              grad_w += (*w_coeffs)(d)*u_gradphi;
           }
 
         libMesh::RealGradient grad_x( dxdxi[qp](0), dxdeta[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
-
 
         libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
         libMesh::Real lambda_sq = 0;
@@ -183,10 +198,12 @@ namespace GRINS
                                       a_cov, a_contra, A_cov, A_contra,
                                       lambda_sq );
 
+        const unsigned int manifold_dim = 2; // The manifold dimension is always 2 for this physics
+
         // Compute stress and elasticity tensors
         libMesh::TensorValue<libMesh::Real> tau;
         ElasticityTensor C;
-        this->_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
+        this->_stress_strain_law.compute_stress_and_elasticity(manifold_dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
         libMesh::Real jac = JxW[qp];
 
@@ -194,9 +211,9 @@ namespace GRINS
 	  {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp], dphi_deta[i][qp] );
 
-            for( unsigned int alpha = 0; alpha < dim; alpha++ )
+            for( unsigned int alpha = 0; alpha < manifold_dim; alpha++ )
               {
-                for( unsigned int beta = 0; beta < dim; beta++ )
+                for( unsigned int beta = 0; beta < manifold_dim; beta++ )
                   {
                     libMesh::Real factor = 0.5*tau(alpha,beta)*this->_h0*jac;
 
@@ -206,8 +223,9 @@ namespace GRINS
                     Fv(i) += factor*( (grad_y(beta) + grad_v(beta))*u_gradphi(alpha) +
                                       (grad_y(alpha) + grad_v(alpha))*u_gradphi(beta) );
 
-                    Fw(i) += factor*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
-                                      (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) );
+                    if( this->_disp_vars.dim() == 3 )
+                      (*Fw)(i) += factor*( (grad_z(beta) + grad_w(beta))*u_gradphi(alpha) +
+                                           (grad_z(alpha) + grad_w(alpha))*u_gradphi(beta) );
                   }
               }
           }
@@ -222,9 +240,9 @@ namespace GRINS
                   {
                     libMesh::RealGradient u_gradphi_j( dphi_dxi[j][qp], dphi_deta[j][qp] );
 
-                    for( unsigned int alpha = 0; alpha < dim; alpha++ )
+                    for( unsigned int alpha = 0; alpha < manifold_dim; alpha++ )
                       {
-                        for( unsigned int beta = 0; beta < dim; beta++ )
+                        for( unsigned int beta = 0; beta < manifold_dim; beta++ )
                           {
                             const libMesh::Real diag_term = 0.5*this->_h0*jac*tau(alpha,beta)*context.get_elem_solution_derivative()*
                                                             ( u_gradphi_j(beta)*u_gradphi_i(alpha) +
@@ -233,20 +251,18 @@ namespace GRINS
 
                             Kvv(i,j) += diag_term;
 
-                            Kww(i,j) += diag_term;
+                            if( this->_disp_vars.dim() == 3 )
+                              (*Kww)(i,j) += diag_term;
 
-                            for( unsigned int lambda = 0; lambda < dim; lambda++ )
+                            for( unsigned int lambda = 0; lambda < manifold_dim; lambda++ )
                               {
-                                for( unsigned int mu = 0; mu < dim; mu++ )
+                                for( unsigned int mu = 0; mu < manifold_dim; mu++ )
                                   {
                                     const libMesh::Real dgamma_du = 0.5*( u_gradphi_j(lambda)*(grad_x(mu)+grad_u(mu)) +
                                                                           (grad_x(lambda)+grad_u(lambda))*u_gradphi_j(mu) );
 
                                     const libMesh::Real dgamma_dv = 0.5*( u_gradphi_j(lambda)*(grad_y(mu)+grad_v(mu)) +
                                                                           (grad_y(lambda)+grad_v(lambda))*u_gradphi_j(mu) );
-
-                                    const libMesh::Real dgamma_dw = 0.5*( u_gradphi_j(lambda)*(grad_z(mu)+grad_w(mu)) +
-                                                                          (grad_z(lambda)+grad_w(lambda))*u_gradphi_j(mu) );
 
                                     const libMesh::Real C1 = 0.5*this->_h0*jac*C(alpha,beta,lambda,mu)*context.get_elem_solution_derivative();
 
@@ -256,26 +272,32 @@ namespace GRINS
                                     const libMesh::Real y_term = C1*( (grad_y(beta)+grad_v(beta))*u_gradphi_i(alpha) +
                                                                       (grad_y(alpha)+grad_v(alpha))*u_gradphi_i(beta) );
 
-                                    const libMesh::Real z_term = C1*( (grad_z(beta)+grad_w(beta))*u_gradphi_i(alpha) +
-                                                                      (grad_z(alpha)+grad_w(alpha))*u_gradphi_i(beta) );
-
                                     Kuu(i,j) += x_term*dgamma_du;
 
                                     Kuv(i,j) += x_term*dgamma_dv;
-
-                                    Kuw(i,j) += x_term*dgamma_dw;
 
                                     Kvu(i,j) += y_term*dgamma_du;
 
                                     Kvv(i,j) += y_term*dgamma_dv;
 
-                                    Kvw(i,j) += y_term*dgamma_dw;
+                                    if( this->_disp_vars.dim() == 3 )
+                                      {
+                                        const libMesh::Real dgamma_dw = 0.5*( u_gradphi_j(lambda)*(grad_z(mu)+grad_w(mu)) +
+                                                                              (grad_z(lambda)+grad_w(lambda))*u_gradphi_j(mu) );
 
-                                    Kwu(i,j) += z_term*dgamma_du;
+                                        const libMesh::Real z_term = C1*( (grad_z(beta)+grad_w(beta))*u_gradphi_i(alpha) +
+                                                                          (grad_z(alpha)+grad_w(alpha))*u_gradphi_i(beta) );
 
-                                    Kwv(i,j) += z_term*dgamma_dv;
+                                        (*Kuw)(i,j) += x_term*dgamma_dw;
 
-                                    Kww(i,j) += z_term*dgamma_dw;
+                                        (*Kvw)(i,j) += y_term*dgamma_dw;
+
+                                        (*Kwu)(i,j) += z_term*dgamma_du;
+
+                                        (*Kwv)(i,j) += z_term*dgamma_dv;
+
+                                        (*Kww)(i,j) += z_term*dgamma_dw;
+                                      }
                                   }
                               }
                           }
@@ -310,7 +332,10 @@ namespace GRINS
 
         const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
         const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( this->_disp_vars.v() );
-        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( this->_disp_vars.w() );
+        const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
+
+        if( this->_disp_vars.dim() == 3 )
+          w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
 
         // All shape function gradients are w.r.t. master element coordinates
         const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
@@ -329,7 +354,9 @@ namespace GRINS
                 libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
                 grad_u += u_coeffs(d)*u_gradphi;
                 grad_v += v_coeffs(d)*u_gradphi;
-                grad_w += w_coeffs(d)*u_gradphi;
+
+                if( this->_disp_vars.dim() == 3 )
+                  grad_w += (*w_coeffs)(d)*u_gradphi;
               }
 
             libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
@@ -343,14 +370,10 @@ namespace GRINS
             libMesh::Real stress_33 = this->_stress_strain_law.compute_33_stress( a_contra, a_cov, A_contra, A_cov );
 
             for (unsigned int i=0; i != n_lambda_sq_dofs; i++)
-              {
-                Fl(i) += stress_33*phi[i][qp]*jac;
-              }
+              Fl(i) += stress_33*phi[i][qp]*jac;
 
             if( compute_jacobian )
-              {
-                libmesh_not_implemented();
-              }
+              libmesh_not_implemented();
           }
       } // is_compressible
   }
@@ -384,7 +407,10 @@ namespace GRINS
 
         const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
         const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( this->_disp_vars.v() );
-        const libMesh::DenseSubVector<libMesh::Number>& w_coeffs = context.get_elem_solution( this->_disp_vars.w() );
+        const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
+
+        if( this->_disp_vars.dim() == 3 )
+          w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
 
         // Build new FE for the current point. We need this to build tensors at point.
         libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > fe_new =
@@ -408,7 +434,9 @@ namespace GRINS
             libMesh::RealGradient u_gradphi( dphi_dxi[d][0], dphi_deta[d][0] );
             grad_u += u_coeffs(d)*u_gradphi;
             grad_v += v_coeffs(d)*u_gradphi;
-            grad_w += w_coeffs(d)*u_gradphi;
+
+            if( this->_disp_vars.dim() == 3 )
+              grad_w += (*w_coeffs)(d)*u_gradphi;
           }
 
         libMesh::RealGradient grad_x( dxdxi[0](0), dxdeta[0](0) );
