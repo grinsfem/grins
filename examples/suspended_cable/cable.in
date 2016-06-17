@@ -15,16 +15,30 @@
 [Physics]
 
    enabled_physics = 'ElasticCable
-                      ElasticCableConstantGravity'
+                      ParsedSourceTerm'
 
    [./ElasticCable]
-
       material = 'Cable'
       output_vars = 'stress strain force'
 
-   [../ElasticCableConstantGravity]
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'Ux:Uy'
+      ic_values = '{-50*sin(x*pi/400)}{-55*sin(x*pi/200)}'
+   [../]
 
-      gravity ='0 0 -32.2'
+   [./ParsedSourceTerm]
+      [./Variables]
+         names = 'Uy'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+      [../]
+
+      [./Function]
+         # rho*A*g
+         value = '0.031056*0.1*32.2'
+      [../]
+   [../]
 []
 
 [BoundaryConditions]
@@ -36,17 +50,21 @@
          type = 'pinned'
       [../]
    [../]
+
    [./RightWall]
       [./Displacement]
          type = 'roller_x constant_traction'
-         traction = '5.7735 0.0 0.0'
+         traction = '5.7735 0.0'
+      [../]
+   [../]
 []
 
 [Variables]
    [./Displacement]
-      names = 'u v w'
+      names = 'Ux Uy'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
+   [../]
 []
 
 [Mesh]
@@ -55,42 +73,33 @@
       x_min = '0.0'
       x_max = '200.0'
       n_elems_x = '10'
+   [../]
 []
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  '500'
-max_linear_iterations = '2500'
-
-verify_analytic_jacobians = '0.0'
-
-initial_linear_tolerance = '1.0e-10'
-
-use_numerical_jacobians_only = 'false'
+   max_nonlinear_iterations =  '500'
+   max_linear_iterations = '2500'
+   verify_analytic_jacobians = '1.0e-6'
+   initial_linear_tolerance = '1.0e-10'
 []
 
 # Visualization options
 [vis-options]
-output_vis = 'true'
-
-vis_output_file_prefix = 'cable'
-
-output_residual = 'false'
-
-output_format = 'ExodusII xdr'
+   output_vis = 'true'
+   vis_output_file_prefix = 'cable'
+   output_residual = 'false'
+   output_format = 'ExodusII xdr'
 []
 
 # Options for print info to the screen
 [screen-options]
-
-system_name = 'SuspendedCable'
-
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-print_element_jacobians = 'false'
-print_element_residuals = 'false'
+   system_name = 'SuspendedCable'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   print_element_jacobians = 'false'
+   print_element_residuals = 'false'
 []
