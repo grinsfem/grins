@@ -37,7 +37,7 @@
    [./Right]
       [./Displacement]
          type = 'constant_displacement'
-         u = '0.1'
+         Ux = '0.1'
       [../]
    [../]
 
@@ -50,7 +50,7 @@
 
 [Variables]
    [./Displacement]
-      names = 'u v w'
+      names = 'Ux Uy'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
 []
