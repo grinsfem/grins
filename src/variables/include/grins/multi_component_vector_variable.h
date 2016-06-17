@@ -50,7 +50,7 @@ namespace GRINS
     ~MultcomponentVectorVariable(){}
 
     //! Number of components
-    unsigned int dim()
+    unsigned int dim() const
     { return _vars.size(); }
 
     VariableIndex u() const
