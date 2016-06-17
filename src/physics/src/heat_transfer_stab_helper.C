@@ -82,7 +82,7 @@ namespace GRINS
 
     libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
@@ -106,7 +106,7 @@ namespace GRINS
 
     libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     res = rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
