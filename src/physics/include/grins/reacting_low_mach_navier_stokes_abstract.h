@@ -32,11 +32,10 @@
 #include "grins/physics.h"
 #include "grins/pressure_pinning.h"
 #include "grins/assembly_context.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
-#include "grins/thermo_pressure_fe_variable.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+
+#include "grins/single_variable.h"
+#include "grins/multicomponent_variable.h"
 
 namespace GRINS
 {
@@ -47,8 +46,6 @@ namespace GRINS
     ReactingLowMachNavierStokesAbstract(const PhysicsName& physics_name, const GetPot& input);
 
     virtual ~ReactingLowMachNavierStokesAbstract(){};
-
-    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
@@ -77,16 +74,15 @@ namespace GRINS
 
     libMesh::Number _p0;
 
-    //! Physical dimension of problem
-    unsigned int _dim;
+    VelocityVariable& _flow_vars;
+    PressureFEVariable& _press_var;
+    PrimitiveTempFEVariables& _temp_vars;
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
+              we can use dynamic_pointer_cast to get a SharedPtr. */
+    ThermoPressureVariable* _p0_var;
 
-    libMesh::UniquePtr<ThermoPressureFEVariable> _p0_var;
-
-    SpeciesMassFractionsFEVariables _species_vars;
+    SpeciesMassFractionsVariable& _species_vars;
 
     //! Number of species
     unsigned int _n_species;
@@ -107,8 +103,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
-
-    void register_variables();
 
   }; // class ReactingLowMachNavierStokesAbstract
 

@@ -49,10 +49,7 @@ namespace GRINS
 
     SpalartAllmarasStabilizationHelper( const std::string& helper_name, const GetPot& input );
 
-    ~SpalartAllmarasStabilizationHelper();
-
-    void init( libMesh::FEMSystem& system );
-
+    ~SpalartAllmarasStabilizationHelper(){};
 
     libMesh::Real compute_tau_spalart( AssemblyContext& c,
                                        unsigned int qp,
@@ -135,13 +132,9 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
-
     libMesh::Real _C, _tau_factor;
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
     const TurbulenceFEVariables& _turbulence_vars;

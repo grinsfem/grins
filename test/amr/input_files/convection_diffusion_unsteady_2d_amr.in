@@ -38,13 +38,13 @@
    bc_id_name_map = 'WholeBoundary'
 
    [./WholeBoundary]
-      [./GenericVariable:ConvectionDiffusion]
+      [./SingleVariable]
          type = 'parsed_dirichlet'
          u = '${TestExactSolution/value}'
 []
 
 [Variables]
-   [./GenericVariable:ConvectionDiffusion]
+   [./SingleVariable]
       names = 'u'
       fe_family = 'LAGRANGE'
       order = 'FIRST'

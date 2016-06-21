@@ -109,7 +109,9 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/string_utils.C \
                       unit/mesh_builder.C \
                       unit/variables.C \
+                      unit/builder_helper.C \
                       unit/default_bc_builder.C
+
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
 cantera_mixture_SOURCES = unit/cantera_mixture.C
@@ -191,6 +193,7 @@ TESTS += exact_soln/axi_ns_con_cyl_flow.sh
 TESTS += exact_soln/axi_ns_poiseuille_flow.sh
 TESTS += exact_soln/convection_diffusion_steady_1d.sh
 TESTS += exact_soln/convection_diffusion_unsteady_2d.sh
+TESTS += exact_soln/heat_eqn_unsteady_2d_restart.sh
 TESTS += exact_soln/laplace_parsed_source.sh
 TESTS += exact_soln/ns_couette_flow_2d_x.sh
 TESTS += exact_soln/ns_couette_flow_2d_y.sh

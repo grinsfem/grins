@@ -49,16 +49,14 @@ namespace GRINS
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 								    const GetPot& input)
     : Physics(physics_name, input),
-      _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
-      _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer()),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,physics_name))),
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::axisymmetric_heat_transfer()))
   {
     this->read_input_options(input);
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    this->register_variables();
   }
 
   template< class Conductivity>
@@ -70,33 +68,10 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-  }
-
-  template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::init_variables( libMesh::FEMSystem* system )
-  {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    this->_temp_vars.init(system);
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
-  }
-
-  template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(this->_temp_vars.T());
-    return;
   }
 
   template< class Conductivity>
@@ -114,11 +89,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    // _u_var is registered so can we assume things related to _u_var
-    // are available in FEMContext
-
-    return;
   }
 
   template< class Conductivity>

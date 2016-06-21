@@ -27,27 +27,26 @@
 #define GRINS_SPALART_ALLMARAS_VISCOSITY_H
 
 //GRINS
-#include "grins/assembly_context.h"
 #include "grins/parameter_user.h"
 #include "grins/spalart_allmaras_parameters.h"
 
 // libMesh
 #include "libmesh/libmesh_common.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/auto_ptr.h"
-#include "libmesh/function_base.h"
+#include "libmesh/point.h"
 
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
-#include "grins/turbulence_fe_variables.h"
-
-#include "libmesh/fem_system.h"
-
+// libMesh forward declarations
 class GetPot;
+namespace libMesh
+{
+  class FEMSystem;
+}
 
 namespace GRINS
 {
+  // Forward declarations
+  class AssemblyContext;
+  class TurbulenceFEVariables;
+
   template<class Viscosity>
   class SpalartAllmarasViscosity : public ParameterUser
   {
@@ -65,8 +64,6 @@ namespace GRINS
     libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time=0 )
     { return _mu(p,time); }
 
-    void init(libMesh::FEMSystem* system);
-
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
@@ -80,7 +77,7 @@ namespace GRINS
     Viscosity _mu;
 
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;
+    TurbulenceFEVariables& _turbulence_vars;
 
     SpalartAllmarasParameters _sa_params;
 

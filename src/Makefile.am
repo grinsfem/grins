@@ -64,6 +64,9 @@ libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_old_sty
 libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_old_style_factories.C
 
+# src/common
+libgrins_la_SOURCES += common/src/builder_helper.C
+
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
 libgrins_la_SOURCES += ic_handling/src/generic_ic_handler.C
@@ -223,14 +226,10 @@ libgrins_la_SOURCES += strategies/src/adaptive_time_stepping_options.C
 libgrins_la_SOURCES += strategies/src/mesh_adaptivity_options.C
 
 #src/variables
-libgrins_la_SOURCES += variables/src/fe_variables_base.C
-libgrins_la_SOURCES += variables/src/single_fe_type_variable.C
-libgrins_la_SOURCES += variables/src/single_var_single_fe_type_variable.C
-libgrins_la_SOURCES += variables/src/multi_var_single_fe_type_variable.C
-libgrins_la_SOURCES += variables/src/velocity_fe_variables.C
-libgrins_la_SOURCES += variables/src/displacement_fe_variables.C
-libgrins_la_SOURCES += variables/src/species_mass_fracs_fe_variables.C
 libgrins_la_SOURCES += variables/src/variable_warehouse.C
+libgrins_la_SOURCES += variables/src/variable_factory.C
+libgrins_la_SOURCES += variables/src/variable_builder.C
+libgrins_la_SOURCES += variables/src/default_variable_builder.C
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -320,6 +319,8 @@ include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
+include_HEADERS += common/include/grins/builder_helper.h
+include_HEADERS += common/include/grins/factory_abstract.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
 include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
 
@@ -497,20 +498,15 @@ include_HEADERS += strategies/include/grins/mesh_adaptivity_options.h
 
 #src/variables headers
 include_HEADERS += variables/include/grins/fe_variables_base.h
-include_HEADERS += variables/include/grins/single_fe_type_variable.h
-include_HEADERS += variables/include/grins/single_var_single_fe_type_variable.h
-include_HEADERS += variables/include/grins/multi_var_single_fe_type_variable.h
-include_HEADERS += variables/include/grins/pressure_fe_variable.h
-include_HEADERS += variables/include/grins/velocity_fe_variables.h
-include_HEADERS += variables/include/grins/primitive_temp_fe_variables.h
-include_HEADERS += variables/include/grins/displacement_fe_variables.h
-include_HEADERS += variables/include/grins/species_mass_fracs_fe_variables.h
-include_HEADERS += variables/include/grins/thermo_pressure_fe_variable.h
-include_HEADERS += variables/include/grins/turbulence_fe_variables.h
-include_HEADERS += variables/include/grins/generic_fe_type_variable.h
+include_HEADERS += variables/include/grins/single_variable.h
+include_HEADERS += variables/include/grins/multi_component_vector_variable.h
+include_HEADERS += variables/include/grins/multicomponent_variable.h
 include_HEADERS += variables/include/grins/variable_name_defaults.h
 include_HEADERS += variables/include/grins/variables_parsing.h
 include_HEADERS += variables/include/grins/variable_warehouse.h
+include_HEADERS += variables/include/grins/variable_factory.h
+include_HEADERS += variables/include/grins/variable_builder.h
+include_HEADERS += variables/include/grins/default_variable_builder.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h

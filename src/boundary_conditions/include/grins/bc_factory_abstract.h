@@ -165,8 +165,8 @@ namespace GRINS
   inline
   bool BCFactoryAbstract<Base>::have_bc_type( const std::string& bc_type )
   {
-    const std::map<std::string, libMesh::Factory<Base>*>& map =
-      libMesh::Factory<Base>::factory_map();
+    const std::map<std::string, FactoryAbstract<Base>*>& map =
+      FactoryAbstract<Base>::factory_map();
 
     bool have_bc = false;
 

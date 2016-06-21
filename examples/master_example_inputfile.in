@@ -33,7 +33,7 @@
 #    [SolverOptions] - all options related to the (non)linear solver,
 #                      time stepping, etc.
 #    [BoundaryConditions] - Boundary condition specification
-#
+#    [Variables] - Variable and finite element space specification
 
 
 # The block below is an example of using basic mesh generation
@@ -722,4 +722,98 @@
    [../]
 
 
+[]
+
+# The block below illustrates the use of the variables
+# block. The variables are one of the most central concepts
+# in the input file. The boundary conditions, initial conditions,
+# and Physics will all reference the Variables section to varying
+# degrees. There are two schema for Variable naming: the first is
+# that the user can arbitrarily set the variable names, but then
+# must set the "type"; the second is simply making the variable name
+# one of the understood types and then the type specification is
+# not needed.
+#
+# The type is used internally for things like axisymmetric boundary conditions.
+# For each of the variables, the arguments "names" and "order" are
+# always required. Additionally, "fe_family" is required for
+# non-SCALAR variables.
+[Variables]
+
+   # Here, the variable name is "MassFracs" whose type is
+   # SpeciesMassFractions. For SpeciesMassFractions types,
+   # the "names" argument is a prefix for the species names
+   # so that the each of the corresponding variables will be
+   # named, in this case, w_<species name> in the System.
+   # This is why the "material" argument is also required for
+   # SpeciesMassFractions variables: the species information
+   # is parsed from the material.
+   [./MassFracs]
+      type = 'SpeciesMassFractions'
+      names = 'w_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+      material = '2SpeciesNGas'
+   [../]
+
+   # Velocity is a variable type, so we don't need to specify the
+   # type. Note that Velocity has multiple components and that
+   # the number of components in the names argument will dictate
+   # the dimensionality of the Velocity part. E.g. in this case, there
+   # are two components so the velocity part of the problem will be
+   # two-dimensional. Also note that all components will have the
+   # same fe_family and order. Although not done here, we recommend
+   # a naming scheme analogous to "Vx Vy Vz" --- the x/y/z suffix
+   # will trigger a proper vector treatment in ParaView.
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+
+   # Pressure is a variable type, so we don't need to specify the
+   # type. It should only have one component in names.
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+
+   # Temperature is a variable type, so we don't need to specify the
+   # type. It should only have one component in names.
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+
+   # Temperature is a variable type, so we don't need to specify the
+   # type. It should only have one component in names. ThermoPressure
+   # is a ScalarVariable type, so we do not specify the fe_family.
+   [./ThermoPressure]
+      names = 'p0'
+      order = 'FIRST'
+   [../]
+
+   # TurbineVar is an arbitrary name, so we've specified the type.
+   # Since the type is ScalarVariable, we do not specify the fe_family.
+   [./TurbineVar]
+      type = 'ScalarVariable'
+      names = 'fan_speed'
+      order = 'FIRST'
+   [../]
+
+   # Displacement is a variable type, so we don't need to specify the
+   # type. Note that Displacement has multiple components and that
+   # the number of components in the names argument will dictate
+   # the dimensionality of the Displacement part. E.g. in this case, there
+   # are three components so the displacement part of the problem will be
+   # three-dimensional. Also note that all components will have the
+   # same fe_family and order. Here, we've used the recommended vector
+   # naming scheme so that "U" will show up as a vector variable in ParaView.
+   [./Displacement]
+      names = 'Ux Uy Uz'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
 []

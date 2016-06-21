@@ -40,12 +40,10 @@ namespace GRINS
 
    SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~SpalartAllmarasStabilizationBase();
+    virtual ~SpalartAllmarasStabilizationBase(){};
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
-
-    virtual void init_variables( libMesh::FEMSystem* system );
 
     // Registers all parameters in this physics and in its property
     // classes

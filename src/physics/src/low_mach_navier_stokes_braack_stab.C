@@ -125,7 +125,7 @@ namespace GRINS
 
 	libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
 				 context.interior_value( this->_flow_vars.v(), qp ) );
-	if( this->_dim == 3 )
+	if( this->mesh_dim(context) == 3 )
 	  U(2) = context.interior_value( this->_flow_vars.w(), qp ); // w
 
 	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
@@ -156,7 +156,7 @@ namespace GRINS
 
     // Check number of dofs is same for _flow_vars.u(), v_var and w_var.
     libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
-    if (this->_dim == 3)
+    if (this->mesh_dim(context) == 3)
       libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -174,7 +174,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Real>* Fw = NULL;
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -195,7 +195,7 @@ namespace GRINS
 	libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
 	libMesh::RealGradient grad_w;
 
-	if( this->_dim == 3 )
+	if( this->mesh_dim(context) == 3 )
 	  {
 	    U(2) = context.interior_value(this->_flow_vars.w(), qp);
 	    grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
@@ -228,7 +228,7 @@ namespace GRINS
 					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) ) 
 		       )*JxW[qp];
 
-	    if( this->_dim == 3 )
+	    if( this->mesh_dim(context) == 3 )
 	      {
 		Fu(i) += mu*tau_M*RM_s(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2) 
 					   - 2.0/3.0*u_hessphi[i][qp](2,0))*JxW[qp];
@@ -282,7 +282,7 @@ namespace GRINS
 	libMesh::Gradient grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 
 	libMesh::NumberVectorValue U(u,v);
-	if (this->_dim == 3)
+	if (this->mesh_dim(context) == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
 	libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
@@ -349,7 +349,7 @@ namespace GRINS
 
 	libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
 				 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-	if( this->_dim == 3 )
+	if( this->mesh_dim(context) == 3 )
 	  U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
 
 	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, false );
@@ -380,7 +380,7 @@ namespace GRINS
 
     // Check number of dofs is same for _flow_vars.u(), v_var and w_var.
     libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
-    if (this->_dim == 3)
+    if (this->mesh_dim(context) == 3)
       libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -398,7 +398,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Real>* Fw = NULL;
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         Fw  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -418,7 +418,7 @@ namespace GRINS
 	libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
 	libMesh::RealGradient grad_w;
 
-	if( this->_dim == 3 )
+	if( this->mesh_dim(context) == 3 )
 	  {
 	    U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 	    grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
@@ -451,7 +451,7 @@ namespace GRINS
 					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) )
 		       )*JxW[qp];
 
-	    if( this->_dim == 3 )
+	    if( this->mesh_dim(context) == 3 )
 	      {
 		Fu(i) -= mu*tau_M*RM_t(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2)
 					   - 2.0/3.0*u_hessphi[i][qp](2,0))*JxW[qp];
@@ -505,7 +505,7 @@ namespace GRINS
 	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
 
 	libMesh::NumberVectorValue U(u,v);
-	if (this->_dim == 3)
+	if (this->mesh_dim(context) == 3)
 	  U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp); // w
 
 	libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );

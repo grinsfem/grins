@@ -28,8 +28,8 @@
 // GRINS
 #include "grins/catalycity_factory_abstract.h"
 #include "grins/fe_variables_base.h"
-#include "grins/species_mass_fracs_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/multicomponent_variable.h"
+#include "grins/single_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/gas_recombination_catalytic_wall_neumann_bc_factory_impl.h"
 #include "grins/gas_solid_catalytic_wall_neumann_bc_factory_impl.h"
@@ -73,8 +73,8 @@ namespace GRINS
   void CatalyticWallNeumannBCFactoryCommon<ImpType>::extract_material( const FEVariablesBase& fe_var,
                                                                        std::string& material ) const
   {
-    const SpeciesMassFractionsFEVariables& species_fe_var =
-      libMesh::cast_ref<const SpeciesMassFractionsFEVariables&>(fe_var);
+    const SpeciesMassFractionsVariable& species_fe_var =
+      libMesh::cast_ref<const SpeciesMassFractionsVariable&>(fe_var);
 
     material = species_fe_var.material();
   }

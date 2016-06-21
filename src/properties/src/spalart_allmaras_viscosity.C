@@ -15,13 +15,16 @@
 
 // This class
 #include "grins/spalart_allmaras_viscosity.h"
-#include "grins/constant_viscosity.h"
-#include "grins/parsed_viscosity.h"
 
 //GRINS
 #include "grins/common.h"
 #include "grins/physics_naming.h"
 #include "grins/turbulent_viscosity_macro.h"
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/variable_warehouse.h"
+#include "grins/variables_parsing.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -30,11 +33,11 @@
 namespace GRINS
 {
   template<class Mu>
-  SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input ):
-    ParameterUser("SpalartAllmarasViscosity"),
-    _mu(input),
-    _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
-    _sa_params(input)
+  SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input )
+    : ParameterUser("SpalartAllmarasViscosity"),
+      _mu(input),
+      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _sa_params(input)
   {
     // Warning about this constructor being deprecated
     {
@@ -56,7 +59,7 @@ namespace GRINS
   SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input, const std::string& material ):
     ParameterUser("SpalartAllmarasViscosity"),
     _mu(input,material),
-    _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
+    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
     _sa_params(input)
   {}
 
@@ -69,12 +72,6 @@ namespace GRINS
     ParameterUser::register_parameter(param_name, param_pointer);
     this->_mu.register_parameter(param_name, param_pointer);
     this->_sa_params.register_parameter(param_name, param_pointer);
-  }
-
-  template<class Mu>
-  void SpalartAllmarasViscosity<Mu>::init( libMesh::FEMSystem* system )
-  {
-    this->_turbulence_vars.init(system);
   }
 
   template<class Mu>

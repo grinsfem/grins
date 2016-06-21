@@ -35,7 +35,7 @@ class GetPot;
 namespace GRINS
 {
   // Forward declarations
-  class VelocityFEVariables;
+  class VelocityVariable;
   class PressureFEVariable;
 
   class IncompressibleNavierStokesStabilizationHelper : public StabilizationHelper
@@ -182,7 +182,7 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
   }; // class IncompressibleNavierStokesStabilizationHelper

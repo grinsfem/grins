@@ -46,7 +46,7 @@ namespace GRINS
   template<class K>
   HeatConduction<K>::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
-      _temp_vars(input,PhysicsNaming::heat_conduction()),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,physics_name))),
       _rho(0.0),
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::heat_conduction()))
@@ -55,34 +55,8 @@ namespace GRINS
 
     MaterialsParsing::read_specific_heat( PhysicsNaming::heat_conduction(), input, (*this), this->_Cp );
 
-    this->register_variables();
-
     // This is deleted in the base class
     this->_ic_handler = new GenericICHandler( physics_name, input );
-  }
-
-  template<class K>
-  HeatConduction<K>::~HeatConduction()
-  {
-    return;
-  }
-
-  template<class K>
-  void HeatConduction<K>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-  }
-
-  template<class K>
-  void HeatConduction<K>::init_variables( libMesh::FEMSystem* system )
-  {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    _temp_vars.init(system);
-    
-    return;
   }
 
   template<class K>
@@ -90,8 +64,6 @@ namespace GRINS
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T());
-
-    return;
   }
 
   template<class K>
@@ -109,8 +81,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    return;
   }
 
   template<class K>

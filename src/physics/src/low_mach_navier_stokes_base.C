@@ -49,33 +49,24 @@ namespace GRINS
                                                              const std::string& core_physics_name,
                                                              const GetPot& input)
     : Physics(physics_name, input),
-      _flow_vars(input, core_physics_name),
-      _press_var(input,core_physics_name, true /*is_constraint_var*/),
-      _temp_vars(input, core_physics_name),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,core_physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,core_physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,core_physics_name))),
+      _p0_var(NULL),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
+    _press_var.set_is_constraint_var(true);
+
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
-      _p0_var.reset( new ThermoPressureFEVariable(input,core_physics_name, true /*is_constraint_var*/) );
+      {
+        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::physics_thermo_press_variable_name(input,core_physics_name));
+        _p0_var->set_is_constraint_var(true);
+      }
 
     this->read_input_options(input);
-    this->register_variables();
-  }
-
-  template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBase<Mu,SH,TC>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-    if( this->_enable_thermo_press_calc )
-      GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::thermo_pressure_section(),
-                                                                   *(this->_p0_var));
   }
 
   template<class Mu, class SH, class TC>
@@ -116,24 +107,6 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBase<Mu,SH,TC>::init_variables( libMesh::FEMSystem* system )
-  {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
-    this->_temp_vars.init(system);
-
-    /* If we need to compute the thermodynamic pressure, we force this to be a first
-       order scalar variable. */
-    if( _enable_thermo_press_calc )
-      _p0_var->init(system);
-
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokesBase<Mu,SH,TC>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
@@ -149,8 +122,6 @@ namespace GRINS
 
     if( _enable_thermo_press_calc )
       system->time_evolving(_p0_var->p0());
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -171,8 +142,6 @@ namespace GRINS
 
     context.get_element_fe(_press_var.p())->get_phi();
     context.get_element_fe(_press_var.p())->get_xyz();
-
-    return;
   }
 
   template<class Mu, class SH, class TC>

@@ -36,11 +36,12 @@
 
 // GRINS
 #include "grins/grins_enums.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
-#include "grins/species_mass_fracs_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/multicomponent_variable.h"
+#include "grins/single_variable.h"
 #include "grins/variable_warehouse.h"
+#include "grins/variable_builder.h"
+#include "grins/variables_parsing.h"
 
 namespace GRINSTesting
 {
@@ -50,12 +51,9 @@ namespace GRINSTesting
   public:
     CPPUNIT_TEST_SUITE( VariablesTest );
 
-    CPPUNIT_TEST( test_velocity_2d );
-    CPPUNIT_TEST( test_velocity_3d );
-    CPPUNIT_TEST( test_temp );
-    CPPUNIT_TEST( test_species_mass_fracs );
-    CPPUNIT_TEST( test_pressure );
-    CPPUNIT_TEST( test_var_constraint_and_warehouse );
+    CPPUNIT_TEST( test_variable_builder );
+    CPPUNIT_TEST( test_var_constraint );
+    CPPUNIT_TEST( test_variable_arbitrary_names );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -66,124 +64,135 @@ namespace GRINSTesting
       this->reset_all();
     }
 
-    void test_velocity_2d()
+    void test_variable_builder()
     {
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
       this->setup_multiphysics_system(filename);
 
-      // This will add the variables to the system
-      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      vel_vars.init(_system);
-      CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
 
-      const std::vector<std::string>& var_names = vel_vars.active_var_names();
-      this->test_vel_var_names_2d(var_names);
-
-      // Verify the FE part
-      this->test_vel_fe_2d(*_system);
-    }
-
-    void test_velocity_3d()
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_3d.in";
-      this->setup_multiphysics_system(filename);
-
-      // This will add the variables to the system
-      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      vel_vars.init(_system);
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3,_system->n_vars());
-
-      const std::vector<std::string>& var_names = vel_vars.active_var_names();
-      this->test_vel_var_names_3d(var_names);
-
-      // Verify the FE part
-      this->test_vel_fe_3d(*_system);
-    }
-
-    void test_temp()
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
-      this->setup_multiphysics_system(filename);
-
-      // This will add the variables to the system
-      GRINS::PrimitiveTempFEVariables temp_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      temp_vars.init(_system);
-      CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
-
-      const std::vector<std::string>& var_names = temp_vars.active_var_names();
-      this->test_temp_var_names(var_names);
-
-      // Verify the FE part
-      this->test_temp_fe(*_system);
-    }
-
-    void test_species_mass_fracs()
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
-      this->setup_multiphysics_system(filename);
-
-      // This will add the variables to the system
-      GRINS::SpeciesMassFractionsFEVariables species_vars(*_input,"TestSpeciesMassFractionsVariables");
-      species_vars.init(_system);
-      CPPUNIT_ASSERT_EQUAL((unsigned int)2,_system->n_vars());
-
-      const std::vector<std::string>& var_names = species_vars.active_var_names();
-      this->test_species_var_names(var_names);
-
-      // Verify the FE part
-      this->test_species_fe(*_system);
-    }
-
-    void test_var_constraint_and_warehouse()
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_3d.in";
-      this->setup_multiphysics_system(filename);
-
-      GRINS::VelocityFEVariables vel_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest",true /*is_constraint_variable*/ );
-
-      GRINS::GRINSPrivate::VariableWarehouse::register_variable("Velocity", vel_vars);
-      GRINS::GRINSPrivate::VariableWarehouse::register_variable("Pressure", press_vars);
-
-      // This should not throw an error
-      GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Velocity", vel_vars);
-      GRINS::GRINSPrivate::VariableWarehouse::check_and_register_variable("Pressure", press_vars);
-
-      vel_vars.init(_system);
-      press_vars.init(_system);
-
-      {
-        const GRINS::FEVariablesBase& vel_base =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable("Velocity");
-        CPPUNIT_ASSERT(!vel_base.is_constraint_var());
-
-        const GRINS::FEVariablesBase& press_base =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable("Pressure");
-        CPPUNIT_ASSERT(press_base.is_constraint_var());
-      }
+      this->test_all_variables( GRINS::VariablesParsing::velocity_section(),
+                                GRINS::VariablesParsing::temperature_section(),
+                                GRINS::VariablesParsing::species_mass_fractions_section(),
+                                GRINS::VariablesParsing::pressure_section(),
+                                GRINS::VariablesParsing::single_var_section() );
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
 
-    void test_pressure()
+    void test_var_constraint()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_2d.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_3d.in";
       this->setup_multiphysics_system(filename);
 
-      // This will add the variables to the system
-      GRINS::PressureFEVariable press_vars(*_input,"PhysicsNameIsDUMMYForThisTest");
-      press_vars.init(_system);
-      CPPUNIT_ASSERT_EQUAL((unsigned int)1,_system->n_vars());
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
 
-      const std::vector<std::string>& var_names = press_vars.active_var_names();
-      this->test_press_var_names(var_names);
+      const GRINS::FEVariablesBase& vel_vars =
+        GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::velocity_section());
 
-      // Verify the FE part
-      this->test_press_fe(*_system);
+      GRINS::FEVariablesBase& press_vars =
+        GRINS::GRINSPrivate::VariableWarehouse::get_variable(GRINS::VariablesParsing::pressure_section());
+      press_vars.set_is_constraint_var(true);
+
+      CPPUNIT_ASSERT(!vel_vars.is_constraint_var());
+      CPPUNIT_ASSERT(press_vars.is_constraint_var());
+
+      // Clear out the VariableWarehouse so it doesn't interfere with other tests.
+      GRINS::GRINSPrivate::VariableWarehouse::clear();
+    }
+
+    void test_variable_arbitrary_names()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_arbitrary_names.in";
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
+
+      this->test_all_variables( "MySpeed",
+                                "TestingIsSoHot",
+                                "MassFractions",
+                                "SoMuchPressure",
+                                "ForeverAlone" );
+
+      // Clear out the VariableWarehouse so it doesn't interfere with other tests.
+      GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
 
   private:
+
+    void test_all_variables( const std::string& velocity_name,
+                             const std::string& temp_name,
+                             const std::string& species_name,
+                             const std::string& press_name,
+                             const std::string& single_var_name )
+    {
+      // There should be 7 variables generated from that input file
+      CPPUNIT_ASSERT_EQUAL((unsigned int)7,_system->n_vars());
+
+      // Check Velocity variables
+      {
+        const GRINS::FEVariablesBase& vel_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(velocity_name);
+
+        const std::vector<std::string>& var_names = vel_vars.active_var_names();
+        this->test_vel_var_names_2d(var_names);
+
+        // Verify the FE part
+        this->test_vel_fe_2d(*_system);
+      }
+
+      // Check Temperature variables
+      {
+        const GRINS::FEVariablesBase& temp_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(temp_name);
+
+        const std::vector<std::string>& var_names = temp_vars.active_var_names();
+        this->test_temp_var_names(var_names);
+
+        // Verify the FE part
+        this->test_temp_fe(*_system);
+      }
+
+      // Check SpeciesMassFractions variables
+      {
+        const GRINS::FEVariablesBase& species_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(species_name);
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        this->test_species_var_names(var_names);
+
+        // Verify the FE part
+        this->test_species_fe(*_system);
+      }
+
+      // Check Pressure variable
+      {
+        const GRINS::FEVariablesBase& press_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(press_name);
+
+        const std::vector<std::string>& var_names = press_vars.active_var_names();
+        this->test_press_var_names(var_names);
+
+        // Verify the FE part
+        this->test_press_fe(*_system);
+      }
+
+      // Check Single variable
+      {
+        const GRINS::FEVariablesBase& single_var =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable(single_var_name);
+
+        const std::vector<std::string>& var_names = single_var.active_var_names();
+        CPPUNIT_ASSERT_EQUAL(1,(int)var_names.size());
+        CPPUNIT_ASSERT_EQUAL(std::string("u"),var_names[0]);
+
+        // Verify the FE part
+        libMesh::Order order = _system->variable_type("u").order;
+        CPPUNIT_ASSERT_EQUAL(GRINSEnums::LAGRANGE,_system->variable_type("u").family);
+        CPPUNIT_ASSERT_EQUAL(GRINSEnums::FIRST,order);
+      }
+    }
 
     void test_vel_var_names_2d( const std::vector<std::string>& var_names )
     {

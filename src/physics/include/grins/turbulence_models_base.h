@@ -28,7 +28,7 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/single_variable.h"
 
 //Utils
 #include "grins/distance_function.h"
@@ -51,9 +51,7 @@ namespace GRINS
 
     TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
-    virtual void init_variables( libMesh::FEMSystem* system );
-
-    ~TurbulenceModelsBase();
+    ~TurbulenceModelsBase(){};
 
     // Registers all parameters in this physics and in its property
     // classes

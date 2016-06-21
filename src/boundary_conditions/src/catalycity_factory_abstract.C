@@ -25,21 +25,18 @@
 // This class
 #include "grins/catalycity_factory_abstract.h"
 
-// Full specialization for the Factory<CatalycityBase>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, libMesh::Factory<GRINS::CatalycityBase>*>&
-  libMesh::Factory<GRINS::CatalycityBase>::factory_map()
-  {
-    static std::map<std::string, libMesh::Factory<GRINS::CatalycityBase>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
-
 // Definition of static members
 namespace GRINS
 {
+  // Full specialization for the Factory<CatalycityBase>
+  template<>
+  std::map<std::string, FactoryAbstract<CatalycityBase>*>&
+  FactoryAbstract<CatalycityBase>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<CatalycityBase>*> _map;
+    return _map;
+  }
+
   template<>
   const GetPot* FactoryWithGetPot<CatalycityBase>::_input = NULL;
 

@@ -35,10 +35,10 @@
 #include "grins/parsed_function_neumann_old_style_bc_factory.h"
 #include "grins/dirichlet_bc_factory_function_old_style_base.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/primitive_temp_fe_variables.h"
-#include "grins/displacement_fe_variables.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/multicomponent_variable.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -156,7 +156,7 @@ namespace GRINS
                  raw_physics_name == PhysicsNaming::elastic_cable() )
           var_section = VariablesParsing::displacement_section();
         else if( raw_physics_name == PhysicsNaming::convection_diffusion() )
-          var_section = VariablesParsing::generic_section()+":"+raw_physics_name;
+          var_section = VariablesParsing::single_var_section()+":"+raw_physics_name;
         else
           libmesh_error();
       }

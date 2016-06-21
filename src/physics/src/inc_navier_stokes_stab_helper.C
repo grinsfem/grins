@@ -29,8 +29,9 @@
 // GRINS
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
+#include "grins/physics_naming.h"
 
 //libMesh
 #include "libmesh/getpot.h"
@@ -46,8 +47,8 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::incompressible_navier_stokes()))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::incompressible_navier_stokes())))
   {
     if (input.have_variable("Stabilization/tau_constant_vel"))
       this->set_parameter
@@ -175,7 +176,7 @@ namespace GRINS
 
     libMesh::Real divU = grad_u(0) + grad_v(1);
 
-    if( context.get_system().get_mesh().mesh_dimension() == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         divU += (context.fixed_interior_gradient(this->_flow_vars.w(), qp))(2);
       }
@@ -200,7 +201,7 @@ namespace GRINS
     d_res_C_dgradU(0,0) = 1;
     d_res_C_dgradU(1,1) = 1;
 
-    if( context.get_system().get_mesh().mesh_dimension() == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         divU += (context.fixed_interior_gradient(this->_flow_vars.w(), qp))(2);
         d_res_C_dgradU(2,2) = 1;
@@ -214,7 +215,7 @@ namespace GRINS
   {
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
                              context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
@@ -228,7 +229,7 @@ namespace GRINS
     libMesh::RealGradient rhoUdotGradU;
     libMesh::RealGradient divGradU;
 
-    if( context.get_system().get_mesh().mesh_dimension() < 3 )
+    if( this->mesh_dim(context) < 3 )
       {
         rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v );
         divGradU  = this->div_GradU( hess_u, hess_v );
@@ -258,7 +259,7 @@ namespace GRINS
   {
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
                              context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
@@ -272,7 +273,7 @@ namespace GRINS
     libMesh::RealGradient rhoUdotGradU;
     libMesh::RealGradient divGradU;
 
-    if( context.get_system().get_mesh().mesh_dimension() < 3 )
+    if( this->mesh_dim(context) < 3 )
       {
         rhoUdotGradU = rho*this->UdotGradU( U, grad_u, grad_v );
         divGradU  = this->div_GradU( hess_u, hess_v );
@@ -321,7 +322,7 @@ namespace GRINS
     libMesh::RealGradient u_dot;
     context.interior_rate(this->_flow_vars.u(), qp, u_dot(0)); 
     context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       context.interior_rate(this->_flow_vars.w(), qp, u_dot(2));
 
     return rho*u_dot;
@@ -339,7 +340,7 @@ namespace GRINS
     libMesh::RealGradient u_dot;
     context.interior_rate(this->_flow_vars.u(), qp, u_dot(0)); 
     context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       context.interior_rate(this->_flow_vars.w(), qp, u_dot(2));
 
     res_M = rho*u_dot;

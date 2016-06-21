@@ -36,7 +36,7 @@ namespace GRINS
 {
   // Forward declarations
   class PrimitiveTempFEVariables;
-  class VelocityFEVariables;
+  class VelocityVariable;
   class PressureFEVariable;
 
   class HeatTransferStabilizationHelper : public StabilizationHelper
@@ -107,7 +107,7 @@ namespace GRINS
 
     const PrimitiveTempFEVariables& _temp_vars;
 
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
   }; // class HeatTransferStabilizationHelper

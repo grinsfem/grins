@@ -126,7 +126,7 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         KTw = &context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.w()); // R_{T},{w}
       }
@@ -150,7 +150,7 @@ namespace GRINS
 	grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 
 	libMesh::NumberVectorValue U (u,v);
-	if (this->_dim == 3)
+	if (this->mesh_dim(context) == 3)
 	  U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         const libMesh::Number r = u_qpoint[qp](0);
@@ -189,7 +189,7 @@ namespace GRINS
 		  {
 		    KTu(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
 		    KTv(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
-		    if (this->_dim == 3)
+		    if (this->mesh_dim(context) == 3)
 		      (*KTw)(i,j) += jac * context.get_elem_solution_derivative()*(-this->_rho*this->_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(2)));
 		  } // end of the inner dof (j) loop
 

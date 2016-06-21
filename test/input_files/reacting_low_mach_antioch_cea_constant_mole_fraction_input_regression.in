@@ -41,6 +41,11 @@
       ic_types = 'parsed'
       ic_variables = 'T:w_N:w_N2:u'
       ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
+
+      velocity_var_name = '2DVelocity'
+      pressure_var_name = 'HydrostaticPressure'
+      temperature_var_name = 'Temp'
+      species_mass_fracs_var_name = 'MassFracs'
 []
 
 [BoundaryConditions]
@@ -48,29 +53,29 @@
    bc_id_name_map = 'Walls Inlet Outlet'
 
    [./Walls]
-      [./Velocity]
+      [./2DVelocity]
          type = 'no_slip'
       [../]
-      [./Temperature]
+      [./Temp]
          type = 'isothermal'
          T = '300'
       [../]
-      [./SpeciesMassFractions]
+      [./MassFracs]
          type = 'homogeneous_neumann'
       [../]
    [../]
 
    [./Inlet]
-      [./Velocity]
+      [./2DVelocity]
          type = 'parsed_dirichlet'
          u = '1-y^2'
          v = '0.0'
       [../]
-      [./Temperature]
+      [./Temp]
          type = 'isothermal'
          T = '300'
       [../]
-      [./SpeciesMassFractions]
+      [./MassFracs]
          type = 'mole_fractions'
          X_N2 = '0.4285714285714285'
          X_N  = '0.5714285714285715'
@@ -78,39 +83,44 @@
    [../]
 
    [./Outlet]
-      [./Velocity]
+      [./2DVelocity]
          type = 'homogeneous_neumann'
       [../]
-      [./Temperature]
+      [./Temp]
          type = 'homogeneous_neumann'
       [../]
-      [./SpeciesMassFractions]
+      [./MassFracs]
          type = 'homogeneous_neumann'
       [../]
    [../]
 []
 
 [Variables]
-   [./Temperature]
-      names = 'T'
-      fe_family = 'LAGRANGE'
-      order = 'SECOND'
-
-   [../Velocity]
-      names = 'u v w'
-      fe_family = 'LAGRANGE'
-      order = 'SECOND'
-
-   [../Pressure]
-      names = 'p'
-      fe_family = 'LAGRANGE'
-      order = 'FIRST'
-
-   [../SpeciesMassFractions]
+   [./MassFracs]
+      type = 'SpeciesMassFractions'
       names = 'w_'
       fe_family = 'LAGRANGE'
       order = 'SECOND'
-
+      material = '2SpeciesNGas'
+   [../]
+   [./2DVelocity]
+      type = 'Velocity'
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./HydrostaticPressure]
+      type = 'Pressure'
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+   [./Temp]
+      type = 'Temperature'
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
 []
 
 [Mesh]

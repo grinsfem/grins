@@ -35,7 +35,7 @@
 namespace GRINS
 {
   // Forward declarations
-  class VelocityFEVariables;
+  class VelocityVariable;
   class PressureFEVariable;
 
   class SpalartAllmarasHelper
@@ -53,11 +53,8 @@ namespace GRINS
 
   protected:
 
-    // Physical dimension
-    unsigned int _dim;
-
     // The flow variables
-    const VelocityFEVariables& _flow_vars;
+    const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
   private:

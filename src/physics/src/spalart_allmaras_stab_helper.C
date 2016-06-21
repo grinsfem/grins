@@ -29,9 +29,8 @@
 // GRINS
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 //libMesh
 #include "libmesh/getpot.h"
@@ -46,9 +45,9 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C( input("Stabilization/tau_constant_vel", input("Stabilization/tau_constant", 1.0 ) ) ),
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section())),
-      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turbulence_section())),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
       _spalart_allmaras_helper(input),
       _sa_params(input)
   {
@@ -64,19 +63,6 @@ namespace GRINS
     this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
-  SpalartAllmarasStabilizationHelper::~SpalartAllmarasStabilizationHelper()
-  {
-    return;
-  }
-
-  void SpalartAllmarasStabilizationHelper::init( libMesh::FEMSystem& system )
-  {
-    // Init the variables belonging to SA helper
-    _spalart_allmaras_helper.init_variables(&system);
-
-    this->_dim = system.get_mesh().mesh_dimension();
-  }
-
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
                                                                                 unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp, const bool infinite_distance) const
   {
@@ -86,7 +72,7 @@ namespace GRINS
     v = context.interior_value(this->_flow_vars.v(), qp);
 
     libMesh::NumberVectorValue U(u,v);
-    if ( context.get_system().get_mesh().mesh_dimension() == 3 )
+    if ( this->mesh_dim(context) == 3 )
       U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
     libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
@@ -102,7 +88,7 @@ namespace GRINS
     libMesh::Number rhoUdotGradnu = rho*(U*grad_nu);
 
     // The diffusion term
-    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sa_params.get_sigma())*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->_dim == 3)?hess_nu(2,2):0)) + this->_sa_params.get_cb2()*grad_nu*grad_nu);
+    libMesh::Number inv_sigmadivnuplusnuphysicalGradnu = (1./this->_sa_params.get_sigma())*(grad_nu*grad_nu + ((nu_value + mu)*(hess_nu(0,0) + hess_nu(1,1) + (this->mesh_dim(context) == 3)?hess_nu(2,2):0)) + this->_sa_params.get_cb2()*grad_nu*grad_nu);
 
     // The source term
     libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);

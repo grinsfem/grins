@@ -48,9 +48,9 @@ namespace GRINS
                                          const std::string& core_physics_name,
                                          const GetPot& input )
     : Physics(physics_name, input),
-      _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
-      _temp_vars(input,PhysicsNaming::heat_transfer()),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,core_physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,core_physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,core_physics_name))),
       _rho(0.0),
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
@@ -58,32 +58,6 @@ namespace GRINS
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
 
     MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
-
-    this->register_variables();
-  }
-
-  template<class K>
-  void HeatTransferBase<K>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-  }
-
-  template<class K>
-  void HeatTransferBase<K>::init_variables( libMesh::FEMSystem* system )
-  {
-    // Get libMesh to assign an index for each variable
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    _flow_vars.init(system);
-    this->_press_var.init(system);
-    _temp_vars.init(system);
-
-    return;
   }
 
   template<class K>
@@ -91,8 +65,6 @@ namespace GRINS
   {
     // Tell the system to march temperature forward in time
     system->time_evolving(_temp_vars.T());
-
-    return;
   }
 
   template<class K>
@@ -110,8 +82,6 @@ namespace GRINS
     context.get_side_fe(_temp_vars.T())->get_phi();
     context.get_side_fe(_temp_vars.T())->get_dphi();
     context.get_side_fe(_temp_vars.T())->get_xyz();
-
-    return;
   }
 
   template<class K>

@@ -45,6 +45,30 @@ namespace GRINS
                              bool is_2D, bool is_3D,
                              bool is_constraint_var = false );
 
+    DisplacementFEVariables( const std::vector<std::string>& var_names,
+                             const std::vector<VariableIndex>& var_indices )
+      : MultiVarSingleFETypeVariable(var_names,var_indices),
+        _have_v(false),
+        _have_w(false),
+        _u_idx(0),
+        _v_idx(1),
+        _w_idx(2),
+        _is_2D(false),
+        _is_3D(false)
+    {
+      if( var_names.size() > 1 )
+        {
+          _is_2D = true;
+          _have_v = true;
+        }
+
+      if( var_names.size() > 2 )
+        {
+          _is_3D = true;
+          _have_w = true;
+        }
+    }
+
     virtual ~DisplacementFEVariables(){};
 
     //! Initialize System variables

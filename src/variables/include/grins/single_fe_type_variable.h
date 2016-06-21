@@ -58,6 +58,11 @@ namespace GRINS
                           const std::string& subsection,
                           bool is_constraint_var);
 
+    SingleFETypeVariable( const std::vector<std::string>& var_names,
+                          const std::vector<VariableIndex>& var_indices )
+      : FEVariablesBase(var_names,var_indices)
+    {}
+
     ~SingleFETypeVariable(){};
 
     //! Add variables to the system

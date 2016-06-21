@@ -25,6 +25,12 @@
 #ifndef GRINS_VARIABLES_PARSING_H
 #define GRINS_VARIABLES_PARSING_H
 
+// C++
+#include <string>
+
+// libMesh
+#include "libmesh/getpot.h"
+
 namespace GRINS
 {
   class VariablesParsing
@@ -52,8 +58,11 @@ namespace GRINS
     static std::string velocity_section()
     { return "Velocity"; }
 
-    static std::string generic_section()
-    { return "GenericVariable"; }
+    static std::string single_var_section()
+    { return "SingleVariable"; }
+
+    static std::string scalar_var_section()
+    { return "ScalarVariable"; }
 
     //! Helper function to encapsualte the overall [Variables] section name.
     static std::string variables_section()
@@ -73,6 +82,74 @@ namespace GRINS
     static std::string order_input_name( const std::string& subsection )
     { return VariablesParsing::variables_section()+"/"+subsection+"/order"; }
 
+    static std::string physics_single_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "var_name",
+                                                      VariablesParsing::single_var_section()); }
+
+    static std::string physics_scalar_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "var_name",
+                                                      VariablesParsing::scalar_var_section()); }
+
+    static std::string physics_velocity_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "velocity_var_name",
+                                                      VariablesParsing::velocity_section()); }
+
+    static std::string physics_temp_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "temperature_var_name",
+                                                      VariablesParsing::temperature_section()); }
+
+    static std::string physics_press_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "pressure_var_name",
+                                                      VariablesParsing::pressure_section()); }
+
+    static std::string physics_thermo_press_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "thermo_pressure_var_name",
+                                                      VariablesParsing::thermo_pressure_section()); }
+
+    static std::string physics_turb_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "turbulence_var_name",
+                                                      VariablesParsing::turbulence_section()); }
+
+    static std::string physics_disp_variable_name( const GetPot& input, const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "displacement_var_name",
+                                                      VariablesParsing::displacement_section()); }
+
+    static std::string physics_species_mass_frac_variable_name( const GetPot& input,
+                                                                const std::string& physics_name )
+    { return VariablesParsing::parse_physics_var_name(input,
+                                                      physics_name,
+                                                      "species_mass_fracs_var_name",
+                                                      VariablesParsing::species_mass_fractions_section()); }
+
+  private:
+
+    //! string to feed to GetPot to look up the name of the Variable
+    static std::string physics_var_name_input( const std::string& physics_name, const std::string& var_name )
+    { return std::string("Physics/"+physics_name+"/"+var_name); }
+
+    //! Parse the variable name from the Physics section and falls back to default if it's not there
+    /*! It's intended the default be one of the Variable "types". */
+    static std::string parse_physics_var_name(const GetPot& input,
+                                              const std::string& physics_name,
+                                              const std::string& var_name,
+                                              const std::string& default_name )
+    { return input( VariablesParsing::physics_var_name_input(physics_name,var_name), default_name ); }
   };
 
 } // end namespace GRINS

@@ -29,9 +29,9 @@
 // GRINS
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/primitive_temp_fe_variables.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
+#include "grins/physics_naming.h"
 
 //libMesh
 #include "libmesh/getpot.h"
@@ -47,9 +47,9 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temperature_section())),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,PhysicsNaming::heat_transfer()))),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::heat_transfer()))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::heat_transfer())))
   {
     if (input.have_variable("Stabilization/tau_constant_T"))
       this->set_parameter
@@ -82,7 +82,7 @@ namespace GRINS
 
     libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     return rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
@@ -106,7 +106,7 @@ namespace GRINS
 
     libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(context.get_system().get_mesh().mesh_dimension() == 3)
+    if(this->mesh_dim(context) == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     res = rhocpU*grad_T - k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));

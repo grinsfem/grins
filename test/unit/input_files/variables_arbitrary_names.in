@@ -1,0 +1,48 @@
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD4'
+      n_elems_x = '10'
+      n_elems_y = '10'
+[]
+
+[Variables]
+   [./MySpeed]
+      type = 'Velocity'
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../SoMuchPressure]
+      type = 'Pressure'
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../TestingIsSoHot]
+      type = 'Temperature'
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../MassFractions]
+      type = 'SpeciesMassFractions'
+      material = '2SpeciesNGas'
+      names = 'Y_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../ForeverAlone]
+      type = 'SingleVariable'
+      names = 'u'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+[Materials]
+  [./2SpeciesNGas]
+     [./GasMixture]
+        species   = 'N2 N'
+[]
+
+[Physics]
+   [./TestSpeciesMassFractionsVariables]
+      material = '2SpeciesNGas'
+[]

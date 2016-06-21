@@ -30,9 +30,8 @@
 #include "grins_config.h"
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/enum_order.h"
@@ -53,12 +52,6 @@ namespace GRINS
     AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
     ~AxisymmetricHeatTransfer(){};
-
-    //! Initialization  AxisymmetricHeatTransfer variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
@@ -88,13 +81,9 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Make this static member of base class? */
-    unsigned int _dim;
-
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityVariable& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
@@ -112,7 +101,6 @@ namespace GRINS
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
 
-    void register_variables();
   };
 
 } //End namespace block

@@ -34,7 +34,7 @@ pin_value = '0.0'
 moment_of_inertia = 1
 
 ic_ids = 0
-ic_variables = fan_speed
+ic_variables = 'fan_speed'
 ic_types = constant
 ic_values = 1
 
@@ -50,18 +50,26 @@ chord_length = '.2*sqrt(2)'
 area_swept = '{.6*.2/4}' # 4 blade fan
 angle_of_attack = '{pi/4}'
 
+var_name = 'TurbineVar'
+
 []
 
 [Variables]
+   [./TurbineVar]
+      type = 'ScalarVariable'
+      names = 'fan_speed'
+      order = 'FIRST'
+   [../]
    [./Velocity]
       names = 'u v'
       fe_family = 'LAGRANGE'
       order = 'SECOND'
-
-   [../Pressure]
+   [../]
+   [./Pressure]
       names = 'p'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
+   [../]
 []
 
 # Mesh related options
@@ -88,7 +96,7 @@ angle_of_attack = '{pi/4}'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = '7' 
+max_nonlinear_iterations = '7'
 max_linear_iterations = '500'
 
 relative_residual_tolerance = '1.0e-10'
@@ -104,7 +112,7 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'false'
 
-vis_output_file_prefix = 'output/prop' 
+vis_output_file_prefix = 'output/prop'
 
 output_residual = 'false'
 

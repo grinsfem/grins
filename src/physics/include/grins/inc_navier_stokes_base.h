@@ -28,8 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
@@ -52,12 +52,6 @@ namespace GRINS
 
     ~IncompressibleNavierStokesBase(){};
 
-    //! Initialization of Navier-Stokes variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -76,12 +70,9 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    /*! \todo Do we really need to cache this? */
-    unsigned int _dim;
+    VelocityVariable& _flow_vars;
+    PressureFEVariable& _press_var;
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
@@ -91,8 +82,6 @@ namespace GRINS
 
   private:
     IncompressibleNavierStokesBase();
-
-    void register_variables();
 
   };
 

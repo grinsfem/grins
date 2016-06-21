@@ -28,9 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/turbulence_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 #include "grins/turbulence_models_base.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"
@@ -61,7 +60,7 @@ namespace GRINS
 
     SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
-    ~SpalartAllmaras();
+    ~SpalartAllmaras(){};
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -95,10 +94,10 @@ namespace GRINS
   protected:
 
     // The flow variables
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
+    VelocityVariable& _flow_vars;
+    PressureFEVariable& _press_var;
     // These are defined for each physics
-    TurbulenceFEVariables _turbulence_vars;
+    TurbulenceFEVariables& _turbulence_vars;
 
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
@@ -117,9 +116,6 @@ namespace GRINS
 
   private:
     SpalartAllmaras();
-
-    void register_variables();
-
   };
 
 } //End namespace block

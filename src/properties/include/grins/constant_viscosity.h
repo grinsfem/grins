@@ -64,8 +64,6 @@ namespace GRINS
 
     libMesh::Real deriv( const libMesh::Real T ) const;
 
-    void init(libMesh::FEMSystem* /*system*/){};
-
   private:
 
     ConstantViscosity();

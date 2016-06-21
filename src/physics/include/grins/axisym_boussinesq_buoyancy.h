@@ -30,9 +30,8 @@
 #include "grins_config.h"
 #include "grins/grins_enums.h"
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/enum_order.h"
@@ -63,9 +62,6 @@ namespace GRINS
 
     ~AxisymmetricBoussinesqBuoyancy(){};
 
-    //! Initialization of AxisymmetricBoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     virtual void init_context( AssemblyContext& context );
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
@@ -78,12 +74,9 @@ namespace GRINS
 
   protected:
 
-    //! Physical dimension of problem
-    unsigned int _dim;
-
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityVariable& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
@@ -104,8 +97,6 @@ namespace GRINS
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
-
-    void register_variables();
 
   }; // class AxisymmetricBoussinesqBuoyancy
 

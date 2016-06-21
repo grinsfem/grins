@@ -91,7 +91,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         Kuw = &context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.w()); // R_{u},{w}
         Kvw = &context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.w()); // R_{v},{w}
@@ -112,7 +112,7 @@ namespace GRINS
         v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (this->_dim == 3)
+        if (this->mesh_dim(context) == 3)
           U(2) = context.interior_value(this->_flow_vars.w(), qp); // w
 
         libMesh::NumberVectorValue F;
@@ -131,7 +131,7 @@ namespace GRINS
             Fu(i) += F(0)*jac_i;
             Fv(i) += F(1)*jac_i;
 
-            if( this->_dim == 3 )
+            if( this->mesh_dim(context) == 3 )
               (*Fw)(i) += F(2)*jac_i;
 
 	    if( compute_jacobian )
@@ -146,7 +146,7 @@ namespace GRINS
                     Kvu(i,j) += jac_ij * dFdU(1,0);
                     Kvv(i,j) += jac_ij * dFdU(1,1);
 
-                    if( this->_dim == 3 )
+                    if( this->mesh_dim(context) == 3 )
                       {
                         (*Kuw)(i,j) += jac_ij * dFdU(0,2);
                         (*Kvw)(i,j) += jac_ij * dFdU(1,2);

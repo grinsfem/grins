@@ -47,47 +47,21 @@ namespace GRINS
   template<class Mu>
   SpalartAllmaras<Mu>::SpalartAllmaras(const std::string& physics_name, const GetPot& input )
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
-    _flow_vars(input,PhysicsNaming::incompressible_navier_stokes()),
-    _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
-    _turbulence_vars(input, PhysicsNaming::spalart_allmaras()),
+    _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
+    _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
+    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,physics_name))),
     _spalart_allmaras_helper(input),
     _sa_params(input),
     _no_of_walls(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/no_of_walls", 0)),
     _infinite_distance(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/infinite_distance", false))
   {
+    _press_var.set_is_constraint_var(true);
+
     // Loop over the _no_of_walls and fill the wall_ids set
     for(unsigned int i = 0; i != _no_of_walls; i++)
-      {
-        _wall_ids.insert(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/wall_ids", 0, i ));
-      }
-
-    std::cout<<"No of walls: "<<_no_of_walls<<std::endl;
-
-    for( std::set<libMesh::boundary_id_type>::iterator b_id = _wall_ids.begin(); b_id != _wall_ids.end(); ++b_id )
-      {
-        std::cout<<"Boundary Id: "<<*b_id<<std::endl;
-      }
-
-    this->register_variables();
+      _wall_ids.insert(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/wall_ids", 0, i ));
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
-  }
-
-  template<class Mu>
-  SpalartAllmaras<Mu>::~SpalartAllmaras()
-  {
-    return;
-  }
-
-  template<class Mu>
-  void SpalartAllmaras<Mu>::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::turbulence_section(),
-                                                                 this->_turbulence_vars);
   }
 
   template<class Mu>
@@ -96,15 +70,8 @@ namespace GRINS
     // Init base class.
     TurbulenceModelsBase<Mu>::init_variables(system);
 
-    this->_turbulence_vars.init(system);
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
-
-    // Init the variables belonging to SA helper
-    _spalart_allmaras_helper.init_variables(system);
-
     // Initialize Boundary Mesh
-    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , this->_dim));
+    this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , system->get_mesh().mesh_dimension()) );
 
     // Use the _wall_ids set to build the boundary mesh object
     (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);
@@ -116,8 +83,6 @@ namespace GRINS
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-
-    return;
   }
 
   template<class Mu>
@@ -148,8 +113,6 @@ namespace GRINS
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
     system->time_evolving(this->_turbulence_vars.nu());
-
-    return;
   }
 
   template<class Mu>
@@ -231,7 +194,7 @@ namespace GRINS
         v = context.interior_value(this->_flow_vars.v(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (this->_dim == 3)
+        if (this->mesh_dim(context) == 3)
           U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         //The source term

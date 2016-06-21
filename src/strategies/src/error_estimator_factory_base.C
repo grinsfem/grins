@@ -25,20 +25,18 @@
 // This class
 #include "grins/error_estimator_factory_base.h"
 
-// Full specialization for the Factory<ErrorEstimator>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, Factory<ErrorEstimator>*>&
-  Factory<ErrorEstimator>::factory_map()
-  {
-    static std::map<std::string, Factory<ErrorEstimator>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
-
 namespace GRINS
 {
+  // Full specialization for the Factory<ErrorEstimator>
+  template<>
+  std::map<std::string, FactoryAbstract<libMesh::ErrorEstimator>*>&
+  FactoryAbstract<libMesh::ErrorEstimator>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<libMesh::ErrorEstimator>*> _map;
+    return _map;
+  }
+
+  // Definition of static members
   template<>
   const GetPot* FactoryWithGetPot<libMesh::ErrorEstimator>::_input = NULL;
 

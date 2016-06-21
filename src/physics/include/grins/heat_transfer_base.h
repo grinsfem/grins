@@ -28,9 +28,8 @@
 
 //GRINS
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
@@ -49,12 +48,6 @@ namespace GRINS
                       const GetPot& input );
 
     ~HeatTransferBase(){};
-
-    //! Initialization Heat Transfer variables
-    /*!
-      Add velocity and pressure variables to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
@@ -75,9 +68,9 @@ namespace GRINS
     /*! \todo Make this static member of base class? */
     unsigned int _dim;
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    VelocityVariable& _flow_vars;
+    PressureFEVariable& _press_var;
+    PrimitiveTempFEVariables& _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
@@ -91,8 +84,6 @@ namespace GRINS
 
   private:
     HeatTransferBase();
-
-    void register_variables();
   };
 
 } //End namespace block

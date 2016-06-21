@@ -27,7 +27,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
-#include "grins/species_mass_fracs_fe_variables.h"
+#include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
 
 #ifdef GRINS_HAVE_CANTERA
@@ -64,7 +64,7 @@ namespace GRINS
     std::set<std::string> vars_found;
     {
       std::vector<std::string> vars_to_search_for(var_names.size());
-      this->set_vars_to_search_for(var_names,vars_to_search_for);
+      this->set_vars_to_search_for(section,var_names,vars_to_search_for);
       this->check_for_vars(input,section,vars_to_search_for,&vars_found);
     }
 
@@ -128,16 +128,20 @@ namespace GRINS
     species_name = split_name[0];
   }
 
-  void MoleFractionsDirichletBCFactory::set_vars_to_search_for( const std::vector<std::string>& var_names,
+  void MoleFractionsDirichletBCFactory::set_vars_to_search_for( const std::string& section,
+                                                                const std::vector<std::string>& var_names,
                                                                 std::vector<std::string>&vars_to_search_for ) const
   {
     libmesh_assert_equal_to(var_names.size(),vars_to_search_for.size());
 
-    // This only makes sense for SpeciesMassFractionsFEVariables in the VariableWarehouse.
+    // Strip out the Variable name from the section
+    std::string var_section = extract_var_section(section);
+
+    // This only makes sense for SpeciesMassFractionsVariable in the VariableWarehouse.
     // This call will error out if it's not there.
-    const SpeciesMassFractionsFEVariables& species_fe_var =
-      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
-      (VariablesParsing::species_mass_fractions_section());
+    const SpeciesMassFractionsVariable& species_fe_var =
+      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>
+      (var_section);
 
     const std::string& prefix = species_fe_var.prefix();
     for( unsigned int v = 0; v < var_names.size(); v++ )
@@ -159,17 +163,20 @@ namespace GRINS
 #else
    void MoleFractionsDirichletBCFactory::add_found_vars( const GetPot& input,
                                                          MultiphysicsSystem& /*system*/,
-                                                         const std::string& /*section*/,
+                                                         const std::string& section,
                                                          const std::set<std::string>& /*vars_found*/,
                                                          libMesh::CompositeFunction<libMesh::Number>& /*composite_func*/,
                                                          std::set<std::string>& /*vars_added*/ ) const
 #endif
   {
-    // This only makes sense for SpeciesMassFractionsFEVariables in the VariableWarehouse.
+    // Strip out the Variable name from the section
+    std::string var_section = extract_var_section(section);
+
+    // This only makes sense for SpeciesMassFractionsVariable in the VariableWarehouse.
     // This call will error out if it's not there.
-    const SpeciesMassFractionsFEVariables& species_fe_var =
-      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsFEVariables>
-      (VariablesParsing::species_mass_fractions_section());
+    const SpeciesMassFractionsVariable& species_fe_var =
+      GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>
+      (var_section);
 
     const std::string& material = species_fe_var.material();
 
@@ -207,7 +214,7 @@ namespace GRINS
                                                                    const std::string& section,
                                                                    const std::set<std::string>& vars_found,
                                                                    const std::string& material,
-                                                                   const SpeciesMassFractionsFEVariables& species_fe_var,
+                                                                   const SpeciesMassFractionsVariable& species_fe_var,
                                                                    libMesh::CompositeFunction<libMesh::Number>& composite_func,
                                                                    std::set<std::string>& vars_added) const
   {
@@ -282,13 +289,20 @@ namespace GRINS
       }
   }
 
+  std::string MoleFractionsDirichletBCFactory::extract_var_section( const std::string& section ) const
+  {
+    std::vector<std::string> tokens;
+    StringUtilities::split_string(section,"/",tokens);
+    return tokens.back();
+  }
+
   // Instantiate
 #ifdef GRINS_HAVE_CANTERA
-  template void MoleFractionsDirichletBCFactory::add_mole_frac_to_mass_frac<CanteraMixture>(const GetPot&,const std::string&,const std::set<std::string>&,const std::string&,const SpeciesMassFractionsFEVariables&,libMesh::CompositeFunction<libMesh::Number>&,std::set<std::string>& ) const;
+  template void MoleFractionsDirichletBCFactory::add_mole_frac_to_mass_frac<CanteraMixture>(const GetPot&,const std::string&,const std::set<std::string>&,const std::string&,const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>&,std::set<std::string>& ) const;
 #endif
 
 #ifdef GRINS_HAVE_ANTIOCH
-  template void MoleFractionsDirichletBCFactory::add_mole_frac_to_mass_frac<AntiochChemistry>(const GetPot&,const std::string&,const std::set<std::string>&,const std::string&,const SpeciesMassFractionsFEVariables&,libMesh::CompositeFunction<libMesh::Number>&,std::set<std::string>& ) const;
+  template void MoleFractionsDirichletBCFactory::add_mole_frac_to_mass_frac<AntiochChemistry>(const GetPot&,const std::string&,const std::set<std::string>&,const std::string&,const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>&,std::set<std::string>& ) const;
 #endif
 
   // Register all the ConstantFunction factories.

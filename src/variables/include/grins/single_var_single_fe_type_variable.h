@@ -56,6 +56,11 @@ namespace GRINS
                                    const std::string& default_name,
                                    bool is_constraint_var);
 
+    SingleVarSingleFETypeVariable( const std::vector<std::string>& var_names,
+                                   const std::vector<VariableIndex>& var_indices )
+      : SingleFETypeVariable(var_names,var_indices)
+    {}
+
     ~SingleVarSingleFETypeVariable(){};
 
   };

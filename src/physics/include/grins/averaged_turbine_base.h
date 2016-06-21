@@ -30,6 +30,7 @@
 #include "grins_config.h"
 #include "grins/inc_navier_stokes_base.h"
 
+
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/parsed_function.h"
@@ -50,13 +51,6 @@ namespace GRINS
 
     ~AveragedTurbineBase(){};
 
-    //! Initialization of variables
-    /*!
-      Add turbine_speed variable to system; call base function to
-      initialize Navier-Stokes variables.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
-
     //! Sets turbine_speed and velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -69,7 +63,7 @@ namespace GRINS
                          libMesh::NumberTensorValue *dFdU = NULL,
                          libMesh::NumberVectorValue *dFds = NULL);
 
-    VariableIndex fan_speed_var() const { return _fan_speed_var; }
+    VariableIndex fan_speed_var() const { return _var.var(); }
 
   protected:
 
@@ -132,9 +126,7 @@ namespace GRINS
     // this will be a constant.
     libMesh::ParsedFunction<libMesh::Number> aoa_function;
 
-    VariableIndex _fan_speed_var; /* Index for turbine speed scalar */
-
-    std::string _fan_speed_var_name;
+    ScalarVariable& _var;
 
   private:
 

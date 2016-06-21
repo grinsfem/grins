@@ -32,8 +32,9 @@
 #include "grins/turbulence_models_macro.h"
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
+#include "grins/physics_naming.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -43,16 +44,10 @@
 
 namespace GRINS
 {
-
-  SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& /*input*/ )
-    : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityFEVariables>(VariablesParsing::velocity_section())),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::pressure_section()))
+  SpalartAllmarasHelper::SpalartAllmarasHelper(const GetPot& input )
+    : _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::spalart_allmaras())))
   {}
-
-  void SpalartAllmarasHelper::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_dim = system->get_mesh().mesh_dimension();
-  }
 
   libMesh::Real SpalartAllmarasHelper::vorticity(AssemblyContext& context, unsigned int qp) const
   {
@@ -63,7 +58,7 @@ namespace GRINS
     libMesh::Real vorticity_value;
     vorticity_value = fabs(grad_v(0) - grad_u(1));
 
-    if(this->_dim == 3)
+    if(context.get_system().get_mesh().mesh_dimension() == 3)
       {
         libMesh::Gradient grad_w;
         grad_w = context.interior_gradient(this->_flow_vars.w(), qp);

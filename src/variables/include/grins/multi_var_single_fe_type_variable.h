@@ -56,6 +56,11 @@ namespace GRINS
                                   const std::vector<std::string>& default_names,
                                   bool is_constraint_var);
 
+    MultiVarSingleFETypeVariable( const std::vector<std::string>& var_names,
+                                  const std::vector<VariableIndex>& var_indices )
+      : SingleFETypeVariable(var_names,var_indices)
+    {}
+
     ~MultiVarSingleFETypeVariable(){};
 
   };

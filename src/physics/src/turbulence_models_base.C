@@ -53,22 +53,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  void TurbulenceModelsBase<Mu>::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    this->_mu.init(system);
-
-    return;
-  }
-
-  template<class Mu>
-  TurbulenceModelsBase<Mu>::~TurbulenceModelsBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void TurbulenceModelsBase<Mu>::register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )

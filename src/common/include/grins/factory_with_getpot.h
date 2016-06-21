@@ -25,19 +25,21 @@
 #ifndef GRINS_FACTORY_WITH_GETPOT_H
 #define GRINS_FACTORY_WITH_GETPOT_H
 
+// GRINS
+#include "grins/factory_abstract.h"
+
 // libMesh
-#include "libmesh/factory.h"
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
   //! Abstract factory that provides availability of GetPot
   template<typename Base>
-  class FactoryWithGetPot : public libMesh::Factory<Base>
+  class FactoryWithGetPot : public FactoryAbstract<Base>
   {
   public:
     FactoryWithGetPot( const std::string& name )
-      : libMesh::Factory<Base>(name)
+      : FactoryAbstract<Base>(name)
     {}
 
     ~FactoryWithGetPot(){};

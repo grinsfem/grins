@@ -48,6 +48,11 @@ namespace GRINS
                                        this->subsection(),"LAGRANGE","SECOND",_is_constraint_var)
     {}
 
+    PrimitiveTempFEVariables( const std::vector<std::string>& var_names,
+                              const std::vector<VariableIndex>& var_indices )
+      : SingleVarSingleFETypeVariable(var_names,var_indices)
+    {}
+
     ~PrimitiveTempFEVariables(){};
 
     VariableIndex T() const;

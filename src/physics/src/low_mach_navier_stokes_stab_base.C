@@ -40,15 +40,7 @@ namespace GRINS
 											const GetPot& input )
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,PhysicsNaming::low_mach_navier_stokes(),input),
       _stab_helper( physics_name+"StabHelper", input )
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
-  LowMachNavierStokesStabilizationBase<Mu,SH,TC>::~LowMachNavierStokesStabilizationBase()
-  {
-    return;
-  }
+  {}
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesStabilizationBase<Mu,SH,TC>::init_context( AssemblyContext& context )
@@ -62,8 +54,6 @@ namespace GRINS
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_flow_vars.u())->get_d2phi();
     context.get_element_fe(this->_temp_vars.T())->get_d2phi();
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -83,7 +73,8 @@ namespace GRINS
 
     libMesh::Real divU = grad_u(0) + grad_v(1);
 
-    if( this->_dim == 3 )
+
+    if( this->mesh_dim(context) == 3 )
       {
 	U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 	divU += (context.fixed_interior_gradient(this->_flow_vars.w(), qp))(2);
@@ -122,7 +113,8 @@ namespace GRINS
 
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
 			     context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(this->_dim == 3)
+
+    if(this->mesh_dim(context) == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     libMesh::RealGradient grad_p = context.fixed_interior_gradient(this->_press_var.p(), qp);
@@ -138,7 +130,7 @@ namespace GRINS
     libMesh::RealGradient divGradUT;
     libMesh::RealGradient divdivU;
 
-    if( this->_dim < 3 )
+    if( this->mesh_dim(context) < 3 )
       {
 	rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
 	divGradU  = _stab_helper.div_GradU( hess_u, hess_v );
@@ -175,7 +167,7 @@ namespace GRINS
 
 	libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
 
-	if(this->_dim == 3)
+	if(this->mesh_dim(context) == 3)
 	  {
 	    libMesh::Gradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
 
@@ -190,12 +182,12 @@ namespace GRINS
 	    gradTdivU(1) += grad_T(1)*grad_w(2);
 	    gradTdivU(2) += grad_T(2)*divU;
 	  }
-      
+
 	divT += this->_mu.deriv(T)*( gradTgradu + gradTgraduT - 2.0/3.0*gradTdivU );
       }
 
     libMesh::RealGradient rhog( rho*this->_g(0), rho*this->_g(1) );
-    if(this->_dim == 3)
+    if(this->mesh_dim(context) == 3)
       rhog(2) = rho*this->_g(2);
 
     return rhoUdotGradU + grad_p - divT - rhog;
@@ -210,7 +202,7 @@ namespace GRINS
 
     libMesh::RealGradient u_dot( context.interior_value(this->_flow_vars.u(), qp), context.interior_value(this->_flow_vars.v(), qp) );
 
-    if(this->_dim == 3)
+    if(this->mesh_dim(context) == 3)
       u_dot(2) = context.interior_value(this->_flow_vars.w(), qp);
 
     return rho*u_dot;
@@ -229,7 +221,8 @@ namespace GRINS
 
     libMesh::RealGradient rhocpU( rho_cp*context.fixed_interior_value(this->_flow_vars.u(), qp),
 				  rho_cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
-    if(this->_dim == 3)
+
+    if(this->mesh_dim(context) == 3)
       rhocpU(2) = rho_cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
 
     libMesh::Real hess_term = hess_T(0,0) + hess_T(1,1);

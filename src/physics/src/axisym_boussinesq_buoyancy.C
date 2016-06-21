@@ -45,12 +45,11 @@ namespace GRINS
   AxisymmetricBoussinesqBuoyancy::AxisymmetricBoussinesqBuoyancy( const std::string& physics_name,
 								  const GetPot& input )
     : Physics(physics_name, input),
-      _flow_vars(input, PhysicsNaming::incompressible_navier_stokes()),
-      _press_var(input,PhysicsNaming::incompressible_navier_stokes(), true /*is_constraint_var*/),
-      _temp_vars(input, PhysicsNaming::axisymmetric_heat_transfer())
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,physics_name)))
   {
     this->read_input_options(input);
-    this->register_variables();
   }
 
   void AxisymmetricBoussinesqBuoyancy::read_input_options( const GetPot& input )
@@ -67,27 +66,6 @@ namespace GRINS
 
     _g(0) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 0 );
     _g(1) = input("Physics/"+PhysicsNaming::axisymmetric_boussinesq_buoyancy()+"/g", 0.0, 1 );
-
-    return;
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::register_variables()
-  {
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::pressure_section(),
-                                                                 this->_press_var);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::velocity_section(),
-                                                                 this->_flow_vars);
-    GRINSPrivate::VariableWarehouse::check_and_register_variable(VariablesParsing::temperature_section(),
-                                                                 this->_temp_vars);
-  }
-
-  void AxisymmetricBoussinesqBuoyancy::init_variables( libMesh::FEMSystem* system )
-  {
-    this->_dim = system->get_mesh().mesh_dimension();
-
-    this->_temp_vars.init(system);
-    this->_flow_vars.init(system);
-    this->_press_var.init(system);
   }
 
   void AxisymmetricBoussinesqBuoyancy::init_context( AssemblyContext& context )

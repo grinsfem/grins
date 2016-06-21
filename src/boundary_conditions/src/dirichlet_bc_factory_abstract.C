@@ -25,20 +25,17 @@
 // This class
 #include "grins/dirichlet_bc_factory_abstract.h"
 
-// Full specialization for the Factory<DirichetBoundary>
-namespace libMesh
-{
-  template<>
-  std::map<std::string, Factory<DirichletBoundary>*>&
-  Factory<DirichletBoundary>::factory_map()
-  {
-    static std::map<std::string, Factory<DirichletBoundary>*> _map;
-    return _map;
-  }
-} // end namespace libMesh
-
 namespace GRINS
 {
+  // Full specialization for the Factory<DirichletBoundary>
+  template<>
+  std::map<std::string, FactoryAbstract<libMesh::DirichletBoundary>*>&
+  FactoryAbstract<libMesh::DirichletBoundary>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<libMesh::DirichletBoundary>*> _map;
+    return _map;
+  }
+
   // Definition of static members
   template<>
   const GetPot* FactoryWithGetPot<libMesh::DirichletBoundary>::_input = NULL;

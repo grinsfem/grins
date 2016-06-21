@@ -43,24 +43,13 @@ namespace GRINS
     : AveragedTurbineBase<Mu>(physics_name, input)
   {
     this->_ic_handler = new GenericICHandler( physics_name, input );
-
-    return;
   }
-
-  template<class Mu>
-  AveragedTurbine<Mu>::~AveragedTurbine()
-  {
-    return;
-  }
-
 
   template<class Mu>
   void AveragedTurbine<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
-
-    return;
   }
 
 
@@ -124,7 +113,7 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fs = context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
-    if( this->_dim == 3 )
+    if( this->mesh_dim(context) == 3 )
       {
         Kuw = &context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.w()); // R_{u},{w}
         Kvw = &context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.w()); // R_{v},{w}
@@ -151,7 +140,7 @@ namespace GRINS
         s = context.interior_value(this->fan_speed_var(), qp);
 
         libMesh::NumberVectorValue U(u,v);
-        if (this->_dim == 3)
+        if (this->mesh_dim(context) == 3)
           U(2) = context.interior_value(this->_flow_vars.w(), qp); // w
 
         libMesh::NumberVectorValue U_B_1;
@@ -190,7 +179,7 @@ namespace GRINS
                     Ksv(0,j) -= jac_j * U_B_1(d) * dFdU(d,1);
                   }
 
-                if (this->_dim == 3)
+                if (this->mesh_dim(context) == 3)
                   {
                     for (unsigned int d=0; d != 3; ++d)
                       (*Ksw)(0,j) -= jac_j * U_B_1(d) * dFdU(d,2);
@@ -206,14 +195,14 @@ namespace GRINS
             Fu(i) += F(0)*jac_i;
             Fv(i) += F(1)*jac_i;
 
-            if( this->_dim == 3 )
+            if( this->mesh_dim(context) == 3 )
               (*Fw)(i) += F(2)*jac_i;
 
 	    if( compute_jacobian )
               {
                 Kus(i,0) += dFds(0) * jac_i;
                 Kvs(i,0) += dFds(1) * jac_i;
-                if( this->_dim == 3 )
+                if( this->mesh_dim(context) == 3 )
                   (*Kws)(i,0) += dFds(2) * jac_i;
 
                 for (unsigned int j=0; j != n_u_dofs; j++)
@@ -224,7 +213,7 @@ namespace GRINS
                     Kvu(i,j) += jac_ij * dFdU(1,0);
                     Kvv(i,j) += jac_ij * dFdU(1,1);
 
-                    if( this->_dim == 3 )
+                    if( this->mesh_dim(context) == 3 )
                       {
                         (*Kuw)(i,j) += jac_ij * dFdU(0,2);
                         (*Kvw)(i,j) += jac_ij * dFdU(1,2);
@@ -297,7 +286,7 @@ namespace GRINS
             context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
     const libMesh::DenseSubVector<libMesh::Number> &Us =
-      context.get_elem_solution_rate(this->_fan_speed_var);
+      context.get_elem_solution_rate(this->fan_speed_var());
 
     const libMesh::Number& fan_speed = Us(0);
 

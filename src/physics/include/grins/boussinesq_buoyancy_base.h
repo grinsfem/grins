@@ -28,9 +28,8 @@
 
 // GRINS
 #include "grins/physics.h"
-#include "grins/velocity_fe_variables.h"
-#include "grins/pressure_fe_variable.h"
-#include "grins/primitive_temp_fe_variables.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/single_variable.h"
 
 // libMesh
 #include "libmesh/point.h"
@@ -43,10 +42,7 @@ namespace GRINS
     
     BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyBase();
-
-    //! Initialization of BoussinesqBuoyancy variables
-    virtual void init_variables( libMesh::FEMSystem* system );
+    ~BoussinesqBuoyancyBase(){};
 
   protected:
 
@@ -62,9 +58,9 @@ namespace GRINS
                            const std::string& material,
                            const std::string& property );
 
-    VelocityFEVariables _flow_vars;
-    PressureFEVariable _press_var;
-    PrimitiveTempFEVariables _temp_vars;
+    const VelocityVariable& _flow_vars;
+    const PressureFEVariable& _press_var;
+    const PrimitiveTempFEVariables& _temp_vars;
 
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
@@ -78,14 +74,9 @@ namespace GRINS
     //! Gravitational vector
     libMesh::Point _g;
 
-     //! Physical dimension of problem
-    unsigned int _dim;
-
   private:
 
     BoussinesqBuoyancyBase();
-
-    void register_variables();
 
   };
 

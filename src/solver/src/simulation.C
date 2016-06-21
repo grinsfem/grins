@@ -35,6 +35,7 @@
 #include "grins/strategies_parsing.h"
 #include "grins/physics_builder.h"
 #include "grins/error_estimator_factory_base.h"
+#include "grins/variable_builder.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -144,6 +145,8 @@ namespace GRINS
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
     if( this->_print_log_info ) libMesh::perflog.enable_logging();
+
+    VariableBuilder::build_variables(input,(*_multiphysics_system));
 
     PhysicsList physics_list = PhysicsBuilder::build_physics_map(input);
 

@@ -32,6 +32,7 @@
 #include "grins/cached_values.h"
 #include "grins/inc_navier_stokes_base.h"
 
+
 // libMesh
 #include "libmesh/fem_system.h"
 #include "libmesh/getpot.h"
@@ -54,12 +55,6 @@ namespace GRINS
     ScalarODE( const std::string& physics_name, const GetPot& input );
 
     ~ScalarODE(){};
-
-    //! Initialization of variables
-    /*!
-      Add scalar variable(s) to system.
-     */
-    virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets scalar variable(s) to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
@@ -84,7 +79,7 @@ namespace GRINS
 				          AssemblyContext& context,
 				          CachedValues& cache );
 
-    VariableIndex scalar_ode_var() const { return _scalar_ode_var; }
+    VariableIndex scalar_ode_var() const { return _var.var(); }
 
   private:
 
@@ -95,18 +90,12 @@ namespace GRINS
       constraint_function,
       mass_residual_function;
 
-    // Number of components of the scalar solution variable; defaults
-    // to 1.
-    libMesh::Number _order;
-
     // Perturbation to use for finite differencing of functions
     libMesh::Number _epsilon;
 
-    VariableIndex _scalar_ode_var; /* Index for turbine speed scalar */
-
-    std::string _scalar_ode_var_name;
-
     const GetPot & _input;
+
+    ScalarVariable& _var;
 
     ScalarODE();
 
