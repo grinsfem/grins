@@ -256,6 +256,19 @@ namespace GRINS
     return;
   }
 
+  void MultiphysicsSystem::assembly( bool get_residual,
+                                     bool get_jacobian,
+                                     bool apply_heterogeneous_constraints )
+  {
+    // First do any preassembly that the Physics requires (which by default is none)
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+         physics_iter != _physics_list.end();
+         physics_iter++ )
+      (physics_iter->second)->preassembly(*this);
+
+    // Now do the assembly
+    libMesh::FEMSystem::assembly(get_residual,get_jacobian,apply_heterogeneous_constraints);
+  }
 
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,
 					      libMesh::DiffContext& context,

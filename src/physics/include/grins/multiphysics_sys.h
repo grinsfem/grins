@@ -124,6 +124,12 @@ namespace GRINS
     //! Context initialization. Calls each physics implementation of init_context()
     virtual void init_context( libMesh::DiffContext &context );
 
+    //! Override FEMSystem::assembly
+    /*! This allows us to insert things like preassembly(). */
+    virtual void assembly( bool get_residual,
+                           bool get_jacobian,
+                           bool apply_heterogeneous_constraints = false );
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
