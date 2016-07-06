@@ -52,10 +52,6 @@ namespace GRINSTesting
   public:
     CPPUNIT_TEST_SUITE( RayfireTest );
 
-    // test designed to produce libmesh_error
-    // will FAIL make check
-    // CPPUNIT_TEST( origin_not_on_boundary );
-
     CPPUNIT_TEST( quad4_all_sides );
     CPPUNIT_TEST( quad9_all_sides );
     CPPUNIT_TEST( test_slanted_quad4 );
@@ -69,22 +65,6 @@ namespace GRINSTesting
     CPPUNIT_TEST_SUITE_END();
 
   public:
-  
-    // these tests should produce a "bad origin" error
-/*    void origin_not_on_boundary()
-    {
-        // origin not on boundary of element
-        // mesh is 1 elem
-//        libMesh::Point origin = libMesh::Point(0.5,0.5);
-//        libMesh::Node calc_end_node_straight = libMesh::Node(1,0.5);
-//        this->run_test(origin,0.0,calc_end_node_straight,1,0,"quad4",1);
-        
-        // origin not on boundary element
-        // mesh is 9 elem in 3x3 square
-//        libMesh::Point origin = libMesh::Point(1.5,1.5);
-//        libMesh::Node calc_end_node_straight = libMesh::Node(3,0.1);
-//        this->run_test(origin,0.0,calc_end_node_straight,9,2,"quad4",2);
-    }*/
     
     void quad4_all_sides()
     {
@@ -111,7 +91,7 @@ namespace GRINSTesting
         
       mesh->prepare_for_use();
       
-      _run_test_on_all_point_combinations(pts,mesh);
+      run_test_on_all_point_combinations(pts,mesh);
       
     }
     
@@ -146,7 +126,7 @@ namespace GRINSTesting
           
       mesh->prepare_for_use();
       
-      _run_test_on_all_point_combinations(pts,mesh);
+      run_test_on_all_point_combinations(pts,mesh);
       
     }
     
@@ -175,7 +155,7 @@ namespace GRINSTesting
           
       mesh->prepare_for_use();
       
-      _run_test_on_all_point_combinations(pts,mesh);
+      run_test_on_all_point_combinations(pts,mesh);
       
     }
     
@@ -304,7 +284,7 @@ namespace GRINSTesting
       run_test_with_mesh(mesh,origin,theta,calc_end_node,exit_elem);
     }
 
-    void _run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    void run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
     {  
       // iterate over the starting points
       for(unsigned int i=0; i<pts.size(); i++)
@@ -319,7 +299,7 @@ namespace GRINSTesting
                     
           libMesh::Point end_point = pts[j];
                 
-          libMesh::Real theta = _calc_theta(start_point,end_point);
+          libMesh::Real theta = calc_theta(start_point,end_point);
                 
           // run the test
           this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
@@ -336,10 +316,10 @@ namespace GRINSTesting
     
       const libMesh::Elem* original_elem = mesh->elem(exit_elem);
     
-      const libMesh::Elem* rayfire_elem = rayfire->translate(original_elem->id());
+      const libMesh::Elem* rayfire_elem = rayfire->map_to_rayfire_elem(original_elem->id());
     
       if (!rayfire_elem)
-        libmesh_error_msg("Attempted to translate an element that is not in the Rayfire");
+        libmesh_error_msg("Attempted to map an element that is not in the Rayfire");
     
       CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(0), (*(rayfire_elem->get_node(1)))(0),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(1), (*(rayfire_elem->get_node(1)))(1),libMesh::TOLERANCE);
@@ -351,9 +331,9 @@ namespace GRINSTesting
       return mesh_builder.build( input, *TestCommWorld );
     }
     
-    libMesh::Real _calc_theta(libMesh::Point& start, libMesh::Point end)
+    libMesh::Real calc_theta(libMesh::Point& start, libMesh::Point end)
     {
-        return std::atan2( (end(1)-start(1)), (end(0)-start(0)) );
+      return std::atan2( (end(1)-start(1)), (end(0)-start(0)) );
     }
     
   };
