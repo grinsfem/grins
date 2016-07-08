@@ -21,43 +21,66 @@
       # Gravity vector
       g = '0.0 0.0' #[m/s^2]
 
+      Tmax = '700'
+
       # Initial Conditions
       ic_ids = '0'
       ic_types = 'parsed'
-      ic_variables = 'Y_O2:Y_O3:T:u'
-      ic_values = '{0.8}{0.2}{Tmax:=1000;300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{64000.0*(y*(0.005-y))}'
-
-      # Boundary ids:
-      # y = y_min --> 0
-      # x = x_max --> 1
-      # y = y_max --> 2
-      # x = x_min --> 3
-      vel_bc_ids = '3 0 2'
-      vel_bc_types = 'parsed_dirichlet no_slip no_slip'
-      vel_bc_variables = 'u'
-      vel_bc_values = '64000.0*(y*(0.005-y))'
-
-      temp_bc_ids = '0 2 3'
-      temp_bc_types = 'parsed_dirichlet parsed_dirichlet isothermal'
-
-      temp_bc_variables = 'T T na'
-      temp_bc_values = '{Tmax:=1000;300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}
-                        {Tmax:=1000;300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}'
-
-      T_wall_3 = '300'
-
-      species_bc_ids = '3'
-      species_bc_types = 'prescribed_species'
-
-      bound_species_3 = '0.0 0.8 0.2'
+      ic_variables = 'Y_O2:Y_O3:T:Ux'
+      ic_values = '{0.8}{0.2}{Tmax:=${Physics/ReactingLowMachNavierStokes/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{64000.0*(y*(0.005-y))}'
 
       enable_thermo_press_calc = 'false'
       pin_pressure = 'false'
 
       output_vars = 'mole_fractions omega_dot'
+[]
 
-   [../ReactingLowMachNavierStokesSPGSMStabilization]
-      material = 'OzoneGas'
+[BoundaryConditions]
+   bc_ids = '0:2 3 1'
+   bc_id_name_map = 'Walls Inlet Outlet'
+
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         Ux = '64000.0*(y*(0.005-y))'
+      [../]
+
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+
+      [./SpeciesMassFractions]
+         type = 'constant_dirichlet'
+         Y_O2 = '0.8'
+         Y_O3 = '0.2'
+      [../]
+   [../]
+
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         T = '{Tmax:=${Physics/ReactingLowMachNavierStokes/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
 
 [Stabilization]
@@ -74,14 +97,8 @@
        x_max = '0.02'
        y_min = '0'
        y_max = '0.005'
-       n_elems_x = '20'
-       n_elems_y = '5'
-
-   [../Refinement]
-       uniformly_refine = '2'
-
-   #[./Read]
-   #   filename = 'unif_ref_1.xda'
+       n_elems_x = '80'
+       n_elems_y = '20'
 []
 
 [Materials]
@@ -104,7 +121,7 @@
       order = 'FIRST'
 
    [../Velocity]
-      names = 'u v w'
+      names = 'Ux Uy'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
 
@@ -117,20 +134,12 @@
       names = 'Y_'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
+      material = 'OzoneGas'
 []
 
 [restart-options]
    #restart_file = 'unif_ref_1_conv.xdr'
 []
-
-#[MeshAdaptivity]
-#   mesh_adaptive = 'true'
-#   max_refinement_steps = '2'
-#   absolute_global_tolerance = '0.0'
-#   estimator_type = 'kelly'
-#[]
-
-
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
