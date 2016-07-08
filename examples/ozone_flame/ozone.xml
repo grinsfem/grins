@@ -108,11 +108,11 @@
     <reaction reversible="yes" type="threeBody" id="0001">
       <equation>O + O [=] O2</equation>
       <rateCoeff>
-        <ModifiedArrhenius>
+        <Arrhenius>
            <A units="cm6/mol2/s">2.9e+17</A>
            <b>-1.0</b>
            <E units="kJ/mol">0.0</E>
-        </ModifiedArrhenius>
+        </Arrhenius>
         <efficiencies O3="0.92" O2="0.94" O="1.13"></efficiencies>
       </rateCoeff>
       <reactants>O:2.0</reactants>
