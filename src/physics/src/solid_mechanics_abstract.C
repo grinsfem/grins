@@ -48,6 +48,8 @@ namespace GRINS
     // will all have a '-', so we need to set that so the input tractions are
     // positive.
     _disp_vars.set_neumann_bc_is_positive(false);
+
+    this->check_var_subdomain_consistency(_disp_vars);
   }
 
   void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )

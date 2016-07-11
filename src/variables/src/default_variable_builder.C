@@ -31,12 +31,20 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/mesh_base.h"
 
 namespace GRINS
 {
   void DefaultVariableBuilder::build_variables_impl( const GetPot& input,
                                                      MultiphysicsSystem& system )
   {
+    std::set<libMesh::subdomain_id_type> mesh_subdomain_ids;
+    const libMesh::MeshBase& mesh = system.get_mesh();
+
+    // Note this does a full loop of the mesh, these are not cached
+    // So we compute them once
+    mesh.subdomain_ids(mesh_subdomain_ids);
+
     std::vector<std::string> var_sections;
     this->parse_var_sections_vector( input, var_sections );
 
@@ -61,12 +69,17 @@ namespace GRINS
         // Parse FE order
         std::string order = this->parse_fe_order( input, var_section, var_type );
 
+        // Parse the subdomain_ids
+        std::set<libMesh::subdomain_id_type> subdomain_ids;
+        this->parse_subdomain_ids( mesh_subdomain_ids, input, var_section, subdomain_ids );
+
         // Add variables to system
         std::vector<VariableIndex> var_indices;
-        this->add_vars_to_system( system, var_names, fe_family, order, var_indices );
+        this->add_vars_to_system( system, var_names, fe_family, order, var_indices, subdomain_ids );
+
 
         // Build FEVariablesBase object
-        SharedPtr<FEVariablesBase> fe_var = this->build_fe_var( var_type, var_names, var_indices );
+        SharedPtr<FEVariablesBase> fe_var = this->build_fe_var( var_type, var_names, var_indices, subdomain_ids );
 
         // Add to VariableWarehouse
         this->add_variable_to_warehouse( fe_var, var_section );
@@ -105,6 +118,29 @@ namespace GRINS
     VariableFactoryAbstract::set_var_section(VariablesParsing::variables_section()+"/"+var_section);
 
     return VariableFactoryAbstract::parse_fe_order(var_type);
+  }
+
+  void DefaultVariableBuilder::parse_subdomain_ids( const std::set<libMesh::subdomain_id_type>& mesh_subdomain_ids,
+                                                    const GetPot& input,
+                                                    const std::string& var_section,
+                                                    std::set<libMesh::subdomain_id_type>& subdomain_ids )
+  {
+    std::string input_sec(VariablesParsing::variables_section()+"/"+var_section+"/enabled_subdomains");
+    if( input.have_variable(input_sec) )
+      {
+        unsigned int invalid_id = std::numeric_limits<unsigned int>::max();
+
+        unsigned int n_ids = input.vector_variable_size(input_sec);
+        for( unsigned int i = 0; i < n_ids; i++ )
+          {
+            unsigned int id = input(input_sec,invalid_id,i);
+            subdomain_ids.insert(id);
+          }
+
+        for( std::set<libMesh::subdomain_id_type>::const_iterator it = subdomain_ids.begin(); it != subdomain_ids.end(); ++it )
+          if( mesh_subdomain_ids.find(*it) == mesh_subdomain_ids.end() )
+            libmesh_error_msg("ERROR: Could not find subdomain " << *it << " in the mesh!");
+      }
   }
 
 } // end namespace GRINS

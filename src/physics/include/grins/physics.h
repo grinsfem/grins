@@ -73,6 +73,7 @@ namespace GRINS
   class NBCContainer;
   class DBCContainer;
   class MultiphysicsSystem;
+  class FEVariablesBase;
 
   template <typename Scalar>
   class PostProcessedQuantities;
@@ -262,6 +263,9 @@ namespace GRINS
 
     unsigned int mesh_dim( const AssemblyContext& context ) const
     { return context.get_system().get_mesh().mesh_dimension(); }
+
+    //! Check that var is enabled on at least the subdomains this Physics is
+    void check_var_subdomain_consistency( const FEVariablesBase& var ) const;
 
     //! Name of the physics object. Used for reading physics specific inputs.
     /*! We use a reference because the physics names are const global objects

@@ -89,6 +89,7 @@ namespace GRINS
                                   const std::set<BoundaryID>& bc_ids,
                                   libMesh::DofMap& dof_map,
                                   std::set<std::string>& var_sections,
+                                  const std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map,
                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs);
 
     void parse_and_build_bc_id_map( const GetPot& input,
@@ -109,6 +110,18 @@ namespace GRINS
 
     libMesh::RealVectorValue parse_periodic_offset(const GetPot& input,
                                                    const std::string& section) const;
+
+    //! Build up bc_id to subdomain_id map
+    /*! we also check and make sure that there's only one subdomain id
+        per boundary id. If not, we throw an error. */
+    void build_bc_to_subdomain_map_check_with_mesh
+    ( const MultiphysicsSystem& system,
+      std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map ) const;
+
+    //! Check if the Variable var is active on the given subdomain_id
+    bool is_var_active( const FEVariablesBase& var,
+                        const std::vector<libMesh::subdomain_id_type>& subdomain_ids ) const;
+
   };
 } // end namespace GRINS
 

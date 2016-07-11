@@ -389,6 +389,7 @@ AC_CONFIG_LINKS([test/grids/mixed_dim_circle.exo:test/grids/mixed_dim_circle.exo
 AC_CONFIG_LINKS([test/grids/mixed_dim_symmetric_square.exo:test/grids/mixed_dim_symmetric_square.exo])
 AC_CONFIG_LINKS([test/grids/poiseuille_verification.e:test/grids/poiseuille_verification.e])
 AC_CONFIG_LINKS([test/grids/mixed_quad_tri_square_mesh.xda:test/grids/mixed_quad_tri_square_mesh.xda])
+AC_CONFIG_LINKS([test/grids/cylinder.exo:test/grids/cylinder.exo])
 
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read restarts without having to

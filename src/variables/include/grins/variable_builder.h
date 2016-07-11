@@ -71,13 +71,15 @@ namespace GRINS
                              const std::vector<std::string>& var_names,
                              const std::string& fe_family,
                              const std::string& order,
-                             std::vector<VariableIndex>& var_indices );
+                             std::vector<VariableIndex>& var_indices,
+                             const std::set<libMesh::subdomain_id_type>& subdomain_ids);
 
 
     //! Sets appropriate data in the VariableFactoryAbstract and calls VariableFactoryAbstract::build()
     SharedPtr<FEVariablesBase> build_fe_var( const std::string& var_type,
                                              const std::vector<std::string>& var_names,
-                                             const std::vector<VariableIndex>&  var_indices );
+                                             const std::vector<VariableIndex>&  var_indices,
+                                             const std::set<libMesh::subdomain_id_type>& subdomain_ids );
 
   };
 } // end namespace GRINS

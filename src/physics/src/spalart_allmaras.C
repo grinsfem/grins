@@ -62,6 +62,10 @@ namespace GRINS
       _wall_ids.insert(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/wall_ids", 0, i ));
 
     this->_ic_handler = new GenericICHandler( physics_name, input );
+
+    this->check_var_subdomain_consistency(_flow_vars);
+    this->check_var_subdomain_consistency(_press_var);
+    this->check_var_subdomain_consistency(_turbulence_vars);
   }
 
   template<class Mu>

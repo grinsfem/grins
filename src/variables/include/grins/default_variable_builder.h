@@ -74,6 +74,11 @@ namespace GRINS
     { std::string input_sec = VariablesParsing::variables_section()+"/"+var_section+"/type";
       return input(input_sec,var_section); }
 
+    void parse_subdomain_ids( const std::set<libMesh::subdomain_id_type>& mesh_subdomain_ids,
+                              const GetPot& input,
+                              const std::string& var_section,
+                              std::set<libMesh::subdomain_id_type>& subdomain_ids );
+
   };
 } // end namespace GRINS
 

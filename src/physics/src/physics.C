@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/ic_handling_base.h"
+#include "grins/fe_variables_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -285,6 +286,23 @@ namespace GRINS
     fe_new->reinit (elem, &coor);
 
     return fe_new;
+  }
+
+  void Physics::check_var_subdomain_consistency( const FEVariablesBase& var ) const
+  {
+    const std::set<libMesh::subdomain_id_type>& var_subdomains = var.subdomain_ids();
+
+    // If both are empty or only the var is empty, we don't need to do anything
+    // since the check is automatically satisified. Empty in both cases means
+    // enabled on all subdomains
+
+    if( _enabled_subdomains.empty() && !var_subdomains.empty() )
+      libmesh_error_msg("ERROR: Physics enabled on all subdomains but variable is not!");
+
+    if( !_enabled_subdomains.empty() && !var_subdomains.empty() )
+      for( std::set<libMesh::subdomain_id_type>::const_iterator it = _enabled_subdomains.begin(); it != _enabled_subdomains.end(); ++it )
+        if( var_subdomains.find(*it) == var_subdomains.end() )
+          libmesh_error_msg("ERROR: Could not find subdomain " << *it << " in varaible!");
   }
 
 #ifdef GRINS_USE_GRVY_TIMERS

@@ -56,6 +56,9 @@ namespace GRINS
     _press_var.set_is_constraint_var(true);
 
     MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
+
+    this->check_var_subdomain_consistency(_flow_vars);
+    this->check_var_subdomain_consistency(_press_var);
   }
 
   template<class Mu>

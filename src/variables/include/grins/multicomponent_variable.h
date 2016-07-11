@@ -37,8 +37,9 @@ namespace GRINS
   public:
 
     MulticomponentVariable( const std::vector<std::string>& var_names,
-                           const std::vector<VariableIndex>& var_indices )
-      : FEVariablesBase(var_names,var_indices)
+                            const std::vector<VariableIndex>& var_indices,
+                            const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+      : FEVariablesBase(var_names,var_indices,subdomain_ids)
     {}
 
     virtual ~MulticomponentVariable(){}
@@ -63,8 +64,9 @@ namespace GRINS
     SpeciesMassFractionsVariable( const std::vector<std::string>& var_names,
                                   const std::vector<VariableIndex>& var_indices,
                                   const std::string& prefix,
-                                  const std::string& material )
-      : MulticomponentVariable(var_names,var_indices),
+                                  const std::string& material,
+                                  const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+      : MulticomponentVariable(var_names,var_indices,subdomain_ids),
         _prefix(prefix),
         _material(material)
     {}

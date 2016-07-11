@@ -1,0 +1,160 @@
+# Materials section
+[Materials]
+   [./Fluid]
+      [./ThermalConductivity]
+         model = 'constant'
+         value = '1'
+      [../]
+      [./Density]
+         value = '1'
+      [../]
+      [./Viscosity]
+         model = 'constant'
+         value = '1'
+      [../]
+      [./SpecificHeat]
+         model = 'constant'
+         value =  '1'
+      [../]
+   [../]
+   [./Solid]
+      [./ThermalConductivity]
+         model = 'constant'
+         value = '1'
+      [../]
+      [./Density]
+         value = '1'
+      [../]
+      [./SpecificHeat]
+         model = 'constant'
+         value =  '1'
+      [../]
+   [../]
+[]
+
+[Physics]
+
+   enabled_physics = 'IncompressibleNavierStokes
+                      HeatTransfer
+                      HeatConduction'
+
+   [./IncompressibleNavierStokes]
+      enabled_subdomains = '2'
+      material = 'Fluid'
+   [../]
+
+   [./HeatTransfer]
+      enabled_subdomains = '2'
+      material = 'Fluid'
+   [../]
+
+   [./HeatConduction]
+      enabled_subdomains = '1'
+      material = 'Solid'
+   [../]
+[]
+
+[Variables]
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+
+   [./Velocity]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+      enabled_subdomains = '2'
+   [../]
+
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+      enabled_subdomains = '2'
+   [../]
+
+[]
+
+[Mesh]
+   [./Read]
+      filename = 'cylinder.exo'
+[]
+
+[BoundaryConditions]
+
+   bc_ids = '1 2 3 4 5'
+   bc_id_name_map = 'Inlet OuterWalls Outlet Hole Interface'
+
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         Ux = '-(y+2)*(y-2)'
+         Uy = '0.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T =  '1.0'
+      [../]
+   [../]
+
+   [./OuterWalls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '1.0'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+
+   [./Hole]
+      [./Temperature]
+         type = 'isothermal'
+         T = '10.0'
+      [../]
+   [../]
+
+   [./Interface]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '30'
+   max_linear_iterations = '1000'
+   relative_residual_tolerance = '1.0e-10'
+   verify_analytic_jacobians = '0.0'
+   use_numerical_jacobians_only = 'false'
+[]
+
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'hot_cylinder'
+   output_residual = 'false'
+   output_format = 'ExodusII'
+[]
+
+[screen-options]
+   system_name = 'HotCylinder'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

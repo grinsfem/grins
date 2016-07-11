@@ -257,6 +257,7 @@ TESTS += regression/penalty_poiseuille.sh
 TESTS += regression/penalty_poiseuille_stab.sh
 TESTS += regression/redistribute.sh
 TESTS += regression/coupled_stokes_ns.sh
+TESTS += regression/hot_cylinder.sh
 
 TESTS += regression/reacting_low_mach_cantera.sh
 XFAIL_TESTS += regression/reacting_low_mach_cantera.sh

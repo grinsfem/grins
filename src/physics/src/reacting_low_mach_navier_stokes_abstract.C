@@ -72,6 +72,11 @@ namespace GRINS
       }
 
     this->read_input_options(input);
+
+    this->check_var_subdomain_consistency(_flow_vars);
+    this->check_var_subdomain_consistency(_press_var);
+    this->check_var_subdomain_consistency(_temp_vars);
+    this->check_var_subdomain_consistency(_species_vars);
   }
 
   void ReactingLowMachNavierStokesAbstract::read_input_options( const GetPot& input )
