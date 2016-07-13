@@ -76,8 +76,8 @@ namespace GRINS
       ss <<"The supplied mesh object is " <<mesh_base.mesh_dimension() 
          <<"D, but the RayfireMesh object was created with the "
          <<_dim <<"D constructor";
-         
-      libmesh_error_msg(ss); 
+
+      libmesh_error_msg(ss.str());
     }
       
     _mesh = new libMesh::Mesh(mesh_base.comm(),(unsigned char)1);
