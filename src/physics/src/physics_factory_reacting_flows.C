@@ -23,6 +23,7 @@
 
 // Physics whose factories we're instantiating
 #include "grins/reacting_low_mach_navier_stokes.h"
+#include "grins/reacting_low_mach_navier_stokes_spgsm_stab.h"
 
 namespace GRINS
 {
@@ -206,5 +207,8 @@ namespace GRINS
   // Instantiate all the "reacting flow" Physics factories.
   PhysicsFactoryReactingFlows<ReactingLowMachNavierStokes> grins_factory_rlmns
   (PhysicsNaming::reacting_low_mach_navier_stokes(),PhysicsNaming::reacting_low_mach_navier_stokes());
+
+  PhysicsFactoryReactingFlows<ReactingLowMachNavierStokesSPGSMStabilization> grins_factory_rlmns_spgsm_stab
+  (PhysicsNaming::reacting_low_mach_navier_stokes_spgsm_stab(),PhysicsNaming::reacting_low_mach_navier_stokes());
 
 } // end namespace GRINS

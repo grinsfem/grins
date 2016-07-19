@@ -407,6 +407,11 @@ AC_CONFIG_LINKS([test/input_files/air_4sp.xml:test/input_files/air_4sp.xml])
 AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test.xml])
 AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
 AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
+AC_CONFIG_LINKS([test/input_files/ozone_flame_antioch_constant_restart.xdr:test/input_files/ozone_flame_antioch_constant_restart.xdr])
+AC_CONFIG_LINKS([test/input_files/ozone.xml:test/input_files/ozone.xml])
+AC_CONFIG_LINKS([test/input_files/ozone_cea_data.dat:test/input_files/ozone_cea_data.dat])
+AC_CONFIG_LINKS([test/input_files/ozone_species_data.dat:test/input_files/ozone_species_data.dat])
+AC_CONFIG_LINKS([test/input_files/ozone_transport_data.dat:test/input_files/ozone_transport_data.dat])
 
 dnl----------------------------------------------
 dnl Generate header with paths for use in testing
@@ -432,6 +437,7 @@ AC_CONFIG_FILES(examples/sa_airfoil/run.sh,         [chmod +x examples/sa_airfoi
 AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/suspended_cable/run.sh])
 AC_CONFIG_FILES(examples/mixed_dim_inflating_sheet/run.sh,   [chmod +x examples/mixed_dim_inflating_sheet/run.sh])
 AC_CONFIG_FILES(examples/transient_amr/run.sh,   [chmod +x examples/transient_amr/run.sh])
+AC_CONFIG_FILES(examples/ozone_flame/run.sh,                 [chmod +x examples/ozone_flame/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+DEFAULT_SOLVER_OPTIONS="-ksp_type gmeres -pc_type bjacobi -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/ozone_flame/ozone_antioch.in $GRINS_SOLVER_OPTIONS
