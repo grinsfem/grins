@@ -162,6 +162,9 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
+    //! Perform any necessary setup before element assembly begins
+    virtual void preassembly( MultiphysicsSystem & /*system*/ ){};
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
