@@ -411,6 +411,7 @@ AC_CONFIG_LINKS([test/input_files/ozone_flame_antioch_constant_restart.xdr:test/
 AC_CONFIG_LINKS([test/input_files/ozone.xml:test/input_files/ozone.xml])
 AC_CONFIG_LINKS([test/input_files/ozone_cea_data.dat:test/input_files/ozone_cea_data.dat])
 AC_CONFIG_LINKS([test/input_files/ozone_species_data.dat:test/input_files/ozone_species_data.dat])
+AC_CONFIG_LINKS([test/input_files/ozone_transport_data.dat:test/input_files/ozone_transport_data.dat])
 
 dnl----------------------------------------------
 dnl Generate header with paths for use in testing
