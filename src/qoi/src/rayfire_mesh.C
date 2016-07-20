@@ -135,8 +135,8 @@ namespace GRINS
 
     return NULL;
   }
-  
-  
+
+
   void RayfireMesh::reinit(const libMesh::MeshBase& mesh_base)
   {
     // store the elems to be refined until later
@@ -362,8 +362,8 @@ namespace GRINS
     // no convergence
     return false;
   }
-  
-  
+
+
   void RayfireMesh::refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem)
   {
     // these nodes cannot change
@@ -390,11 +390,11 @@ namespace GRINS
 
     const libMesh::Elem* next_elem;
     const libMesh::Elem* prev_elem = main_elem->child(i);
-    
+
     // if prev_elem is INACTIVE, then more than one refinement
     // has taken place between reinit() calls and will
     // break this
-    libmesh_assert( prev_elem->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED );
+    libmesh_assert_equal_to( prev_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
 
     // There are _mesh->n_nodes()-1 number of nodes already in _mesh
     // so use n_nodes() as the ID of the next node to add
@@ -410,8 +410,8 @@ namespace GRINS
     while(!(end_point->absolute_fuzzy_equals(*end_node)))
       {
         // again, checking for multiple refinements
-        libmesh_assert( next_elem->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED );
-        
+        libmesh_assert_equal_to( next_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
+
         // add end point as node on the rayfire mesh
         _mesh->add_point(*end_point,end_node_id);
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
