@@ -214,8 +214,19 @@ namespace GRINS
 
         // All the boundary ids have the same subdomain id (this is checked
         // earlier), so just grab the first one
-        const std::vector<libMesh::subdomain_id_type>& subdomain_ids =
-          bc_id_to_subdomain_id_map.find((*bc_ids.begin()))->second;
+        std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >::const_iterator
+          subdomain_ids_iter = bc_id_to_subdomain_id_map.find(*bc_ids.begin());
+
+        // If we're on a DistributedMesh we might need to learn about
+        // subdomain ids from other processors.
+        std::vector<libMesh::subdomain_id_type> subdomain_ids;
+        if (subdomain_ids_iter != bc_id_to_subdomain_id_map.end())
+          subdomain_ids = subdomain_ids_iter->second;
+        system.comm().allgather(subdomain_ids);
+        std::sort( subdomain_ids.begin(), subdomain_ids.end() );
+        subdomain_ids.erase
+	  (std::unique(subdomain_ids.begin(), subdomain_ids.end()),
+           subdomain_ids.end() );
 
         // Grab the FEVariable
         const FEVariablesBase& fe_var =
@@ -337,7 +348,8 @@ namespace GRINS
     const libMesh::MeshBase& mesh = system.get_mesh();
     const libMesh::BoundaryInfo& boundary_info = mesh.get_boundary_info();
 
-    const std::set<BoundaryID> mesh_ids = boundary_info.get_boundary_ids();
+    std::set<BoundaryID> mesh_ids = boundary_info.get_boundary_ids();
+    mesh.comm().set_union(mesh_ids);
 
     // Collect all the bc_ids into one set so we can just compare the sets
     std::set<BoundaryID> all_ids;
