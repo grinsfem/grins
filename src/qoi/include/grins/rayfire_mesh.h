@@ -59,6 +59,9 @@ namespace GRINS
   can access the 1D elements, prescribe a desired quadrature rule, and perform
   integration directly along the line, rather than using the entire 2D/3D elements
   of the main mesh.
+  
+  Refinement of the rayfire mesh is supported through the reinit() function.
+  Coarsening is not yet supported.
   */
   class RayfireMesh
   {
@@ -103,7 +106,8 @@ namespace GRINS
     Checks for refined main mesh elements along the rayfire path.
     If INACTIVE elements are found, they are passed to refine() to update the rayfire mesh.
 
-    Only 1 refinement can be done between reinit() calls
+    Only 1 refinement can be done between reinit() calls.
+    Coarsening is not yet supported
     @param mesh: reference to main mesh, needed to get Elem* from the stored elem_id's
     */
     void reinit(const libMesh::MeshBase& mesh_base);
