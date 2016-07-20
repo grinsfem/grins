@@ -98,6 +98,15 @@ namespace GRINS
     @return NULL if the given elem_id does not correspond to an elem through which the rayfire passes
     */
     const libMesh::Elem* map_to_rayfire_elem(const libMesh::dof_id_type elem_id);
+    
+    /*!
+    Checks for refined main mesh elements along the rayfire path.
+    If INACTIVE elements are found, they are passed to refine() to update the rayfire mesh.
+
+    Only 1 refinement can be done between reinit() calls
+    @param mesh: reference to main mesh, needed to get Elem* from the stored elem_id's
+    */
+    void reinit(const libMesh::MeshBase& mesh_base);
 
 
   private:
@@ -178,6 +187,9 @@ namespace GRINS
     @return Whether or not the solver converged before hitting the iteration limit
     */
     bool newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point* intersection_point);
+    
+    //! Refinement of a rayfire element whose main mesh counterpart was refined
+    void refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem);
   };
       
 }
