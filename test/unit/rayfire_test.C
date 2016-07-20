@@ -44,6 +44,7 @@
 #include "libmesh/face_quad4.h"
 #include "libmesh/face_quad9.h"
 #include "libmesh/fe_interface.h"
+#include "libmesh/serial_mesh.h"
 
 namespace GRINSTesting
 {
