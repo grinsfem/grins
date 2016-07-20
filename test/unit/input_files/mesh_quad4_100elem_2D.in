@@ -1,0 +1,12 @@
+# Mesh related options                                                                                                                                                                                                                       
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD4'
+      n_elems_x = '10'
+      n_elems_y = '10'
+      y_min = '0'
+      y_max = '10'
+      x_min = '0'
+      x_max = '10'
+[]

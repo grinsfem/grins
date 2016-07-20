@@ -111,7 +111,8 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/variables.C \
                       unit/builder_helper.C \
                       unit/default_bc_builder.C \
-                      unit/rayfire_test.C
+                      unit/rayfire_test.C \
+                      unit/rayfireAMR_test.C
 
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
