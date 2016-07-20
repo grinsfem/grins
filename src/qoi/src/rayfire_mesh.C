@@ -137,6 +137,32 @@ namespace GRINS
   }
 
 
+  void RayfireMesh::reinit(const libMesh::MeshBase& mesh_base)
+  {
+    // store the elems to be refined until later
+    // so we don't mess with the _elem_id_map while we
+    // iterate over it
+    std::vector<std::pair<const libMesh::Elem*,libMesh::Elem*> > elems_to_refine;
+
+    // iterate over all elems along the rayfire and looks for INATCIVE ones
+    // that were just refined
+    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    for(; it != _elem_id_map.end(); it++)
+      {
+        const libMesh::Elem* main_elem = mesh_base.elem(it->first);
+        libmesh_assert(main_elem);
+        libMesh::Elem::RefinementState state = main_elem->refinement_flag();
+
+        if(state == libMesh::Elem::INACTIVE)
+          elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
+      }
+
+    // refine the elements that need it
+    for (unsigned int i=0; i<elems_to_refine.size(); i++)
+      refine(elems_to_refine[i].first, elems_to_refine[i].second);
+  }
+
+
   // private functions
 
   void RayfireMesh::check_origin_on_boundary(const libMesh::Elem* start_elem)
@@ -335,6 +361,80 @@ namespace GRINS
 
     // no convergence
     return false;
+  }
+
+
+  void RayfireMesh::refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem)
+  {
+    // these nodes cannot change
+    libMesh::Node* start_node = rayfire_elem->get_node(0);
+    libMesh::Node* end_node   = rayfire_elem->get_node(1);
+
+    // remove unrefined elem from _mesh
+    _mesh->delete_elem(rayfire_elem);
+
+    // remove unrefined elem from _elem_id_map
+    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
+    it = _elem_id_map.find(main_elem->id());
+    _elem_id_map.erase(it);
+
+    // find which child elem we start with
+    unsigned int i=0;
+    while(!(main_elem->child(i))->contains_point(*start_node))
+      i++;
+
+    // we found the starting element, so perform a the rayfire
+    // until we reach the stored end_node
+    libMesh::Point* start_point = start_node;
+    libMesh::Point* end_point = new libMesh::Point();
+
+    const libMesh::Elem* next_elem;
+    const libMesh::Elem* prev_elem = main_elem->child(i);
+
+    // if prev_elem is INACTIVE, then more than one refinement
+    // has taken place between reinit() calls and will
+    // break this
+    libmesh_assert_equal_to( prev_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
+
+    // There are _mesh->n_nodes()-1 number of nodes already in _mesh
+    // so use n_nodes() as the ID of the next node to add
+    unsigned int end_node_id = _mesh->n_nodes();
+
+    unsigned int start_node_id = start_node->id();
+
+    // calculate the end point and
+    // get the second elem in the rayfire
+    next_elem = get_next_elem(prev_elem,start_point,end_point);
+
+    // iterate until we reach the stored end_node
+    while(!(end_point->absolute_fuzzy_equals(*end_node)))
+      {
+        // again, checking for multiple refinements
+        libmesh_assert_equal_to( next_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
+
+        // add end point as node on the rayfire mesh
+        _mesh->add_point(*end_point,end_node_id);
+        libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+        elem->set_node(0) = _mesh->node_ptr(start_node_id);
+        elem->set_node(1) = _mesh->node_ptr(end_node_id);
+
+        // add new rayfire elem to the map
+        _elem_id_map[prev_elem->id()] = elem;
+        start_point = end_point;
+        prev_elem = next_elem;
+        start_node_id = end_node_id++;
+
+        next_elem = get_next_elem(prev_elem,start_point,end_point);
+      }
+
+    // need to manually assign the end_node to the final edge elem
+    libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+    elem->set_node(0) = _mesh->node_ptr(start_node_id);
+    elem->set_node(1) = _mesh->node_ptr(end_node->id());
+
+    // add new rayfire elem to the map
+    _elem_id_map[prev_elem->id()] = elem;
+
   }
 
 } //namespace GRINS
