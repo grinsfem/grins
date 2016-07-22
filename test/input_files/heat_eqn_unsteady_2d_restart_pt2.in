@@ -54,6 +54,8 @@
 []
 
 [Mesh]
+   class = 'serial'
+
    [./Read]
       filename = './heat_eqn_unsteady_2d_restart_pt1.24_mesh.xda'
 []
