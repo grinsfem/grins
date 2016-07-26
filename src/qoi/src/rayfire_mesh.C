@@ -145,17 +145,16 @@ namespace GRINS
         const libMesh::Elem* main_elem = mesh_base.elem(it->first);
         libmesh_assert(main_elem);
 
+        if (main_elem->parent())
+          {
+            if (main_elem->parent()->refinement_flag() == libMesh::Elem::RefinementState::JUST_COARSENED)
+              elems_to_coarsen.push_back(main_elem);
+          }
+
         libMesh::Elem::RefinementState state = main_elem->refinement_flag();
 
         if (state == libMesh::Elem::RefinementState::INACTIVE)
           {
-            // could be a refined parent or a coarsened child
-            if (main_elem->parent())
-              {
-                if (main_elem->parent()->refinement_flag() == libMesh::Elem::RefinementState::JUST_COARSENED)
-                  elems_to_coarsen.push_back(main_elem);
-              }
-
             if (main_elem->has_children())
               if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
                 elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));

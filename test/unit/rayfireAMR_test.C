@@ -54,10 +54,12 @@ namespace GRINSTesting
   public:
     CPPUNIT_TEST_SUITE( RayfireTestAMR );
 
-    CPPUNIT_TEST( single_elems );
-    CPPUNIT_TEST( through_vertex_postrefinment );
-    CPPUNIT_TEST( large_2D_mesh );
-    CPPUNIT_TEST( refine_elem_not_on_rayfire );
+//    CPPUNIT_TEST( single_elems );
+//    CPPUNIT_TEST( through_vertex_postrefinment );
+//    CPPUNIT_TEST( large_2D_mesh );
+//    CPPUNIT_TEST( refine_elem_not_on_rayfire );
+//    CPPUNIT_TEST( multiple_refinements );
+
     CPPUNIT_TEST( coarsen_elements );
 
     CPPUNIT_TEST_SUITE_END();
@@ -126,6 +128,16 @@ namespace GRINSTesting
       // no children of elem 0 should be in the rayfire
       for (unsigned int i=0; i<4; i++)
         CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( mesh->elem(0)->child(i)->id() ) ) );
+    }
+
+    //! Test for multiple successive refinements
+    void multiple_refinements()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      test_multiple_refinements(mesh);
+
+      mesh = build_quad9_elem();
+      test_multiple_refinements(mesh);
     }
 
     //! Test of the coarsening functionality
@@ -355,6 +367,37 @@ namespace GRINSTesting
                 CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( elem->child(c)->id() )) );
             }
         }
+    }
+
+    //! Refine the mesh 3 times
+    void test_multiple_refinements(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    {
+      libMesh::Point origin(0.0,0.0);
+      libMesh::Point end_point(1.0,0.25);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      libMesh::MeshRefinement mr(*mesh);
+
+      // do 3 successive uniform refinements
+      for (unsigned int i=0; i<3; i++)
+        {
+          mr.uniformly_refine();
+          rayfire->reinit(*mesh);
+        }
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(1)->id()) );
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(3)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(3)->id()) );
+
     }
 
     //! Test coarsening specific elements on a large mesh
