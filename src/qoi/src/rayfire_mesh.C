@@ -155,7 +155,8 @@ namespace GRINS
                 if (main_elem->parent()->refinement_flag() == libMesh::Elem::RefinementState::JUST_COARSENED)
                   elems_to_coarsen.push_back(main_elem);
               }
-            else if (main_elem->has_children())
+
+            if (main_elem->has_children())
               if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
                 elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
           }
@@ -399,9 +400,27 @@ namespace GRINS
     rayfire_elem->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
 
     // find which child elem we start with
-    unsigned int i=0;
-    while(!(main_elem->child(i))->contains_point(*start_node))
-      i++;
+    libMesh::dof_id_type start_child = -1;
+    for(unsigned int i=0; i<main_elem->n_children(); i++)
+      {
+        if ( (main_elem->child(i))->contains_point(*start_node) )
+          {
+            // move a little bit along the rayfire
+            // and see if we are in the elem
+            libMesh::Real L = main_elem->child(i)->hmin();
+            L *= 0.1;
+
+            // parametric representation of rayfire line
+            libMesh::Real x = (*start_node)(0) + L*std::cos(_theta);
+            libMesh::Real y = (*start_node)(1) + L*std::sin(_theta);
+
+            if (main_elem->child(i)->contains_point(libMesh::Point(x,y)))
+              {
+                start_child = i;
+                break;
+              }
+          }
+      }
 
     // we found the starting element, so perform the rayfire
     // until we reach the stored end_node
@@ -409,7 +428,7 @@ namespace GRINS
     libMesh::Point* end_point = new libMesh::Point();
 
     const libMesh::Elem* next_elem;
-    const libMesh::Elem* prev_elem = main_elem->child(i);
+    const libMesh::Elem* prev_elem = main_elem->child(start_child);
 
     // if prev_elem is INACTIVE, then more than one refinement
     // has taken place between reinit() calls and will
@@ -429,9 +448,6 @@ namespace GRINS
     // iterate until we reach the stored end_node
     while(!(end_point->absolute_fuzzy_equals(*end_node)))
       {
-        // again, checking for multiple refinements
-        libmesh_assert_equal_to( next_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
-
         // add end point as node on the rayfire mesh
         _mesh->add_point(*end_point,end_node_id);
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
