@@ -36,7 +36,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
-#include "libmesh/point_locator_list.h"
+#include "libmesh/point_locator_base.h"
 #include "libmesh/elem.h"
 #include "libmesh/edge_edge2.h"
 #include "libmesh/analytic_function.h"
