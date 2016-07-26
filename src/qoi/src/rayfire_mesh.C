@@ -27,22 +27,14 @@
 #include "grins/rayfire_mesh.h"
 
 // GRINS
-#include "grins/multiphysics_sys.h"
-#include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
 #include "grins/math_constants.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/point_locator_base.h"
 #include "libmesh/elem.h"
 #include "libmesh/edge_edge2.h"
-#include "libmesh/analytic_function.h"
 #include "libmesh/enum_elem_type.h"
 #include "libmesh/fe.h"
-#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -95,7 +87,7 @@ namespace GRINS
 
     // ensure the origin is on a boundary element
     // AND on the boundary of said element
-    check_origin_on_boundary(start_elem);
+    this->check_origin_on_boundary(start_elem);
 
     // add the origin point to the point list
     _mesh->add_point(*start_point,node_id++);
@@ -109,7 +101,7 @@ namespace GRINS
       {
         // calculate the end point and
         // get the next elem in the rayfire
-        next_elem = get_next_elem(prev_elem,start_point,end_point);
+        next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
         // add end point as node on the rayfire mesh
         _mesh->add_point(*end_point,node_id);
@@ -159,7 +151,7 @@ namespace GRINS
 
     // refine the elements that need it
     for (unsigned int i=0; i<elems_to_refine.size(); i++)
-      refine(elems_to_refine[i].first, elems_to_refine[i].second);
+      this->refine(elems_to_refine[i].first, elems_to_refine[i].second);
   }
 
 
@@ -202,12 +194,12 @@ namespace GRINS
         if (edge_elem->contains_point(*start_point))
           continue;
 
-        bool converged = newton_solve_intersection(*start_point,edge_elem.get(),intersection_point);
+        bool converged = this->newton_solve_intersection(*start_point,edge_elem.get(),intersection_point);
 
         if (converged)
           {
-            if ( check_valid_point(*intersection_point,*start_point,*edge_elem,next_point) )
-              return get_correct_neighbor(*intersection_point,cur_elem,s);
+            if ( this->check_valid_point(*intersection_point,*start_point,*edge_elem,next_point) )
+              return this->get_correct_neighbor(*intersection_point,cur_elem,s);
           }
         else
           continue;
@@ -404,7 +396,7 @@ namespace GRINS
 
     // calculate the end point and
     // get the second elem in the rayfire
-    next_elem = get_next_elem(prev_elem,start_point,end_point);
+    next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
     // iterate until we reach the stored end_node
     while(!(end_point->absolute_fuzzy_equals(*end_node)))
@@ -424,7 +416,7 @@ namespace GRINS
         prev_elem = next_elem;
         start_node_id = end_node_id++;
 
-        next_elem = get_next_elem(prev_elem,start_point,end_point);
+        next_elem = this->get_next_elem(prev_elem,start_point,end_point);
       }
 
     // need to manually assign the end_node to the final edge elem
