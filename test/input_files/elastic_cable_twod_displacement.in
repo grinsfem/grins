@@ -1,0 +1,91 @@
+
+# Material properties
+[Materials]
+   [./Cable]
+     [./CrossSectionalArea]
+       value = '0.5'
+     [../Density]
+       value = '1.0'
+     [../StressStrainLaw]
+       model = 'hookes_law'
+       [./HookesLaw]
+          E = '1.0e4'
+          nu = '0.45'
+[]
+
+[Physics]
+
+   enabled_physics = 'ElasticCable'
+
+   [./ElasticCable]
+
+      material = 'Cable'
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'Ux:Uy'
+      ic_values = '{0.05*x/8}{0.05*x/8}'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'Left Right'
+
+   [./Left]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+
+   [./Right]
+      [./Displacement]
+         type = 'constant_displacement'
+         Ux = '0.1'
+         Uy = '0.2'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+[Mesh]
+   [./Generation]
+      dimension = '1'
+      element_type = 'EDGE2'
+      x_min = '0.0'
+      x_max = '8.0'
+      n_elems_x = '10'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '50'
+   max_linear_iterations = '2500'
+   verify_analytic_jacobians = '1.0e-6'
+   initial_linear_tolerance = '1.0e-10'
+   minimum_linear_tolerance = '1.0e-11'
+   relative_residual_tolerance = '1.0e-11'
+   use_numerical_jacobians_only = 'false'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'elastic_cable_twod_displacement'
+   output_residual = 'false'
+   output_format = 'xdr'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

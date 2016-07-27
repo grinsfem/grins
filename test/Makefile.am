@@ -208,6 +208,7 @@ TESTS += exact_soln/poisson_periodic_3d_xy.sh
 TESTS += exact_soln/poisson_periodic_3d_xz.sh
 TESTS += exact_soln/poisson_periodic_3d_yz.sh
 TESTS += exact_soln/elastic_cable_oned_displacement.sh
+TESTS += exact_soln/elastic_cable_twod_displacement.sh
 
 # Error/xfail TESTS
 TESTS += error_xfail/error_ufo.sh
