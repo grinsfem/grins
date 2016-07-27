@@ -59,9 +59,8 @@ namespace GRINS
   can access the 1D elements, prescribe a desired quadrature rule, and perform
   integration directly along the line, rather than using the entire 2D/3D elements
   of the main mesh.
-  
-  Refinement of the rayfire mesh is supported through the reinit() function.
-  Coarsening is not yet supported.
+
+  Refinement and coarsening of the rayfire mesh are supported through the reinit() function.
   */
   class RayfireMesh
   {
@@ -90,12 +89,13 @@ namespace GRINS
     /*!
     This function performs the rayfire and assembles the 1D mesh.
     Call this immediately after the constructor.
+    Must be called before any refinements of the main mesh.
     @param mesh_base Reference to the main mesh
     */
     void init(const libMesh::MeshBase& mesh_base);
 
     /*!
-    This function takes in an elem_id on the main mesh and returns an elem from the 1D rayfire mesh
+    This function takes in an elem_id on the main mesh and returns an elem from the 1D rayfire mesh.
     @param elem_id The ID of the elem on the main mesh
     @return Elem* to 1D elem from the rayfire mesh if the elem_id falls along the rayfire path
     @return NULL if the given elem_id does not correspond to an elem through which the rayfire passes
@@ -103,11 +103,12 @@ namespace GRINS
     const libMesh::Elem* map_to_rayfire_elem(const libMesh::dof_id_type elem_id);
 
     /*!
-    Checks for refined main mesh elements along the rayfire path.
-    If INACTIVE elements are found, they are passed to refine() to update the rayfire mesh.
+    Checks for refined and coarsened main mesh elements along the rayfire path.
+    They are then passed to refine() and coarsen(), respectively, to update the rayfire mesh.
 
-    Only 1 refinement can be done between reinit() calls.
-    Coarsening is not yet supported
+    Only 1 level of refinement and/or coarsening can be done between reinit() calls.
+    Note that this is not limited to doing either refinement or coarsening between reinits.
+    Both can be done on different elements, as long as they are only 1 level in either direction.
     @param mesh: reference to main mesh, needed to get Elem* from the stored elem_id's
     */
     void reinit(const libMesh::MeshBase& mesh_base);
@@ -132,9 +133,18 @@ namespace GRINS
     //! Map of main mesh elem_id to rayfire mesh elems
     std::map<libMesh::dof_id_type,libMesh::Elem*> _elem_id_map;
 
-
     //! User should never call the default constructor
     RayfireMesh();
+
+    //! Private function to get a rayfire elem from main_mesh elem ID
+    /*!
+    Does not return a const pointer, and is used within this class to simplify
+    rayfire elem access.
+
+    Also used by map_to_rayfire_elem(), which adds a const to prevent modification
+    outside this class.
+    */
+    libMesh::Elem* get_rayfire_elem(const libMesh::dof_id_type elem_id);
 
     //! Calculate the intersection point
     /*!
@@ -194,6 +204,10 @@ namespace GRINS
 
     //! Refinement of a rayfire element whose main mesh counterpart was refined
     void refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem);
+
+    //! Coarsening of a rayfire element whose main mesh counterpart was coarsened
+    void coarsen(const libMesh::Elem* rayfire_elem);
+
   };
 
 }

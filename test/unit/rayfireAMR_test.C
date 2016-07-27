@@ -58,6 +58,11 @@ namespace GRINSTesting
     CPPUNIT_TEST( through_vertex_postrefinment );
     CPPUNIT_TEST( large_2D_mesh );
     CPPUNIT_TEST( refine_elem_not_on_rayfire );
+    CPPUNIT_TEST( multiple_refinements );
+    CPPUNIT_TEST( coarsen_elements );
+    CPPUNIT_TEST( refine_and_coarsen );
+    CPPUNIT_TEST( mixed_type_mesh );
+    CPPUNIT_TEST( start_with_refined_mesh );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -127,6 +132,183 @@ namespace GRINSTesting
         CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( mesh->elem(0)->child(i)->id() ) ) );
     }
 
+    //! Test for multiple successive refinements
+    void multiple_refinements()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      test_multiple_refinements(mesh);
+
+      mesh = build_quad9_elem();
+      test_multiple_refinements(mesh);
+    }
+
+    //! Test of the coarsening functionality
+    void coarsen_elements()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      GetPot input_quad4(filename);
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
+      test_coarsen(mesh);
+
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem_2D.in";
+      GetPot input_quad9(filename);
+      mesh = this->build_mesh(input_quad9);
+      test_coarsen(mesh);
+    }
+
+    //! Refine and coarsen before calling reinit()
+    void refine_and_coarsen()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+
+      libMesh::Point origin(0.0,0.1);
+      libMesh::Point end_point(1.0,0.1);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      libMesh::MeshRefinement mr(*mesh);
+      mr.uniformly_refine();
+      rayfire->reinit(*mesh);
+      mr.uniformly_refine();
+      rayfire->reinit(*mesh);
+
+      // refine elem(0)->child(1)->child(1)
+      mesh->elem(0)->child(1)->child(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+      // coarsen elem(0)->child(0)
+      for (unsigned int c=0; c<mesh->elem(0)->child(0)->n_children(); c++)
+        mesh->elem(0)->child(0)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+
+      mr.refine_and_coarsen_elements();
+      rayfire->reinit(*mesh);
+
+      CPPUNIT_ASSERT( mesh->elem(0)->child(0)->active() );
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(1)->id()) );
+
+
+    }
+
+    //! Mesh contains 2 QUAD4 and 2 TRI3
+    void mixed_type_mesh()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mixed_quad_tri.in";
+      GetPot input(filename);
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
+
+      libMesh::Point origin(0.0,0.25);
+      libMesh::Point end_point(1.0,0.25);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      // check that the rayfire is through the right elems
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(0) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(6) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(9) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(8) );
+
+      // and not through others
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(2)) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(3)) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(4)) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(5)) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(1)) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(7)) );
+
+      // now do a uniform refinement
+      libMesh::MeshRefinement mr(*mesh);
+      mr.uniformly_refine();
+
+      rayfire->reinit(*mesh);
+
+      // check post-refinement
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(6)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(9)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child(2)->id()) );
+
+      // coarsen two of the TRIs
+      for (unsigned int c=0; c<mesh->elem(6)->n_children(); c++)
+        {
+          mesh->elem(6)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(9)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+        }
+
+      mr.coarsen_elements();
+      rayfire->reinit(*mesh);
+
+      CPPUNIT_ASSERT( mesh->elem(6)->active() );
+      CPPUNIT_ASSERT( mesh->elem(9)->active() );
+
+      // check post-coarsen
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(6) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(9) );
+
+      for (unsigned int c=0; c<mesh->elem(6)->n_children(); c++)
+        {
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(6)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child(c)->id())) );
+        }
+    }
+
+    //! Mesh given to init() is already refined
+    void start_with_refined_mesh()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+
+      // uniform refinement
+      libMesh::MeshRefinement mr(*mesh);
+      mr.uniformly_refine();
+
+      // now init the rayfire
+      libMesh::Point origin(0.0,0.1);
+      libMesh::Point end_point(1.0,0.1);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
+
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child(2)->id())) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child(3)->id())) );
+
+      // refine again
+      mr.uniformly_refine();
+      rayfire->reinit(*mesh);
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->id()) );
+
+      // uniformly coarsen twice to get back to a single elem
+      mr.uniformly_coarsen();
+      rayfire->reinit(*mesh);
+      mr.uniformly_coarsen();
+      rayfire->reinit(*mesh);
+
+      // ensure the original elem is active
+      CPPUNIT_ASSERT( mesh->elem(0)->active() );
+
+      // the original elem should be in the rayfire
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(0) );
+
+      // and no other elem
+      for (unsigned int e=1; e<mesh->n_elem(); e++)
+        CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(e)) );
+    }
 
   private:
 
@@ -334,12 +516,85 @@ namespace GRINSTesting
               if (c==children[index] && index<children.size())
                 {
                   index++;
-                  std::cout <<it->first <<" child: " <<c <<std::endl;
                   CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem( elem->child(c)->id() ) );
                 }
               else
                 CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( elem->child(c)->id() )) );
             }
+        }
+    }
+
+    //! Refine the mesh 3 times
+    void test_multiple_refinements(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    {
+      libMesh::Point origin(0.0,0.0);
+      libMesh::Point end_point(1.0,0.25);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      libMesh::MeshRefinement mr(*mesh);
+
+      // do 3 successive uniform refinements
+      for (unsigned int i=0; i<3; i++)
+        {
+          mr.uniformly_refine();
+          rayfire->reinit(*mesh);
+        }
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(1)->id()) );
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(3)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(3)->id()) );
+
+    }
+
+    //! Test coarsening specific elements on a large mesh
+    void test_coarsen(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    {
+      libMesh::Point origin(0.0,6.5);
+      libMesh::Point end_point(10.0,0.25);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      // unifromly refine the elements
+      libMesh::MeshRefinement mr(*mesh);
+      mr.uniformly_refine();
+      rayfire->reinit(*mesh);
+
+      // coarsen specific elements along the rayfire
+      for(unsigned int c=0; c<4; c++)
+        {
+          mesh->elem(60)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(25)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(26)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(9)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+        }
+
+      mr.coarsen_elements();
+      rayfire->reinit(*mesh);
+
+      // check that the coarsened elems are in the rayfire
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(60) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(25) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(26) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(9) );
+
+      // and that their children are not
+      for(unsigned int c=0; c<4; c++)
+        {
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(60)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(25)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(26)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child(c)->id())) );
         }
     }
 

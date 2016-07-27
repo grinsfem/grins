@@ -27,22 +27,14 @@
 #include "grins/rayfire_mesh.h"
 
 // GRINS
-#include "grins/multiphysics_sys.h"
-#include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
 #include "grins/math_constants.h"
 
 // libMesh
 #include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
-#include "libmesh/point_locator_base.h"
 #include "libmesh/elem.h"
 #include "libmesh/edge_edge2.h"
-#include "libmesh/analytic_function.h"
 #include "libmesh/enum_elem_type.h"
 #include "libmesh/fe.h"
-#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -95,7 +87,7 @@ namespace GRINS
 
     // ensure the origin is on a boundary element
     // AND on the boundary of said element
-    check_origin_on_boundary(start_elem);
+    this->check_origin_on_boundary(start_elem);
 
     // add the origin point to the point list
     _mesh->add_point(*start_point,node_id++);
@@ -109,7 +101,7 @@ namespace GRINS
       {
         // calculate the end point and
         // get the next elem in the rayfire
-        next_elem = get_next_elem(prev_elem,start_point,end_point);
+        next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
         // add end point as node on the rayfire mesh
         _mesh->add_point(*end_point,node_id);
@@ -119,6 +111,7 @@ namespace GRINS
 
         // add new rayfire elem to the map
         _elem_id_map[prev_elem->id()] = elem;
+
         start_point = end_point;
         prev_elem = next_elem;
       } while(next_elem);
@@ -128,12 +121,7 @@ namespace GRINS
 
   const libMesh::Elem* RayfireMesh::map_to_rayfire_elem(const libMesh::dof_id_type elem_id)
   {
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
-    it = _elem_id_map.find(elem_id);
-    if (it != _elem_id_map.end())
-      return it->second;
-
-    return NULL;
+    return this->get_rayfire_elem(elem_id);
   }
 
 
@@ -144,22 +132,42 @@ namespace GRINS
     // iterate over it
     std::vector<std::pair<const libMesh::Elem*,libMesh::Elem*> > elems_to_refine;
 
-    // iterate over all elems along the rayfire and looks for INATCIVE ones
-    // that were just refined
+    // same with elems to coarsen
+    // store the main_mesh elem
+    std::vector<const libMesh::Elem*> elems_to_coarsen;
+
+    // iterate over all main elems along the rayfire and look for
+    // refinement: INACTIVE parent with JUST_REFINED children
+    // coarsening: JUST_COARSENED parent
     std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
         const libMesh::Elem* main_elem = mesh_base.elem(it->first);
         libmesh_assert(main_elem);
+
+        if (main_elem->parent())
+          {
+            if (main_elem->parent()->refinement_flag() == libMesh::Elem::RefinementState::JUST_COARSENED)
+              elems_to_coarsen.push_back(main_elem);
+          }
+
         libMesh::Elem::RefinementState state = main_elem->refinement_flag();
 
-        if(state == libMesh::Elem::INACTIVE)
-          elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
+        if (state == libMesh::Elem::RefinementState::INACTIVE)
+          {
+            if (main_elem->has_children())
+              if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
+                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
+          }
       }
 
     // refine the elements that need it
     for (unsigned int i=0; i<elems_to_refine.size(); i++)
-      refine(elems_to_refine[i].first, elems_to_refine[i].second);
+      this->refine(elems_to_refine[i].first, elems_to_refine[i].second);
+
+    // coarsen the elements that need it
+    for (unsigned int i=0; i<elems_to_coarsen.size(); i++)
+      this->coarsen(elems_to_coarsen[i]);
   }
 
 
@@ -191,6 +199,21 @@ namespace GRINS
   }
 
 
+  libMesh::Elem* RayfireMesh::get_rayfire_elem(const libMesh::dof_id_type elem_id)
+  {
+    // return value; set if valid rayfire elem is found
+    libMesh::Elem* retval = NULL;
+
+    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
+    it = _elem_id_map.find(elem_id);
+    if (it != _elem_id_map.end())
+        if (it->second->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
+          retval = it->second;
+
+    return retval;
+  }
+
+
   const libMesh::Elem* RayfireMesh::get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point* start_point, libMesh::Point* next_point)
   {
     libMesh::Point* intersection_point = new libMesh::Point();
@@ -202,12 +225,12 @@ namespace GRINS
         if (edge_elem->contains_point(*start_point))
           continue;
 
-        bool converged = newton_solve_intersection(*start_point,edge_elem.get(),intersection_point);
+        bool converged = this->newton_solve_intersection(*start_point,edge_elem.get(),intersection_point);
 
         if (converged)
           {
-            if ( check_valid_point(*intersection_point,*start_point,*edge_elem,next_point) )
-              return get_correct_neighbor(*intersection_point,cur_elem,s);
+            if ( this->check_valid_point(*intersection_point,*start_point,*edge_elem,next_point) )
+              return this->get_correct_neighbor(*intersection_point,cur_elem,s);
           }
         else
           continue;
@@ -243,7 +266,7 @@ namespace GRINS
 
     // check if the intersection point is a vertex
     bool is_vertex = false;
-    for(unsigned int n=0; n<4; n++)
+    for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
       is_vertex |= (cur_elem->get_node(n))->absolute_fuzzy_equals(end_point);
 
     if (is_vertex)
@@ -366,30 +389,45 @@ namespace GRINS
 
   void RayfireMesh::refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem)
   {
+    libmesh_assert_equal_to(main_elem->refinement_flag(),libMesh::Elem::RefinementState::INACTIVE);
+
     // these nodes cannot change
     libMesh::Node* start_node = rayfire_elem->get_node(0);
     libMesh::Node* end_node   = rayfire_elem->get_node(1);
 
-    // remove unrefined elem from _mesh
-    _mesh->delete_elem(rayfire_elem);
-
-    // remove unrefined elem from _elem_id_map
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
-    it = _elem_id_map.find(main_elem->id());
-    _elem_id_map.erase(it);
+    // set the rayfire_elem as INACTIVE
+    rayfire_elem->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
 
     // find which child elem we start with
-    unsigned int i=0;
-    while(!(main_elem->child(i))->contains_point(*start_node))
-      i++;
+    libMesh::dof_id_type start_child = -1;
+    for(unsigned int i=0; i<main_elem->n_children(); i++)
+      {
+        if ( (main_elem->child(i))->contains_point(*start_node) )
+          {
+            // move a little bit along the rayfire
+            // and see if we are in the elem
+            libMesh::Real L = main_elem->child(i)->hmin();
+            L *= 0.1;
 
-    // we found the starting element, so perform a the rayfire
+            // parametric representation of rayfire line
+            libMesh::Real x = (*start_node)(0) + L*std::cos(_theta);
+            libMesh::Real y = (*start_node)(1) + L*std::sin(_theta);
+
+            if (main_elem->child(i)->contains_point(libMesh::Point(x,y)))
+              {
+                start_child = i;
+                break;
+              }
+          }
+      }
+
+    // we found the starting element, so perform the rayfire
     // until we reach the stored end_node
     libMesh::Point* start_point = start_node;
     libMesh::Point* end_point = new libMesh::Point();
 
     const libMesh::Elem* next_elem;
-    const libMesh::Elem* prev_elem = main_elem->child(i);
+    const libMesh::Elem* prev_elem = main_elem->child(start_child);
 
     // if prev_elem is INACTIVE, then more than one refinement
     // has taken place between reinit() calls and will
@@ -404,19 +442,20 @@ namespace GRINS
 
     // calculate the end point and
     // get the second elem in the rayfire
-    next_elem = get_next_elem(prev_elem,start_point,end_point);
+    next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
     // iterate until we reach the stored end_node
     while(!(end_point->absolute_fuzzy_equals(*end_node)))
       {
-        // again, checking for multiple refinements
-        libmesh_assert_equal_to( next_elem->refinement_flag(), libMesh::Elem::RefinementState::JUST_REFINED );
-
         // add end point as node on the rayfire mesh
         _mesh->add_point(*end_point,end_node_id);
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
         elem->set_node(0) = _mesh->node_ptr(start_node_id);
         elem->set_node(1) = _mesh->node_ptr(end_node_id);
+
+        // set rayfire_elem as the parent of this new elem
+        // in case it gets coarsened
+        elem->set_parent(rayfire_elem);
 
         // add new rayfire elem to the map
         _elem_id_map[prev_elem->id()] = elem;
@@ -424,7 +463,7 @@ namespace GRINS
         prev_elem = next_elem;
         start_node_id = end_node_id++;
 
-        next_elem = get_next_elem(prev_elem,start_point,end_point);
+        next_elem = this->get_next_elem(prev_elem,start_point,end_point);
       }
 
     // need to manually assign the end_node to the final edge elem
@@ -432,9 +471,58 @@ namespace GRINS
     elem->set_node(0) = _mesh->node_ptr(start_node_id);
     elem->set_node(1) = _mesh->node_ptr(end_node->id());
 
+    elem->set_parent(rayfire_elem);
+
     // add new rayfire elem to the map
     _elem_id_map[prev_elem->id()] = elem;
+  }
 
+
+  void RayfireMesh::coarsen(const libMesh::Elem* child_elem)
+  {
+    if (this->get_rayfire_elem(child_elem->id()))
+      {
+        const libMesh::Elem* parent_elem = child_elem->parent();
+        libmesh_assert(parent_elem);
+
+        const libMesh::Node* start_node;
+        const libMesh::Node* end_node;
+
+        bool initial_nodes = false;
+
+        for (unsigned int c=0; c<parent_elem->n_children(); c++)
+          {
+            libMesh::Elem* rayfire_child = this->get_rayfire_elem(parent_elem->child(c)->id());
+
+            if (rayfire_child)
+              {
+                if (!initial_nodes)
+                  {
+                    start_node = rayfire_child->get_node(0);
+                    end_node = rayfire_child->get_node(1);
+                    initial_nodes = true;
+                  }
+                else
+                  {
+                    if ( (this->_origin - *(rayfire_child->get_node(0))).norm() < (this->_origin - *start_node).norm() )
+                      start_node = rayfire_child->get_node(0);
+
+                    if ( (this->_origin - *(rayfire_child->get_node(1))).norm() > (this->_origin - *end_node).norm() )
+                      end_node = rayfire_child->get_node(1);
+                  }
+
+                rayfire_child->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
+              }
+          } // for c
+
+        // add a new rayfire elem
+        libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+        elem->set_node(0) = _mesh->node_ptr(start_node->id());
+        elem->set_node(1) = _mesh->node_ptr(end_node->id());
+
+        // add new rayfire elem to the map
+        _elem_id_map[parent_elem->id()] = elem;
+      }
   }
 
 } //namespace GRINS
