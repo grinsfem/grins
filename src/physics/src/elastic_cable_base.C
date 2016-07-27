@@ -61,13 +61,25 @@ namespace GRINS
       this->get_fe(context)->get_phi();
 
     // Residuals that we're populating
-    libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_disp_vars.u());
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_disp_vars.v());
-    libMesh::DenseSubVector<libMesh::Number> &Fw = context.get_elem_residual(this->_disp_vars.w());
+    libMesh::DenseSubVector<libMesh::Number> & Fu = context.get_elem_residual(this->_disp_vars.u());
+    libMesh::DenseSubVector<libMesh::Number> * Fv = NULL;
+    libMesh::DenseSubVector<libMesh::Number> * Fw = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.u());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.v());
-    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+    libMesh::DenseSubMatrix<libMesh::Number> & Kuu = context.get_elem_jacobian(this->_disp_vars.u(),this->_disp_vars.u());
+    libMesh::DenseSubMatrix<libMesh::Number> * Kvv = NULL;
+    libMesh::DenseSubMatrix<libMesh::Number> * Kww = NULL;
+
+    if( this->_disp_vars.dim() >= 2 )
+      {
+        Fv = &context.get_elem_residual(this->_disp_vars.v());
+        Kvv = &context.get_elem_jacobian(this->_disp_vars.v(),this->_disp_vars.v());
+      }
+
+    if( this->_disp_vars.dim() == 3 )
+      {
+        Fw = &context.get_elem_residual(this->_disp_vars.w());
+        Kww = &context.get_elem_jacobian(this->_disp_vars.w(),this->_disp_vars.w());
+      }
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -77,15 +89,23 @@ namespace GRINS
 
         libMesh::Real u_ddot, v_ddot, w_ddot;
         (context.*interior_solution)( this->_disp_vars.u(), qp, u_ddot );
-        (context.*interior_solution)( this->_disp_vars.v(), qp, v_ddot );
-        (context.*interior_solution)( this->_disp_vars.w(), qp, w_ddot );
+
+        if( this->_disp_vars.dim() >= 2 )
+          (context.*interior_solution)( this->_disp_vars.v(), qp, v_ddot );
+
+        if( this->_disp_vars.dim() == 3 )
+          (context.*interior_solution)( this->_disp_vars.w(), qp, w_ddot );
 
         for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
             libMesh::Real value = this->_rho*this->_A*u_phi[i][qp]*jac*mu;
             Fu(i) += value*u_ddot;
-            Fv(i) += value*v_ddot;
-            Fw(i) += value*w_ddot;
+
+            if( this->_disp_vars.dim() >= 2 )
+              (*Fv)(i) += value*v_ddot;
+
+            if( this->_disp_vars.dim() == 3 )
+              (*Fw)(i) += value*w_ddot;
 
             if( compute_jacobian )
               {
@@ -95,8 +115,12 @@ namespace GRINS
                     jac_term *= (context.*get_solution_deriv)();
 
                     Kuu(i,j) += jac_term;
-                    Kvv(i,j) += jac_term;
-                    Kww(i,j) += jac_term;
+
+                    if( this->_disp_vars.dim() >= 2 )
+                      (*Kvv)(i,j) += jac_term;
+
+                    if( this->_disp_vars.dim() == 3 )
+                      (*Kww)(i,j) += jac_term;
                   }
               }
           }
