@@ -47,7 +47,7 @@ namespace GRINS
     else
       this->parse_new_style(input);
 
-    if( _target_tolerance > 0 )
+    if( _target_tolerance != 0.0 )
       _is_time_adaptive = true;
   }
 
