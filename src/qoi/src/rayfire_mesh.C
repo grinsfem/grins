@@ -266,7 +266,7 @@ namespace GRINS
 
     // check if the intersection point is a vertex
     bool is_vertex = false;
-    for(unsigned int n=0; n<4; n++)
+    for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
       is_vertex |= (cur_elem->get_node(n))->absolute_fuzzy_equals(end_point);
 
     if (is_vertex)
