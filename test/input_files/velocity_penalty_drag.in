@@ -1,3 +1,17 @@
+#
+# This exceedingly simple test
+# is designed to ensure that the velocitypenaltydrag
+# input option functions and converges
+#
+# at a later date, adding a channel flow drag estimate would also
+# be useful
+# 
+# for the above, one need only equate shear stresses at the wall
+# to the pressure gradient, al la munson pg. 421 + 431
+#
+#
+# this test was created from: penalty_poiseuille.in
+#
 
 # Mesh related options
 [Mesh]
@@ -37,7 +51,7 @@ numerical_jacobian_h = 1.e-10
 
 # Visualization options
 [vis-options]
-output_vis = true
+output_vis = false
 vis_output_file_prefix = convection_cell
 output_format = 'ExodusII xdr'
 
@@ -119,3 +133,8 @@ echo_physics = 'true'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
 []
+
+#
+# nick 
+# 7/29/16
+#
