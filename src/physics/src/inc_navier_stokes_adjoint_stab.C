@@ -95,7 +95,7 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kww = NULL;
 
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
         Kuw = &context.get_elem_jacobian
@@ -123,7 +123,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -184,7 +184,7 @@ namespace GRINS
 
             Fv(i) += ( -tau_M*RM_s(1)*test_func - tau_C*RC*u_gradphi[i][qp](1) )*JxW[qp];
 
-            if(this->mesh_dim(context) == 3)
+            if(this->_flow_vars.dim() == 3)
               {
                 (*Fw)(i) += ( -tau_M*RM_s(2)*test_func - tau_C*RC*u_gradphi[i][qp](2) )*JxW[qp];
               }
@@ -276,7 +276,7 @@ namespace GRINS
                     Kvv(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
                                 )*fixed_deriv*JxW[qp];
                   }
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_p_dofs; j++)
                       {
@@ -415,7 +415,7 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         Kpw = &context.get_elem_jacobian
           (this->_press_var.p(), this->_flow_vars.w()); // J_{pw}
@@ -432,7 +432,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -509,7 +509,7 @@ namespace GRINS
                                 )*JxW[qp];
                   }
 
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
@@ -595,7 +595,7 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
@@ -625,7 +625,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
@@ -688,7 +688,7 @@ namespace GRINS
                     Kpv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*p_dphi[i][qp](1)*fixed_deriv*JxW[qp];
                   }
 
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
@@ -711,7 +711,7 @@ namespace GRINS
 
             Fv(i) -= tau_M*RM_t(1)*test_func*JxW[qp];
 
-            if(this->mesh_dim(context) == 3)
+            if(this->_flow_vars.dim() == 3)
               {
                 (*Fw)(i) -= tau_M*RM_t(2)*test_func*JxW[qp];
               }
@@ -737,7 +737,7 @@ namespace GRINS
                     Kvv(i,j) -= tau_M*d_RM_t_uvw_duvw*u_phi[j][qp]*test_func*fixed_deriv*JxW[qp];
                     Kvv(i,j) -= tau_M*RM_t(1)*d_test_func_dU(1)*u_phi[j][qp]*fixed_deriv*JxW[qp];
                   }
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {

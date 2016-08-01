@@ -3,4 +3,4 @@
 GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
 GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS}
 
-$GRINS_RUN @prefix@/examples/suspended_cable/cable @prefix@/examples/suspended_cable/cable.in $GRINS_SOLVER_OPTIONS
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/suspended_cable/cable.in $GRINS_SOLVER_OPTIONS

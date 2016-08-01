@@ -88,7 +88,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -110,7 +110,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -138,7 +138,7 @@ namespace GRINS
             Fv(i) += ( -tau_M*residual(1)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
             // + _rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp] )*JxW[qp];
 
-            if (this->mesh_dim(context) == 3)
+            if (this->_flow_vars.dim() == 3)
               {
                 (*Fw)(i) += ( -tau_M*residual(2)*_rho*U*u_gradphi[i][qp] )*JxW[qp];
                 // + _rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp] )*JxW[qp];
@@ -197,7 +197,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           U(2) = context.interior_value( this->_flow_vars.w(), qp );
 
         // Compute the viscosity at this qp
@@ -258,7 +258,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -280,7 +280,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
@@ -296,7 +296,7 @@ namespace GRINS
 
             Fv(i) += -_rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
 
-            if (this->mesh_dim(context) == 3)
+            if (this->_flow_vars.dim() == 3)
               {
                 (*Fw)(i) += -_rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
               }

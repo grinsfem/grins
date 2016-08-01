@@ -86,7 +86,7 @@ namespace GRINS
       libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
-      if(this->mesh_dim(context) == 3)
+      if(this->_flow_vars.dim() == 3)
       {
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -101,7 +101,7 @@ namespace GRINS
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.v()); // J_{Tv}
     libMesh::DenseSubMatrix<libMesh::Number> *KTw = NULL;
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         KTw = &context.get_elem_jacobian
           (this->_temp_vars.T(), this->_flow_vars.w()); // J_{Tw}
@@ -118,7 +118,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -157,7 +157,7 @@ namespace GRINS
           {
           Fu(i) += -tau_E*RE_s*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(0)*JxW[qp];
           Fv(i) += -tau_E*RE_s*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(1)*JxW[qp];
-          if( this->mesh_dim(context) == 3 )
+          if( this->_flow_vars.dim() == 3 )
           {
           (*Fw)(i) += -tau_E*RE_s*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(2)*JxW[qp];
           }
@@ -206,11 +206,11 @@ namespace GRINS
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*JxW[qp]
                       * context.get_fixed_solution_derivative();
                   }
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; ++j)
                       {
@@ -275,7 +275,7 @@ namespace GRINS
       libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{p}
       libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
-      if(this->mesh_dim(context) == 3)
+      if(this->_flow_vars.dim() == 3)
       {
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
       }
@@ -290,7 +290,7 @@ namespace GRINS
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.v()); // J_{Tv}
     libMesh::DenseSubMatrix<libMesh::Number> *KTw = NULL;
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       {
         KTw = &context.get_elem_jacobian
           (this->_temp_vars.T(), this->_flow_vars.w()); // J_{Tw}
@@ -307,7 +307,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
       
         //libMesh::RealGradient grad_T = context.fixed_interior_gradient( this->_temp_vars.T(), qp );
@@ -343,7 +343,7 @@ namespace GRINS
           {
           Fu(i) += -tau_E*RE_t*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(0)*JxW[qp];
           Fv(i) += -tau_E*RE_t*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(1)*JxW[qp];
-          if( this->mesh_dim(context) == 3 )
+          if( this->_flow_vars.dim() == 3 )
           {
           (*Fw)(i) += -tau_E*RE_t*this->_rho*this->_Cp*u_phi[i][qp]*grad_T(2)*JxW[qp];
           }
@@ -395,7 +395,7 @@ namespace GRINS
                       ( this->_rho*this->_Cp*u_phi[j][qp]*T_gradphi[i][qp](1)*fixed_deriv
                       )*JxW[qp];
                   }
-                if(this->mesh_dim(context) == 3)
+                if(this->_flow_vars.dim() == 3)
                   {
                     for (unsigned int j=0; j != n_u_dofs; ++j)
                       {

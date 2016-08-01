@@ -17,23 +17,30 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'ElasticCable
-                   ElasticCableConstantGravity'
+   enabled_physics = 'ElasticCable
+                      ParsedSourceTerm'
 
-# Options for Incompressible Navier-Stokes physics
-[./ElasticCable]
+   # Options for Incompressible Navier-Stokes physics
+   [./ElasticCable]
+      material = 'TestMaterial'
 
-material = 'TestMaterial'
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'Ux:Uy'
+      ic_values = '{-50*sin(x*pi/400)}{-55*sin(x*pi/200)}'
+   [../]
 
-#ic_ids = '1'
-#ic_types = 'parsed'
-#ic_variables = 'w'
-#ic_values = '-1*sin(pi*x)'
+   [./ParsedSourceTerm]
+      [./Variables]
+         names = 'Uy'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+      [../]
 
-[../ElasticCableConstantGravity]
-
-gravity ='0 0 -32.2'
-
+      [./Function]
+         value = '32.2*0.1*0.031056'
+      [../]
+   [../]
 []
 
 [BoundaryConditions]
@@ -48,12 +55,12 @@ gravity ='0 0 -32.2'
    [./RightWall]
       [./Displacement]
          type = 'roller_x parsed_traction'
-         traction = '5.7735 0.0 0.0'
+         traction = '5.7735 0.0'
 []
 
 [Variables]
    [./Displacement]
-      names = 'u v w'
+      names = 'Ux Uy'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
 []
@@ -75,11 +82,12 @@ max_linear_iterations = '2500'
 
 verify_analytic_jacobians = '1.0e-6'
 
-initial_linear_tolerance = '1.0e-4'
-minimum_linear_tolerance = '1.0e-7'
-relative_step_tolerance = '1.0e-10'
+initial_linear_tolerance = '1.0e-10'
+minimum_linear_tolerance = '1.0e-11'
+relative_step_tolerance = '1.0e-11'
 
 use_numerical_jacobians_only = 'false'
+[]
 
 # Visualization options
 [vis-options]
@@ -90,6 +98,7 @@ vis_output_file_prefix = 'cable'
 output_residual = 'false' 
 
 output_format = 'ExodusII xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]

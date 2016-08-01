@@ -97,7 +97,6 @@ check_PROGRAMS += elastic_sheet_regression
 check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
-check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += generic_solution_regression
 
 
@@ -155,7 +154,6 @@ elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
 3d_low_mach_jacobians_xy_SOURCES = regression/3d_low_mach_jacobians.C
 3d_low_mach_jacobians_xz_SOURCES = regression/3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = regression/3d_low_mach_jacobians.C
-suspended_cable_regression_SOURCES = regression/suspended_cable_regression.C
 generic_solution_regression_SOURCES = regression/generic_solution_regression.C
 
 # AMR test source files
@@ -209,6 +207,10 @@ TESTS += exact_soln/poisson_periodic_2d_y.sh
 TESTS += exact_soln/poisson_periodic_3d_xy.sh
 TESTS += exact_soln/poisson_periodic_3d_xz.sh
 TESTS += exact_soln/poisson_periodic_3d_yz.sh
+TESTS += exact_soln/elastic_cable_oned_displacement.sh
+TESTS += exact_soln/elastic_cable_twod_displacement.sh
+TESTS += exact_soln/elastic_cable_oned_newmark_rayleigh_damping.sh
+TESTS += exact_soln/elastic_cable_twod_newmark_rayleigh_damping.sh
 
 # Error/xfail TESTS
 TESTS += error_xfail/error_ufo.sh
@@ -291,6 +293,7 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_unifref.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
+TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_rayleigh_damping.sh
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 

@@ -80,7 +80,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -142,7 +142,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }

@@ -83,9 +83,9 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> &KvT = context.get_elem_jacobian(_flow_vars.v(), _temp_vars.T()); // R_{v},{T}
     libMesh::DenseSubMatrix<libMesh::Number>* KwT = NULL;
 
-    
 
-    if( this->mesh_dim(context) == 3 )
+
+    if( this->_flow_vars.dim() == 3 )
       {
         Fw  = &context.get_elem_residual(_flow_vars.w()); // R_{w}
         KwT = &context.get_elem_jacobian(_flow_vars.w(), _temp_vars.T()); // R_{w},{T}
@@ -113,7 +113,7 @@ namespace GRINS
             Fu(i) += -_rho*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*JxW[qp];
             Fv(i) += -_rho*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*JxW[qp];
 
-            if (this->mesh_dim(context) == 3)
+            if (this->_flow_vars.dim() == 3)
               (*Fw)(i) += -_rho*_beta_T*(T - _T_ref)*_g(2)*vel_phi[i][qp]*JxW[qp];
 
             if (compute_jacobian)
@@ -125,7 +125,7 @@ namespace GRINS
                     KvT(i,j) += context.get_elem_solution_derivative() *
                       -_rho*_beta_T*_g(1)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 
-                    if (this->mesh_dim(context) == 3)
+                    if (this->_flow_vars.dim() == 3)
                       (*KwT)(i,j) += context.get_elem_solution_derivative() *
                         -_rho*_beta_T*_g(2)*vel_phi[i][qp]*T_phi[j][qp]*JxW[qp];
 

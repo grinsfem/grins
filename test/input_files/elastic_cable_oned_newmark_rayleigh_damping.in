@@ -1,0 +1,98 @@
+
+# Material properties
+[Materials]
+   [./Cable]
+     [./CrossSectionalArea]
+       value = '0.5'
+     [../Density]
+       value = '1.0'
+     [../StressStrainLaw]
+       model = 'hookes_law'
+       [./HookesLaw]
+          E = '1.0e4'
+          nu = '0.45'
+[]
+
+[Physics]
+
+   enabled_physics = 'ElasticCable ElasticCableRayleighDamping'
+
+   [./ElasticCable]
+      material = 'Cable'
+   [../]
+   [./ElasticCableRayleighDamping]
+      lambda_factor = '0.1'                                                                                                                                                                                                                  
+      mu_factor = '0.1' 
+   [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'Left Right'
+
+   [./Left]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+
+   [./Right]
+      [./Displacement]
+         type = 'constant_displacement'
+         Ux = '0.1'
+      [../]
+   [../]
+[]
+
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_newmark'
+      delta_t = '0.125'
+      n_timesteps = '100'
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'Ux'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+[Mesh]
+   [./Generation]
+      dimension = '1'
+      element_type = 'EDGE2'
+      x_min = '0.0'
+      x_max = '8.0'
+      n_elems_x = '10'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '50'
+   max_linear_iterations = '2500'
+   verify_analytic_jacobians = '1.0e-6'
+   initial_linear_tolerance = '1.0e-10'
+   minimum_linear_tolerance = '1.0e-11'
+   relative_residual_tolerance = '1.0e-11'
+   use_numerical_jacobians_only = 'false'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'elastic_cable_oned_newmark_rayleigh_damping'
+   output_residual = 'false'
+   output_format = 'xdr'
+   timesteps_per_vis = '100' 
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

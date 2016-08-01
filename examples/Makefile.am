@@ -183,17 +183,10 @@ EXTRA_DIST += $(cabledisp_DATA)
 # Suspended Cable Example
 #=======================================================================
 suspendedcabledir = $(prefix)/examples/suspended_cable
-suspendedcable_PROGRAMS = cable
 suspendedcable_DATA  = $(top_srcdir)/examples/suspended_cable/cable.in
 suspendedcable_SCRIPTS = $(top_builddir)/examples/suspended_cable/run.sh
 
 EXTRA_DIST += $(suspendedcable_DATA)
-
-cable_SOURCES  = suspended_cable/suspended_cable.C
-
-cable_LDADD = $(LIBGRINS_LIBS)
-cable_CPPFLAGS = -I$(top_srcdir)/examples/suspended_cable $(AM_CPPFLAGS)
-
 
 #=======================================================================
 # Inflating Quarter Sheet with 1D Stiffeners Example

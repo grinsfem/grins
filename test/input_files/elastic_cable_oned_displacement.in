@@ -58,36 +58,29 @@
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations =  '50'
-max_linear_iterations = '2500'
-
-verify_analytic_jacobians = '0.0'
-
-initial_linear_tolerance = '1.0e-10'
-
-use_numerical_jacobians_only = 'true'
+   max_nonlinear_iterations =  '50'
+   max_linear_iterations = '2500'
+   verify_analytic_jacobians = '1.0e-6'
+   initial_linear_tolerance = '1.0e-10'
+   minimum_linear_tolerance = '1.0e-11'
+   relative_residual_tolerance = '1.0e-11'
+   use_numerical_jacobians_only = 'false'
+[]
 
 # Visualization options
 [vis-options]
-output_vis = 'true'
-
-vis_output_file_prefix = 'cable'
-
-output_residual = 'false'
-
-output_format = 'ExodusII xdr'
+   output_vis = 'true'
+   vis_output_file_prefix = 'elastic_cable_oned_displacement'
+   output_residual = 'false'
+   output_format = 'xdr'
+[]
 
 # Options for print info to the screen
 [screen-options]
-
-system_name = 'StretchedElasticCable'
-
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-print_element_jacobians = 'false'
-print_element_residuals = 'false'
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
 []

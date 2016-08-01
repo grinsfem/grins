@@ -57,7 +57,7 @@ namespace GRINS
     libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
 
 
-    if (this->mesh_dim(context) == 3)
+    if (this->_flow_vars.dim() == 3)
       libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
     // Element Jacobian * quadrature weights for interior integration.
@@ -71,7 +71,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
@@ -85,7 +85,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
@@ -107,7 +107,7 @@ namespace GRINS
             Fv(i) += ( - tau_C*RC*u_gradphi[i][qp](1)
                        - tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
 
-            if( this->mesh_dim(context) == 3 )
+            if( this->_flow_vars.dim() == 3 )
               {
                 (*Fw)(i) += ( - tau_C*RC*u_gradphi[i][qp](2)
                               - tau_M*RM_s(2)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
@@ -156,7 +156,7 @@ namespace GRINS
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
                                  context.interior_value( this->_flow_vars.v(), qp ) );
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           U(2) = context.interior_value( this->_flow_vars.w(), qp );
 
 	// Compute the viscosity at this qp
@@ -209,7 +209,7 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
 
-    if(this->mesh_dim(context) == 3)
+    if(this->_flow_vars.dim() == 3)
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
@@ -228,7 +228,7 @@ namespace GRINS
 	// Compute the viscosity at this qp
 	libMesh::Real _mu_qp = this->_mu(context, qp);
 
-        if( this->mesh_dim(context) == 3 )
+        if( this->_flow_vars.dim() == 3 )
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
@@ -248,7 +248,7 @@ namespace GRINS
 
             Fv(i) -= tau_M*RM_t(1)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
 
-            if( this->mesh_dim(context) == 3 )
+            if( this->_flow_vars.dim() == 3 )
               {
                 (*Fw)(i) -= tau_M*RM_t(2)*this->_rho*U*u_gradphi[i][qp]*JxW[qp];
               }
