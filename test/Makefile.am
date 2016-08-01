@@ -258,6 +258,7 @@ TESTS += regression/backward_facing_step.sh
 TESTS += regression/locally_refine.sh
 TESTS += regression/penalty_poiseuille.sh
 TESTS += regression/penalty_poiseuille_stab.sh
+TESTS += regression/velocity_penalty_drag.sh
 TESTS += regression/redistribute.sh
 TESTS += regression/coupled_stokes_ns.sh
 TESTS += regression/hot_cylinder.sh
