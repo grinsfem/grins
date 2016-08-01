@@ -53,7 +53,7 @@ numerical_jacobian_h = 1.e-10
 [vis-options]
 output_vis = false
 vis_output_file_prefix = convection_cell
-output_format = 'ExodusII xdr'
+output_format = 'xdr'
 
 # Options for print info to the screen
 [screen-options]
@@ -109,7 +109,6 @@ echo_physics = 'true'
    [./Flowing]
       [./Velocity]
          type = 'parsed_dirichlet'
-	 # u = '10*(abs(y-.5)<.25)*(y-.25)*(.75-y)'
 	 u = '10*(1<y)*(y<9)*(y<9)'
       [../]
    [../]
