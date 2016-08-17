@@ -46,6 +46,10 @@ namespace GRINSTesting
       _mesh = mesh_builder.build( *_input, *TestCommWorld );
       _es.reset( new libMesh::EquationSystems(*_mesh) );
       _system = &_es->add_system<GRINS::MultiphysicsSystem>( "GRINS-TEST" );
+
+      // We may not need any of these options, but this does some setup work that's needed
+      // and all the options have sane defaults if they're not in the testing input file.
+      _system->read_input_options( (*_input) );
     }
 
     void reset_all()
