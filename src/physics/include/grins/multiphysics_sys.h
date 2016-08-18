@@ -130,6 +130,11 @@ namespace GRINS
                            bool get_jacobian,
                            bool apply_heterogeneous_constraints = false );
 
+    //! Override FEMSystem::reinit
+    /*! This will allow each Physics to reinit things internally that need it,
+        such as point locators. */
+    virtual void reinit();
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 

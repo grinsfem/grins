@@ -270,6 +270,18 @@ namespace GRINS
     libMesh::FEMSystem::assembly(get_residual,get_jacobian,apply_heterogeneous_constraints);
   }
 
+  void MultiphysicsSystem::reinit()
+  {
+    // First call Parent
+    FEMSystem::reinit();
+
+    // Now do per Physics reinit (which by default is none)
+    for( PhysicsListIter physics_iter = _physics_list.begin();
+         physics_iter != _physics_list.end();
+         physics_iter++ )
+      (physics_iter->second)->reinit(*this);
+  }
+
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,
 					      libMesh::DiffContext& context,
                                               ResFuncType resfunc,
