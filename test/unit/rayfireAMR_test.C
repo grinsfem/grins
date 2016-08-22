@@ -56,6 +56,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( single_elems );
     CPPUNIT_TEST( through_vertex_postrefinment );
+    CPPUNIT_TEST( near_vertex_postrefinement );
     CPPUNIT_TEST( large_2D_mesh );
     CPPUNIT_TEST( refine_elem_not_on_rayfire );
     CPPUNIT_TEST( multiple_refinements );
@@ -86,6 +87,16 @@ namespace GRINSTesting
 
       mesh = build_quad9_elem();
       test_through_vertex(mesh);
+    }
+
+    //! After refinement, the rayfire will travel very near (but not through) a vertex
+    void near_vertex_postrefinement()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      test_near_vertex(mesh);
+
+      mesh = build_quad9_elem();
+      test_near_vertex(mesh);
     }
 
     //! A 10x10 mesh with selectively refined elements
@@ -433,6 +444,39 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( (rayfire_elem0->get_node(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
       CPPUNIT_ASSERT( (rayfire_elem1->get_node(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
       CPPUNIT_ASSERT( (rayfire_elem1->get_node(1))->absolute_fuzzy_equals(end_point) );
+    }
+
+    void test_near_vertex(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    {
+      libMesh::Point origin(0.4999,0.0);
+      libMesh::Point end_point(1.0,1.0);
+      libMesh::Real theta = calc_theta(origin,end_point);
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      libMesh::Elem* elem = mesh->elem(0);
+      CPPUNIT_ASSERT(elem);
+
+      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+
+      libMesh::MeshRefinement mr(*mesh);
+      mr.refine_elements();
+
+      rayfire->reinit(*mesh);
+
+      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child(0)->id() );
+      CPPUNIT_ASSERT(rayfire_elem0);
+
+      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(1)->id() );
+      CPPUNIT_ASSERT(rayfire_elem1);
+
+      const libMesh::Elem* rayfire_elem2 = rayfire->map_to_rayfire_elem( elem->child(3)->id() );
+      CPPUNIT_ASSERT(rayfire_elem2);
+
+      // not in rayfire
+      const libMesh::Elem* non_rayfire_elem = rayfire->map_to_rayfire_elem( elem->child(2)->id() );
+      CPPUNIT_ASSERT(!non_rayfire_elem);
     }
 
     //! Refine specific elements on a large mesh
