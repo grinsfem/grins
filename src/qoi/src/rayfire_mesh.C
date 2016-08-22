@@ -399,27 +399,43 @@ namespace GRINS
     rayfire_elem->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
 
     // find which child elem we start with
-    libMesh::dof_id_type start_child = -1;
+    libMesh::dof_id_type start_child = libMesh::invalid_uint;
     for(unsigned int i=0; i<main_elem->n_children(); i++)
       {
         if ( (main_elem->child(i))->contains_point(*start_node) )
           {
-            // move a little bit along the rayfire
-            // and see if we are in the elem
-            libMesh::Real L = main_elem->child(i)->hmin();
-            L *= 0.1;
+            // check if the start point is a vertex
+            bool is_vertex = false;
+            for(unsigned int n=0; n<main_elem->child(i)->n_nodes(); n++)
+              is_vertex |= (main_elem->child(i)->get_node(n))->absolute_fuzzy_equals(*start_node);
 
-            // parametric representation of rayfire line
-            libMesh::Real x = (*start_node)(0) + L*std::cos(_theta);
-            libMesh::Real y = (*start_node)(1) + L*std::sin(_theta);
+            if (is_vertex)
+              {
+                // move a little bit along the rayfire
+                // and see if we are in the elem
+                libMesh::Real L = main_elem->child(i)->hmin();
+                L *= 0.1;
 
-            if (main_elem->child(i)->contains_point(libMesh::Point(x,y)))
+                // parametric representation of rayfire line
+                libMesh::Real x = (*start_node)(0) + L*std::cos(_theta);
+                libMesh::Real y = (*start_node)(1) + L*std::sin(_theta);
+
+                if (main_elem->child(i)->contains_point(libMesh::Point(x,y)))
+                  {
+                    start_child = i;
+                    break;
+                  }
+              }
+            else
               {
                 start_child = i;
                 break;
               }
           }
       }
+
+    // make sure we found a starting child elem
+    libmesh_assert_not_equal_to(start_child,libMesh::invalid_uint);
 
     // we found the starting element, so perform the rayfire
     // until we reach the stored end_node
