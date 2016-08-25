@@ -32,5 +32,6 @@ namespace GRINS
   const std::string parsed_boundary = "parsed_boundary";
   const std::string parsed_interior = "parsed_interior";
   const std::string weighted_flux = "weighted_flux";
+  const std::string integrated_function = "integrated_function";
 }
 #endif //GRINS_QOI_NAMES_H
