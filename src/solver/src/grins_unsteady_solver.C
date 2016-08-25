@@ -228,7 +228,7 @@ namespace GRINS
     // Right now, only Newmark is available so we cast directly to that
     libMesh::TimeSolver& base_time_solver = context.system->get_time_solver();
 
-    libMesh::NewmarkSolver& time_solver = libMesh::libmesh_cast_ref<libMesh::NewmarkSolver&>(base_time_solver);
+    libMesh::NewmarkSolver& time_solver = libMesh::cast_ref<libMesh::NewmarkSolver&>(base_time_solver);
 
     // If there's a restart, the acceleration should already be there
     if( context.have_restart )

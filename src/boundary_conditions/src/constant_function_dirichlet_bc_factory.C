@@ -72,7 +72,7 @@ namespace GRINS
 
     // Cast to raw CompositeFunction for convenience
     libMesh::CompositeFunction<libMesh::Number>& composite_func =
-      libMesh::libmesh_cast_ref<libMesh::CompositeFunction<libMesh::Number>&>(*(all_funcs.get()));
+      libMesh::cast_ref<libMesh::CompositeFunction<libMesh::Number>&>(*(all_funcs.get()));
 
     std::set<std::string> vars_added;
     this->add_found_vars(input, system, section, vars_found, composite_func, vars_added);
