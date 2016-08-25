@@ -501,10 +501,8 @@ namespace GRINS
         const libMesh::Elem* parent_elem = child_elem->parent();
         libmesh_assert(parent_elem);
 
-        const libMesh::Node* start_node;
-        const libMesh::Node* end_node;
-
-        bool initial_nodes = false;
+        const libMesh::Node* start_node = NULL;
+        const libMesh::Node* end_node = NULL;
 
         for (unsigned int c=0; c<parent_elem->n_children(); c++)
           {
@@ -512,11 +510,10 @@ namespace GRINS
 
             if (rayfire_child)
               {
-                if (!initial_nodes)
+                if (!start_node)
                   {
                     start_node = rayfire_child->get_node(0);
                     end_node = rayfire_child->get_node(1);
-                    initial_nodes = true;
                   }
                 else
                   {
@@ -530,6 +527,10 @@ namespace GRINS
                 rayfire_child->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
               }
           } // for c
+
+        // make sure we found nodes
+        libmesh_assert(start_node);
+        libmesh_assert(end_node);
 
         // add a new rayfire elem
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
