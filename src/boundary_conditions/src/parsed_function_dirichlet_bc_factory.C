@@ -50,7 +50,7 @@ namespace GRINS
 
     typedef typename TypeFrom<FunctionType>::to_composite composite_type;
     composite_type * composite_func =
-      libMesh::libmesh_cast_ptr<composite_type *>(all_funcs.get());
+      libMesh::cast_ptr<composite_type *>(all_funcs.get());
 
     // We're given the active variables in var_names. Let's first check
     // which ones the user actually set in the input file.

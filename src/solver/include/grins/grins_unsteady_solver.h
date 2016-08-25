@@ -79,7 +79,7 @@ namespace GRINS
   inline
   void UnsteadySolver::set_theta( libMesh::UnsteadySolver* time_solver )
   {
-    T* deriv_solver = libMesh::libmesh_cast_ptr<T*>(time_solver);
+    T* deriv_solver = libMesh::cast_ptr<T*>(time_solver);
     deriv_solver->theta = this->_theta;
   }
 

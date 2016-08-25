@@ -49,9 +49,9 @@ namespace GRINS
       {
         this->qoi_functional = original.qoi_functional->clone();
         this->move_parameter
-          (*libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+          (*libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
              (original.qoi_functional.get()),
-           *libMesh::libmesh_cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
+           *libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
              (this->qoi_functional.get()));
       }
 
