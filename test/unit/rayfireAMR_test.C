@@ -557,10 +557,13 @@ namespace GRINSTesting
           unsigned int index = 0;
           for(unsigned int c=0; c<elem->n_children(); c++)
             {
-              if (c==children[index] && index<children.size())
+              if (index<children.size())
                 {
-                  index++;
-                  CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem( elem->child(c)->id() ) );
+                  if (c==children[index])
+                    {
+                      index++;
+                      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem( elem->child(c)->id() ) );
+                    }
                 }
               else
                 CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( elem->child(c)->id() )) );
