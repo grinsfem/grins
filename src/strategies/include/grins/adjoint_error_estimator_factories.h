@@ -56,7 +56,7 @@ namespace GRINS
 
       // Now cast to derived type
       EstimatorType* adjoint_error_estimator =
-        libMesh::libmesh_cast_ptr<EstimatorType*>(raw_error_estimator.get() );
+        libMesh::cast_ptr<EstimatorType*>(raw_error_estimator.get() );
 
       // Set a QoISet
       libMesh::QoISet qoi_set(system);

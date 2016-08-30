@@ -127,7 +127,7 @@ namespace GRINS
 	if( _error_estimator_options.compute_qoi_error_estimate() )
 	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
 	  {
-	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::libmesh_cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
+	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
 	    std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
 	  }
 

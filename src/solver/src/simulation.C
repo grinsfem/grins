@@ -370,7 +370,7 @@ namespace GRINS
     if ( this->_print_qoi )
       {
         _multiphysics_system->assemble_qoi();
-        const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+        const CompositeQoI* my_qoi = libMesh::cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
       }
 
@@ -449,7 +449,7 @@ namespace GRINS
 
   libMesh::Number Simulation::get_qoi_value( unsigned int qoi_index ) const
   {
-    const CompositeQoI* qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+    const CompositeQoI* qoi = libMesh::cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
     return qoi->get_qoi_value(qoi_index);
   }
 

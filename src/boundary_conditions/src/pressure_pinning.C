@@ -111,7 +111,7 @@ namespace GRINS
     libmesh_assert_not_equal_to( _pinned_elem_id, libMesh::DofObject::invalid_id );
 
     /** \todo pin_location needs to be const. Currently a libMesh restriction. */
-    AssemblyContext &c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    AssemblyContext &c = libMesh::cast_ref<AssemblyContext&>(context);
 
     if( c.get_elem().id() == _pinned_elem_id )
       {

@@ -243,7 +243,7 @@ namespace GRINS
 
   void MultiphysicsSystem::init_context( libMesh::DiffContext& context )
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    AssemblyContext& c = libMesh::cast_ref<AssemblyContext&>(context);
 
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -287,7 +287,7 @@ namespace GRINS
                                               ResFuncType resfunc,
                                               CacheFuncType cachefunc)
   {
-    AssemblyContext& c = libMesh::libmesh_cast_ref<AssemblyContext&>(context);
+    AssemblyContext& c = libMesh::cast_ref<AssemblyContext&>(context);
 
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
@@ -476,7 +476,7 @@ namespace GRINS
                                               libMesh::DiffContext& context )
   {
     AssemblyContext& assembly_context =
-      libMesh::libmesh_cast_ref<AssemblyContext&>( context );
+      libMesh::cast_ref<AssemblyContext&>( context );
 
     std::vector<BoundaryID> ids = assembly_context.side_boundary_ids();
 
