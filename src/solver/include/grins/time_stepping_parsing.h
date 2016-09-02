@@ -56,6 +56,10 @@ namespace GRINS
     static double parse_deltat( const GetPot& input );
 
     static std::string parse_time_stepper_name( const GetPot& input );
+
+    static bool parse_zero_initial_velocity( const GetPot & input );
+
+    static bool parse_recompute_accel( const GetPot & input );
   };
 
 } // end namespace GRINS
