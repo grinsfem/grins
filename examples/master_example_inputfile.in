@@ -433,6 +433,7 @@
       # Current valid options are:
       #   libmesh_euler_solver
       #   libmesh_euler2_solver
+      #   libmesh_newmark
       solver_type = 'libmesh_euler_solver'
 
       # This sets the time step size. There is no default.
