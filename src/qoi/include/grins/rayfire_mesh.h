@@ -152,10 +152,10 @@ namespace GRINS
     @return Elem* if intersection is found
     @return NULL  if no intersection point found (i.e. start_point is on a boundary)
     */
-    const libMesh::Elem* get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point* start_point, libMesh::Point* end_point);
+    const libMesh::Elem* get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point& start_point, libMesh::Point& end_point);
 
     //! Ensure the calculated intersection point is on the edge_elem and is not the start_point
-    bool check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, libMesh::Elem& edge_elem, libMesh::Point* next_point);
+    bool check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, libMesh::Elem& edge_elem, libMesh::Point& next_point);
 
     //! Knowing the end_point, get the appropraite next elem along the path
     const libMesh::Elem* get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side);
@@ -200,7 +200,7 @@ namespace GRINS
     @param[out] intersection_point The calculated intersection point (only set if convergence is achieved)
     @return Whether or not the solver converged before hitting the iteration limit
     */
-    bool newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point* intersection_point);
+    bool newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point& intersection_point);
 
     //! Refinement of a rayfire element whose main mesh counterpart was refined
     void refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem);
