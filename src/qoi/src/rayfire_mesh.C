@@ -347,7 +347,6 @@ namespace GRINS
         return cur_elem->neighbor(side);
       }
 
-    libmesh_error_msg("We shouldn't be here...");
     return NULL;
   }
 
