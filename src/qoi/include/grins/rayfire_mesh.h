@@ -163,6 +163,16 @@ namespace GRINS
     //! Ensure the supplied origin is on a boundary of the mesh
     void check_origin_on_boundary(const libMesh::Elem* start_elem);
 
+    //! Get the correct starting elem corresponding to _origin
+    /*!
+    @return NULL Origin is not on the mesh
+    @return Elem* First elem on the rayfire
+    */
+    const libMesh::Elem* get_start_elem(const libMesh::MeshBase& mesh_base);
+
+    //! Walks a short distance along the rayfire and checks if elem contains that point
+    bool rayfire_in_elem(const libMesh::Point& end_point, const libMesh::Elem* elem);
+
     //! Iterative solver for calculating the intersection point of the rayfire on the side of an elem
     /*!
     The rayfire line can be represented in point-slope form:
