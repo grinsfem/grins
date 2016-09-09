@@ -79,8 +79,7 @@ namespace GRINS
     libMesh::Point start_point(_origin);
 
     // get first element
-    libMesh::UniquePtr<libMesh::PointLocatorBase> locator = mesh_base.sub_point_locator();
-    const libMesh::Elem* start_elem = (*locator)(_origin);
+    const libMesh::Elem* start_elem = this->get_start_elem(mesh_base);
 
     if (!start_elem)
       libmesh_error_msg("Origin is not on mesh");
@@ -199,6 +198,39 @@ namespace GRINS
   }
 
 
+  const libMesh::Elem* RayfireMesh::get_start_elem(const libMesh::MeshBase& mesh_base)
+  {
+    const libMesh::Elem* start_elem = NULL;
+
+    libMesh::UniquePtr<libMesh::PointLocatorBase> locator = mesh_base.sub_point_locator();
+    const libMesh::Elem* elem = (*locator)(_origin);
+
+    // elem would be NULL if origin is not on mesh
+    if (elem)
+      {
+        if (this->rayfire_in_elem(_origin,elem))
+          start_elem = elem;
+        else
+          {
+            for (unsigned int i=0; i<elem->n_neighbors(); i++)
+              {
+                const libMesh::Elem* neighbor_elem = elem->neighbor(i);
+                if (!neighbor_elem)
+                  continue;
+
+                if (this->rayfire_in_elem(_origin,neighbor_elem))
+                  {
+                    start_elem = neighbor_elem;
+                    break;
+                  }
+              }
+          }
+      }
+
+    return start_elem; // might be NULL if _origin is not on mesh
+  }
+
+
   libMesh::Elem* RayfireMesh::get_rayfire_elem(const libMesh::dof_id_type elem_id)
   {
     // return value; set if valid rayfire elem is found
@@ -258,6 +290,23 @@ namespace GRINS
   }
 
 
+  bool RayfireMesh::rayfire_in_elem(const libMesh::Point& end_point, const libMesh::Elem* elem)
+  {
+    libmesh_assert(elem);
+
+    // move a little bit along the rayfire
+    // and see if we are still in the elem
+    libMesh::Real L = elem->hmin();
+    L *= 0.1;
+
+    // parametric representation of rayfire line
+    libMesh::Real x = end_point(0) + L*std::cos(_theta);
+    libMesh::Real y = end_point(1) + L*std::sin(_theta);
+
+    return elem->contains_point(libMesh::Point(x,y));
+  }
+
+
   const libMesh::Elem* RayfireMesh::get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side)
   {
     // check if side is a boundary
@@ -287,16 +336,7 @@ namespace GRINS
             if (elem == cur_elem) // skip the current elem
               continue;
 
-            // move a little bit along the rayfire
-            // and see if we are in the elem
-            libMesh::Real L = elem->hmin();
-            L *= 0.1;
-
-            // parametric representation of rayfire line
-            libMesh::Real x = end_point(0) + L*std::cos(_theta);
-            libMesh::Real y = end_point(1) + L*std::sin(_theta);
-
-            if ( elem->contains_point(libMesh::Point(x,y)) )
+            if (this->rayfire_in_elem(end_point,elem))
               return elem;
           }
 
