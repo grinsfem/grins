@@ -59,6 +59,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_exact_answer );
     CPPUNIT_TEST( test_convergence );
+    CPPUNIT_TEST( qoi_from_input_file );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -284,6 +285,27 @@ namespace GRINSTesting
 
         } //for t
     }
+
+    //! Tests that an IntegratedFunction can be initialized and computed
+    //! directly from the input file
+    void qoi_from_input_file()
+    {
+      const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/integrated_function_qoi_quad9.in";
+      this->init_sim(filename);
+
+      libMesh::Real theta = 0.25;
+      libMesh::Real L = 10.0/std::cos(theta);
+      libMesh::Real costheta = std::cos(theta);
+
+      // function: "(4/3)*(x^3)+10"
+
+      libMesh::Real calc_answer = (4.0/12.0)*pow(costheta,3)*std::pow(L,4)+10*L;
+
+      _sim->run();
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE  );
+    }
+
 
   private:
     GRINS::SharedPtr<GRINS::Simulation> _sim;
