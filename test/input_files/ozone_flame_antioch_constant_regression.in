@@ -151,13 +151,13 @@
    use_numerical_jacobians_only = 'true'
 
    relative_residual_tolerance = '1.0e-10'
-   relative_step_tolerance = '1.0e-6'
+   relative_step_tolerance = '1.0e-8'
 []
 
 # Visualization options
 [vis-options]
    output_vis = 'true'
-   vis_output_file_prefix = 'output'
+   vis_output_file_prefix = 'output_ozone_constant'
    output_residual = 'false'
    output_format = 'ExodusII xdr'
 []
