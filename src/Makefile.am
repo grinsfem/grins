@@ -200,6 +200,7 @@ libgrins_la_SOURCES += qoi/src/weighted_flux_qoi.C
 libgrins_la_SOURCES += qoi/src/rayfire_mesh.C
 libgrins_la_SOURCES += qoi/src/integrated_function.C
 libgrins_la_SOURCES += qoi/src/qoi_output.C
+libgrins_la_SOURCES += qoi/src/hitran.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/grins_solver.C
@@ -475,6 +476,7 @@ include_HEADERS += qoi/include/grins/rayfire_mesh.h
 include_HEADERS += qoi/include/grins/integrated_function.h
 include_HEADERS += qoi/include/grins/qoi_output.h
 include_HEADERS += qoi/include/grins/qoi_options.h
+include_HEADERS += qoi/include/grins/hitran.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/grins_solver.h
