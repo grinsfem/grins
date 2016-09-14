@@ -34,6 +34,10 @@
 #include "grins/parsed_boundary_qoi.h"
 #include "grins/parsed_interior_qoi.h"
 #include "grins/weighted_flux_qoi.h"
+#include "grins/integrated_function.h"
+
+// libMesh
+#include "libmesh/parsed_function.h"
 
 namespace GRINS
 {
@@ -41,7 +45,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   QoIFactory::~QoIFactory()
   {
     return;
@@ -59,7 +63,7 @@ namespace GRINS
       }
 
     SharedPtr<CompositeQoI> qois( new CompositeQoI );
-    
+
     if( !qoi_names.empty() )
       {
         for( std::vector<std::string>::const_iterator name = qoi_names.begin();
@@ -79,7 +83,7 @@ namespace GRINS
     return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& /*input*/, const std::string& qoi_name, SharedPtr<CompositeQoI>& qois )
+  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, SharedPtr<CompositeQoI>& qois )
   {
     QoIBase* qoi = NULL;
 
@@ -108,6 +112,49 @@ namespace GRINS
         qoi =  new WeightedFluxQoI( weighted_flux );
       }
 
+    else if( qoi_name == integrated_function )
+      {
+        unsigned int rayfire_dim = input.vector_variable_size("QoI/IntegratedFunction/Rayfire/origin");
+
+        if (rayfire_dim != 2)
+          libmesh_error_msg("ERROR: Only 2D Rayfires are currently supported");
+
+        if (!input.have_variable("QoI/IntegratedFunction/Rayfire/origin"))
+          libmesh_error_msg("ERROR: No origin specified for Rayfire");
+
+        if (input.vector_variable_size("QoI/IntegratedFunction/Rayfire/origin") != 2)
+          libmesh_error_msg("ERROR: Please specify a 2D point (x,y) for the rayfire origin");
+
+        libMesh::Point origin;
+        origin(0) = input("QoI/IntegratedFunction/Rayfire/origin", 0.0, 0);
+        origin(1) = input("QoI/IntegratedFunction/Rayfire/origin", 0.0, 1);
+
+        libMesh::Real theta;
+
+        if (input.have_variable("QoI/IntegratedFunction/Rayfire/theta"))
+            theta = input("QoI/IntegratedFunction/Rayfire/theta", -7.0);
+        else
+            libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+          
+
+        if (input.have_variable("QoI/IntegratedFunction/Rayfire/phi"))
+          libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
+
+
+        std::string function;
+        if (input.have_variable("QoI/IntegratedFunction/function"))
+          function = input("QoI/IntegratedFunction/function", "");
+        else
+          libmesh_error_msg("ERROR: Could not find function to integrate");
+
+        unsigned int p_level = input("QoI/IntegratedFunction/quadrature_level", 2);
+
+        RayfireMesh* rayfire = new RayfireMesh(origin,theta);
+        SharedPtr<libMesh::FunctionBase<libMesh::Real> > f = new libMesh::ParsedFunction<libMesh::Real>(function);
+
+        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(p_level,f,rayfire,integrated_function);
+      }
+
     else
       {
 	 libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
@@ -121,14 +168,14 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::check_qoi_physics_consistency( const GetPot& input, 
+  void QoIFactory::check_qoi_physics_consistency( const GetPot& input,
 						  const std::string& qoi_name )
   {
     int num_physics =  input.vector_variable_size("Physics/enabled_physics");
 
     // This should be checked other places, but let's be double sure.
     libmesh_assert(num_physics > 0);
-  
+
     std::set<std::string> requested_physics;
     std::set<std::string> required_physics;
 
@@ -137,8 +184,8 @@ namespace GRINS
       {
 	requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
       }
-  
-    /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes. 
+
+    /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes.
        HeatTransfer implicitly requires fluids, so no need to check for those. `*/
     if( qoi_name == avg_nusselt )
       {
@@ -146,7 +193,7 @@ namespace GRINS
 	required_physics.insert(PhysicsNaming::low_mach_navier_stokes());
 	this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
-      
+
     return;
   }
 
@@ -155,10 +202,10 @@ namespace GRINS
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl
 	      << "List of Enabled QoIs:" << std::endl;
-    
+
     for( unsigned int q = 0; q < qois->n_qois(); q++ )
       {
-        std::cout << qois->get_qoi(q).name() << std::endl;      
+        std::cout << qois->get_qoi(q).name() << std::endl;
       }
 
     std::cout <<  "==========================================================" << std::endl;
@@ -167,7 +214,7 @@ namespace GRINS
   }
 
   void QoIFactory::consistency_helper( const std::set<std::string>& requested_physics,
-				       const std::set<std::string>& required_physics, 
+				       const std::set<std::string>& required_physics,
 				       const std::string& qoi_name )
   {
     bool physics_found = false;
@@ -185,20 +232,20 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::consistency_error_msg( const std::string& qoi_name, 
+  void QoIFactory::consistency_error_msg( const std::string& qoi_name,
 					  const std::set<std::string>& required_physics )
   {
     libMesh::err << "================================================================" << std::endl
 		 << "QoI " << qoi_name << std::endl
 		 << "requires one of the following physics which were not found:" <<std::endl;
-    
+
     for( std::set<std::string>::const_iterator name = required_physics.begin();
 	 name != required_physics.end();
 	 name++ )
       {
 	libMesh::err << *name << std::endl;
       }
-  
+
     libMesh::err << "================================================================" << std::endl;
 
     libmesh_error();

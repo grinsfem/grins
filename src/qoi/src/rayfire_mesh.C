@@ -124,6 +124,17 @@ namespace GRINS
   }
 
 
+  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector)
+  {
+    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    for(; it != _elem_id_map.end(); it++)
+      {
+        if (it->second->active())
+          id_vector.push_back(it->first);
+      }
+  }
+
+
   void RayfireMesh::reinit(const libMesh::MeshBase& mesh_base)
   {
     // store the elems to be refined until later

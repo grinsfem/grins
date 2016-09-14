@@ -103,6 +103,11 @@ namespace GRINS
     const libMesh::Elem* map_to_rayfire_elem(const libMesh::dof_id_type elem_id);
 
     /*!
+    Returns a vector of elem IDs that are currently along the rayfire
+    */
+    void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector);
+
+    /*!
     Checks for refined and coarsened main mesh elements along the rayfire path.
     They are then passed to refine() and coarsen(), respectively, to update the rayfire mesh.
 
