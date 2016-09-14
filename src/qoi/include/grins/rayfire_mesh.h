@@ -119,7 +119,7 @@ namespace GRINS
     const unsigned int _dim;
 
     //! Origin point
-    libMesh::Point& _origin;
+    libMesh::Point _origin;
 
     //! Rayfire Spherical polar angle (in radians)
     libMesh::Real   _theta;
