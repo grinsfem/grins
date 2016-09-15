@@ -95,6 +95,10 @@ namespace GRINS
     void split_string( const std::string& input,
                        const std::string& delimiter,
                        std::vector<std::string>& results );
+
+    void split_string_real( const std::string& input,
+                            const std::string& delimiter,
+                            std::vector<libMesh::Real>& results );
   } // end namespace StringUtilities
 } // end namespace GRINS
 
