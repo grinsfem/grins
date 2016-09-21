@@ -71,10 +71,20 @@ namespace GRINS
 
     _antioch_mixture.molar_densities( rho, mass_fractions, molar_densities );
 
-    _antioch_kinetics.compute_mass_sources( temp_cache.T,
-                                            molar_densities,
-                                            h_RT_minus_s_R,
-                                            omega_dot );
+    bool have_density = false;
+    for (unsigned int i=0; i != n_species; ++i)
+      if (molar_densities[i] <= 0)
+        molar_densities[i] = 0;
+      else
+        have_density = true;
+
+    if (have_density)
+      _antioch_kinetics.compute_mass_sources( temp_cache.T,
+                                              molar_densities,
+                                              h_RT_minus_s_R,
+                                              omega_dot );
+    else
+      std::fill(omega_dot.begin(), omega_dot.end(), 0.0);
   }
 
 }// end namespace GRINS
