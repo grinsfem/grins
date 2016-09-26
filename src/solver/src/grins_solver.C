@@ -152,13 +152,11 @@ namespace GRINS
         }
   }
 
-  void Solver::print_qoi( SolverContext& context, std::ostream& output )
+  void Solver::print_qoi( SolverContext & context )
   {
     context.system->assemble_qoi();
     const CompositeQoI* my_qoi = libMesh::cast_ptr<const CompositeQoI*>(context.system->get_qoi());
-
-    my_qoi->output_qoi( output );
-    output << std::endl;
+    context.qoi_output->output_qois(*my_qoi, context.system->comm());
   }
 
 } // namespace GRINS

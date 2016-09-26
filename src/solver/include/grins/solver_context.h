@@ -32,6 +32,7 @@
 #include "grins/shared_ptr.h"
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
+#include "grins/qoi_output.h"
 
 // libMesh
 #include "libmesh/error_estimator.h"
@@ -66,8 +67,9 @@ namespace GRINS
     bool output_solution_sensitivities;
     bool print_perflog;
     bool print_scalars;
-    bool print_qoi;
     bool do_adjoint_solve;
+
+    SharedPtr<QoIOutput> qoi_output;
 
     SharedPtr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 

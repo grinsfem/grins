@@ -151,8 +151,8 @@ namespace GRINS
 
                 // It's helpful to print the qoi along the way, but only do it if the user
                 // asks for it
-                if( context.print_qoi )
-                  this->print_qoi(context,std::cout);
+                if( context.qoi_output->output_qoi_set() )
+                  this->print_qoi(context);
               }
           }
 
