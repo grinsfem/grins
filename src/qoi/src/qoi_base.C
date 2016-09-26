@@ -40,50 +40,7 @@ namespace GRINS
     : ParameterUser(qoi_name),
       _qoi_name(qoi_name),
       _qoi_value(0.0)
-  {
-    return;
-  }
-
-  QoIBase::~QoIBase()
-  {
-    return;
-  }
-
-  void QoIBase::init
-    (const GetPot& /*input*/,
-     const MultiphysicsSystem& /*system*/,
-     unsigned int /*qoi_num*/ )
-  {
-  }
-
-  void QoIBase::init_context( AssemblyContext& /*context*/ )
-  {
-    return;
-  }
-
-  void QoIBase::element_qoi( AssemblyContext& /*context*/,
-                             const unsigned int /*qoi_index*/ )
-  {
-    return;
-  }
-
-  void QoIBase::element_qoi_derivative( AssemblyContext& /*context*/,
-                                        const unsigned int /*qoi_index*/ )
-  {
-    return;
-  }
-
-  void QoIBase::side_qoi( AssemblyContext& /*context*/,
-                          const unsigned int /*qoi_index*/ )
-  {
-    return;
-  }
-
-  void QoIBase::side_qoi_derivative( AssemblyContext& /*context*/,
-                                     const unsigned int /*qoi_index*/ )
-  {
-    return;
-  }
+  {}
 
   void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
                              libMesh::Number& sys_qoi,
@@ -94,15 +51,11 @@ namespace GRINS
     sys_qoi = local_qoi;
 
     _qoi_value = sys_qoi;
-
-    return;
   }
 
   void QoIBase::thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi )
   {
     qoi += other_qoi;
-
-    return;
   }
 
   void QoIBase::output_qoi( std::ostream& out ) const
@@ -111,8 +64,6 @@ namespace GRINS
         << std::setprecision(16)
         << std::scientific
         << _qoi_value << std::endl;
-
-    return;
   }
-  
+
 } // namespace GRINS
