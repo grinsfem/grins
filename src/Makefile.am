@@ -472,6 +472,7 @@ include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
 include_HEADERS += qoi/include/grins/weighted_flux_qoi.h
 include_HEADERS += qoi/include/grins/rayfire_mesh.h
 include_HEADERS += qoi/include/grins/integrated_function.h
+include_HEADERS += qoi/include/grins/qoi_options.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/grins_solver.h
