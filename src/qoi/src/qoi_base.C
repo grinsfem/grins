@@ -107,14 +107,10 @@ namespace GRINS
 
   void QoIBase::output_qoi( std::ostream& out ) const
   {
-    out << "==========================================================" << std::endl;
-
     out << _qoi_name+" = "
         << std::setprecision(16)
         << std::scientific
         << _qoi_value << std::endl;
-
-    out << "==========================================================" << std::endl;
 
     return;
   }
