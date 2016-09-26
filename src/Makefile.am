@@ -525,6 +525,7 @@ include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
 include_HEADERS += utilities/include/grins/distance_function.h
 include_HEADERS += utilities/include/grins/parameter_antioch_reset.h
+include_HEADERS += utilities/include/grins/output_parsing.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h
