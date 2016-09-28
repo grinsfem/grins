@@ -42,8 +42,8 @@ namespace GRINS
 {
   QoIOutput::QoIOutput( const GetPot & input )
     : _output_to_display( input(OutputParsing::output_section()+"/"+OutputParsing::display_section()+"/"+QoIOptions::output_to_display(), false) ),
-      _output_to_file( input.have_variable(OutputParsing::output_section()+"/"+QoIOptions::qoi_section()+"/"+QoIOptions::file_prefix()) ),
-      _file_prefix( input(OutputParsing::output_section()+"/"+QoIOptions::qoi_section()+"/"+QoIOptions::file_prefix(), "nofile") )
+      _output_to_file( input.have_variable(OutputParsing::output_section()+"/"+QoIOptions::qoi_section()+"/"+QoIOptions::default_file_prefix()) ),
+      _file_prefix( input(OutputParsing::output_section()+"/"+QoIOptions::qoi_section()+"/"+QoIOptions::default_file_prefix(), "nofile") )
   {
     if( input.have_variable("screen-options/print_qoi") )
       {

@@ -40,8 +40,8 @@ namespace GRINS
     static const std::string output_to_display()
     { return "print_qoi"; }
 
-    static const std::string file_prefix()
-    { return "file_prefix"; }
+    static const std::string default_file_prefix()
+    { return "default_file_prefix"; }
   };
 } // end namespace GRINS
 
