@@ -98,7 +98,7 @@ check_PROGRAMS += 3d_low_mach_jacobians_xy
 check_PROGRAMS += 3d_low_mach_jacobians_xz
 check_PROGRAMS += 3d_low_mach_jacobians_yz
 check_PROGRAMS += generic_solution_regression
-
+check_PROGRAMS += regression_testing_app
 
 # AMR Tests
 check_PROGRAMS += generic_amr_testing_app
@@ -156,6 +156,7 @@ elastic_sheet_regression_SOURCES = regression/elastic_sheet_regression.C
 3d_low_mach_jacobians_xz_SOURCES = regression/3d_low_mach_jacobians.C
 3d_low_mach_jacobians_yz_SOURCES = regression/3d_low_mach_jacobians.C
 generic_solution_regression_SOURCES = regression/generic_solution_regression.C
+regression_testing_app_SOURCES = regression/regression_testing_app.C
 
 # AMR test source files
 generic_amr_testing_app_SOURCES = amr/generic_amr_testing_app.C
