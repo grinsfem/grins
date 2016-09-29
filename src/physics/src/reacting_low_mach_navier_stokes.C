@@ -173,7 +173,9 @@ namespace GRINS
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
     // Check number of dofs is same for _flow_vars.u(), v_var and w_var.
-    libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
+    if (this->_flow_vars.dim() > 1)
+      libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.v()).size());
+
     if (this->_flow_vars.dim() == 3)
       libmesh_assert (n_u_dofs == context.get_dof_indices(this->_flow_vars.w()).size());
 
@@ -213,9 +215,12 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number>& Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u()); // R_{u}
-    libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
-    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
 
+    libMesh::DenseSubVector<libMesh::Number>* Fv = NULL;
+    if( this->_flow_vars.dim() > 1 )
+      Fv = &context.get_elem_residual(this->_flow_vars.v()); // R_{v}
+
+    libMesh::DenseSubVector<libMesh::Number>* Fw = NULL;
     if( this->_flow_vars.dim() == 3 )
       Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
@@ -226,32 +231,43 @@ namespace GRINS
       {
         libMesh::Number rho = cache.get_cached_values(Cache::MIXTURE_DENSITY)[qp];
 
-        libMesh::Number u, v, T;
+        libMesh::Number u, T;
         u = cache.get_cached_values(Cache::X_VELOCITY)[qp];
-        v = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
 
         T = cache.get_cached_values(Cache::TEMPERATURE)[qp];
 
         const libMesh::Gradient& grad_T =
           cache.get_cached_gradient_values(Cache::TEMPERATURE_GRAD)[qp];
 
-        libMesh::NumberVectorValue U(u,v);
+        libMesh::NumberVectorValue U(u);
+        if (this->_flow_vars.dim() > 1)
+          U(1) = cache.get_cached_values(Cache::Y_VELOCITY)[qp];
         if (this->_flow_vars.dim() == 3)
           U(2) = cache.get_cached_values(Cache::Z_VELOCITY)[qp]; // w
 
         libMesh::Gradient grad_u = cache.get_cached_gradient_values(Cache::X_VELOCITY_GRAD)[qp];
-        libMesh::Gradient grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
+        libMesh::Gradient grad_v;
+
+        if (this->_flow_vars.dim() > 1)
+          grad_v = cache.get_cached_gradient_values(Cache::Y_VELOCITY_GRAD)[qp];
 
         libMesh::Gradient grad_w;
         if (this->_flow_vars.dim() == 3)
           grad_w = cache.get_cached_gradient_values(Cache::Z_VELOCITY_GRAD)[qp];
 
-        libMesh::Number divU = grad_u(0) + grad_v(1);
+        libMesh::Number divU = grad_u(0);
+        if (this->_flow_vars.dim() > 1)
+          divU += grad_v(1);
         if (this->_flow_vars.dim() == 3)
           divU += grad_w(2);
 
-        libMesh::NumberVectorValue grad_uT( grad_u(0), grad_v(0) );
-        libMesh::NumberVectorValue grad_vT( grad_u(1), grad_v(1) );
+        libMesh::NumberVectorValue grad_uT( grad_u(0) );
+        libMesh::NumberVectorValue grad_vT;
+        if( this->_flow_vars.dim() > 1 )
+          {
+            grad_uT(1) = grad_v(0);
+            grad_vT = libMesh::NumberVectorValue( grad_u(1), grad_v(1) );
+          }
         libMesh::NumberVectorValue grad_wT;
         if( this->_flow_vars.dim() == 3 )
           {
@@ -339,12 +355,15 @@ namespace GRINS
                 Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) - 2.0/3.0*mu*divU/r )*jac;
               }
 
-            Fv(i) += ( -rho*U*grad_v*u_phi[i][qp]
-                       + p*u_gradphi[i][qp](1)
-                       - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
-                             - 2.0/3.0*divU*u_gradphi[i][qp](1) )
-                       + rho*this->_g(1)*u_phi[i][qp]
-                       )*jac;
+            if (this->_flow_vars.dim() > 1)
+              {
+                (*Fv)(i) += ( -rho*U*grad_v*u_phi[i][qp]
+                           + p*u_gradphi[i][qp](1)
+                           - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
+                                 - 2.0/3.0*divU*u_gradphi[i][qp](1) )
+                           + rho*this->_g(1)*u_phi[i][qp]
+                           )*jac;
+              }
 
             if (this->_flow_vars.dim() == 3)
               {
@@ -421,9 +440,12 @@ namespace GRINS
 
     // The subvectors and submatrices we need to fill:
     libMesh::DenseSubVector<libMesh::Real> &F_u = context.get_elem_residual(this->_flow_vars.u());
-    libMesh::DenseSubVector<libMesh::Real> &F_v = context.get_elem_residual(this->_flow_vars.v());
-    libMesh::DenseSubVector<libMesh::Real>* F_w = NULL;
 
+    libMesh::DenseSubVector<libMesh::Real>* F_v = NULL;
+    if( this->_flow_vars.dim() > 1 )
+      F_v  = &context.get_elem_residual(this->_flow_vars.v());
+
+    libMesh::DenseSubVector<libMesh::Real>* F_w = NULL;
     if( this->_flow_vars.dim() == 3 )
       F_w  = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
 
@@ -436,9 +458,11 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-        libMesh::Real u_dot, v_dot, w_dot = 0.0;
+        libMesh::Real u_dot, v_dot = 0.0, w_dot = 0.0;
         context.interior_rate(this->_flow_vars.u(), qp, u_dot);
-        context.interior_rate(this->_flow_vars.v(), qp, v_dot);
+
+        if( this->_flow_vars.dim() > 1 )
+          context.interior_rate(this->_flow_vars.v(), qp, v_dot);
 
         if( this->_flow_vars.dim() == 3 )
           context.interior_rate(this->_flow_vars.w(), qp, w_dot);
@@ -495,7 +519,9 @@ namespace GRINS
         for (unsigned int i = 0; i != n_u_dofs; ++i)
           {
             F_u(i) -= rho*u_dot*u_phi[i][qp]*jac;
-            F_v(i) -= rho*v_dot*u_phi[i][qp]*jac;
+
+            if( this->_flow_vars.dim() > 1 )
+              (*F_v)(i) -= rho*v_dot*u_phi[i][qp]*jac;
 
             if( this->_flow_vars.dim() == 3 )
               (*F_w)(i) -= rho*w_dot*u_phi[i][qp]*jac;
