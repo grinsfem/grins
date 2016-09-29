@@ -56,9 +56,11 @@ namespace GRINS
       }
 
     _pin_location(0) = input("Physics/"+physics_name+"/pin_location", 0.0, 0 );
-    _pin_location(1) = input("Physics/"+physics_name+"/pin_location", 0.0, 1 );
 
-    if( pin_loc_dim == 3 ) 
+    if( pin_loc_dim > 1 )
+      _pin_location(1) = input("Physics/"+physics_name+"/pin_location", 0.0, 1 );
+
+    if( pin_loc_dim == 3 )
       _pin_location(2) = input("Physics/"+physics_name+"/pin_location", 0.0, 2 );
 
     return;
