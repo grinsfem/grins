@@ -48,9 +48,14 @@ namespace GRINS
 							AssemblyContext& c,
 							unsigned int qp ) const
   {
-    libMesh::RealGradient g( fe->get_dxidx()[qp] + fe->get_detadx()[qp],
-			     fe->get_dxidy()[qp] + fe->get_detady()[qp] );
-  
+    libMesh::RealGradient g( fe->get_dxidx()[qp] );
+
+    if( c.get_dim() > 1 )
+      {
+	g(0) += fe->get_detadx()[qp];
+	g(1) = fe->get_dxidy()[qp] + fe->get_detady()[qp];
+      }
+
     if( c.get_dim() == 3 )
       {
 	g(0) += fe->get_dzetadx()[qp];
@@ -66,37 +71,40 @@ namespace GRINS
 						      unsigned int qp ) const
   {     
     libMesh::Real dxidx = fe->get_dxidx()[qp];
-    libMesh::Real dxidy = fe->get_dxidy()[qp];
   
-    libMesh::Real detadx = fe->get_detadx()[qp];
-    libMesh::Real detady = fe->get_detady()[qp];
-  
-    libMesh::RealTensor G( dxidx*dxidx + detadx*detadx,
-			   dxidx*dxidy + detadx*detady,
-			   0.0,
-			   dxidy*dxidx + detady*detadx,
-			   dxidy*dxidy + detady*detady,
-			   0.0 );
-  
-    if( c.get_dim() == 3 )
+    libMesh::RealTensor G( dxidx*dxidx );
+
+    if( c.get_dim() > 1 )
       {
-	libMesh::Real dxidz = fe->get_dxidz()[qp];
+        libMesh::Real dxidy = fe->get_dxidy()[qp];
+  
+        libMesh::Real detadx = fe->get_detadx()[qp];
+        libMesh::Real detady = fe->get_detady()[qp];
+
+        G(0,0) += detadx*detadx;
+        G(0,1) = G(1,0) = dxidx*dxidy + detadx*detady;
+        G(1,1) = dxidy*dxidy + detady*detady;
+  
+        if( c.get_dim() == 3 )
+          {
+	    libMesh::Real dxidz = fe->get_dxidz()[qp];
       
-	libMesh::Real detadz = fe->get_detadz()[qp];
+	    libMesh::Real detadz = fe->get_detadz()[qp];
       
-	libMesh::Real dzetadx = fe->get_dzetadx()[qp];
-	libMesh::Real dzetady = fe->get_dzetady()[qp];
-	libMesh::Real dzetadz = fe->get_dzetadz()[qp];
+	    libMesh::Real dzetadx = fe->get_dzetadx()[qp];
+	    libMesh::Real dzetady = fe->get_dzetady()[qp];
+	    libMesh::Real dzetadz = fe->get_dzetadz()[qp];
       
-	G(0,0) += dzetadx*dzetadx;
-	G(0,1) += dzetadx*dzetady;
-	G(0,2) = dxidx*dxidz + detadx*detadz + dzetadx*dzetadz;
-	G(1,0) += dzetady*dzetadx;
-	G(1,1) += dzetady*dzetady;
-	G(1,2) = dxidy*dxidz + detady*detadz + dzetady*dzetadz;
-	G(2,0) = dxidz*dxidx + detadz*detadx + dzetadz*dzetadx;
-	G(2,1) = dxidz*dxidy + detadz*detady + dzetadz*dzetady;
-	G(2,2) = dxidz*dxidz + detadz*detadz + dzetadz*dzetadz;
+	    G(0,0) += dzetadx*dzetadx;
+	    G(0,1) += dzetadx*dzetady;
+	    G(0,2) = dxidx*dxidz + detadx*detadz + dzetadx*dzetadz;
+	    G(1,0) += dzetady*dzetadx;
+	    G(1,1) += dzetady*dzetady;
+	    G(1,2) = dxidy*dxidz + detady*detadz + dzetady*dzetadz;
+	    G(2,0) = dxidz*dxidx + detadz*detadx + dzetadz*dzetadx;
+	    G(2,1) = dxidz*dxidy + detadz*detady + dzetadz*dzetady;
+	    G(2,2) = dxidz*dxidz + detadz*detadz + dzetadz*dzetadz;
+          }
       }
   
     return G;
