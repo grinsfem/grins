@@ -71,15 +71,18 @@ namespace GRINS
     libMesh::RealGradient grad_p = context.interior_gradient(this->_press_var.p(), qp);
 
     libMesh::RealGradient grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
-    libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
 
-    libMesh::RealGradient U( context.interior_value(this->_flow_vars.u(), qp),
-                             context.interior_value(this->_flow_vars.v(), qp) );
-    libMesh::Real divU = grad_u(0) + grad_v(1);
+    libMesh::RealGradient U( context.interior_value(this->_flow_vars.u(), qp) );
+    libMesh::Real divU = grad_u(0);
 
     if( this->_is_axisymmetric )
       divU += U(0)/r;
 
+    if(this->_flow_vars.dim() > 1)
+      {
+        U(1) = context.interior_value(this->_flow_vars.v(), qp);
+        divU += (context.interior_gradient(this->_flow_vars.v(), qp))(1);
+      }
     if(this->_flow_vars.dim() == 3)
       {
         U(2) = context.interior_value(this->_flow_vars.w(), qp);
@@ -147,8 +150,18 @@ namespace GRINS
     libMesh::RealGradient divGradUT;
     libMesh::RealGradient divdivU;
 
-    if( this->_flow_vars.dim() < 3 )
+    if( this->_flow_vars.dim() == 1 )
       {
+        rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u );
+
+        divGradU  = _stab_helper.div_GradU( hess_u );
+        divGradUT = _stab_helper.div_GradU_T( hess_u );
+        divdivU   = _stab_helper.div_divU_I( hess_u );
+      }
+    else if( this->_flow_vars.dim() == 2 )
+      {
+        libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
+
         rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
 
         // Call axisymmetric versions if we are doing an axisymmetric run
@@ -167,6 +180,9 @@ namespace GRINS
       }
     else
       {
+        libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
+        libMesh::RealTensor hess_v = context.interior_hessian(this->_flow_vars.v(), qp);
+
         libMesh::RealGradient grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
         libMesh::RealTensor hess_w = context.interior_hessian(this->_flow_vars.w(), qp);
 
@@ -296,7 +312,8 @@ namespace GRINS
 
     libMesh::RealGradient u_dot;
     context.interior_rate(this->_flow_vars.u(), qp, u_dot(0));
-    context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
+    if(this->_flow_vars.dim() > 1)
+      context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
     if(this->_flow_vars.dim() == 3)
       context.interior_rate(this->_flow_vars.w(), qp, u_dot(2));
 
