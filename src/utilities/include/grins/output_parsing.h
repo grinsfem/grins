@@ -22,48 +22,27 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_OUTPUT_PARSING_H
+#define GRINS_OUTPUT_PARSING_H
 
-// This class
-#include "grins/qoi_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
-
-// GRINS
-#include "grins/assembly_context.h"
+#include <string>
 
 namespace GRINS
 {
-  QoIBase::QoIBase( const std::string& qoi_name )
-    : ParameterUser(qoi_name),
-      _qoi_name(qoi_name),
-      _qoi_value(0.0)
-  {}
-
-  void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
-                             libMesh::Number& sys_qoi,
-                             libMesh::Number& local_qoi )
+  //! Functions for naming input sections/variables related to output
+  class OutputParsing
   {
-    communicator.sum(local_qoi);
+  public:
 
-    sys_qoi = local_qoi;
+    //! Outer output section in input file
+    static const std::string output_section()
+    { return "Output"; }
 
-    _qoi_value = sys_qoi;
-  }
+    //! Displace section in input file
+    static const std::string display_section()
+    { return "Display"; }
 
-  void QoIBase::thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi )
-  {
-    qoi += other_qoi;
-  }
+  };
+} // end namespace GRINS
 
-  void QoIBase::output_qoi( std::ostream& out ) const
-  {
-    out << _qoi_name+" = "
-        << std::setprecision(16)
-        << std::scientific
-        << _qoi_value << std::endl;
-  }
-
-} // namespace GRINS
+#endif // GRINS_OUTPUT_PARSING_H

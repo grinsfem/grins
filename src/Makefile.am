@@ -199,6 +199,7 @@ libgrins_la_SOURCES += qoi/src/parsed_interior_qoi.C
 libgrins_la_SOURCES += qoi/src/weighted_flux_qoi.C
 libgrins_la_SOURCES += qoi/src/rayfire_mesh.C
 libgrins_la_SOURCES += qoi/src/integrated_function.C
+libgrins_la_SOURCES += qoi/src/qoi_output.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/grins_solver.C
@@ -472,6 +473,8 @@ include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
 include_HEADERS += qoi/include/grins/weighted_flux_qoi.h
 include_HEADERS += qoi/include/grins/rayfire_mesh.h
 include_HEADERS += qoi/include/grins/integrated_function.h
+include_HEADERS += qoi/include/grins/qoi_output.h
+include_HEADERS += qoi/include/grins/qoi_options.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/grins_solver.h
@@ -525,6 +528,7 @@ include_HEADERS += utilities/include/grins/cached_quantities_enum.h
 include_HEADERS += utilities/include/grins/string_utils.h
 include_HEADERS += utilities/include/grins/distance_function.h
 include_HEADERS += utilities/include/grins/parameter_antioch_reset.h
+include_HEADERS += utilities/include/grins/output_parsing.h
 
 # src/visualization headers
 include_HEADERS += visualization/include/grins/steady_visualization.h

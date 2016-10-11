@@ -22,48 +22,27 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-// This class
-#include "grins/qoi_base.h"
-
-// libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
+#ifndef GRINS_QOI_OPTIONS_H
+#define GRINS_QOI_OPTIONS_H
 
 // GRINS
-#include "grins/assembly_context.h"
+#include "grins/output_parsing.h"
 
 namespace GRINS
 {
-  QoIBase::QoIBase( const std::string& qoi_name )
-    : ParameterUser(qoi_name),
-      _qoi_name(qoi_name),
-      _qoi_value(0.0)
-  {}
-
-  void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
-                             libMesh::Number& sys_qoi,
-                             libMesh::Number& local_qoi )
+  class QoIOptions
   {
-    communicator.sum(local_qoi);
+  public:
 
-    sys_qoi = local_qoi;
+    static const std::string qoi_section()
+    { return "QoI"; }
 
-    _qoi_value = sys_qoi;
-  }
+    static const std::string output_to_display()
+    { return "print_qoi"; }
 
-  void QoIBase::thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi )
-  {
-    qoi += other_qoi;
-  }
+    static const std::string default_file_prefix()
+    { return "default_file_prefix"; }
+  };
+} // end namespace GRINS
 
-  void QoIBase::output_qoi( std::ostream& out ) const
-  {
-    out << _qoi_name+" = "
-        << std::setprecision(16)
-        << std::scientific
-        << _qoi_value << std::endl;
-  }
-
-} // namespace GRINS
+#endif // GRINS_QOI_OPTIONS_H

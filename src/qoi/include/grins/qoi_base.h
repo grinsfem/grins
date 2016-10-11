@@ -51,7 +51,7 @@ namespace GRINS
 
     QoIBase( const std::string& qoi_name );
 
-    virtual ~QoIBase();
+    virtual ~QoIBase(){}
 
     //! Clone this QoI
     /*!
@@ -72,30 +72,30 @@ namespace GRINS
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.
      */
-    virtual void init( const GetPot& input,
-                       const MultiphysicsSystem& system,
-                       unsigned int qoi_num );
+    virtual void init( const GetPot& /*input*/,
+                       const MultiphysicsSystem & /*system*/,
+                       unsigned int /*qoi_num*/ ){}
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& /*context*/ ){}
 
     //! Compute the qoi value for element interiors.
     /*! Override this method if your QoI is defined on element interiors */
-    virtual void element_qoi( AssemblyContext& context,
-                              const unsigned int qoi_index );
+    virtual void element_qoi( AssemblyContext& /*context*/,
+                              const unsigned int /*qoi_index*/ ){}
 
     //! Compute the qoi derivative with respect to the solution on element interiors.
     /*! Override this method if your QoI is defined on element interiors */
-    virtual void element_qoi_derivative( AssemblyContext &context,
-                                         const unsigned int qoi_index );
+    virtual void element_qoi_derivative( AssemblyContext & /*context*/,
+                                         const unsigned int /*qoi_index*/ ){}
 
     //! Compute the qoi value on the domain boundary
     /*! Override this method if your QoI is defined on the domain boundary */
-    virtual void side_qoi( AssemblyContext& context, const unsigned int qoi_index );
+    virtual void side_qoi( AssemblyContext & /*context*/, const unsigned int /*qoi_index*/ ){}
 
     //! Compute the qoi derivative with respect to the solution on the domain boundary
     /*! Override this method if your QoI is defined on the domain boundary */
-    virtual void side_qoi_derivative( AssemblyContext& context,
-                                      const unsigned int qoi_index );
+    virtual void side_qoi_derivative( AssemblyContext & /*context*/,
+                                      const unsigned int /*qoi_index*/ ){}
 
     //! Call the parallel operation for this QoI and cache the value.
     /*!

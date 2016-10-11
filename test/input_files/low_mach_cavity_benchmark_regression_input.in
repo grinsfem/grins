@@ -163,6 +163,14 @@ vis_output_file_prefix = 'cavity'
 output_residual = 'false'
 
 output_format = 'ExodusII xdr'
+[]
+
+[Output]
+   [./Display]
+      print_qoi = 'true'
+   [../]
+[]
+
 
 # Options for print info to the screen
 [screen-options]
@@ -175,8 +183,6 @@ print_log_info = true
 solver_verbose = true
 solver_quiet = false
 
-
-print_qoi = 'true'
 echo_qoi = 'true'
 
 print_element_jacobians = 'false'

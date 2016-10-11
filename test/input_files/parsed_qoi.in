@@ -29,6 +29,12 @@ output_solution_sensitivities = 'false'
 vis_output_file_prefix = 'parsed_qoi_vis'
 output_format = 'ExodusII'
 
+[Output]
+   [./Display]
+      print_qoi = 'true'
+   [../]
+[]
+
 # Options for print info to the screen
 [screen-options]
 print_equation_system_info = 'false'
@@ -39,7 +45,6 @@ solver_quiet = 'true'
 
 echo_physics = 'true'
 echo_qoi = 'true' # which QoIs activated
-print_qoi = 'true' # print numerical values of QoIs
 
 [Materials]
    [./TestMaterial]

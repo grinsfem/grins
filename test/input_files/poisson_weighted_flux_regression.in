@@ -105,13 +105,18 @@ weights = 'y*(1-y)' # This 'fixes' the spill
    output_format = 'ExodusII xdr'
 []
 
+[Output]
+   [./Display]
+      print_qoi = 'true'
+   [../]
+[]
+
 # Options for print info to the screen
 [screen-options]
    system_name = 'Laplace'
    print_equation_system_info = 'true'
    print_mesh_info = 'true'
    print_log_info = 'true'
-   print_qoi = 'true'
    solver_verbose = 'true'
    solver_quiet = 'false'
 []

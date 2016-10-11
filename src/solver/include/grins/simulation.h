@@ -39,6 +39,7 @@
 #include "grins/parameter_manager.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/error_estimator_options.h"
+#include "grins/qoi_output.h"
 
 // libMesh
 #include "libmesh/error_estimator.h"
@@ -142,8 +143,10 @@ namespace GRINS
     bool _print_log_info;
     bool _print_equation_system_info;
     bool _print_perflog;
-    bool _print_qoi;
     bool _print_scalars;
+
+    // QoI output options and functionality
+    SharedPtr<QoIOutput> _qoi_output;
 
     // Visualization options
     bool _output_vis;
