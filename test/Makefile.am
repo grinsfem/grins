@@ -113,7 +113,8 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/rayfire_test.C \
                       unit/rayfireAMR_test.C \
                       unit/integrated_function_test.C \
-                      unit/hitran_test.C
+                      unit/hitran_test.C \
+                      unit/spectroscopic_absorption_test.C
 
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C

@@ -1,0 +1,152 @@
+# Materials
+[Materials]
+   [./TestMaterial]
+      [./ThermalConductivity]
+        model = 'constant'
+        value = '1.0'
+      [../ThermodynamicPressure]
+        value = '5066.25' #[Pa]
+      [../Density]
+        value = '1.0'
+      [../SpecificHeat]
+        model = 'constant'
+        value = '1.0'
+      [../Viscosity]
+        model = 'constant'
+        value = '1.0e-5'
+      [../LewisNumber]
+        value = '1.0'
+
+      [../GasMixture]
+        thermochemistry_library = 'antioch'
+        species = 'CO2 N2'
+        kinetics_data = './test_data/CO2_N2.xml'
+
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'cea'
+           viscosity_model = 'constant'
+           thermal_conductivity_model = 'constant'
+           mass_diffusivity_model = 'constant_lewis'
+[]
+
+# Options related to all Physics
+[Physics]
+
+   enabled_physics = 'ReactingLowMachNavierStokes
+                      ReactingLowMachNavierStokesSPGSMStabilization'
+
+   [./ReactingLowMachNavierStokes]
+
+      material = 'TestMaterial'
+      pin_pressure = 'true'
+      pin_location = '0.0 0.0'
+      pin_value = '0.0'
+
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'T:Y_CO2:Y_N2'
+      ic_values = '{300.0}{0.0763662233}{0.9236337767}'
+
+      enable_thermo_press_calc = 'false'
+[]
+
+[BoundaryConditions]
+
+    bc_ids = '0:1:2:3'
+    bc_id_name_map = 'Dirichlet'
+
+    [./Dirichlet]
+
+      [./Temperature]
+         type = 'isothermal'
+         T = '300.0'
+      [../]
+
+      [./Velocity]
+          type = 'no_slip'
+      [../]
+
+      [./SpeciesMassFractions]
+         type = 'mole_fractions'
+         X_CO2 = '0.05'
+         X_N2 = '0.95'
+      [../]
+
+[]
+
+[Variables]
+    [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+    [../Velocity]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+    [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+    [../SpeciesMassFractions]
+      names = 'Y_'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+      material = 'TestMaterial'
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      n_elems_x = '10'
+      n_elems_y = '10'
+      x_min = '0.0'
+      x_max = '0.10'
+      y_min = '0.0'
+      y_max = '0.10'
+      element_type = 'QUAD4'
+[]
+
+[QoI]
+
+  enabled_qois = 'spectroscopic_absorption'
+
+  [./SpectroscopicAbsorption]
+
+    material = 'TestMaterial'
+    species_of_interest = 'CO2'
+    hitran_data_file = './test_data/CO2_data.dat'
+    hitran_partition_function_file = './test_data/CO2_partition_function.dat'
+    partition_temperatures = '290 310 0.01'
+    desired_wavenumber = '3682.7649'
+    min_wavenumber = '3682.69'
+    max_wavenumber = '3682.8'
+    calc_thermo_pressure = 'false'
+
+    [./Rayfire]
+      origin = '0.0 0.025'
+      theta = '0.0'
+    [../]
+  [../]
+
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   relative_residual_tolerance = '1.0e-14'
+   absolute_residual_tolerance = '1.0e-13'
+   relative_step_tolerance = '1.0e-12'
+   use_numerical_jacobians_only = 'true'
+[]
+
+[Output]
+   [./Display]
+      print_qoi = 'true'
+   [../]
+[]
