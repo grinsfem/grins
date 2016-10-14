@@ -42,6 +42,7 @@
 #include "libmesh/euler2_solver.h"
 #include "libmesh/twostep_time_solver.h"
 #include "libmesh/newmark_solver.h"
+#include "libmesh/function_base.h"
 
 // C++
 #include <ctime>
