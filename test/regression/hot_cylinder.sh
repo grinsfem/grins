@@ -12,7 +12,7 @@ PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type lu -sub_pc_factor_shi
 SOLNDATA="./hot_cylinder.xda"
 
 # Gold data used for regression comparsion
-GOLDDATA="${GRINS_TEST_DATA_DIR}/hot_cylinder.xdr"
+GOLDDATA="${GRINS_TEST_DATA_DIR}/hot_cylinder_gold.xdr"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT $PETSC_OPTIONS
