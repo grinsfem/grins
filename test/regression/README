@@ -1,0 +1,32 @@
+There are currently multiple paradigms for the regression tests as we transition
+to the preferred version.
+
+The preferred version is based on running the actual GRINS executable, then using
+the regression testing app to compare against gold solution values as well as,
+optional, gold QoI values. See the parsed_qoi.sh and hot_cylinder.sh for examples
+of usage. 
+
+There are a couple of important points for the preferred paradigm:
+
+1. We are assuming that the primary libMesh::System name is "GRINS-TEST", so
+   be sure to set the system_name variable to 'GRINS-TEST' in the test input file.
+
+2. These tests are meant to operate by running the grins app directly, which will write
+   out a restart file (and possibly QoI data). Then, the regression_testing_app
+   will run and load the restart file
+   to compare against the exact solution (supplied on the command line). To maintain
+   the integrity of the parallel builds, each restart file *must* be named uniquely.
+   Thus, the rule here is to name the restart file the same as the test, e.g.
+   if the test was named navier_stokes_2d.sh, then the restart should be named
+   navier_stokes_2d.xdr.
+
+3. Gold data should be xdr files, to help keep the size of the repo down, but
+   have the grins run generate an xda file so that the data can be readily
+   examined by a human if need be.
+
+
+An older, but substandard version, are the tests that use the generic_solution_regression
+program. These will be migrated to the preferred version.
+
+The oldest and most subpar are the standalone programs that have lots of code duplication.
+Those, too, will be migrated where possible.
