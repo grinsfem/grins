@@ -144,14 +144,14 @@
 []
 
 [vis-options]
-   output_vis = 'false'
+   output_vis = 'true'
    vis_output_file_prefix = 'hot_cylinder'
    output_residual = 'false'
-   output_format = 'ExodusII'
+   output_format = 'xda'
 []
 
 [screen-options]
-   system_name = 'HotCylinder'
+   system_name = 'GRINS-TEST'
    print_equation_system_info = 'true'
    print_mesh_info = 'true'
    print_log_info = 'true'
