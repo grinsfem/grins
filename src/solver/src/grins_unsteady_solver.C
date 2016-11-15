@@ -40,6 +40,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/euler_solver.h"
 #include "libmesh/euler2_solver.h"
+#include "libmesh/function_base.h"
 #include "libmesh/twostep_time_solver.h"
 #include "libmesh/newmark_solver.h"
 
