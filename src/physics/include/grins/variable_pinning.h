@@ -58,7 +58,11 @@ namespace GRINS
 
     PressurePinning _var_pinning;
 
-    unsigned int variable_to_pin;
+    std::string _variablename_to_pin;
+
+    unsigned int _variable_to_pin;
+
+    libMesh::Real _penalty;
 
     bool _pin_variable;
 

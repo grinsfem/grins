@@ -39,14 +39,34 @@ namespace GRINS
   VariablePinning::VariablePinning( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _var_pinning(input,physics_name),
-      _pin_variable(input("Physics/"+PhysicsNaming::variable_pinning()+"/pin_variable", false ))
+      _penalty(input("Physics/" + PhysicsNaming::variable_pinning() + "/penalty", 1e10)),
+      _pin_variable(false)
   {
+    std::string pin_variable_str = "Physics/" +
+      PhysicsNaming::variable_pinning() + "/pin_variable";
+    if (input.have_variable(pin_variable_str))
+      {
+        _variablename_to_pin = input(pin_variable_str, std::string());
+        _pin_variable = true;
+      }
   }
 
   void VariablePinning::auxiliary_init( MultiphysicsSystem& system )
   {
     if( _pin_variable )
-      _var_pinning.check_pin_location(system.get_mesh());
+      {
+        _variable_to_pin =
+          system.variable_number(_variablename_to_pin);
+        _var_pinning.check_pin_location(system.get_mesh());
+      }
+    else
+      {
+        // Commenting out pin_variable makes testing easier but never
+        // makes sense in a real run.
+        libMesh::out <<
+          "Warning!  VariablePinning physics requested but not used!"
+           << std::endl;
+      }
   }
 
   void VariablePinning::init_context( AssemblyContext& context )
@@ -54,8 +74,8 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(variable_to_pin)->get_JxW();
-    context.get_element_fe(variable_to_pin)->get_phi();
+    context.get_element_fe(_variable_to_pin)->get_JxW();
+    context.get_element_fe(_variable_to_pin)->get_phi();
   }
 
   void VariablePinning::element_constraint( bool compute_jacobian,
@@ -65,7 +85,7 @@ namespace GRINS
     // Pin var = var_value at p_point
     if( _pin_variable )
       {
-        _var_pinning.pin_value( context, compute_jacobian, this->variable_to_pin );
+        _var_pinning.pin_value( context, compute_jacobian, this->_variable_to_pin, this->_penalty );
       }
   }
 
