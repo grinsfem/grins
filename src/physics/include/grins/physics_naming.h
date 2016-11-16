@@ -191,6 +191,9 @@ namespace GRINS
     static PhysicsName convection_diffusion()
     { return "ConvectionDiffusion"+suffix(); }
 
+    static PhysicsName variable_pinning()
+    { return "VariablePinning"+suffix(); }
+
   private:
 
     static std::string physics_name_delimiter()

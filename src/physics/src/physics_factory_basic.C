@@ -34,6 +34,7 @@
 #include "grins/constant_source_term.h"
 #include "grins/parsed_source_term.h"
 #include "grins/convection_diffusion.h"
+#include "grins/variable_pinning.h"
 
 namespace GRINS
 {
@@ -55,5 +56,6 @@ namespace GRINS
   PhysicsFactoryBasic<ConstantSourceTerm> grins_factory_constant_source_term(PhysicsNaming::constant_source_term());
   PhysicsFactoryBasic<ParsedSourceTerm> grins_factory_parsed_source_term(PhysicsNaming::parsed_source_term());
   PhysicsFactoryBasic<ConvectionDiffusion> grins_factory_convection_difffusion(PhysicsNaming::convection_diffusion());
+  PhysicsFactoryBasic<VariablePinning> grins_factory_variable_pinning(PhysicsNaming::variable_pinning());
 
 } // end namespace GRINS
