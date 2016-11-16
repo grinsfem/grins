@@ -397,6 +397,9 @@ dnl require AC_CONFIG_FILES to generate the .sh files
 dnl NOTE: AC_CONFIG_LINKS will generate the rules for `make dist`
 dnl-------------------------------------------------------------------------
 AC_CONFIG_LINKS([test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr:test/test_data/elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr])
+AC_CONFIG_LINKS([test/test_data/CO2_data.dat:test/test_data/CO2_data.dat])
+AC_CONFIG_LINKS([test/test_data/CO2_partition_function.dat:test/test_data/CO2_partition_function.dat])
+AC_CONFIG_LINKS([test/test_data/CO2_N2.xml:test/test_data/CO2_N2.xml])
 
 dnl------------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read these files from the test input file

@@ -30,6 +30,7 @@
 
 //GRINS
 #include "grins/composite_qoi.h"
+#include "grins/rayfire_mesh.h"
 
 // shared_ptr
 #include "grins/shared_ptr.h"
@@ -63,6 +64,12 @@ namespace GRINS
 
     void consistency_error_msg( const std::string& qoi_name, const std::set<std::string>& required_physics );
 
+  private:
+    SharedPtr<RayfireMesh> construct_rayfire( const GetPot& input, const std::string qoi_string );
+
+    //! Helper function to read a required value from the input file, or error if value is missing
+    template<typename T>
+    void get_var_value( const GetPot & input, T & value, std::string input_var, T default_value);
   };
 }
 #endif // QOI_FACTORY_H

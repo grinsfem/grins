@@ -42,6 +42,17 @@ namespace GRINS
      */
     const libMesh::Real Avogadro = 6.02214179e23;
 
+    /*!
+     * Boltzmann Constant, [J/K]
+     */
+    const libMesh::Real Boltzmann = 1.38064852e-23;
+
+    /*!
+     * Speed of light in a vacuum, [m/s]
+     */
+    const libMesh::Real c_vacuum = 299792458;
+
+
   } // namespace Constants
 } // namespace GRINS
 
