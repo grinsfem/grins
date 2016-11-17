@@ -33,17 +33,17 @@
 #include "grins/assembly_context.h"
 #include "grins/materials_parsing.h"
 #include "grins/single_variable.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
-#include "libmesh/fem_function_base.h"
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<libMesh::FEMFunctionBase<libMesh::Real> > absorb)
-    : IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >(input,2 /* QGauss order */,absorb,"SpectroscopicAbsorption",qoi_name)
+  SpectroscopicAbsorption::SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb)
+    : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(input,2 /* QGauss order */,absorb,"SpectroscopicAbsorption",qoi_name)
   {}
 
   QoIBase * SpectroscopicAbsorption::clone() const

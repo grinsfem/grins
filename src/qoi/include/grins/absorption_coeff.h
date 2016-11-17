@@ -26,15 +26,13 @@
 #ifndef GRINS_ABSORPTION_COEFF_H
 #define GRINS_ABSORPTION_COEFF_H
 
-// libMesh
-#include "libmesh/fem_function_base.h"
-
 // GRINS
 #include "grins/assembly_context.h"
 #include "grins/hitran.h"
 #include "grins/single_variable.h"
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 namespace GRINS
 {
@@ -58,7 +56,7 @@ namespace GRINS
     A chemistry library (Antioch or Cantera) is also required.
   */
   template<typename Chemistry>
-  class AbsorptionCoeff : public libMesh::FEMFunctionBase<libMesh::Real>
+  class AbsorptionCoeff : public FEMFunctionAndDerivativeBase<libMesh::Real>
   {
   public:
 
@@ -78,6 +76,13 @@ namespace GRINS
 
     //! Calculate the absorption coefficient at a quadratue point
     virtual libMesh::Real operator()(const libMesh::FEMContext & context, const libMesh::Point & qp_xyz, const libMesh::Real t);
+
+    //! Calculate the derivatives with respect to Temperature, Pressure, and Species Mass Fraction
+    virtual void derivatives( libMesh::FEMContext & context,
+                              const libMesh::Point & p,
+                              const libMesh::Real & JxW,
+                              const unsigned int qoi_index,
+                              const libMesh::Real time = 0.);
 
     //! Not used
     virtual void operator()( const libMesh::FEMContext & context,
