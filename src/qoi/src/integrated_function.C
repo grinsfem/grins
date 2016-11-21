@@ -130,11 +130,38 @@ namespace GRINS
   }
 
   template<typename Function>
-  void IntegratedFunction<Function>::element_qoi_derivative( AssemblyContext& /*context*/,
-                                                             const unsigned int /*qoi_index*/ )
+  void IntegratedFunction<Function>::element_qoi_derivative(AssemblyContext& context,
+                                                            const unsigned int qoi_index )
   {
-    //TODO
-    libmesh_not_implemented();
+    const libMesh::Elem& original_elem = context.get_elem();
+    const libMesh::Elem* rayfire_elem = _rayfire->map_to_rayfire_elem(original_elem.id());
+
+    // rayfire_elem will be NULL if the main_elem
+    // is not in the rayfire
+    if (rayfire_elem)
+      {
+        // create and init the quadrature base on the rayfire elem
+        libMesh::QGauss qbase(rayfire_elem->dim(),libMesh::Order(_p_level));
+        qbase.init(rayfire_elem->type(),libMesh::Order(_p_level));
+
+        // need the QP coordinates and JxW
+        libMesh::UniquePtr< libMesh::FEBase > fe = libMesh::FEBase::build(rayfire_elem->dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE) );
+
+        fe->attach_quadrature_rule( &qbase );
+        fe->get_xyz();
+        fe->get_JxW();
+
+        fe->reinit(rayfire_elem);
+
+        const std::vector<libMesh::Real>& JxW = fe->get_JxW();
+        const std::vector<libMesh::Point>& xyz = fe->get_xyz();
+
+        const unsigned int n_qpoints = fe->n_quadrature_points();
+
+        for (unsigned int qp = 0; qp != n_qpoints; qp++)
+          this->qoi_derivative((*_f),context,xyz[qp],JxW[qp],qoi_index);
+
+      }
   }
 
   // speciaizations of the qoi_value() function
@@ -148,6 +175,23 @@ namespace GRINS
   libMesh::Real IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >::qoi_value(libMesh::FunctionBase<libMesh::Real>& f,AssemblyContext& /*context*/,const libMesh::Point& xyz)
   {
     return f(xyz);
+  }
+
+  // speciaizations of the qoi_derivative() function
+  template<>
+  void IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >::qoi_derivative( FEMFunctionAndDerivativeBase<libMesh::Real> & f, AssemblyContext & context,
+                                                                                         const libMesh::Point & qp_xyz, const libMesh::Real JxW,
+                                                                                         const unsigned int qoi_index)
+  {
+    f.derivatives(context,qp_xyz,JxW,qoi_index);
+  }
+
+  template<>
+  void IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >::qoi_derivative( libMesh::FunctionBase<libMesh::Real> & /*f*/, AssemblyContext & /*context*/,
+                                                                                  const libMesh::Point & /*qp_xyz*/, const libMesh::Real /*JxW*/,
+                                                                                  const unsigned int /*qoi_index*/)
+  {
+    // derivatives are always zero for FunctionBase
   }
 
 template class IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >;

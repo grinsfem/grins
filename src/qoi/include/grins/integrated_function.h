@@ -117,6 +117,11 @@ namespace GRINS
     //! Compute the value of a QoI at a QP
     libMesh::Real qoi_value(Function& f,AssemblyContext& context,const libMesh::Point& xyz);
 
+    //! Compute derivatiuves at QP
+    void qoi_derivative( Function & f, AssemblyContext & context,
+                         const libMesh::Point & qp_xyz, const libMesh::Real JxW,
+                         const unsigned int qoi_index);
+
     //! User cannot call empty constructor
     IntegratedFunction();
 
