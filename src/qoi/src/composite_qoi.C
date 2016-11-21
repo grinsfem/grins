@@ -119,6 +119,13 @@ namespace GRINS
       (*_qois[q]).register_parameter(param_name, param_pointer);
   }
 
+  void CompositeQoI::reinit(MultiphysicsSystem & system)
+  {
+    // call reinit() on each qoi
+    for (unsigned int i=0; i<this->n_qois(); i++)
+      (this->get_qoi(i)).reinit(system);
+  }
+
   void CompositeQoI::element_qoi( libMesh::DiffContext& context,
                                   const libMesh::QoISet& /*qoi_indices*/ )
   {

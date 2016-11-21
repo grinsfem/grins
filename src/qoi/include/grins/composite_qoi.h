@@ -89,6 +89,9 @@ namespace GRINS
 
     virtual void init_context( libMesh::DiffContext& context );
 
+    //! Reinitialize qoi
+    virtual void reinit(MultiphysicsSystem & system);
+
     //! Compute the qoi value for element interiors.
     virtual void element_qoi( libMesh::DiffContext& context,
                               const libMesh::QoISet& qoi_indices );
@@ -128,6 +131,9 @@ namespace GRINS
 
     const QoIBase& get_qoi( unsigned int qoi_index ) const;
 
+    //! Non-const version needed for reinit()
+    QoIBase& get_qoi( unsigned int qoi_index );
+
   protected:
     
     std::vector<QoIBase*> _qois;
@@ -142,6 +148,14 @@ namespace GRINS
 
   inline
   const QoIBase& CompositeQoI::get_qoi( unsigned int qoi_index ) const
+  {
+    libmesh_assert_less( qoi_index, this->n_qois() );
+
+    return (*_qois[qoi_index]);
+  }
+
+  inline
+  QoIBase& CompositeQoI::get_qoi( unsigned int qoi_index )
   {
     libmesh_assert_less( qoi_index, this->n_qois() );
 

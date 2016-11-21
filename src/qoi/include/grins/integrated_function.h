@@ -84,6 +84,8 @@ namespace GRINS
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num );
 
+    //! Reinitialize the rayfire
+    virtual void reinit(MultiphysicsSystem & system);
 
   private:
     //! Quadrature order
