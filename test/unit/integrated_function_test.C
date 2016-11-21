@@ -65,6 +65,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_exact_answer );
     CPPUNIT_TEST( test_convergence );
     CPPUNIT_TEST( qoi_from_input_file );
+    CPPUNIT_TEST( reinit_through_system );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -309,6 +310,70 @@ namespace GRINSTesting
       _sim->run();
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE  );
+    }
+
+    //! Here, we use CompositeQoI::reinit() to reinitialize the rayfire post-refinement
+    void reinit_through_system()
+    {
+      const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/integrated_function_quad9.in";
+      this->init_sim(filename);
+
+      libMesh::Point origin(0.0,0.0);
+      libMesh::Real theta = 0.0;
+
+      GRINS::MultiphysicsSystem* system = _sim->get_multiphysics_system();
+      GRINS::SharedPtr<libMesh::EquationSystems> es = _sim->get_equation_system();
+
+      libMesh::MeshRefinement mr(system->get_mesh());
+
+      // build rayfire
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+
+      // and now the CompositeQoI to do the evalutaion
+      GRINS::CompositeQoI comp_qoi;
+
+      libMesh::Real costheta = std::cos(theta);
+
+      // simple function
+      std::string function = "x";
+      libMesh::Real calc_answer = 0.5/costheta*3.0*3.0;
+
+      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(function),rayfire,"integrated_function");
+      comp_qoi.add_qoi(integ_func);
+
+      comp_qoi.init(*_input,*system);
+      system->attach_qoi(&comp_qoi);
+
+      // evaluate qoi
+      system->assemble_qoi();
+
+      // ensure we get the correct answer
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE  );
+
+      // get the number of rayfire elements
+      std::vector<libMesh::dof_id_type> elems_in_rayfire;
+      rayfire->elem_ids_in_rayfire(elems_in_rayfire);
+      unsigned int num_rayfire_elems = elems_in_rayfire.size();
+      CPPUNIT_ASSERT_EQUAL((unsigned int)3,num_rayfire_elems);
+
+      for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
+        system->get_mesh().elem(elems_in_rayfire[i])->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+
+      mr.refine_elements();
+
+      // this should trigger RayfireMesh::reinit()
+      es->reinit();
+
+      // recalculate the qoi to make sure
+      // we still get the same answer
+      system->assemble_qoi();
+
+      // after the refinement, we should now have 6 rayfire elements
+      std::vector<libMesh::dof_id_type> refined_elems_in_rayfire;
+      rayfire->elem_ids_in_rayfire(refined_elems_in_rayfire);
+      unsigned int num_refined_rayfire_elems = refined_elems_in_rayfire.size();
+      CPPUNIT_ASSERT_EQUAL((unsigned int)6,num_refined_rayfire_elems);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE );
     }
 
 

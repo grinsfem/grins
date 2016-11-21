@@ -62,6 +62,14 @@
       element_type = 'QUAD9'
 []
 
+[Strategies]
+
+  [./MeshAdaptivity]
+    disable_two_step_refinement = 'true'
+  [../]
+
+[]
+
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
    max_nonlinear_iterations =  25
