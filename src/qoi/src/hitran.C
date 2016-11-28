@@ -41,10 +41,11 @@ namespace GRINS
                  libMesh::Real T_min, libMesh::Real T_max, libMesh::Real T_step)
   : _Tmin(T_min),
     _Tmax(T_max),
-    _Tstep(T_step)
+    _Tstep(T_step),
+    _T0(296.0)
   {
     // sanity checks on temperature range specification
-    if ( (T_min<0.0) || (T_min>=T_max) || (T_step<=0.0) )
+    if ( (T_min<0.0) || (T_min>=T_max) || (T_step<=0.0) || (T_min>_T0) || (T_max<_T0) )
       {
         std::stringstream ss;
         ss <<"Invalid specification of temperature range:" <<std::endl;
@@ -141,9 +142,6 @@ namespace GRINS
     // save length and close partition sum file
     _q_size = num_T;
     qT_file.close();
-
-    // reference temperature
-    _T0 = 296;
     
     // cache the partition function values at the referece temperature
     for(unsigned int i=0; i<_qT.size(); i++)
