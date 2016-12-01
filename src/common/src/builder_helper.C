@@ -55,34 +55,8 @@ namespace GRINS
     if( !input.have_section(VariablesParsing::variables_section()) )
        libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
 
-    // We need to extract all the Variable sections from the input file
-    // We'll populate the relevant sections in var_sections
-    /*! \todo This would probably be a good function to add to libMesh::GetPot */
-    std::vector<std::string> all_sections = input.get_section_names();
-    for( std::vector<std::string>::const_iterator s = all_sections.begin();
-         s < all_sections.end(); ++s )
-      {
-        // First check that it contains "Variable" as the first slot
-        if( s->find(VariablesParsing::variables_section()) == 0 )
-          {
-            // Now check it only has 2 elements when we split on "/"
-            std::vector<std::string> split_str;
-            StringUtilities::split_string(*s, "/", split_str );
-
-            // Our Variable should be the second part of the split
-            if( split_str.size() == 2 )
-              {
-                // Make sure we don't already have that section
-                // We don't want to sort the vector since this function is supposed to maintain
-                // the ordering, so we just do the stupid thing for the search. Nevertheless,
-                // the list of variable subsections should never be very large.
-                if( std::find(sections.begin(), sections.end(), split_str[1]) != sections.end() )
-                  libmesh_error_msg("ERROR: Found duplicate Variable section "+split_str[1]+"!");
-
-                sections.push_back( split_str[1] );
-              }
-          }
-      }
+    // We need to extract all the Variable subsections from the input file
+    sections = input.get_subsection_names(VariablesParsing::variables_section());
 
     // Make sure we found some variable subsections
     if( sections.empty() )
