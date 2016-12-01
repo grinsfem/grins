@@ -38,10 +38,10 @@
 namespace GRINS
 {
   void BuilderHelper::parse_var_sections( const GetPot& input,
-                                          std::set<std::string>& sections ) const
+                                          std::set<std::string>& sections )
   {
     std::vector<std::string> sec_vec;
-    this->parse_var_sections_vector(input,sec_vec);
+    parse_var_sections_vector(input,sec_vec);
 
     // Now convert populated vector to a set
     for(std::vector<std::string>::const_iterator it = sec_vec.begin();
@@ -50,7 +50,7 @@ namespace GRINS
   }
 
   void BuilderHelper::parse_var_sections_vector( const GetPot& input,
-                                                 std::vector<std::string>& sections ) const
+                                                 std::vector<std::string>& sections )
   {
     if( !input.have_section(VariablesParsing::variables_section()) )
        libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
