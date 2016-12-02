@@ -48,6 +48,11 @@ namespace GRINS
   private:
 
     libMesh::System & _sys;
+
+    std::vector<std::string> _constraint_names;
+    std::vector<libMesh::Point> _constrained_points;
+    std::vector<std::vector<libMesh::Point> > _constraining_points;
+    std::vector<std::vector<libMesh::Number> > _constraint_coeffs;
   };
 } // end namespace GRINS
 
