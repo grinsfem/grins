@@ -60,22 +60,18 @@ namespace GRINS
                    pt_it = point_sections.begin();
                    pt_it != point_sections.end(); ++pt_it)
               {
-                const std::string & point_name = *pt_it;
-
-                _constraint_names.push_back(point_name);
+                ConstrainedPoint pt;
+                
+                pt.name = *pt_it;
 
                 const std::string point_section =
-                  constraint_section + '/' + point_name;
+                  constraint_section + '/' + pt.name;
 
-                libMesh::Point constrained_pt;
                 const unsigned int constrained_loc_dim =
                   input.vector_variable_size(point_section+"/constraint_location");
                 libmesh_assert_less_equal(constrained_loc_dim, LIBMESH_DIM);
                 for (unsigned int d=0; d != constrained_loc_dim; ++d)
-                  constrained_pt(d) =
-                    input(point_section+"/constraint_location", 0.0, d );
-
-                _constrained_points.push_back(constrained_pt);
+                  pt(d) = input(point_section+"/constraint_location", 0.0, d );
 
                 const unsigned int n_constraining_points =
                   input.vector_variable_size(point_section+"/constraining_points_x");
@@ -101,26 +97,27 @@ namespace GRINS
                   libmesh_assert_equal_to(n_constraining_points_x, n_constraining_points_coeff);
 #endif // !NDEBUG
 
-                std::vector<libMesh::Point> constraining_this_point;
-                std::vector<libMesh::Number> these_coeffs;
-
                 for (unsigned int n=0; n != n_constraining_points; ++n)
                   {
-                    libMesh::Point constraining_pt
-                      (input(point_section+"/constraining_points_x", 0.0, n));
+                    ConstrainingPoint constraining_pt;
+                    constraining_pt(0) = input(point_section+"/constraining_points_x", 0.0, n);
                     if (LIBMESH_DIM > 1)
                       constraining_pt(1) = input(point_section+"/constraining_points_y", 0.0, n);
                     if (LIBMESH_DIM > 2)
                       constraining_pt(2) = input(point_section+"/constraining_points_z", 0.0, n);
 
-                    constraining_this_point.push_back(constraining_pt);
+                    constraining_pt.coeff =
+                      input(point_section+"/constraining_points_coeff", libMesh::Number(0), n);
 
-                    these_coeffs.push_back
-                      (input(point_section+"/constraining_points_coeff", libMesh::Number(0), n));
+                    const std::string var_name
+                      (input(point_section+"/constraining_points_var", std::string(), n));
+
+                    constraining_pt.var = _sys.variable_number(var_name);
+
+                    pt.constrainers.push_back(constraining_pt);
                   }
 
-                _constraining_points.push_back(constraining_this_point);
-                _constraint_coeffs.push_back(these_coeffs);
+                _constrained_pts.push_back(pt);
               }
           }
       }

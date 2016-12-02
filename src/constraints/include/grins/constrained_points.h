@@ -49,10 +49,18 @@ namespace GRINS
 
     libMesh::System & _sys;
 
-    std::vector<std::string> _constraint_names;
-    std::vector<libMesh::Point> _constrained_points;
-    std::vector<std::vector<libMesh::Point> > _constraining_points;
-    std::vector<std::vector<libMesh::Number> > _constraint_coeffs;
+    struct ConstrainingPoint : public libMesh::Point {
+      libMesh::Number coeff;
+      unsigned short var;
+    };
+
+    struct ConstrainedPoint : public libMesh::Point {
+      std::string name;
+      unsigned short var;
+      std::vector<ConstrainingPoint> constrainers;
+    };
+
+    std::vector<ConstrainedPoint> _constrained_pts;
   };
 } // end namespace GRINS
 
