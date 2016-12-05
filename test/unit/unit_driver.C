@@ -25,8 +25,10 @@
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_CPPUNIT
+#include <libmesh/ignore_warnings.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
+#include <libmesh/restore_warnings.h>
 #endif // GRINS_HAVE_CPPUNIT
 
 #include <libmesh/libmesh.h>
