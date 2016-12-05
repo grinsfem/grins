@@ -56,8 +56,9 @@ namespace GRINS
 
     struct ConstrainedPoint : public libMesh::Point {
       std::string name;
-      unsigned short var;
       std::vector<ConstrainingPoint> constrainers;
+      libMesh::Number rhs;
+      unsigned short var;
     };
 
     std::vector<ConstrainedPoint> _constrained_pts;
