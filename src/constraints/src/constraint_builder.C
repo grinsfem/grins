@@ -45,9 +45,6 @@ namespace GRINS
     // If we ever want to add more constraint object options, we'll
     // also need a MultiConstraint object to hold them.
 
-    ConstrainedPoints *constraints =
-      new ConstrainedPoints(input, system);
-
     return libMesh::UniquePtr<libMesh::System::Constraint>
       (new ConstrainedPoints(input, system));
   }
