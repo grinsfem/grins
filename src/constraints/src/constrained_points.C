@@ -135,6 +135,8 @@ namespace GRINS
 
                 pt.rhs = input(point_section+"/constraint_rhs", 0.0);
 
+                pt.forbid_overwrite = input(point_section+"/forbid_overwrite", true);
+
                 _constrained_pts.push_back(pt);
               }
           }
@@ -221,7 +223,7 @@ namespace GRINS
         if (constrained_node)
           _sys.get_dof_map().add_constraint_row
             (constrained_dof, constraint_row, constrained_pt.rhs,
-             /* forbid_constraint_overwrite = */ true);
+             constrained_pt.forbid_overwrite);
       }
   }
 } // end namespace GRINS

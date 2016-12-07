@@ -59,6 +59,7 @@ namespace GRINS
       std::vector<ConstrainingPoint> constrainers;
       libMesh::Number rhs;
       unsigned short var;
+      bool forbid_overwrite;
     };
 
     std::vector<ConstrainedPoint> _constrained_pts;
