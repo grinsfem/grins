@@ -26,8 +26,10 @@
 
 #ifdef GRINS_HAVE_CPPUNIT
 
+#include <libmesh/ignore_warnings.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestCase.h>
+#include <libmesh/restore_warnings.h>
 
 #include "test_comm.h"
 #include "grins_test_paths.h"
@@ -46,6 +48,9 @@
 #include "libmesh/fe_interface.h"
 #include "libmesh/mesh_refinement.h"
 #include "libmesh/serial_mesh.h"
+
+// Ignore warnings from auto_ptr in CPPUNIT_TEST_SUITE_END()
+#include <libmesh/ignore_warnings.h>
 
 namespace GRINSTesting
 {
