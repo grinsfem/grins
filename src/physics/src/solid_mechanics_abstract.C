@@ -54,10 +54,15 @@ namespace GRINS
 
   void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    // Tell the system to march temperature forward in time
+    // Tell the system to march displacement forward in time, for as
+    // many displacement variables as the dimension we're tracking
     system->time_evolving(_disp_vars.u());
-    system->time_evolving(_disp_vars.v());
-    system->time_evolving(_disp_vars.w());
+
+    if( this->_disp_vars.dim() > 1 )
+      system->time_evolving(_disp_vars.v());
+
+    if( this->_disp_vars.dim() > 2 )
+      system->time_evolving(_disp_vars.w());
   }
 
 } // end namespace GRINS
