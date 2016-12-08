@@ -93,7 +93,9 @@ namespace GRINS
     unsigned int g_dim = input.vector_variable_size("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g");
 
     _g(0) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 0 );
-    _g(1) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 1 );
+
+    if( g_dim > 1)
+      _g(1) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 1 );
 
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/g", 0.0, 2 );
@@ -110,7 +112,9 @@ namespace GRINS
       }
 
     system->time_evolving(_flow_vars.u());
-    system->time_evolving(_flow_vars.v());
+
+    if (dim > 1)
+      system->time_evolving(_flow_vars.v());
 
     if (dim == 3)
       system->time_evolving(_flow_vars.w());
