@@ -67,6 +67,10 @@ libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_old
 # src/common
 libgrins_la_SOURCES += common/src/builder_helper.C
 
+# src/constraints
+libgrins_la_SOURCES += constraints/src/constraint_builder.C
+libgrins_la_SOURCES += constraints/src/constrained_points.C
+
 # src/ic_handling files
 libgrins_la_SOURCES += ic_handling/src/ic_handling_base.C
 libgrins_la_SOURCES += ic_handling/src/generic_ic_handler.C
@@ -329,6 +333,10 @@ include_HEADERS += common/include/grins/builder_helper.h
 include_HEADERS += common/include/grins/factory_abstract.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
 include_HEADERS += common/include/grins/factory_with_getpot_physics_name.h
+
+# src/constraints headers
+include_HEADERS += constraints/include/grins/constrained_points.h
+include_HEADERS += constraints/include/grins/constraint_builder.h
 
 # src/ic_handling headers
 include_HEADERS += ic_handling/include/grins/ic_handling_base.h
@@ -597,6 +605,7 @@ endif
 #--------------------------------------
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
+AM_CPPFLAGS += -I$(top_srcdir)/src/constraints/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/ic_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/physics/include

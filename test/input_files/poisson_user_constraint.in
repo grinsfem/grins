@@ -1,0 +1,114 @@
+# Materials
+[Materials]
+   [./TestMaterial]
+      [./ThermalConductivity]
+          model = 'constant'
+          value = '1.0'
+      [../Density]
+         value = '1.0'
+      [../SpecificHeat]
+         model = 'constant'
+         value = '1.0'
+[]
+
+# Options related to all Physics
+[Physics]
+
+   enabled_physics = 'HeatConduction ParsedSourceTerm'
+
+   [./HeatConduction]
+
+      material = 'TestMaterial'
+
+   [../ParsedSourceTerm]
+      [./Function]
+         value = '1'
+      [../Variables]
+         names = 'u'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:2 1:3'
+   bc_id_name_map = 'Dirichlet Neumann'
+
+   [./Dirichlet]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         u = '10.0'
+      [../]
+   [../]
+   [./Neumann]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Temperature]
+      names = 'u'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+      # Add a specially constrained node, whose temperature will
+      # equal half the opposing node's temperature plus 3; i.e. 8.
+      [./ConstrainedPoints]
+         [./FirstEdgeNode]
+           constraint_location = '0.5 0 0'
+           constraining_points_x = '0.5'
+           constraining_points_y = '1.0'
+           constraining_points_z = '0'
+           constraining_points_coeff = '0.5'
+           constraining_points_var = 'u'
+           constraint_rhs = '3'
+
+           # This will need to overwrite the existing Dirichlet
+           # constraint on one boundary node
+           forbid_overwrite = false
+[]
+
+# Mesh related options
+[Mesh]
+   # This must be serial for periodic boundaries until libMesh/libmesh#977 is resolved
+   # https://github.com/libMesh/libmesh/issues/977
+   class = 'serial'
+
+   [./Generation]
+      dimension = '2'
+      n_elems_x = '20'
+      n_elems_y = '20'
+      x_min = '0.0'
+      x_max = '1.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      element_type = 'QUAD4'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   relative_residual_tolerance = '1.0e-14'
+   relative_step_tolerance = '1.0e-12'
+   minimum_linear_tolerance = '1.0e-10'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'poisson_user_constraint'
+   output_format = 'xda.gz ExodusII'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_constraint_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

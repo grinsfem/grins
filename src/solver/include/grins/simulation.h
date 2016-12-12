@@ -144,6 +144,7 @@ namespace GRINS
     bool _print_mesh_info;
     bool _print_log_info;
     bool _print_equation_system_info;
+    bool _print_constraint_info;
     bool _print_perflog;
     bool _print_scalars;
 

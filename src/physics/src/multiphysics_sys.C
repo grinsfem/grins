@@ -31,6 +31,7 @@
 #include "grins/fe_variables_base.h"
 #include "grins/variable_warehouse.h"
 #include "grins/bc_builder.h"
+#include "grins/constraint_builder.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -133,6 +134,11 @@ namespace GRINS
 
     libmesh_assert(_input);
     BCBuilder::build_boundary_conditions(*_input,*this,_neumann_bcs);
+
+    this->_constraint =
+      ConstraintBuilder::build_constraint_object(*_input,*this);
+
+    this->attach_constraint_object(*this->_constraint);
 
     // If any variables need custom numerical_jacobian_h, we can set those
     // values now that variable names are all registered with the System

@@ -59,6 +59,7 @@ namespace GRINS
        _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
        _print_log_info( input("screen-options/print_log_info", false ) ),
        _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+       _print_constraint_info( input("screen-options/print_constraint_info", false ) ),
        _print_scalars( input("screen-options/print_scalars", false ) ),
        _qoi_output( new QoIOutput(input) ),
        _output_vis( input("vis-options/output_vis", false ) ),
@@ -107,6 +108,7 @@ namespace GRINS
        _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
        _print_log_info( input("screen-options/print_log_info", false ) ),
        _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+       _print_constraint_info( input("screen-options/print_constraint_info", false ) ),
        _print_scalars( input("screen-options/print_scalars", false ) ),
        _qoi_output( new QoIOutput(input) ),
        _output_vis( input("vis-options/output_vis", false ) ),
@@ -434,10 +436,16 @@ namespace GRINS
   void Simulation::print_sim_info()
   {
     // Print mesh info if the user wants it
-    if( this->_print_mesh_info ) this->_mesh->print_info();
+    if( this->_print_mesh_info )
+      this->_mesh->print_info();
 
-    // Print info if requested
-    if( this->_print_equation_system_info ) this->_equation_system->print_info();
+    // Print EquationSystems info if requested
+    if( this->_print_equation_system_info )
+      this->_equation_system->print_info();
+
+    // Print DofMap constraint info if requested
+    if( this->_print_constraint_info )
+      this->_multiphysics_system->get_dof_map().print_dof_constraints();
 
     return;
   }

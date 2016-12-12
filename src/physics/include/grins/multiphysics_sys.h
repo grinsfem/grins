@@ -229,6 +229,9 @@ namespace GRINS
         libMesh::UniquePtr may still actually be an AutoPtr. */
     std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
 
+    //! Constraint application object
+    libMesh::UniquePtr<libMesh::System::Constraint> _constraint;
+
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
 #endif
