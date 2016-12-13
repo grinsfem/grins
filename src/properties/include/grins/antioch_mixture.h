@@ -82,6 +82,10 @@ namespace GRINS
     // evaluated, in Kelvin
     libMesh::Real minimum_T() const;
 
+    // Returns true iff negative species densities are clipped to zero
+    // when calculating reaction rates.
+    bool clip_negative_rho() const;
+
   protected:
 
     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
@@ -93,11 +97,22 @@ namespace GRINS
     void build_stat_mech_ref_correction();
 
     // Users can specify a minimum temperature at which to evaluate
-    // reaction rates; some reaction equations give us NaNs at 0
+    // reaction rates.  Some reaction equations give us NaNs at 0
     // Kelvin or less, and solution "ringing" can result in those
     // unphysical temperatures for some formulations near strong
     // fronts.
+    //
+    // By default, temperatures are not clipped to any minimum.
     libMesh::Real _minimum_T;
+
+    // Users can request that negative densities be clipped to zero
+    // when evaluating reaction rates.  Some reaction equations fail
+    // badly with negative densities input, and solution "ringing" can
+    // result in those unphysical densities for some formulations near
+    // strong fronts.
+    //
+    // By default, negative densities are not clipped to zero.
+    bool _clip_negative_rho;
 
   private:
 
@@ -128,6 +143,12 @@ namespace GRINS
   libMesh::Real AntiochMixture::minimum_T() const
   {
     return _minimum_T;
+  }
+
+  inline
+  bool AntiochMixture::clip_negative_rho() const
+  {
+    return _clip_negative_rho;
   }
 
 } // end namespace GRINS

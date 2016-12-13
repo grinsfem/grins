@@ -71,12 +71,18 @@ namespace GRINS
 
     _antioch_mixture.molar_densities( rho, mass_fractions, molar_densities );
 
-    bool have_density = false;
-    for (unsigned int i=0; i != n_species; ++i)
-      if (molar_densities[i] <= 0)
-        molar_densities[i] = 0;
-      else
-        have_density = true;
+    // If we don't clip negative densities, then we always have
+    // density to evaluate
+    bool have_density = !_antioch_mixture.clip_negative_rho();
+
+    // If we don't necessarily have density to evaluate, then we need
+    // to check (and potentially clip) each species
+    if (!have_density)
+      for (unsigned int i=0; i != n_species; ++i)
+        if (molar_densities[i] <= 0)
+          molar_densities[i] = 0;
+        else
+          have_density = true;
 
     if (have_density)
       _antioch_kinetics.compute_mass_sources( temp_cache.T,
