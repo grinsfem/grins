@@ -258,6 +258,26 @@
            sutherland_data = 'default'
            blottner_data = 'default'
 
+           # Antioch reaction rates are evaluated at the temperature
+           # of the flow field.  This can result in NaNs if "ringing"
+           # near sharp features has created negative temperatures
+           # anywhere in the flow field.  Users can specify a minimum
+           # temperature at which to evaluate reaction rates in order
+           # to improve stability (at the cost of reduced
+           # differentiability and Newton convergence rate in those
+           # cases)
+           minimum_T = 10
+
+           # Antioch reaction rates are evaluated using the densities
+           # computed from the flow field.  This can result in NaNs or
+           # instabilities if "ringing" near sharp features has
+           # created negative densities for any species.  If users
+           # enable the clip_negative_rho option, then species with
+           # negative densities are treated as if they had zero
+           # density when computing reaction rates.
+           clip_negative_rho = true
+
+
    [../../Viscosity]
       value = '1.0e-5' # Units *must* be SI in this case.
 
