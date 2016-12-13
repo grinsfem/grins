@@ -99,6 +99,14 @@ namespace GRINS
 
     libMesh::UniquePtr<AntiochKinetics> _kinetics;
 
+    // Temperature should be clipped to positive values for
+    // stability's sake
+    libMesh::Real _clipped_T;
+
+    // We'll clip temperature at a user-specified minimum if
+    // requested.  Some reaction equations give us NaNs at 0K too.
+    const libMesh::Real _minimum_T;
+
     libMesh::UniquePtr<Antioch::TempCache<libMesh::Real> > _temp_cache;
 
     //! Helper method for managing _temp_cache
@@ -198,10 +206,12 @@ namespace GRINS
   inline
   void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
   {
+    _clipped_T = std::max(_minimum_T, T);
+
     // We can't compare T because it's a reference, so we may have already
     // changed it upstream. So, we compare the next cheapest thing.
-    if( _temp_cache->T2 != T*T )
-      _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(T) );
+    if( _temp_cache->T2 != _clipped_T*_clipped_T )
+      _temp_cache.reset( new Antioch::TempCache<libMesh::Real>(_clipped_T) );
   }
 
 } // end namespace GRINS

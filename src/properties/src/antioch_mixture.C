@@ -49,7 +49,9 @@ namespace GRINS
                                   const std::string& material )
     : AntiochChemistry(input,material),
       _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
-      _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) )
+      _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) ),
+      _minimum_T( input( "Materials/"+material+"/GasMixture/Antioch/minimum_T", -std::numeric_limits<libMesh::Real>::max() ) ),
+      _clip_negative_rho( input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false) )
   {
     std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
 
