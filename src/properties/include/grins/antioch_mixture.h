@@ -78,6 +78,10 @@ namespace GRINS
 
     libMesh::Real h_stat_mech_ref_correction( unsigned int species ) const;
 
+    // Returns the minimum temperature at which reactions will be
+    // evaluated, in Kelvin
+    libMesh::Real minimum_T() const;
+
   protected:
 
     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
@@ -87,6 +91,13 @@ namespace GRINS
     std::vector<libMesh::Real> _h_stat_mech_ref_correction;
 
     void build_stat_mech_ref_correction();
+
+    // Users can specify a minimum temperature at which to evaluate
+    // reaction rates; some reaction equations give us NaNs at 0
+    // Kelvin or less, and solution "ringing" can result in those
+    // unphysical temperatures for some formulations near strong
+    // fronts.
+    libMesh::Real _minimum_T;
 
   private:
 
@@ -111,6 +122,12 @@ namespace GRINS
   libMesh::Real AntiochMixture::h_stat_mech_ref_correction( unsigned int species ) const
   {
     return _h_stat_mech_ref_correction[species];
+  }
+
+  inline
+  libMesh::Real AntiochMixture::minimum_T() const
+  {
+    return _minimum_T;
   }
 
 } // end namespace GRINS
