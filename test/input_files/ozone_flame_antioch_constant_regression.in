@@ -105,6 +105,8 @@
            mass_diffusivity_model = 'constant_lewis'
            cea_data = './input_files/ozone_cea_data.dat'
            species_data = './input_files/ozone_species_data.dat'
+           minimum_T = 10
+           clip_negative_rho = true
 
      [../../Viscosity]
         value = '1.0e-5'
