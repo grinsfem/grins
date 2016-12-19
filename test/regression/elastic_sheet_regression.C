@@ -69,6 +69,9 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
+  // But allow command line options to override the file
+  libMesh_inputfile.parse_command_line(argc, argv);
+
   int return_flag = 0;
 
   return_flag = run( argc, argv, libMesh_inputfile );
