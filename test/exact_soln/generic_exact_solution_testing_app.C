@@ -154,6 +154,16 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot input( input_filename );
 
+  // But allow command line options to override the file
+  input.parse_command_line(argc, argv);
+
+  // Don't flag our command-line-specific variables as UFOs later
+  input.have_variable("input");
+  input.have_variable("test_data");
+  input.have_variable("vars");
+  input.have_variable("norms");
+  input.have_variable("tol");
+ 
   // Initialize libMesh library
   libMesh::LibMeshInit libmesh_init(argc, argv);
 
