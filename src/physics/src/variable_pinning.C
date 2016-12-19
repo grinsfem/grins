@@ -74,8 +74,11 @@ namespace GRINS
     // We should prerequest all the data
     // we will need to build the linear system
     // or evaluate a quantity of interest.
-    context.get_element_fe(_variable_to_pin)->get_JxW();
-    context.get_element_fe(_variable_to_pin)->get_phi();
+    if ( _pin_variable )
+      {
+        context.get_element_fe(_variable_to_pin)->get_JxW();
+        context.get_element_fe(_variable_to_pin)->get_phi();
+      }
   }
 
   void VariablePinning::element_constraint( bool compute_jacobian,
