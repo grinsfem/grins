@@ -25,6 +25,13 @@
 # an error. This is to reduce the chance of errors in the input
 # file specification.
 #
+# In the default grins binary, as well as in any libgrins.so
+# application that so chooses, it is possible to override input-file
+# options using command-line options.  For example, running
+# $ grins input.in Mesh/class=parallel
+# will try to use a DistributedMesh regardless of what the value of
+# Mesh/class is in input.in
+#
 # The primary sections are:
 #    [Mesh] - all options related to the mesh used in the simulation
 #    [Materials] - all material property specifications
