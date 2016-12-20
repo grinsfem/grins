@@ -66,6 +66,9 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
+  // But allow command line options to override the file
+  libMesh_inputfile.parse_command_line(argc, argv);
+
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif

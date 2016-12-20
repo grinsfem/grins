@@ -49,6 +49,9 @@ int main(int argc, char* argv[])
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
+  // But allow command line options to override the file
+  libMesh_inputfile.parse_command_line(argc, argv);
+
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
  

@@ -63,8 +63,15 @@
 
    [./Generation]
       dimension = '2'
-      n_elems_x = '20'
-      n_elems_y = '20'
+
+      # We actually need to generate a 20x20 solution to match our
+      # gold standard, so we'll override these variables via the
+      # command line in our regression test script; that way this test
+      # doubles as a function test for command line variable
+      # overriding.
+      n_elems_x = '10'
+      n_elems_y = '10'
+
       x_min = '0.0'
       x_max = '1.0'
       y_min = '0.0'
