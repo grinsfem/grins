@@ -157,13 +157,13 @@ namespace GRINS
     @return Elem* if intersection is found
     @return NULL  if no intersection point found (i.e. start_point is on a boundary)
     */
-    const libMesh::Elem* get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point& start_point, libMesh::Point& end_point);
+    const libMesh::Elem* get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point& start_point, libMesh::Point& end_point, bool same_parent = false);
 
     //! Ensure the calculated intersection point is on the edge_elem and is not the start_point
     bool check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, libMesh::Elem& edge_elem, libMesh::Point& next_point);
 
     //! Knowing the end_point, get the appropraite next elem along the path
-    const libMesh::Elem* get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side);
+    const libMesh::Elem* get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side, bool same_parent);
 
     //! Ensure the supplied origin is on a boundary of the mesh
     void check_origin_on_boundary(const libMesh::Elem* start_elem);
