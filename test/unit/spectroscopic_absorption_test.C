@@ -53,10 +53,10 @@ namespace GRINSTesting
   {
   public:
     CPPUNIT_TEST_SUITE( SpectroscopicAbsorptionTest );
-
+#if GRINS_HAVE_ANTIOCH
     CPPUNIT_TEST( single_elem_mesh );
     CPPUNIT_TEST( multi_elem_mesh );
-
+#endif
     CPPUNIT_TEST_SUITE_END();
 
   public:
