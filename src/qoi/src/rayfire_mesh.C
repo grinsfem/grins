@@ -105,6 +105,18 @@ namespace GRINS
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
         elem->set_node(0) = start_node;
         elem->set_node(1) = end_node;
+        
+        // warn if rayfire elem is shorter than TOLERANCE
+        if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
+          {
+            std::stringstream ss;
+            ss  <<"********\n"
+                <<"WARNING\n"
+                <<"Detected rayfire element shorter than TOLERANCE\n"
+                <<"Element ID: " <<prev_elem->id() <<", rayfire element length: " <<(start_point-end_point).norm();
+
+            libmesh_warning(ss.str());
+          }
 
         // add new rayfire elem to the map
         _elem_id_map[prev_elem->id()] = elem;
@@ -269,7 +281,10 @@ namespace GRINS
     for (unsigned int s=0; s<cur_elem->n_sides(); s++)
       {
         const libMesh::UniquePtr<libMesh::Elem> edge_elem = cur_elem->build_edge(s);
-        if (edge_elem->contains_point(start_point))
+        
+        // Using the default tol can cause a false positive when start_point is near a node,
+        // causing this loop to skip over an otherwise valid edge to check
+        if (edge_elem->contains_point(start_point,libMesh::TOLERANCE*0.1))
           continue;
 
         bool converged = this->newton_solve_intersection(start_point,edge_elem.get(),intersection_point);
@@ -309,10 +324,13 @@ namespace GRINS
   {
     libmesh_assert(elem);
 
-    // move a little bit along the rayfire
-    // and see if we are still in the elem
-    libMesh::Real L = elem->hmin();
-    L *= 0.1;
+    // move a little bit along the rayfire and see if we are still in the elem
+    // need to move more than TOLERANCE to avoid false positive on contains_point()
+    libMesh::Real L = 2*libMesh::TOLERANCE;
+
+    // If the elem is too small, need to shorten L so we stay within the elem
+    if ( elem->hmin() < libMesh::TOLERANCE )
+        L = elem->hmin() * 0.1;
 
     // parametric representation of rayfire line
     libMesh::Real x = end_point(0) + L*std::cos(_theta);
@@ -328,8 +346,16 @@ namespace GRINS
 
     // check if the intersection point is a vertex
     bool is_vertex = false;
+    libMesh::Node * vertex = NULL;
     for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
-      is_vertex |= (cur_elem->get_node(n))->absolute_fuzzy_equals(end_point);
+      {
+        if ((cur_elem->get_node(n))->absolute_fuzzy_equals(end_point))
+          {
+            is_vertex = true;
+            vertex = cur_elem->get_node(n);
+            break;
+          }
+      }
 
     if (is_vertex)
       {
@@ -367,7 +393,7 @@ namespace GRINS
         // next elem is not a neighbor,
         // so get all elems that share this vertex
         std::set<const libMesh::Elem*> elem_set;
-        cur_elem->find_point_neighbors(end_point,elem_set);
+        cur_elem->find_point_neighbors(*vertex,elem_set);
         std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
         const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
 
@@ -498,20 +524,17 @@ namespace GRINS
             // check if the start point is a vertex
             bool is_vertex = false;
             for(unsigned int n=0; n<main_elem->child(i)->n_nodes(); n++)
-              is_vertex |= (main_elem->child(i)->get_node(n))->absolute_fuzzy_equals(*start_node);
+              {
+                if ((main_elem->child(i)->get_node(n))->absolute_fuzzy_equals(*start_node))
+                  {
+                    is_vertex = true;
+                    break;
+                  }
+              }
 
             if (is_vertex)
               {
-                // move a little bit along the rayfire
-                // and see if we are in the elem
-                libMesh::Real L = main_elem->child(i)->hmin();
-                L *= 0.1;
-
-                // parametric representation of rayfire line
-                libMesh::Real x = (*start_node)(0) + L*std::cos(_theta);
-                libMesh::Real y = (*start_node)(1) + L*std::sin(_theta);
-
-                if (main_elem->child(i)->contains_point(libMesh::Point(x,y)))
+                if ( this->rayfire_in_elem(*start_node, main_elem->child(i)) )
                   {
                     start_child = i;
                     break;
@@ -557,6 +580,18 @@ namespace GRINS
         elem->set_node(1) = new_node;
 
         libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
+        
+        // warn if rayfire elem is shorter than TOLERANCE
+        if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
+          {
+            std::stringstream ss;
+            ss  <<"********\n"
+                <<"WARNING\n"
+                <<"Detected rayfire element shorter than TOLERANCE on refinement\n"
+                <<"Element ID: " <<prev_elem->id() <<", rayfire element length: " <<(start_point-end_point).norm();
+
+            libmesh_warning(ss.str());
+          }
 
         // set rayfire_elem as the parent of this new elem
         // in case it gets coarsened
