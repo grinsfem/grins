@@ -69,6 +69,9 @@ namespace GRINSTesting
     CPPUNIT_TEST( refine_and_coarsen );
     CPPUNIT_TEST( mixed_type_mesh );
     CPPUNIT_TEST( start_with_refined_mesh );
+    CPPUNIT_TEST( refined_above_unrefined );
+    CPPUNIT_TEST( refine_deformed_elem );
+    CPPUNIT_TEST( refine_deformed_elem_near_tolerance );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -325,6 +328,134 @@ namespace GRINSTesting
       for (unsigned int e=1; e<mesh->n_elem(); e++)
         CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(e)) );
     }
+
+    //! 2 QUAD4 elems, one is refined, one if not, rayfire travels boundary between them
+    void refined_above_unrefined() {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0),3 );
+      mesh->add_point( libMesh::Point(1.0,2.0),4 );
+      mesh->add_point( libMesh::Point(0.0,2.0),5 );
+
+      libMesh::Elem* elem0 = mesh->add_elem( new libMesh::Quad4 );
+      elem0->set_node(0) = mesh->node_ptr(0);
+      elem0->set_node(1) = mesh->node_ptr(1);
+      elem0->set_node(2) = mesh->node_ptr(2);
+      elem0->set_node(3) = mesh->node_ptr(3);
+
+      libMesh::Elem* elem1 = mesh->add_elem( new libMesh::Quad4 );
+      elem1->set_node(0) = mesh->node_ptr(3);
+      elem1->set_node(1) = mesh->node_ptr(2);
+      elem1->set_node(2) = mesh->node_ptr(4);
+      elem1->set_node(3) = mesh->node_ptr(5);
+
+      mesh->prepare_for_use();
+
+      libMesh::Point origin(0.0,1.0);
+      libMesh::Real theta = 0.0;
+
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->id()) );
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem1->id()) );
+
+      elem0->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+
+      libMesh::MeshRefinement mr(*mesh);
+      mr.refine_elements();
+
+      rayfire->reinit(*mesh);
+
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem1->id()) );
+
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child(0)->id()) );
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child(3)->id()) );
+    }
+
+    //! QUAD4 elem is deformed, rayfire goes within libMesh::TOLERANCE central node
+    void refine_deformed_elem()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.1,1.1),2 );
+      mesh->add_point( libMesh::Point(0.2,1.0),3 );
+
+      libMesh::Elem* e = mesh->add_elem( new libMesh::Quad4 );
+      for (unsigned int n=0; n<4; n++)
+        e->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      CPPUNIT_ASSERT_EQUAL( mesh->n_elem(), (libMesh::dof_id_type)1 );
+
+      libMesh::Real y = 0.5250005;
+      libMesh::Real x = y/5.0;
+
+      libMesh::Point origin(x,y); // within libMesh::TOLERANCE of node 8
+      libMesh::Real theta = 0.0;
+
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(1);
+      children_in_rayfire.push_back(2);
+      children_in_rayfire.push_back(3);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(0);
+      
+      this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
+    }
+
+    //! QUAD4 elem is slightly deformed, rayfire starts and ends very neay boundary of refined children.
+    //!
+    //! Based on an element from a larger mesh, hence the seemingly arbitrary coordinates
+    void refine_deformed_elem_near_tolerance()
+    {
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.26591876082146976,0.016285303166482301),2 );
+      mesh->add_point( libMesh::Point(0.26539426622418877,0.016285726631637167),3 );
+      mesh->add_point( libMesh::Point(0.26538091506882988,0.015714299294800886),0 );
+      mesh->add_point( libMesh::Point(0.26590538328042834,0.015713833483130532),1 );
+
+      libMesh::Elem* e = mesh->add_elem( new libMesh::Quad4 );
+      for (unsigned int n=0; n<4; n++)
+        e->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      CPPUNIT_ASSERT_EQUAL( mesh->n_elem(), (libMesh::dof_id_type)1 );
+
+      libMesh::Real x = 0.26538759034362924;
+      libMesh::Real y = 0.01600000000000000;
+
+      libMesh::Point origin(x,y);
+      libMesh::Real theta = 0.0;
+
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(0);
+      children_in_rayfire.push_back(2);
+      children_in_rayfire.push_back(3);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(1);
+      
+      this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
+    }
+
 
   private:
 
@@ -648,6 +779,32 @@ namespace GRINSTesting
           CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(26)->child(c)->id())) );
           CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child(c)->id())) );
         }
+    }
+
+    void test_deformed_elem(  GRINS::SharedPtr<libMesh::UnstructuredMesh> & mesh,
+                              libMesh::Point & origin, libMesh::Real theta,
+                              std::vector<unsigned int> & children_in_rayfire,
+                              std::vector<unsigned int> & children_not_in_rayfire )
+    {
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      libMesh::Elem* elem = mesh->elem(0);
+      CPPUNIT_ASSERT(elem);
+
+      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+
+      libMesh::MeshRefinement mr(*mesh);
+      mr.refine_elements();
+
+      rayfire->reinit(*mesh);
+
+      for (unsigned int c=0; c<children_in_rayfire.size(); c++)
+        CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(children_in_rayfire[c])->id()) );
+
+      for (unsigned int c=0; c<children_not_in_rayfire.size(); c++)
+        CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(mesh->elem(0)->child(children_not_in_rayfire[c])->id()) );
+
     }
 
   };
