@@ -25,10 +25,14 @@ Dependencies
 Requirements
 ------------
 
-In addition to a modern C++ compiler,
-GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git)
-finite element library. GRINS release 0.5.0 can use libMesh versions as old as 0.9.4. Subsequent to
-the 0.5.0 release requires at least libMesh 1.0.0. The Boost C++ library is also required (header only).
+In addition to a modern C++ compiler, GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git) finite element library. If your C++ compiler does not support smart pointers, than the Boost C++ library is also required (header only).
+
+libMesh
+-------
+GRINS development both drives and is driven by libMesh development. Thus, the required minimum master hash of libMesh may change in GRINS master. The current required libMesh master hash is 4b96823, as of GRINS [PR #478](https://github.com/grinsfem/grins/pull/478). 
+GRINS release 0.5.0 can use libMesh versions as old as 0.9.4. Subsequent to
+the 0.5.0 release requires at least libMesh 1.0.0.
+
 
 Optional Packages
 -----------------
