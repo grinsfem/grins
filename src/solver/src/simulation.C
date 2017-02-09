@@ -173,6 +173,9 @@ namespace GRINS
     // This *must* be done after equation_system->init in order to get variable indices
     // Set any extra quadrature order the user requested. By default, is 0.
     _multiphysics_system->extra_quadrature_order = StrategiesParsing::extra_quadrature_order(input);
+
+    if (input("Strategies/MeshAdaptivity/disable_two_step_refinement",false))
+      _equation_system->disable_refine_in_reinit();
   }
 
   void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
