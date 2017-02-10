@@ -78,6 +78,9 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& /*context*/ ){}
 
+    //! Reinitialize QoI
+    virtual void reinit(MultiphysicsSystem & /*system*/) {}
+
     //! Compute the qoi value for element interiors.
     /*! Override this method if your QoI is defined on element interiors */
     virtual void element_qoi( AssemblyContext& /*context*/,

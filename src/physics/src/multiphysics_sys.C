@@ -32,6 +32,7 @@
 #include "grins/variable_warehouse.h"
 #include "grins/bc_builder.h"
 #include "grins/constraint_builder.h"
+#include "grins/composite_qoi.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -286,6 +287,14 @@ namespace GRINS
          physics_iter != _physics_list.end();
          physics_iter++ )
       (physics_iter->second)->reinit(*this);
+
+    // And now reinit the QoI
+    if (this->qoi.size() > 0)
+      {
+        libMesh::DifferentiableQoI* diff_qoi = this->get_qoi();
+        CompositeQoI* qoi = libMesh::cast_ptr<CompositeQoI*>(diff_qoi);
+        qoi->reinit(*this);
+      }
   }
 
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,

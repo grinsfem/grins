@@ -71,6 +71,12 @@ namespace GRINS
   }
 
   template<typename Function>
+  void IntegratedFunction<Function>::reinit(MultiphysicsSystem & system)
+  {
+    _rayfire->reinit(system.get_mesh());
+  }
+
+  template<typename Function>
   void IntegratedFunction<Function>::element_qoi( AssemblyContext& context,
                                        const unsigned int qoi_index )
   {
