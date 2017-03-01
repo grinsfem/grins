@@ -305,6 +305,8 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_unifref.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_rayleigh_damping.sh
+TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_newmark_regression.sh 
+
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 
