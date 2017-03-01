@@ -64,7 +64,7 @@ namespace GRINS
   void HeatConduction<K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march temperature forward in time
-    system->time_evolving(_temp_vars.T(), 1);
+    system->time_evolving(_temp_vars.T(),1);
   }
 
   template<class K>
