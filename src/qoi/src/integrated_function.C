@@ -56,6 +56,18 @@ namespace GRINS
   }
 
   template<typename Function>
+  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input,unsigned int p_level,SharedPtr<Function> f,const std::string & input_qoi_string,const std::string& qoi_name) :
+    QoIBase(qoi_name),
+    _p_level(p_level),
+    _f(f)
+  {
+    _rayfire.reset(new RayfireMesh(input,input_qoi_string));
+
+    // use Gauss Quadrature
+    _qbase.reset(new libMesh::QGauss(1,libMesh::Order(_p_level)));
+  }
+
+  template<typename Function>
   QoIBase* IntegratedFunction<Function>::clone() const
   {
     return new IntegratedFunction<Function>( *this );

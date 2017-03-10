@@ -58,6 +58,37 @@ namespace GRINS
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
   }
 
+  RayfireMesh::RayfireMesh(const GetPot & input, const std::string & qoi_string) :
+    _dim(2),
+    _phi(-7.0)
+  {
+    unsigned int rayfire_dim = input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin");
+
+    if (rayfire_dim != 2)
+      libmesh_error_msg("ERROR: Only 2D Rayfires are currently supported");
+
+    if (!input.have_variable("QoI/"+qoi_string+"/Rayfire/origin"))
+      libmesh_error_msg("ERROR: No origin specified for Rayfire");
+
+    if (input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin") != 2)
+      libmesh_error_msg("ERROR: Please specify a 2D point (x,y) for the rayfire origin");
+
+    libMesh::Point origin;
+    _origin(0) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 0);
+    _origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
+
+    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
+        _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+    else
+        libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+
+    if (std::abs(_theta) > 2.0*Constants::pi)
+      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
+
+    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
+      libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
+  }
+
   void RayfireMesh::init(const libMesh::MeshBase& mesh_base)
   {
     // consistency check
@@ -71,7 +102,7 @@ namespace GRINS
         libmesh_error_msg(ss.str());
       }
 
-    _mesh = new libMesh::Mesh(mesh_base.comm(),(unsigned char)1);
+    _mesh.reset( new libMesh::Mesh(mesh_base.comm(),(unsigned char)1) );
 
     libMesh::Point start_point(_origin);
 

@@ -85,6 +85,12 @@ namespace GRINS
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta, libMesh::Real phi);
 
+    //! Input File Constructor
+    /*!
+    Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
+    */
+    RayfireMesh(const GetPot & input, const std::string & qoi_string);
+
     //! Initialization
     /*!
       This function performs the rayfire and assembles the 1D mesh.

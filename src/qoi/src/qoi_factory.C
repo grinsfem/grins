@@ -126,8 +126,6 @@ namespace GRINS
 
     else if( qoi_name == integrated_function )
       {
-        SharedPtr<RayfireMesh> rayfire = this->construct_rayfire(input,"IntegratedFunction");
-
         std::string function;
         if (input.have_variable("QoI/IntegratedFunction/function"))
           function = input("QoI/IntegratedFunction/function", "");
@@ -138,7 +136,7 @@ namespace GRINS
 
         SharedPtr<libMesh::FunctionBase<libMesh::Real> > f = new libMesh::ParsedFunction<libMesh::Real>(function);
 
-        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(p_level,f,rayfire,integrated_function);
+        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(input,p_level,f,"IntegratedFunction",integrated_function);
       }
 
     else if ( qoi_name == spectroscopic_absorption )
@@ -202,9 +200,7 @@ namespace GRINS
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
 
-        SharedPtr<RayfireMesh> rayfire( this->construct_rayfire(input,"SpectroscopicAbsorption") );
-
-        qoi = new SpectroscopicAbsorption(qoi_name,absorb,rayfire);
+        qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
       }
 
     else
@@ -301,37 +297,6 @@ namespace GRINS
     libMesh::err << "================================================================" << std::endl;
 
     libmesh_error();
-  }
-
-  SharedPtr<RayfireMesh> QoIFactory::construct_rayfire( const GetPot& input, const std::string qoi_string )
-  {
-    unsigned int rayfire_dim = input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin");
-
-    if (rayfire_dim != 2)
-      libmesh_error_msg("ERROR: Only 2D Rayfires are currently supported");
-
-    if (!input.have_variable("QoI/"+qoi_string+"/Rayfire/origin"))
-      libmesh_error_msg("ERROR: No origin specified for Rayfire");
-
-    if (input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin") != 2)
-      libmesh_error_msg("ERROR: Please specify a 2D point (x,y) for the rayfire origin");
-
-    libMesh::Point origin;
-    origin(0) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 0);
-    origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
-
-    libMesh::Real theta;
-
-    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
-      theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
-    else
-      libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
-
-
-    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
-      libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
-
-    return new RayfireMesh(origin,theta);
   }
 
   template<typename T>
