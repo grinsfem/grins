@@ -135,8 +135,8 @@ namespace GRINS
     //! Internal 1D mesh of EDGE2 elements
     SharedPtr<libMesh::Mesh> _mesh;
 
-    //! Map of main mesh elem_id to rayfire mesh elems
-    std::map<libMesh::dof_id_type,libMesh::Elem*> _elem_id_map;
+    //! Map of main mesh elem_id to rayfire mesh elem_id
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;
 
     //! User should never call the default constructor
     RayfireMesh();

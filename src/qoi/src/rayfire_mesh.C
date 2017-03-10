@@ -119,7 +119,7 @@ namespace GRINS
           }
 
         // add new rayfire elem to the map
-        _elem_id_map[prev_elem->id()] = elem;
+        _elem_id_map[prev_elem->id()] = elem->id();
 
         start_point = end_point;
         start_node = end_node;
@@ -137,10 +137,10 @@ namespace GRINS
 
   void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector)
   {
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
-        if (it->second->active())
+        if (_mesh->elem(it->second)->active())
           id_vector.push_back(it->first);
       }
   }
@@ -160,7 +160,7 @@ namespace GRINS
     // iterate over all main elems along the rayfire and look for
     // refinement: INACTIVE parent with JUST_REFINED children
     // coarsening: JUST_COARSENED parent
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
         const libMesh::Elem* main_elem = mesh_base.elem(it->first);
@@ -178,7 +178,7 @@ namespace GRINS
           {
             if (main_elem->has_children())
               if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
-                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
+                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem(it->second)));
           }
       }
 
@@ -261,11 +261,11 @@ namespace GRINS
     // return value; set if valid rayfire elem is found
     libMesh::Elem* retval = NULL;
 
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it;
     it = _elem_id_map.find(elem_id);
     if (it != _elem_id_map.end())
-      if (it->second->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
-        retval = it->second;
+      if (_mesh->elem(it->second)->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
+        retval = _mesh->elem(it->second);
 
     return retval;
   }
@@ -598,7 +598,7 @@ namespace GRINS
         elem->set_parent(rayfire_elem);
 
         // add new rayfire elem to the map
-        _elem_id_map[prev_elem->id()] = elem;
+        _elem_id_map[prev_elem->id()] = elem->id();
         start_point = end_point;
         prev_elem = next_elem;
         prev_node = new_node;
@@ -656,7 +656,7 @@ namespace GRINS
         libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
 
         // add new rayfire elem to the map
-        _elem_id_map[parent_elem->id()] = elem;
+        _elem_id_map[parent_elem->id()] = elem->id();
       }
 
   }
