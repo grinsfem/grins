@@ -89,6 +89,18 @@ namespace GRINS
       libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
   }
 
+  RayfireMesh::RayfireMesh(const RayfireMesh & original) :
+    _dim(original._dim),
+    _origin(original._origin),
+    _theta(original._theta),
+    _phi(original._phi)
+  {
+    if (original._mesh.get())
+      this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
+      
+    this->_elem_id_map = original._elem_id_map;
+  }
+
   void RayfireMesh::init(const libMesh::MeshBase& mesh_base)
   {
     // consistency check

@@ -91,6 +91,12 @@ namespace GRINS
     */
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
+    //! Copy Constructor
+    /*!
+    Required to deep-copy _mesh and _elem_id_map
+    */
+    RayfireMesh(const RayfireMesh & original);
+
     //! Initialization
     /*!
       This function performs the rayfire and assembles the 1D mesh.
@@ -139,7 +145,7 @@ namespace GRINS
     libMesh::Real   _phi;
 
     //! Internal 1D mesh of EDGE2 elements
-    SharedPtr<libMesh::Mesh> _mesh;
+    libMesh::UniquePtr<libMesh::Mesh> _mesh;
 
     //! Map of main mesh elem_id to rayfire mesh elem_id
     std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;

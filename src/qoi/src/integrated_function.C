@@ -45,15 +45,12 @@
 namespace GRINS
 {
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, SharedPtr<RayfireMesh> rayfire, const std::string& qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level,SharedPtr<Function> f,RayfireMesh * rayfire,const std::string& qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f),
     _rayfire(rayfire)
-  {
-    // use Gauss Quadrature
-    _qbase.reset(new libMesh::QGauss(1,libMesh::Order(_p_level)));
-  }
+  {}
 
   template<typename Function>
   IntegratedFunction<Function>::IntegratedFunction(const GetPot & input,unsigned int p_level,SharedPtr<Function> f,const std::string & input_qoi_string,const std::string& qoi_name) :
@@ -62,9 +59,16 @@ namespace GRINS
     _f(f)
   {
     _rayfire.reset(new RayfireMesh(input,input_qoi_string));
+  }
 
-    // use Gauss Quadrature
-    _qbase.reset(new libMesh::QGauss(1,libMesh::Order(_p_level)));
+  template<typename Function>
+  IntegratedFunction<Function>::IntegratedFunction(const IntegratedFunction & original) :
+    QoIBase(original),
+    _p_level(original._p_level),
+    _f(original._f)
+  {
+    // call RayfireMesh copy constructor
+    this->_rayfire.reset(new RayfireMesh( *((original._rayfire).get())) );
   }
 
   template<typename Function>
@@ -99,13 +103,14 @@ namespace GRINS
     // is not in the rayfire
     if (rayfire_elem)
       {
-        // init the quadrature base on the rayfire elem
-        _qbase->init(rayfire_elem->type(),_p_level);
+        // create and init the quadrature base on the rayfire elem
+        libMesh::QGauss qbase(rayfire_elem->dim(),libMesh::Order(_p_level));
+        qbase.init(rayfire_elem->type(),libMesh::Order(_p_level));
 
         // need the QP coordinates and JxW
         libMesh::UniquePtr< libMesh::FEBase > fe = libMesh::FEBase::build(rayfire_elem->dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE) );
 
-        fe->attach_quadrature_rule( _qbase.get() );
+        fe->attach_quadrature_rule( &qbase );
         fe->get_xyz();
         fe->get_JxW();
 

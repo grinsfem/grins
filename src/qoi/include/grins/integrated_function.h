@@ -55,18 +55,24 @@ namespace GRINS
   public:
     //! Constructor
     /*!
-      @param p_level The desired Gauss Quadrature level
-      @param f A FunctionBase or FEMFunctionBase object for evaluting the QoI
-      @param rayfire A RayfireMesh object (will be initialized in init())
-      @param qoi_name Passed to the QoIBase
+    @param p_level The desired Gauss Quadrature level
+    @param f A FunctionBase or FEMFunctionBase object for evaluting the QoI
+    @param rayfire A RayfireMesh object (will be initialized in init()) <b>Ownership will be taken by an internal libMesh::UniquePtr</b>
+    @param qoi_name Passed to the QoIBase
     */
-    IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, SharedPtr<RayfireMesh> rayfire, const std::string& qoi_name);
+    IntegratedFunction(unsigned int p_level,SharedPtr<Function> f,RayfireMesh * rayfire,const std::string& qoi_name);
 
     //! Constructor
     /*!
     Used by the QoIFactory. Passes GetPot through to RayfireMesh for construction
     */
     IntegratedFunction(const GetPot & input,unsigned int p_level,SharedPtr<Function> f,const std::string & input_qoi_string,const std::string& qoi_name);
+
+    //! Copy Constructor
+    /*!
+    Required to deep-copy the UniquePtr RayfireMesh object
+    */
+    IntegratedFunction(const IntegratedFunction & original);
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const;
@@ -101,10 +107,7 @@ namespace GRINS
     SharedPtr<Function> _f;
 
     //! Pointer to RayfireMesh object
-    SharedPtr<RayfireMesh> _rayfire;
-
-    //! QBase object for adding quadrature to rayfire elements
-    SharedPtr<libMesh::QBase> _qbase;
+    libMesh::UniquePtr<RayfireMesh> _rayfire;
 
     //! Compute the value of a QoI at a QP
     libMesh::Real qoi_value(Function& f,AssemblyContext& context,const libMesh::Point& xyz);
