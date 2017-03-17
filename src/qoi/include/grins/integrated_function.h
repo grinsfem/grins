@@ -99,6 +99,11 @@ namespace GRINS
     //! Reinitialize the rayfire
     virtual void reinit(MultiphysicsSystem & system);
 
+    const RayfireMesh & get_rayfire()
+    {
+      return *(_rayfire.get());
+    }
+
   private:
     //! Quadrature order
     unsigned int _p_level;
