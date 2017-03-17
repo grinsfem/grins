@@ -117,9 +117,6 @@ namespace GRINSTesting
 
           GRINS::MultiphysicsSystem* system = _sim->get_multiphysics_system();
 
-          // build rayfire
-          GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-
           CPPUNIT_ASSERT_EQUAL(functions.size(), calc_answers.size());
 
           // and now the CompositeQoI to do the evalutaion
@@ -127,6 +124,7 @@ namespace GRINSTesting
 
           for (unsigned int i=0; i<functions.size(); i++)
             {
+              GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
               GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)2,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
               comp_qoi.add_qoi(integ_func);
             }
@@ -197,16 +195,21 @@ namespace GRINSTesting
           GRINS::MultiphysicsSystem* system = _sim->get_multiphysics_system();
           GRINS::SharedPtr<libMesh::EquationSystems> es = _sim->get_equation_system();
 
-          // build rayfire
-          GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-
           CPPUNIT_ASSERT_EQUAL(functions.size(), calc_answers.size());
 
           // and now the CompositeQoI to do the evalutaion
           GRINS::CompositeQoI comp_qoi;
 
+          // all functions use the same mesh, so they have identical rayfires.
+          // instead of trying to access each of them directly, we create a reference rayfire that
+          // can be used for checking the number of rayfire elements and
+          // finding the longest rayfire element for calculating convergence
+          GRINS::SharedPtr<GRINS::RayfireMesh> ref_rayfire(new GRINS::RayfireMesh(origin,theta[t]));
+          ref_rayfire->init( system->get_mesh() );
+
           for (unsigned int i=0; i<functions.size(); i++)
             {
+              GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
               GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
               comp_qoi.add_qoi(integ_func);
             }
@@ -227,7 +230,7 @@ namespace GRINSTesting
           do
             {
               std::vector<libMesh::dof_id_type> elems_in_rayfire;
-              rayfire->elem_ids_in_rayfire(elems_in_rayfire);
+              ref_rayfire->elem_ids_in_rayfire(elems_in_rayfire);
 
               system->assemble_qoi();
 
@@ -235,7 +238,7 @@ namespace GRINSTesting
               libMesh::Real h = -1.0;
               for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
                 {
-                  libMesh::Real l = (rayfire->map_to_rayfire_elem(elems_in_rayfire[i]))->length(0,1);
+                  libMesh::Real l = (ref_rayfire->map_to_rayfire_elem(elems_in_rayfire[i]))->length(0,1);
                   if (l>h)
                     h=l;
                 }
@@ -278,8 +281,14 @@ namespace GRINSTesting
                   for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
                     CPPUNIT_ASSERT( !( system->get_mesh().elem(elems_in_rayfire[i])->active() ) );
 
-                  // post-refinement reinit
-                  rayfire->reinit(system->get_mesh());
+                  // need to manually reinit the reference rayfire
+                  ref_rayfire->reinit(system->get_mesh());
+
+                  // and reinit the CompositeQoI (which will reinit all internal rayfires)
+                  libMesh::DifferentiableQoI* diff_qoi = system->get_qoi();
+                  GRINS::CompositeQoI* qoi = libMesh::cast_ptr<GRINS::CompositeQoI*>(diff_qoi);
+                  qoi->reinit(*system);
+
                   es->reinit();
                 }
 
@@ -327,7 +336,7 @@ namespace GRINSTesting
       libMesh::MeshRefinement mr(system->get_mesh());
 
       // build rayfire
-      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta);
 
       // and now the CompositeQoI to do the evalutaion
       GRINS::CompositeQoI comp_qoi;
@@ -350,9 +359,14 @@ namespace GRINSTesting
       // ensure we get the correct answer
       CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE  );
 
-      // get the number of rayfire elements
+      // get the IntegratedFunction object, since comp_qoi would have already been cloned
+      libMesh::DifferentiableQoI* diff_qoi = system->get_qoi();
+      GRINS::CompositeQoI* qoi = libMesh::cast_ptr<GRINS::CompositeQoI*>(diff_qoi);
+      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > * integrated_func = libMesh::cast_ptr<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > * >( &(qoi->get_qoi(0)) );
+      
+      // make sure we have exactly 3 elements along the rayfire
       std::vector<libMesh::dof_id_type> elems_in_rayfire;
-      rayfire->elem_ids_in_rayfire(elems_in_rayfire);
+      integrated_func->get_rayfire().elem_ids_in_rayfire(elems_in_rayfire);
       unsigned int num_rayfire_elems = elems_in_rayfire.size();
       CPPUNIT_ASSERT_EQUAL((unsigned int)3,num_rayfire_elems);
 
@@ -370,7 +384,7 @@ namespace GRINSTesting
 
       // after the refinement, we should now have 6 rayfire elements
       std::vector<libMesh::dof_id_type> refined_elems_in_rayfire;
-      rayfire->elem_ids_in_rayfire(refined_elems_in_rayfire);
+      integrated_func->get_rayfire().elem_ids_in_rayfire(refined_elems_in_rayfire);
       unsigned int num_refined_rayfire_elems = refined_elems_in_rayfire.size();
       CPPUNIT_ASSERT_EQUAL((unsigned int)6,num_refined_rayfire_elems);
       CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answer, _sim->get_qoi_value(0),libMesh::TOLERANCE );
