@@ -178,9 +178,9 @@ namespace GRINS
   }
 
 
-  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector)
+  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector) const
   {
-    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::const_iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
         if (_mesh->elem(it->second)->active())

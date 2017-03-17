@@ -117,7 +117,7 @@ namespace GRINS
     /*!
       Returns a vector of elem IDs that are currently along the rayfire
     */
-    void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector);
+    void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector) const;
 
     /*!
       Checks for refined and coarsened main mesh elements along the rayfire path.
