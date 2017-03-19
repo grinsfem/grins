@@ -140,14 +140,6 @@ namespace GRINS
       return;
     }
 
-    void specialized_build_thermo( const GetPot& /*input*/,
-                                   libMesh::UniquePtr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
-    {
-      thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( this->cea_mixture() ) );
-      return;
-    }
-
     void specialized_build_viscosity( const GetPot& input,
                                       const std::string& material,
                                       libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
