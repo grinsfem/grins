@@ -44,9 +44,9 @@
 template class GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>;
 template class GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>;
 
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>,
+template class GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
                                                         GRINS::ConstantConductivity>;
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>,
+template class GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
                                                         GRINS::ConstantPrandtlConductivity>;
 
 template class GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
