@@ -72,6 +72,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( refined_above_unrefined );
     CPPUNIT_TEST( refine_deformed_elem );
     CPPUNIT_TEST( refine_deformed_elem_near_tolerance );
+    CPPUNIT_TEST( init_on_refined_mesh );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -456,6 +457,41 @@ namespace GRINSTesting
       this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
     }
 
+    //! Call init() on an already refined mesh
+    //!
+    //! Mimics a run from restart
+    void init_on_refined_mesh()
+    {
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_9elem_2D.in";
+      GetPot input_quad4(filename);
+      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
+
+      // refine elem 1 before rayfire init
+      libMesh::MeshRefinement mr(*mesh);
+      mesh->elem(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+      mr.refine_elements();
+
+      CPPUNIT_ASSERT( !(mesh->elem(1)->active()) );
+      CPPUNIT_ASSERT( mesh->elem(1)->has_children() );
+
+      libMesh::Point origin(0.0,0.1);
+      libMesh::Real theta = 0.0;
+
+      // initialize the rayfire
+      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      rayfire->init(*mesh);
+
+      // make sure we pick up the 2 unrefined elements
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(0) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(2) );
+
+      // rayfire should not include elem 1 since it's INACTIVE
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(1)) );
+
+      // rayfire should contain children 0,1 of elem 1
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(1)->child(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(1)->child(1)->id()) );
+    }
 
   private:
 
