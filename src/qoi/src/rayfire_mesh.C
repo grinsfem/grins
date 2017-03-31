@@ -143,6 +143,12 @@ namespace GRINS
         // get the next elem in the rayfire
         next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
+#ifndef NDEBUG
+        // make sure we are only picking up active elements
+        if (next_elem)
+          libmesh_assert( next_elem->active() );
+#endif
+
         // add end point as node on the rayfire mesh
         end_node = _mesh->add_point(end_point);
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
@@ -386,81 +392,104 @@ namespace GRINS
   const libMesh::Elem* RayfireMesh::get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side, bool same_parent)
   {
     libmesh_assert(cur_elem);
+    libmesh_assert(cur_elem->active());
 
-    // check if the intersection point is a vertex
-    bool is_vertex = false;
-    const libMesh::Node * vertex = NULL;
-    for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
+    const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(side);
+
+    // a valid neighbor is an ACTIVE elem or null
+    bool is_valid = true;
+    if (neighbor)
+      is_valid = neighbor->active();
+
+    if (is_valid)
       {
-        if ((cur_elem->node_ptr(n))->absolute_fuzzy_equals(end_point))
+        // check if the intersection point is a vertex
+        bool is_vertex = false;
+        libMesh::Node * vertex = NULL;
+        for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
           {
-            is_vertex = true;
-            vertex = cur_elem->node_ptr(n);
-            break;
-          }
-      }
-
-    if (is_vertex)
-      {
-        // rayfire goes through vertex
-
-        // check elem neighbors first
-        for (unsigned int s=0; s<cur_elem->n_sides(); s++)
-          {
-            libMesh::UniquePtr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
-            if (side_elem->contains_point(end_point))
+            if ((cur_elem->node_ptr(n))->absolute_fuzzy_equals(end_point))
               {
-                const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(s);
-                if (!neighbor)
-                  continue;
-
-                if (same_parent)
-                  {
-                    if (neighbor->parent())
-                      {
-                        if (neighbor->parent()->id() != cur_elem->parent()->id())
-                          continue;
-                        else
-                          if (this->rayfire_in_elem(end_point,neighbor))
-                            return neighbor;
-                      }
-                    else
-                      continue;
-                  }
-                else
-                  if (this->rayfire_in_elem(end_point,neighbor))
-                    return neighbor;
+                is_vertex = true;
+                vertex = cur_elem->node_ptr(n);
+                break;
               }
           }
 
-        // next elem is not a neighbor,
-        // so get all elems that share this vertex
-        std::set<const libMesh::Elem*> elem_set;
-        cur_elem->find_point_neighbors(*vertex,elem_set);
-        std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
-        const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
-
-        // iterate over each elem
-        for (; it != end; ++it)
+        if (is_vertex)
           {
-            const libMesh::Elem* elem = *it;
+            // rayfire goes through vertex
 
-            if (elem == cur_elem) // skip the current elem
-              continue;
+            // check elem neighbors first
+            for (unsigned int s=0; s<cur_elem->n_sides(); s++)
+              {
+                libMesh::UniquePtr<libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+                if (side_elem->contains_point(end_point))
+                  {
+                    const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(s);
+                    if (!neighbor)
+                      continue;
 
-            if (this->rayfire_in_elem(end_point,elem))
-              return elem;
+                    if (same_parent)
+                      {
+                        if (neighbor->parent())
+                          {
+                            if (neighbor->parent()->id() != cur_elem->parent()->id())
+                              continue;
+                            else
+                              if (this->rayfire_in_elem(end_point,neighbor))
+                                return neighbor;
+                          }
+                        else
+                          continue;
+                      }
+                    else
+                      if (this->rayfire_in_elem(end_point,neighbor))
+                        return neighbor;
+                  }
+              }
+
+            // next elem is not a neighbor,
+            // so get all elems that share this vertex
+            std::set<const libMesh::Elem*> elem_set;
+            cur_elem->find_point_neighbors(*vertex,elem_set);
+            std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
+            const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
+
+            // iterate over each elem
+            for (; it != end; ++it)
+              {
+                const libMesh::Elem* elem = *it;
+
+                if (elem == cur_elem) // skip the current elem
+                  continue;
+
+                if (this->rayfire_in_elem(end_point,elem))
+                  return elem;
+              }
+
           }
+        else
+          {
+            // check if side is a boundary
+            if( !(cur_elem->neighbor_ptr(side)) )
+              return NULL;
 
-      }
+            // not a vertex or boundary, so just get the elem on that side
+            return cur_elem->neighbor_ptr(side);
+          }
+      } // if (is_valid)
     else
       {
-        // check if side is a boundary
-        if( !(cur_elem->neighbor_ptr(side)) )
-          return NULL;
-
-        // not a vertex or boundary, so just get the elem on that side
-        return cur_elem->neighbor_ptr(side);
+        for (unsigned int c=0; c<neighbor->n_children(); c++)
+          {
+            const libMesh::Elem * child = neighbor->child_ptr(c);
+            
+            if (child->contains_point(end_point))
+              if (this->rayfire_in_elem(end_point,child))
+                return child;
+          }
+        // could not find a valid child elem, so we return NULL below
       }
 
     return NULL;
@@ -614,6 +643,12 @@ namespace GRINS
     do
       {
         next_elem = this->get_next_elem(prev_elem,start_point,end_point,true);
+
+#ifndef NDEBUG
+        // make sure we are only picking up active elements
+        if (next_elem)
+          libmesh_assert( next_elem->active() );
+#endif
 
         // add end point as node on the rayfire mesh
         new_node = _mesh->add_point(end_point);
