@@ -341,7 +341,7 @@ namespace GRINS
         if (converged)
           {
             if ( this->check_valid_point(intersection_point,start_point,*edge_elem,next_point) )
-              return this->get_correct_neighbor(intersection_point,cur_elem,s,same_parent);
+              return this->get_correct_neighbor(start_point,intersection_point,cur_elem,s,same_parent);
           }
         else
           continue;
@@ -389,7 +389,47 @@ namespace GRINS
   }
 
 
-  const libMesh::Elem* RayfireMesh::get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side, bool same_parent)
+  bool RayfireMesh::validate_edge(const libMesh::Point & start_point, const libMesh::Point & end_point, const libMesh::Elem * side_elem, const libMesh::Elem * neighbor)
+  {
+    bool is_valid = true;
+
+    const libMesh::Node * node0 = side_elem->node_ptr(0);
+    const libMesh::Node * node1 = side_elem->node_ptr(1);
+
+    unsigned int side = libMesh::invalid_uint;
+
+    for (unsigned int s=0; s<neighbor->n_sides(); s++)
+      {
+        libMesh::UniquePtr<const libMesh::Elem> side_elem = neighbor->build_side_ptr(s); 
+
+        if ( (side_elem->contains_point(*node0)) && (side_elem->contains_point(*node1)) )
+          {
+            side = s;
+            break;
+          }
+      }
+
+    if ( side != libMesh::invalid_uint )
+      {
+        libMesh::UniquePtr<const libMesh::Elem> edge_elem = neighbor->build_side_ptr(side);
+
+        bool start_point_on_edge = edge_elem->contains_point(start_point);
+        bool end_point_on_edge = edge_elem->contains_point(end_point);
+
+        if ( end_point_on_edge && start_point_on_edge )
+          {
+            bool l_to_r = ( start_point.absolute_fuzzy_equals(*(edge_elem->node_ptr(0))) ) && ( end_point.absolute_fuzzy_equals(*(edge_elem->node_ptr(1))) );
+            bool r_to_l = ( end_point.absolute_fuzzy_equals(*(edge_elem->node_ptr(0))) )   && ( start_point.absolute_fuzzy_equals(*(edge_elem->node_ptr(1))) );
+
+            is_valid &= ( l_to_r || r_to_l );
+          }
+        }
+
+    return is_valid;
+  }
+
+
+  const libMesh::Elem* RayfireMesh::get_correct_neighbor(libMesh::Point & start_point, libMesh::Point & end_point, const libMesh::Elem * cur_elem, unsigned int side, bool same_parent)
   {
     libmesh_assert(cur_elem);
     libmesh_assert(cur_elem->active());
@@ -405,7 +445,7 @@ namespace GRINS
       {
         // check if the intersection point is a vertex
         bool is_vertex = false;
-        libMesh::Node * vertex = NULL;
+        const libMesh::Node * vertex = NULL;
         for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
           {
             if ((cur_elem->node_ptr(n))->absolute_fuzzy_equals(end_point))
@@ -423,7 +463,7 @@ namespace GRINS
             // check elem neighbors first
             for (unsigned int s=0; s<cur_elem->n_sides(); s++)
               {
-                libMesh::UniquePtr<libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+                libMesh::UniquePtr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
                 if (side_elem->contains_point(end_point))
                   {
                     const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(s);
@@ -438,14 +478,16 @@ namespace GRINS
                               continue;
                             else
                               if (this->rayfire_in_elem(end_point,neighbor))
-                                return neighbor;
+                                if (this->validate_edge(start_point,end_point,side_elem.get(),neighbor))
+                                  return neighbor;
                           }
                         else
                           continue;
                       }
                     else
                       if (this->rayfire_in_elem(end_point,neighbor))
-                        return neighbor;
+                        if (this->validate_edge(start_point,end_point,side_elem.get(),neighbor))
+                          return neighbor;
                   }
               }
 
