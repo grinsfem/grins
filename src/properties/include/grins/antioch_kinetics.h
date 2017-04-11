@@ -44,6 +44,7 @@
 namespace GRINS
 {
   // GRINS forward declarations
+  template<typename KineticsThermoCurveFit>
   class AntiochMixture;
 
   //! Wrapper class for evaluating chemical kinetics using Antioch
@@ -58,7 +59,7 @@ namespace GRINS
   {
   public:
 
-    AntiochKinetics( const AntiochMixture& mixture );
+    AntiochKinetics( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture );
 
     ~AntiochKinetics(){};
 
@@ -74,7 +75,7 @@ namespace GRINS
 
   protected:
 
-    const AntiochMixture& _antioch_mixture;
+    const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & _antioch_mixture;
 
     Antioch::KineticsEvaluator<libMesh::Real> _antioch_kinetics;
 

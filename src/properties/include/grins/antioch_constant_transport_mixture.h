@@ -55,7 +55,7 @@ namespace GRINS
     output to confirm that Antioch was included in the build.
   */
   template<typename Conductivity>
-  class AntiochConstantTransportMixture : public AntiochMixture
+  class AntiochConstantTransportMixture : public AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >
   {
   public:
 

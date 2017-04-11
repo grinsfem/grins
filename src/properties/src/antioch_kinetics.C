@@ -39,7 +39,7 @@
 
 namespace GRINS
 {
-  AntiochKinetics::AntiochKinetics( const AntiochMixture& mixture )
+  AntiochKinetics::AntiochKinetics( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture )
     : _antioch_mixture( mixture ),
       _antioch_kinetics( mixture.reaction_set(), 0 ),
       _antioch_cea_thermo( mixture.nasa_mixture() )

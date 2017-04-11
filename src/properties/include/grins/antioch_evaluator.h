@@ -57,7 +57,7 @@ namespace GRINS
   {
   public:
 
-    AntiochEvaluator( const AntiochMixture& mixture );
+    AntiochEvaluator( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >& mixture );
 
     virtual ~AntiochEvaluator(){};
 
@@ -93,7 +93,7 @@ namespace GRINS
 
   protected:
 
-    const AntiochMixture& _chem;
+    const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & _chem;
 
     //! Primary thermo object.
     libMesh::UniquePtr<Thermo> _thermo;
@@ -122,22 +122,21 @@ namespace GRINS
        This way, we can control how the cached transport objects get constructed
        based on the template type. This is achieved by the dummy types forcing operator
        overloading for each of the specialized types. */
-    void build_thermo( const AntiochMixture& mixture )
+    void build_thermo( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture )
     { specialized_build_thermo( mixture, _thermo, thermo_type<Thermo>() ); }
 
   private:
 
     AntiochEvaluator();
 
-    void specialized_build_thermo( const AntiochMixture& mixture,
+    void specialized_build_thermo( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture,
                                    libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
-      return;
     }
 
-    void specialized_build_thermo( const AntiochMixture& mixture,
+    void specialized_build_thermo( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture,
                                    libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
                                    thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
     {

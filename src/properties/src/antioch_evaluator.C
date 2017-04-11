@@ -40,7 +40,7 @@
 namespace GRINS
 {
   template<typename Thermo>
-  AntiochEvaluator<Thermo>::AntiochEvaluator( const AntiochMixture& mixture )
+  AntiochEvaluator<Thermo>::AntiochEvaluator( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >& mixture )
     : _chem( mixture ),
       _kinetics( new AntiochKinetics(mixture) ),
       _minimum_T( mixture.minimum_T() ),

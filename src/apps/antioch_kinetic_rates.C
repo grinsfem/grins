@@ -54,7 +54,8 @@ int main(int argc, char* argv[])
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture antioch_mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
+  GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >
+    antioch_mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
 
   GRINS::AntiochKinetics antioch_kinetics( antioch_mixture );
 

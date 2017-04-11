@@ -42,16 +42,16 @@ namespace GRINSTesting
   {
   public:
 
-    void init_antioch(const std::string& input_file, const std::string& material_name)
+    void init_antioch(const std::string & input_file, const std::string & material_name)
     {
       GetPot input(input_file);
 
-      _antioch_mixture.reset( new GRINS::AntiochMixture(input,material_name) );
+      _antioch_mixture.reset( new GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name) );
     }
 
   protected:
 
-    libMesh::UniquePtr<GRINS::AntiochMixture> _antioch_mixture;
+    libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
   };
 
 } // end namespace GRINSTesting
