@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >
     antioch_mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
 
-  GRINS::AntiochKinetics antioch_kinetics( antioch_mixture );
+  GRINS::AntiochKinetics<Antioch::CEACurveFit<libMesh::Real> > antioch_kinetics( antioch_mixture );
 
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );

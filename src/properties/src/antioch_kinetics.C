@@ -39,25 +39,30 @@
 
 namespace GRINS
 {
-  AntiochKinetics::AntiochKinetics( const AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & mixture )
+  template<typename KineticsThermoCurveFit>
+  AntiochKinetics<KineticsThermoCurveFit>::AntiochKinetics( const AntiochMixture<KineticsThermoCurveFit> & mixture )
     : _antioch_mixture( mixture ),
       _antioch_kinetics( mixture.reaction_set(), 0 ),
-      _antioch_cea_thermo( mixture.nasa_mixture() )
+      _antioch_nasa_thermo( mixture.nasa_mixture() )
   {}
 
-  void AntiochKinetics::omega_dot( const libMesh::Real& T,
-                                   const libMesh::Real rho,
-                                   const std::vector<libMesh::Real>& mass_fractions,
-                                   std::vector<libMesh::Real>& omega_dot )
+  template<typename KineticsThermoCurveFit>
+  void AntiochKinetics<KineticsThermoCurveFit>::
+  omega_dot( const libMesh::Real& T,
+             const libMesh::Real rho,
+             const std::vector<libMesh::Real>& mass_fractions,
+             std::vector<libMesh::Real>& omega_dot )
   {
     Antioch::TempCache<libMesh::Real> temp_cache(T);
     this->omega_dot(temp_cache,rho,mass_fractions,omega_dot);
   }
 
-  void AntiochKinetics::omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
-                                   const libMesh::Real rho,
-                                   const std::vector<libMesh::Real>& mass_fractions,
-                                   std::vector<libMesh::Real>& omega_dot )
+  template<typename KineticsThermoCurveFit>
+  void AntiochKinetics<KineticsThermoCurveFit>::
+  omega_dot( const Antioch::TempCache<libMesh::Real>& temp_cache,
+             const libMesh::Real rho,
+             const std::vector<libMesh::Real>& mass_fractions,
+             std::vector<libMesh::Real>& omega_dot )
   {
     const unsigned int n_species = _antioch_mixture.n_species();
 
@@ -67,7 +72,7 @@ namespace GRINS
     std::vector<libMesh::Real> h_RT_minus_s_R(n_species, 0.0);
     std::vector<libMesh::Real> molar_densities(n_species, 0.0);
 
-    _antioch_cea_thermo.h_RT_minus_s_R( temp_cache, h_RT_minus_s_R );
+    _antioch_nasa_thermo.h_RT_minus_s_R( temp_cache, h_RT_minus_s_R );
 
     _antioch_mixture.molar_densities( rho, mass_fractions, molar_densities );
 

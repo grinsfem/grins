@@ -101,7 +101,7 @@ namespace GRINS
     //! For some Thermo types, we also need to cache a NASAEvaluator.
     libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
 
-    libMesh::UniquePtr<AntiochKinetics> _kinetics;
+    libMesh::UniquePtr<AntiochKinetics<KineticsThermoCurveFit> > _kinetics;
 
     // Temperature should be clipped to positive values for
     // stability's sake
