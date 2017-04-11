@@ -51,7 +51,7 @@ namespace GRINS
     output to confirm that Antioch was included in the build.
   */
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  class AntiochMixtureAveragedTransportEvaluator : public AntiochEvaluator<Thermo>
+  class AntiochMixtureAveragedTransportEvaluator : public AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>
   {
   public:
 

@@ -37,7 +37,7 @@ namespace GRINS
 {
   template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
   AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity>::AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture )
-    : AntiochEvaluator<Thermo>( mixture ),
+    : AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>( mixture ),
     _wilke_evaluator( new Antioch::MixtureAveragedTransportEvaluator<Diffusivity,Viscosity,Conductivity,libMesh::Real>( mixture.wilke_mixture(), mixture.diffusivity(), mixture.viscosity(), mixture.conductivity() ) ),
     _diffusivity( mixture.diffusivity() )
   {}
