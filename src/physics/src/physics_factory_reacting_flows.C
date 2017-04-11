@@ -147,6 +147,24 @@ namespace GRINS
                                                                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> > >
                                   (physics_name,input) );
               }
+            else if( (thermo_model == std::string("cea")) &&
+                     (diffusivity_model == std::string("kinetics_theory")) &&
+                     (conductivity_model == std::string("kinetics_theory")) &&
+                     (viscosity_model == std::string("kinetics_theory")) )
+              {
+#ifdef ANTIOCH_HAVE_GSL
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>,
+                                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >,
+                                                     GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                     Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                                     Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>,
+                                                                                                     Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >(physics_name,input) );
+#else
+                libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
+#endif // ANTIOCH_HAVE_GSL
+              }
             else
               this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
           }

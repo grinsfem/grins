@@ -64,6 +64,17 @@ template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<A
                                                                                    Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >, \
                                                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> > >; \
   /*
+   *MixtureAveraged: IdealGasMicroThermo/CEA thermo, Kinetic theory viscosity, Kinetic theory  conductivity, Molecular binary diffusivity
+   */ \
+  template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >, \
+                                                                                 Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
+                                                                                 Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>, \
+                                                                                 Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >, \
+                                   GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >, \
+                                                                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
+                                                                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>, \
+                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >; \
+  /*
    *Constant viscosity, constant Lewis diffusivity, constant conductivity, StatMech thermo
    */ \
   template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>, \
@@ -121,6 +132,13 @@ template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<A
                                                                                  Antioch::BlottnerViscosity<libMesh::Real>, \
                                                                                  Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >, \
                                                                                  Antioch::ConstantLewisDiffusivity<libMesh::Real> > >;\
+  /*
+   *MixtureAveraged: StatMech thermo, Kinetic theory viscosity, Kinetic theory  conductivity, Molecular binary diffusivity
+   */ \
+  template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >, \
+                                                                                 Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
+                                                                                 Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>, \
+                                                                                 Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >; \
   /*
    *Constant transport: constant conductivity
    */ \
