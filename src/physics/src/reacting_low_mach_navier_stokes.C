@@ -112,11 +112,14 @@ namespace GRINS
                 this->_omega_dot_index.resize(this->n_species());
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
-                  {
-                    this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture.species_name(s) );
-                  }
+                  this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture.species_name(s) );
+              }
+            else if( name == std::string("D_s") )
+              {
+                this->_Ds_index.resize(this->n_species());
 
-                std::cout << "omega_dot size = " << _omega_dot_index.size() << std::endl;
+                for( unsigned int s = 0; s < this->n_species(); s++ )
+                  this->_Ds_index[s] = postprocessing.register_quantity( "D_"+this->_gas_mixture.species_name(s) );
               }
             else
               {
@@ -786,6 +789,35 @@ namespace GRINS
                     gas_evaluator.omega_dot( T, rho, Y, omega_dot );
 
                     value = omega_dot[s];
+                    return;
+                  }
+              }
+          }
+
+        if( !this->_Ds_index.empty() )
+          {
+            libmesh_assert_equal_to( _Ds_index.size(), this->n_species() );
+
+            for( unsigned int s = 0; s < this->n_species(); s++ )
+              {
+                if( quantity_index == this->_Ds_index[s] )
+                  {
+                    std::vector<libMesh::Real> Y( this->_n_species );
+
+                    libMesh::Real T = this->T(point,context);
+                    this->mass_fractions( point, context, Y );
+                    libMesh::Real p0 = this->get_p0_steady(context,point);
+
+                    libMesh::Real cp = gas_evaluator.cp( T, p0, Y );
+
+                    libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
+
+                    libMesh::Real mu, k;
+                    std::vector<libMesh::Real> D( this->_n_species );
+
+                    gas_evaluator.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
+
+                    value = D[s];
                     return;
                   }
               }

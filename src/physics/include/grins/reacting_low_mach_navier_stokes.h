@@ -104,6 +104,9 @@ namespace GRINS
     //! Index from registering this quantity. Each species will have it's own index.
     std::vector<unsigned int> _omega_dot_index;
 
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _Ds_index;
+
   private:
 
     ReactingLowMachNavierStokes();
