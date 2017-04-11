@@ -148,7 +148,7 @@ namespace GRINS
                                    libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
                                    thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
     {
-      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >(this->cea_mixture()) );
+      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >(this->nasa_mixture()) );
       thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>( *_cea_evaluator, *(this->_antioch_gas.get()) ) );
     }
 

@@ -75,7 +75,7 @@ namespace GRINS
 
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 
-    const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & cea_mixture() const;
+    const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture() const;
 
     libMesh::Real h_stat_mech_ref_correction( unsigned int species ) const;
 
@@ -91,7 +91,7 @@ namespace GRINS
 
     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_mixture;
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _nasa_mixture;
 
     std::vector<libMesh::Real> _h_stat_mech_ref_correction;
 
@@ -129,9 +129,9 @@ namespace GRINS
   }
 
   inline
-  const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & AntiochMixture::cea_mixture() const
+  const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & AntiochMixture::nasa_mixture() const
   {
-    return *_cea_mixture.get();
+    return *_nasa_mixture.get();
   }
 
   inline
