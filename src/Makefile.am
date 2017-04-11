@@ -164,6 +164,7 @@ libgrins_la_SOURCES += properties/src/cantera_kinetics.C
 libgrins_la_SOURCES += properties/src/cantera_evaluator.C
 libgrins_la_SOURCES += properties/src/antioch_chemistry.C
 libgrins_la_SOURCES += properties/src/antioch_mixture.C
+libgrins_la_SOURCES += properties/src/antioch_mixture_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_kinetics.C
 libgrins_la_SOURCES += properties/src/antioch_evaluator_instantiate.C
 libgrins_la_SOURCES += properties/src/antioch_mixture_averaged_transport_mixture_instantiate.C
@@ -259,6 +260,7 @@ sfiles_DATA += boundary_conditions/src/gas_solid_catalytic_wall.C
 sfiles_DATA += physics/src/reacting_low_mach_navier_stokes.C
 sfiles_DATA += physics/src/reacting_low_mach_navier_stokes_stab_base.C
 sfiles_DATA += physics/src/reacting_low_mach_navier_stokes_spgsm_stab.C
+sfiles_DATA += properties/src/antioch_mixture.C
 sfiles_DATA += properties/src/antioch_evaluator.C
 sfiles_DATA += properties/src/antioch_mixture_averaged_transport_mixture.C
 sfiles_DATA += properties/src/antioch_mixture_averaged_transport_evaluator.C
@@ -467,6 +469,7 @@ include_HEADERS += properties/include/grins/hyperelastic_strain_energy.h
 include_HEADERS += properties/include/grins/mooney_rivlin.h
 include_HEADERS += properties/include/grins/materials_parsing.h
 include_HEADERS += properties/include/grins/viscosity_base.h
+include_HEADERS += properties/include/grins/antioch_thermo_curve_fit_instantiation_macro.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h

@@ -97,12 +97,6 @@ namespace GRINS
       }
   }
 
-
-  // Instantiate
-  template class AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >;
-  template class AntiochMixture<Antioch::NASA7CurveFit<libMesh::Real> >;
-  template class AntiochMixture<Antioch::NASA9CurveFit<libMesh::Real> >;
-
 }// end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
