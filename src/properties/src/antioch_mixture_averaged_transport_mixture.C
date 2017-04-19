@@ -38,18 +38,21 @@
 
 namespace GRINS
 {
-  template<typename T, typename V, typename C, typename D>
-  AntiochMixtureAveragedTransportMixture<T,V,C,D>::AntiochMixtureAveragedTransportMixture( const GetPot& input,
-                                                                                           const std::string& material )
-    : AntiochMixture(input,material)
+  template<typename KT, typename T, typename V, typename C, typename D>
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::AntiochMixtureAveragedTransportMixture
+  ( const GetPot& input,const std::string& material )
+    : AntiochMixture<KT>(input,material)
   {
-    std::string transport_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
+    std::string transport_data_filename =
+      input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
+
     if( transport_data_filename == std::string("default") )
       transport_data_filename = Antioch::DefaultInstallFilename::transport_mixture();
 
-    bool verbose_transport_read = input( "Materials/"+material+"/GasMixture/Antioch/verbose_transport_read", false );
+    bool verbose_transport_read =
+      input( "Materials/"+material+"/GasMixture/Antioch/verbose_transport_read", false );
 
-    _trans_mixture.reset( new Antioch::TransportMixture<libMesh::Real>( *(_antioch_gas.get()),
+    _trans_mixture.reset( new Antioch::TransportMixture<libMesh::Real>( *(this->_antioch_gas.get()),
                                                                         transport_data_filename,
                                                                         verbose_transport_read,
                                                                         Antioch::ParsingType::ASCII ) );
@@ -63,14 +66,6 @@ namespace GRINS
     this->build_conductivity( input );
 
     this->build_diffusivity( input, material );
-
-    return;
-  }
-
-  template<typename T, typename V, typename C, typename D>
-  AntiochMixtureAveragedTransportMixture<T,V,C,D>::~AntiochMixtureAveragedTransportMixture()
-  {
-    return;
   }
 
 } // end namespace GRINS

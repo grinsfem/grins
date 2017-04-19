@@ -81,14 +81,14 @@ namespace GRINS
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
   */
-  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  class AntiochMixtureAveragedTransportMixture : public AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >
+  template<typename KineticsThermoCurveFit, typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
+  class AntiochMixtureAveragedTransportMixture : public AntiochMixture<KineticsThermoCurveFit>
   {
   public:
 
     AntiochMixtureAveragedTransportMixture( const GetPot& input, const std::string& material );
 
-    virtual ~AntiochMixtureAveragedTransportMixture();
+    virtual ~AntiochMixtureAveragedTransportMixture(){}
 
     const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& wilke_mixture() const;
 
@@ -109,7 +109,7 @@ namespace GRINS
     libMesh::UniquePtr<Thermo> _thermo;
 
     //! For some Thermo types, we also need to cache a NASAEvaluator.
-    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_evaluator;
+    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
 
     libMesh::UniquePtr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
 
@@ -138,23 +138,23 @@ namespace GRINS
     AntiochMixtureAveragedTransportMixture();
 
     void specialized_build_thermo( const GetPot& /*input*/,
-                                   libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
+                                   libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> > & thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
     }
 
     void specialized_build_thermo( const GetPot& /*input*/,
-                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
+                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>,libMesh::Real> > & thermo,
+                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>,libMesh::Real> > )
     {
-      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >(this->nasa_mixture()) );
-      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>( *_cea_evaluator, *(this->_antioch_gas.get()) ) );
+      _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>(this->nasa_mixture()) );
+      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real>( *_nasa_evaluator, *(this->_antioch_gas.get()) ) );
     }
 
     void specialized_build_viscosity( const GetPot& input,
                                       const std::string& material,
-                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> > & viscosity,
                                       viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -168,7 +168,7 @@ namespace GRINS
 
     void specialized_build_viscosity( const GetPot& input,
                                       const std::string& material,
-                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> > & viscosity,
                                       viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -183,7 +183,7 @@ namespace GRINS
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_viscosity( const GetPot& /*input*/,
                                       const std::string& /*material*/,
-                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& viscosity,
+                                      libMesh::UniquePtr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> > & viscosity,
                                       viscosity_type<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> > )
     {
       viscosity.reset( new Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -193,7 +193,7 @@ namespace GRINS
 #endif // ANTIOCH_HAVE_GSL
 
     void specialized_build_conductivity( const GetPot& /*input*/,
-                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >& conductivity,
+                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> > & conductivity,
                                          conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
     {
       conductivity.reset( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -203,7 +203,7 @@ namespace GRINS
 
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_conductivity( const GetPot& /*input*/,
-                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >& conductivity,
+                                         libMesh::UniquePtr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> > & conductivity,
                                          conductivity_type<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real> > )
     {
       conductivity.reset( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -214,7 +214,7 @@ namespace GRINS
 
     void specialized_build_diffusivity( const GetPot& input,
                                         const std::string& material,
-                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> >& diffusivity,
+                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> > & diffusivity,
                                         diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
     {
       libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
@@ -228,7 +228,7 @@ namespace GRINS
 #ifdef ANTIOCH_HAVE_GSL
     void specialized_build_diffusivity( const GetPot& /*input*/,
                                         const std::string& /*material*/,
-                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >& diffusivity,
+                                        libMesh::UniquePtr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> > & diffusivity,
                                         diffusivity_type<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > )
     {
       diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );
@@ -238,30 +238,34 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  template<typename T, typename V, typename C, typename D>
+  template<typename KT, typename T, typename V, typename C, typename D>
   inline
-  const Antioch::MixtureAveragedTransportMixture<libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,C,D>::wilke_mixture() const
+  const Antioch::MixtureAveragedTransportMixture<libMesh::Real>&
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::wilke_mixture() const
   {
     return *(_wilke_mixture.get());
   }
 
-  template<typename T, typename Viscosity, typename C, typename D>
+  template<typename KT, typename T, typename V, typename C, typename D>
   inline
-  const Antioch::MixtureViscosity<Viscosity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,Viscosity,C,D>::viscosity() const
+  const Antioch::MixtureViscosity<V,libMesh::Real>&
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::viscosity() const
   {
     return *_viscosity.get();
   }
 
-  template<typename T, typename V, typename Conductivity, typename D>
+  template<typename KT, typename T, typename V, typename C, typename D>
   inline
-  const Antioch::MixtureConductivity<Conductivity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,Conductivity,D>::conductivity() const
+  const Antioch::MixtureConductivity<C,libMesh::Real>&
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::conductivity() const
   {
     return *_conductivity.get();
   }
 
-  template<typename T, typename V, typename C, typename Diffusivity>
+  template<typename KT, typename T, typename V, typename C, typename D>
   inline
-  const Antioch::MixtureDiffusion<Diffusivity,libMesh::Real>& AntiochMixtureAveragedTransportMixture<T,V,C,Diffusivity>::diffusivity() const
+  const Antioch::MixtureDiffusion<D,libMesh::Real>&
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::diffusivity() const
   {
     return *_diffusivity.get();
   }
