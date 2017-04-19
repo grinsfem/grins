@@ -7,6 +7,36 @@
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
 
+namespace GRINSPrivate
+{
+  typedef  Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> CEAIdealGasThermo;
+}
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_RAW(class_name,curve_fit,conductivity) \
+  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<curve_fit,GRINS::conductivity> >
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_CURVEFIT_RAW(class_name,conductivity) \
+  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::conductivity> >
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE(class_name) \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_CURVEFIT_RAW(class_name,ConstantConductivity); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_CURVEFIT_RAW(class_name,ConstantPrandtlConductivity)
+
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,curve_fit,conductivity,thermo) \
+  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<curve_fit,GRINS::conductivity>, \
+                                   GRINS::AntiochConstantTransportEvaluator<curve_fit,thermo,GRINS::conductivity> >
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_CURVEFIT_THERMO_RAW(class_name,conductivity) \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity,Antioch::StatMechThermodynamics<libMesh::Real>);\
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity,GRINSPrivate::CEAIdealGasThermo)
+
+#define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR(class_name) \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_CURVEFIT_THERMO_RAW(class_name,ConstantConductivity);\
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_CURVEFIT_THERMO_RAW(class_name,ConstantPrandtlConductivity)
+
+
+
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTURE_AND_EVALUATOR(class_name) \
   /*
    *MixtureAveraged: StatMech thermo, Sutherland viscosity, Eucken conductivity, constant Lewis diffusivity
@@ -73,27 +103,7 @@ template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<A
                                    GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >, \
                                                                                    Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
                                                                                    Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>, \
-                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >; \
-  /*
-   *Constant viscosity, constant Lewis diffusivity, constant conductivity, StatMech thermo
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>, \
-                                   GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >; \
-  /*
-   *Constant viscosity, constant Lewis diffusivity, constant Prandtl conductivity, StatMech thermo
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,\
-                                   GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >; \
-  /*
-   *Constant viscosity, constant Lewis diffusivity, constant conductivity, CEA thermo
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,\
-                                   GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>, GRINS::ConstantConductivity> >; \
-  /*
-   *Constant viscosity, constant Lewis diffusivity, constant Prandtl conductivity, CEA thermo
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>, \
-                                   GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>, GRINS::ConstantPrandtlConductivity> >
+                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >
 
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTURE_ONLY(class_name) \
@@ -138,14 +148,6 @@ template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<A
   template class GRINS::class_name<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >, \
                                                                                  Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
                                                                                  Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>, \
-                                                                                 Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >; \
-  /*
-   *Constant transport: constant conductivity
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity> >; \
-  /*
-   *Constant transport: constant Prandtl conductivity
-   */ \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity> >
+                                                                                 Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >
 
 #endif // GRINS_REACTING_LOW_MACH_NAVIER_STOKES_MACRO_H

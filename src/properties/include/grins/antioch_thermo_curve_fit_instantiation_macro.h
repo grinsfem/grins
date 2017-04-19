@@ -34,6 +34,11 @@
   template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real> >; \
   template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real> >
 
+#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT_WITH_CONDUCTIVITY(class_name,conductivity) \
+  template class GRINS::class_name<Antioch::CEACurveFit<libMesh::Real>,GRINS::conductivity>; \
+  template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real>,GRINS::conductivity>; \
+  template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real>,GRINS::conductivity>
+
 #endif // GRINS_HAVE_ANTIOCH
 
 #endif // GRINS_ANTIOCH_THERMO_CURVE_FIT_INSTANTIATION_MACRO_H

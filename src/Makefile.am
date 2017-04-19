@@ -267,7 +267,6 @@ sfiles_DATA += properties/src/antioch_kinetics.C
 sfiles_DATA += properties/src/antioch_mixture_averaged_transport_mixture.C
 sfiles_DATA += properties/src/antioch_mixture_averaged_transport_evaluator.C
 sfiles_DATA += properties/src/antioch_constant_transport_mixture.C
-sfiles_DATA += properties/src/antioch_constant_transport_evaluator.C
 
 #----------------------------
 #INCLUDES we want distributed

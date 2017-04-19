@@ -180,29 +180,29 @@ namespace GRINS
             if( (thermo_model == std::string("stat_mech")) &&
                 (conductivity_model == std::string("constant")) )
               {
-                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
-                                  GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantConductivity>,
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantConductivity> >
                                   (physics_name,input) );
               }
             else if( (thermo_model == std::string("cea")) &&
                      (conductivity_model == std::string("constant")) )
               {
-                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
-                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantConductivity> >
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantConductivity>,
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantConductivity> >
                                   (physics_name,input) );
               }
             else if( (thermo_model == std::string("stat_mech")) &&
                      (conductivity_model == std::string("constant_prandtl")) )
               {
-                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
-                                  GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantPrandtlConductivity>,
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >
                                   (physics_name,input) );
               }
             else if( (thermo_model == std::string("cea")) &&
                      (conductivity_model == std::string("constant_prandtl")) )
               {
-                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
-                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantPrandtlConductivity> >
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantPrandtlConductivity>,
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantPrandtlConductivity> >
                                   (physics_name,input) );
               }
             else

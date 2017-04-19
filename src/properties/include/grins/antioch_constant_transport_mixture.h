@@ -53,15 +53,15 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
-  template<typename Conductivity>
-  class AntiochConstantTransportMixture : public AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >
+   */
+  template<typename KineticsThermoCurveFit,typename Conductivity>
+  class AntiochConstantTransportMixture : public AntiochMixture<KineticsThermoCurveFit>
   {
   public:
 
     AntiochConstantTransportMixture( const GetPot& input, const std::string& material );
 
-    virtual ~AntiochConstantTransportMixture();
+    virtual ~AntiochConstantTransportMixture(){}
 
     libMesh::Real mu() const;
 
@@ -114,23 +114,26 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  template<typename Conductivity>
+  template<typename KineticsThermoCurveFit, typename Conductivity>
   inline
-  libMesh::Real AntiochConstantTransportMixture<Conductivity>::mu() const
+  libMesh::Real
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>::mu() const
   {
     return (*_mu)();
   }
 
-  template<typename Conductivity>
+  template<typename KineticsThermoCurveFit, typename Conductivity>
   inline
-  const Conductivity& AntiochConstantTransportMixture<Conductivity>::conductivity() const
+  const Conductivity&
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>::conductivity() const
   {
     return *_conductivity.get();
   }
 
-  template<typename Conductivity>
+  template<typename KineticsThermoCurveFit, typename Conductivity>
   inline
-  const Antioch::ConstantLewisDiffusivity<libMesh::Real>& AntiochConstantTransportMixture<Conductivity>::diffusivity() const
+  const Antioch::ConstantLewisDiffusivity<libMesh::Real>&
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>::diffusivity() const
   {
     return *_diffusivity.get();
   }
