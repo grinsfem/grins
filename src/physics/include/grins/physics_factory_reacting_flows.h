@@ -27,6 +27,8 @@
 
 // GRINS
 #include "grins/physics_factory_with_core.h"
+#include "grins/antioch_mixture_averaged_transport_mixture.h"
+#include "grins/antioch_mixture_averaged_transport_evaluator.h"
 
 namespace GRINS
 {
@@ -50,6 +52,17 @@ namespace GRINS
                                         const std::string& conductivity_model,
                                         const std::string& diffusivity_model,
                                         const std::string& thermo_model ) const;
+
+  private:
+
+    template<typename KineticsThermo,typename Thermo,typename Viscosity,typename Conductivity,typename Diffusivity>
+    void build_mix_avged_physics( const GetPot& input, const std::string& physics_name,
+                                  libMesh::UniquePtr<Physics> & new_physics )
+    {
+      new_physics.reset(new DerivedPhysics<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>,
+                                           AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+                        (physics_name,input) );
+    }
 
   };
 
