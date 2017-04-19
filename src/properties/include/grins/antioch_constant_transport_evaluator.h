@@ -94,9 +94,9 @@ namespace GRINS
 
     const libMesh::Real _mu;
 
-    const Conductivity& _conductivity;
+    const Conductivity & _conductivity;
 
-    const Antioch::ConstantLewisDiffusivity<libMesh::Real>& _diffusivity;
+    const Antioch::ConstantLewisDiffusivity<libMesh::Real> & _diffusivity;
 
   private:
 
