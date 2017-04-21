@@ -49,7 +49,8 @@ namespace GRINS
   Simulation::Simulation( const GetPot& input,
                           SimulationBuilder& sim_builder,
                           const libMesh::Parallel::Communicator &comm )
-    :  _mesh( sim_builder.build_mesh(input, comm) ),
+    :  _initializer(),
+       _mesh( sim_builder.build_mesh(input, comm) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
        _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
@@ -98,7 +99,8 @@ namespace GRINS
                           GetPot& command_line,
                           SimulationBuilder& sim_builder,
                           const libMesh::Parallel::Communicator &comm )
-    :  _mesh( sim_builder.build_mesh(input, comm) ),
+    :  _initializer(),
+       _mesh( sim_builder.build_mesh(input, comm) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
        _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
