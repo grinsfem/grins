@@ -36,6 +36,8 @@ namespace GRINS
   {
     if( !_is_initialized )
       {
+        ErrorEstimatorFactoryInitializer error_est_init;
+
         _is_initialized = true;
       }
   }

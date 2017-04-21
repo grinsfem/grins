@@ -22,35 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H
-#define GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H
-
-#include "grins/error_estimator_factory_base.h"
+#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H
+#define GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  template<typename EstimatorType>
-  class ErrorEstimatorFactoryBasic : public ErrorEstimatorFactoryBase
+  //! Initialize all ErrorEstimatorFactory objects
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the ErrorEstimator factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class ErrorEstimatorFactoryInitializer
   {
   public:
-    ErrorEstimatorFactoryBasic( const std::string& estimator_name )
-      : ErrorEstimatorFactoryBase(estimator_name)
-    {}
-
-    ~ErrorEstimatorFactoryBasic(){};
-
-  protected:
-
-    virtual libMesh::UniquePtr<libMesh::ErrorEstimator>
-    build_error_estimator( const GetPot & /*input*/,
-                           MultiphysicsSystem & /*system*/,
-                           const ErrorEstimatorOptions & /*estimator_options*/ )
-    {
-      return libMesh::UniquePtr<libMesh::ErrorEstimator>( new EstimatorType );
-    }
-
+    ErrorEstimatorFactoryInitializer();
+    ~ErrorEstimatorFactoryInitializer(){}
   };
+}
 
-} // end namespace GRINS
-
-#endif // GRINS_ERROR_ESTIMATOR_FACTORY_BASIC_H
+#endif // GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H

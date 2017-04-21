@@ -23,7 +23,11 @@
 //-----------------------------------------------------------------------el-
 
 // This class
+#include "grins/error_estimator_factory_initializer.h"
+
+// GRINS
 #include "grins/error_estimator_factory_basic.h"
+#include "grins/adjoint_error_estimator_factories.h"
 #include "grins/strategies_parsing.h"
 
 // libMesh
@@ -32,19 +36,18 @@
 
 namespace GRINS
 {
-  template<typename EstimatorType>
-  libMesh::UniquePtr<libMesh::ErrorEstimator>
-  ErrorEstimatorFactoryBasic<EstimatorType>::build_error_estimator
-  ( const GetPot& /*input*/, MultiphysicsSystem& /*system*/, const ErrorEstimatorOptions& /*estimator_options*/ )
+  ErrorEstimatorFactoryInitializer::ErrorEstimatorFactoryInitializer()
   {
-    return libMesh::UniquePtr<libMesh::ErrorEstimator>( new EstimatorType );
+    static ErrorEstimatorFactoryBasic<libMesh::KellyErrorEstimator>
+      grins_factory_kelly_error_est(StrategiesParsing::kelly_error_estimator());
+
+    static ErrorEstimatorFactoryBasic<libMesh::PatchRecoveryErrorEstimator>
+      grins_factory_patch_recovery_error_est(StrategiesParsing::patch_recovery_error_estimator());
+
+    static AdjointRefinementErrorEstimatorFactory
+      grins_factory_adjoint_refinement_estimator(StrategiesParsing::adjoint_refinement_error_estimator());
+
+    static AdjointResidualErrorEstimatorFactory
+      grins_factory_adjoint_residual_estimator(StrategiesParsing::adjoint_residual_error_estimator());
   }
-
-  // Instantiate basic ErrorEstimator factories
-  ErrorEstimatorFactoryBasic<libMesh::KellyErrorEstimator>
-  grins_factory_kelly_error_est(StrategiesParsing::kelly_error_estimator());
-
-  ErrorEstimatorFactoryBasic<libMesh::PatchRecoveryErrorEstimator>
-  grins_factory_patch_recovery_error_est(StrategiesParsing::patch_recovery_error_estimator());
-
 } // end namespace GRINS
