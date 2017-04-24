@@ -150,17 +150,11 @@ libgrins_la_SOURCES += physics/src/parsed_source_term.C
 libgrins_la_SOURCES += physics/src/physics_naming.C
 libgrins_la_SOURCES += physics/src/convection_diffusion.C
 libgrins_la_SOURCES += physics/src/physics_factory_base.C
-libgrins_la_SOURCES += physics/src/physics_factory_basic.C
 libgrins_la_SOURCES += physics/src/physics_factory_with_core.C
-libgrins_la_SOURCES += physics/src/physics_factory_incompressible_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_incompressible_turb_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_heat_transfer.C
-libgrins_la_SOURCES += physics/src/physics_factory_variable_density_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_plane_stress_solids.C
-libgrins_la_SOURCES += physics/src/physics_factory_one_d_stress_solids.C
 libgrins_la_SOURCES += physics/src/physics_factory_reacting_flows.C
 libgrins_la_SOURCES += physics/src/physics_builder.C
 libgrins_la_SOURCES += physics/src/variable_pinning.C
+libgrins_la_SOURCES += physics/src/physics_factory_initializer.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -438,6 +432,7 @@ include_HEADERS += physics/include/grins/physics_factory_one_d_stress_solids.h
 include_HEADERS += physics/include/grins/physics_factory_reacting_flows.h
 include_HEADERS += physics/include/grins/physics_builder.h
 include_HEADERS += physics/include/grins/variable_pinning.h
+include_HEADERS += physics/include/grins/physics_factory_initializer.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h

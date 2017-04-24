@@ -27,6 +27,8 @@
 
 // GRINS
 #include "grins/physics_factory_with_core.h"
+#include "grins/physics_factory_helper.h"
+#include "grins/hookes_law_1d.h"
 
 namespace GRINS
 {
@@ -47,6 +49,40 @@ namespace GRINS
                                                        const std::string& physics_name );
 
   };
+
+  template<template<typename> class DerivedPhysics>
+  inline
+  libMesh::UniquePtr<Physics> PhysicsFactoryOneDStressSolids<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                                const std::string& physics_name )
+  {
+    std::string core_physics = this->find_core_physics_name(physics_name);
+
+    std::string model = "none";
+    std::string strain_energy = "none";
+
+    PhysicsFactoryHelper::parse_stress_strain_model( input,
+                                                     core_physics,
+                                                     model,
+                                                     strain_energy );
+
+    libMesh::UniquePtr<Physics> new_physics;
+
+    if( model == std::string("hookes_law") )
+      {
+        new_physics.reset( new DerivedPhysics<HookesLaw1D>
+                           (physics_name,input, false /*is_compressible*/) );
+      }
+    else
+      {
+        std::string error = "Error: Invalid stress-strain model: "+model+"!\n";
+        error += "       Valid values are: hookes_law\n";
+        libmesh_error_msg(error);
+      }
+
+    libmesh_assert(new_physics);
+
+    return new_physics;
+  }
 
 } // end namespace GRINS
 

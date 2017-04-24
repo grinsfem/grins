@@ -27,6 +27,10 @@
 
 // GRINS
 #include "grins/physics_factory_with_core.h"
+#include "grins/physics_factory_helper.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_specific_heat.h"
 
 namespace GRINS
 {
@@ -52,6 +56,53 @@ namespace GRINS
                          const std::string& specific_heat ) const;
 
   };
+
+  template<template<typename,typename,typename> class DerivedPhysics>
+  inline
+  libMesh::UniquePtr<Physics> PhysicsFactoryVariableDensityFlow<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                                const std::string& physics_name )
+  {
+    std::string core_physics = this->find_core_physics_name(physics_name);
+
+    std::string conductivity;
+    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
+
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
+
+    std::string specific_heat;
+    PhysicsFactoryHelper::parse_specific_heat_model(input,core_physics,specific_heat);
+
+    libMesh::UniquePtr<Physics> new_physics;
+
+    if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
+      new_physics.reset( new DerivedPhysics<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>
+                         (physics_name,input) );
+
+    else
+      this->prop_error_msg(physics_name, conductivity, viscosity, specific_heat);
+
+    libmesh_assert(new_physics);
+
+    return new_physics;
+  }
+
+  template<template<typename,typename,typename> class DerivedPhysics>
+  inline
+  void PhysicsFactoryVariableDensityFlow<DerivedPhysics>::prop_error_msg( const std::string& physics,
+                                                                          const std::string& conductivity,
+                                                                          const std::string& viscosity,
+                                                                          const std::string& specific_heat ) const
+  {
+    std::string error = "================================================================\n";
+    error += "Invalid combination of models for "+physics+"\n";
+    error += "Viscosity model     = "+viscosity+"\n";
+    error += "Conductivity model  = "+conductivity+"\n";
+    error += "Specific heat model = "+specific_heat+"\n";
+    error += "================================================================\n";
+
+    libmesh_error_msg(error);
+  }
 
 } // end namespace GRINS
 

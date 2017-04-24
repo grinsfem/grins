@@ -27,6 +27,8 @@
 
 // GRINS
 #include "grins/physics_factory_with_core.h"
+#include "grins/physics_factory_helper.h"
+#include "grins/constant_viscosity.h"
 
 namespace GRINS
 {
@@ -49,6 +51,42 @@ namespace GRINS
     void visc_error_msg( const std::string& physics, const std::string& viscosity ) const;
 
   };
+
+  template<template<typename> class DerivedPhysics>
+  inline
+  libMesh::UniquePtr<Physics> PhysicsFactoryIncompressibleTurbFlow<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                                   const std::string& physics_name )
+  {
+    std::string core_physics = this->find_core_physics_name(physics_name);
+
+    std::string viscosity;
+    PhysicsFactoryHelper::parse_turb_viscosity_model(input,core_physics,viscosity);
+
+    libMesh::UniquePtr<Physics> new_physics;
+
+    if( viscosity == "constant" )
+      new_physics.reset( new DerivedPhysics<ConstantViscosity>(physics_name,input) );
+
+    else
+      this->visc_error_msg(physics_name, viscosity);
+
+    libmesh_assert(new_physics);
+
+    return new_physics;
+  }
+
+  template<template<typename> class DerivedPhysics>
+  inline
+  void PhysicsFactoryIncompressibleTurbFlow<DerivedPhysics>::visc_error_msg( const std::string& physics,
+                                                                             const std::string& viscosity ) const
+  {
+    std::string error = "================================================================\n";
+    error += "Invalid turblence viscosity model for "+physics+"\n";
+    error += "Viscosity model     = "+viscosity+"\n";
+    error += "================================================================\n";
+
+    libmesh_error_msg(error);
+  }
 
 } // end namespace GRINS
 

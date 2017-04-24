@@ -22,25 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/simulation_initializer.h"
-
-// GRINS
-#include "grins/error_estimator_factory_initializer.h"
-#include "grins/physics_factory_initializer.h"
+#ifndef GRINS_PHYSICS_FACTORY_INITIALIZER_H
+#define GRINS_PHYSICS_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  bool SimulationInitializer::_is_initialized = false;
+  //! Initialize all PhysicsFactory objects
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the Physics factory objects.
 
-  SimulationInitializer::SimulationInitializer()
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class PhysicsFactoryInitializer
   {
-    if( !_is_initialized )
-      {
-        ErrorEstimatorFactoryInitializer error_est_init;
-        PhysicsFactoryInitializer physics_init;
+  public:
+    PhysicsFactoryInitializer();
+    ~PhysicsFactoryInitializer(){}
+  };
+}
 
-        _is_initialized = true;
-      }
-  }
-} // end namespace GRINS
+#endif // GRINS_PHYSICS_FACTORY_INITIALIZER_H
