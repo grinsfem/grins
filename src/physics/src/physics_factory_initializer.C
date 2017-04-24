@@ -33,6 +33,7 @@
 #include "grins/physics_factory_one_d_stress_solids.h"
 #include "grins/physics_factory_plane_stress_solids.h"
 #include "grins/physics_factory_variable_density_flow.h"
+#include "grins/physics_factory_reacting_flows.h"
 
 #include "grins/physics_naming.h"
 #include "grins/scalar_ode.h"
@@ -228,5 +229,7 @@ namespace GRINS
 
     static PhysicsFactoryVariableDensityFlow<LowMachNavierStokesBraackStabilization> grins_factory_lmns_braack_stab
       (PhysicsNaming::low_mach_navier_stokes_braack_stab(),PhysicsNaming::low_mach_navier_stokes());
+
+    ReactingFlowsPhysicsFactoryInitializer grins_factory_reacting_flows_init;
   }
 }// end namespace GRINS
