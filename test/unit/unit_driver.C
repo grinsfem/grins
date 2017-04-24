@@ -23,6 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 #include "grins_config.h"
+#include "grins/simulation_initializer.h"
 
 #ifdef GRINS_HAVE_CPPUNIT
 #include <libmesh/ignore_warnings.h>
@@ -44,6 +45,8 @@ int main(int argc, char **argv)
   // that require initialization before use.
   libMesh::LibMeshInit init(argc, argv);
   TestCommWorld = &init.comm();
+
+  GRINS::SimulationInitializer initializer;
 
   CppUnit::TextUi::TestRunner runner;
   CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();

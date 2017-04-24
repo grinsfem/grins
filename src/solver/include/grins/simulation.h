@@ -31,7 +31,6 @@
 
 // GRINS
 #include "grins_config.h"
-#include "grins/simulation_initializer.h"
 #include "grins/shared_ptr.h"
 #include "grins/grins_solver.h"
 #include "grins/qoi_base.h"
@@ -124,8 +123,6 @@ namespace GRINS
     void init_adjoint_solve( const GetPot& input, bool output_adjoint );
 
     void build_error_estimator(const GetPot& input);
-
-    SimulationInitializer _initializer;
 
     SharedPtr<libMesh::UnstructuredMesh> _mesh;
 

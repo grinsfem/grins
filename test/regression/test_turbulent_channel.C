@@ -28,6 +28,7 @@
 #include <iostream>
 
 // GRINS
+#include "grins/simulation_initializer.h"
 #include "grins/mesh_builder.h"
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
@@ -333,6 +334,8 @@ int main(int argc, char* argv[])
   turbulent_bc_values->init();
 
   GRINSTesting::SATurbBCFactoryBase::set_turb_bc_values( turbulent_bc_values.get() );
+
+  GRINS::SimulationInitializer initializer;
 
   GRINS::SimulationBuilder sim_builder;
 
