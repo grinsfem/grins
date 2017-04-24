@@ -226,6 +226,7 @@ libgrins_la_SOURCES += variables/src/variable_warehouse.C
 libgrins_la_SOURCES += variables/src/variable_factory.C
 libgrins_la_SOURCES += variables/src/variable_builder.C
 libgrins_la_SOURCES += variables/src/default_variable_builder.C
+libgrins_la_SOURCES += variables/src/variable_factory_initializer.C
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -521,6 +522,7 @@ include_HEADERS += variables/include/grins/variable_warehouse.h
 include_HEADERS += variables/include/grins/variable_factory.h
 include_HEADERS += variables/include/grins/variable_builder.h
 include_HEADERS += variables/include/grins/default_variable_builder.h
+include_HEADERS += variables/include/grins/variable_factory_initializer.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h

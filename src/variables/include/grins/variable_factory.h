@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/factory_with_getpot.h"
 #include "grins/fe_variables_base.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/factory.h"
@@ -243,6 +244,52 @@ namespace GRINS
 
     std::string _material;
   };
+
+  template<typename VariableType>
+  inline
+  std::vector<std::string> VariableFactoryBasic<VariableType>::parse_var_names( const GetPot& input,
+                                                                                const std::string& var_section )
+  {
+    std::vector<std::string> var_names;
+
+    std::string input_sec = var_section+"/names";
+
+    // Make sure the names are present
+    if( !input.have_variable(input_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+input_sec);
+
+    unsigned int n_names = input.vector_variable_size(input_sec);
+
+    var_names.resize(n_names);
+    for( unsigned int i = 0; i < n_names; i++ )
+      var_names[i] = input(input_sec,std::string("DIE!"),i);
+
+    return var_names;
+  }
+
+  template<typename VariableType>
+  inline
+  std::vector<std::string> SpeciesVariableFactory<VariableType>::parse_var_names( const GetPot& input,
+                                                                                  const std::string& var_section )
+  {
+    // Make sure the prefix is present
+    std::string prefix_sec = var_section+"/names";
+    if( !input.have_variable(prefix_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+prefix_sec+" for species prefix!");
+
+    // Make sure the material is present
+    std::string material_sec = var_section+"/material";
+    if( !input.have_variable(material_sec) )
+      libmesh_error_msg("ERROR: Could not find input parameter "+material_sec+" for species material!");
+
+    this->_prefix = input(prefix_sec,std::string("DIE!"));
+    this->_material = input(material_sec,std::string("DIE!"));
+
+    std::vector<std::string> var_names;
+    MaterialsParsing::parse_species_varnames(input,this->_material,this->_prefix,var_names);
+
+    return var_names;
+  }
 
 } // end namespace GRINS
 
