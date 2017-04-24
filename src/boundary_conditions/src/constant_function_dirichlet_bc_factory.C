@@ -305,10 +305,4 @@ namespace GRINS
   template void MoleFractionsDirichletBCFactory::add_mole_frac_to_mass_frac<AntiochChemistry>(const GetPot&,const std::string&,const std::set<std::string>&,const std::string&,const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>&,std::set<std::string>& ) const;
 #endif
 
-  // Register all the ConstantFunction factories.
-  ConstantFunctionDirichletBCFactory grins_factory_constant_dirichlet("constant_dirichlet");
-  ConstantFunctionDirichletBCFactory grins_factory_constant_displacement("constant_displacement");
-  ConstantFunctionDirichletBCFactory grins_factory_constant_isothermal("isothermal");
-  MoleFractionsDirichletBCFactory grins_factory_mole_fractions("mole_fractions");
-
 } // end namespace GRINS

@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/error_estimator_factory_initializer.h"
 #include "grins/physics_factory_initializer.h"
+#include "grins/boundary_condition_factory_initializer.h"
 
 namespace GRINS
 {
@@ -39,6 +40,7 @@ namespace GRINS
       {
         ErrorEstimatorFactoryInitializer error_est_init;
         PhysicsFactoryInitializer physics_init;
+        BoundaryConditionFactoryInitializer bc_init;
 
         _is_initialized = true;
       }

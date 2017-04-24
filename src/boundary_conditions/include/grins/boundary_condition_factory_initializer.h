@@ -22,16 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// These classes
-#include "grins/gas_catalytic_wall_neumann_bc_factories.h"
+#ifndef GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H
+#define GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  // Instantiate and register Factory
-  GasRecombinationCatalyticWallNeumannBCFactory
-  grins_factory_gas_recomb_catalytic_wall_neumann_bc("gas_recombination_catalytic_wall");
+  //! Initialize all Factory objects related to boundary conditions
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the boundary condition factory objects.
 
-  GasSolidCatalyticWallNeumannBCFactory
-  grins_factory_gas_solid_catalytic_wall_neumann_bc("gas_solid_catalytic_wall");
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class BoundaryConditionFactoryInitializer
+  {
+  public:
+    BoundaryConditionFactoryInitializer();
+    ~BoundaryConditionFactoryInitializer(){}
+  };
+}
 
-} // end namespace GRINS
+#endif // GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H

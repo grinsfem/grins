@@ -205,10 +205,4 @@ namespace GRINS
   template void PrescribedMoleFractionsDirichletOldStyleBCFactory::convert_mole_fracs_and_add_to_func<AntiochChemistry>(const GetPot&, const std::vector<libMesh::Number>&, const SpeciesMassFractionsVariable&,libMesh::CompositeFunction<libMesh::Number>& ) const;
 #endif
 
-  // Register factories
-  PrescribedVelDirichletOldStyleBCFactory grins_factory_prescribed_vel_old_style("prescribed_vel_old_style");
-  PrescribedDispDirichletOldStyleBCFactory grins_factory_constant_displacement_old_style("constant_displacement_old_style");
-  PrescribedSpeciesDirichletOldStyleBCFactory grins_factory_prescribed_species_old_style("prescribed_species_old_style");
-  PrescribedMoleFractionsDirichletOldStyleBCFactory grins_factory_prescribed_mole_fraccs_old_style("prescribed_mole_fracs_old_style");
-
 } // end namespace GRINS

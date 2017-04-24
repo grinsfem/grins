@@ -85,9 +85,8 @@ namespace GRINS
     return all_funcs;
   }
 
-  // Instantiate all the Parsed(FEM)Function factories.
-  ParsedDirichletBCFactory grins_factory_parsed_dirichlet("parsed_dirichlet");
-  ParsedFEMDirichletBCFactory grins_factory_parsed_fem_dirichlet("parsed_fem_dirichlet");
-  ParsedDirichletBCFactory grins_factory_parsed_displacement("parsed_displacement");
+  // Instantiate
+  template class ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >;
+  template class ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >;
 
 } // end namespace GRINS

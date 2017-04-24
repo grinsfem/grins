@@ -27,6 +27,10 @@
 
 // GRINS
 #include "grins/dirichlet_bc_factory_function_old_style_base.h"
+#include "grins/string_utils.h"
+
+// libMesh
+#include "libmesh/const_function.h"
 
 namespace GRINS
 {
@@ -49,6 +53,28 @@ namespace GRINS
                 const std::string& section );
 
   };
+
+  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  inline
+  IsothermalDirichletOldStyleBCFactory::build_func( const GetPot& input,
+                                                    MultiphysicsSystem& /*system*/,
+                                                    std::vector<std::string>& var_names,
+                                                    const std::string& section )
+  {
+    libmesh_assert_equal_to(DirichletBCFactoryAbstract::_bc_ids->size(), 1 );
+    libmesh_assert_equal_to(var_names.size(), 1 );
+
+    std::string bc_id_string = StringUtilities::T_to_string<BoundaryID>( *(_bc_ids->begin()) );
+
+    std::string input_var = section+"/T_wall_"+bc_id_string;
+
+    if( !input.have_variable(input_var) )
+      libmesh_error_msg("ERROR: Could not find input variable "+input_var+"!");
+
+    libMesh::Number value = input(input_var, 0.0);
+
+    return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ConstFunction<libMesh::Number>(value) );
+  }
 
 } // end namespace GRINS
 

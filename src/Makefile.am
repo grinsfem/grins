@@ -34,16 +34,11 @@ libgrins_la_SOURCES += boundary_conditions/src/parsed_function_factory_helper.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_function_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/homogeneous_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/prescribed_vector_value_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/isothermal_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/symmetry_type_bc_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_instantiate.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_factory_abstract.C
-libgrins_la_SOURCES += boundary_conditions/src/catalycity_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_factory_old_style_base.C
-libgrins_la_SOURCES += boundary_conditions/src/catalycity_factories_old_style.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_base.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/arrhenius_catalycity.C
@@ -53,16 +48,12 @@ libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_parsed.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_old_style_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_bc_factory_helper.C
-libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/homogeneous_neumann_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_recombination_catalytic_wall_neumann_bc_factory_impl.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_solid_catalytic_wall_neumann_bc_factory_impl.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_factory_common.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_factory_base.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_old_style_factory_base.C
-libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_factories.C
-libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_old_style_factories.C
+libgrins_la_SOURCES += boundary_conditions/src/boundary_condition_factory_initializer.C
 
 # src/common
 libgrins_la_SOURCES += common/src/builder_helper.C
@@ -321,6 +312,7 @@ include_HEADERS += boundary_conditions/include/grins/catalytic_wall_neumann_bc_f
 include_HEADERS += boundary_conditions/include/grins/catalytic_wall_neumann_bc_old_style_factory_base.h
 include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_bc_factories.h
 include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_bc_old_style_factories.h
+include_HEADERS += boundary_conditions/include/grins/boundary_condition_factory_initializer.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
