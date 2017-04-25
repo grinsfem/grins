@@ -37,33 +37,41 @@ namespace GRINS
 {
   std::string SolverParsing::solver_type(const GetPot& input)
   {
-    //! \todo We should just pass this object in from the calling function
-    MeshAdaptivityOptions mesh_adaptivity_options(input);
-    bool mesh_adaptive = mesh_adaptivity_options.is_mesh_adaptive();
+    std::string solver_type;
 
-    bool transient = SolverParsing::is_transient(input);
+    // If the user set the solver_type, use that
+    if( input.have_variable("SolverOptions/solver_type") )
+      solver_type = input("SolverOptions/solver_type", "DIE!");
 
-    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
-
-    if(transient && !mesh_adaptive)
-      {
-        solver_type = SolverNames::unsteady_solver();
-      }
-    else if( !transient && !mesh_adaptive )
-      {
-        solver_type = SolverNames::steady_solver();
-      }
-    else if( !transient && mesh_adaptive )
-      {
-        solver_type = SolverNames::steady_mesh_adaptive_solver();
-      }
-    else if( transient && mesh_adaptive )
-      {
-        solver_type = SolverNames::unsteady_mesh_adaptive_solver();
-      }
+    // Otherwise, they're using grins_steady/unsteady (possibly mesh_adaptive) solver
     else
       {
-        libmesh_error_msg("Unsupported combination of solver options!");
+        //! \todo We should just pass this object in from the calling function
+        MeshAdaptivityOptions mesh_adaptivity_options(input);
+        bool mesh_adaptive = mesh_adaptivity_options.is_mesh_adaptive();
+
+        bool transient = SolverParsing::is_transient(input);
+
+        if(transient && !mesh_adaptive)
+          {
+            solver_type = SolverNames::unsteady_solver();
+          }
+        else if( !transient && !mesh_adaptive )
+          {
+            solver_type = SolverNames::steady_solver();
+          }
+        else if( !transient && mesh_adaptive )
+          {
+            solver_type = SolverNames::steady_mesh_adaptive_solver();
+          }
+        else if( transient && mesh_adaptive )
+          {
+            solver_type = SolverNames::unsteady_mesh_adaptive_solver();
+          }
+        else
+          {
+            libmesh_error_msg("Unsupported combination of solver options!");
+          }
       }
 
     return solver_type;
