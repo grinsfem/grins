@@ -27,7 +27,7 @@
 #define GRINS_STEADY_SOLVER_H
 
 //GRINS
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 
 namespace GRINS
 {

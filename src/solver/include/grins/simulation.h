@@ -32,7 +32,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/shared_ptr.h"
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
 #include "grins/physics_naming.h"

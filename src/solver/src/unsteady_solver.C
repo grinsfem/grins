@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/grins_unsteady_solver.h"
+#include "grins/unsteady_solver.h"
 
 // GRINS
 #include "grins/grins_enums.h"

@@ -27,7 +27,7 @@
 #define GRINS_SOLVER_FACTORY_H
 
 //GRINS
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 
 // libMesh forward declarations
 class GetPot;

@@ -26,7 +26,7 @@
 #define GRINS_DISPLACEMENT_CONTINUATION_SOLVER_H
 
 //GRINS
-#include "grins/grins_steady_solver.h"
+#include "grins/steady_solver.h"
 
 namespace GRINS
 {

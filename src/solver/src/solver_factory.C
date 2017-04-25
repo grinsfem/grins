@@ -28,8 +28,8 @@
 // GRINS
 #include "grins/solver_names.h"
 #include "grins/solver_parsing.h"
-#include "grins/grins_steady_solver.h"
-#include "grins/grins_unsteady_solver.h"
+#include "grins/steady_solver.h"
+#include "grins/unsteady_solver.h"
 #include "grins/steady_mesh_adaptive_solver.h"
 #include "grins/unsteady_mesh_adaptive_solver.h"
 

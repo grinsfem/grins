@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/grins_steady_solver.h"
+#include "grins/steady_solver.h"
 
 // GRINS
 #include "grins/multiphysics_sys.h"
