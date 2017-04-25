@@ -78,8 +78,7 @@ namespace GRINS
     void init();
 
     //! Runs the simulation that was setup at construction time.
-    void run()
-    { _simulation->run(); }
+    void run();
 
   protected:
 
@@ -88,6 +87,9 @@ namespace GRINS
 
     //! Check (and error if not found) and then return GetPot input file name.
     std::string check_and_get_inputfile(int argc, char* argv[], GetPot & command_line);
+
+    //! Check for any unused variables in GetPot input file.
+    void check_for_unused_vars( const GetPot& input, bool warning_only );
 
     SimulationInitializer _initializer;
 
