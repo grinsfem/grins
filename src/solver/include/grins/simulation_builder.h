@@ -28,7 +28,6 @@
 
 // GRINS
 #include "grins/mesh_builder.h"
-#include "grins/solver_factory.h"
 #include "grins/visualization_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
@@ -48,8 +47,6 @@ namespace GRINS
         const libMesh::Parallel::Communicator &comm
         LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    SharedPtr<GRINS::Solver> build_solver( const GetPot& input );
-
     SharedPtr<GRINS::Visualization> build_vis
       ( const GetPot& input,
         const libMesh::Parallel::Communicator &comm
@@ -58,8 +55,6 @@ namespace GRINS
     SharedPtr<CompositeQoI> build_qoi( const GetPot& input );
 
     SharedPtr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
-
-    void attach_solver_factory( SharedPtr<SolverFactory> solver_factory );
 
     void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
 
@@ -74,7 +69,6 @@ namespace GRINS
   protected:
 
     SharedPtr<MeshBuilder> _mesh_builder;
-    SharedPtr<SolverFactory> _solver_factory;
     SharedPtr<VisualizationFactory> _vis_factory;
     SharedPtr<QoIFactory> _qoi_factory;
     SharedPtr<PostprocessingFactory> _postprocessing_factory;
