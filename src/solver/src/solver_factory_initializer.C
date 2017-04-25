@@ -23,30 +23,32 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/simulation_initializer.h"
+#include "grins/solver_factory_initializer.h"
 
 // GRINS
-#include "grins/error_estimator_factory_initializer.h"
-#include "grins/physics_factory_initializer.h"
-#include "grins/boundary_condition_factory_initializer.h"
-#include "grins/variable_factory_initializer.h"
-#include "grins/solver_factory_initializer.h"
+#include "grins/solver_factory_basic.h"
+#include "grins/solver_names.h"
+
+// GRINS-Solvers
+#include "grins/steady_solver.h"
+#include "grins/unsteady_solver.h"
+#include "grins/steady_mesh_adaptive_solver.h"
+#include "grins/unsteady_mesh_adaptive_solver.h"
 
 namespace GRINS
 {
-  bool SimulationInitializer::_is_initialized = false;
-
-  SimulationInitializer::SimulationInitializer()
+  SolverFactoryInitializer::SolverFactoryInitializer()
   {
-    if( !_is_initialized )
-      {
-        ErrorEstimatorFactoryInitializer error_est_init;
-        PhysicsFactoryInitializer physics_init;
-        BoundaryConditionFactoryInitializer bc_init;
-        VariableFactoryInitializer var_init;
-        SolverFactoryInitializer solver_init;
+    static SolverFactoryBasic<UnsteadySolver>
+      grins_factory_unsteady_solver(SolverNames::unsteady_solver());
 
-        _is_initialized = true;
-      }
+    static SolverFactoryBasic<SteadySolver>
+      grins_factory_steady_solver(SolverNames::steady_solver());
+
+    static SolverFactoryBasic<UnsteadyMeshAdaptiveSolver>
+      grins_factory_unsteady_mesh_adapt_solver(SolverNames::unsteady_mesh_adaptive_solver());
+
+    static SolverFactoryBasic<SteadyMeshAdaptiveSolver>
+      grins_factory_steady_mesh_adapt_solver(SolverNames::steady_mesh_adaptive_solver());
   }
 } // end namespace GRINS

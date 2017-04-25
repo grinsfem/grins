@@ -22,31 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/simulation_initializer.h"
-
-// GRINS
-#include "grins/error_estimator_factory_initializer.h"
-#include "grins/physics_factory_initializer.h"
-#include "grins/boundary_condition_factory_initializer.h"
-#include "grins/variable_factory_initializer.h"
-#include "grins/solver_factory_initializer.h"
+#ifndef GRINS_SOLVER_FACTORY_INITIALIZER_H
+#define GRINS_SOLVER_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  bool SimulationInitializer::_is_initialized = false;
+  //! Initialize all Factory objects related to Solvers
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the Solvers factory objects.
 
-  SimulationInitializer::SimulationInitializer()
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class SolverFactoryInitializer
   {
-    if( !_is_initialized )
-      {
-        ErrorEstimatorFactoryInitializer error_est_init;
-        PhysicsFactoryInitializer physics_init;
-        BoundaryConditionFactoryInitializer bc_init;
-        VariableFactoryInitializer var_init;
-        SolverFactoryInitializer solver_init;
-
-        _is_initialized = true;
-      }
-  }
+  public:
+    SolverFactoryInitializer();
+    ~SolverFactoryInitializer(){}
+  };
 } // end namespace GRINS
+
+#endif // GRINS_SOLVER_FACTORY_INITIALIZER_H
