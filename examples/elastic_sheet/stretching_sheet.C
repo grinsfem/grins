@@ -28,71 +28,23 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation_builder.h"
-#include "grins/simulation.h"
+#include "grins/runner.h"
+#include "grins/solver_factory_basic.h"
 
 // libMesh
 #include "libmesh/parallel.h"
 
-#include "displacement_continuation_solver_factory.h"
+#include "displacement_continuation_solver.h"
 
 int main(int argc, char* argv[])
 {
-  /* Echo GRINS version, libMesh version, and command */
-  libMesh::out << "=========================================================="
-               << std::endl;
-  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
-               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
-               << "Running with command:\n";
+  // Register new solver
+  GRINS::SolverFactoryBasic<GRINS::DisplacementContinuationSolver>
+    cont_solver_factory("displacement_continuation");
 
-  for (int i=0; i != argc; ++i)
-    std::cout << argv[i] << ' ';
+  GRINS::Runner grins(argc,argv);
 
-  std::cout << std::endl
-            << "=========================================================="
-            << std::endl;
-
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
-
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-  
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  GetPot command_line(argc,argv);
-
-  // GetPot doesn't throw an error for a nonexistent file?
-  {
-    std::ifstream i(libMesh_input_filename.c_str());
-    if (!i)
-      {
-        std::cerr << "Error: Could not read from libMesh input file "
-                << libMesh_input_filename << std::endl;
-        exit(1);
-      }
-  }
-
-  GRINS::SimulationInitializer initializer;
-  GRINS::SimulationBuilder sim_builder;
-  GRINS::SharedPtr<GRINS::SolverFactory> solver_factory( new GRINS::DisplacementContinuationSolverFactory );
-  sim_builder.attach_solver_factory(solver_factory);
-
-  GRINS::Simulation grins( libMesh_inputfile,
-                           command_line,
-			   sim_builder,
-                           libmesh_init.comm() );
-
+  grins.init();
   grins.run();
 
   return 0;

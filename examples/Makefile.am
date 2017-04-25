@@ -137,7 +137,6 @@ EXTRA_DIST += $(simpleprop_DATA)
 elasticsheetdir = $(prefix)/examples/elastic_sheet
 elasticsheet_PROGRAMS = stretching_sheet
 elasticsheet_DATA  = $(top_srcdir)/examples/elastic_sheet/sheet.in
-elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver_factory.h
 elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver.h
 elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
 
