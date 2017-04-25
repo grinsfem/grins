@@ -31,13 +31,6 @@
 #include "grins/simulation_builder.h"
 #include "grins/simulation_initializer.h"
 
-// GRVY
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh
 #include "libmesh/parallel.h"
 
@@ -48,11 +41,6 @@ initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
 
 int main(int argc, char* argv[])
 {
-#ifdef GRINS_USE_GRVY_TIMERS
-  GRVY::GRVY_Timer_Class grvy_timer;
-  grvy_timer.Init("GRINS Timer");
-#endif
-
   // Check command line count.
   if( argc < 2 )
     {
@@ -66,10 +54,6 @@ int main(int argc, char* argv[])
   
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.BeginTimer("Initialize Solver");
-#endif
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
@@ -105,20 +89,7 @@ int main(int argc, char* argv[])
       system.project_solution( initial_values, NULL, params );
     }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.EndTimer("Initialize Solver");
-
-  // Attach GRVY timer to solver
-  grins.attach_grvy_timer( &grvy_timer );
-#endif
-
   grins.run();
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.Finalize();
- 
-  if( Parallel::Communicator_World.rank() == 0 ) grvy_timer.Summarize();
-#endif
 
   return 0;
 }

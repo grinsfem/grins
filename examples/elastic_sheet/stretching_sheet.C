@@ -32,13 +32,6 @@
 #include "grins/simulation_builder.h"
 #include "grins/simulation.h"
 
-// GRVY
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh
 #include "libmesh/parallel.h"
 
@@ -59,11 +52,6 @@ int main(int argc, char* argv[])
   std::cout << std::endl
             << "=========================================================="
             << std::endl;
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  GRVY::GRVY_Timer_Class grvy_timer;
-  grvy_timer.Init("GRINS Timer");
-#endif
 
   // Check command line count.
   if( argc < 2 )
@@ -95,10 +83,6 @@ int main(int argc, char* argv[])
       }
   }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.BeginTimer("Initialize Solver");
-#endif
-
   GRINS::SimulationInitializer initializer;
   GRINS::SimulationBuilder sim_builder;
   GRINS::SharedPtr<GRINS::SolverFactory> solver_factory( new GRINS::DisplacementContinuationSolverFactory );
@@ -109,20 +93,7 @@ int main(int argc, char* argv[])
 			   sim_builder,
                            libmesh_init.comm() );
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.EndTimer("Initialize Solver");
-
-  // Attach GRVY timer to solver
-  grins.attach_grvy_timer( &grvy_timer );
-#endif
-
-grins.run();
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.Finalize();
- 
-  if( Parallel::Communicator_World.rank() == 0 ) grvy_timer.Summarize();
-#endif
+  grins.run();
 
   return 0;
 }
