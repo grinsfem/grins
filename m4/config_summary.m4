@@ -23,7 +23,7 @@ echo Package version............... : $PACKAGE-$VERSION
 echo
 echo C++ compiler.................. : $CXX
 echo C++ compiler flags............ : $CXXFLAGS
-echo Install dir................... : $prefix 
+echo Install dir................... : $prefix
 echo Build user.................... : $USER
 echo Build host.................... : $BUILD_HOST
 echo Configure date................ : $BUILD_DATE
@@ -75,16 +75,6 @@ if test "x$HAVE_CANTERA" = "x1"; then
 else
   echo '   'Cantera....................... : no
 fi
-if test "$HAVE_GRVY" = "0"; then
-  echo '   'Link with GRVY................ : no
-else
-  echo '   'Link with GRVY................ :$GRVY_PREFIX
-fi
-if test "x$USE_GRVY_TIMERS" = "x1"; then
-  echo '   'Use GRVY timers............... : yes
-else
-  echo '   'Use GRVY timers............... : no
-fi
 if test "$HAVE_MASA" = "0"; then
   echo '   'Link with MASA................ : no
 else
@@ -92,7 +82,7 @@ else
 fi
 if test "$HAVE_GCOV_TOOLS" = "0"; then
   echo '   'Enable gcov code coverage..... : no
-else     
+else
   echo '   'Enable gcov code coverage..... : yes
 fi
 

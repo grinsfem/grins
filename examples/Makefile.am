@@ -14,7 +14,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/visualization/include
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
-AM_CPPFLAGS += $(GRVY_CFLAGS)
 
 AM_LDFLAGS =
 #----------------
