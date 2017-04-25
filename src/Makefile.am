@@ -560,7 +560,7 @@ endif
 # Source for stand alone GRINS driver
 #------------------------------------
 
-grins_SOURCES = solver/src/grins.C
+grins_SOURCES = apps/grins.C
 grins_LDADD = libgrins.la
 if !LIBMESH_LIBTOOL
 grins_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
