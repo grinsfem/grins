@@ -36,21 +36,8 @@
 //libMesh
 #include "libmesh/exact_solution.h"
 
-// GRVY
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  GRVY::GRVY_Timer_Class grvy_timer;
-  grvy_timer.Init("GRINS Timer");
-#endif
-
   // Check command line count.
   if( argc < 2 )
     {
@@ -61,13 +48,9 @@ int main(int argc, char* argv[])
 
   // libMesh input file should be first argument
   std::string libMesh_input_filename = argv[1];
-  
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.BeginTimer("Initialize Solver");
-#endif
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
@@ -79,13 +62,6 @@ int main(int argc, char* argv[])
   GRINS::Simulation grins( libMesh_inputfile,
 			   sim_builder,
                            libmesh_init.comm() );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-  grvy_timer.EndTimer("Initialize Solver");
-
-  // Attach GRVY timer to solver
-  grins.attach_grvy_timer( &grvy_timer );
-#endif
 
   // Solve
   grins.run();

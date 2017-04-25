@@ -31,31 +31,19 @@
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
 
-// GRVY
-#ifdef HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh
 #include "libmesh/parallel.h"
 #include "libmesh/exact_solution.h"
 
 // Function for getting initial temperature field
 libMesh::Real
-initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
 		const std::string& system_name, const std::string& unknown_name );
 
 int run( int argc, char* argv[], const GetPot& input );
 
 int main(int argc, char* argv[])
 {
-#ifdef USE_GRVY_TIMERS
-  GRVY::GRVY_Timer_Class grvy_timer;
-  grvy_timer.Init("GRINS Timer");
-#endif
-
   // Check command line count.
   if( argc < 3 )
     {
@@ -66,7 +54,7 @@ int main(int argc, char* argv[])
 
   // libMesh input file should be first argument
   std::string libMesh_input_filename = argv[1];
-  
+
   // Create our GetPot object.
   GetPot libMesh_inputfile( libMesh_input_filename );
 
@@ -82,10 +70,6 @@ int main(int argc, char* argv[])
 
 int run( int argc, char* argv[], const GetPot& input )
 {
-#ifdef USE_GRVY_TIMERS
-  grvy_timer.BeginTimer("Initialize Solver");
-#endif
-
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
 
@@ -107,7 +91,7 @@ int run( int argc, char* argv[], const GetPot& input )
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
-  
+
   libMesh::EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
@@ -115,7 +99,7 @@ int run( int argc, char* argv[], const GetPot& input )
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );
-  
+
   // Compute error and get it in various norms
   exact_sol.compute_error("StretchedElasticSheet", "u");
   exact_sol.compute_error("StretchedElasticSheet", "v");
@@ -133,7 +117,7 @@ int run( int argc, char* argv[], const GetPot& input )
   int return_flag = 0;
 
   double tol = 5.0e-8;
-  
+
   if( u_l2error > tol   || u_h1error > tol   ||
       v_l2error > tol   || v_h1error > tol   ||
       w_l2error > tol   || w_h1error > tol     )
