@@ -489,6 +489,7 @@ include_HEADERS += solver/include/grins/mesh_builder.h
 include_HEADERS += solver/include/grins/simulation.h
 include_HEADERS += solver/include/grins/solver_factory.h
 include_HEADERS += solver/include/grins/solver_factory_abstract.h
+include_HEADERS += solver/include/grins/solver_factory_basic.h
 include_HEADERS += solver/include/grins/steady_solver.h
 include_HEADERS += solver/include/grins/unsteady_solver.h
 include_HEADERS += solver/include/grins/simulation_builder.h
