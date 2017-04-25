@@ -27,63 +27,25 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation_builder.h"
-#include "grins/simulation.h"
+#include "grins/runner.h"
+#include "grins/solver_factory_basic.h"
 
 // libMesh
 #include "libmesh/parallel.h"
 
 // InflatingSheet
-#include "inflating_sheet_solver_factory.h"
+#include "pressure_continuation_solver.h"
 
 int main(int argc, char* argv[])
 {
-// Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
+  // Register new solver
+  GRINS::SolverFactoryBasic<GRINS::PressureContinuationSolver>
+    press_solver_factory("pressure_continuation");
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-  
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
+  GRINS::Runner grins(argc,argv);
 
-  // GetPot doesn't throw an error for a nonexistent file?
-  {
-    std::ifstream i(libMesh_input_filename.c_str());
-    if (!i)
-      {
-        std::cerr << "Error: Could not read from libMesh input file "
-                << libMesh_input_filename << std::endl;
-        exit(1);
-      }
-  }
+  grins.init();
+  grins.run();
 
-// Initialize libMesh library.
-      libMesh::LibMeshInit libmesh_init(argc, argv);
-
-      libMesh::out << "Starting GRINS with command:\n";
-      for (int i=0; i != argc; ++i)
-        libMesh::out << argv[i] << ' ';
-      libMesh::out << std::endl;
-
-      GRINS::SimulationInitializer initializer;
-      GRINS::SimulationBuilder sim_builder;
-
-      GRINS::SharedPtr<GRINS::SolverFactory> sheet_factory( new GRINS::InflatingSheetSolverFactory );
-
-      sim_builder.attach_solver_factory( sheet_factory );
-
-      GRINS::Simulation grins( libMesh_inputfile,
-                               sim_builder,
-                               libmesh_init.comm() );
-
-grins.run();
-
-return 0;
+  return 0;
 }

@@ -155,14 +155,12 @@ inflatingsheetdir = $(prefix)/examples/inflating_sheet
 inflatingsheet_PROGRAMS = sheet
 inflatingsheet_DATA  = $(top_srcdir)/examples/inflating_sheet/sheet.in
 inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/sheet_coarse.e
-inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/inflating_sheet_solver_factory.h
 inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/pressure_continuation_solver.h
 inflatingsheet_SCRIPTS = $(top_builddir)/examples/inflating_sheet/run.sh
 
 EXTRA_DIST += $(inflatingsheet_DATA)
 
 sheet_SOURCES  = inflating_sheet/inflating_sheet.C
-sheet_SOURCES += inflating_sheet/inflating_sheet_solver_factory.C
 sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
 
 sheet_LDADD = $(LIBGRINS_LIBS)
