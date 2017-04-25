@@ -25,10 +25,9 @@
 #include "grins_config.h"
 
 // GRINS
+#include "grins/runner.h"
 #include "grins/grins_enums.h"
 #include "grins/mesh_builder.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 
 //libMesh
@@ -45,14 +44,9 @@ int test_error_norm( libMesh::ExactSolution& exact_sol,
 
 int main(int argc, char* argv[])
 {
-  GetPot command_line(argc,argv);
+  GRINS::Runner grins(argc,argv);
 
-  if( !command_line.have_variable("input") )
-    {
-      std::cerr << "ERROR: Must specify input file on command line with input=<file>."
-                << std::endl;
-      exit(1);
-    }
+  const GetPot & command_line = grins.get_command_line();
 
   if( !command_line.have_variable("test_data") )
     {
@@ -81,8 +75,6 @@ int main(int argc, char* argv[])
                 << std::endl;
       exit(1);
     }
-
-
 
   // Grab the variables for which we want to compare the errors
   unsigned int n_vars = command_line.vector_variable_size("vars");
@@ -137,44 +129,17 @@ int main(int argc, char* argv[])
         }
     }
 
-  // Grab the input filename
-  std::string input_filename = command_line("input", "DIE!");
-
-  // Check that the input file is actually there
-  {
-    std::ifstream i(input_filename.c_str());
-    if (!i)
-      {
-        std::cerr << "Error: Could not read from input file "
-                  << input_filename << std::endl;
-        exit(1);
-      }
-  }
-
-  // Create our GetPot object.
-  GetPot input( input_filename );
-
-  // But allow command line options to override the file
-  input.parse_command_line(argc, argv);
-
-  // Don't flag our command-line-specific variables as UFOs later
-  input.have_variable("input");
-  input.have_variable("test_data");
-  input.have_variable("vars");
-  input.have_variable("norms");
-  input.have_variable("tol");
- 
-  // Initialize libMesh library
-  libMesh::LibMeshInit libmesh_init(argc, argv);
+  const GetPot & inputfile = grins.get_input_file();
+  const libMesh::LibMeshInit & libmesh_init = grins.get_libmesh_init();
 
   GRINS::MeshBuilder mesh_builder;
-  GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = mesh_builder.build(input,libmesh_init.comm());
+  GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = mesh_builder.build(inputfile,libmesh_init.comm());
 
   libMesh::EquationSystems es(*mesh);
 
   // This needs to match the read counter-part in GRINS::Simulation
   std::string test_data = command_line("test_data", "DIE!" );
-  
+
   {
     std::ifstream i(test_data.c_str());
     if (!i)

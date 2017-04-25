@@ -27,63 +27,41 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation.h"
-#include "grins/simulation_initializer.h"
-#include "grins/simulation_builder.h"
+#include "grins/runner.h"
 
 // Function for getting initial temperature field
 libMesh::Real
-initial_values( const libMesh::Point& p, const libMesh::Parameters &params, 
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
 		const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
-
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-  
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
-
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
+  GRINS::Runner grins(argc,argv);
 
   // This is a tough problem to get to converge without PETSc
   libmesh_example_requires
     (libMesh::default_solver_package() != libMesh::LASPACK_SOLVERS,
      "--enable-petsc");
 
-  GRINS::SimulationInitializer initializer;
+  grins.init();
 
-  GRINS::SimulationBuilder sim_builder;
+  const GetPot & inputfile = grins.get_input_file();
 
-  GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder,
-                           libmesh_init.comm() );
+  GRINS::Simulation & sim = grins.get_simulation();
 
   //FIXME: We need to move this to within the Simulation object somehow...
-  std::string restart_file = libMesh_inputfile( "restart-options/restart_file", "none" );
+  std::string restart_file = inputfile( "restart-options/restart_file", "none" );
 
   if( restart_file == "none" )
     {
       // Asssign initial temperature value
-      std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
-      GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
+      std::string system_name = inputfile( "screen-options/system_name", "GRINS" );
+      GRINS::SharedPtr<libMesh::EquationSystems> es = sim.get_equation_system();
       const libMesh::System& system = es->get_system(system_name);
-      
+
       libMesh::Parameters &params = es->parameters;
-      libMesh::Real T_init = libMesh_inputfile("Materials/TestMaterial/ReferenceTemperature/value", 0.0);
-      libMesh::Real p0_init = libMesh_inputfile("Materials/TestMaterial/ThermodynamicPressure/value", 0.0);
+      libMesh::Real T_init = inputfile("Materials/TestMaterial/ReferenceTemperature/value", 0.0);
+      libMesh::Real p0_init = inputfile("Materials/TestMaterial/ThermodynamicPressure/value", 0.0);
 
       libMesh::Real& dummy_T  = params.set<libMesh::Real>("T_init");
       dummy_T = T_init;
@@ -96,7 +74,7 @@ int main(int argc, char* argv[])
 
   grins.run();
 
-  libMesh::Real qoi = grins.get_qoi_value(0);
+  libMesh::Real qoi = sim.get_qoi_value(0);
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.
@@ -131,7 +109,7 @@ int main(int argc, char* argv[])
 }
 
 libMesh::Real
-initial_values( const libMesh::Point&, const libMesh::Parameters &params, 
+initial_values( const libMesh::Point&, const libMesh::Parameters &params,
 		const std::string& , const std::string& unknown_name )
 {
   libMesh::Real value = 0.0;

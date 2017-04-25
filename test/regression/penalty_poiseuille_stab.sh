@@ -9,4 +9,4 @@ DATA="${GRINS_TEST_DATA_DIR}/penalty_poiseuille_stab.xdr"
 
 PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
 
-${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v p' norms='L2 H1' tol='5.0e-8' $PETSC_OPTIONS
+${LIBMESH_RUN:-} $PROG --input $INPUT soln-data=$DATA vars='u v p' norms='L2 H1' tol='5.0e-8' $PETSC_OPTIONS

@@ -27,9 +27,7 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h" 
+#include "grins/runner.h"
 
 //libMesh
 #include "libmesh/exact_solution.h"
@@ -44,36 +42,20 @@ int main(int argc, char* argv[])
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-  
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
-
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder,
-                           libmesh_init.comm() );
-
+  GRINS::Runner grins(argc,argv);
+  grins.init();
   grins.run();
 
+  GRINS::Simulation & sim = grins.get_simulation();
+
   // Get equation systems to create ExactSolution object
-  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = sim.get_equation_system();
 
   //es->write("foobar.xdr");
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
-  
+
   libMesh::EquationSystems es_ref( es->get_mesh() );
 
   // Filename of file where comparison solution is stashed
@@ -81,8 +63,9 @@ int main(int argc, char* argv[])
   es_ref.read( solution_file );
 
   exact_sol.attach_reference_solution( &es_ref );
-  
-  std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
+
+  const GetPot & inputfile = grins.get_input_file();
+  std::string system_name = inputfile( "screen-options/system_name", "GRINS" );
 
   // Compute error and get it in various norms
   exact_sol.compute_error(system_name, "u");
@@ -104,7 +87,7 @@ int main(int argc, char* argv[])
   // This is the tolerance of the iterative linear solver so
   // it's unreasonable to expect anything better than this.
   double tol = atof(argv[3]);
-  
+
   if( u_l2error > tol || u_h1error > tol ||
       v_l2error > tol || v_h1error > tol ||
       p_l2error > tol || p_h1error > tol  )

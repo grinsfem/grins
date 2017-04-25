@@ -25,10 +25,8 @@
 #include "grins_config.h"
 
 // GRINS
-#include "grins/simulation_initializer.h"
+#include "grins/runner.h"
 #include "grins/mesh_builder.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 
 //libMesh
@@ -43,13 +41,9 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
 
 int main(int argc, char* argv[])
 {
-  GetPot command_line(argc,argv);
+  GRINS::Runner grins(argc,argv);
 
-  if( !command_line.have_variable("input") )
-    {
-      std::cerr << "ERROR: Must specify input file on command line with input=<file>." << std::endl;
-      exit(1);
-    }
+  const GetPot & command_line = grins.get_command_line();
 
   if( !command_line.have_variable("soln-data") )
     {
@@ -75,50 +69,25 @@ int main(int argc, char* argv[])
       exit(1);
     }
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = command_line("input", "DIE!");
-
-  {
-    std::ifstream i(libMesh_input_filename.c_str());
-    if (!i)
-      {
-        std::cerr << "Error: Could not read from libMesh input file "
-                << libMesh_input_filename << std::endl;
-        exit(1);
-      }
-  }
-
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
+  const GetPot & inputfile = grins.get_input_file();
 
   // Don't flag our command-line-specific variables as UFOs later
-  libMesh_inputfile.have_variable("input");
-  libMesh_inputfile.have_variable("soln-data");
-  libMesh_inputfile.have_variable("vars");
-  libMesh_inputfile.have_variable("norms");
-  libMesh_inputfile.have_variable("tol");
-  libMesh_inputfile.have_variable("qois");
+  inputfile.have_variable("soln-data");
+  inputfile.have_variable("vars");
+  inputfile.have_variable("norms");
+  inputfile.have_variable("tol");
+  inputfile.have_variable("qois");
 
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( libMesh_inputfile,
-                           command_line,
-			   sim_builder,
-                           libmesh_init.comm() );
+  // Initialize Simulation
+  grins.init();
 
   // Do solve here
   grins.run();
 
+  GRINS::Simulation & sim = grins.get_simulation();
+
   // Get equation systems to create ExactSolution object
-  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = sim.get_equation_system();
 
    // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
@@ -154,7 +123,7 @@ int main(int argc, char* argv[])
         }
     }
 
-  const std::string& system_name = grins.get_multiphysics_system_name();
+  const std::string& system_name = sim.get_multiphysics_system_name();
 
   // Now compute error for each variable
   for( unsigned int v = 0; v < n_vars; v++ )
@@ -186,7 +155,7 @@ int main(int argc, char* argv[])
       libMesh::Number gold_qoi = command_line("qois", libMesh::Number(0), n);
 
       libMesh::Number computed_qoi =
-        grins.get_multiphysics_system()->qoi[n];
+        sim.get_multiphysics_system()->qoi[n];
 
       double error = computed_qoi - gold_qoi;
 

@@ -7,4 +7,4 @@ DATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_cantera_regression.xdr"
 
 PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
 
-${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v T p w_N2 w_N' norms='L2 H1' tol='1.5e-8' $PETSC_OPTIONS
+${LIBMESH_RUN:-} $PROG --input $INPUT soln-data=$DATA vars='u v T p w_N2 w_N' norms='L2 H1' tol='1.5e-8' $PETSC_OPTIONS

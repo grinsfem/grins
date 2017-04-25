@@ -7,7 +7,7 @@ then
    INPUT="${GRINS_TEST_INPUT_DIR}/thermally_driven_3d_flow.in"
    DATA="${GRINS_TEST_DATA_DIR}/thermally_driven_3d.xdr"
 
-   ${LIBMESH_RUN:-} $PROG input=$INPUT soln-data=$DATA vars='u v p T' norms='L2 H1' tol='8.0e-9'
+   ${LIBMESH_RUN:-} $PROG --input $INPUT soln-data=$DATA vars='u v p T' norms='L2 H1' tol='8.0e-9'
 else
    # If LIBMESH_DIM != 3, then we skip this test
    exit 77

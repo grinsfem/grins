@@ -28,45 +28,22 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h"
-#include "grins/multiphysics_sys.h"
+#include "grins/runner.h"
 
 //libMesh
 #include "libmesh/exact_solution.h"
 
 int main(int argc, char* argv[])
 {
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for iarallel runs?
-    }
-
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder,
-                           libmesh_init.comm() );
+  GRINS::Runner grins(argc,argv);
+  grins.init();
 
   // Solve
   grins.run();
 
-  libMesh::Number qoi = grins.get_qoi_value( 0 );
+  GRINS::Simulation & sim = grins.get_simulation();
+
+  libMesh::Number qoi = sim.get_qoi_value( 0 );
 
   int return_flag = 0;
   const libMesh::Number exact_value = -0.5;
