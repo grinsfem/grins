@@ -89,7 +89,6 @@
       order = 'FIRST'
    [../ThermoPressure]
       names = 'p0'
-      fe_family = 'SCALAR'
       order = 'FIRST'
 []
 
