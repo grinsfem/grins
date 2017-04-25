@@ -114,10 +114,10 @@ namespace GRINS
     libmesh_assert( context.system );
 
     context.system->deltat = this->_deltat;
-  
+
     libMesh::Real sim_time;
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
@@ -128,7 +128,7 @@ namespace GRINS
       this->init_second_order_in_time_solvers(context);
 
     std::time_t first_wall_time = std::time(NULL);
-    
+
     // Now we begin the timestep loop to compute the time-accurate
     // solution of the equations.
     for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
@@ -139,7 +139,7 @@ namespace GRINS
 		  << "   Beginning time step " << t_step  <<
                      ", t = " << context.system->time <<
                      ", dt = " << context.system->deltat <<
-                     ", runtime = " << (latest_wall_time - first_wall_time) << 
+                     ", runtime = " << (latest_wall_time - first_wall_time) <<
                      std::endl
 		  << "==========================================================" << std::endl;
 
@@ -147,7 +147,6 @@ namespace GRINS
         // need to update them with the current solution.
         this->update_dirichlet_bcs(context);
 
-	// GRVY timers contained in here (if enabled)
 	context.system->solve();
 
 	sim_time = context.system->time;
@@ -176,7 +175,7 @@ namespace GRINS
     std::time_t final_wall_time = std::time(NULL);
     std::cout << "==========================================================" << std::endl
 	      << "   Ending time stepping, t = " << context.system->time <<
-                 ", runtime = " << (final_wall_time - first_wall_time) << 
+                 ", runtime = " << (final_wall_time - first_wall_time) <<
                  std::endl
               << "==========================================================" << std::endl;
 

@@ -45,13 +45,6 @@
 #include "libmesh/system.h"
 #include "libmesh/mesh_base.h"
 
-// GRVY
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h" // GRVY timers
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh forward declarations
 class GetPot;
 namespace libMesh
@@ -258,10 +251,6 @@ namespace GRINS
 
     ICHandlingBase* get_ic_handler();
 
-#ifdef GRINS_USE_GRVY_TIMERS
-    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-#endif
-
   protected:
 
     /*! \todo This is straight up copied from libMesh. Need to make this available from libMesh. */
@@ -295,10 +284,6 @@ namespace GRINS
 
     //! Caches whether we are solving an axisymmetric problem or not
     static bool _is_axisymmetric;
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    GRVY::GRVY_Timer_Class* _timer;
-#endif
 
   private:
     Physics();

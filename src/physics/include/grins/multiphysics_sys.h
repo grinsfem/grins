@@ -37,13 +37,6 @@
 // libMesh
 #include "libmesh/fem_system.h"
 
-#ifdef GRINS_HAVE_GRVY
-// GRVY timers
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh forward declartions
 class GetPot;
 
@@ -195,11 +188,6 @@ namespace GRINS
     const std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs() const
     { return _neumann_bcs; }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-    //! Add GRVY Timer object to system for timing physics.
-    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-#endif
-
   private:
 
     //! Container of pointers to GRINS::Physics classes requested at runtime.
@@ -231,10 +219,6 @@ namespace GRINS
 
     //! Constraint application object
     libMesh::UniquePtr<libMesh::System::Constraint> _constraint;
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    GRVY::GRVY_Timer_Class* _timer;
-#endif
 
     // Useful typedef for refactoring
     typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &, CachedValues &);

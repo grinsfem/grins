@@ -39,7 +39,7 @@ namespace GRINS
 {
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesBraackStabilization<Mu,SH,TC>::LowMachNavierStokesBraackStabilization( const std::string& physics_name, 
+  LowMachNavierStokesBraackStabilization<Mu,SH,TC>::LowMachNavierStokesBraackStabilization( const std::string& physics_name,
 											    const GetPot& input )
     : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
   {
@@ -57,18 +57,9 @@ namespace GRINS
 										  AssemblyContext& context,
 										  CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::element_time_derivative");
-#endif
-
     this->assemble_continuity_time_deriv( compute_jacobian, context );
     this->assemble_momentum_time_deriv( compute_jacobian, context );
     this->assemble_energy_time_deriv( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::element_time_derivative");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -76,18 +67,9 @@ namespace GRINS
 									AssemblyContext& context,
 									CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesBraackStabilization::mass_residual");
-#endif
-
     this->assemble_continuity_mass_residual( compute_jacobian, context );
     this->assemble_momentum_mass_residual( compute_jacobian, context );
     this->assemble_energy_mass_residual( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesBraackStabilization::mass_residual");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -138,7 +120,7 @@ namespace GRINS
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    Fp(i) += ( tau_M*RM_s*p_dphi[i][qp] 
+	    Fp(i) += ( tau_M*RM_s*p_dphi[i][qp]
 		       + tau_E*RE_s*(U*p_dphi[i][qp])/T )*JxW[qp];
 	  }
 
@@ -215,22 +197,22 @@ namespace GRINS
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) += ( tau_C*RC_s*u_gradphi[i][qp](0)
-		       + tau_M*RM_s(0)*rho*U*u_gradphi[i][qp] 
-		       + mu*tau_M*RM_s(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
-					   + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1) 
-					   - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) ) 
+		       + tau_M*RM_s(0)*rho*U*u_gradphi[i][qp]
+		       + mu*tau_M*RM_s(0)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1)
+					   + u_hessphi[i][qp](0,0) + u_hessphi[i][qp](0,1)
+					   - 2.0/3.0*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,0)) )
 		       )*JxW[qp];
 
 	    Fv(i) += ( tau_C*RC_s*u_gradphi[i][qp](1)
 		       + tau_M*RM_s(1)*rho*U*u_gradphi[i][qp]
-		       + mu*tau_M*RM_s(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) 
-					   + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1) 
-					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) ) 
+		       + mu*tau_M*RM_s(1)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1)
+					   + u_hessphi[i][qp](1,0) + u_hessphi[i][qp](1,1)
+					   - 2.0/3.0*(u_hessphi[i][qp](0,1) + u_hessphi[i][qp](1,1)) )
 		       )*JxW[qp];
 
 	    if( this->_flow_vars.dim() == 3 )
 	      {
-		Fu(i) += mu*tau_M*RM_s(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2) 
+		Fu(i) += mu*tau_M*RM_s(0)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](0,2)
 					   - 2.0/3.0*u_hessphi[i][qp](2,0))*JxW[qp];
 
 		Fv(i) += mu*tau_M*RM_s(1)*(u_hessphi[i][qp](2,2) + u_hessphi[i][qp](1,2)
@@ -240,9 +222,9 @@ namespace GRINS
 			   + tau_M*RM_s(2)*rho*U*u_gradphi[i][qp]
 			   + mu*tau_M*RM_s(2)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)
 					       + u_hessphi[i][qp](2,0) + u_hessphi[i][qp](2,1) + u_hessphi[i][qp](2,2)
-					       - 2.0/3.0*(u_hessphi[i][qp](0,2) + u_hessphi[i][qp](1,2) 
-							  + u_hessphi[i][qp](2,2)) 
-					       ) 
+					       - 2.0/3.0*(u_hessphi[i][qp](0,2) + u_hessphi[i][qp](1,2)
+							  + u_hessphi[i][qp](2,2))
+					       )
 			   )*JxW[qp];
 	      }
 	  }
@@ -305,7 +287,7 @@ namespace GRINS
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
 	    FT(i) += ( rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]
-		       + tau_E*RE_s*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2) ) 
+		       + tau_E*RE_s*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2) )
 		       )*JxW[qp];
 	  }
 
@@ -362,7 +344,7 @@ namespace GRINS
 	// computes the contributions of the continuity equation.
 	for (unsigned int i=0; i != n_p_dofs; i++)
 	  {
-	    Fp(i) += ( tau_M*RM_t*p_dphi[i][qp] 
+	    Fp(i) += ( tau_M*RM_t*p_dphi[i][qp]
 		       +  tau_E*RE_t*(U*p_dphi[i][qp])/T
 		       )*JxW[qp];
 	  }
@@ -463,9 +445,9 @@ namespace GRINS
 			   + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp]
 			   + mu*tau_M*RM_t(2)*(u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2)
 					       + u_hessphi[i][qp](2,0) + u_hessphi[i][qp](2,1) + u_hessphi[i][qp](2,2)
-					       - 2.0/3.0*(u_hessphi[i][qp](0,2) + u_hessphi[i][qp](1,2) 
-							  + u_hessphi[i][qp](2,2)) 
-					       ) 
+					       - 2.0/3.0*(u_hessphi[i][qp](0,2) + u_hessphi[i][qp](1,2)
+							  + u_hessphi[i][qp](2,2))
+					       )
 			   )*JxW[qp];
 	      }
 	  }
@@ -528,7 +510,7 @@ namespace GRINS
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
 	    FT(i) += ( rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
-		       + tau_E*RE_t*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+		       + tau_E*RE_t*k*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2))
 		       )*JxW[qp];
 	  }
 

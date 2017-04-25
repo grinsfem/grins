@@ -63,13 +63,12 @@ namespace GRINS
   {
     libmesh_assert( context.system );
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
 
-    // GRVY timers contained in here (if enabled)
     context.system->solve();
 
     if ( context.print_scalars )

@@ -69,10 +69,6 @@ namespace GRINS
                                         AssemblyContext& context,
                                         CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("Stokes::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -209,12 +205,6 @@ namespace GRINS
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("Stokes::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -222,10 +212,6 @@ namespace GRINS
                                    AssemblyContext& context,
                                    CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("Stokes::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -304,13 +290,6 @@ namespace GRINS
       {
         _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
       }
-  
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("Stokes::element_constraint");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -320,12 +299,12 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The shape functions at interior quadrature points.
     // We assume the same for each flow variable
-    const std::vector<std::vector<libMesh::Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     // The number of local degrees of freedom in each variable
@@ -361,7 +340,7 @@ namespace GRINS
 
         if( this->_flow_vars.dim() == 3 )
           context.interior_rate(this->_flow_vars.w(), qp, w_dot);
-      
+
         for (unsigned int i = 0; i != n_u_dofs; ++i)
           {
             F_u(i) -= JxW[qp]*this->_rho*u_dot*u_phi[i][qp];
@@ -369,7 +348,7 @@ namespace GRINS
 
             if( this->_flow_vars.dim() == 3 )
               (*F_w)(i) -= JxW[qp]*this->_rho*w_dot*u_phi[i][qp];
-          
+
             if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)

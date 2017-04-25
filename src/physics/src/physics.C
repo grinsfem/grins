@@ -305,12 +305,4 @@ namespace GRINS
           libmesh_error_msg("ERROR: Could not find subdomain " << *it << " in varaible!");
   }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  void Physics::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-  {
-    _timer = grvy_timer;
-    return;
-  }
-#endif
-
 } // namespace GRINS

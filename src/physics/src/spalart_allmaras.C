@@ -124,10 +124,6 @@ namespace GRINS
                                                      AssemblyContext& context,
                                                      CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("SpalartAllmaras::element_time_derivative");
-#endif
-
     // Get a pointer to the current element, we need this for computing
     // the distance to wall for the  quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
@@ -263,12 +259,6 @@ namespace GRINS
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("SpalartAllmaras::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class K>
@@ -276,10 +266,6 @@ namespace GRINS
                                           AssemblyContext& context,
                                           CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("SpalartAllmaras::mass_residual");
-#endif
-
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
 
@@ -323,12 +309,6 @@ namespace GRINS
           } // End of element dof loop
 
       } // End of the quadrature point loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("SpalartAllmaras::mass_residual");
-#endif
-
-    return;
   }
 
   template<class Mu>

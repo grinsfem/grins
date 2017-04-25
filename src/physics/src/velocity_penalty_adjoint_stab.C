@@ -69,10 +69,6 @@ namespace GRINS
                                                                      AssemblyContext& context,
                                                                      CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenaltyAdjointStabilization::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
@@ -80,7 +76,7 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
@@ -97,13 +93,13 @@ namespace GRINS
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuu =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.u()); // J_{uu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kuv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kuv =
       context.get_elem_jacobian(this->_flow_vars.u(), this->_flow_vars.v()); // J_{uv}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvu =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.u()); // J_{vu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kvv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kvv =
       context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // J_{vv}
 
     libMesh::DenseSubMatrix<libMesh::Number> *Kuw = NULL;
@@ -232,12 +228,6 @@ namespace GRINS
 
           } // End i dof loop
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancyAdjointStabilization::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -245,10 +235,6 @@ namespace GRINS
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityPenaltyAdjointStabilization::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -257,7 +243,7 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
@@ -268,9 +254,9 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
 
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpu =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // J_{pu}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &Kpv =
       context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // J_{pv}
     libMesh::DenseSubMatrix<libMesh::Number> *Kpw = NULL;
 
@@ -357,12 +343,6 @@ namespace GRINS
               }
           }
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityPenaltyAdjointStabilization::element_constraint");
-#endif
-
-    return;
   }
 
 } // namespace GRINS

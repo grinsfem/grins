@@ -67,10 +67,6 @@ namespace GRINS
                                                                        AssemblyContext& context,
                                                                        CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::element_time_derivative");
-#endif
-
     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
@@ -148,12 +144,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("SpalartAllmarasSPGSMStabilization::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -161,10 +151,6 @@ namespace GRINS
                                                              AssemblyContext& context,
                                                              CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("SpalartAllmarasSPGSMStabilization::mass_residual");
-#endif
-
     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points
     libMesh::Elem &elem_pointer = context.get_elem();
@@ -222,12 +208,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("SpalartAllmarasSPGSMStabilization::mass_residual");
-#endif
-
-    return;
   }
 
 } // end namespace GRINS

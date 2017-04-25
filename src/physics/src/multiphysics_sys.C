@@ -528,22 +528,4 @@ namespace GRINS
     return compute_jacobian;
   }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  void MultiphysicsSystem::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-  {
-    _timer = grvy_timer;
-
-    // Attach timers to each physics
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
-      {
-	(physics_iter->second)->attach_grvy_timer( grvy_timer );
-      }
-
-    return;
-  }
-#endif
-
-
 } // namespace GRINS

@@ -98,10 +98,6 @@ namespace GRINS
                                                             AssemblyContext& context,
                                                             CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("IncompressibleNavierStokes::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -323,12 +319,6 @@ namespace GRINS
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokes::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -336,10 +326,6 @@ namespace GRINS
                                                        AssemblyContext& context,
                                                        CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("IncompressibleNavierStokes::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -443,12 +429,6 @@ namespace GRINS
       {
         _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
-#endif
-
-    return;
   }
 
   template<class Mu>

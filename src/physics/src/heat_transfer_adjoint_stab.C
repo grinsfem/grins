@@ -35,7 +35,7 @@ namespace GRINS
 {
 
   template<class K>
-  HeatTransferAdjointStabilization<K>::HeatTransferAdjointStabilization( const std::string& physics_name, 
+  HeatTransferAdjointStabilization<K>::HeatTransferAdjointStabilization( const std::string& physics_name,
                                                                       const GetPot& input )
     : HeatTransferStabilizationBase<K>(physics_name,input)
   {
@@ -53,10 +53,6 @@ namespace GRINS
                                                                   AssemblyContext& context,
                                                                   CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("HeatTransferAdjointStabilization::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -93,11 +89,11 @@ namespace GRINS
     */
 
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTT = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTT =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_temp_vars.T()); // J_{TT}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTu =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.u()); // J_{Tu}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTv =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.v()); // J_{Tv}
     libMesh::DenseSubMatrix<libMesh::Number> *KTw = NULL;
 
@@ -122,7 +118,7 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
-      
+
         //libMesh::RealGradient grad_T = context.interior_gradient( this->_temp_vars.T(), qp );
 
         libMesh::Real tau_E, RE_s;
@@ -132,7 +128,7 @@ namespace GRINS
 
 	// Compute the conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
-       
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_energy_and_derivs
@@ -163,11 +159,11 @@ namespace GRINS
           }
           }
         */
-  
+
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
             FT(i) += -tau_E*RE_s*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
-                                  + _k_qp*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+                                  + _k_qp*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2))
                                   )*JxW[qp];
             if (compute_jacobian)
               {
@@ -181,7 +177,7 @@ namespace GRINS
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*JxW[qp]
                       * context.get_fixed_solution_derivative();
                   }
@@ -195,7 +191,7 @@ namespace GRINS
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*JxW[qp]
                       * context.get_fixed_solution_derivative();
                     KTv(i,j) += -tau_E*RE_s*
@@ -222,7 +218,7 @@ namespace GRINS
                           ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                             + _k_qp*(T_hessphi[i][qp](0,0) +
                                   T_hessphi[i][qp](1,1) +
-                                  T_hessphi[i][qp](2,2)) 
+                                  T_hessphi[i][qp](2,2))
                           )*JxW[qp]
                           * context.get_fixed_solution_derivative();
                       }
@@ -230,11 +226,6 @@ namespace GRINS
               }
           }
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("HeatTransferAdjointStabilization::element_time_derivative");
-#endif
-    return;
   }
 
   template<class K>
@@ -242,10 +233,6 @@ namespace GRINS
                                                         AssemblyContext& context,
                                                         CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("HeatTransferAdjointStabilization::mass_residual");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -282,11 +269,11 @@ namespace GRINS
     */
 
     libMesh::DenseSubVector<libMesh::Number> &FT = context.get_elem_residual(this->_temp_vars.T()); // R_{T}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTT = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTT =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_temp_vars.T()); // J_{TT}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTu = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTu =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.u()); // J_{Tu}
-    libMesh::DenseSubMatrix<libMesh::Number> &KTv = 
+    libMesh::DenseSubMatrix<libMesh::Number> &KTv =
       context.get_elem_jacobian(this->_temp_vars.T(), this->_flow_vars.v()); // J_{Tv}
     libMesh::DenseSubMatrix<libMesh::Number> *KTw = NULL;
 
@@ -309,7 +296,7 @@ namespace GRINS
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
         if( this->_flow_vars.dim() == 3 )
           U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
-      
+
         //libMesh::RealGradient grad_T = context.fixed_interior_gradient( this->_temp_vars.T(), qp );
 
         libMesh::Real tau_E, RE_t;
@@ -318,7 +305,7 @@ namespace GRINS
 
 	// Compute the conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
-       
+
         if (compute_jacobian)
           {
             this->_stab_helper.compute_tau_energy_and_derivs
@@ -353,7 +340,7 @@ namespace GRINS
         for (unsigned int i=0; i != n_T_dofs; i++)
           {
             FT(i) -= tau_E*RE_t*( this->_rho*this->_Cp*U*T_gradphi[i][qp]
-                                  + _k_qp*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2)) 
+                                  + _k_qp*(T_hessphi[i][qp](0,0) + T_hessphi[i][qp](1,1) + T_hessphi[i][qp](2,2))
                                   )*JxW[qp];
             if (compute_jacobian)
               {
@@ -362,12 +349,12 @@ namespace GRINS
 
                 for (unsigned int j=0; j != n_T_dofs; ++j)
                   {
-                    KTT(i,j) -= 
+                    KTT(i,j) -=
                       (tau_E*d_RE_t_dT)*T_phi[j][qp]*
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*JxW[qp];
                   }
                 for (unsigned int j=0; j != n_u_dofs; ++j)
@@ -377,7 +364,7 @@ namespace GRINS
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*fixed_deriv*JxW[qp];
                     KTu(i,j) -=
                       tau_E*RE_t*
@@ -388,7 +375,7 @@ namespace GRINS
                       ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                         + _k_qp*(T_hessphi[i][qp](0,0) +
                               T_hessphi[i][qp](1,1) +
-                              T_hessphi[i][qp](2,2)) 
+                              T_hessphi[i][qp](2,2))
                       )*fixed_deriv*JxW[qp];
                     KTv(i,j) -=
                       tau_E*RE_t*
@@ -404,7 +391,7 @@ namespace GRINS
                           ( this->_rho*this->_Cp*U*T_gradphi[i][qp]
                             + _k_qp*(T_hessphi[i][qp](0,0) +
                                   T_hessphi[i][qp](1,1) +
-                                  T_hessphi[i][qp](2,2)) 
+                                  T_hessphi[i][qp](2,2))
                           )*fixed_deriv*JxW[qp];
                         (*KTw)(i,j) -=
                           tau_E*RE_t*
@@ -416,11 +403,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("HeatTransferAdjointStabilization::mass_residual");
-#endif
-    return;
   }
 
 } // namespace GRINS

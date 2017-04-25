@@ -115,22 +115,12 @@ namespace GRINS
 							       AssemblyContext& context,
 							       CachedValues& cache )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokes::element_time_derivative");
-#endif
-
     this->assemble_mass_time_deriv( compute_jacobian, context, cache );
     this->assemble_momentum_time_deriv( compute_jacobian, context, cache );
     this->assemble_energy_time_deriv( compute_jacobian, context, cache );
 
     if( this->_enable_thermo_press_calc )
       this->assemble_thermo_press_elem_time_deriv( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokes::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu, class SH, class TC>

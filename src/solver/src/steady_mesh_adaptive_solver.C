@@ -91,7 +91,6 @@ namespace GRINS
               << " adaptive refinements" << std::endl
               << "==========================================================" << std::endl;
 
-    // GRVY timers contained in here (if enabled)
     for ( unsigned int r_step = 0; r_step < _mesh_adaptivity_options.max_refinement_steps(); r_step++ )
       {
         std::cout << "==========================================================" << std::endl

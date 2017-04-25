@@ -39,7 +39,7 @@ namespace GRINS
 {
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesVMSStabilization<Mu,SH,TC>::LowMachNavierStokesVMSStabilization( const std::string& physics_name, 
+  LowMachNavierStokesVMSStabilization<Mu,SH,TC>::LowMachNavierStokesVMSStabilization( const std::string& physics_name,
 										      const GetPot& input )
     : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
   {
@@ -57,18 +57,9 @@ namespace GRINS
 									       AssemblyContext& context,
 									       CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::element_time_derivative");
-#endif
-
     this->assemble_continuity_time_deriv( compute_jacobian, context );
     this->assemble_momentum_time_deriv( compute_jacobian, context );
     this->assemble_energy_time_deriv( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::element_time_derivative");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -76,18 +67,9 @@ namespace GRINS
 								     AssemblyContext& context,
 								     CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesVMSStabilization::mass_residual");
-#endif
-
     this->assemble_continuity_mass_residual( compute_jacobian, context );
     this->assemble_momentum_mass_residual( compute_jacobian, context );
     this->assemble_energy_mass_residual( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesVMSStabilization::mass_residual");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -211,7 +193,7 @@ namespace GRINS
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) += ( -tau_C*RC_s*u_gradphi[i][qp](0)
-		       - tau_M*RM_s(0)*rho*U*u_gradphi[i][qp] 
+		       - tau_M*RM_s(0)*rho*U*u_gradphi[i][qp]
 		       + rho*tau_M*RM_s*grad_u*u_phi[i][qp]
 		       + tau_M*RM_s(0)*rho*tau_M*RM_s*u_gradphi[i][qp] )*JxW[qp];
 
@@ -290,7 +272,7 @@ namespace GRINS
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) += ( rho_cp*tau_M*RM_s*grad_T*T_phi[i][qp] 
+	    FT(i) += ( rho_cp*tau_M*RM_s*grad_T*T_phi[i][qp]
 		       - rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]
 		       + rho_cp*tau_E*RE_s*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
 	  }
@@ -415,7 +397,7 @@ namespace GRINS
 	libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
 	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
 	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
-      
+
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) -= ( tau_C*RC_t*u_gradphi[i][qp](0)
@@ -504,7 +486,7 @@ namespace GRINS
 
 	for (unsigned int i=0; i != n_T_dofs; i++)
 	  {
-	    FT(i) -= ( -rho_cp*tau_M*RM_t*grad_T*T_phi[i][qp] 
+	    FT(i) -= ( -rho_cp*tau_M*RM_t*grad_T*T_phi[i][qp]
 		       +rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]
 		       - rho_cp*tau_E*(RE_s+RE_t)*tau_M*RM_t*T_gradphi[i][qp]
 		       - rho_cp*tau_E*RE_t*tau_M*RM_s*T_gradphi[i][qp] )*JxW[qp];
