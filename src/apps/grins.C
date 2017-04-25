@@ -22,79 +22,13 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#include "grins_config.h"
-
-#include <iostream>
-
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation_builder.h"
-#include "grins/simulation.h"
-
-// libMesh
-#include "libmesh/parallel.h"
+#include "grins/runner.h"
 
 int main(int argc, char* argv[])
 {
-  /* Echo GRINS version, libMesh version, and command */
-  libMesh::out << "=========================================================="
-               << std::endl;
-  libMesh::out << "GRINS Version: " << GRINS_BUILD_VERSION << std::endl
-               << "libMesh Version: " << LIBMESH_BUILD_VERSION << std::endl
-               << "Running with command:\n";
-
-  for (int i=0; i != argc; ++i)
-    std::cout << argv[i] << ' ';
-
-  std::cout << std::endl
-            << "=========================================================="
-            << std::endl;
-
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
-
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  // Create our GetPot object from the input file
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
-
-  // And create a command_line only GetPot object for command line
-  // specific arguments
-  GetPot command_line(argc,argv);
-
-  // GetPot doesn't throw an error for a nonexistent file?
-  {
-    std::ifstream i(libMesh_input_filename.c_str());
-    if (!i)
-      {
-        std::cerr << "Error: Could not read from libMesh input file "
-                << libMesh_input_filename << std::endl;
-        exit(1);
-      }
-  }
-
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( libMesh_inputfile,
-                           command_line,
-			   sim_builder,
-                           libmesh_init.comm() );
-
+  GRINS::Runner grins(argc,argv);
+  grins.init();
   grins.run();
 
   return 0;
