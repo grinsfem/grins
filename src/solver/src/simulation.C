@@ -36,6 +36,8 @@
 #include "grins/physics_builder.h"
 #include "grins/error_estimator_factory_base.h"
 #include "grins/variable_builder.h"
+#include "grins/solver_factory_abstract.h"
+#include "grins/solver_parsing.h"
 
 // libMesh
 #include "libmesh/dof_map.h"
@@ -51,7 +53,6 @@ namespace GRINS
                           const libMesh::Parallel::Communicator &comm )
     :  _mesh( sim_builder.build_mesh(input, comm) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
-       _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
        _vis( sim_builder.build_vis(input, comm) ),
@@ -76,6 +77,8 @@ namespace GRINS
   {
     libmesh_deprecated();
 
+    this->build_solver(input);
+
     this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
@@ -97,7 +100,6 @@ namespace GRINS
                           const libMesh::Parallel::Communicator &comm )
     :  _mesh( sim_builder.build_mesh(input, comm) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
-       _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
        _vis( sim_builder.build_vis(input, comm) ),
@@ -120,6 +122,8 @@ namespace GRINS
        _do_adjoint_solve(false), // Helper function will set final value
        _have_restart(false)
   {
+    this->build_solver(input);
+
     this->init_multiphysics_system(input);
 
     this->init_qois(input,sim_builder);
@@ -494,6 +498,15 @@ namespace GRINS
         ErrorEstimatorFactoryBase::set_estimator_options(_error_estimator_options);
         _error_estimator.reset( (ErrorEstimatorFactoryBase::build(estimator_type)).release() );
       }
+  }
+
+  void Simulation::build_solver(const GetPot& input)
+  {
+    SolverFactoryAbstract::set_getpot(input);
+
+    std::string solver_name = SolverParsing::solver_type(input);
+
+    _solver = SolverFactoryAbstract::build(solver_name);
   }
 
 } // namespace GRINS
