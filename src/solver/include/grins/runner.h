@@ -86,7 +86,8 @@ namespace GRINS
     //! Echo GRINS, libMesh version info as well as command line
     void echo_version_info( std::ostream & out, int argc, char* argv[] );
 
-    std::string check_and_get_inputfile(int argc, char* argv[]);
+    //! Check (and error if not found) and then return GetPot input file name.
+    std::string check_and_get_inputfile(int argc, char* argv[], GetPot & command_line);
 
     SimulationInitializer _initializer;
 

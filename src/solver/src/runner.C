@@ -43,7 +43,7 @@ namespace GRINS
     this->echo_version_info( libMesh::out, argc, argv );
 
     // Grab inputfile name and setup GetPot input file
-    std::string inputfile_name = this->check_and_get_inputfile(argc,argv);
+    std::string inputfile_name = this->check_and_get_inputfile(argc,argv,_command_line);
     _inputfile.reset( new GetPot(inputfile_name) );
 
     // Allow command line options to override the inputfile
@@ -73,18 +73,23 @@ namespace GRINS
         << "==========================================================" << std::endl;
   }
 
-  std::string Runner::check_and_get_inputfile(int argc, char* argv[])
+  std::string Runner::check_and_get_inputfile(int argc, char* argv[], GetPot & command_line)
   {
     if( argc < 2 )
     {
       std::stringstream error_msg;
       error_msg << "ERROR: Found only 1 command line argument, but was expecting an inputfile name!"
                 << std::endl
-                << "       Please specify the name of the inputfile on the command line." << std::endl;
+                << "       Please specify the name of the input file on the command line as the first" << std::endl
+                << "       command line argument or using the '--input <filename>' option." << std::endl;
       libmesh_error_msg(error_msg.str());
     }
 
-    std::string inputfile_name = argv[1];
+    std::string inputfile_name;
+    if( command_line.search("--input") )
+      inputfile_name = command_line.next(std::string("DIE!"));
+    else
+      inputfile_name = argv[1];
 
     std::ifstream i(inputfile_name.c_str());
     if (!i)
